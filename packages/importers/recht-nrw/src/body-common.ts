@@ -1,0 +1,296 @@
+/**
+ * Gemeinsame Bausteine beider Textparser: Gliederungserkennung, Absatz- und Listenkennzeichen,
+ * Fußnotenmarken, Tabellen und der Aufbau des verschachtelten Normkörpers aus einer flachen
+ * Folge von Zeilen. Fail-closed: Unbekanntes wird als Befund gemeldet, nie stillschweigend
+ * verworfen.
+ */
+import type { NormBodyBlock, StructureType } from '@landesrecht/legal-core/lib/schema.ts';
+import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
+
+/** Flache Zeile, wie sie ein Formatparser liefert; der Builder verschachtelt sie. */
+export type SourceLine =
+  | { kind: 'division'; level: DivisionLevel; label: string; title?: string; footnotes: string[] }
+  | { kind: 'unit'; unitType: 'paragraph' | 'article'; label: string; title?: string; footnotes: string[] }
+  | { kind: 'annex'; label: string; title?: string; footnotes: string[] }
+  | { kind: 'subparagraph'; label: string; text: string; footnotes: string[] }
+  | { kind: 'item'; label?: string; text: string; level: number; footnotes: string[] }
+  | { kind: 'text'; text: string; centered: boolean; bold: boolean; footnotes: string[] }
+  | { kind: 'heading'; text: string; footnotes: string[] }
+  | { kind: 'table'; block: NormBodyBlock; footnotes: string[] }
+  | { kind: 'signature'; text: string };
+
+export type DivisionLevel = 'book' | 'part' | 'chapter' | 'section' | 'subsection';
+
+export interface SourceFootnote {
+  label: string;
+  text: string;
+}
+
+export interface ParsedBody {
+  blocks: NormBodyBlock[];
+  footnotes: SourceFootnote[];
+  findings: ImportFinding[];
+  /** Roh-Kennzahlen des Parsers (für die Textintegritätsprüfung). */
+  stats: BodyStats;
+}
+
+export interface BodyStats {
+  units: number;
+  unitLabels: string[];
+  tables: number;
+  annexes: number;
+  textLength: number;
+  lines: number;
+}
+
+const DIVISION_RANK: Record<DivisionLevel, number> = { book: 1, part: 2, chapter: 3, section: 4, subsection: 5 };
+
+const ORDINALS = '(?:Erst|Zweit|Dritt|Viert|Fünft|Sechst|Siebt|Siebent|Acht|Neunt|Zehnt|Elft|Zwölft|Dreizehnt|Vierzehnt|Fünfzehnt|Sechzehnt|Siebzehnt|Achtzehnt|Neunzehnt|Zwanzigst|Einundzwanzigst|Zweiundzwanzigst)(?:e|er|es)';
+const DIVISION_WORD = '(Buch|Teil|Kapitel|Abschnitt|Unterabschnitt|Titel)';
+const DIVISION_PATTERNS = [
+  new RegExp(`^${ORDINALS}\\s+${DIVISION_WORD}\\b(.*)$`, 'u'),
+  new RegExp(`^(?:\\d+\\.|[IVXLC]+\\.?)\\s+${DIVISION_WORD}\\b(.*)$`, 'u'),
+  new RegExp(`^${DIVISION_WORD}\\s+(?:\\d+|[IVXLC]+)[a-z]?\\b(.*)$`, 'u'),
+];
+
+const DIVISION_LEVELS: Record<string, DivisionLevel> = {
+  Buch: 'book',
+  Teil: 'part',
+  Kapitel: 'chapter',
+  Abschnitt: 'section',
+  Unterabschnitt: 'subsection',
+  Titel: 'subsection',
+};
+
+/** „Erster Teil“, „2. Abschnitt“, „Kapitel 3“, „Erster Abschnitt - Von den Grundrechten“ */
+export function parseDivisionHeading(text: string): { level: DivisionLevel; label: string; title?: string } | null {
+  const cleaned = text.replace(/\s+/gu, ' ').trim();
+  for (const pattern of DIVISION_PATTERNS) {
+    const match = pattern.exec(cleaned);
+    if (!match) continue;
+    const word = match[1]!;
+    const rest = (match[2] ?? '').trim();
+    const level = DIVISION_LEVELS[word];
+    if (!level) continue;
+    const label = cleaned.slice(0, cleaned.length - rest.length).trim();
+    const title = rest.replace(/^[\s:–—-]+/u, '').trim();
+    return title ? { level, label, title } : { level, label };
+  }
+  return null;
+}
+
+const UNIT_PATTERN = /^(§{1,2}|Art\.|Artikel)\s*(\d+\s?[a-z]?)\b\s*(.*)$/u;
+
+/** „§ 5“, „§ 3a“, „Artikel 12“, „Art. 4“ → Einheit; Rest ist Überschrift. */
+export function parseUnitHeading(text: string): { unitType: 'paragraph' | 'article'; label: string; title?: string } | null {
+  const cleaned = text.replace(/\s+/gu, ' ').trim();
+  const match = UNIT_PATTERN.exec(cleaned);
+  if (!match) return null;
+  const marker = match[1]!;
+  const number = match[2]!.replace(/\s+/gu, '');
+  const unitType = marker.startsWith('§') ? 'paragraph' : 'article';
+  const label = unitType === 'paragraph' ? `§ ${number}` : `${marker === 'Art.' ? 'Art.' : 'Artikel'} ${number}`;
+  const title = match[3]!.replace(/^[\s:–—-]+/u, '').trim();
+  return title ? { unitType, label, title } : { unitType, label };
+}
+
+export function parseAnnexHeading(text: string): { label: string; title?: string } | null {
+  const cleaned = text.replace(/\s+/gu, ' ').trim();
+  const match = /^(Anlage(?:\s+\d+[a-z]?)?)(?:\s*(?:\(zu\s+[^)]+\)|zu\s+§\s*\S+.*?))?\s*[:–—-]?\s*(.*)$/u.exec(cleaned);
+  if (!match) return null;
+  const title = match[2]!.trim();
+  return title ? { label: match[1]!, title } : { label: match[1]! };
+}
+
+const SUBPARAGRAPH_PATTERN = /^\((\d+[a-z]?)\)\s*(.*)$/su;
+const ITEM_PATTERNS: Array<{ pattern: RegExp; level: number }> = [
+  { pattern: /^(\d{1,3}\.)\s+(.*)$/su, level: 0 },
+  { pattern: /^([a-z]{1,2}\))\s+(.*)$/su, level: 1 },
+  { pattern: /^([a-z]{2}\))\s+(.*)$/su, level: 2 },
+  { pattern: /^(\d{1,2}\.\d{1,2}\.?)\s+(.*)$/su, level: 1 },
+  { pattern: /^([–-])\s+(.*)$/su, level: 0 },
+];
+
+export function parseSubparagraph(text: string): { label: string; text: string } | null {
+  const match = SUBPARAGRAPH_PATTERN.exec(text.trim());
+  return match ? { label: `(${match[1]})`, text: match[2]!.trim() } : null;
+}
+
+export function parseItem(text: string): { label: string; text: string; level: number } | null {
+  const cleaned = text.trim();
+  for (const { pattern, level } of ITEM_PATTERNS) {
+    const match = pattern.exec(cleaned);
+    if (match) return { label: match[1]!, text: match[2]!.trim(), level };
+  }
+  return null;
+}
+
+/** Entfernt „(Fn 4)“, „(Fn 1, 2)“ und liefert die referenzierten Fußnotennummern. */
+export function extractFootnoteMarkers(text: string): { text: string; footnotes: string[] } {
+  const footnotes: string[] = [];
+  const cleaned = text
+    .replace(/\(\s*Fn\s*((?:\d+\s*,?\s*)+)\)/gu, (_match, numbers: string) => {
+      for (const number of numbers.split(/\s*,\s*/u)) if (number.trim()) footnotes.push(number.trim());
+      return ' ';
+    })
+    .replace(/\s+/gu, ' ')
+    .trim();
+  return { text: cleaned, footnotes };
+}
+
+export function tableBlock(rows: Array<Array<{ text: string; header: boolean; colspan?: number; rowspan?: number }>>): NormBodyBlock {
+  return {
+    type: 'table',
+    children: rows.map((cells) => ({
+      type: 'tableRow' as StructureType,
+      children: cells.map((cell) => {
+        const block: NormBodyBlock = { type: cell.header ? 'tableHeaderCell' : 'tableCell', text: cell.text };
+        if (cell.header) block.scope = 'col';
+        if (cell.colspan && cell.colspan > 1) block.colspan = cell.colspan;
+        if (cell.rowspan && cell.rowspan > 1) block.rowspan = cell.rowspan;
+        return block;
+      }),
+    })),
+  };
+}
+
+/**
+ * Baut aus flachen Zeilen den verschachtelten Normkörper: Gliederungen enthalten Einheiten,
+ * Einheiten enthalten Absätze, Absätze enthalten Nummerierungen (nach Ebene verschachtelt).
+ * Fußnotenreferenzen einer Einheit werden als `footnote`-Blöcke am Ende der Einheit
+ * materialisiert (Text aus der Fußnotenliste), damit der Bezug nicht verloren geht.
+ */
+export function buildBody(lines: readonly SourceLine[], footnotes: readonly SourceFootnote[], findings: ImportFinding[]): { blocks: NormBodyBlock[]; stats: BodyStats } {
+  const root: NormBodyBlock[] = [];
+  const footnoteText = new Map(footnotes.map((footnote) => [footnote.label, footnote.text]));
+  const stats: BodyStats = { units: 0, unitLabels: [], tables: 0, annexes: 0, textLength: 0, lines: lines.length };
+
+  interface Frame { block: NormBodyBlock; rank: number; kind: 'division' | 'unit' | 'annex' | 'subparagraph' }
+  const stack: Frame[] = [];
+  let listStack: Array<{ block: NormBodyBlock; level: number }> = [];
+
+  const container = (): NormBodyBlock[] => (stack.length > 0 ? (stack[stack.length - 1]!.block.children ??= []) : root);
+  const popTo = (rank: number): void => {
+    while (stack.length > 0 && stack[stack.length - 1]!.rank >= rank) stack.pop();
+    listStack = [];
+  };
+  const attachFootnotes = (block: NormBodyBlock, labels: string[]): void => {
+    for (const label of labels) {
+      const text = footnoteText.get(label);
+      if (!text) {
+        findings.push({ severity: 'warning', code: 'dangling-footnote', message: `Fußnote ${label} wird referenziert, aber nicht gefunden` });
+        continue;
+      }
+      (block.children ??= []).push({ type: 'footnote', label: `Fn ${label}`, text });
+    }
+  };
+  const openUnit = (line: Extract<SourceLine, { kind: 'unit' }>): void => {
+    popTo(10);
+    const block: NormBodyBlock = { type: line.unitType, label: line.label, children: [] };
+    if (line.title) block.title = line.title;
+    container().push(block);
+    stack.push({ block, rank: 10, kind: 'unit' });
+    stats.units += 1;
+    stats.unitLabels.push(line.label);
+    attachFootnotes(block, line.footnotes);
+  };
+  const pushLeaf = (block: NormBodyBlock, footnoteLabels: string[]): void => {
+    container().push(block);
+    attachFootnotes(block, footnoteLabels);
+  };
+  const pushItem = (line: Extract<SourceLine, { kind: 'item' }>): void => {
+    const block: NormBodyBlock = { type: line.level === 0 ? 'item' : 'subitem', text: line.text, level: line.level, children: [] };
+    if (line.label) block.label = line.label;
+    block.numberingStyle = line.label ? (/^\d+\./u.test(line.label) ? 'decimal' : /^[a-z]+\)/u.test(line.label) ? 'lower-alpha' : 'none') : 'none';
+    while (listStack.length > 0 && listStack[listStack.length - 1]!.level >= line.level) listStack.pop();
+    const parent = listStack[listStack.length - 1];
+    if (parent) (parent.block.children ??= []).push(block);
+    else container().push(block);
+    listStack.push({ block, level: line.level });
+    attachFootnotes(block, line.footnotes);
+  };
+
+  for (const line of lines) {
+    if (line.kind !== 'item') listStack = [];
+    switch (line.kind) {
+      case 'division': {
+        const rank = DIVISION_RANK[line.level];
+        popTo(rank);
+        const block: NormBodyBlock = { type: line.level, label: line.label, children: [] };
+        if (line.title) block.title = line.title;
+        container().push(block);
+        stack.push({ block, rank, kind: 'division' });
+        attachFootnotes(block, line.footnotes);
+        break;
+      }
+      case 'annex': {
+        popTo(1);
+        const block: NormBodyBlock = { type: 'annex', label: line.label, children: [] };
+        if (line.title) block.title = line.title;
+        root.push(block);
+        stack.push({ block, rank: 1, kind: 'annex' });
+        stats.annexes += 1;
+        attachFootnotes(block, line.footnotes);
+        break;
+      }
+      case 'unit':
+        openUnit(line);
+        break;
+      case 'subparagraph': {
+        popTo(20);
+        const block: NormBodyBlock = { type: 'subparagraph', label: line.label, text: line.text, children: [] };
+        container().push(block);
+        stack.push({ block, rank: 20, kind: 'subparagraph' });
+        stats.textLength += line.text.length;
+        attachFootnotes(block, line.footnotes);
+        break;
+      }
+      case 'item':
+        pushItem(line);
+        stats.textLength += line.text.length;
+        break;
+      case 'text': {
+        stats.textLength += line.text.length;
+        if (line.bold && line.centered) pushLeaf({ type: 'heading', title: line.text }, line.footnotes);
+        else pushLeaf({ type: 'paragraphText', text: line.text }, line.footnotes);
+        break;
+      }
+      case 'heading':
+        stats.textLength += line.text.length;
+        pushLeaf({ type: 'heading', title: line.text }, line.footnotes);
+        break;
+      case 'table':
+        stats.tables += 1;
+        stats.textLength += JSON.stringify(line.block).length / 4;
+        pushLeaf(line.block, line.footnotes);
+        break;
+      case 'signature':
+        popTo(1);
+        root.push({ type: 'signature', text: line.text });
+        break;
+      default:
+        break;
+    }
+  }
+
+  // Einheiten ohne Kinder wären für den Normkörper unzulässig (children Pflicht) – ein leeres
+  // Array ist gültig; Divisionen ohne Inhalt bleiben ebenfalls gültig.
+  stats.textLength = Math.round(stats.textLength);
+  return { blocks: root, stats };
+}
+
+/** Sichtbarer Textumfang eines Normkörpers (für Integritätsvergleiche). */
+export function bodyTextLength(blocks: readonly NormBodyBlock[]): number {
+  let total = 0;
+  const visit = (entries: readonly NormBodyBlock[]): void => {
+    for (const block of entries) {
+      if (block.type === 'footnote') continue;
+      if (block.label) total += block.label.length + 1;
+      if (block.title) total += block.title.length + 1;
+      if (block.text) total += block.text.length + 1;
+      if (block.children) visit(block.children);
+    }
+  };
+  visit(blocks);
+  return total;
+}

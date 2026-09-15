@@ -31,7 +31,7 @@ implementieren dieselbe `NormStore`-Schnittstelle (`packages/runtime/src/store.t
 | `@landesrecht/search` | Sucheinheiten aus dem Normkörper, Abfrageplan (Strukturadressen, Phrasen, Token, Filter), FTS5-Vertrag (Spalten, Gewichte, Trigger), In-Memory-Bewertung, Zusammenführung mehrerer Stores |
 | `@landesrecht/runtime` | Bindings, Projektionsplan, D1-Store, Dateistore, Registry, SQLite-Adapter (D1-kompatibel, nur Node) |
 | `@landesrecht/providers` | `LegalProvider`-Schnittstelle, Content-Provider, OstRecht-Adapter + Provider, Bundesrechts-Provider, zentraler Resolver |
-| `@landesrecht/importer-*` | Pipeline-Schnittstellen (`common`) und Platzhalter für RECHT.NRW, juris SH, BAYERN.RECHT, OstRecht |
+| `@landesrecht/importer-*` | Pipeline-Schnittstellen (`common`); `importer-recht-nrw` (Fetcher, Fassungsseiten-Parser, Legacy-/Nativ-Textparser, Stichtagsauswahl, Transformation NRW → West, Integritätsprüfung, Manifest, CLI); Platzhalter für juris SH, BAYERN.RECHT, OstRecht-Leser |
 
 ## Jurisdiktionsmodell
 
@@ -66,6 +66,16 @@ FTS5-Index mit externem Inhalt und Triggern, zweischichtige MATCH-Strategie (OR-
 Strukturadressen als JSON1-Prädikate, Kandidaten in SQL + Bewertung der Seite im Speicher,
 fail-safe Zustandsparser. Neu: `jurisdiction`-Spalte, Sucheinheiten für alle Fassungen (Suche nach
 Geltungstag `validOn`), Zusammenführung mehrerer Stores.
+
+## Importer
+
+Der RECHT.NRW-Importer (`docs/RECHT_NRW_IMPORT.md`) ist der erste produktionsnahe Quellimporter:
+Parser (Nordrhein-Westfalen bleibt Nordrhein-Westfalen) und Transformer (→ Land Westdeutschland)
+sind getrennte Phasen; die Stichtagsauswahl ist eine eigene, fail-closed geprüfte Stufe;
+Quellmetadaten (URLs, Hashes, Quellintervall, Fundstellen, Fußnoten) werden nie transformiert;
+jede Ersetzung steht im Transformationsreport, NRW-spezifische Bezeichnungen im Unresolved-Report.
+Status: Phase 2, validierter Beispielkorpus (12 Vorschriften) – noch kein vollständiger
+Ausgangsimport (`docs/RECHT_NRW_BULK_IMPORT.md`).
 
 ## Provider und Verweise
 

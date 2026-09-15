@@ -58,9 +58,18 @@ npm run content:check         # beides
 npm run d1:seed:local         # lokale Projektion zum Nachsehen
 ```
 
+## Importierte Normen (RECHT.NRW → West)
+
+`content/norms/west/` enthält neben der synthetischen Fixture-Norm zwölf über den RECHT.NRW-Importer
+übernommene Stichtagsfassungen (`docs/RECHT_NRW_IMPORT.md`). Sie werden nicht von Hand bearbeitet:
+Quelle der Wahrheit für ihre Ausgangsfassung ist der Importlauf (`npm run import:recht-nrw:sample -- --write`)
+mit Manifest `data/imports/recht-nrw/manifest.json`, Transformationsreport `data/audits/recht-nrw/<slug>.json`
+und archivierten Rohquellen `sources/recht-nrw/term-<id>/`. Spätere Änderungen der Simulation entstehen als
+neue Fassungsdateien, nie durch Umschreiben von `versions/2023-12-01.json`.
+
 ## Testbestand
 
-Der committete Bestand ist ausschließlich synthetisch: `schulgesetz-west` (zwei Fassungen,
+Der synthetische Bestand: `schulgesetz-west` (zwei Fassungen,
 Quellintervall 2023-08-01 bis 2024-01-31), `kuestenschutzgesetz-nsh`, `testverordnung-ost`
 (OstRecht-Format mit zitierter Vorschrift), `gemeindeordnung-baywue` (Artikelgliederung) und die
 Verkündung `gv-west-2026-12`. Echte Gesetzestexte werden erst über die Importpipeline übernommen.

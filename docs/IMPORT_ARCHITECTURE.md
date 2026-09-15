@@ -7,7 +7,8 @@ Platzhalter und Regeln (`packages/importers/common/src/pipeline.ts`).
 
 ```text
 Fetch → Archive Raw Source → Parse Source Format → Normalize Source Law
-  → Transform into Simulation Jurisdiction → Validate → Write Canonical JSON → Project to D1 → Audit
+  → Select Source Version at Baseline → Transform into Simulation Jurisdiction → Validate
+  → Write Canonical JSON → Project to D1 → Audit
 ```
 
 | Phase | Schnittstelle | Ergebnis |
@@ -15,6 +16,7 @@ Fetch → Archive Raw Source → Parse Source Format → Normalize Source Law
 | Fetch | `SourceFetcher.fetch(url)` | `RawSource` (Bytes, SHA-256, Abrufzeit) |
 | Archive | `SourceArchive.archive(source, jurisdiction)` | `ArchivedSource` (R2-`objectKey` `<jur>/<system>/<stichtag>/<datei>` oder `localSource`) |
 | Parse + Normalize | `SourceParser.detect/parse` | `SourceLaw`: echtes Recht des Herkunftslandes (Titel, Kennungen, Quellintervall, Body, Quellen, Befunde) |
+| Select | `selectSourceVersionAtBaseline` (Importer) | genau die Quellfassung, deren reales Intervall den Stichtag enthält; Lücke/Überlappung/Mehrdeutigkeit → Abbruch |
 | Transform | `JurisdictionTransformer.transform(law, context)` | `NormRecord` der Simulationsjurisdiktion (Namen, Zitate, Organe übergeleitet); `audit()` prüft Reststellen |
 | Validate | Parser aus `legal-core`, `validateNormRecord`, `assertBaselineConsistency` | fail-closed |
 | Write | `CanonicalWriter.write(record)` | `content/norms/<jur>/<slug>/…` |
@@ -29,12 +31,12 @@ Analog: Schleswig-Holstein → NSH, Bayern → BayWü, Sachsen/OstRecht → Ost.
 
 | Paket | Quelle | Ziel | Stand |
 | --- | --- | --- | --- |
-| `importer-recht-nrw` | RECHT.NRW | west | Platzhalter (`detect` → false, `parse`/`transform` werfen) |
+| `importer-recht-nrw` | RECHT.NRW (LRGV) | west | **Phase 2**: Fetcher, Parser (Legacy + nativ), Stichtagsauswahl, Transformer, Integritätsprüfung, Manifest, CLI; validierter Beispielkorpus, noch kein Bulkimport (`docs/RECHT_NRW_IMPORT.md`) |
 | `importer-juris-sh` | juris Schleswig-Holstein | nsh | Platzhalter |
 | `importer-bayernrecht` | BAYERN.RECHT | baywue | Platzhalter |
 | `importer-ostrecht` | OstRecht-Normordner | ost | Leser + Adapter vorhanden, kein Schreiblauf |
 
-## Regeln für den ersten echten Importer (RECHT.NRW → West)
+## Regeln des RECHT.NRW-Importers (umgesetzt)
 
 1. Discovery und Abruf nur über einen ausdrücklichen Befehl; Rohquellen unverändert mit SHA-256
    archivieren (`sources/` lokal, R2 produktiv), Manifest committen.

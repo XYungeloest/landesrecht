@@ -32,6 +32,9 @@ Prioritäten:
 - Ostdeutsche Normen werden hier nicht redaktionell gepflegt; sie kommen über den
   OstRecht-Adapter (`packages/providers/src/ostrecht.ts`, `packages/importers/ostrecht`).
 - Keine Massenimporte, kein Scraping, keine Cloudflare-Ressourcen, keine Secrets im Repository.
+- RECHT.NRW-Import nur über die CLI (`npm run import:recht-nrw …`), Dry-run ist Standard; importierte
+  Normen unter `content/norms/west/` werden nicht von Hand bearbeitet (`docs/RECHT_NRW_IMPORT.md`).
+  Verwaltungsvorschriften (LRMB) werden mit diesem Importer nicht übernommen.
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar
   (Hinweisleiste, Startseite, Fußzeile, Impressum).
 

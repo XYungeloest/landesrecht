@@ -44,13 +44,14 @@ packages/legal-core/      Jurisdiktionsregister, Normdatenmodell, Zeitmodell, Ro
 packages/search/          Sucheinheiten, Abfrageplan, FTS5-Vertrag, Ranking, Zusammenführung
 packages/runtime/         D1-Projektionsplan, D1-Store, Dateistore, Store-Registry, SQLite-Adapter, Bindings
 packages/providers/       LegalProvider-Schnittstelle, Content-, OstRecht-, Bundesrechts-Provider, Resolver
-packages/importers/       Pipeline-Schnittstellen (common) und Platzhalter je Quellportal
-content/norms/<jur>/      kanonische Normen (synthetische Testfixtures)
+packages/importers/       Pipeline-Schnittstellen (common), RECHT.NRW-Importer (recht-nrw), Platzhalter je weiterem Quellportal
+content/norms/<jur>/      kanonische Normen (synthetische Testfixtures; west: 12 importierte RECHT.NRW-Stichtagsfassungen)
 content/publications/     Verkündungsblatt-Ausgaben je Jurisdiktion
 data/d1/                  D1-Migrationen (Schema)
 data/runtime/             lokale SQLite-Projektionen / SQL-Pläne (generiert, nicht eingecheckt)
-data/audits/              Importberichte
-sources/                  lokaler Rohquellen-Arbeitsbereich (nicht eingecheckt)
+data/audits/              Importberichte (recht-nrw/<slug>.json: Transformationsreport, Unresolved-Liste, Integrität)
+data/imports/             Importmanifest und Validierungskorpus des RECHT.NRW-Imports
+sources/recht-nrw/        archivierte Rohquellen des RECHT.NRW-Validierungskorpus (versioniert, SHA-256 im Manifest)
 scripts/                  Validierung, Projektion, Schemaprüfung, Unveränderlichkeitsprüfung
 tests/                    Vitest (synthetische Fixtures, lokale SQLite-D1, OstRecht-Kompatibilität)
 docs/                     Datenmodell, OstRecht-/Bundesrechts-Kompatibilität, Import, Deployment
@@ -71,6 +72,10 @@ npm run d1:seed:local    # data/runtime/landesrecht-<jur>.sqlite aus content/ er
 npm run d1:apply:remote  # SQL-Pläne für wrangler d1 execute schreiben (kein Remote-Zugriff)
 npm run test:search      # nur Suchtests
 npm run test:d1          # nur Projektions- und Runtime-Tests
+npm run import:recht-nrw:inspect -- --url <url>   # RECHT.NRW: Fassungsseite analysieren
+npm run import:recht-nrw -- --url <url> [--write] # RECHT.NRW: Einzelimport (Dry-run ohne --write)
+npm run import:recht-nrw:sample [-- --write]      # RECHT.NRW: Validierungskorpus
+npm run import:recht-nrw:audit                    # RECHT.NRW: Manifest und Rohquellen prüfen
 ```
 
 Der Worker liest ausschließlich D1. Auch `astro dev` führt die Worker-Routen in workerd aus und
@@ -102,4 +107,6 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/OSTRECHT_COMPATIBILITY.md` | Adapter und Abgrenzung zu OstRecht |
 | `docs/FEDERAL_COMPATIBILITY.md` | Bundesrechtsresolver und Rechtsverweise |
 | `docs/IMPORT_ARCHITECTURE.md` | Importpipeline und geplante Importer |
+| `docs/RECHT_NRW_IMPORT.md` | RECHT.NRW-Struktur, Importer (Phase 2, validierter Beispielkorpus), Bedienung |
+| `docs/RECHT_NRW_BULK_IMPORT.md` | Plan für den vollständigen LRGV-Ausgangsimport |
 | `docs/DEPLOYMENT.md` | GitLab-CI, Cloudflare-Ressourcen, D1-Projektion, Variablen |

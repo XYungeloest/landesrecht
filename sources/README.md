@@ -3,7 +3,9 @@
 Dieses Verzeichnis ist der lokale Arbeitsbereich für unveränderte amtliche Rohquellen
 (RECHT.NRW-, juris-SH-, BAYERN.RECHT- und REVOSax-Seiten, PDFs, Anlagen), bevor sie im
 R2-Quellenarchiv (`landesrecht-quellen`) abgelegt werden. Es wird nicht eingecheckt
-(`.gitignore`); nur diese Datei ist versioniert.
+(`.gitignore`) – mit einer Ausnahme: `sources/recht-nrw/term-<id>/` enthält die tatsächlich
+abgerufenen Rohquellen des RECHT.NRW-Validierungskorpus (Fassungsseite, Legacy-Textdatei, Anlagen)
+mit dem SHA-256 der empfangenen Bytes im Manifest `data/imports/recht-nrw/manifest.json`.
 
 Regeln:
 

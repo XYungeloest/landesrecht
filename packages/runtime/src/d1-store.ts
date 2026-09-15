@@ -114,11 +114,11 @@ export function assembleBlocks(rows: readonly BlockRow[]): NormBodyBlock[] {
     .map(([, pieces]) => JSON.parse(pieces.join('')) as NormBodyBlock);
 }
 
-function referenceConditions(references: readonly StructuralIntent[]): { sql: string; params: unknown[] } {
-  const clauses: string[] = [];
+/** Bedingungen einer Strukturadresse direkt auf einer Einheit (Alias `u`). */
+function referenceUnitConditions(references: readonly StructuralIntent[]): { conditions: string[]; params: unknown[] } {
+  const conditions: string[] = [];
   const params: unknown[] = [];
   for (const intent of references) {
-    const conditions: string[] = [];
     if (intent.kind === 'paragraph') {
       conditions.push("json_extract(u.references_json, '$.paragraph') = ?");
       params.push(intent.number);
@@ -131,9 +131,15 @@ function referenceConditions(references: readonly StructuralIntent[]): { sql: st
       conditions.push("EXISTS (SELECT 1 FROM json_each(json_extract(u.references_json, '$.subsections')) je WHERE je.value = ?)");
       params.push(subsection);
     }
-    clauses.push(`(v.norm_id, v.version_id) IN (SELECT u.norm_id, u.version_id FROM law_search_units u WHERE ${conditions.join(' AND ')})`);
   }
-  return { sql: clauses.map((clause) => ` AND ${clause}`).join(''), params };
+  return { conditions, params };
+}
+
+/** Fassungen, die mindestens eine Einheit mit der Strukturadresse enthalten (Kandidatenabfrage). */
+function referenceConditions(references: readonly StructuralIntent[]): { sql: string; params: unknown[] } {
+  const { conditions, params } = referenceUnitConditions(references);
+  if (conditions.length === 0) return { sql: '', params: [] };
+  return { sql: ` AND (v.norm_id, v.version_id) IN (SELECT u.norm_id, u.version_id FROM law_search_units u WHERE ${conditions.join(' AND ')})`, params };
 }
 
 function filterConditions(state: SearchState, plan: SearchQueryPlan): { sql: string; params: unknown[] } {
@@ -180,6 +186,18 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     if (!row) return null;
     const document = JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>;
 
+    // Einheiten der Strukturadresse zuerst (sonst könnte „§ 28“ bei großen Normen hinter den acht
+    // bestbewerteten Volltext-Einheiten verschwinden), dann die Volltext-Treffer.
+    const referenceRows: UnitRow[] = references.length > 0
+      ? (await (() => {
+          const { conditions, params } = referenceUnitConditions(references);
+          return db.prepare(
+            `SELECT u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body FROM law_search_units u
+             WHERE u.norm_id = ? AND u.version_id = ?${conditions.map((condition) => ` AND ${condition}`).join('')} ORDER BY u.unit_index LIMIT ?`,
+          ).bind(id, versionId, ...params, MAX_UNITS_PER_HIT).all<UnitRow>();
+        })()).results
+      : [];
+
     let unitRows: UnitRow[];
     if (unitsMatch) {
       unitRows = (await db.prepare(
@@ -190,19 +208,20 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
          ) WHERE position <= ? ORDER BY unit_index`,
       ).bind(unitsMatch, id, versionId, SEARCH_RANK_WEIGHTS, MAX_UNITS_PER_HIT).all<UnitRow>()).results;
     } else if (references.length > 0) {
-      const { sql, params } = referenceConditions(references);
-      unitRows = (await db.prepare(
-        `SELECT u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body FROM law_search_units u
-         JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
-         WHERE u.norm_id = ? AND u.version_id = ?${sql} ORDER BY u.unit_index LIMIT ?`,
-      ).bind(id, versionId, ...params, MAX_UNITS_PER_HIT).all<UnitRow>()).results;
+      unitRows = [];
     } else {
       unitRows = (await db.prepare(
         'SELECT unit_index, anchor, block_type, references_json, label, heading, body FROM law_search_units WHERE norm_id = ? AND version_id = ? ORDER BY unit_index LIMIT ?',
       ).bind(id, versionId, MAX_UNITS_PER_HIT).all<UnitRow>()).results;
     }
 
-    const units: SearchUnit[] = unitRows.map((unit) => {
+    const seen = new Set<number>();
+    const merged = [...referenceRows, ...unitRows].filter((unit) => {
+      if (seen.has(Number(unit.unit_index))) return false;
+      seen.add(Number(unit.unit_index));
+      return true;
+    });
+    const units: SearchUnit[] = merged.map((unit) => {
       const entry: SearchUnit = {
         index: Number(unit.unit_index),
         type: unit.block_type as SearchUnit['type'],

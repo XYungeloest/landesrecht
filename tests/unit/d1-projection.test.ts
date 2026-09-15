@@ -113,6 +113,21 @@ describe('D1-Store gegen lokale SQLite-Projektion', () => {
     expect(none.total).toBe(0);
   });
 
+  it('findet Strukturadressen auch in großen Normen jenseits der bestbewerteten Volltext-Einheiten', async () => {
+    const big = norm({
+      jurisdiction: 'nsh', slug: 'grosses-gesetz', meta: { title: 'Großes Testgesetz', shortTitle: 'Großes Gesetz', abbr: 'GroßG NSH' },
+      versions: [{ versionId: '2023-12-01', simulationValidFrom: '2023-12-01', body: Array.from({ length: 40 }, (_unused, index) => ({ type: 'paragraph' as const, label: `§ ${index + 1}`, title: `Regelung ${index + 1}`, children: [{ type: 'subparagraph' as const, label: '(1)', text: `Absatz eins des Paragrafen ${index + 1} im Großen Gesetz.`, children: [] }, { type: 'subparagraph' as const, label: '(2)', text: 'Absatz zwei.', children: [] }] })) }],
+    });
+    const db = await openSqliteD1(':memory:', { migrationsDir });
+    executePlan(db, buildProjectionPlan([big], { jurisdiction: 'nsh', full: true, asOf: FIXTURE_REFERENCE_DATE, now: NOW }));
+    const store = createD1NormStore(db, 'nsh');
+    const page = await store.search(createSearchState({ q: '§ 37 Absatz 2 Großes Gesetz' }));
+    expect(page.hits.map((hit) => [hit.matchKind, hit.unit?.anchor])).toEqual([['reference', 'paragraph-37']]);
+    const bare = await store.search(createSearchState({ q: 'Art. 5' }));
+    expect(bare.total).toBe(0);
+    db.close();
+  });
+
   it('die Registry führt D1-Stores mehrerer Jurisdiktionen zusammen', async () => {
     const registry = createStoreRegistry(Object.fromEntries((['west', 'nsh', 'ost', 'baywue'] as const).map((jurisdiction) => [jurisdiction, createD1NormStore(databases[jurisdiction]!, jurisdiction)])));
     const page = await registry.search(createSearchState({ q: 'Gemeinden Küste', sort: 'title' }));

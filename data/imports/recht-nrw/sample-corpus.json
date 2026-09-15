@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "recht-nrw-sample-corpus/1",
+  "description": "Validierungskorpus des RECHT.NRW-Importers: Stichtagsfassungen zum 2023-12-01 aus dem Bereich LRGV. Die Adresse darf eine beliebige Fassung der Stammnorm sein; der Importer wählt die am Stichtag geltende Fassung selbst.",
+  "entries": [
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/14072020-verfassung-fuer-das-land-nordrhein-westfalen",
+      "rationale": "Verfassungsvorschrift mit Artikelgliederung, Teilen und Abschnitten; natives Drupal-Format mit Fußnoten je Artikel und Unterschriftentabelle. Stichtagsfassung ab 14.07.2020 (bis 15.01.2026)."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/31122023-gemeindeordnung-fuer-das-land-nordrhein-westfalen-go-nrw-bekanntmachung-der",
+      "rationale": "Großes allgemeines Gesetz (§§ 1–135, 45 Fassungen) im Legacy-Format; die Stichtagsfassung ab 01.01.2023 endet am 30.12.2023, die Folgefassung beginnt 30 Tage nach dem Stichtag. Viele Regierungsbezirks-, Kommunal- und Behördenbezüge für den Unresolved-Report."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/05052023-verwaltungsverfahrensgesetz-fuer-das-land-nordrhein-westfalen",
+      "rationale": "Gesetz mit vielen Paragraphen und Untergliederungen (Teile, Abschnitte), Legacy-Format mit Neufassungsvorspann, nummerierten Listen mit Einrückungsebenen und Fußnoten; Abkürzung „VwVfG NRW“ als Transformationsfall der Jurisdiktionskennung."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/12092023-gesetz-zur-ausfuehrung-des-baugesetzbuches-nordrhein-westfalen-baugb-ag-nrw",
+      "rationale": "Ausführungsgesetz zum Bundesrecht (§ 35 BauGB) im nativen Format mit Vorspann- und Schlussformel-Feldern; Stichtagsfassung ab 12.09.2023 begann kurz vor dem Stichtag."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/01012023-gesetz-zur-ausfuehrung-des-betreuungsgesetzes-landesbetreuungsgesetz-lbtg",
+      "rationale": "Landesbetreuungsgesetz: Stichtagsfassung ab 01.01.2023 wurde am 30.12.2023 abgelöst (Folgefassung wenige Wochen nach dem Stichtag); viele Bundesrechtsverweise (BGB, Betreuungsorganisationsgesetz); Legacy-Format."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/16122023-gesetz-ueber-den-oeffentlichen-personennahverkehr-nordrhein-westfalen-oepnvg",
+      "rationale": "ÖPNVG NRW als Versionsauswahl-Test: Die Einstiegsadresse ist die Fassung ab 16.12.2023 (nach dem Stichtag); der Importer muss die vorherige Fassung ab 01.01.2020 (bis 15.12.2023) wählen. Legacy-Format mit Inhaltsübersicht als Tabelle."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/01072023-abgeordnetengesetz-des-landes-nordrhein-westfalen-abgg-nrw",
+      "rationale": "Norm mit sehr vielen historischen Fassungen (26, davon drei nicht darstellbar) und Fußnotentabelle; Stichtagsfassung ab 01.07.2023 (bis 31.01.2024)."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/30032018-gesetz-zur-regelung-der-ladenoeffnungszeiten-ladenoeffnungsgesetz-loeg-nrw",
+      "rationale": "Norm, deren am Stichtag geltende Fassung deutlich früher begann (30.03.2018) und offen endet; natives Format mit Nummerierungen und Buchstabenlisten."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/01082022-gesetz-zur-fruehen-bildung-und-foerderung-von-kindern-kinderbildungsgesetz",
+      "rationale": "Vorschrift mit Anlage (Kindpauschalen-Tabellen als separate HTM-Anlage) und Teilen/Kapiteln im nativen Format; die Infobox trägt ein widersprüchliches „Gültig bis 31.07.2022“ (vor „Gültig ab“), das nur per dokumentierter Entscheidung überschrieben wird.",
+      "overrides": [
+        {
+          "field": "sourceValidTo",
+          "value": "2026-07-31",
+          "reason": "RECHT.NRW zeigt für die Fassung ab 01.08.2022 ein „Gültig bis 31.07.2022“, das vor dem Geltungsbeginn liegt. Die Fassungsliste nennt als Folgefassung den 01.08.2026; das Ende wird deshalb auf den Vortag (31.07.2026) gesetzt. Redaktionelle Entscheidung, festgehalten im Manifest."
+        }
+      ]
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/rechtsverordnung/27072013-verordnung-ueber-umzugskostenentschaedigung-tagegelder-und",
+      "rationale": "Rechtsverordnung der Landesregierung (Ausfertigung 1955) im nativen Format; die Stichtagsfassung begann am 27.07.2013 und gilt offen – zweiter Fall einer deutlich früher begonnenen Fassung, diesmal ohne Änderung seit über zehn Jahren."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/rechtsverordnung/27042021-verordnung-zur-durchfuehrung-des-kinderbildungsgesetzes",
+      "rationale": "Rechtsverordnung zum KiBiz (DVO KiBiz) im nativen Format mit Klammer-Kurzbezeichnung und Abkürzung („Durchführungsverordnung KiBiz – DVO KiBiz“); Stichtagsfassung ab 27.04.2021, offen; prüft Slugbildung aus der Abkürzung und Verweise auf das Stammgesetz."
+    },
+    {
+      "url": "https://recht.nrw.de/lrgv/gesetz/09032022-schulgesetz-fuer-das-land-nordrhein-westfalen-schulgesetz-nrw-schulg",
+      "rationale": "Sehr großes Gesetz (§§ 1–133, 24 Teile, 32 Abschnitte, 39 Fußnoten) im Legacy-Format als Belastungstest für Parser, Projektion und Suche; Stichtagsfassung ab 09.03.2022 (bis 06.06.2025)."
+    }
+  ]
+}

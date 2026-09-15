@@ -72,9 +72,20 @@ export function normalizeSearchText(value: string): string {
     .replace(/\s+/g, ' ');
 }
 
-/** Schreibvarianten: normalisiert und zusätzlich mit ae/oe/ue-Transliteration. */
+/** Normalisierung, die „ß“ behält (der FTS5-Tokenizer unicode61 faltet ß nicht zu ss). */
+export function normalizeSearchTextKeepSharpS(value: string): string {
+  return value
+    .toLocaleLowerCase('de-DE')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9ß*]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+/** Schreibvarianten: normalisiert (ß→ss), mit erhaltenem ß und mit ae/oe/ue-Transliteration. */
 export function buildSearchVariants(value: string): string[] {
-  return [...new Set([normalizeSearchText(value), normalizeSearchText(transliterateGermanUmlauts(value))].filter(Boolean))];
+  return [...new Set([normalizeSearchText(value), normalizeSearchTextKeepSharpS(value), normalizeSearchText(transliterateGermanUmlauts(value))].filter(Boolean))];
 }
 
 const PARAGRAPH_PATTERN = /§{1,2}\s*([0-9]+[a-z]?(?:\s*(?:,|und)\s*[0-9]+[a-z]?)*)(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;

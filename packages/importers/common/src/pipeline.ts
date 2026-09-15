@@ -2,8 +2,8 @@
  * Gemeinsame Importpipeline (noch ohne Scraper oder Bulkimport):
  *
  *   Fetch → Archive Raw Source → Parse Source Format → Normalize Source Law
- *     → Transform into Simulation Jurisdiction → Validate → Write Canonical JSON
- *     → Project to D1 → Audit
+ *     → Select Source Version at Baseline → Transform into Simulation Jurisdiction → Validate
+ *     → Write Canonical JSON → Project to D1 → Audit
  *
  * Quellparser und Simulationstransformation sind getrennte Phasen: Ein RECHT.NRW-Parser
  * normalisiert zunächst echtes NRW-Recht (SourceLaw); erst die Transformation macht daraus
@@ -52,6 +52,14 @@ export interface SourceLaw {
   sourceReferences: SourceReference[];
   /** Roher Zusatzkontext des Parsers (Warnungen, Befunde). */
   findings: ImportFinding[];
+  /** Stabile Quellidentität im Herkunftssystem (z. B. RECHT.NRW-Term-ID). */
+  sourceIdentity?: string;
+  /** Adresse der geparsten Fassung und – soweit vorhanden – der konsolidierten PDF. */
+  sourceUrl?: string;
+  pdfUrl?: string;
+  /** Vollzitat und Änderungshistorie des Herkunftssystems (unverändert). */
+  fullCitation?: string;
+  changeHistory?: string;
 }
 
 export interface ImportFinding {
@@ -118,6 +126,7 @@ export const PIPELINE_STAGES = [
   'archive-raw-source',
   'parse-source-format',
   'normalize-source-law',
+  'select-source-version-at-baseline',
   'transform-into-simulation-jurisdiction',
   'validate',
   'write-canonical-json',
@@ -143,6 +152,7 @@ export class ImportPipelineError extends Error {
  */
 export function slugify(value: string): string {
   return value
+    .replace(/ä/gu, 'ae').replace(/ö/gu, 'oe').replace(/ü/gu, 'ue').replace(/Ä/gu, 'Ae').replace(/Ö/gu, 'Oe').replace(/Ü/gu, 'Ue')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/ß/g, 'ss')
