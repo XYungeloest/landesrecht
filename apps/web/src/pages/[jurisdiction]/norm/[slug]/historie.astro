@@ -1,0 +1,50 @@
+---
+export const prerender = false;
+
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import NormPageShell from '../../../../components/NormPageShell.astro';
+import { buildNormView, jurisdictionFromParam } from '../../../../lib/norm-view.ts';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../../lib/runtime/context.ts';
+
+const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
+if (!resolved || !Astro.params.slug) return Astro.rewrite('/404');
+const registry = await getStoreRegistry();
+if (!registry.has(resolved.id)) return Astro.rewrite('/404');
+const record = await registry.get(resolved.id).getNorm(Astro.params.slug, 'none');
+const view = record ? buildNormView(record) : null;
+if (!record || !view) return Astro.rewrite('/404');
+Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
+const entries = [...record.history.entries].sort((left, right) => right.date.localeCompare(left.date));
+---
+<NormPageShell view={view} section="historie" title={`${VOCABULARY.sections.history}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
+  <section aria-labelledby="fassungen-heading">
+    <h2 id="fassungen-heading">Gespeicherte Fassungen</h2>
+    <ul class="history-list">
+      {[...view.versions].reverse().map((entry) => (
+        <li>
+          <time datetime={entry.simulationValidFrom}>{formatDate(entry.simulationValidFrom)}</time>
+          <span class={`tag tag--${entry.kind}`}>{entry.kindLabel}</span>
+          <a href={entry.url}>Fassung {entry.versionId}</a>
+          <span class="muted"> – gültig in der Simulation {entry.simulationValidTo ? `bis ${formatDate(entry.simulationValidTo)}` : 'bis auf Weiteres'}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+  <section aria-labelledby="aenderungen-heading">
+    <h2 id="aenderungen-heading">Änderungen und Hinweise</h2>
+    <ul class="history-list">
+      {entries.map((entry) => (
+        <li>
+          <time datetime={entry.date}>{formatDate(entry.date)}</time>
+          <span class="tag">{VOCABULARY.history[entry.type]}</span>
+          <p>{entry.title}</p>
+          <p class="muted">{entry.citation}{entry.note && ` – ${entry.note}`}</p>
+          {entry.relatedNorm && <p><a href={getNormUrl(entry.relatedNorm.jurisdiction ?? record.meta.jurisdiction, entry.relatedNorm.slug)}>{entry.relatedNorm.slug}</a></p>}
+          {entry.affectingVersionId && <p class="muted">Betroffene Fassung: {entry.affectingVersionId}</p>}
+        </li>
+      ))}
+    </ul>
+    <p class="muted">Geltung und Änderungsinformation sind getrennte Angaben: Eine Fassung gilt in der Simulation ab ihrem Beginn; die Historie nennt die Rechtsakte, die sie ausgelöst haben.</p>
+  </section>
+</NormPageShell>

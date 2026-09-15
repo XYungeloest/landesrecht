@@ -1,0 +1,43 @@
+---
+export const prerender = false;
+
+import { formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import SearchForm from '../../components/SearchForm.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { jurisdictionFromParam } from '../../lib/norm-view.ts';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../lib/runtime/context.ts';
+
+const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
+if (!resolved) return Astro.rewrite('/404');
+const { id, jurisdiction } = resolved;
+const registry = await getStoreRegistry();
+if (!registry.has(id)) return Astro.rewrite('/404');
+const store = registry.get(id);
+const [norms, stats] = await Promise.all([store.listNormSummaries(), store.getStats()]);
+Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
+---
+<BaseLayout title={jurisdiction.name} description={`Landesrecht des ${jurisdiction.name}: Gesetze, Verordnungen und Verwaltungsvorschriften der Simulation.`} canonical={`/${jurisdiction.pathSegment}/`}>
+  <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>{jurisdiction.name}</li></ol></nav>
+  <h1>{jurisdiction.name}</h1>
+  <p class="lead">Kurzbezeichnung: <strong>{jurisdiction.shortName}</strong> · {VOCABULARY.baselineLabel}: <strong>{formatBaselineDate(jurisdiction.baselineDate)}</strong></p>
+  <p>Der Rechtsbestand des {jurisdiction.name} beginnt mit dem Rechtsstand vom {formatBaselineDate(jurisdiction.baselineDate)}. Übernommen wird das reale Recht des Landes {jurisdiction.sourceSystem.realWorldState} ({jurisdiction.sourceSystem.portalLabel}); spätere Änderungen entstehen ausschließlich in der Simulation.</p>
+  {jurisdiction.externalSourceOfTruth && (
+    <p><strong>Hinweis:</strong> Der Rechtsbestand des {jurisdiction.name} wird derzeit in <a href={jurisdiction.externalSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.externalSourceOfTruth.label}</a> gepflegt. Dieses Portal zeigt nur Testbestände und übernimmt Normen später über die OstRecht-Schnittstelle.</p>
+  )}
+  <SearchForm state={{ jurisdictions: [id] }} />
+  <section aria-labelledby="normen-heading">
+    <h2 id="normen-heading">Vorhandene Normen ({stats.normCount})</h2>
+    {norms.length === 0 ? <p class="muted">Noch keine Normen im Bestand.</p> : (
+      <ul class="hit-list">
+        {norms.map((norm) => (
+          <li class="hit">
+            <h3 class="hit__title"><a href={norm.url}>{norm.title}</a></h3>
+            <p class="hit__meta">{norm.shortTitle}{norm.abbr && ` · ${norm.abbr}`} · {typeLabel(norm.type)} · {statusLabel(norm.status)} · {norm.versionCount} {norm.versionCount === 1 ? 'Fassung' : 'Fassungen'}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+</BaseLayout>

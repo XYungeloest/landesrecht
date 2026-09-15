@@ -1,0 +1,42 @@
+{
+  "name": "landesrecht-portal",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Gemeinsames Landesrechtsportal der vier Länder der politischen Simulation (West, NSH, Ost, BayWü).",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "packages/importers/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "npm run d1:seed:dev && npm run dev --workspace @landesrecht/web",
+    "preview": "npm run preview --workspace @landesrecht/web",
+    "check": "npm run check:types && npm run check:web",
+    "check:types": "tsc --noEmit -p tsconfig.json",
+    "check:web": "npm run check --workspace @landesrecht/web",
+    "test": "vitest run --reporter=default --reporter=junit --outputFile=test-results/junit.xml",
+    "test:watch": "vitest",
+    "test:search": "vitest run tests/unit/search-*.test.ts",
+    "test:d1": "vitest run tests/unit/d1-*.test.ts tests/unit/runtime-*.test.ts",
+    "build": "npm run build --workspace @landesrecht/web",
+    "content:validate": "node scripts/validate-content.ts",
+    "content:check": "npm run content:validate && npm run content:immutability",
+    "d1:schema:check": "node scripts/d1-schema-check.ts",
+    "d1:project": "node scripts/project-d1.ts",
+    "d1:project:local": "node scripts/project-d1.ts --target local",
+    "d1:seed:local": "node scripts/project-d1.ts --target local --reset",
+    "d1:apply:remote": "node scripts/project-d1.ts --target remote-plan",
+    "deploy": "npm run deploy --workspace @landesrecht/web",
+    "content:immutability": "node scripts/check-version-immutability.ts",
+    "d1:seed:dev": "node scripts/seed-dev-d1.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.1"
+  }
+}

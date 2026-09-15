@@ -1,0 +1,34 @@
+---
+/** Normtextansicht (geltende oder gewählte Fassung): Kopf, Inhaltsübersicht, Normkörper, Aside. */
+import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import type { NormView } from '../lib/norm-view.ts';
+import NormAside from './NormAside.astro';
+import NormBody from './NormBody.astro';
+import NormOutline from './NormOutline.astro';
+import NormPageShell from './NormPageShell.astro';
+
+interface Props {
+  view: NormView;
+}
+
+const { view } = Astro.props;
+---
+<NormPageShell view={view} section="text">
+  {view.summary && <p class="lead">{view.summary}</p>}
+  <div class="norm-workspace">
+    <NormOutline entries={view.outline} />
+    <article class="norm-document" id="normtext" aria-labelledby="normtext-title">
+      <h2 id="normtext-title" class="visually-hidden">{VOCABULARY.sections.text}</h2>
+      <NormBody blocks={view.version.body} anchors={view.anchors} />
+      {view.version.sourceNotes && view.version.sourceNotes.length > 0 && (
+        <section class="norm-source-notes" aria-labelledby="quellhinweise-heading">
+          <h3 id="quellhinweise-heading">Quellhinweise</h3>
+          <ol>
+            {view.version.sourceNotes.map((note) => <li value={Number.parseInt(note.label, 10) || undefined}><sup>{note.label}</sup> {note.text}</li>)}
+          </ol>
+        </section>
+      )}
+    </article>
+    <NormAside view={view} />
+  </div>
+</NormPageShell>

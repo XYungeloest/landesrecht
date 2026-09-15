@@ -1,0 +1,32 @@
+---
+import type { OutlineEntry } from '@landesrecht/legal-core/lib/body.ts';
+
+interface Props {
+  entries: OutlineEntry[];
+  root?: boolean;
+}
+
+const { entries, root = true } = Astro.props;
+---
+{root ? (
+  <nav class="norm-outline" aria-label="Inhaltsübersicht">
+    <h2>Inhaltsübersicht</h2>
+    <ol>
+      {entries.map((entry) => (
+        <li>
+          <a href={`#${entry.anchor}`}>{[entry.label, entry.title].filter(Boolean).join(' ')}</a>
+          {entry.children.length > 0 && <Astro.self entries={entry.children} root={false} />}
+        </li>
+      ))}
+    </ol>
+  </nav>
+) : (
+  <ol>
+    {entries.map((entry) => (
+      <li>
+        <a href={`#${entry.anchor}`}>{[entry.label, entry.title].filter(Boolean).join(' ')}</a>
+        {entry.children.length > 0 && <Astro.self entries={entry.children} root={false} />}
+      </li>
+    ))}
+  </ol>
+)}

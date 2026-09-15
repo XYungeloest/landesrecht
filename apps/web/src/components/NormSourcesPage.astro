@@ -1,0 +1,25 @@
+---
+/** Quellenbereich: Quellenreferenzen der Norm und der gewählten Fassung mit Provenienz. */
+import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import type { NormView } from '../lib/norm-view.ts';
+import NormPageShell from './NormPageShell.astro';
+import SourceList from './SourceList.astro';
+
+interface Props {
+  view: NormView;
+}
+
+const { view } = Astro.props;
+---
+<NormPageShell view={view} section="quellen" title={`${VOCABULARY.sections.sources}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
+  <div class="card">
+    <h2>Quellen der Fassung {view.version.versionId}</h2>
+    {view.sourceValidityText && <p>{view.sourceValidityText}. Maßgeblich für die Geltung im Portal ist allein die Simulationsgeltung ({view.validityText.toLowerCase()}).</p>}
+    <SourceList sources={view.version.sourceReferences ?? []} />
+  </div>
+  <div class="card">
+    <h2>Quellen der Norm</h2>
+    <SourceList sources={view.record.meta.sourceReferences} />
+  </div>
+  <p class="muted">{VOCABULARY.officialNote} Rohquellen werden unverändert im Quellenarchiv aufbewahrt und nie direkt gerendert.</p>
+</NormPageShell>

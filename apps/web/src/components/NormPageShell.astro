@@ -1,0 +1,49 @@
+---
+/**
+ * Gemeinsamer Rahmen aller Normansichten: Brotkrumen, Kopf mit Bezeichnung, Status,
+ * Jurisdiktion, Fundstelle und Gültigkeit, Bereichsreiter und Fassungsband.
+ */
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import type { NormView } from '../lib/norm-view.ts';
+
+interface Props {
+  view: NormView;
+  section: 'text' | 'daten' | 'historie' | 'vergleich' | 'quellen';
+  title?: string;
+}
+
+const { view, section, title } = Astro.props;
+const pageTitle = title ?? `${view.identity.shortTitle} (${view.jurisdiction.shortName})`;
+---
+<BaseLayout title={pageTitle} description={view.summary ?? view.identity.title} canonical={view.canonicalUrl} robots={view.isCurrent ? undefined : 'noindex, follow'}>
+  <nav class="breadcrumbs" aria-label="Brotkrumen">
+    <ol>
+      <li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li>
+      <li><a href={getJurisdictionUrl(view.jurisdiction.id)}>{view.jurisdiction.name}</a></li>
+      <li><a href={view.url}>{view.identity.shortTitle}</a></li>
+      {!view.isCurrent && <li>{VOCABULARY.version.label} vom {formatDate(view.version.simulationValidFrom)}</li>}
+    </ol>
+  </nav>
+  <header class="norm-head">
+    <span class={`norm-band norm-band--${view.kind}`}>{view.bandLabel}</span>
+    <h1>{view.identity.title}</h1>
+    <p class="norm-head__short">
+      {view.identity.shortTitle}{view.identity.abbr && <> · <abbr>{view.identity.abbr}</abbr></>}
+      · {view.typeLabel} · {view.jurisdiction.name} ({view.jurisdiction.shortName})
+    </p>
+    <dl class="facts norm-head__facts">
+      <dt>{VOCABULARY.validity.label}</dt><dd>{view.statusLabel}</dd>
+      <dt>Fundstelle</dt><dd>{view.version.citation}</dd>
+      <dt>{VOCABULARY.legalStatus.label}</dt><dd>{view.legalStatusText}</dd>
+      <dt>Gültigkeit</dt><dd>{view.validityText}</dd>
+    </dl>
+  </header>
+  <ul class="norm-tabs">
+    {view.subpages.map((subpage) => (
+      <li><a href={subpage.url} aria-current={subpage.key === section ? 'page' : undefined}>{subpage.label}</a></li>
+    ))}
+  </ul>
+  <slot />
+</BaseLayout>

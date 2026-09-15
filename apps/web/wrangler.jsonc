@@ -1,0 +1,56 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // Grundkonfiguration des Landesrechtsportals. Produktive Ressourcen (Account, D1-Datenbanken,
+  // R2-Bucket, Domain) werden später manuell angelegt; die Platzhalter-IDs unten sind KEINE
+  // echten Ressourcen. Der lokale Build und die Tests benötigen keine Cloudflare-Anmeldung.
+  //
+  // Anlegen der Ressourcen (docs/DEPLOYMENT.md):
+  //   npx wrangler d1 create landesrecht-west   (analog nsh, ost, baywue)
+  //   npx wrangler r2 bucket create landesrecht-quellen
+  // Danach die database_id-Werte hier eintragen; account_id kommt aus CLOUDFLARE_ACCOUNT_ID.
+  "name": "landesrecht",
+  "compatibility_date": "2026-04-15",
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [],
+  "vars": {
+    "APP_ENV": "production",
+    "SITE_URL": "https://landesrecht.example"
+  },
+  // Je Jurisdiktion eine eigene D1-Datenbank (packages/runtime/src/bindings.ts).
+  "d1_databases": [
+    { "binding": "LANDESRECHT_WEST", "database_name": "landesrecht-west", "database_id": "00000000-0000-4000-8000-000000000001" },
+    { "binding": "LANDESRECHT_NSH", "database_name": "landesrecht-nsh", "database_id": "00000000-0000-4000-8000-000000000002" },
+    { "binding": "LANDESRECHT_OST", "database_name": "landesrecht-ost", "database_id": "00000000-0000-4000-8000-000000000003" },
+    { "binding": "LANDESRECHT_BAYWUE", "database_name": "landesrecht-baywue", "database_id": "00000000-0000-4000-8000-000000000004" }
+  ],
+  // Gemeinsames unveränderliches Quellenarchiv (Rohquellen, PDFs, Anlagen); Normseiten lesen nie daraus.
+  "r2_buckets": [
+    { "binding": "LANDESRECHT_QUELLEN", "bucket_name": "landesrecht-quellen" }
+  ],
+  "assets": {
+    "directory": "./dist/client",
+    "not_found_handling": "404-page"
+  },
+  // Wrangler-Environments erben D1-/R2-Bindings nicht; staging bindet ausdrücklich eigene Ressourcen.
+  "env": {
+    "staging": {
+      "name": "landesrecht-staging",
+      "workers_dev": true,
+      "routes": [],
+      "vars": {
+        "APP_ENV": "staging",
+        "SITE_URL": "https://landesrecht-staging.example"
+      },
+      "d1_databases": [
+        { "binding": "LANDESRECHT_WEST", "database_name": "landesrecht-west-staging", "database_id": "00000000-0000-4000-8000-000000000101" },
+        { "binding": "LANDESRECHT_NSH", "database_name": "landesrecht-nsh-staging", "database_id": "00000000-0000-4000-8000-000000000102" },
+        { "binding": "LANDESRECHT_OST", "database_name": "landesrecht-ost-staging", "database_id": "00000000-0000-4000-8000-000000000103" },
+        { "binding": "LANDESRECHT_BAYWUE", "database_name": "landesrecht-baywue-staging", "database_id": "00000000-0000-4000-8000-000000000104" }
+      ],
+      "r2_buckets": [
+        { "binding": "LANDESRECHT_QUELLEN", "bucket_name": "landesrecht-quellen-staging" }
+      ]
+    }
+  }
+}

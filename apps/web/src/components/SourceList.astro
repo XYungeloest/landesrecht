@@ -1,0 +1,41 @@
+---
+import type { SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
+
+interface Props {
+  sources: SourceReference[];
+  compact?: boolean;
+}
+
+const { sources, compact = false } = Astro.props;
+const KIND_LABELS: Record<SourceReference['kind'], string> = {
+  'official-portal-snapshot': 'Amtliche Portalfassung',
+  'official-gazette': 'Verkündungsblatt',
+  'structured-transcription': 'Strukturierte Transkription',
+  'amendment-source': 'Änderungsquelle',
+  'provider-record': 'Externer Datensatz',
+  'primary-pdf': 'Amtliche PDF',
+};
+---
+{sources.length === 0 ? (
+  <p class="muted">Keine Quellenangaben hinterlegt.</p>
+) : (
+  <ul>
+    {sources.map((source) => (
+      <li>
+        {source.url && source.availability === 'external' ? <a href={source.url} rel="noopener noreferrer">{source.label}</a> : source.label}
+        {!compact && (
+          <dl class="facts">
+            <dt>Art</dt><dd>{KIND_LABELS[source.kind]}{source.system && ` (${source.system})`}</dd>
+            <dt>Verfügbarkeit</dt><dd>{source.availability}</dd>
+            {source.externalId && <><dt>Kennung</dt><dd>{source.externalId}</dd></>}
+            {(source.sourceValidFrom || source.sourceValidTo) && <><dt>Quellgültigkeit</dt><dd>{source.sourceValidFrom ?? '…'} – {source.sourceValidTo ?? 'offen'}</dd></>}
+            {source.objectKey && <><dt>Archivobjekt</dt><dd><code>{source.objectKey}</code></dd></>}
+            {source.sha256 && <><dt>SHA-256</dt><dd><code>{source.sha256}</code></dd></>}
+            {source.retrievedAt && <><dt>Abgerufen</dt><dd>{source.retrievedAt}</dd></>}
+            {source.note && <><dt>Hinweis</dt><dd>{source.note}</dd></>}
+          </dl>
+        )}
+      </li>
+    ))}
+  </ul>
+)}

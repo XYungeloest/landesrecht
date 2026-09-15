@@ -1,0 +1,21 @@
+---
+import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Hilfe" canonical={PORTAL_PATHS.help}>
+  <h1>Hilfe</h1>
+  <h2>Was ist dieses Portal?</h2>
+  <p>{VOCABULARY.portalName} ist das gemeinsame Rechtsportal der Länder {JURISDICTION_LIST.map((jurisdiction) => jurisdiction.name).join(', ')} innerhalb einer politischen Simulation. {VOCABULARY.simulationNotice}</p>
+  <h2>Ausgangsrechtsstand und Fassungen</h2>
+  <p>Alle Länder beginnen mit dem {VOCABULARY.baselineLabel} vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}. Jede Fassung einer Norm gilt in der Simulation ab einem bestimmten Tag; historische Fassungen bleiben unverändert abrufbar. Zusätzlich dokumentiert das Portal, in welchem Zeitraum die übernommene reale Quellfassung galt; diese Angabe ist Provenienz und entscheidet nicht über die Geltung.</p>
+  <h2>Suche</h2>
+  <p>Die Suche findet Bezeichnungen, Abkürzungen, Normtext und Fundstellen. Angaben wie „§ 3 Absatz 2“ oder „Art. 5“ führen direkt zur Vorschrift; über den Geltungstag lässt sich die an einem Datum geltende Fassung ermitteln.</p>
+  <h2>Adressen</h2>
+  <ul>
+    {JURISDICTION_LIST.map((jurisdiction) => <li><code>/{jurisdiction.pathSegment}/norm/&lt;slug&gt;/</code> – {jurisdiction.name}</li>)}
+    <li><code>…/version/&lt;jjjj-mm-tt&gt;/</code> – unveränderliche Fassung</li>
+    <li><code>{PORTAL_PATHS.simrecht}</code> – maschinenlesbare Beschreibung der Schnittstelle</li>
+  </ul>
+</BaseLayout>

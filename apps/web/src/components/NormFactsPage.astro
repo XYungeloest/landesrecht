@@ -1,0 +1,80 @@
+---
+/** Vorschriftendaten: alle Metadaten der Norm und der gewählten Fassung. */
+import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import type { NormView } from '../lib/norm-view.ts';
+import NormPageShell from './NormPageShell.astro';
+
+interface Props {
+  view: NormView;
+}
+
+const { view } = Astro.props;
+const { meta } = view.record;
+const RELATION_LABELS: Record<string, string> = {
+  amends: 'ändert', 'amended-by': 'geändert durch', repeals: 'hebt auf', 'repealed-by': 'aufgehoben durch', replaces: 'ersetzt', 'replaced-by': 'ersetzt durch',
+  implements: 'führt aus', 'based-on': 'beruht auf', 'part-of': 'Bestandteil von', contains: 'enthält', 'refers-to': 'verweist auf', related: 'verwandt',
+};
+---
+<NormPageShell view={view} section="daten" title={`${VOCABULARY.sections.facts}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
+  <div class="card">
+    <h2>{VOCABULARY.sections.facts}</h2>
+    <dl class="facts">
+      <dt>Titel</dt><dd>{view.identity.title}</dd>
+      <dt>Kurzbezeichnung</dt><dd>{view.identity.shortTitle}</dd>
+      <dt>Abkürzung</dt><dd>{view.identity.abbr ?? '–'}</dd>
+      <dt>Normtyp</dt><dd>{view.typeLabel}</dd>
+      <dt>{VOCABULARY.validity.label}</dt><dd>{view.statusLabel}</dd>
+      <dt>Jurisdiktion</dt><dd>{view.jurisdiction.name} ({view.jurisdiction.shortName})</dd>
+      <dt>{VOCABULARY.baselineLabel}</dt><dd>{formatDate(view.jurisdiction.baselineDate)}</dd>
+      <dt>Dokumentdatum</dt><dd>{formatDate(meta.documentDate)}</dd>
+      <dt>Verkündungsdatum</dt><dd>{formatDate(meta.publicationDate)}</dd>
+      <dt>Inkrafttreten</dt><dd>{formatDate(meta.effectiveDate)}</dd>
+      <dt>Außerkrafttreten</dt><dd>{formatDate(meta.expiryDate)}</dd>
+      <dt>Fundstelle (Stammfassung)</dt><dd>{meta.initialCitation}</dd>
+      <dt>Fundstelle (Fassung)</dt><dd>{view.version.citation}</dd>
+      <dt>Erlassorgan</dt><dd>{meta.enactingBody ?? '–'}</dd>
+      {meta.originEnactingBody && <><dt>Ursprungsorgan (Quelle)</dt><dd>{meta.originEnactingBody}</dd></>}
+      <dt>Zuständige Stelle</dt><dd>{meta.responsibleBody ?? '–'}</dd>
+      <dt>Sachgebiete</dt><dd>{meta.subjects.join(', ') || '–'}</dd>
+      <dt>Schlagwörter</dt><dd>{meta.keywords.join(', ') || '–'}</dd>
+      <dt>Vorgänger</dt><dd>{meta.predecessorTarget ? <a href={getNormUrl(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug)}>{meta.predecessor ?? meta.predecessorTarget.slug}</a> : (meta.predecessor ?? '–')}</dd>
+      <dt>Nachfolger</dt><dd>{meta.successorTarget ? <a href={getNormUrl(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug)}>{meta.successor ?? meta.successorTarget.slug}</a> : (meta.successor ?? '–')}</dd>
+    </dl>
+  </div>
+  <div class="card">
+    <h2>Fassung {view.version.versionId}</h2>
+    <dl class="facts">
+      <dt>Simulationsgeltung ab</dt><dd>{formatDate(view.version.simulationValidFrom)}</dd>
+      <dt>Simulationsgeltung bis</dt><dd>{view.version.simulationValidTo ? formatDate(view.version.simulationValidTo) : 'offen'}</dd>
+      <dt>Quellfassung gültig ab</dt><dd>{formatDate(view.version.sourceValidFrom)}</dd>
+      <dt>Quellfassung gültig bis</dt><dd>{formatDate(view.version.sourceValidTo)}</dd>
+      <dt>Änderungshinweis</dt><dd>{view.version.changeNote}</dd>
+    </dl>
+  </div>
+  <div class="card">
+    <h2>Beziehungen</h2>
+    {meta.relations.length === 0 ? <p class="muted">Keine Beziehungen hinterlegt.</p> : (
+      <ul>
+        {meta.relations.map((relation) => {
+          const jurisdiction = relation.target.jurisdiction ?? meta.jurisdiction;
+          return (
+            <li>
+              {RELATION_LABELS[relation.type] ?? relation.type}: <a href={getNormUrl(jurisdiction, relation.target.slug)}>{relation.target.slug}</a>
+              <span class="muted"> ({getJurisdiction(jurisdiction).shortName}{relation.note ? `, ${relation.note}` : ''}{relation.date ? `, ${formatDate(relation.date)}` : ''})</span>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+    <h3>Externe Kennungen</h3>
+    {meta.externalIdentifiers.length === 0 ? <p class="muted">Keine externen Kennungen.</p> : (
+      <ul>
+        {meta.externalIdentifiers.map((identifier) => (
+          <li><code>{identifier.system}</code>: {identifier.url ? <a href={identifier.url} rel="noopener noreferrer">{identifier.value}</a> : identifier.value}</li>
+        ))}
+      </ul>
+    )}
+  </div>
+</NormPageShell>

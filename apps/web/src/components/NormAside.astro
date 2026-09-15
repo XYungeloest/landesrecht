@@ -1,0 +1,40 @@
+---
+/** Fassungsnavigation, Zitat und Quellenbereich einer Normansicht. */
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import type { NormView } from '../lib/norm-view.ts';
+import SourceList from './SourceList.astro';
+
+interface Props {
+  view: NormView;
+}
+
+const { view } = Astro.props;
+const sources = [...(view.version.sourceReferences ?? []), ...view.record.meta.sourceReferences.filter((source) => !(view.version.sourceReferences ?? []).some((entry) => entry.label === source.label && entry.url === source.url))];
+---
+<aside class="norm-aside">
+  <section aria-labelledby="fassungen-heading">
+    <h2 id="fassungen-heading">{VOCABULARY.sections.history}</h2>
+    <ul class="timeline">
+      {view.versions.map((entry) => (
+        <li aria-current={entry.selected ? 'true' : undefined}>
+          <a href={entry.url}>{formatDate(entry.simulationValidFrom)}</a>
+          <span class={`tag tag--${entry.kind}`}>{entry.kindLabel}</span>
+          {entry.simulationValidTo && <span class="muted"> bis {formatDate(entry.simulationValidTo)}</span>}
+        </li>
+      ))}
+    </ul>
+    <p><a href={view.subpages.find((subpage) => subpage.key === 'historie')?.url}>Alle Änderungen</a></p>
+  </section>
+  <section aria-labelledby="zitieren-heading">
+    <h2 id="zitieren-heading">Zitieren</h2>
+    <p>{view.identity.abbr ?? view.identity.shortTitle}, {view.jurisdiction.shortName}, {VOCABULARY.version.label} vom {formatDate(view.version.simulationValidFrom)}</p>
+    <p class="muted">{view.isCurrent ? 'Der allgemeine Link führt zur jeweils als geltend ausgewiesenen Fassung.' : 'Der Fassungslink führt dauerhaft zu dieser Fassung.'}</p>
+    <p><code>{view.isCurrent ? view.url : view.versionUrl}</code></p>
+  </section>
+  <section aria-labelledby="quellen-heading">
+    <h2 id="quellen-heading">{VOCABULARY.sections.sources}</h2>
+    <SourceList sources={sources} compact={true} />
+    {view.sourceValidityText && <p class="muted">{view.sourceValidityText}</p>}
+    <p><a href={view.subpages.find((subpage) => subpage.key === 'quellen')?.url}>Alle Quellenangaben</a></p>
+  </section>
+</aside>

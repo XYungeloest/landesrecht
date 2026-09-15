@@ -1,0 +1,61 @@
+---
+import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
+import { referenceDateLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import '../styles/base.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  robots?: string;
+}
+
+const { title, description = VOCABULARY.portalSubtitle, canonical, robots } = Astro.props;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL;
+const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCABULARY.portalName}`;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
+    {robots && <meta name="robots" content={robots} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#hauptinhalt">Zum Inhalt springen</a>
+    <div class="notice-bar" role="note">
+      <strong>Simulation:</strong> {VOCABULARY.simulationNotice}
+    </div>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href={PORTAL_PATHS.home}>
+          <span class="site-brand__name">{VOCABULARY.portalName}</span>
+          <span class="site-brand__sub">{VOCABULARY.portalSubtitle}</span>
+        </a>
+        <nav class="site-nav" aria-label="Länder">
+          <ul>
+            {JURISDICTION_LIST.map((jurisdiction) => (
+              <li><a href={getJurisdictionUrl(jurisdiction.id)} title={jurisdiction.name}>{jurisdiction.shortName}</a></li>
+            ))}
+            <li><a href={PORTAL_PATHS.search}>Suche</a></li>
+            <li><a href={PORTAL_PATHS.help}>Hilfe</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="hauptinhalt" class="site-main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>{VOCABULARY.officialNote}</p>
+      <p>{VOCABULARY.baselineLabel} aller Länder: {formatBaselineDate(SIMULATION_BASELINE_DATE)} · {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}</p>
+      <p><a href={PORTAL_PATHS.simrecht}>SimRecht-Schnittstelle</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
+    </footer>
+  </body>
+</html>

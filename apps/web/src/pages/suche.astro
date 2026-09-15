@@ -1,0 +1,84 @@
+---
+export const prerender = false;
+
+import { JURISDICTION_LIST, getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
+import { formatDate, referenceDateLabel, statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { NORM_TYPES } from '@landesrecht/legal-core/lib/schema.ts';
+import { parseSearchState } from '@landesrecht/search/query.ts';
+import SearchForm from '../components/SearchForm.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getStoreRegistry } from '../lib/runtime/context.ts';
+
+const state = parseSearchState(Astro.url.searchParams);
+const registry = await getStoreRegistry();
+const page = state.q || state.types.length > 0 || state.jurisdictions.length < JURISDICTION_LIST.length ? await registry.search(state) : null;
+Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=600');
+
+function pageUrl(offset: number): string {
+  return getSearchUrl({
+    q: state.q,
+    jurisdiction: state.jurisdictions.length === JURISDICTION_LIST.length ? undefined : state.jurisdictions.join(','),
+    type: state.types.join(',') || undefined,
+    versionScope: state.versionScope === 'current' ? undefined : state.versionScope,
+    validOn: state.validOn,
+    sort: state.sort,
+    offset: offset > 0 ? String(offset) : undefined,
+  });
+}
+---
+<BaseLayout title={state.q ? `Suche: ${state.q}` : 'Suche'} robots="noindex, follow">
+  <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>Suche</li></ol></nav>
+  <h1>Rechtssuche</h1>
+  <SearchForm state={state} />
+  <form class="filters" method="get" action={PORTAL_PATHS.search}>
+    <input type="hidden" name="q" value={state.q} />
+    <fieldset>
+      <legend>Land</legend>
+      {JURISDICTION_LIST.map((jurisdiction) => (
+        <label><input type="checkbox" name="jurisdiction" value={jurisdiction.id} checked={state.jurisdictions.includes(jurisdiction.id) && state.jurisdictions.length < JURISDICTION_LIST.length} /> {jurisdiction.shortName}</label>
+      ))}
+    </fieldset>
+    <fieldset>
+      <legend>Normtyp</legend>
+      {NORM_TYPES.map((type) => (
+        <label><input type="checkbox" name="type" value={type} checked={state.types.includes(type)} /> {typeLabel(type)}</label>
+      ))}
+    </fieldset>
+    <fieldset>
+      <legend>{VOCABULARY.version.label}</legend>
+      <label><input type="radio" name="versionScope" value="current" checked={state.versionScope === 'current' && !state.validOn} /> {VOCABULARY.version.byKind.current.many}</label>
+      <label><input type="radio" name="versionScope" value="historical" checked={state.versionScope === 'historical'} /> {VOCABULARY.version.byKind.historical.many}</label>
+      <label><input type="radio" name="versionScope" value="all" checked={state.versionScope === 'all'} /> Alle Fassungen</label>
+      <label>Geltungstag <input type="date" name="validOn" value={state.validOn ?? ''} /></label>
+    </fieldset>
+    <button type="submit">Filter anwenden</button>
+  </form>
+  {page === null ? (
+    <p class="muted">Geben Sie einen Suchbegriff ein oder wählen Sie ein Land. {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>
+  ) : (
+    <section aria-labelledby="treffer-heading">
+      <h2 id="treffer-heading">{page.total} {page.total === 1 ? 'Treffer' : 'Treffer'}{state.q && <> für „{state.q}“</>}</h2>
+      {state.validOn ? <p class="muted">Fassungen, die am {formatDate(state.validOn)} in der Simulation galten.</p> : <p class="muted">{referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>}
+      <ol class="hit-list" start={page.offset + 1}>
+        {page.hits.map((hit) => (
+          <li class="hit">
+            <h3 class="hit__title"><a href={hit.unit ? hit.unit.url : (hit.versionKind === 'current' ? hit.url : hit.versionUrl)}>{hit.title}</a></h3>
+            <p class="hit__meta">
+              <span class="tag">{getJurisdiction(hit.jurisdiction).shortName}</span>
+              <span class={`tag tag--${hit.versionKind}`}>{VOCABULARY.version.byKind[hit.versionKind].one}</span>
+              {hit.abbr && `${hit.abbr} · `}{typeLabel(hit.type)} · {statusLabel(hit.status)} · {hit.matchLabel}{hit.unit && ` · ${[hit.unit.label, hit.unit.heading].filter(Boolean).join(' ')}`}
+            </p>
+            {hit.snippet && <p class="hit__snippet">{hit.snippet}</p>}
+            <p class="hit__meta">{hit.citation}</p>
+          </li>
+        ))}
+      </ol>
+      <p>
+        {page.offset > 0 && <a class="button-link" href={pageUrl(Math.max(0, page.offset - page.limit))}>Zurück</a>}
+        {page.offset + page.limit < page.total && <a class="button-link" href={pageUrl(page.offset + page.limit)}>Weiter</a>}
+      </p>
+    </section>
+  )}
+</BaseLayout>

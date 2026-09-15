@@ -1,0 +1,191 @@
+---
+/**
+ * Rekursive Darstellung des Normkörpers (Struktur wie NormBody.astro in OstRecht, hier ohne
+ * Änderungsmarken und Verlaufsfunktionen). Sprungziele kommen aus der Anchor-Map des
+ * Legal-Core, damit Suche, Inhaltsübersicht und Seite dieselben Adressen verwenden.
+ */
+import type { AnchorMap } from '@landesrecht/legal-core/lib/body.ts';
+import { anchorSlug } from '@landesrecht/legal-core/lib/body.ts';
+import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
+
+interface Props {
+  blocks: NormBodyBlock[];
+  anchors: AnchorMap;
+  path?: number[];
+  headingLevel?: number;
+  quoted?: boolean;
+  unitAnchor?: string;
+}
+
+const { blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor } = Astro.props;
+const headingTag = `h${Math.min(Math.max(headingLevel + 1, 3), 6)}` as 'h3' | 'h4' | 'h5' | 'h6';
+const nextLevel = Number.parseInt(headingTag.slice(1), 10);
+
+type Run = { kind: 'list'; blocks: Array<{ block: NormBodyBlock; index: number }> } | { kind: 'signatures'; blocks: Array<{ block: NormBodyBlock; index: number }> } | { kind: 'block'; block: NormBodyBlock; index: number };
+
+function groupRuns(entries: NormBodyBlock[]): Run[] {
+  const runs: Run[] = [];
+  entries.forEach((block, index) => {
+    const last = runs.at(-1);
+    if (block.type === 'item' || block.type === 'subitem') {
+      if (last && last.kind === 'list') last.blocks.push({ block, index });
+      else runs.push({ kind: 'list', blocks: [{ block, index }] });
+      return;
+    }
+    if (block.type === 'signature') {
+      if (last && last.kind === 'signatures') last.blocks.push({ block, index });
+      else runs.push({ kind: 'signatures', blocks: [{ block, index }] });
+      return;
+    }
+    runs.push({ kind: 'block', block, index });
+  });
+  return runs;
+}
+
+const DIVISIONS = new Set(['book', 'part', 'chapter', 'section', 'subsection']);
+const UNITS = new Set(['paragraph', 'article', 'annex']);
+
+function anchorFor(index: number): string | undefined {
+  return anchors.get([...path, index].join('.'));
+}
+
+function subparagraphId(label: string | undefined, index: number): string {
+  const base = unitAnchor ?? `block-${[...path].join('-')}`;
+  return `${base}-abs-${label ? anchorSlug(label) || index + 1 : index + 1}`;
+}
+
+const HeadingTag = headingTag;
+---
+{groupRuns(blocks).map((run) => {
+  if (run.kind === 'list') {
+    return (
+      <ol class="norm-list">
+        {run.blocks.map(({ block, index }) => (
+          <li class={`norm-item norm-item--${block.type}`}>
+            <span class="norm-item__label">{block.label}</span>
+            <div class="norm-item__content">
+              {block.text && <p class="norm-text">{block.text}</p>}
+              {block.children && block.children.length > 0 && (
+                <Astro.self blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    );
+  }
+  if (run.kind === 'signatures') {
+    return (
+      <div class="norm-signatures">
+        {run.blocks.map(({ block }) => (
+          <p class="norm-signature">
+            {block.label && <span class="norm-signature__place">{block.label}<br /></span>}
+            {block.title && <span class="norm-signature__office">{block.title}<br /></span>}
+            {block.text && <span class="norm-signature__name">{block.text}</span>}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  const { block, index } = run;
+  const anchor = anchorFor(index);
+  const childPath = [...path, index];
+
+  if (DIVISIONS.has(block.type) || block.type === 'preamble') {
+    return (
+      <section id={anchor} class={`norm-division norm-division--${block.type}`} aria-labelledby={anchor ? `${anchor}-heading` : undefined}>
+        <HeadingTag id={anchor ? `${anchor}-heading` : undefined}>
+          {block.label && <span class="norm-label">{block.label}</span>}
+          {block.title && <span class="norm-title">{block.title}</span>}
+        </HeadingTag>
+        {block.text && <p class="norm-text">{block.text}</p>}
+        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} />
+      </section>
+    );
+  }
+
+  if (UNITS.has(block.type)) {
+    return (
+      <section id={anchor} class={`norm-unit norm-unit--${block.type}${quoted ? ' norm-unit--quoted' : ''}`} data-norm-unit aria-labelledby={anchor ? `${anchor}-heading` : undefined}>
+        <div class="norm-unit__head">
+          <HeadingTag id={anchor ? `${anchor}-heading` : undefined}>
+            {block.label && <span class="norm-label">{block.label}</span>}
+            {block.title && <span class="norm-title">{block.title}</span>}
+          </HeadingTag>
+          {!quoted && anchor && <a class="norm-unit__link" href={`#${anchor}`}>Link</a>}
+        </div>
+        <div class="norm-unit__body">
+          {block.text && <p class="norm-text">{block.text}</p>}
+          <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} />
+        </div>
+      </section>
+    );
+  }
+
+  if (block.type === 'quotedProvision') {
+    return (
+      <blockquote class="norm-quoted">
+        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} />
+      </blockquote>
+    );
+  }
+
+  if (block.type === 'subparagraph' || (block.type === 'paragraphText' && block.label)) {
+    const id = subparagraphId(block.label, index);
+    return (
+      <div class="norm-abs" id={id}>
+        <a class="norm-abs__addr" href={`#${id}`}>{block.label ?? ''}</a>
+        <div class="norm-abs__body">
+          {block.text && <p class="norm-text">{block.text}</p>}
+          {block.children && block.children.length > 0 && (
+            <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (block.type === 'paragraphText') {
+    return (
+      <>
+        <p class="norm-text">{block.text}</p>
+        {block.children && block.children.length > 0 && (
+          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+        )}
+      </>
+    );
+  }
+
+  if (block.type === 'heading') {
+    return <p class="norm-heading"><strong>{block.title ?? block.text}</strong></p>;
+  }
+
+  if (block.type === 'footnote') {
+    return <p class="norm-footnote"><sup>{block.label}</sup> {block.text}</p>;
+  }
+
+  if (block.type === 'table') {
+    return (
+      <div class="norm-table-wrap" tabindex="0" role="region" aria-label={block.title ?? 'Tabelle im Normtext'}>
+        <table class="norm-table">
+          {block.title && <caption>{block.title}</caption>}
+          <tbody>
+            {(block.children ?? []).map((row, rowIndex) => (
+              <tr>
+                {(row.children ?? []).map((cell, cellIndex) => cell.type === 'tableHeaderCell'
+                  ? <th scope={cell.scope} rowspan={cell.rowspan} colspan={cell.colspan}>{cell.text}</th>
+                  : <td rowspan={cell.rowspan} colspan={cell.colspan}>
+                      {cell.children && cell.children.length > 0
+                        ? <Astro.self blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+                        : cell.text}
+                    </td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  return null;
+})}

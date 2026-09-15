@@ -1,0 +1,33 @@
+---
+import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getJurisdictionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import SearchForm from '../components/SearchForm.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title={VOCABULARY.portalName} canonical="/">
+  <h1>{VOCABULARY.portalName}</h1>
+  <p class="lead">{VOCABULARY.portalSubtitle}: gemeinsamer Zugang zum Landesrecht der vier Länder der Simulation.</p>
+  <p><strong>Hinweis:</strong> {VOCABULARY.simulationNotice}</p>
+  <section aria-labelledby="suche-heading">
+    <h2 id="suche-heading">Gemeinsame Suche</h2>
+    <SearchForm />
+    <p class="muted">Suchbar sind Titel, Kurzbezeichnungen, Abkürzungen, Normtext und Fundstellen; Angaben wie „§ 3 Absatz 2“ oder „Art. 5“ führen zur Vorschrift.</p>
+  </section>
+  <section aria-labelledby="laender-heading">
+    <h2 id="laender-heading">Länder</h2>
+    <ul class="card-grid">
+      {JURISDICTION_LIST.map((jurisdiction) => (
+        <li class="card">
+          <h3><a href={getJurisdictionUrl(jurisdiction.id)}>{jurisdiction.name}</a></h3>
+          <p class="card__meta">Kurzbezeichnung: {jurisdiction.shortName}</p>
+          <p>{VOCABULARY.baselineLabel}: {formatBaselineDate(jurisdiction.baselineDate)}</p>
+          {jurisdiction.externalSourceOfTruth && (
+            <p class="muted">Rechtsbestand wird in <a href={jurisdiction.externalSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.externalSourceOfTruth.label}</a> geführt.</p>
+          )}
+        </li>
+      ))}
+    </ul>
+    <p class="muted">Alle vier Länder beginnen mit demselben Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}; spätere Änderungen entstehen ausschließlich innerhalb der Simulation.</p>
+  </section>
+</BaseLayout>

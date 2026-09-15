@@ -1,0 +1,15 @@
+---
+export const prerender = false;
+
+import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+Astro.response.status = 404;
+Astro.response.headers.set('Cache-Control', 'no-store');
+---
+<BaseLayout title="Seite nicht gefunden" robots="noindex">
+  <h1>Seite nicht gefunden</h1>
+  <p>Die angeforderte Adresse gibt es im {VOCABULARY.portalName}-Portal nicht. Möglicherweise ist die Norm noch nicht im Bestand oder die Fassungskennung ist unbekannt.</p>
+  <p><a class="button-link" href={PORTAL_PATHS.home}>Zur Startseite</a> <a class="button-link" href={PORTAL_PATHS.search}>Zur Suche</a></p>
+</BaseLayout>

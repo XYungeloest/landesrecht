@@ -1,0 +1,27 @@
+---
+import { JURISDICTION_LIST } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import type { SearchState } from '@landesrecht/search/query.ts';
+
+interface Props {
+  state?: Partial<SearchState>;
+  compact?: boolean;
+}
+
+const { state = {}, compact = false } = Astro.props;
+const selected = state.jurisdictions ?? [];
+const allSelected = selected.length === 0 || selected.length === JURISDICTION_LIST.length;
+---
+<form class="search-form" action={PORTAL_PATHS.search} method="get" role="search">
+  <label class="visually-hidden" for="suche-q">Suchbegriff</label>
+  <input id="suche-q" type="search" name="q" value={state.q ?? ''} placeholder="Gesetz, Abkürzung, § 3 Absatz 2, Stichwort" />
+  {!compact && (
+    <select name="jurisdiction" aria-label="Land">
+      <option value="" selected={allSelected}>Alle Länder</option>
+      {JURISDICTION_LIST.map((jurisdiction) => (
+        <option value={jurisdiction.id} selected={!allSelected && selected.includes(jurisdiction.id)}>{jurisdiction.name}</option>
+      ))}
+    </select>
+  )}
+  <button type="submit">Suchen</button>
+</form>

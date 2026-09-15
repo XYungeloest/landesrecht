@@ -1,0 +1,66 @@
+---
+export const prerender = false;
+
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { collectBlockText } from '@landesrecht/legal-core/lib/body.ts';
+import type { NormBodyBlock, NormVersion } from '@landesrecht/legal-core/lib/schema.ts';
+import NormPageShell from '../../../../components/NormPageShell.astro';
+import { buildNormView, jurisdictionFromParam } from '../../../../lib/norm-view.ts';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../../lib/runtime/context.ts';
+
+const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
+if (!resolved || !Astro.params.slug) return Astro.rewrite('/404');
+const registry = await getStoreRegistry();
+if (!registry.has(resolved.id)) return Astro.rewrite('/404');
+const record = await registry.get(resolved.id).getNorm(Astro.params.slug, 'all');
+const view = record ? buildNormView(record) : null;
+if (!record || !view) return Astro.rewrite('/404');
+Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
+
+const fromId = Astro.url.searchParams.get('von') ?? record.versions.at(-2)?.versionId ?? record.versions[0]!.versionId;
+const toId = Astro.url.searchParams.get('bis') ?? record.versions.at(-1)!.versionId;
+const from = record.versions.find((version) => version.versionId === fromId);
+const to = record.versions.find((version) => version.versionId === toId);
+
+/** Vorbereitung des Fassungsvergleichs: Einheiten je Fassung gegenüberstellen (noch ohne Wortdiff). */
+function unitTexts(version: NormVersion): Map<string, string> {
+  const result = new Map<string, string>();
+  const visit = (blocks: NormBodyBlock[], quoted: boolean): void => {
+    for (const block of blocks) {
+      if (!quoted && (block.type === 'paragraph' || block.type === 'article' || block.type === 'annex')) {
+        result.set([block.label, block.title].filter(Boolean).join(' '), collectBlockText(block).join('\n'));
+        continue;
+      }
+      if (block.children) visit(block.children, quoted || block.type === 'quotedProvision');
+    }
+  };
+  visit(version.body, false);
+  return result;
+}
+const left = from ? unitTexts(from) : new Map<string, string>();
+const right = to ? unitTexts(to) : new Map<string, string>();
+const keys = [...new Set([...left.keys(), ...right.keys()])];
+const changed = keys.filter((key) => left.get(key) !== right.get(key));
+---
+<NormPageShell view={view} section="vergleich" title={`${VOCABULARY.sections.compare}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
+  <form class="search-form" method="get">
+    <label>Von <select name="von">{record.versions.map((version) => <option value={version.versionId} selected={version.versionId === fromId}>{formatDate(version.simulationValidFrom)}</option>)}</select></label>
+    <label>Bis <select name="bis">{record.versions.map((version) => <option value={version.versionId} selected={version.versionId === toId}>{formatDate(version.simulationValidFrom)}</option>)}</select></label>
+    <button type="submit">Vergleichen</button>
+  </form>
+  {!from || !to ? <p class="muted">Unbekannte Fassung.</p> : record.versions.length < 2 ? <p class="muted">Diese Norm hat nur eine gespeicherte Fassung.</p> : (
+    <section>
+      <h2>{changed.length} geänderte {changed.length === 1 ? 'Einheit' : 'Einheiten'} zwischen {formatDate(from.simulationValidFrom)} und {formatDate(to.simulationValidFrom)}</h2>
+      <p class="muted">Vorbereitende Gegenüberstellung je Gliederungseinheit; ein wortgenauer Vergleich folgt.</p>
+      {changed.map((key) => (
+        <div class="card">
+          <h3>{key}{!left.has(key) ? ' (neu)' : !right.has(key) ? ' (entfallen)' : ''}</h3>
+          <div class="norm-workspace" style="grid-template-columns: 1fr 1fr">
+            <div><p class="muted">{formatDate(from.simulationValidFrom)}</p><p>{left.get(key) ?? '–'}</p></div>
+            <div><p class="muted">{formatDate(to.simulationValidFrom)}</p><p>{right.get(key) ?? '–'}</p></div>
+          </div>
+        </div>
+      ))}
+    </section>
+  )}
+</NormPageShell>
