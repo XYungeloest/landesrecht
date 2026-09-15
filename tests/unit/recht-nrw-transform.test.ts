@@ -4,12 +4,13 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity } from '@landesrecht/importer-recht-nrw/integrity.ts';
-import { parseLegacyDocument } from '@landesrecht/importer-recht-nrw/legacy-parser.ts';
-import { normalizeSourceLaw } from '@landesrecht/importer-recht-nrw/normalize.ts';
-import { findUnresolvedReferences, transformText, transformToWest, type TransformationChange, type UnresolvedReference } from '@landesrecht/importer-recht-nrw/transform.ts';
-import { parseVersionPage } from '@landesrecht/importer-recht-nrw/version-page.ts';
-import type { FetchedDocument } from '@landesrecht/importer-recht-nrw/fetcher.ts';
+import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity } from '@landesrecht/importer-recht-nrw/common/integrity.ts';
+import { parseLegacyDocument } from '@landesrecht/importer-recht-nrw/common/legacy-parser.ts';
+import { normalizeSourceLaw } from '@landesrecht/importer-recht-nrw/lrgv/normalize.ts';
+import { detectReferences } from '@landesrecht/importer-recht-nrw/transform/detection.ts';
+import { transformText, transformToWest, type TransformationChange } from '@landesrecht/importer-recht-nrw/transform/transform.ts';
+import { parseVersionPage } from '@landesrecht/importer-recht-nrw/common/version-page.ts';
+import type { FetchedDocument } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 
 const fixtures = join(process.cwd(), 'tests', 'fixtures', 'recht-nrw');
 const fixture = (name: string): string => readFileSync(join(fixtures, name), 'utf8');
@@ -50,17 +51,17 @@ describe('Transformationsregeln', () => {
     expect(transformText('Landesbeamtengesetz NRW (GV. NRW. 2016 S. 310)', 'p', changes)).toBe('Landesbeamtengesetz West (GV. NRW. 2016 S. 310)');
   });
 
-  it('meldet NRW-spezifische Begriffe als unresolved statt sie umzuschreiben', () => {
-    const unresolved: UnresolvedReference[] = [];
-    findUnresolvedReferences('Die Bezirksregierung Düsseldorf und die Landschaftsverbände im Rheinland sowie das Ministerium für Inneres des Landes Westdeutschland.', 'body[1].text', unresolved);
-    expect(unresolved.map((entry) => [entry.term, entry.category])).toEqual([
-      ['Rheinland', 'region'],
-      ['Landschaftsverbände', 'institution'],
-      ['Bezirksregierung', 'authority'],
-      ['Düsseldorf', 'municipality'],
-      ['Ministerium für Inneres', 'ministry'],
+  it('erkennt NRW-spezifische Begriffe vor der Transformation und entscheidet je Kategorie', () => {
+    const detections = detectReferences([{ path: 'body[1].text', text: 'Die Bezirksregierung Düsseldorf und die Landschaftsverbände im Rheinland sowie das Ministerium für Inneres des Landes Nordrhein-Westfalen.' }]);
+    expect(detections.map((entry) => [entry.term, entry.category, entry.decision])).toEqual([
+      ['Bezirksregierung', 'authority', 'manual-review'],
+      ['Düsseldorf', 'municipality', 'manual-review'],
+      ['Landschaftsverbände', 'regional-body', 'manual-review'],
+      ['Rheinland', 'geography', 'manual-review'],
+      ['Ministerium für Inneres', 'ministry', 'manual-review'],
+      ['Landes Nordrhein-Westfalen', 'jurisdiction-name', 'safe-auto-transform'],
     ]);
-    expect(unresolved.every((entry) => entry.manualDecisionRequired && entry.context.includes(entry.term))).toBe(true);
+    expect(detections.every((entry) => entry.context.includes(entry.term) && entry.reason.length > 0)).toBe(true);
   });
 });
 
@@ -87,8 +88,12 @@ describe('Transformation NRW → West', () => {
   });
 
   it('lässt Quellmetadaten unverändert und transformiert nur den Normtext', () => {
-    expect(record.meta.initialCitation).toBe(law.citation);
-    expect(record.meta.initialCitation).toContain('Nordrhein-Westfalen');
+    expect(record.meta.sourceCitation).toBe(law.citation);
+    expect(record.meta.sourceCitation).toContain('Nordrhein-Westfalen');
+    expect(record.versions[0]!.sourceCitation).toBe(law.fullCitation ?? law.citation);
+    expect(record.meta.initialCitation).toBe(record.versions[0]!.citation);
+    expect(record.versions[0]!.citation).not.toMatch(/NRW|Nordrhein-Westfalen/u);
+    expect(record.versions[0]!.sourceStatus).toEqual({ validity: 'exact', text: 'direct' });
     expect(record.meta.sourceReferences).toEqual(law.sourceReferences);
     expect(record.meta.sourceReferences[0]!.url).toContain('recht.nrw.de');
     expect(record.meta.sourceReferences[0]!.localSource).toBe('sources/recht-nrw/term-424242/aaaa-version-page.html');
@@ -105,7 +110,9 @@ describe('Transformation NRW → West', () => {
     expect(report.changes[0]).toMatchObject({ path: 'meta.title', rule: 'jurisdiction-name', from: 'Land Nordrhein-Westfalen', to: 'Land Westdeutschland' });
     expect(report.changes.every((change) => typeof change.path === 'string' && change.from !== change.to)).toBe(true);
     expect(report.unresolved.map((entry) => entry.term)).toEqual(expect.arrayContaining(['Bezirksregierung', 'Düsseldorf', 'Landschaftsverbände']));
-    expect(report.protectedFields).toContain('meta.sourceReferences');
+    expect(report.protectedFields).toEqual(expect.arrayContaining(['meta.sourceReferences', 'meta.sourceCitation', 'version.sourceCitation']));
+    expect(report.postTransformAudit.ok).toBe(true);
+    expect(report.detections.filter((entry) => entry.decision === 'safe-auto-transform' && entry.category === 'jurisdiction-name')).toHaveLength(report.changes.length);
   });
 
   it('besteht die Integritätsprüfung Source → Canonical', () => {

@@ -1,9 +1,12 @@
 {
+  "schemaVersion": "recht-nrw-transformation-report/2",
   "source": "Nordrhein-Westfalen",
   "target": "west",
+  "sourceArea": "lrgv",
   "sourceIdentity": "term:28930",
   "slug": "schulg-west",
   "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.0.0",
   "rules": [
     "jurisdiction-name-genitive",
     "jurisdiction-name-dative",
@@ -13,6 +16,1297 @@
     "jurisdiction-name-bare",
     "jurisdiction-abbreviation"
   ],
+  "detections": [
+    {
+      "id": "meta.title@20:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 20,
+      "end": 44,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Schulgesetz für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@12:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 12,
+      "end": 15,
+      "term": "NRW",
+      "context": "Schulgesetz NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[1].children[3].children[3].text@513:protected:gazette-nrw",
+      "path": "body[14].children[1].children[3].children[3].text",
+      "start": 513,
+      "end": 528,
+      "term": "GV. NRW. S. 877",
+      "context": "…1 Absatz 5 des Kinderbildungsgesetzes vom 3. Dezember 2019 (GV. NRW. S. 877) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].children[0].children[1].text@27:rule:jurisdiction-name-bare",
+      "path": "body[17].children[0].children[1].text",
+      "start": 27,
+      "end": 46,
+      "term": "Nordrhein-Westfalen",
+      "context": "Schulpflichtig ist, wer in Nordrhein-Westfalen seinen Wohnsitz oder seinen gewöhnlichen Aufenthalt oder se…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].children[0].children[1].text@176:rule:jurisdiction-name-bare",
+      "path": "body[17].children[0].children[1].text",
+      "start": 176,
+      "end": 195,
+      "term": "Nordrhein-Westfalen",
+      "context": "…dungs- oder Arbeitsstätte hat. Besteht eine Meldeadresse in Nordrhein-Westfalen, wird dort der Wohnsitz oder gewöhnliche Aufenthalt widerle…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].children[2].children[2].text@392:protected:gazette-nrw",
+      "path": "body[17].children[2].children[2].text",
+      "start": 392,
+      "end": 407,
+      "term": "GV. NRW. S. 894",
+      "context": "…g mit § 18 des Kinderbildungsgesetzes vom 3. Dezember 2019 (GV. NRW. S. 894) in der jeweils geltenden Fassung gewährleistet ist. Beherr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].children[7].children[4].text@285:rule:jurisdiction-abbreviation",
+      "path": "body[17].children[7].children[4].text",
+      "start": 285,
+      "end": 288,
+      "term": "NRW",
+      "context": "…ngsweise gemäß §§ 66 bis 75 Verwaltungsvollstreckungsgesetz NRW zugeführt werden. Das Jugendamt ist über die beabsichtigte …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[17].children[7].children[5].text@118:rule:jurisdiction-abbreviation",
+      "path": "body[17].children[7].children[5].text",
+      "start": 118,
+      "end": 121,
+      "term": "NRW",
+      "context": "…gsmittel gemäß §§ 55 bis 65 Verwaltungsvollstreckungsgesetz NRW zur Erfüllung ihrer Pflichten gemäß Absatz 1 angehalten wer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[0].children[0].children[4].text@442:rule:jurisdiction-name-bare",
+      "path": "body[18].children[0].children[0].children[4].text",
+      "start": 442,
+      "end": 461,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hte aus § 8 Absatz 1 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[0].children[0].children[4].text@485:protected:gazette-nrw",
+      "path": "body[18].children[0].children[0].children[4].text",
+      "start": 485,
+      "end": 500,
+      "term": "GV. NRW. S. 766",
+      "context": "…tellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils geltenden Fassung in Verbindung mit der Kom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[0].children[0].children[4].text@596:rule:jurisdiction-name-bare",
+      "path": "body[18].children[0].children[0].children[4].text",
+      "start": 596,
+      "end": 615,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n Verbindung mit der Kommunikationsunterstützungsverordnung Nordrhein-Westfalen vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[0].children[0].children[4].text@635:protected:gazette-nrw",
+      "path": "body[18].children[0].children[0].children[4].text",
+      "start": 635,
+      "end": 650,
+      "term": "GV. NRW. S. 336",
+      "context": "…rstützungsverordnung Nordrhein-Westfalen vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[3].children[4].text@49:rule:jurisdiction-name-genitive",
+      "path": "body[18].children[1].children[3].children[4].text",
+      "start": 49,
+      "end": 75,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Abschlüsse und Berechtigungen, die außerhalb des Landes Nordrhein-Westfalen erworben wurden, bedürfen der Anerkennung durch die Schulau…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[2].children[1].children[6].text@94:jurisdiction-name-residual",
+      "path": "body[18].children[2].children[1].children[6].text",
+      "start": 94,
+      "end": 97,
+      "term": "NRW",
+      "context": "…t sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[19].children[4].children[3].text@351:protected:gazette-nrw",
+      "path": "body[19].children[4].children[3].text",
+      "start": 351,
+      "end": 366,
+      "term": "GV. NRW. S. 310",
+      "context": "…Absatz 3 und 4 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung keine Anwendung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[4].children[5].children[5].text@101:protected:gazette-nrw",
+      "path": "body[19].children[4].children[5].children[5].text",
+      "start": 101,
+      "end": 115,
+      "term": "GV. NRW. S. 22",
+      "context": "…n auf Grundlage der Laufbahnverordnung vom 28. Januar 2014 (GV. NRW. S. 22, ber. S. 203) in der jeweils geltenden Fassung im Einzelfal…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[2].children[1].children[3].children[4].text@57:rule:jurisdiction-name-bare",
+      "path": "body[20].children[2].children[1].children[3].children[4].text",
+      "start": 57,
+      "end": 76,
+      "term": "Nordrhein-Westfalen",
+      "context": "der Zusammenschluss der Industrie- und Handelskammern in Nordrhein-Westfalen, der Westdeutsche Handwerkskammertag und die Landesvereinig…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[20].children[2].children[1].children[3].children[4].text@165:rule:jurisdiction-name-bare",
+      "path": "body[20].children[2].children[1].children[3].children[4].text",
+      "start": 165,
+      "end": 184,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ammertag und die Landesvereinigung der Unternehmensverbände Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[20].children[2].children[1].children[3].children[5].text@4:public-body-regional",
+      "path": "body[20].children[2].children[1].children[3].children[5].text",
+      "start": 4,
+      "end": 35,
+      "term": "Unfallkasse Nordrhein-Westfalen",
+      "context": "die Unfallkasse Nordrhein-Westfalen,",
+      "category": "public-body",
+      "decision": "manual-review",
+      "detector": "public-body-regional",
+      "reason": "Körperschaft oder Anstalt mit regionaler Bezeichnung des Herkunftslandes – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[20].children[2].children[1].children[3].children[5].text@16:rule:jurisdiction-name-bare",
+      "path": "body[20].children[2].children[1].children[3].children[5].text",
+      "start": 16,
+      "end": 35,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Unfallkasse Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[21].children[0].children[3].text@4:regional-body-association",
+      "path": "body[21].children[0].children[3].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände sind Träger der Förderschulen mit dem Förderschwerpunkt Hör…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[21].children[0].children[6].text@258:regional-body-association",
+      "path": "body[21].children[0].children[6].text",
+      "start": 258,
+      "end": 277,
+      "term": "Landschaftsverbände",
+      "context": "…neter Schulbetrieb gewährleistet ist. Gemeinden, Kreise und Landschaftsverbände sind berechtigt, Klinikschulen zu errichten und fortzuführe…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[21].children[3].children[1].text@29:regional-body-association",
+      "path": "body[21].children[3].children[1].text",
+      "start": 29,
+      "end": 48,
+      "term": "Landschaftsverbände",
+      "context": "Soweit Gemeinden, Kreise und Landschaftsverbände Schulträgeraufgaben nach § 78 zu erfüllen haben, sind sie v…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[22].children[0].children[2].children[0].text@150:protected:gazette-nrw",
+      "path": "body[22].children[0].children[2].children[0].text",
+      "start": 150,
+      "end": 165,
+      "term": "GV. NRW. S. 308",
+      "context": "… 5 Absatz 1 des Lehrerausbildungsgesetzes vom 12. Mai 2009 (GV. NRW. S. 308) in der jeweils geltenden Fassung (Zentren),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].children[2].children[2].text@36:authority-district-government",
+      "path": "body[22].children[2].children[2].text",
+      "start": 36,
+      "end": 52,
+      "term": "Bezirksregierung",
+      "context": "Obere Schulaufsichtsbehörde ist die Bezirksregierung. Sie nimmt in ihrem Gebiet die Schulaufsicht über die Schul…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[22].children[3].children[1].text@183:regional-body-association",
+      "path": "body[22].children[3].children[1].text",
+      "start": 183,
+      "end": 201,
+      "term": "Landschaftsverband",
+      "context": "… Einrichtungen der erzieherischen Hilfe im Benehmen mit dem Landschaftsverband aus.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[22].children[3].children[3].text@103:authority-district-government",
+      "path": "body[22].children[3].children[3].text",
+      "start": 103,
+      "end": 119,
+      "term": "Bezirksregierung",
+      "context": "… Schulaufsicht erforderlich ist, kann das Ministerium einer Bezirksregierung die Ausübung der Schulaufsicht in einem bestimmten Aufgaben…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[22].children[3].children[3].text@235:authority-district-government",
+      "path": "body[22].children[3].children[3].text",
+      "start": 235,
+      "end": 253,
+      "term": "Bezirksregierungen",
+      "context": "…abengebiet auch für den Bereich einer oder mehrerer anderer Bezirksregierungen durch Rechtsverordnung übertragen. Dies gilt insbesondere f…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[23].children[4].children[4].text@54:rule:jurisdiction-name-bare",
+      "path": "body[23].children[4].children[4].text",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "Besuchen Schülerinnen und Schüler mit Hauptwohnung in Nordrhein-Westfalen eine außerhalb des Landes gelegene öffentliche Schule oder …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[23].children[4].children[4].text@486:rule:jurisdiction-name-genitive",
+      "path": "body[23].children[4].children[4].text",
+      "start": 486,
+      "end": 512,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…rfahrkostenrechts ist und ihnen in der Schule außerhalb des Landes Nordrhein-Westfalen keine Lernmittelfreiheit gewährt wird.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[23].children[5].children[1].text@216:rule:jurisdiction-name-bare",
+      "path": "body[23].children[5].children[1].text",
+      "start": 216,
+      "end": 235,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fskollegs in Vollzeitform gemäß § 22, die ihren Wohnsitz in Nordrhein-Westfalen haben, werden die Kosten erstattet, die für ihre wirtschaft…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[0].children[0].children[3].text@532:rule:jurisdiction-name-bare",
+      "path": "body[24].children[0].children[0].children[3].text",
+      "start": 532,
+      "end": 551,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hte aus § 8 Absatz 1 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[0].children[0].children[3].text@575:protected:gazette-nrw",
+      "path": "body[24].children[0].children[0].children[3].text",
+      "start": 575,
+      "end": 590,
+      "term": "GV. NRW. S. 766",
+      "context": "…tellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils geltenden Fassung in Verbindung mit der Kom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[24].children[0].children[0].children[3].text@686:rule:jurisdiction-name-bare",
+      "path": "body[24].children[0].children[0].children[3].text",
+      "start": 686,
+      "end": 705,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n Verbindung mit der Kommunikationsunterstützungsverordnung Nordrhein-Westfalen vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[0].children[0].children[3].text@725:protected:gazette-nrw",
+      "path": "body[24].children[0].children[0].children[3].text",
+      "start": 725,
+      "end": 740,
+      "term": "GV. NRW. S. 336",
+      "context": "…rstützungsverordnung Nordrhein-Westfalen vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[24].children[0].children[3].children[3].text@111:rule:jurisdiction-name-bare",
+      "path": "body[24].children[0].children[3].children[3].text",
+      "start": 111,
+      "end": 130,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en ohne Dienstbezüge zur Dienstleistung an Ersatzschulen in Nordrhein-Westfalen beurlaubt werden. Die Zeit, während der eine ohne Dienstbez…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[1].children[1].children[9].text@81:ministry-compound",
+      "path": "body[24].children[1].children[1].children[9].text",
+      "start": 81,
+      "end": 98,
+      "term": "Finanzministerium",
+      "context": "…derer Umstände kann das Ministerium im Einvernehmen mit dem Finanzministerium einer längeren Ermäßigung der Eigenleistung zustimmen, wenn…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung."
+    },
+    {
+      "id": "body[24].children[1].children[1].children[11].text@173:ministry-compound",
+      "path": "body[24].children[1].children[1].children[11].text",
+      "start": 173,
+      "end": 190,
+      "term": "Finanzministerium",
+      "context": "…ungen der Absätze 7 und 8 auf Dauer im Einvernehmen mit dem Finanzministerium festlegen. Dies setzt voraus, dass ein besonderes Landesint…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung."
+    },
+    {
+      "id": "body[24].children[1].children[6].children[1].text@315:authority-state-office",
+      "path": "body[24].children[1].children[6].children[1].text",
+      "start": 315,
+      "end": 338,
+      "term": "Landesamt für Besoldung",
+      "context": "…ule werden vom Land ohne Abzug einer Eigenleistung über das Landesamt für Besoldung und Versorgung festgesetzt und zahlbar gemacht.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[24].children[1].children[9].children[3].children[0].text@68:authority-district-government",
+      "path": "body[24].children[1].children[9].children[3].children[0].text",
+      "start": 68,
+      "end": 84,
+      "term": "Bezirksregierung",
+      "context": "…ilfeangelegenheiten an Ersatzschulen die örtlich zuständige Bezirksregierung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[24].children[1].children[9].children[3].children[1].text@86:authority-state-office",
+      "path": "body[24].children[1].children[9].children[3].children[1].text",
+      "start": 86,
+      "end": 109,
+      "term": "Landesamt für Besoldung",
+      "context": "…iten der Planstelleninhaberinnen und Planstelleninhaber das Landesamt für Besoldung und Versorgung, zusätzlich deren Beihilfeangelegenheiten, s…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[24].children[1].children[10].children[3].text@187:protected:gazette-nrw",
+      "path": "body[24].children[1].children[10].children[3].text",
+      "start": 187,
+      "end": 202,
+      "term": "GV. NRW. S. 230",
+      "context": "…zschulen (Ersatzschulfinanzgesetz - EFG) vom 27. Juni 1961 (GV. NRW. S. 230) in der bis zum 31. Dezember 2005 geltenden Fassung erfolgt…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[24].children[2].children[2].children[4].text@348:jurisdiction-name-residual",
+      "path": "body[24].children[2].children[2].children[4].text",
+      "start": 348,
+      "end": 351,
+      "term": "NRW",
+      "context": "…Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungs…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[25].children[0].children[0].children[7].text@213:authority-state-office",
+      "path": "body[25].children[0].children[0].children[7].text",
+      "start": 213,
+      "end": 278,
+      "term": "Landesamt für Ausbildungsförderung sowie den Ausbildungsbetrieben",
+      "context": "…m Landesjugendamt, den Ämtern für Ausbildungsförderung, dem Landesamt für Ausbildungsförderung sowie den Ausbildungsbetrieben der Schülerinnen und Schüler an Berufskollegs nur übermitte…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[0].children[0].children[8].text@122:authority-state-enterprise",
+      "path": "body[25].children[0].children[0].children[8].text",
+      "start": 122,
+      "end": 147,
+      "term": "Landesbetrieb Information",
+      "context": "…onymisierte Leistungsdaten der Schülerinnen und Schüler dem Landesbetrieb Information und Technik regelmäßig übermittelt werden sowie für Maßnahm…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[0].children[1].children[2].text@571:authority-state-enterprise",
+      "path": "body[25].children[0].children[1].children[2].text",
+      "start": 571,
+      "end": 596,
+      "term": "Landesbetrieb Information",
+      "context": "…n Studienseminaren an die Schulaufsichtsbehörden und an den Landesbetrieb Information und Technik übermittelt werden. Verhaltensdaten von Lehreri…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[0].children[1].children[3].text@167:authority-state-enterprise",
+      "path": "body[25].children[0].children[1].children[3].text",
+      "start": 167,
+      "end": 192,
+      "term": "Landesbetrieb Information",
+      "context": "…behörden gespeicherten Daten der Lehrerinnen und Lehrer dem Landesbetrieb Information und Technik regelmäßig übermittelt und zur Erstellung einer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[0].children[1].children[3].text@602:authority-state-enterprise",
+      "path": "body[25].children[0].children[1].children[3].text",
+      "start": 602,
+      "end": 627,
+      "term": "Landesbetrieb Information",
+      "context": "…atistische Aufbereitungen übermittelt werden, sind sie beim Landesbetrieb Information und Technik zu löschen, sobald die Überprüfung der Erhebung…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[0].children[1].children[4].text@98:authority-state-office",
+      "path": "body[25].children[0].children[1].children[4].text",
+      "start": 98,
+      "end": 121,
+      "term": "Landesamt für Besoldung",
+      "context": "…n Daten des im Landesdienst stehenden Schulpersonals an das Landesamt für Besoldung und Versorgung regelmäßig übermittelt und für diesen Zweck …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[0].children[2].children[3].text@436:authority-state-office",
+      "path": "body[25].children[0].children[2].children[3].text",
+      "start": 436,
+      "end": 459,
+      "term": "Landesamt für Besoldung",
+      "context": "… personenbezogener Daten für Versorgungsempfänger durch das Landesamt für Besoldung und Versorgung des Landes und für die Übertragung der Beihi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[1].children[1].children[2].text@50:regional-body-association",
+      "path": "body[25].children[1].children[1].children[2].text",
+      "start": 50,
+      "end": 69,
+      "term": "Landschaftsverbände",
+      "context": "Für die Lehrerinnen und Lehrer an den Schulen der Landschaftsverbände, die keine Förderschulen und Klinikschulen sind, gilt Absat…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[25].children[1].children[1].children[3].text@692:authority-district-government",
+      "path": "body[25].children[1].children[1].children[3].text",
+      "start": 692,
+      "end": 708,
+      "term": "Bezirksregierung",
+      "context": "…tte. Das Nähere regelt die Satzung, die der Genehmigung der Bezirksregierung Arnsberg als oberer Schulaufsichtsbehörde bedarf.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[25].children[1].children[1].children[3].text@709:municipality",
+      "path": "body[25].children[1].children[1].children[3].text",
+      "start": 709,
+      "end": 717,
+      "term": "Arnsberg",
+      "context": "…egelt die Satzung, die der Genehmigung der Bezirksregierung Arnsberg als oberer Schulaufsichtsbehörde bedarf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation."
+    },
+    {
+      "id": "body[25].children[1].children[4].children[0].text@74:rule:jurisdiction-name-bare",
+      "path": "body[25].children[1].children[4].children[0].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "…13 des Gesetzes zur finanziellen Entlastung der Kommunen in Nordrhein-Westfalen (EntlKommG) vom 29. April 2003 (GV. NRW. S. 254) bleiben un…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[25].children[1].children[4].children[0].text@126:protected:gazette-nrw",
+      "path": "body[25].children[1].children[4].children[0].text",
+      "start": 126,
+      "end": 141,
+      "term": "GV. NRW. S. 254",
+      "context": "…unen in Nordrhein-Westfalen (EntlKommG) vom 29. April 2003 (GV. NRW. S. 254) bleiben unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[4].children[1].text@106:protected:gazette-nrw",
+      "path": "body[25].children[1].children[4].children[1].text",
+      "start": 106,
+      "end": 121,
+      "term": "GV. NRW. S. 811",
+      "context": "…on Schulen (Schulentwicklungsgesetz) vom 27. November 2001 (GV. NRW. S. 811) und die Verordnung zur Durchführung des Modellvorhabens „S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[4].children[1].text@266:protected:gazette-nrw",
+      "path": "body[25].children[1].children[4].children[1].text",
+      "start": 266,
+      "end": 281,
+      "term": "GV. NRW. S. 122",
+      "context": "…rordnung „Selbstständige Schule“- VOSS) vom 12. April 2002 (GV. NRW. S. 122) bleiben unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[0].text@51:rule:jurisdiction-name-bare",
+      "path": "body[25].children[1].children[7].children[0].children[0].text",
+      "start": 51,
+      "end": 70,
+      "term": "Nordrhein-Westfalen",
+      "context": "Erstes Gesetz zur Ordnung des Schulwesens im Lande Nordrhein-Westfalen (Schulordnungsgesetz – SchOG) vom 8. April 1952 (GV. NRW. S…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[0].text@120:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[0].text",
+      "start": 120,
+      "end": 134,
+      "term": "GV. NRW. S. 61",
+      "context": "…-Westfalen (Schulordnungsgesetz – SchOG) vom 8. April 1952 (GV. NRW. S. 61), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[0].text@185:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[0].text",
+      "start": 185,
+      "end": 200,
+      "term": "GV. NRW. S. 413",
+      "context": "…RW. S. 61), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[1].text@86:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[1].text",
+      "start": 86,
+      "end": 101,
+      "term": "GV. NRW. S. 155",
+      "context": "…hVG) in der Fassung der Bekanntmachung vom 18. Januar 1985 (GV. NRW. S. 155, ber. S. 477), zuletzt geändert durch Gesetz vom 8. Juli 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[1].text@165:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[1].text",
+      "start": 165,
+      "end": 180,
+      "term": "GV. NRW. S. 413",
+      "context": "…r. S. 477), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[2].text@38:rule:jurisdiction-name-bare",
+      "path": "body[25].children[1].children[7].children[0].children[2].text",
+      "start": 38,
+      "end": 57,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz über die Schulpflicht im Lande Nordrhein-Westfalen (Schulpflichtgesetz - SchpflG) in der Fassung der Bekanntma…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[2].text@144:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[2].text",
+      "start": 144,
+      "end": 159,
+      "term": "GV. NRW. S. 164",
+      "context": "…flG) in der Fassung der Bekanntmachung vom 2. Februar 1980 (GV. NRW. S. 164), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[2].text@210:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[2].text",
+      "start": 210,
+      "end": 225,
+      "term": "GV. NRW. S. 413",
+      "context": "…W. S. 164), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[3].text@99:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[3].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 448",
+      "context": "…n - Schulmitwirkungsgesetz (SchMG) - vom 13. Dezember 1977 (GV. NRW. S. 448), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[3].text@165:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[3].text",
+      "start": 165,
+      "end": 180,
+      "term": "GV. NRW. S. 413",
+      "context": "…W. S. 448), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[4].text@136:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[4].text",
+      "start": 136,
+      "end": 151,
+      "term": "GV. NRW. S. 288",
+      "context": "…chFG) in der Fassung der Bekanntmachung vom 17. April 1970 (GV. NRW. S. 288), zuletzt geändert durch Gesetz vom 17. Dezember 2003 (GV. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[4].text@207:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[4].text",
+      "start": 207,
+      "end": 222,
+      "term": "GV. NRW. S. 808",
+      "context": "… 288), zuletzt geändert durch Gesetz vom 17. Dezember 2003 (GV. NRW. S. 808),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[5].text@85:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[5].text",
+      "start": 85,
+      "end": 100,
+      "term": "GV. NRW. S. 165",
+      "context": "… (LFG) in der Fassung der Bekanntmachung vom 24. März 1982 (GV. NRW. S. 165), geändert durch Gesetz vom 29. April 2003 (GV. NRW. S. 254…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[0].children[5].text@145:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[0].children[5].text",
+      "start": 145,
+      "end": 160,
+      "term": "GV. NRW. S. 254",
+      "context": "…GV. NRW. S. 165), geändert durch Gesetz vom 29. April 2003 (GV. NRW. S. 254).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[1].text@102:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[1].text",
+      "start": 102,
+      "end": 117,
+      "term": "GV. NRW. S. 230",
+      "context": "…zschulen (Ersatzschulfinanzgesetz - EFG) vom 27. Juni 1961 (GV. NRW. S. 230), zuletzt geändert durch Gesetz vom 27. Januar 2004 (GV. NR…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[1].text@171:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[1].text",
+      "start": 171,
+      "end": 185,
+      "term": "GV. NRW. S. 30",
+      "context": "…S. 230), zuletzt geändert durch Gesetz vom 27. Januar 2004 (GV. NRW. S. 30), tritt zum 31. Dezember 2005 außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[2].children[0].text@51:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[2].children[0].text",
+      "start": 51,
+      "end": 71,
+      "term": "GV. NRW. 2002 S. 314",
+      "context": "Allgemeine Schulordnung (ASchO) vom 25. Juni 2002 (GV. NRW. 2002 S. 314, ber. S. 444), geändert durch Verordnung vom 8. April 2003 …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[2].children[0].text@132:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[2].children[0].text",
+      "start": 132,
+      "end": 147,
+      "term": "GV. NRW. S. 224",
+      "context": "… ber. S. 444), geändert durch Verordnung vom 8. April 2003 (GV. NRW. S. 224),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[2].children[1].text@72:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[2].children[1].text",
+      "start": 72,
+      "end": 86,
+      "term": "GV. NRW.S. 360",
+      "context": "…ber die Zusammenarbeit von Schulen (KVO) vom 24. März 1995 (GV. NRW.S. 360), zuletzt geändert durch Verordnung vom 23. Februar 2000 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[2].children[1].text@145:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[2].children[1].text",
+      "start": 145,
+      "end": 160,
+      "term": "GV. NRW. S. 290",
+      "context": "…0), zuletzt geändert durch Verordnung vom 23. Februar 2000 (GV. NRW. S. 290, ber. S. 496),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[25].children[1].children[7].children[2].children[2].text@219:protected:gazette-nrw",
+      "path": "body[25].children[1].children[7].children[2].children[2].text",
+      "start": 219,
+      "end": 234,
+      "term": "GV. NRW. S. 283",
+      "context": "…echtigten in Einzelfällen (WahlOzSchMG) vom 11. April 1979 (GV. NRW. S. 283).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].text@4:constitutional-organ-state",
+      "path": "body[26].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet."
+    },
+    {
+      "id": "body[26].text@20:rule:jurisdiction-name-bare",
+      "path": "body[26].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[28].text@4:ministry-portfolio",
+      "path": "body[28].text",
+      "start": 4,
+      "end": 44,
+      "term": "Ministerin für Schule, Jugend und Kinder",
+      "context": "Die Ministerin für Schule, Jugend und Kinder",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung."
+    },
+    {
+      "id": "body[30].title@75:protected:gazette-nrw",
+      "path": "body[30].title",
+      "start": 75,
+      "end": 90,
+      "term": "GV. NRW. S. 540",
+      "context": "…3 des 6. Schulrechtsänderungsgesetzes vom 25. Oktober 2011 (GV. NRW. S. 540))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[35].text@232:protected:gazette-nrw",
+      "path": "body[35].text",
+      "start": 232,
+      "end": 247,
+      "term": "GV. NRW. S. 278",
+      "context": "…sung des 2. Schulrechtsänderungsgesetzes vom 27. Juni 2006 (GV. NRW. S. 278) bis zum Ablauf des Schuljahres 2019/2020 und danach auslau…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[35].text@427:rule:jurisdiction-abbreviation",
+      "path": "body[35].text",
+      "start": 427,
+      "end": 430,
+      "term": "NRW",
+      "context": "… Gesetzes als Sekundarschulen gemäß § 17a des Schulgesetzes NRW geführt. In begründeten Einzelfällen sind Ausnahmen hiervon…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[36].children[0].text@92:protected:gazette-nrw",
+      "path": "body[36].children[0].text",
+      "start": 92,
+      "end": 107,
+      "term": "GV. NRW. S. 358",
+      "context": "… neu gefasst durch Artikel 3 des Gesetzes vom 29. Mai 2020 (GV. NRW. S. 358), in Kraft getreten am 3. Juni 2020.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[3].title@74:protected:gazette-nrw",
+      "path": "body[36].children[3].title",
+      "start": 74,
+      "end": 89,
+      "term": "GV. NRW. S. 331",
+      "context": "…el 2 des 14. Schulrechtsänderungsgesetzes vom 2. Juli 2019 (GV. NRW. S. 331))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[38].text@57:rule:jurisdiction-abbreviation",
+      "path": "body[38].text",
+      "start": 57,
+      "end": 60,
+      "term": "NRW",
+      "context": "Beschlüsse, die der Beirat nach § 132a des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der am 1. August …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[38].text@83:protected:gazette-nrw",
+      "path": "body[38].text",
+      "start": 83,
+      "end": 98,
+      "term": "GV. NRW. S. 102",
+      "context": "…rat nach § 132a des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der am 1. August 2012 geltenden Fassung gefasst hat, ge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[38].text@219:rule:jurisdiction-abbreviation",
+      "path": "body[38].text",
+      "start": 219,
+      "end": 222,
+      "term": "NRW",
+      "context": "…ten fort, bis die Kommission gemäß § 132a des Schulgesetzes NRW in der am 1. August 2019 geltenden Fassung andere Entscheid…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[39].text@68:rule:jurisdiction-abbreviation",
+      "path": "body[39].text",
+      "start": 68,
+      "end": 71,
+      "term": "NRW",
+      "context": "…Zusammentreten der Kommission nach § 132a des Schulgesetzes NRW in der am 1. August 2019 geltenden Fassung nimmt der Beirat…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[39].text@162:rule:jurisdiction-abbreviation",
+      "path": "body[39].text",
+      "start": 162,
+      "end": 165,
+      "term": "NRW",
+      "context": "…nden Fassung nimmt der Beirat nach § 132a des Schulgesetzes NRW in der am 1. August 2012 geltenden Fassung deren Aufgaben w…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[39].children[1].title@75:protected:gazette-nrw",
+      "path": "body[39].children[1].title",
+      "start": 75,
+      "end": 90,
+      "term": "GV. NRW. S. 358",
+      "context": "…tz 2 des 15. Schulrechtsänderungsgesetzes vom 29. Mai 2020 (GV. NRW. S. 358))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[40].text@184:rule:jurisdiction-abbreviation",
+      "path": "body[40].text",
+      "start": 184,
+      "end": 187,
+      "term": "NRW",
+      "context": "…sprechend der jeweils nach § 101 Absatz 1 des Schulgesetzes NRW erteilten oder § 132 Absatz 4 des Schulgesetzes NRW fortgel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[40].text@236:rule:jurisdiction-abbreviation",
+      "path": "body[40].text",
+      "start": 236,
+      "end": 239,
+      "term": "NRW",
+      "context": "…esetzes NRW erteilten oder § 132 Absatz 4 des Schulgesetzes NRW fortgeltenden Genehmigung übergangsweise bis längstens zum …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[40].text@541:jurisdiction-name-residual",
+      "path": "body[40].text",
+      "start": 541,
+      "end": 544,
+      "term": "NRW",
+      "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[40].children[1].title@70:protected:gazette-nrw",
+      "path": "body[40].children[1].title",
+      "start": 70,
+      "end": 85,
+      "term": "GV. NRW. S. 250",
+      "context": "… des 16. Schulrechtsänderungsgesetzes vom 23. Februar 2022 (GV. NRW. S. 250))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[40].children[2].text@74:protected:gazette-nrw",
+      "path": "body[40].children[2].text",
+      "start": 74,
+      "end": 89,
+      "term": "GV. NRW. S. 358",
+      "context": "…tz 2 des 15. Schulrechtsänderungsgesetzes vom 29. Mai 2020 (GV. NRW. S. 358) wird wie folgt gefasst:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[40].children[3].text@189:rule:jurisdiction-abbreviation",
+      "path": "body[40].children[3].text",
+      "start": 189,
+      "end": 192,
+      "term": "NRW",
+      "context": "…sprechend der jeweils nach § 101 Absatz 1 des Schulgesetzes NRW erteilten oder § 132 Absatz 4 des Schulgesetzes NRW fortgel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[40].children[3].text@241:rule:jurisdiction-abbreviation",
+      "path": "body[40].children[3].text",
+      "start": 241,
+      "end": 244,
+      "term": "NRW",
+      "context": "…esetzes NRW erteilten oder § 132 Absatz 4 des Schulgesetzes NRW fortgeltenden Genehmigung fortgeführt werden und haben weit…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[40].children[3].text@481:jurisdiction-name-residual",
+      "path": "body[40].children[3].text",
+      "start": 481,
+      "end": 484,
+      "term": "NRW",
+      "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.“",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 31,
+      "manual-review": 4
+    },
+    "source-citation": {
+      "protected": 40
+    },
+    "public-body": {
+      "manual-review": 1
+    },
+    "regional-body": {
+      "manual-review": 5
+    },
+    "authority": {
+      "manual-review": 14
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
   "changes": [
     {
       "path": "meta.title",
@@ -88,15 +1382,15 @@
     },
     {
       "path": "body[23].children[4].children[4].text",
-      "rule": "jurisdiction-name-genitive",
-      "from": "Landes Nordrhein-Westfalen",
-      "to": "Landes Westdeutschland"
-    },
-    {
-      "path": "body[23].children[4].children[4].text",
       "rule": "jurisdiction-name-bare",
       "from": "Nordrhein-Westfalen",
       "to": "Westdeutschland"
+    },
+    {
+      "path": "body[23].children[4].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
     },
     {
       "path": "body[23].children[5].children[1].text",
@@ -203,24 +1497,48 @@
   ],
   "unresolved": [
     {
+      "path": "body[18].children[2].children[1].children[6].text",
+      "term": "NRW",
+      "context": "…t sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[2].children[1].children[3].children[5].text",
+      "term": "Unfallkasse Nordrhein-Westfalen",
+      "context": "die Unfallkasse Nordrhein-Westfalen,",
+      "category": "public-body",
+      "decision": "manual-review",
+      "reason": "Körperschaft oder Anstalt mit regionaler Bezeichnung des Herkunftslandes – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "manualDecisionRequired": true
+    },
+    {
       "path": "body[21].children[0].children[3].text",
       "term": "Landschaftsverbände",
       "context": "Die Landschaftsverbände sind Träger der Förderschulen mit dem Förderschwerpunkt Hör…",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     },
     {
       "path": "body[21].children[0].children[6].text",
       "term": "Landschaftsverbände",
       "context": "…neter Schulbetrieb gewährleistet ist. Gemeinden, Kreise und Landschaftsverbände sind berechtigt, Klinikschulen zu errichten und fortzuführe…",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     },
     {
       "path": "body[21].children[3].children[1].text",
       "term": "Landschaftsverbände",
       "context": "Soweit Gemeinden, Kreise und Landschaftsverbände Schulträgeraufgaben nach § 78 zu erfüllen haben, sind sie v…",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -228,13 +1546,17 @@
       "term": "Bezirksregierung",
       "context": "Obere Schulaufsichtsbehörde ist die Bezirksregierung. Sie nimmt in ihrem Gebiet die Schulaufsicht über die Schul…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
       "path": "body[22].children[3].children[1].text",
       "term": "Landschaftsverband",
       "context": "… Einrichtungen der erzieherischen Hilfe im Benehmen mit dem Landschaftsverband aus.",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -242,6 +1564,8 @@
       "term": "Bezirksregierung",
       "context": "… Schulaufsicht erforderlich ist, kann das Ministerium einer Bezirksregierung die Ausübung der Schulaufsicht in einem bestimmten Aufgaben…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -249,6 +1573,26 @@
       "term": "Bezirksregierungen",
       "context": "…abengebiet auch für den Bereich einer oder mehrerer anderer Bezirksregierungen durch Rechtsverordnung übertragen. Dies gilt insbesondere f…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[1].children[1].children[9].text",
+      "term": "Finanzministerium",
+      "context": "…derer Umstände kann das Ministerium im Einvernehmen mit dem Finanzministerium einer längeren Ermäßigung der Eigenleistung zustimmen, wenn…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[1].children[1].children[11].text",
+      "term": "Finanzministerium",
+      "context": "…ungen der Absätze 7 und 8 auf Dauer im Einvernehmen mit dem Finanzministerium festlegen. Dies setzt voraus, dass ein besonderes Landesint…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
       "manualDecisionRequired": true
     },
     {
@@ -256,6 +1600,8 @@
       "term": "Landesamt für Besoldung",
       "context": "…ule werden vom Land ohne Abzug einer Eigenleistung über das Landesamt für Besoldung und Versorgung festgesetzt und zahlbar gemacht.",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -263,6 +1609,8 @@
       "term": "Bezirksregierung",
       "context": "…ilfeangelegenheiten an Ersatzschulen die örtlich zuständige Bezirksregierung,",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -270,6 +1618,17 @@
       "term": "Landesamt für Besoldung",
       "context": "…iten der Planstelleninhaberinnen und Planstelleninhaber das Landesamt für Besoldung und Versorgung, zusätzlich deren Beihilfeangelegenheiten, s…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[2].children[2].children[4].text",
+      "term": "NRW",
+      "context": "…Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungs…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
       "manualDecisionRequired": true
     },
     {
@@ -277,6 +1636,8 @@
       "term": "Landesamt für Ausbildungsförderung sowie den Ausbildungsbetrieben",
       "context": "…m Landesjugendamt, den Ämtern für Ausbildungsförderung, dem Landesamt für Ausbildungsförderung sowie den Ausbildungsbetrieben der Schülerinnen und Schüler an Berufskollegs nur übermitte…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -284,6 +1645,8 @@
       "term": "Landesbetrieb Information",
       "context": "…onymisierte Leistungsdaten der Schülerinnen und Schüler dem Landesbetrieb Information und Technik regelmäßig übermittelt werden sowie für Maßnahm…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -291,6 +1654,8 @@
       "term": "Landesbetrieb Information",
       "context": "…n Studienseminaren an die Schulaufsichtsbehörden und an den Landesbetrieb Information und Technik übermittelt werden. Verhaltensdaten von Lehreri…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -298,6 +1663,8 @@
       "term": "Landesbetrieb Information",
       "context": "…behörden gespeicherten Daten der Lehrerinnen und Lehrer dem Landesbetrieb Information und Technik regelmäßig übermittelt und zur Erstellung einer…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -305,6 +1672,8 @@
       "term": "Landesbetrieb Information",
       "context": "…atistische Aufbereitungen übermittelt werden, sind sie beim Landesbetrieb Information und Technik zu löschen, sobald die Überprüfung der Erhebung…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -312,6 +1681,8 @@
       "term": "Landesamt für Besoldung",
       "context": "…n Daten des im Landesdienst stehenden Schulpersonals an das Landesamt für Besoldung und Versorgung regelmäßig übermittelt und für diesen Zweck …",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -319,13 +1690,17 @@
       "term": "Landesamt für Besoldung",
       "context": "… personenbezogener Daten für Versorgungsempfänger durch das Landesamt für Besoldung und Versorgung des Landes und für die Übertragung der Beihi…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
       "path": "body[25].children[1].children[1].children[2].text",
       "term": "Landschaftsverbände",
       "context": "Für die Lehrerinnen und Lehrer an den Schulen der Landschaftsverbände, die keine Förderschulen und Klinikschulen sind, gilt Absat…",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -333,6 +1708,8 @@
       "term": "Bezirksregierung",
       "context": "…tte. Das Nähere regelt die Satzung, die der Genehmigung der Bezirksregierung Arnsberg als oberer Schulaufsichtsbehörde bedarf.",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
@@ -340,25 +1717,335 @@
       "term": "Arnsberg",
       "context": "…egelt die Satzung, die der Genehmigung der Bezirksregierung Arnsberg als oberer Schulaufsichtsbehörde bedarf.",
       "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation.",
       "manualDecisionRequired": true
     },
     {
       "path": "body[28].text",
-      "term": "Ministerin für Schule",
+      "term": "Ministerin für Schule, Jugend und Kinder",
       "context": "Die Ministerin für Schule, Jugend und Kinder",
       "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[40].text",
+      "term": "NRW",
+      "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[40].children[3].text",
+      "term": "NRW",
+      "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.“",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
       "manualDecisionRequired": true
     }
   ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 2491,
+    "residuals": [
+      {
+        "path": "body[14].children[1].children[3].children[3].text",
+        "term": "NRW",
+        "context": "…satz 5 des Kinderbildungsgesetzes vom 3. Dezember 2019 (GV. NRW. S. 877) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[17].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…t § 18 des Kinderbildungsgesetzes vom 3. Dezember 2019 (GV. NRW. S. 894) in der jeweils geltenden Fassung gewährleistet ist…",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[0].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…tellungsgesetzes Westdeutschland vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils geltenden Fassung in Verbindung mit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[0].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…rstützungsverordnung Westdeutschland vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[2].children[1].children[6].text",
+        "term": "NRW",
+        "context": "…t sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.",
+        "status": "documented",
+        "detectionId": "body[18].children[2].children[1].children[6].text@94:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[19].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…tz 3 und 4 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung keine Anwendung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[4].children[5].children[5].text",
+        "term": "NRW",
+        "context": "…f Grundlage der Laufbahnverordnung vom 28. Januar 2014 (GV. NRW. S. 22, ber. S. 203) in der jeweils geltenden Fassung im Ei…",
+        "status": "protected"
+      },
+      {
+        "path": "body[22].children[0].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…bsatz 1 des Lehrerausbildungsgesetzes vom 12. Mai 2009 (GV. NRW. S. 308) in der jeweils geltenden Fassung (Zentren),",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[0].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…tellungsgesetzes Westdeutschland vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils geltenden Fassung in Verbindung mit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[0].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…rstützungsverordnung Westdeutschland vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[1].children[10].children[3].text",
+        "term": "NRW",
+        "context": "…ulen (Ersatzschulfinanzgesetz - EFG) vom 27. Juni 1961 (GV. NRW. S. 230) in der bis zum 31. Dezember 2005 geltenden Fassung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[2].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungs…",
+        "status": "documented",
+        "detectionId": "body[24].children[2].children[2].children[4].text@348:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[25].children[1].children[4].children[0].text",
+        "term": "NRW",
+        "context": "…unen in Westdeutschland (EntlKommG) vom 29. April 2003 (GV. NRW. S. 254) bleiben unberührt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…chulen (Schulentwicklungsgesetz) vom 27. November 2001 (GV. NRW. S. 811) und die Verordnung zur Durchführung des Modellvorh…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…nung „Selbstständige Schule“- VOSS) vom 12. April 2002 (GV. NRW. S. 122) bleiben unberührt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…chland (Schulordnungsgesetz – SchOG) vom 8. April 1952 (GV. NRW. S. 61), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…S. 61), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[1].text",
+        "term": "NRW",
+        "context": "… in der Fassung der Bekanntmachung vom 18. Januar 1985 (GV. NRW. S. 155, ber. S. 477), zuletzt geändert durch Gesetz vom 8.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…. 477), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[2].text",
+        "term": "NRW",
+        "context": "… in der Fassung der Bekanntmachung vom 2. Februar 1980 (GV. NRW. S. 164), zuletzt geändert durch Gesetz vom 8. Juli 2003 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…. 164), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…Schulmitwirkungsgesetz (SchMG) - vom 13. Dezember 1977 (GV. NRW. S. 448), zuletzt geändert durch Gesetz vom 8. Juli 2003 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…. 448), zuletzt geändert durch Gesetz vom 8. Juli 2003 (GV. NRW. S. 413),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…) in der Fassung der Bekanntmachung vom 17. April 1970 (GV. NRW. S. 288), zuletzt geändert durch Gesetz vom 17. Dezember 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…), zuletzt geändert durch Gesetz vom 17. Dezember 2003 (GV. NRW. S. 808),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[5].text",
+        "term": "NRW",
+        "context": "…G) in der Fassung der Bekanntmachung vom 24. März 1982 (GV. NRW. S. 165), geändert durch Gesetz vom 29. April 2003 (GV. NRW…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[0].children[5].text",
+        "term": "NRW",
+        "context": "…NRW. S. 165), geändert durch Gesetz vom 29. April 2003 (GV. NRW. S. 254).",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…ulen (Ersatzschulfinanzgesetz - EFG) vom 27. Juni 1961 (GV. NRW. S. 230), zuletzt geändert durch Gesetz vom 27. Januar 2004…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…30), zuletzt geändert durch Gesetz vom 27. Januar 2004 (GV. NRW. S. 30), tritt zum 31. Dezember 2005 außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[2].children[0].text",
+        "term": "NRW",
+        "context": "Allgemeine Schulordnung (ASchO) vom 25. Juni 2002 (GV. NRW. 2002 S. 314, ber. S. 444), geändert durch Verordnung vom 8…",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…. S. 444), geändert durch Verordnung vom 8. April 2003 (GV. NRW. S. 224),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…die Zusammenarbeit von Schulen (KVO) vom 24. März 1995 (GV. NRW.S. 360), zuletzt geändert durch Verordnung vom 23. Februar …",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…zuletzt geändert durch Verordnung vom 23. Februar 2000 (GV. NRW. S. 290, ber. S. 496),",
+        "status": "protected"
+      },
+      {
+        "path": "body[25].children[1].children[7].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…igten in Einzelfällen (WahlOzSchMG) vom 11. April 1979 (GV. NRW. S. 283).",
+        "status": "protected"
+      },
+      {
+        "path": "body[30].title",
+        "term": "NRW",
+        "context": "…s 6. Schulrechtsänderungsgesetzes vom 25. Oktober 2011 (GV. NRW. S. 540))",
+        "status": "protected"
+      },
+      {
+        "path": "body[35].text",
+        "term": "NRW",
+        "context": "… des 2. Schulrechtsänderungsgesetzes vom 27. Juni 2006 (GV. NRW. S. 278) bis zum Ablauf des Schuljahres 2019/2020 und danac…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[0].text",
+        "term": "NRW",
+        "context": "… gefasst durch Artikel 3 des Gesetzes vom 29. Mai 2020 (GV. NRW. S. 358), in Kraft getreten am 3. Juni 2020.",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[3].title",
+        "term": "NRW",
+        "context": "… des 14. Schulrechtsänderungsgesetzes vom 2. Juli 2019 (GV. NRW. S. 331))",
+        "status": "protected"
+      },
+      {
+        "path": "body[38].text",
+        "term": "NRW",
+        "context": "…ach § 132a des Schulgesetzes West vom 15. Februar 2005 (GV. NRW. S. 102) in der am 1. August 2012 geltenden Fassung gefasst…",
+        "status": "protected"
+      },
+      {
+        "path": "body[39].children[1].title",
+        "term": "NRW",
+        "context": "… des 15. Schulrechtsänderungsgesetzes vom 29. Mai 2020 (GV. NRW. S. 358))",
+        "status": "protected"
+      },
+      {
+        "path": "body[40].text",
+        "term": "NRW",
+        "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.",
+        "status": "documented",
+        "detectionId": "body[40].text@541:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[40].children[1].title",
+        "term": "NRW",
+        "context": "… 16. Schulrechtsänderungsgesetzes vom 23. Februar 2022 (GV. NRW. S. 250))",
+        "status": "protected"
+      },
+      {
+        "path": "body[40].children[2].text",
+        "term": "NRW",
+        "context": "… des 15. Schulrechtsänderungsgesetzes vom 29. Mai 2020 (GV. NRW. S. 358) wird wie folgt gefasst:",
+        "status": "protected"
+      },
+      {
+        "path": "body[40].children[3].text",
+        "term": "NRW",
+        "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.“",
+        "status": "documented",
+        "detectionId": "body[40].children[3].text@481:jurisdiction-name-residual"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Schulgesetz für das Land Nordrhein-Westfalen vom 15. Februar 2005 (GV NRW. S. 102)",
+    "sourceVersion": "Schulgesetz für das Land Nordrhein-Westfalen vom 15. Februar 2005 (GV NRW. S. 102)",
+    "simulation": "Schulgesetz für das Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
   "protectedFields": [
     "meta.sourceReferences",
-    "meta.initialCitation",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
     "meta.externalIdentifiers",
     "version.sourceReferences",
     "version.sourceNotes",
     "version.sourceValidFrom",
     "version.sourceValidTo",
-    "history.entries[0].citation",
+    "version.sourceCitation",
     "history.entries[0].note"
   ],
   "integrity": {
@@ -447,5 +2134,5 @@
       ]
     }
   },
-  "generatedAt": "2026-09-15T17:02:38.219Z"
+  "generatedAt": "2026-09-15T18:52:41.354Z"
 }

@@ -28,14 +28,15 @@ const RELATION_LABELS: Record<string, string> = {
       <dt>{VOCABULARY.validity.label}</dt><dd>{view.statusLabel}</dd>
       <dt>Jurisdiktion</dt><dd>{view.jurisdiction.name} ({view.jurisdiction.shortName})</dd>
       <dt>{VOCABULARY.baselineLabel}</dt><dd>{formatDate(view.jurisdiction.baselineDate)}</dd>
-      <dt>Dokumentdatum</dt><dd>{formatDate(meta.documentDate)}</dd>
+      <dt>Ausfertigungs- oder Erlassdatum</dt><dd>{formatDate(meta.documentDate)}</dd>
       <dt>Verkündungsdatum</dt><dd>{formatDate(meta.publicationDate)}</dd>
       <dt>Inkrafttreten</dt><dd>{formatDate(meta.effectiveDate)}</dd>
       <dt>Außerkrafttreten</dt><dd>{formatDate(meta.expiryDate)}</dd>
-      <dt>Fundstelle (Stammfassung)</dt><dd>{meta.initialCitation}</dd>
-      <dt>Fundstelle (Fassung)</dt><dd>{view.version.citation}</dd>
-      <dt>Erlassorgan</dt><dd>{meta.enactingBody ?? '–'}</dd>
-      {meta.originEnactingBody && <><dt>Ursprungsorgan (Quelle)</dt><dd>{meta.originEnactingBody}</dd></>}
+      <dt>Fundstelle (Simulation)</dt><dd>{view.version.citation}</dd>
+      {meta.initialCitation !== view.version.citation && <><dt>Fundstelle der Stammfassung</dt><dd>{meta.initialCitation}</dd></>}
+      <dt>Fundstelle der Quelle</dt><dd>{view.version.sourceCitation ?? meta.sourceCitation ?? '–'}</dd>
+      <dt>Erlassorgan</dt><dd>{meta.enactingBody ?? (meta.originEnactingBody ? 'nicht übergeleitet – siehe Erlassorgan der Quelle' : 'nicht angegeben')}</dd>
+      {meta.originEnactingBody && <><dt>Erlassorgan der Quelle</dt><dd>{meta.originEnactingBody}</dd></>}
       <dt>Zuständige Stelle</dt><dd>{meta.responsibleBody ?? '–'}</dd>
       <dt>Sachgebiete</dt><dd>{meta.subjects.join(', ') || '–'}</dd>
       <dt>Schlagwörter</dt><dd>{meta.keywords.join(', ') || '–'}</dd>
@@ -49,7 +50,8 @@ const RELATION_LABELS: Record<string, string> = {
       <dt>Simulationsgeltung ab</dt><dd>{formatDate(view.version.simulationValidFrom)}</dd>
       <dt>Simulationsgeltung bis</dt><dd>{view.version.simulationValidTo ? formatDate(view.version.simulationValidTo) : 'offen'}</dd>
       <dt>Quellfassung gültig ab</dt><dd>{formatDate(view.version.sourceValidFrom)}</dd>
-      <dt>Quellfassung gültig bis</dt><dd>{formatDate(view.version.sourceValidTo)}</dd>
+      <dt>Quellfassung gültig bis</dt><dd>{view.version.sourceValidTo ? formatDate(view.version.sourceValidTo) : (view.version.sourceValidFrom ? 'offen oder nicht belegt' : '–')}</dd>
+      {view.version.sourceStatus && <><dt>{VOCABULARY.sourceStatus.label}</dt><dd>{VOCABULARY.sourceStatus.validity[view.version.sourceStatus.validity]}; {VOCABULARY.sourceStatus.text[view.version.sourceStatus.text]}{view.version.sourceStatus.note && <><br /><span class="muted">{view.version.sourceStatus.note}</span></>}</dd></>}
       <dt>Änderungshinweis</dt><dd>{view.version.changeNote}</dd>
     </dl>
   </div>

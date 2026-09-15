@@ -1,4 +1,4 @@
-import type { NormStatus, NormType } from './schema.ts';
+import type { NormStatus, NormType, SourceTextStatus, SourceValidityStatus } from './schema.ts';
 import type { VersionTemporalKind } from './versions.ts';
 
 /**
@@ -38,6 +38,10 @@ export const VOCABULARY = {
     gesetz: 'Gesetz',
     verordnung: 'Verordnung',
     verwaltungsvorschrift: 'Verwaltungsvorschrift',
+    'allgemeine-verwaltungsvorschrift': 'Allgemeine Verwaltungsvorschrift',
+    runderlass: 'Runderlass',
+    richtlinie: 'Richtlinie',
+    durchfuehrungserlass: 'Durchführungserlass',
     foerderrichtlinie: 'Förderrichtlinie',
     allgemeinverfuegung: 'Allgemeinverfügung',
     bekanntmachung: 'Bekanntmachung',
@@ -48,6 +52,23 @@ export const VOCABULARY = {
     aenderungsvorschrift: 'Änderungsvorschrift',
     satzung: 'Satzung',
   } satisfies Record<NormType, string>,
+  sourceStatus: {
+    label: 'Quellenlage',
+    validity: {
+      exact: 'Quellintervall ausdrücklich belegt',
+      'verified-active-at-baseline': 'Geltung am Ausgangsrechtsstand durch Belege nachgewiesen',
+      reconstructed: 'Quellintervall aus Änderungsbelegen hergeleitet',
+    } satisfies Record<SourceValidityStatus, string>,
+    text: {
+      direct: 'Text unverändert aus der Quellfassung übernommen',
+      reconstructed: 'Stichtagsfassung rekonstruiert',
+    } satisfies Record<SourceTextStatus, string>,
+    reconstructedHint: 'Stichtagsfassung rekonstruiert',
+  },
+  typeFilter: {
+    all: 'Alle',
+    administrativeFamily: 'Verwaltungsvorschriften (alle Arten)',
+  },
   history: {
     initial: 'Stammfassung',
     amendment: 'Änderung',

@@ -13,9 +13,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { loadNorm } from '@landesrecht/legal-core/lib/loader.ts';
 import { getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
-import type { FetchedDocument, RechtNrwFetcher } from '@landesrecht/importer-recht-nrw/fetcher.ts';
-import { readManifest } from '@landesrecht/importer-recht-nrw/manifest.ts';
-import { importRechtNrwNorm, type ImportResult } from '@landesrecht/importer-recht-nrw/pipeline.ts';
+import type { FetchedDocument, RechtNrwFetcher } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
+import { readManifest } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
+import { importRechtNrwNorm, type ImportResult } from '@landesrecht/importer-recht-nrw/lrgv/pipeline.ts';
 import { createD1NormStore } from '@landesrecht/runtime/d1-store.ts';
 import { buildProjectionPlan } from '@landesrecht/runtime/projection.ts';
 import { checkSearchIndexIntegrity, executePlan, openSqliteD1 } from '@landesrecht/runtime/sqlite-d1.ts';
@@ -52,7 +52,7 @@ beforeAll(async () => {
   await mkdir(join(root, 'packages', 'legal-core'), { recursive: true });
   await writeFile(join(root, 'package.json'), '{"name":"tmp"}');
   // Vorhandene Fixture-Norm (Slug-Kollision bleibt ausgeschlossen, Projektion enthält beide).
-  await cp(join(repoRoot, 'content', 'norms', 'west', 'schulgesetz-west'), join(root, 'content', 'norms', 'west', 'schulgesetz-west'), { recursive: true });
+  await cp(join(repoRoot, 'content', 'norms', 'west', 'testfixture-schulgesetz-west'), join(root, 'content', 'norms', 'west', 'testfixture-schulgesetz-west'), { recursive: true });
 });
 afterAll(async () => {
   await rm(root, { recursive: true, force: true });
@@ -71,7 +71,7 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     expect(fetcher.requested).toEqual([LATER_URL, BASELINE_URL, TEXT_URL]);
     expect(result.record?.meta.slug).toBe('testg-west');
     expect(result.writtenFiles).toEqual([]);
-    expect(await readdir(join(root, 'content', 'norms', 'west'))).toEqual(['schulgesetz-west']);
+    expect(await readdir(join(root, 'content', 'norms', 'west'))).toEqual(['testfixture-schulgesetz-west']);
     expect(result.findings.filter((finding) => finding.severity === 'error')).toEqual([]);
     expect(result.integrity?.fetchParse.ok).toBe(true);
     expect(result.projection?.norms).toBe(2);
@@ -128,13 +128,13 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
 
   it('projiziert die importierte Norm nach D1 und findet sie in der Volltextsuche mit Strukturadresse', async () => {
     const record = await loadNorm('west', 'testg-west', root);
-    const fixture = await loadNorm('west', 'schulgesetz-west', root);
+    const fixture = await loadNorm('west', 'testfixture-schulgesetz-west', root);
     const db = await openSqliteD1(':memory:', { migrationsDir: join(repoRoot, 'data', 'd1') });
     executePlan(db, buildProjectionPlan([record, fixture], { jurisdiction: 'west', full: true, now: '2026-01-01T00:00:00.000Z' }));
     checkSearchIndexIntegrity(db);
     const store = createD1NormStore(db, 'west');
     const summaries = await store.listNormSummaries();
-    expect(summaries.map((summary) => summary.slug)).toEqual(['schulgesetz-west', 'testg-west']);
+    expect(summaries.map((summary) => summary.slug)).toEqual(['testfixture-schulgesetz-west', 'testg-west']);
     const hit = await store.search(createSearchState({ q: 'Prüfung des Landesrechts' }));
     expect(hit.hits.map((entry) => [entry.slug, entry.unit?.anchor])).toEqual([['testg-west', 'paragraph-1']]);
     const reference = await store.search(createSearchState({ q: '§ 2 Absatz 2 TestG' }));
@@ -151,7 +151,8 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     expect(result.record?.meta.slug).toBe('testvo-west');
     expect(result.record?.meta.type).toBe('verordnung');
     expect(result.record?.meta.abbr).toBe('TestVO West');
-    expect(result.record?.meta.initialCitation).toBe('Testverordnung Nordrhein-Westfalen vom 16. November 2006 (GV. NRW. 2006 S. 516)');
+    expect(result.record?.meta.sourceCitation).toBe('Testverordnung Nordrhein-Westfalen vom 16. November 2006 (GV. NRW. 2006 S. 516)');
+    expect(result.record?.meta.initialCitation).toBe('Testverordnung Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)');
     expect(result.record?.versions[0]!.sourceValidTo).toBeUndefined();
     const body = result.record!.versions[0]!.body;
     const annexes = body.filter((block) => block.type === 'annex');
@@ -165,7 +166,9 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
   it('bricht bei Vorschriften außerhalb von LRGV und bei Datenfehlern fail-closed ab', async () => {
     const outside = await importRechtNrwNorm({ url: 'https://recht.nrw.de/lrmb/verwaltungsvorschrift/irgendwas', root, fetcher: fakeFetcher({}), now });
     expect(outside.status).toBe('failed');
-    expect(outside.findings[0]?.code).toBe('invalid-url');
+    expect(outside.findings[0]?.code).toBe('not-lrgv');
+    const invalid = await importRechtNrwNorm({ url: 'https://example.org/lrgv/gesetz/01012020-x', root, fetcher: fakeFetcher({}), now });
+    expect(invalid.findings[0]?.code).toBe('invalid-url');
     const broken = (await readFile(join(fixtures, 'version-page-native.html'), 'utf8')).replace('<div class="field__label">Gültig ab</div><div class="field__item"> 30.03.2018 </div></div>', '<div class="field__label">Gültig ab</div><div class="field__item"> 30.03.2018 </div></div><div class="info-box-item"><div class="field__label">Gültig bis</div><div class="field__item"> 29.03.2018 </div></div>');
     await writeFile(join(fixtures, '.tmp-broken.html'), broken);
     try {

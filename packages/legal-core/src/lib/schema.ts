@@ -18,6 +18,10 @@ export const NORM_TYPES = [
   'gesetz',
   'verordnung',
   'verwaltungsvorschrift',
+  'allgemeine-verwaltungsvorschrift',
+  'runderlass',
+  'richtlinie',
+  'durchfuehrungserlass',
   'foerderrichtlinie',
   'allgemeinverfuegung',
   'bekanntmachung',
@@ -28,6 +32,33 @@ export const NORM_TYPES = [
   'aenderungsvorschrift',
   'satzung',
 ] as const;
+
+/** Normtypen, die fachlich zur Familie der Verwaltungsvorschriften gehören (Filter „Verwaltungsvorschrift“). */
+export const ADMINISTRATIVE_REGULATION_TYPES = [
+  'verwaltungsvorschrift',
+  'allgemeine-verwaltungsvorschrift',
+  'runderlass',
+  'richtlinie',
+  'durchfuehrungserlass',
+  'foerderrichtlinie',
+] as const;
+
+/** Erweitert einen Typfilter: „verwaltungsvorschrift“ umfasst die ganze Familie der Verwaltungsvorschriften. */
+export function expandNormTypeFilter(types: readonly NormType[]): NormType[] {
+  const expanded = new Set<NormType>(types);
+  if (expanded.has('verwaltungsvorschrift')) for (const type of ADMINISTRATIVE_REGULATION_TYPES) expanded.add(type);
+  return [...expanded];
+}
+
+/**
+ * Status der realen Quellfassung einer übernommenen Fassung (Provenienz, nie geltungsrelevant):
+ *   exact                        Quellintervall ausdrücklich belegt (z. B. RECHT.NRW „Gültig ab/bis“)
+ *   verified-active-at-baseline  Geltung am Stichtag durch Belege nachgewiesen, Intervall nur teilweise belegt
+ *   reconstructed                Intervall aus Änderungsbelegen rekonstruiert
+ */
+export const SOURCE_VALIDITY_STATUSES = ['exact', 'verified-active-at-baseline', 'reconstructed'] as const;
+/** direct: Text unverändert aus einer Quellfassung; reconstructed: Stichtagsfassung aus Basis + Änderungen rekonstruiert. */
+export const SOURCE_TEXT_STATUSES = ['direct', 'reconstructed'] as const;
 
 export const NORM_STATUSES = [
   'in-force',
@@ -148,6 +179,16 @@ export type SourceAvailability = (typeof SOURCE_AVAILABILITIES)[number];
 export type SourceRole = (typeof SOURCE_ROLES)[number];
 export type MediaType = (typeof MEDIA_TYPES)[number];
 export type NormRelationType = (typeof NORM_RELATION_TYPES)[number];
+export type SourceValidityStatus = (typeof SOURCE_VALIDITY_STATUSES)[number];
+export type SourceTextStatus = (typeof SOURCE_TEXT_STATUSES)[number];
+
+/** Quellenlage einer übernommenen Fassung (für Anzeige und Audit; ändert keine Geltung). */
+export interface VersionSourceStatus {
+  validity: SourceValidityStatus;
+  text: SourceTextStatus;
+  /** Öffentlicher Kurzhinweis zur Quellenlage, z. B. Rekonstruktionspfad. */
+  note?: string;
+}
 
 /**
  * Generischer externer Identifikator. Ersetzt Einzelspalten wie `revosax_law_id`:
@@ -233,8 +274,13 @@ export interface NormMeta {
   subjects: string[];
   primarySubject?: string;
   keywords: string[];
-  /** Fundstelle der Stammfassung (Vollzitat). */
+  /** Fundstelle der Stammfassung in der Simulation (Vollzitat der Simulationsjurisdiktion). */
   initialCitation: string;
+  /**
+   * Fundstelle der realen Quelle (z. B. „… vom 5. April 2005 (GV. NRW. S. 102)“). Provenienz;
+   * wird nie transformiert. Fehlt bei eigenen Vorschriften der Simulation.
+   */
+  sourceCitation?: string;
   /** Redaktionelle Kurzbeschreibung; `summarySource: derived` wird nicht öffentlich gerendert. */
   summary?: string;
   summarySource?: 'derived' | 'editorial';
@@ -288,7 +334,12 @@ export interface NormVersion {
   shortTitle?: string;
   abbr?: string;
   summary?: string;
+  /** Fundstelle dieser Fassung in der Simulation. */
   citation: string;
+  /** Fundstelle/Vollzitat der übernommenen realen Quellfassung (Provenienz, nie transformiert). */
+  sourceCitation?: string;
+  /** Quellenlage der übernommenen Fassung (exakt, am Stichtag nachgewiesen, rekonstruiert). */
+  sourceStatus?: VersionSourceStatus;
   changeNote: string;
   sourceReferences?: SourceReference[];
   sourceNotes?: NormSourceNote[];
@@ -572,6 +623,7 @@ export function parseNormMeta(value: unknown, path = 'meta.json'): NormMeta {
     primarySubject,
     keywords: expectStringArray(object.keywords, `${path}.keywords`),
     initialCitation: expectString(object.initialCitation, `${path}.initialCitation`),
+    sourceCitation: expectOptionalString(object.sourceCitation, `${path}.sourceCitation`),
     summary: expectOptionalString(object.summary, `${path}.summary`),
     summarySource: object.summarySource === undefined
       ? undefined
@@ -719,6 +771,18 @@ export function parseNormVersion(value: unknown, path = 'version.json'): NormVer
   if (abbr !== undefined) version.abbr = abbr;
   const summary = expectOptionalString(object.summary, `${path}.summary`);
   if (summary !== undefined) version.summary = summary;
+  const sourceCitation = expectOptionalString(object.sourceCitation, `${path}.sourceCitation`);
+  if (sourceCitation !== undefined) version.sourceCitation = sourceCitation;
+  if (object.sourceStatus !== undefined) {
+    const status = expectObject(object.sourceStatus, `${path}.sourceStatus`);
+    const sourceStatus: VersionSourceStatus = {
+      validity: expectEnumValue(status.validity, `${path}.sourceStatus.validity`, SOURCE_VALIDITY_STATUSES),
+      text: expectEnumValue(status.text, `${path}.sourceStatus.text`, SOURCE_TEXT_STATUSES),
+    };
+    const note = expectOptionalString(status.note, `${path}.sourceStatus.note`);
+    if (note !== undefined) sourceStatus.note = note;
+    version.sourceStatus = sourceStatus;
+  }
   if (object.sourceReferences !== undefined) version.sourceReferences = parseSourceReferences(object.sourceReferences, `${path}.sourceReferences`);
   if (object.sourceNotes !== undefined) {
     version.sourceNotes = expectArray(object.sourceNotes, `${path}.sourceNotes`).map((entry, index) => parseSourceNote(entry, `${path}.sourceNotes[${index}]`));

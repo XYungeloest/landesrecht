@@ -14,6 +14,11 @@ const { view } = Astro.props;
 <NormPageShell view={view} section="quellen" title={`${VOCABULARY.sections.sources}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
   <div class="card">
     <h2>Quellen der Fassung {view.version.versionId}</h2>
+    {view.version.sourceStatus && (
+      <p><strong>{VOCABULARY.sourceStatus.label}:</strong> {VOCABULARY.sourceStatus.validity[view.version.sourceStatus.validity]}; {VOCABULARY.sourceStatus.text[view.version.sourceStatus.text]}.{view.version.sourceStatus.note && <> {view.version.sourceStatus.note}</>}</p>
+    )}
+    {(view.version.sourceCitation ?? view.record.meta.sourceCitation) && <p><strong>Fundstelle der Quelle:</strong> {view.version.sourceCitation ?? view.record.meta.sourceCitation}</p>}
+    {view.record.meta.originEnactingBody && <p><strong>Erlassorgan der Quelle:</strong> {view.record.meta.originEnactingBody}</p>}
     {view.sourceValidityText && <p>{view.sourceValidityText}. Maßgeblich für die Geltung im Portal ist allein die Simulationsgeltung ({view.validityText.toLowerCase()}).</p>}
     <SourceList sources={view.version.sourceReferences ?? []} />
   </div>

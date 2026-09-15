@@ -33,7 +33,7 @@ describe('Jurisdiktionsregister', () => {
     expect(JURISDICTIONS.baywue.pathSegment).toBe('bayern-wuerttemberg');
     expect(getJurisdictionUrl('baywue')).toBe('/bayern-wuerttemberg/');
     expect(getNormUrl('baywue', 'gemeindeordnung-baywue')).toBe('/bayern-wuerttemberg/norm/gemeindeordnung-baywue/');
-    expect(getNormVersionUrl('west', 'schulgesetz-west', '2023-12-01')).toBe('/west/norm/schulgesetz-west/version/2023-12-01/');
+    expect(getNormVersionUrl('west', 'testfixture-schulgesetz-west', '2023-12-01')).toBe('/west/norm/testfixture-schulgesetz-west/version/2023-12-01/');
     expect(getNormSubpageUrl('nsh', 'x', 'historie')).toBe('/nsh/norm/x/historie/');
     expect(getNormSubpageUrl('ost', 'x', 'daten', '2024-01-11')).toBe('/ost/norm/x/version/2024-01-11/daten/');
   });

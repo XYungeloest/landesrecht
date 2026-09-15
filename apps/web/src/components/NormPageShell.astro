@@ -39,6 +39,9 @@ const pageTitle = title ?? `${view.identity.shortTitle} (${view.jurisdiction.sho
       <dt>{VOCABULARY.legalStatus.label}</dt><dd>{view.legalStatusText}</dd>
       <dt>Gültigkeit</dt><dd>{view.validityText}</dd>
     </dl>
+    {view.version.sourceStatus?.text === 'reconstructed' && (
+      <p class="norm-head__note">{VOCABULARY.sourceStatus.reconstructedHint}: Der Text entspricht dem am {formatDate(view.jurisdiction.baselineDate)} geltenden Stand der Quelle. Herleitung und Belege unter <a href={view.subpages.find((subpage) => subpage.key === 'quellen')?.url}>{VOCABULARY.sections.sources}</a>.</p>
+    )}
   </header>
   <ul class="norm-tabs">
     {view.subpages.map((subpage) => (

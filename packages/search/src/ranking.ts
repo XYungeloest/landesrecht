@@ -5,7 +5,7 @@
  * Bewertung liefert Treffart und beste Einheit).
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import type { NormStatus, NormType } from '@landesrecht/legal-core/lib/schema.ts';
+import { expandNormTypeFilter, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import type { VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
 import { buildSearchVariants, normalizeSearchText, type QueryToken, type SearchQueryPlan, type SearchSort, type SearchState, type StructuralIntent } from './query.ts';
 import { isSyntheticUnit, type SearchDocument, type SearchUnit } from './units.ts';
@@ -186,7 +186,8 @@ export function compareHits(left: SearchHit, right: SearchHit, sort: SearchSort)
 
 export function documentMatchesFilters(document: SearchDocument, state: SearchState): boolean {
   if (state.jurisdictions.length > 0 && !state.jurisdictions.includes(document.jurisdiction)) return false;
-  if (state.types.length > 0 && !state.types.includes(document.type)) return false;
+  const types = expandNormTypeFilter(state.types);
+  if (types.length > 0 && !types.includes(document.type)) return false;
   if (state.statuses.length > 0 && !state.statuses.includes(document.status)) return false;
   if (state.subjects.length > 0 && !state.subjects.some((subject) => document.subjects.includes(subject))) return false;
   if (state.validOn) {

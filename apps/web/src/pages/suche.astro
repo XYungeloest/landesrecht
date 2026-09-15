@@ -5,13 +5,16 @@ import { JURISDICTION_LIST, getJurisdiction } from '@landesrecht/legal-core/conf
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { formatDate, referenceDateLabel, statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
-import { NORM_TYPES } from '@landesrecht/legal-core/lib/schema.ts';
+import { NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { parseSearchState } from '@landesrecht/search/query.ts';
 import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getStoreRegistry } from '../lib/runtime/context.ts';
 
 const state = parseSearchState(Astro.url.searchParams);
+/** Hauptfilter; „Verwaltungsvorschrift“ umfasst alle Arten von Verwaltungsvorschriften. */
+const PRIMARY_TYPES: NormType[] = ['gesetz', 'verordnung', 'verwaltungsvorschrift', 'runderlass', 'richtlinie'];
+const secondaryTypes = NORM_TYPES.filter((type) => !PRIMARY_TYPES.includes(type));
 const registry = await getStoreRegistry();
 const page = state.q || state.types.length > 0 || state.jurisdictions.length < JURISDICTION_LIST.length ? await registry.search(state) : null;
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=600');
@@ -42,9 +45,15 @@ function pageUrl(offset: number): string {
     </fieldset>
     <fieldset>
       <legend>Normtyp</legend>
-      {NORM_TYPES.map((type) => (
-        <label><input type="checkbox" name="type" value={type} checked={state.types.includes(type)} /> {typeLabel(type)}</label>
+      {PRIMARY_TYPES.map((type) => (
+        <label><input type="checkbox" name="type" value={type} checked={state.types.includes(type)} /> {type === 'verwaltungsvorschrift' ? VOCABULARY.typeFilter.administrativeFamily : typeLabel(type)}</label>
       ))}
+      <details open={state.types.some((type) => !PRIMARY_TYPES.includes(type))}>
+        <summary>Weitere Normtypen</summary>
+        {secondaryTypes.map((type) => (
+          <label><input type="checkbox" name="type" value={type} checked={state.types.includes(type)} /> {typeLabel(type)}</label>
+        ))}
+      </details>
     </fieldset>
     <fieldset>
       <legend>{VOCABULARY.version.label}</legend>

@@ -4,8 +4,9 @@ Dieses Verzeichnis ist der lokale Arbeitsbereich für unveränderte amtliche Roh
 (RECHT.NRW-, juris-SH-, BAYERN.RECHT- und REVOSax-Seiten, PDFs, Anlagen), bevor sie im
 R2-Quellenarchiv (`landesrecht-quellen`) abgelegt werden. Es wird nicht eingecheckt
 (`.gitignore`) – mit einer Ausnahme: `sources/recht-nrw/term-<id>/` enthält die tatsächlich
-abgerufenen Rohquellen des RECHT.NRW-Validierungskorpus (Fassungsseite, Legacy-Textdatei, Anlagen)
-mit dem SHA-256 der empfangenen Bytes im Manifest `data/imports/recht-nrw/manifest.json`.
+abgerufenen Rohquellen der RECHT.NRW-Beispielkorpora LRGV und LRMB (Fassungsseiten, Legacy-Textdateien,
+Ministerialblatt-Einträge der Änderungen, Anlagen) mit dem SHA-256 der empfangenen Bytes im Manifest
+`data/imports/recht-nrw/manifest.json`. Im Bulkimport liegen Rohquellen ausschließlich in R2.
 
 Regeln:
 

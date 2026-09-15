@@ -3,9 +3,9 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { isImportableLrgvType, normalizeVersionUrl, parseGermanDate, parseGermanLongDate, parseTaxonomyTermId, parseVersionUrl, stemIdentifier } from '@landesrecht/importer-recht-nrw/source-identity.ts';
-import { parseVersionPage } from '@landesrecht/importer-recht-nrw/version-page.ts';
-import { splitTitle, looksLikeAbbreviation } from '@landesrecht/importer-recht-nrw/normalize.ts';
+import { isImportableLrgvType, normalizeVersionUrl, parseGermanDate, parseGermanLongDate, parseTaxonomyTermId, parseVersionUrl, stemIdentifier } from '@landesrecht/importer-recht-nrw/common/source-identity.ts';
+import { parseVersionPage } from '@landesrecht/importer-recht-nrw/common/version-page.ts';
+import { splitTitle, looksLikeAbbreviation } from '@landesrecht/importer-recht-nrw/lrgv/normalize.ts';
 
 const fixtures = join(process.cwd(), 'tests', 'fixtures', 'recht-nrw');
 const fixture = (name: string): string => readFileSync(join(fixtures, name), 'utf8');
@@ -16,7 +16,8 @@ describe('Quellidentität', () => {
     expect(address).toMatchObject({ section: 'lrgv', documentType: 'gesetz', pathDate: '2023-12-16', slug: 'gesetz-ueber-den-oeffentlichen-personennahverkehr-nordrhein-westfalen-oepnvg' });
     expect(address?.url).toBe('https://recht.nrw.de/lrgv/gesetz/16122023-gesetz-ueber-den-oeffentlichen-personennahverkehr-nordrhein-westfalen-oepnvg');
     expect(parseVersionUrl('/lrgv/rechtsverordnung/27072013-verordnung-x')?.documentType).toBe('rechtsverordnung');
-    expect(parseVersionUrl('https://recht.nrw.de/lrmb/verwaltungsvorschrift/irgendwas')).toBeNull();
+    expect(parseVersionUrl('https://recht.nrw.de/lrmb/verwaltungsvorschrift/irgendwas')).toEqual({ url: 'https://recht.nrw.de/lrmb/verwaltungsvorschrift/irgendwas', section: 'lrmb', documentType: 'verwaltungsvorschrift', slug: 'irgendwas' });
+    expect(parseVersionUrl('https://recht.nrw.de/lrgv/gesetz/ohne-datum')).toBeNull();
     expect(parseVersionUrl('https://example.org/lrgv/gesetz/01012020-x')).toBeNull();
     expect(normalizeVersionUrl('/lrgv/gesetz/01012020-x/')).toBe('https://recht.nrw.de/lrgv/gesetz/01012020-x');
   });

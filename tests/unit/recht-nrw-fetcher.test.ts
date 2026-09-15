@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { createRechtNrwFetcher, decodeHtml, RechtNrwFetchError, sha256Hex } from '@landesrecht/importer-recht-nrw/fetcher.ts';
+import { createRechtNrwFetcher, decodeHtml, RechtNrwFetchError, sha256Hex } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 
 const dirs: string[] = [];
 async function tempDir(): Promise<string> {

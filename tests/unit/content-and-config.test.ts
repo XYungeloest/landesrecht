@@ -20,7 +20,7 @@ describe('Committeter Testbestand', () => {
   it('enthält je Jurisdiktion mindestens eine Norm und West zwei Fassungen', async () => {
     const norms = await loadAllNorms(root);
     for (const jurisdiction of JURISDICTION_IDS) expect(norms.some((record) => record.meta.jurisdiction === jurisdiction), jurisdiction).toBe(true);
-    const west = await loadNorm('west', 'schulgesetz-west', root);
+    const west = await loadNorm('west', 'testfixture-schulgesetz-west', root);
     expect(west.versions.map((version) => version.versionId)).toEqual(['2023-12-01', '2026-05-01']);
     expect(west.versions[0]!.sourceValidFrom).toBe('2023-08-01');
     expect(west.versions[0]!.sourceValidTo).toBe('2024-01-31');
@@ -33,11 +33,11 @@ describe('Committeter Testbestand', () => {
   it('verknüpft Verkündungen mit gespeicherten Fassungen', async () => {
     const publications = await loadJurisdictionPublications('west', root);
     expect(publications).toHaveLength(1);
-    expect(publications[0]!.entries[0]).toMatchObject({ normSlug: 'schulgesetz-west', versionId: '2026-05-01' });
+    expect(publications[0]!.entries[0]).toMatchObject({ normSlug: 'testfixture-schulgesetz-west', versionId: '2026-05-01' });
   });
 
   it('lehnt Normen im falschen Jurisdiktionsverzeichnis ab', async () => {
-    await expect(loadNorm('nsh', 'schulgesetz-west', root)).rejects.toThrow();
+    await expect(loadNorm('nsh', 'testfixture-schulgesetz-west', root)).rejects.toThrow();
   });
 });
 

@@ -5,10 +5,10 @@ import { describe, expect, it } from 'vitest';
 
 import { countBlockTypes } from '@landesrecht/legal-core/lib/body.ts';
 import { parseBodyBlocks, type NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
-import { extractFootnoteMarkers, parseDivisionHeading, parseItem, parseSubparagraph, parseUnitHeading } from '@landesrecht/importer-recht-nrw/body-common.ts';
-import { parseLegacyDocument } from '@landesrecht/importer-recht-nrw/legacy-parser.ts';
-import { parseNativeDocument } from '@landesrecht/importer-recht-nrw/native-parser.ts';
-import { parseVersionPage } from '@landesrecht/importer-recht-nrw/version-page.ts';
+import { extractFootnoteMarkers, parseDivisionHeading, parseItem, parseSubparagraph, parseUnitHeading } from '@landesrecht/importer-recht-nrw/common/body-common.ts';
+import { parseLegacyDocument } from '@landesrecht/importer-recht-nrw/common/legacy-parser.ts';
+import { parseNativeDocument } from '@landesrecht/importer-recht-nrw/common/native-parser.ts';
+import { parseVersionPage } from '@landesrecht/importer-recht-nrw/common/version-page.ts';
 
 const fixtures = join(process.cwd(), 'tests', 'fixtures', 'recht-nrw');
 const fixture = (name: string): string => readFileSync(join(fixtures, name), 'utf8');

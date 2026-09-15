@@ -6,6 +6,7 @@
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { expandNormTypeFilter } from '@landesrecht/legal-core/lib/schema.ts';
 import {
   parseNormHistory,
   parseNormMeta,
@@ -145,9 +146,10 @@ function referenceConditions(references: readonly StructuralIntent[]): { sql: st
 function filterConditions(state: SearchState, plan: SearchQueryPlan): { sql: string; params: unknown[] } {
   const clauses: string[] = [];
   const params: unknown[] = [];
-  if (state.types.length > 0) {
-    clauses.push(`n.type IN (${state.types.map(() => '?').join(', ')})`);
-    params.push(...state.types);
+  const types = expandNormTypeFilter(state.types);
+  if (types.length > 0) {
+    clauses.push(`n.type IN (${types.map(() => '?').join(', ')})`);
+    params.push(...types);
   }
   if (state.statuses.length > 0) {
     clauses.push(`n.status IN (${state.statuses.map(() => '?').join(', ')})`);

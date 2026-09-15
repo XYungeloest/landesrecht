@@ -5,7 +5,7 @@
  * neue Fassungsdatei; alte Dateien werden nie umgeschrieben. Bewusste Korrekturen (etwa
  * Berichtigungen) werden mit `--allow <jurisdiction>/<slug>/<versionId>` ausdrücklich freigegeben.
  *
- *   node scripts/check-version-immutability.ts [--base <ref>] [--allow west/schulgesetz-west/2023-12-01]
+ *   node scripts/check-version-immutability.ts [--base <ref>] [--allow west/testfixture-schulgesetz-west/2023-12-01]
  */
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';

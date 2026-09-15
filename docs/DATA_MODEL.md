@@ -20,12 +20,12 @@ Quelle der Wahrheit für Typen und Parser: `packages/legal-core/src/lib/schema.t
 ## NormMeta (Pflichtfelder fett)
 
 **id** (`<jur>:<slug>`), **slug**, **jurisdiction**, **title**, shortTitle, abbr, shortTitleSource,
-**type** (`verfassung, gesetz, verordnung, verwaltungsvorschrift, foerderrichtlinie,
+**type** (`verfassung, gesetz, verordnung, verwaltungsvorschrift, allgemeine-verwaltungsvorschrift, runderlass, richtlinie, durchfuehrungserlass, foerderrichtlinie,
 allgemeinverfuegung, bekanntmachung, berichtigung, staatsvertrag, verwaltungsabkommen,
 zustimmungsgesetz, aenderungsvorschrift, satzung`), **status** (`in-force, future-effective,
 pending-effective, repealed, historical, one-time-act, planned`), enactingBody,
 originEnactingBody, responsibleBody, **subjects**, primarySubject, **keywords**,
-**initialCitation**, summary, summarySource, documentDate, publicationDate, effectiveDate,
+**initialCitation** (Simulation), sourceCitation (reale Quelle, nie transformiert), summary, summarySource, documentDate, publicationDate, effectiveDate,
 expiryDate, dateNote, **predecessor** (Text|null), predecessorTarget, **successor**,
 successorTarget, relations (Standard `[]`), externalIdentifiers (Standard `[]`),
 sourceReferences (Standard `[]`).
@@ -33,7 +33,7 @@ sourceReferences (Standard `[]`).
 ## NormVersion
 
 **versionId**, **simulationValidFrom**, **simulationValidTo** (null = offen), sourceValidFrom,
-sourceValidTo, title, shortTitle, abbr, summary, **citation**, **changeNote**, sourceReferences,
+sourceValidTo, sourceCitation, sourceStatus (`validity: exact|verified-active-at-baseline|reconstructed`, `text: direct|reconstructed`, note), title, shortTitle, abbr, summary, **citation**, **changeNote**, sourceReferences,
 sourceNotes (`{ label, text }[]`, Quellhinweise/Fußnoten der amtlichen Fassung), **body**.
 
 `validFrom`/`validTo` ohne Präfix werden abgewiesen. Ein `isCurrent`-Flag gibt es nicht; die

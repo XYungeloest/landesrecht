@@ -1,9 +1,12 @@
 {
+  "schemaVersion": "recht-nrw-transformation-report/2",
   "source": "Nordrhein-Westfalen",
   "target": "west",
+  "sourceArea": "lrgv",
   "sourceIdentity": "term:27474",
   "slug": "lbtg-west",
   "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.0.0",
   "rules": [
     "jurisdiction-name-genitive",
     "jurisdiction-name-dative",
@@ -13,6 +16,125 @@
     "jurisdiction-name-bare",
     "jurisdiction-abbreviation"
   ],
+  "detections": [
+    {
+      "id": "body[1].children[2].children[0].text@4:regional-body-association",
+      "path": "body[1].children[2].children[0].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landschaftsverbände",
+      "context": "die Landschaftsverbände für die Anerkennung von rechtsfähigen Vereinen als Betreuun…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[1].children[2].children[1].text@4:authority-state-office",
+      "path": "body[1].children[2].children[1].text",
+      "start": 4,
+      "end": 71,
+      "term": "Landesamt für Finanzen für die Beschäftigung von Landesbediensteten",
+      "context": "das Landesamt für Finanzen für die Beschäftigung von Landesbediensteten, die als sachkundige Behördenbetreuerinnen oder Behördenbet…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+    },
+    {
+      "id": "body[1].children[3].text@4:regional-body-association",
+      "path": "body[1].children[3].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände führen bei der Wahrnehmung von Aufgaben nach diesem Gesetz …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+    },
+    {
+      "id": "body[4].children[1].text@91:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].text",
+      "start": 91,
+      "end": 110,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ch § 8 Absatz 2 des Betreuungsorganisationsgesetzes wird in Nordrhein-Westfalen seitens der Betreuungsbehörden in Modellprojekten nach § 11…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[2].text@460:protected:gazette-nrw",
+      "path": "body[9].children[2].text",
+      "start": 460,
+      "end": 475,
+      "term": "GV. NRW. S. 360",
+      "context": "…atz 2 des Konnexitätsausführungsgesetzes vom 22. Juni 2004 (GV. NRW. S. 360), das zuletzt durch Artikel 12 des Gesetzes vom 1. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].text@542:protected:gazette-nrw",
+      "path": "body[9].children[2].text",
+      "start": 542,
+      "end": 558,
+      "term": "GV. NRW. S. 1346",
+      "context": "…zuletzt durch Artikel 12 des Gesetzes vom 1. Dezember 2021 (GV. NRW. S. 1346) geändert worden ist, eine wesentliche Belastung für die Ge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].text@4:constitutional-organ-state",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet."
+    },
+    {
+      "id": "body[10].text@20:rule:jurisdiction-name-bare",
+      "path": "body[10].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "regional-body": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
   "changes": [
     {
       "path": "body[4].children[1].text",
@@ -32,7 +154,9 @@
       "path": "body[1].children[2].children[0].text",
       "term": "Landschaftsverbände",
       "context": "die Landschaftsverbände für die Anerkennung von rechtsfähigen Vereinen als Betreuun…",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -40,25 +164,61 @@
       "term": "Landesamt für Finanzen für die Beschäftigung von Landesbediensteten",
       "context": "das Landesamt für Finanzen für die Beschäftigung von Landesbediensteten, die als sachkundige Behördenbetreuerinnen oder Behördenbet…",
       "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
       "manualDecisionRequired": true
     },
     {
       "path": "body[1].children[3].text",
       "term": "Landschaftsverbände",
       "context": "Die Landschaftsverbände führen bei der Wahrnehmung von Aufgaben nach diesem Gesetz …",
-      "category": "institution",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
       "manualDecisionRequired": true
     }
   ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 68,
+    "residuals": [
+      {
+        "path": "body[9].children[2].text",
+        "term": "NRW",
+        "context": "…2 des Konnexitätsausführungsgesetzes vom 22. Juni 2004 (GV. NRW. S. 360), das zuletzt durch Artikel 12 des Gesetzes vom 1. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 12 des Gesetzes vom 1. Dezember 2021 (GV. NRW. S. 1346) geändert worden ist, eine wesentliche Belastung f…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Ausführung des Betreuungsgesetzes vom 3. April 1992 (GV. NW. S. 124)",
+    "sourceVersion": "Gesetz zur Ausführung des Betreuungsgesetzes vom 3. April 1992 (GV. NW. S. 124)",
+    "simulation": "Gesetz zur Ausführung des Betreuungsgesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
   "protectedFields": [
     "meta.sourceReferences",
-    "meta.initialCitation",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
     "meta.externalIdentifiers",
     "version.sourceReferences",
     "version.sourceNotes",
     "version.sourceValidFrom",
     "version.sourceValidTo",
-    "history.entries[0].citation",
+    "version.sourceCitation",
     "history.entries[0].note"
   ],
   "integrity": {
@@ -147,5 +307,5 @@
       ]
     }
   },
-  "generatedAt": "2026-09-15T17:02:37.387Z"
+  "generatedAt": "2026-09-15T18:52:40.909Z"
 }

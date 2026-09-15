@@ -4,6 +4,7 @@ export const prerender = false;
 import { formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { ADMINISTRATIVE_REGULATION_TYPES, expandNormTypeFilter, isNormType, NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import SearchForm from '../../components/SearchForm.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { jurisdictionFromParam } from '../../lib/norm-view.ts';
@@ -16,6 +17,15 @@ const registry = await getStoreRegistry();
 if (!registry.has(id)) return Astro.rewrite('/404');
 const store = registry.get(id);
 const [norms, stats] = await Promise.all([store.listNormSummaries(), store.getStats()]);
+const typeParam = Astro.url.searchParams.get('type') ?? '';
+const selectedType: NormType | undefined = isNormType(typeParam) ? typeParam : undefined;
+const allowedTypes = selectedType ? new Set<string>(expandNormTypeFilter([selectedType])) : undefined;
+const visibleNorms = allowedTypes ? norms.filter((norm) => allowedTypes.has(norm.type)) : norms;
+const isAdministrative = (type: NormType): boolean => (ADMINISTRATIVE_REGULATION_TYPES as readonly string[]).includes(type);
+const typeCounts = NORM_TYPES.map((type) => ({ type, count: norms.filter((norm) => norm.type === type).length })).filter((entry) => entry.count > 0);
+const administrativeCount = norms.filter((norm) => isAdministrative(norm.type)).length;
+const basePath = `/${jurisdiction.pathSegment}/`;
+const filterUrl = (type?: NormType): string => (type ? `${basePath}?type=${encodeURIComponent(type)}` : basePath);
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 ---
 <BaseLayout title={jurisdiction.name} description={`Landesrecht des ${jurisdiction.name}: Gesetze, Verordnungen und Verwaltungsvorschriften der Simulation.`} canonical={`/${jurisdiction.pathSegment}/`}>
@@ -29,9 +39,24 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
   <SearchForm state={{ jurisdictions: [id] }} />
   <section aria-labelledby="normen-heading">
     <h2 id="normen-heading">Vorhandene Normen ({stats.normCount})</h2>
-    {norms.length === 0 ? <p class="muted">Noch keine Normen im Bestand.</p> : (
+    {norms.length > 0 && (
+      <nav aria-label="Nach Normtyp filtern">
+        <ul class="type-filter">
+          <li><a href={filterUrl()} aria-current={selectedType ? undefined : 'true'}>{VOCABULARY.typeFilter.all} ({norms.length})</a></li>
+          {typeCounts.filter((entry) => !isAdministrative(entry.type)).map((entry) => (
+            <li><a href={filterUrl(entry.type)} aria-current={selectedType === entry.type ? 'true' : undefined}>{typeLabel(entry.type)} ({entry.count})</a></li>
+          ))}
+          {administrativeCount > 0 && <li><a href={filterUrl('verwaltungsvorschrift')} aria-current={selectedType === 'verwaltungsvorschrift' ? 'true' : undefined}>{VOCABULARY.typeFilter.administrativeFamily} ({administrativeCount})</a></li>}
+          {typeCounts.filter((entry) => entry.type !== 'verwaltungsvorschrift' && isAdministrative(entry.type)).map((entry) => (
+            <li><a href={filterUrl(entry.type)} aria-current={selectedType === entry.type ? 'true' : undefined}>{typeLabel(entry.type)} ({entry.count})</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+    {selectedType && <p class="muted">{visibleNorms.length} von {norms.length} Normen: {selectedType === 'verwaltungsvorschrift' ? VOCABULARY.typeFilter.administrativeFamily : typeLabel(selectedType)}.</p>}
+    {visibleNorms.length === 0 ? <p class="muted">{norms.length === 0 ? 'Noch keine Normen im Bestand.' : 'Keine Normen dieses Typs.'}</p> : (
       <ul class="hit-list">
-        {norms.map((norm) => (
+        {visibleNorms.map((norm) => (
           <li class="hit">
             <h3 class="hit__title"><a href={norm.url}>{norm.title}</a></h3>
             <p class="hit__meta">{norm.shortTitle}{norm.abbr && ` · ${norm.abbr}`} · {typeLabel(norm.type)} · {statusLabel(norm.status)} · {norm.versionCount} {norm.versionCount === 1 ? 'Fassung' : 'Fassungen'}</p>

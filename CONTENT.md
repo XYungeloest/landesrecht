@@ -24,6 +24,12 @@ Regeln:
 - Beziehungen: `relations: [{ type, target: { jurisdiction?, slug }, note?, date? }]` mit den Typen
   `amends, amended-by, repeals, repealed-by, replaces, replaced-by, implements, based-on, part-of,
   contains, refers-to, related`. Ohne `jurisdiction` liegt das Ziel in derselben Jurisdiktion.
+- Fundstellen: `initialCitation` (meta) und `citation` (Fassung) sind Fundstellen der Simulation;
+  übernommene Normen führen zusätzlich die reale Fundstelle `sourceCitation` (meta und Fassung, nie
+  transformiert). `originEnactingBody` ist das Erlassorgan der Quelle aus einer ausdrücklichen Formel,
+  `enactingBody` das Organ der Simulation (nur bei sicherer Entsprechung).
+- Quellenlage einer übernommenen Fassung: `sourceStatus: { validity: exact | verified-active-at-baseline |
+  reconstructed, text: direct | reconstructed, note? }`.
 - Externe Kennungen: `externalIdentifiers: [{ system, value, url? }]`, z. B.
   `{ "system": "revosax", "value": "4192" }`.
 - Quellen: `sourceReferences` mit `kind` (`official-portal-snapshot | official-gazette |
@@ -60,16 +66,22 @@ npm run d1:seed:local         # lokale Projektion zum Nachsehen
 
 ## Importierte Normen (RECHT.NRW → West)
 
-`content/norms/west/` enthält neben der synthetischen Fixture-Norm zwölf über den RECHT.NRW-Importer
-übernommene Stichtagsfassungen (`docs/RECHT_NRW_IMPORT.md`). Sie werden nicht von Hand bearbeitet:
-Quelle der Wahrheit für ihre Ausgangsfassung ist der Importlauf (`npm run import:recht-nrw:sample -- --write`)
-mit Manifest `data/imports/recht-nrw/manifest.json`, Transformationsreport `data/audits/recht-nrw/<slug>.json`
-und archivierten Rohquellen `sources/recht-nrw/term-<id>/`. Spätere Änderungen der Simulation entstehen als
-neue Fassungsdateien, nie durch Umschreiben von `versions/2023-12-01.json`.
+`content/norms/west/` enthält neben der synthetischen Fixture-Norm zwölf Stichtagsfassungen aus dem Bereich
+LRGV (Gesetze, Rechtsverordnungen) und acht aus dem Bereich LRMB (Verwaltungsvorschriften, davon eine
+rekonstruiert: `vv-lhundg-west`). Welche Vorschriften aufgenommen werden, regelt `docs/LEGAL_SCOPE.md`.
+Importierte Normen werden nicht von Hand bearbeitet. Quelle der Wahrheit für ihre Ausgangsfassung ist der
+Importlauf (`npm run import:recht-nrw:lrgv:sample -- --write`, `npm run import:recht-nrw:lrmb:sample -- --write`)
+mit gemeinsamem Manifest `data/imports/recht-nrw/manifest.json`, Review-Queue
+`data/imports/recht-nrw/review-queue.json`, Reports `data/audits/recht-nrw/`, Rekonstruktionsrezepten
+`data/imports/recht-nrw/reconstructions/` und archivierten Rohquellen `sources/recht-nrw/term-<id>/`.
+Spätere Änderungen der Simulation entstehen als neue Fassungsdateien, nie durch Umschreiben von
+`versions/2023-12-01.json`. Eine Neuerzeugung der Ausgangsfassungen durch den Importer (z. B. nach einer
+Schemaerweiterung) wird mit `node scripts/check-version-immutability.ts --allow west/<slug>/2023-12-01`
+ausdrücklich freigegeben; der Normkörper muss dabei unverändert bleiben (Importaudit).
 
 ## Testbestand
 
-Der synthetische Bestand: `schulgesetz-west` (zwei Fassungen,
+Der synthetische Bestand: `testfixture-schulgesetz-west` („Testfixture Schulgesetz …“, zwei Fassungen,
 Quellintervall 2023-08-01 bis 2024-01-31), `kuestenschutzgesetz-nsh`, `testverordnung-ost`
 (OstRecht-Format mit zitierter Vorschrift), `gemeindeordnung-baywue` (Artikelgliederung) und die
 Verkündung `gv-west-2026-12`. Echte Gesetzestexte werden erst über die Importpipeline übernommen.
