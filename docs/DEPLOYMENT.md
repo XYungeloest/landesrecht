@@ -60,9 +60,13 @@ npm run d1:apply:batches -- --database landesrecht-west --local --execute  # lok
 npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remote landesrecht-west [--resume]
 ```
 
+- Voraussetzung: Die Batches setzen das Schema voraus. Eine leere Datenbank zuerst mit
+  `npx wrangler d1 execute landesrecht-west --remote --config wrangler.jsonc --file ../../data/d1/0001_landesrecht.sql --yes`
+  (aus `apps/web`; lokal mit `--local`) anlegen, sonst scheitert die erste Datei mit `no such table: law_search`.
 - Aufteilung: höchstens 1 500 Anweisungen und 6 MB je Datei, einzelne Anweisungen höchstens 100 KB
   (`packages/runtime/src/sql-batches.ts`); je Norm Löschen und Neuaufbau in derselben Datei, damit ein
-  abgebrochener Lauf mit `--resume` fortgesetzt werden kann (`apply-state.json`).
+  abgebrochener Lauf mit `--resume` fortgesetzt werden kann. Protokolle je Ziel getrennt: `apply-state.json`
+  (remote) und `apply-state.local.json` (lokal) – ein lokal eingespielter Plan gilt remote nicht als eingespielt.
 - Inkrementell: `npm run d1:plan -- --jurisdiction west --incremental --since <git-ref>` oder
   `--state data/runtime/projection-state-west.remote.json` projiziert nur neue, geänderte und entfernte Normen
   (Fingerabdruck je Norm, `packages/runtime/src/incremental.ts`). Jede inkrementelle Datei beginnt mit einer
@@ -91,6 +95,17 @@ und `wrangler dev` lesen daraus. Ein Remote-Zugriff findet dabei nicht statt.
 ## Offen
 
 - Playwright-Smokes gegen den lokalen Worker (Muster: OstRecht `serve-law-worker`).
-- R2-Upload der gestagten RECHT.NRW-Rohquellen (`npm run import:recht-nrw:r2-sync -- --write`) erst mit
-  eingerichteten Zugangsdaten (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `.env.example`).
+- R2-Upload der gestagten RECHT.NRW-Rohquellen über die bestehende Wrangler-Anmeldung (`npx wrangler login`),
+  ohne zusätzliche API-Tokens oder S3-Schlüssel:
+  `npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag`
+  (wiederholbar; bereits vorhandene Objekte mit gleichem Inhalt zählen als `already-present`, anderer Inhalt ist
+  ein harter Fehler). `wrangler-api` liest das OAuth-Token aus Wranglers eigener Anmeldedatei (nur im Speicher;
+  Erneuerung über `wrangler whoami`) und ruft dieselben R2-Endpunkte direkt auf, die `wrangler r2 object` nutzt.
+  Das Cloudflare-API-Ratenlimit (≈4 Aufrufe/s im Mittel, 429 bei Bursts) begrenzt den Durchsatz, deshalb zwei
+  Prüfregime: `--verify readback` (Standard: Vorabprüfung, Upload, Byte-Rücklesung mit SHA-256 je Objekt und
+  Umschlag = 6 Aufrufe je Objekt, ≈0,6 Objekte/s) und `--verify etag` (Bucket-Listing je 1000 Objekte für
+  Vorab- und Nachprüfung über Größe und Etag = von R2 berechneter MD5 der gespeicherten Bytes, dazu 2 % zufällige
+  Byte-Rücklesungen mit SHA-256 = 2 Aufrufe je Objekt, ≈2 Objekte/s; Manifest wird je Charge erst nach der
+  Nachprüfung geschrieben). `--r2-transport wrangler` (Wrangler-Prozesse, höchstens 8 gleichzeitig) bleibt als
+  Alternative; der S3-Weg (`.env.example`) bleibt für CI dokumentiert.
 - Domain/Routes in `wrangler.jsonc` nach Festlegung der öffentlichen Site-URL.

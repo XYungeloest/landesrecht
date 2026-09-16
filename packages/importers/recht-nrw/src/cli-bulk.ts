@@ -9,14 +9,14 @@ import { join, resolve } from 'node:path';
 import { isJurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
 import type { CliOptions, Io } from './cli.ts';
-import { assertArchiveAllowed, createR2Archive, DEFAULT_R2_STAGING_DIR, R2_SOURCES_BUCKET, syncStagedObjects, type RawSourceArchive } from './common/archive.ts';
+import { assertArchiveAllowed, createR2Archive, DEFAULT_R2_STAGING_DIR, maxSyncConcurrency, R2_SOURCES_BUCKET, syncStagedObjects, type RawSourceArchive } from './common/archive.ts';
 import { createStopController, runBulkImport, type RunSummary } from './common/bulk-runner.ts';
 import { collectCoverageInput, computeCoverage, renderCoverageMarkdown, writeCoverage } from './common/coverage.ts';
 import { buildEnumeration, enumerationPath, enumerationStatusCounts, fetchSearchHits, fetchSitemapUrls, readEnumeration, SEARCH_INDEX_TYPES, writeEnumeration, type SearchHit } from './common/enumeration.ts';
 import { loadImportEnvironment } from './common/environment.ts';
 import { createRechtNrwFetcher, DEFAULT_MIN_DELAY_MS } from './common/fetcher.ts';
 import { IMPORT_DATA_DIR, readManifest, RECONSTRUCTIONS_DIR, SOURCE_AREAS, type SourceArea } from './common/manifest.ts';
-import { createMemoryR2Transport, createWranglerR2Transport, missingR2Environment, s3R2TransportFromEnv, type R2Transport } from './common/r2-transport.ts';
+import { createMemoryR2Transport, createWranglerApiR2Transport, createWranglerR2Transport, missingR2Environment, s3R2TransportFromEnv, type R2Transport } from './common/r2-transport.ts';
 import { evaluateReadiness } from './common/readiness.ts';
 import { readReviewQueue } from './common/review-queue.ts';
 import { runSearchAudit } from './common/search-audit.ts';
@@ -34,6 +34,7 @@ function requireArea(options: CliOptions): SourceArea {
 
 function resolveTransport(options: CliOptions, root: string): R2Transport | undefined {
   if (options.r2Transport === 'wrangler') return createWranglerR2Transport({ bucket: process.env.R2_BUCKET ?? R2_SOURCES_BUCKET, cwd: join(root, 'apps', 'web') });
+  if (options.r2Transport === 'wrangler-api') return createWranglerApiR2Transport({ bucket: process.env.R2_BUCKET ?? R2_SOURCES_BUCKET, cwd: join(root, 'apps', 'web') });
   return s3R2TransportFromEnv(process.env, R2_SOURCES_BUCKET);
 }
 
@@ -185,8 +186,15 @@ export async function runR2SyncCommand(options: CliOptions, root: string, io: Io
     io.error(`R2-Zugangsdaten fehlen (${missingR2Environment(process.env).join(', ')}); kein Upload.`);
     return 1;
   }
-  const result = await syncStagedObjects({ root, manifest, transport, stagingDir: resolve(root, options.stagingDir ?? DEFAULT_R2_STAGING_DIR), dryRun: !options.write, ...(options.limit !== undefined ? { limit: options.limit } : {}), log: (line) => io.print(`  ${line}`) });
-  io.print(`R2-Sync: ${result.pending} gestagte Objekte${options.write ? `, hochgeladen ${result.uploaded}, bereits vorhanden ${result.alreadyPresent}, Staging fehlt ${result.missingStaging.length}` : ' (Dry-run, kein Upload)'}`);
+  const maxConcurrency = maxSyncConcurrency(transport);
+  if (options.concurrency !== undefined && options.concurrency > maxConcurrency) {
+    io.error(`--concurrency höchstens ${maxConcurrency} für Transport ${transport.name} (begrenzte Parallelität; Vorabprüfung und Rücklesung je Objekt bleiben erhalten)`);
+    return 1;
+  }
+  const startedAt = Date.now();
+  const result = await syncStagedObjects({ root, manifest, transport, stagingDir: resolve(root, options.stagingDir ?? DEFAULT_R2_STAGING_DIR), dryRun: !options.write, ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}), ...(options.verify ? { verification: options.verify } : {}), log: (line) => io.print(`  ${line}`) });
+  const verificationNote = result.verification === 'etag' ? `, Listing/Etag geprüft ${result.verifiedByListing} (Objekte + Umschläge), Stichproben-Rücklesungen ${result.sampledReadbacks}, Listings ${result.listingCalls}` : '';
+  io.print(`R2-Sync (${transport.name}, Bucket ${transport.bucket}, Parallelität ${Math.min(options.concurrency ?? 1, maxConcurrency)}, Prüfung ${result.verification}): ${result.pending} gestagte Objekte${options.write ? `, hochgeladen ${result.uploaded}, bereits vorhanden ${result.alreadyPresent}, Staging fehlt ${result.missingStaging.length}${verificationNote}, ${Math.round((Date.now() - startedAt) / 1000)} s` : ' (Dry-run, kein Upload)'}`);
   return result.missingStaging.length > 0 ? 1 : 0;
 }
 

@@ -9,7 +9,7 @@
  *            [--regenerate-stale] [--refresh] [--offline] [--max-requests n] [--max-runtime 8h]
  *            [--max-bytes n] [--min-delay ms] [--archive staging|r2] [--r2-transport s3|wrangler]
  *            [--staging-dir dir] [--output-root dir]
- *   r2-sync  [--write] [--limit n] [--r2-transport s3|wrangler]   gestagte Rohquellen nach R2 (Rücklesung)
+ *   r2-sync  [--write] [--limit n] [--concurrency n] [--r2-transport s3|wrangler|wrangler-api] [--verify readback|etag]   gestagte Rohquellen nach R2
  *   coverage [--write]                        Coverage-Report (JSON + COVERAGE.md)
  *   review   [--area lrgv|lrmb] [--decide <id> --status <s> --reason <text> [--by <name>] [--override <id>] --write]
  *   reconstruction-queue [--write]            Rekonstruktionsqueue mit Priorisierungshilfe
@@ -60,6 +60,8 @@ export interface CliOptions {
   json: boolean;
   resume: boolean;
   limit?: number;
+  concurrency?: number;
+  verify?: 'readback' | 'etag';
   only: string[];
   retryFailed: boolean;
   retryReview: boolean;
@@ -69,7 +71,7 @@ export interface CliOptions {
   maxBytes?: number;
   minDelayMs?: number;
   archive?: 'staging' | 'r2';
-  r2Transport?: 's3' | 'wrangler';
+  r2Transport?: 's3' | 'wrangler' | 'wrangler-api';
   stagingDir?: string;
   outputRoot?: string;
   decide?: string;
@@ -121,6 +123,13 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--cache-dir': options.cacheDir = take(); break;
       case '--baseline': options.baseline = take(); break;
       case '--limit': options.limit = positiveInteger(take(), '--limit'); break;
+      case '--concurrency': options.concurrency = positiveInteger(take(), '--concurrency'); break;
+      case '--verify': {
+        const verify = take();
+        if (verify !== 'readback' && verify !== 'etag') throw new Error('--verify erwartet readback|etag');
+        options.verify = verify;
+        break;
+      }
       case '--only': options.only.push(...take().split(',').map((entry) => entry.trim()).filter(Boolean)); break;
       case '--max-requests': options.maxRequests = positiveInteger(take(), '--max-requests'); break;
       case '--max-bytes': options.maxBytes = positiveInteger(take(), '--max-bytes'); break;
@@ -142,7 +151,7 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       }
       case '--r2-transport': {
         const transport = take();
-        if (transport !== 's3' && transport !== 'wrangler') throw new Error('--r2-transport erwartet s3|wrangler');
+        if (transport !== 's3' && transport !== 'wrangler' && transport !== 'wrangler-api') throw new Error('--r2-transport erwartet s3|wrangler|wrangler-api');
         options.r2Transport = transport;
         break;
       }

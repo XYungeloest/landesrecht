@@ -11,7 +11,8 @@ export const TARGET_JURISDICTION: JurisdictionId = 'west';
 export const BASE_URL = 'https://recht.nrw.de';
 export const USER_AGENT = 'landesrecht-portal-importer/0.1 (+https://gitlab.com/politiksim/landesrecht; Politiksimulation, schonender Einzelabruf)';
 /** Version des Parsers; wird in Manifest und Quellenreferenzen festgehalten. */
-export const PARSER_VERSION = 'recht-nrw-parser/1.0.0';
+/** 1.1.0: Legacy-Fußnotenanker in gemischter Schreibung, Hülltabellen, Zeilen mit fehlenden Zellen, römische Artikel, präsentationale Legacy-Wrapper, Zählbereiche für §§ in Artikeln/Anlagen, Inhaltsübersichten als Text. */
+export const PARSER_VERSION = 'recht-nrw-parser/1.1.0';
 
 /** Dokumentarten des Bereichs LRGV (Landesrecht Gesetze und Verordnungen), die importiert werden. */
 export const LRGV_IMPORTABLE_TYPES = ['gesetz', 'rechtsverordnung'] as const;

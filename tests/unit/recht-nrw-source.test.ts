@@ -97,6 +97,11 @@ describe('Titelzerlegung', () => {
     expect(splitTitle('Gemeindeordnung für das Land Nordrhein-Westfalen (GO NRW), Bekanntmachung der Neufassung')).toEqual({ title: 'Gemeindeordnung für das Land Nordrhein-Westfalen, Bekanntmachung der Neufassung', abbr: 'GO NRW' });
     expect(splitTitle('Gesetz zur Ausführung des Betreuungsgesetzes (Landesbetreuungsgesetz - LBtG)')).toEqual({ title: 'Gesetz zur Ausführung des Betreuungsgesetzes', shortTitle: 'Landesbetreuungsgesetz', abbr: 'LBtG' });
     expect(splitTitle('Verfassung für das Land Nordrhein-Westfalen')).toEqual({ title: 'Verfassung für das Land Nordrhein-Westfalen' });
+    // Regression aus dem Bulk (term:27535, term:31477): getrenntes Landeskürzel ergab die Abkürzung „NRW“ → „West“, Slug „west-west“.
+    expect(splitTitle('Ausführungsgesetz zum Bundesausbildungsförderungsgesetz - AG BAföG - NRW -')).toEqual({ title: 'Ausführungsgesetz zum Bundesausbildungsförderungsgesetz', abbr: 'AG BAföG NRW' });
+    expect(splitTitle('Gesetz über die Stiftung von Feuerwehr- und Katastrophenschutz-Ehrenzeichen (Feuerwehr- und Katastrophenschutz-Ehrenzeichengesetz - FwKatsEG - NRW)')).toEqual({ title: 'Gesetz über die Stiftung von Feuerwehr- und Katastrophenschutz-Ehrenzeichen', shortTitle: 'Feuerwehr- und Katastrophenschutz-Ehrenzeichengesetz', abbr: 'FwKatsEG NRW' });
+    expect(looksLikeAbbreviation('NRW')).toBe(false);
+    expect(looksLikeAbbreviation('AbgG NRW')).toBe(true);
     expect(looksLikeAbbreviation('ÖPNVG NRW')).toBe(true);
     expect(looksLikeAbbreviation('Bekanntmachung der Neufassung')).toBe(false);
   });

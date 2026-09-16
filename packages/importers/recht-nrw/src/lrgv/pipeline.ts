@@ -29,6 +29,7 @@ import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type Fetched
 import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity, rawMetrics, type IntegrityReport } from '../common/integrity.ts';
 import { parseLegacyDocument } from '../common/legacy-parser.ts';
 import { AUDIT_DIR, isImportedStatus, readManifest, readManifestEntry, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type RawDocumentRole, type ValidityEvidence } from '../common/manifest.ts';
+import { recordUnresolvedSource } from '../common/unresolved.ts';
 import { parseNativeDocument } from '../common/native-parser.ts';
 import { overridesFor, type ImportOverride } from '../common/overrides.ts';
 import { assessTextCompleteness, type AttachmentInput, type TextCompletenessAssessment } from '../common/pdf.ts';
@@ -68,6 +69,8 @@ export interface ImportOptions {
 export interface ImportResult {
   status: ManifestEntry['importStatus'];
   stage: string;
+  /** Datensatz einer Quelle ohne Stammnorm-Kennung (`data/audits/recht-nrw/lrgv/unresolved/`). */
+  unresolvedReport?: string;
   findings: ImportFinding[];
   page?: RechtNrwVersionPage;
   selection?: SelectionResult;
@@ -175,6 +178,13 @@ async function runLrgvImport(options: ImportOptions & { manifest: ImportManifest
   }
   if (address.section !== 'lrgv' || !isImportableLrgvType(address.documentType)) {
     findings.push({ severity: 'error', code: 'not-lrgv', message: `Nur Gesetze und Rechtsverordnungen des Bereichs LRGV werden über diesen Pfad importiert (${address.section}/${address.documentType})` });
+    // Portaleinträge des Bereichs LRGV mit fremdem Dokumenttyp (z. B. Verwaltungsvorschriften unter /lrgv/) bleiben
+    // als expliziter Datensatz ohne Abruf nachvollziehbar statt still aus der Abdeckung zu fallen.
+    if (address.section === 'lrgv') {
+      const unresolved = await recordUnresolvedSource({ root: options.root, write: Boolean(options.write), area: 'lrgv', url: address.url, importStatus: 'failed', findings, documents: [], ...(env.runId ? { runId: env.runId } : {}), now: now().toISOString() });
+      result.unresolvedReport = unresolved.path;
+      if (unresolved.written) result.writtenFiles.push(unresolved.path);
+    }
     return { ...result, status: 'failed' };
   }
   let pageDocument = await fetchDocument(address.url, 'version-page');
@@ -247,7 +257,7 @@ async function runLrgvImport(options: ImportOptions & { manifest: ImportManifest
   }
   if (!page.stemTermId) {
     findings.push({ severity: 'error', code: 'missing-stem-id', message: 'Keine Stammnorm-Kennung' });
-    return { ...result, status: 'failed' };
+    return finish('failed');
   }
   const termId = page.stemTermId;
   result.termId = termId;
@@ -437,7 +447,14 @@ async function finishLrgv(input: {
   result.status = status;
   const page = result.page!;
   const termId = page.stemTermId ?? state.entryPage?.stemTermId;
-  if (!termId) return result;
+  if (!termId) {
+    // Keine Stammnorm-Kennung: keine Identität erfinden, aber ein expliziter Datensatz mit URL, Titel, Grund,
+    // Abrufstatus und Hashes, damit der enumerierte Eintrag einen nachvollziehbaren Endzustand behält.
+    const unresolved = await recordUnresolvedSource({ root: options.root, write: Boolean(options.write), area: 'lrgv', url: address.url, ...(page.title ? { title: page.title } : {}), importStatus: status, findings: result.findings, documents: input.fetched, ...(env.runId ? { runId: env.runId } : {}), now: now().toISOString() });
+    result.unresolvedReport = unresolved.path;
+    if (unresolved.written) result.writtenFiles.push(unresolved.path);
+    return result;
+  }
   const imported = isImportedStatus(status) || status === 'dry-run';
   const record = imported ? result.record : undefined;
   const selection = result.selection;
@@ -513,20 +530,31 @@ async function finishLrgv(input: {
   }
   result.manifestEntry = entry;
   if (record && state.slugs) state.slugs.commit();
-  if (!options.write || status === 'dry-run' || status === 'failed') return result;
+  if (!options.write || status === 'dry-run') return result;
+
+  const writer = new FileWriter(env.root);
+  const documents = new Map(input.fetched.map(({ document }) => [document.sha256, document]));
+  const storeRawDocuments = async (): Promise<void> => {
+    for (const raw of rawDocuments) {
+      const document = documents.get(raw.sha256);
+      if (!document) continue;
+      const object = env.archive.locate(document, { termId, sourceArea: 'lrgv', role: raw.role });
+      const stored = await env.archive.store(document, object);
+      raw.archiveStatus = stored.status;
+      if (object.localSource) writer.written.push(object.localSource);
+    }
+  };
+  if (status === 'failed') {
+    // Gescheiterte Importe schreiben keine Norm, im Bulkmodus aber ihre Rohquellen ins Archiv (Beleg für die
+    // Fehleranalyse); sonst trüge das Manifest einen Archivstatus „staged“ ohne gestagte Datei.
+    if (env.mode === 'bulk') await storeRawDocuments();
+    else for (const raw of rawDocuments) { delete raw.archiveStatus; delete raw.bucket; delete raw.objectKey; }
+    return result;
+  }
 
   // Reihenfolge der Checkpoints: Rohquellen → Slug-Registry → Norm → Report; Manifest und Queue danach.
   result.stage = 'write-canonical-json';
-  const writer = new FileWriter(env.root);
-  const documents = new Map(input.fetched.map(({ document }) => [document.sha256, document]));
-  for (const raw of rawDocuments) {
-    const document = documents.get(raw.sha256);
-    if (!document) continue;
-    const object = env.archive.locate(document, { termId, sourceArea: 'lrgv', role: raw.role });
-    const stored = await env.archive.store(document, object);
-    raw.archiveStatus = stored.status;
-    if (object.localSource) writer.written.push(object.localSource);
-  }
+  await storeRawDocuments();
   if (record) {
     await writeSlugRegistry(env.root, env.slugRegistry);
     const blocked = await writeInitialNorm(writer, record, baseline, { protectVersionedSources: env.mode === 'bulk' });

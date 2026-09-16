@@ -1,0 +1,1214 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27515",
+  "slug": "gesetz-zu-dem-vertrag-zwischen-dem-land-westdeutschland-und-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@31:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 31,
+      "end": 59,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "meta.title@92:geography-region",
+      "path": "meta.title",
+      "start": 92,
+      "end": 101,
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@132:geography-region",
+      "path": "meta.title",
+      "start": 132,
+      "end": 141,
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@7:municipality",
+      "path": "body[1].children[0].text",
+      "start": 7,
+      "end": 17,
+      "term": "Düsseldorf",
+      "context": "Dem in Düsseldorf am 29. März 1984 unterzeichneten Vertrag zwischen dem Land …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@68:rule:jurisdiction-name-dative",
+      "path": "body[1].children[0].text",
+      "start": 68,
+      "end": 96,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…üsseldorf am 29. März 1984 unterzeichneten Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@129:geography-region",
+      "path": "body[1].children[0].text",
+      "start": 129,
+      "end": 138,
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@169:geography-region",
+      "path": "body[1].children[0].text",
+      "start": 169,
+      "end": 178,
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche sowie dem dazugehörigen Sch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].text@200:rule:jurisdiction-name",
+      "path": "body[2].children[2].text",
+      "start": 200,
+      "end": 224,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n Kraft treten, ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekanntzumachen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].text@4:constitutional-organ-state",
+      "path": "body[3].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[3].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].text@9:rule:jurisdiction-name-dative",
+      "path": "body[5].text",
+      "start": 9,
+      "end": 37,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[5].text@70:geography-region",
+      "path": "body[5].text",
+      "start": 70,
+      "end": 79,
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].text@110:geography-region",
+      "path": "body[5].text",
+      "start": 110,
+      "end": 119,
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].text@219:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 219,
+      "end": 245,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…hschulen mit den anderen wissenschaftlichen Hochschulen des Landes Nordrhein-Westfalen haben die Vertragschließenden bewogen, auf der Grundlage de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].text@590:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 590,
+      "end": 616,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 2 dieses Vertrages sowie des Artikels 11 des Vertrages des Landes Nordrhein-Westfalen mit der Lippischen Landeskirche vom 6. März 1958 zu treffen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].text@720:constitutional-organ-state",
+      "path": "body[6].text",
+      "start": 720,
+      "end": 766,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "… 1958 zu treffen und zugleich die Vereinbarung zwischen der Landesregierung des Landes Nordrhein-Westfalen und den Evangelischen Landeskirchen über Fragen der Lehrera…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[6].text@740:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 740,
+      "end": 766,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… zugleich die Vereinbarung zwischen der Landesregierung des Landes Nordrhein-Westfalen und den Evangelischen Landeskirchen über Fragen der Lehrera…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].text@4:rule:jurisdiction-name",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "das Land Nordrhein-Westfalen, vertreten durch den Ministerpräsidenten, Herrn Johannes Ra…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[10].text@27:geography-region",
+      "path": "body[10].text",
+      "start": 27,
+      "end": 36,
+      "term": "Rheinland",
+      "context": "die Evangelische Kirche im Rheinland, vertreten durch ihre Kirchenleitung, diese vertreten durch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].text@28:geography-region",
+      "path": "body[11].text",
+      "start": 28,
+      "end": 37,
+      "term": "Westfalen",
+      "context": "die Evangelische Kirche von Westfalen, vertreten durch ihre Kirchenleitung, diese vertreten durch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@125:municipality",
+      "path": "body[15].children[0].text",
+      "start": 125,
+      "end": 131,
+      "term": "Bochum",
+      "context": "…evangelisch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@133:municipality",
+      "path": "body[15].children[0].text",
+      "start": 133,
+      "end": 137,
+      "term": "Bonn",
+      "context": "…sch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@142:municipality",
+      "path": "body[15].children[0].text",
+      "start": 142,
+      "end": 149,
+      "term": "Münster",
+      "context": "…ogischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[16].children[0].text@189:rule:jurisdiction-name-genitive",
+      "path": "body[16].children[0].text",
+      "start": 189,
+      "end": 215,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…e Schlußprotokoll sowie Artikel 11 Abs. 2 des Vertrages des Landes Nordrhein-Westfalen mit der Lippischen Landeskirche vom 6. März 1958 sind dahin…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[21].children[0].text@30:constitutional-organ-state",
+      "path": "body[21].children[0].text",
+      "start": 30,
+      "end": 76,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Vereinbarung zwischen der Landesregierung des Landes Nordrhein-Westfalen und den Evangelischen Landeskirchen über Fragen der Lehrera…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[21].children[0].text@50:rule:jurisdiction-name-genitive",
+      "path": "body[21].children[0].text",
+      "start": 50,
+      "end": 76,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Vereinbarung zwischen der Landesregierung des Landes Nordrhein-Westfalen und den Evangelischen Landeskirchen über Fragen der Lehrera…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[23].children[2].text@0:municipality",
+      "path": "body[23].children[2].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 29. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[23].children[3].text@8:rule:jurisdiction-name",
+      "path": "body[23].children[3].text",
+      "start": 8,
+      "end": 32,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Für das Land Nordrhein-Westfalen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[5].text@31:geography-region",
+      "path": "body[23].children[5].text",
+      "start": 31,
+      "end": 40,
+      "term": "Rheinland",
+      "context": "Für die Evangelische Kirche im Rheinland:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[7].text@32:geography-region",
+      "path": "body[23].children[7].text",
+      "start": 32,
+      "end": 41,
+      "term": "Westfalen",
+      "context": "Für die Evangelische Kirche von Westfalen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[12].text@77:rule:jurisdiction-name-dative",
+      "path": "body[23].children[12].text",
+      "start": 77,
+      "end": 105,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…hnung des am heutigen Tage geschlossenen Vertrages zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[12].text@138:geography-region",
+      "path": "body[23].children[12].text",
+      "start": 138,
+      "end": 147,
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[12].text@178:geography-region",
+      "path": "body[23].children[12].text",
+      "start": 178,
+      "end": 187,
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche haben die ordnungsgemäß bev…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[14].text@110:municipality",
+      "path": "body[23].children[14].text",
+      "start": 110,
+      "end": 119,
+      "term": "Wuppertal",
+      "context": "…die Absicht besteht, die Kirchlichen Hochschulen Bethel und Wuppertal aufzulösen oder eine weitere kirchliche Einrichtung für die…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[23].children[19].text@0:municipality",
+      "path": "body[23].children[19].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 29. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[23].children[20].text@8:rule:jurisdiction-name",
+      "path": "body[23].children[20].text",
+      "start": 8,
+      "end": 32,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Für das Land Nordrhein-Westfalen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[22].text@31:geography-region",
+      "path": "body[23].children[22].text",
+      "start": 31,
+      "end": 40,
+      "term": "Rheinland",
+      "context": "Für die Evangelische Kirche im Rheinland:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[24].text@32:geography-region",
+      "path": "body[23].children[24].text",
+      "start": 32,
+      "end": 41,
+      "term": "Westfalen",
+      "context": "Für die Evangelische Kirche von Westfalen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[30].text@61:rule:jurisdiction-name-dative",
+      "path": "body[23].children[30].text",
+      "start": 61,
+      "end": 89,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…ufgrund des Artikels 2 des Gesetzes zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[30].text@122:geography-region",
+      "path": "body[23].children[30].text",
+      "start": 122,
+      "end": 131,
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[30].text@162:geography-region",
+      "path": "body[23].children[30].text",
+      "start": 162,
+      "end": 171,
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche vom 18. September 1984 (GV.…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[23].children[30].text@228:protected:gazette-nw",
+      "path": "body[23].children[30].text",
+      "start": 228,
+      "end": 242,
+      "term": "GV. NW. S. 592",
+      "context": "…len und der Lippischen Landeskirche vom 18. September 1984 (GV. NW. S. 592) wird hiermit bekanntgemacht, daß der Vertrag und das Schlu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[24].text@4:constitutional-organ-state",
+      "path": "body[24].text",
+      "start": 4,
+      "end": 52,
+      "term": "Ministerpräsident des Landes Nordrhein-Westfalen",
+      "context": "Der Ministerpräsident des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[24].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[24].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Ministerpräsident des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[25].children[0].children[1].text@0:protected:gazette-nw",
+      "path": "body[25].children[0].children[1].text",
+      "start": 0,
+      "end": 19,
+      "term": "GV. NW. 1984 S. 803",
+      "context": "GV. NW. 1984 S. 803.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 16
+    },
+    "geography": {
+      "manual-review": 16
+    },
+    "municipality": {
+      "manual-review": 7
+    },
+    "institution": {
+      "safe-auto-transform": 4
+    },
+    "source-citation": {
+      "protected": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[8].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[21].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[23].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[12].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[20].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[30].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[24].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[0].text",
+      "term": "Düsseldorf",
+      "context": "Dem in Düsseldorf am 29. März 1984 unterzeichneten Vertrag zwischen dem Land …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[0].text",
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[0].text",
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche sowie dem dazugehörigen Sch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].text",
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].text",
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].text",
+      "term": "Rheinland",
+      "context": "die Evangelische Kirche im Rheinland, vertreten durch ihre Kirchenleitung, diese vertreten durch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Westfalen",
+      "context": "die Evangelische Kirche von Westfalen, vertreten durch ihre Kirchenleitung, diese vertreten durch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Bochum",
+      "context": "…evangelisch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Bonn",
+      "context": "…sch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Münster",
+      "context": "…ogischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[2].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 29. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[5].text",
+      "term": "Rheinland",
+      "context": "Für die Evangelische Kirche im Rheinland:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[7].text",
+      "term": "Westfalen",
+      "context": "Für die Evangelische Kirche von Westfalen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[12].text",
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[12].text",
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche haben die ordnungsgemäß bev…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[14].text",
+      "term": "Wuppertal",
+      "context": "…die Absicht besteht, die Kirchlichen Hochschulen Bethel und Wuppertal aufzulösen oder eine weitere kirchliche Einrichtung für die…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[19].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 29. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[22].text",
+      "term": "Rheinland",
+      "context": "Für die Evangelische Kirche im Rheinland:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[24].text",
+      "term": "Westfalen",
+      "context": "Für die Evangelische Kirche von Westfalen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[30].text",
+      "term": "Rheinland",
+      "context": "…em Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[30].text",
+      "term": "Westfalen",
+      "context": "…gelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche vom 18. September 1984 (GV.…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 110,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche vom 18. September 1984",
+    "sourceVersion": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche vom 18. September 1984",
+    "simulation": "Gesetz zu dem Vertrag zwischen dem Land Westdeutschland und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 10587,
+          "actual": 10731,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 116,
+          "actual": 116,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 10731,
+          "actual": 10671,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "12 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "12 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": true,
+    "treatyTextLocation": "unknown",
+    "evidence": [
+      "Titel: „Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche“"
+    ],
+    "treatyTitle": "Vertrag zwischen dem Land Nordrhein-Westfalen und der Evangelischen Kirche im Rheinland, der Evangelischen Kirche von Westfalen und der Lippischen Landeskirche"
+  },
+  "generatedAt": "2026-09-16T15:25:30.151Z"
+}

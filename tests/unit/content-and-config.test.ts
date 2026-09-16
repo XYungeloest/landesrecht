@@ -68,7 +68,8 @@ describe('Wrangler-Konfiguration', () => {
     for (const jurisdiction of JURISDICTION_IDS) {
       const binding = config.d1_databases.find((entry) => entry.binding === D1_BINDINGS[jurisdiction]);
       expect(binding?.database_name, jurisdiction).toBe(D1_DATABASE_NAMES[jurisdiction]);
-      expect(binding?.database_id).toMatch(/^00000000-0000-4000-8000-0000000000\d\d$/u);
+      // Echte D1-Kennungen sind Konfigurationswerte, keine Zugangsdaten: gültige UUID (oder Platzhalter vor dem Anlegen).
+      expect(binding?.database_id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u);
       const staging = config.env.staging.d1_databases.find((entry) => entry.binding === D1_BINDINGS[jurisdiction]);
       expect(staging?.database_name).toBe(`${D1_DATABASE_NAMES[jurisdiction]}-staging`);
       expect(staging?.database_id).not.toBe(binding?.database_id);

@@ -1,0 +1,508 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28077",
+  "slug": "gesetz-zum-fuenften-staatsvertrag-zur-aenderung-rundfunkrechtlicher-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].title@38:rule:jurisdiction-name",
+      "path": "body[2].title",
+      "start": 38,
+      "end": 62,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Änderung des Rundfunkgesetzes für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@320:authority-district-government",
+      "path": "body[3].children[0].text",
+      "start": 320,
+      "end": 336,
+      "term": "Bezirksregierung",
+      "context": "…gesetz – IuKDG) vom 22. Juli 1997 (BGBl.I S.1870)) wird der Bezirksregierung Düsseldorf für das gesamte Land Nordrhein-Westfalen übertra…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@337:municipality",
+      "path": "body[3].children[0].text",
+      "start": 337,
+      "end": 347,
+      "term": "Düsseldorf",
+      "context": "…om 22. Juli 1997 (BGBl.I S.1870)) wird der Bezirksregierung Düsseldorf für das gesamte Land Nordrhein-Westfalen übertragen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@364:rule:jurisdiction-name",
+      "path": "body[3].children[0].text",
+      "start": 364,
+      "end": 388,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…1870)) wird der Bezirksregierung Düsseldorf für das gesamte Land Nordrhein-Westfalen übertragen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@187:ministry-portfolio",
+      "path": "body[4].children[1].text",
+      "start": 187,
+      "end": 266,
+      "term": "Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt sind",
+      "context": "…lle Ratifikationsurkunden bis zum 31. Dezember 2000 bei der Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt sind. Der Zeitpunkt des Inkrafttretens des Fünften Rundfunkänder…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "staatskanzlei",
+        "group": "Landesregierung NRW"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@426:rule:jurisdiction-name",
+      "path": "body[4].children[1].text",
+      "start": 426,
+      "end": 450,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Abs. 2 Satz 1 wird im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt gemacht.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[0].text@0:municipality",
+      "path": "body[4].children[1].children[0].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 12. Dezember 2000",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[16].text@4:rule:jurisdiction-name",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "das Land Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[17].text@9:geography-region",
+      "path": "body[17].text",
+      "start": 9,
+      "end": 18,
+      "term": "Rheinland",
+      "context": "das Land Rheinland-Pfalz,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[30].children[1].text@127:ministry-portfolio",
+      "path": "body[30].children[1].text",
+      "start": 127,
+      "end": 201,
+      "term": "Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt",
+      "context": "… 31. Dezember 2000 nicht alle Ratifikationsurkunden bei der Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt, wird der Staatsvertrag gegenstandslos.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "staatskanzlei",
+        "group": "Landesregierung NRW"
+      }
+    },
+    {
+      "id": "body[30].children[2].text@4:ministry-portfolio",
+      "path": "body[30].children[2].text",
+      "start": 4,
+      "end": 128,
+      "term": "Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz teilt den Ländern die Hinterlegung der Ratifikationsurkunden",
+      "context": "Die Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz teilt den Ländern die Hinterlegung der Ratifikationsurkunden mit.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "staatskanzlei",
+        "group": "Landesregierung NRW"
+      }
+    },
+    {
+      "id": "body[31].children[24].text@8:rule:jurisdiction-name",
+      "path": "body[31].children[24].text",
+      "start": 8,
+      "end": 32,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Für das Land Nordrhein-Westfalen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[31].children[26].text@13:geography-region",
+      "path": "body[31].children[26].text",
+      "start": 13,
+      "end": 22,
+      "term": "Rheinland",
+      "context": "Für das Land Rheinland-Pfalz:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 2
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "geography": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[31].children[24].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…gesetz – IuKDG) vom 22. Juli 1997 (BGBl.I S.1870)) wird der Bezirksregierung Düsseldorf für das gesamte Land Nordrhein-Westfalen übertra…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…om 22. Juli 1997 (BGBl.I S.1870)) wird der Bezirksregierung Düsseldorf für das gesamte Land Nordrhein-Westfalen übertragen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt sind",
+      "context": "…lle Ratifikationsurkunden bis zum 31. Dezember 2000 bei der Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt sind. Der Zeitpunkt des Inkrafttretens des Fünften Rundfunkänder…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[0].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 12. Dezember 2000",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Rheinland",
+      "context": "das Land Rheinland-Pfalz,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[30].children[1].text",
+      "term": "Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt",
+      "context": "… 31. Dezember 2000 nicht alle Ratifikationsurkunden bei der Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz hinterlegt, wird der Staatsvertrag gegenstandslos.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[30].children[2].text",
+      "term": "Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz teilt den Ländern die Hinterlegung der Ratifikationsurkunden",
+      "context": "Die Staatskanzlei des Vorsitzenden der Ministerpräsidentenkonferenz teilt den Ländern die Hinterlegung der Ratifikationsurkunden mit.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[31].children[26].text",
+      "term": "Rheinland",
+      "context": "Für das Land Rheinland-Pfalz:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 158,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zum Fünften Staatsvertrag zur Änderung rundfunkrechtlicher Staatsverträge (Fünfter Rundfunkänderungsstaatsvertrag) vom 12. Dezember 2000",
+    "sourceVersion": "Gesetz zum Fünften Staatsvertrag zur Änderung rundfunkrechtlicher Staatsverträge (Fünfter Rundfunkänderungsstaatsvertrag) vom 12. Dezember 2000",
+    "simulation": "Gesetz zum Fünften Staatsvertrag zur Änderung rundfunkrechtlicher Staatsverträge (Fünfter Rundfunkänderungsstaatsvertrag) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8945,
+          "actual": 9579,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 106,
+          "actual": 106,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 9579,
+          "actual": 9559,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "12 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "12 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": true,
+    "treatyTextLocation": "unknown",
+    "evidence": [
+      "Titel: „Gesetz zum Fünften Staatsvertrag zur Änderung rundfunkrechtlicher Staatsverträge (Fünfter Rundfunkänderungsstaatsvertrag)“"
+    ],
+    "treatyTitle": "Fünften Staatsvertrag zur Änderung rundfunkrechtlicher Staatsverträge"
+  },
+  "generatedAt": "2026-09-16T15:25:33.434Z"
+}

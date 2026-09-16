@@ -1,0 +1,1647 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27497",
+  "slug": "gesetz-zu-dem-vertrage-des-landes-westdeutschland-mit-dem-heiligen-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@27:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 27,
+      "end": 53,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Gesetz zu dem Vertrage des Landes Nordrhein-Westfalen mit dem Heiligen Stuhle",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@71:rule:jurisdiction-name-genitive",
+      "path": "body[1].children[0].text",
+      "start": 71,
+      "end": 97,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Godesberg am 19. Dezember 1956 unterzeichneten Vertrage des Landes Nordrhein-Westfalen mit dem Heiligen Stuhle wird zugestimmt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@152:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 152,
+      "end": 176,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…in Kraft tritt, ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekanntzumachen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[4].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@19:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].text",
+      "start": 19,
+      "end": 45,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Anlage Vertrag des Landes Nordrhein-Westfalen mit dem Heiligen Stuhl",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].text@10:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].text",
+      "start": 10,
+      "end": 29,
+      "term": "Nordrhein-Westfalen",
+      "context": "dem Lande Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[5].text@131:ministry-compound",
+      "path": "body[5].children[5].text",
+      "start": 131,
+      "end": 145,
+      "term": "Kultusminister",
+      "context": "…h Herrn Ministerpräsidenten Fritz Steinhoff und durch Herrn Kultusminister Professor Dr. Paul Luchtenberg in Düsseldorf,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[5].children[5].text@180:municipality",
+      "path": "body[5].children[5].text",
+      "start": 180,
+      "end": 190,
+      "term": "Düsseldorf",
+      "context": "…urch Herrn Kultusminister Professor Dr. Paul Luchtenberg in Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[6].text@221:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[6].text",
+      "start": 221,
+      "end": 247,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…en Stuhl und dem für diesen Bereich als Rechtsvorgänger des Landes Nordrhein-Westfalen anerkannten Freistaate Preußen abgeschlossen worden ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[8].text@85:municipality",
+      "path": "body[5].children[8].text",
+      "start": 85,
+      "end": 90,
+      "term": "Essen",
+      "context": "…mit einem Bischöflichen Stuhl und einem Kathedralkapitel in Essen errichtet; Bischof und Kathedralkapitel werden bei St. Joha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[8].text@180:municipality",
+      "path": "body[5].children[8].text",
+      "start": 180,
+      "end": 185,
+      "term": "Essen",
+      "context": "…ralkapitel werden bei St. Johann Baptist (Münsterkirche) in Essen ihren Sitz nehmen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@20:municipality",
+      "path": "body[5].children[11].text",
+      "start": 20,
+      "end": 25,
+      "term": "Essen",
+      "context": "Das künftige Bistum Essen umfaßt die nachstehend genannten, aus den Erzdiözesen Köln …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@80:municipality",
+      "path": "body[5].children[11].text",
+      "start": 80,
+      "end": 84,
+      "term": "Köln",
+      "context": "…Essen umfaßt die nachstehend genannten, aus den Erzdiözesen Köln und Paderborn sowie der Diözese Münster ausscheidenden Gebi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@89:municipality",
+      "path": "body[5].children[11].text",
+      "start": 89,
+      "end": 98,
+      "term": "Paderborn",
+      "context": "…aßt die nachstehend genannten, aus den Erzdiözesen Köln und Paderborn sowie der Diözese Münster ausscheidenden Gebietsteile. Es w…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@117:municipality",
+      "path": "body[5].children[11].text",
+      "start": 117,
+      "end": 124,
+      "term": "Münster",
+      "context": "…n, aus den Erzdiözesen Köln und Paderborn sowie der Diözese Münster ausscheidenden Gebietsteile. Es wird umschrieben durch die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@203:municipality",
+      "path": "body[5].children[11].text",
+      "start": 203,
+      "end": 209,
+      "term": "Bochum",
+      "context": "…ietsteile. Es wird umschrieben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdensc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@211:municipality",
+      "path": "body[5].children[11].text",
+      "start": 211,
+      "end": 218,
+      "term": "Bottrop",
+      "context": "…e. Es wird umschrieben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mül…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@220:municipality",
+      "path": "body[5].children[11].text",
+      "start": 220,
+      "end": 228,
+      "term": "Duisburg",
+      "context": "…d umschrieben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@230:municipality",
+      "path": "body[5].children[11].text",
+      "start": 230,
+      "end": 235,
+      "term": "Essen",
+      "context": "…ben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Ober…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@237:municipality",
+      "path": "body[5].children[11].text",
+      "start": 237,
+      "end": 250,
+      "term": "Gelsenkirchen",
+      "context": "…ch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattens…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@284:geography-region",
+      "path": "body[5].children[11].text",
+      "start": 284,
+      "end": 288,
+      "term": "Ruhr",
+      "context": "…burg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid sowie der Landkreise Altena und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@291:municipality",
+      "path": "body[5].children[11].text",
+      "start": 291,
+      "end": 301,
+      "term": "Oberhausen",
+      "context": "…ssen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid sowie der Landkreise Altena und Ennepe-Ruhrkr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[11].text@430:geography-region",
+      "path": "body[5].children[11].text",
+      "start": 430,
+      "end": 434,
+      "term": "Ruhr",
+      "context": "…ch mit Ausnahme der Gemeinde Herdecke und der Stadt Wetter (Ruhr)].",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[13].text@11:municipality",
+      "path": "body[5].children[13].text",
+      "start": 11,
+      "end": 16,
+      "term": "Essen",
+      "context": "Das Bistum Essen wird der Kölner Kirchenprovinz zugeteilt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[15].text@24:municipality",
+      "path": "body[5].children[15].text",
+      "start": 24,
+      "end": 29,
+      "term": "Essen",
+      "context": "Das Kathedralkapitel in Essen wird gebildet aus dem Propste, sechs residierenden und vier…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[17].text@72:municipality",
+      "path": "body[5].children[17].text",
+      "start": 72,
+      "end": 77,
+      "term": "Essen",
+      "context": "…tzung des Diözesanbischofs wird dem Bischöflichen Stuhl von Essen ein Weihbischof zugeteilt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[19].text@16:municipality",
+      "path": "body[5].children[19].text",
+      "start": 16,
+      "end": 21,
+      "term": "Essen",
+      "context": "Der Bischof von Essen ist berechtigt, in seinem Bistum ein Seminar zur wissenscha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[20].text@52:rule:jurisdiction-name",
+      "path": "body[5].children[20].text",
+      "start": 52,
+      "end": 76,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Recht aus Art. 16 Abs. 2 der Verfassung für das Land Nordrhein-Westfalen vom 28. Juni 1950 bleibt auch im übrigen unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[22].text@4:rule:jurisdiction-name",
+      "path": "body[5].children[22].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen leistet zur Bestreitung der Personal- und Sachausgaben des …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[22].text@96:municipality",
+      "path": "body[5].children[22].text",
+      "start": 96,
+      "end": 101,
+      "term": "Essen",
+      "context": "… zur Bestreitung der Personal- und Sachausgaben des Bistums Essen jährlich einen Zuschuß von 258 500 DM, und zwar als Persona…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[27].text@149:municipality",
+      "path": "body[5].children[27].text",
+      "start": 149,
+      "end": 159,
+      "term": "Düsseldorf",
+      "context": "…iert und die Ratifikationsurkunden sollen möglichst bald in Düsseldorf ausgetauscht werden.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[31].text@36:rule:jurisdiction-name",
+      "path": "body[5].children[31].text",
+      "start": 36,
+      "end": 60,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Convenzione fra la Santa Sede ed il Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[35].text@3:rule:jurisdiction-name",
+      "path": "body[5].children[35].text",
+      "start": 3,
+      "end": 27,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "il Land Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[36].text@131:rule:jurisdiction-name-bare",
+      "path": "body[5].children[36].text",
+      "start": 131,
+      "end": 150,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Signori Fritz Steinhoff, Presidente del Ministero di Stato Nordrhein-Westfalen, ed il Professore Dr. Paul Luchtenberg, Ministro dei culti,…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[36].text@223:municipality",
+      "path": "body[5].children[36].text",
+      "start": 223,
+      "end": 233,
+      "term": "Düsseldorf",
+      "context": "…ssore Dr. Paul Luchtenberg, Ministro dei culti, residenti a Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[37].text@286:rule:jurisdiction-name",
+      "path": "body[5].children[37].text",
+      "start": 286,
+      "end": 310,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…onosciuto per questo ambito come predecessore giuridico del Land Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[39].text@94:municipality",
+      "path": "body[5].children[39].text",
+      "start": 94,
+      "end": 99,
+      "term": "Essen",
+      "context": "… la Sede Vescovile ed il Capitolo Cattedrale nella città di Essen; Vescovo e Capitolo Cattedrale stabiliranno la loro sede pr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[39].text@223:municipality",
+      "path": "body[5].children[39].text",
+      "start": 223,
+      "end": 228,
+      "term": "Essen",
+      "context": "… la chiesa di S. Giovanni Battista, detta Münsterkirche, in Essen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@21:municipality",
+      "path": "body[5].children[42].text",
+      "start": 21,
+      "end": 26,
+      "term": "Essen",
+      "context": "La futura Diocesi di Essen comprende i territori qui appresso nominati, che vengono st…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@157:municipality",
+      "path": "body[5].children[42].text",
+      "start": 157,
+      "end": 164,
+      "term": "Münster",
+      "context": "…e Arcidiocesi di Colonia e di Paderborna e dalla Diocesi di Münster. Essa abbraccia i territori delle città di Bochum, Bottrop,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@208:municipality",
+      "path": "body[5].children[42].text",
+      "start": 208,
+      "end": 214,
+      "term": "Bochum",
+      "context": "…ocesi di Münster. Essa abbraccia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdensc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@216:municipality",
+      "path": "body[5].children[42].text",
+      "start": 216,
+      "end": 223,
+      "term": "Bottrop",
+      "context": "… Münster. Essa abbraccia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mül…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@225:municipality",
+      "path": "body[5].children[42].text",
+      "start": 225,
+      "end": 233,
+      "term": "Duisburg",
+      "context": "… Essa abbraccia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@235:municipality",
+      "path": "body[5].children[42].text",
+      "start": 235,
+      "end": 240,
+      "term": "Essen",
+      "context": "…accia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Ober…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@242:municipality",
+      "path": "body[5].children[42].text",
+      "start": 242,
+      "end": 255,
+      "term": "Gelsenkirchen",
+      "context": "… territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattens…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@289:geography-region",
+      "path": "body[5].children[42].text",
+      "start": 289,
+      "end": 293,
+      "term": "Ruhr",
+      "context": "…burg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid, nonchè delle circoscrizioni rur…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@296:municipality",
+      "path": "body[5].children[42].text",
+      "start": 296,
+      "end": 306,
+      "term": "Oberhausen",
+      "context": "…ssen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid, nonchè delle circoscrizioni rurali di Altena…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[42].text@454:geography-region",
+      "path": "body[5].children[42].text",
+      "start": 454,
+      "end": 458,
+      "term": "Ruhr",
+      "context": "…ezione però del comune di Herdecke e della città di Wetter (Ruhr)].",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[44].text@14:municipality",
+      "path": "body[5].children[44].text",
+      "start": 14,
+      "end": 19,
+      "term": "Essen",
+      "context": "La Diocesi di Essen viene assegnata alla provincia ecclesiastica di Colonia.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[46].text@26:municipality",
+      "path": "body[5].children[46].text",
+      "start": 26,
+      "end": 31,
+      "term": "Essen",
+      "context": "Il Capitolo Cattedrale di Essen è costituito dal Preposto, da sei Canonici effettivi e da q…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[48].text@66:municipality",
+      "path": "body[5].children[48].text",
+      "start": 66,
+      "end": 71,
+      "term": "Essen",
+      "context": "…uto del Vescovo diocesano viene dato alla Sede Vescovile di Essen un Vescovo Ausiliare.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[50].text@14:municipality",
+      "path": "body[5].children[50].text",
+      "start": 14,
+      "end": 19,
+      "term": "Essen",
+      "context": "Il Vescovo di Essen ha il diritto di avere nella sua Diocesi un Seminario per l…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[52].text@72:rule:jurisdiction-name",
+      "path": "body[5].children[52].text",
+      "start": 72,
+      "end": 96,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…erivante dall'articolo 16, capov. 2, della Costituzione del Land Nordrhein-Westfalen del 28 giugno 1950 rimane invariato anche per il resto.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[54].text@60:municipality",
+      "path": "body[5].children[54].text",
+      "start": 60,
+      "end": 65,
+      "term": "Essen",
+      "context": "Per sopperire alle spese personali e reali della Diocesi di Essen, il Land Nordrhein-Westfalen versa annualmente un contribut…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[54].text@70:rule:jurisdiction-name",
+      "path": "body[5].children[54].text",
+      "start": 70,
+      "end": 94,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ire alle spese personali e reali della Diocesi di Essen, il Land Nordrhein-Westfalen versa annualmente un contributo di DM (marchi tedeschi) 258…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[59].text@170:municipality",
+      "path": "body[5].children[59].text",
+      "start": 170,
+      "end": 180,
+      "term": "Düsseldorf",
+      "context": "…nti della ratifica dovranno essere scambiati quanto prima a Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[67].text@0:constitutional-organ-state",
+      "path": "body[5].children[67].text",
+      "start": 0,
+      "end": 48,
+      "term": "Ministerpräsident des Landes Nordrhein-Westfalen",
+      "context": "Ministerpräsident des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[5].children[67].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[67].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Ministerpräsident des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[69].text@0:ministry-compound",
+      "path": "body[5].children[69].text",
+      "start": 0,
+      "end": 14,
+      "term": "Kultusminister",
+      "context": "Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[5].children[69].text@19:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[69].text",
+      "start": 19,
+      "end": 45,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 17
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "municipality": {
+      "manual-review": 36
+    },
+    "geography": {
+      "manual-review": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[20].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[22].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[31].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[35].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[36].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[37].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[52].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[54].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[67].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[69].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[5].children[5].text",
+      "term": "Kultusminister",
+      "context": "…h Herrn Ministerpräsidenten Fritz Steinhoff und durch Herrn Kultusminister Professor Dr. Paul Luchtenberg in Düsseldorf,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].text",
+      "term": "Düsseldorf",
+      "context": "…urch Herrn Kultusminister Professor Dr. Paul Luchtenberg in Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[8].text",
+      "term": "Essen",
+      "context": "…mit einem Bischöflichen Stuhl und einem Kathedralkapitel in Essen errichtet; Bischof und Kathedralkapitel werden bei St. Joha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[8].text",
+      "term": "Essen",
+      "context": "…ralkapitel werden bei St. Johann Baptist (Münsterkirche) in Essen ihren Sitz nehmen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Essen",
+      "context": "Das künftige Bistum Essen umfaßt die nachstehend genannten, aus den Erzdiözesen Köln …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Köln",
+      "context": "…Essen umfaßt die nachstehend genannten, aus den Erzdiözesen Köln und Paderborn sowie der Diözese Münster ausscheidenden Gebi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Paderborn",
+      "context": "…aßt die nachstehend genannten, aus den Erzdiözesen Köln und Paderborn sowie der Diözese Münster ausscheidenden Gebietsteile. Es w…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Münster",
+      "context": "…n, aus den Erzdiözesen Köln und Paderborn sowie der Diözese Münster ausscheidenden Gebietsteile. Es wird umschrieben durch die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Bochum",
+      "context": "…ietsteile. Es wird umschrieben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdensc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Bottrop",
+      "context": "…e. Es wird umschrieben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mül…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Duisburg",
+      "context": "…d umschrieben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Essen",
+      "context": "…ben durch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Ober…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Gelsenkirchen",
+      "context": "…ch die Gebiete der Städte Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattens…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Ruhr",
+      "context": "…burg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid sowie der Landkreise Altena und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Oberhausen",
+      "context": "…ssen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid sowie der Landkreise Altena und Ennepe-Ruhrkr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[11].text",
+      "term": "Ruhr",
+      "context": "…ch mit Ausnahme der Gemeinde Herdecke und der Stadt Wetter (Ruhr)].",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[13].text",
+      "term": "Essen",
+      "context": "Das Bistum Essen wird der Kölner Kirchenprovinz zugeteilt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[15].text",
+      "term": "Essen",
+      "context": "Das Kathedralkapitel in Essen wird gebildet aus dem Propste, sechs residierenden und vier…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[17].text",
+      "term": "Essen",
+      "context": "…tzung des Diözesanbischofs wird dem Bischöflichen Stuhl von Essen ein Weihbischof zugeteilt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[19].text",
+      "term": "Essen",
+      "context": "Der Bischof von Essen ist berechtigt, in seinem Bistum ein Seminar zur wissenscha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[22].text",
+      "term": "Essen",
+      "context": "… zur Bestreitung der Personal- und Sachausgaben des Bistums Essen jährlich einen Zuschuß von 258 500 DM, und zwar als Persona…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[27].text",
+      "term": "Düsseldorf",
+      "context": "…iert und die Ratifikationsurkunden sollen möglichst bald in Düsseldorf ausgetauscht werden.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[36].text",
+      "term": "Düsseldorf",
+      "context": "…ssore Dr. Paul Luchtenberg, Ministro dei culti, residenti a Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[39].text",
+      "term": "Essen",
+      "context": "… la Sede Vescovile ed il Capitolo Cattedrale nella città di Essen; Vescovo e Capitolo Cattedrale stabiliranno la loro sede pr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[39].text",
+      "term": "Essen",
+      "context": "… la chiesa di S. Giovanni Battista, detta Münsterkirche, in Essen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Essen",
+      "context": "La futura Diocesi di Essen comprende i territori qui appresso nominati, che vengono st…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Münster",
+      "context": "…e Arcidiocesi di Colonia e di Paderborna e dalla Diocesi di Münster. Essa abbraccia i territori delle città di Bochum, Bottrop,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Bochum",
+      "context": "…ocesi di Münster. Essa abbraccia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdensc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Bottrop",
+      "context": "… Münster. Essa abbraccia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mül…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Duisburg",
+      "context": "… Essa abbraccia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Essen",
+      "context": "…accia i territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Ober…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Gelsenkirchen",
+      "context": "… territori delle città di Bochum, Bottrop, Duisburg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattens…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Ruhr",
+      "context": "…burg, Essen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid, nonchè delle circoscrizioni rur…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Oberhausen",
+      "context": "…ssen, Gelsenkirchen, Gladbeck, Lüdenscheid, Mülheim (Ruhr), Oberhausen, Wattenscheid, nonchè delle circoscrizioni rurali di Altena…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[42].text",
+      "term": "Ruhr",
+      "context": "…ezione però del comune di Herdecke e della città di Wetter (Ruhr)].",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[44].text",
+      "term": "Essen",
+      "context": "La Diocesi di Essen viene assegnata alla provincia ecclesiastica di Colonia.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[46].text",
+      "term": "Essen",
+      "context": "Il Capitolo Cattedrale di Essen è costituito dal Preposto, da sei Canonici effettivi e da q…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[48].text",
+      "term": "Essen",
+      "context": "…uto del Vescovo diocesano viene dato alla Sede Vescovile di Essen un Vescovo Ausiliare.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[50].text",
+      "term": "Essen",
+      "context": "Il Vescovo di Essen ha il diritto di avere nella sua Diocesi un Seminario per l…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[54].text",
+      "term": "Essen",
+      "context": "Per sopperire alle spese personali e reali della Diocesi di Essen, il Land Nordrhein-Westfalen versa annualmente un contribut…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[59].text",
+      "term": "Düsseldorf",
+      "context": "…nti della ratifica dovranno essere scambiati quanto prima a Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[69].text",
+      "term": "Kultusminister",
+      "context": "Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 82,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zu dem Vertrage des Landes Nordrhein-Westfalen mit dem Heiligen Stuhle vom 12. Februar 1957",
+    "sourceVersion": "Gesetz zu dem Vertrage des Landes Nordrhein-Westfalen mit dem Heiligen Stuhle vom 12. Februar 1957",
+    "simulation": "Gesetz zu dem Vertrage des Landes Westdeutschland mit dem Heiligen Stuhle in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 464,
+          "actual": 487,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 80,
+          "actual": 80,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8103,
+          "actual": 8039,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "2 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "2 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:28.978Z"
+}

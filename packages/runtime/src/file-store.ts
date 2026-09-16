@@ -11,7 +11,7 @@ import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 import { getApplicableVersion, getNormLastChangeDate } from '@landesrecht/legal-core/lib/versions.ts';
 import { buildSearchDocument, buildSearchQueryPlan, runSearch, type SearchDocument } from '@landesrecht/search/index.ts';
 
-import { selectVersionIds, type BodySelection, type NormStore, type NormSummary } from './store.ts';
+import { selectVersionIds, type BodySelection, type NormStore, type NormSummary, type NormTypeCount } from './store.ts';
 
 export interface FileStoreOptions {
   asOf?: string;
@@ -52,6 +52,12 @@ export function createFileNormStore(jurisdiction: JurisdictionId, records: reado
   return {
     kind: 'files',
     jurisdiction,
+
+    async countNormsByType(): Promise<NormTypeCount[]> {
+      const counts = new Map<NormRecord['meta']['type'], number>();
+      for (const record of own) counts.set(record.meta.type, (counts.get(record.meta.type) ?? 0) + 1);
+      return [...counts.entries()].map(([type, count]) => ({ type, count })).sort((left, right) => left.type.localeCompare(right.type));
+    },
 
     async listNormSummaries(query = {}) {
       return own

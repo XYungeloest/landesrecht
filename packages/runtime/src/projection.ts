@@ -297,7 +297,9 @@ export function renderStatement(query: PlanQuery): string {
     return sqlLiteral(query.params[index++]);
   });
   if (index !== query.params.length) throw new Error('Zu viele Parameter für die Anweisung');
-  return `${rendered};`;
+  // Genau ein Abschluss-Semikolon: Trigger-Definitionen (`… END;`) bringen ihres mit; `;;` ergäbe eine leere
+  // Anweisung, die die Remote-D1 mit „SQL code did not contain a statement“ ablehnt (lokal wird sie übergangen).
+  return `${rendered.replace(/;\s*$/u, '')};`;
 }
 
 export function renderPlanSql(plan: ProjectionPlan): string {

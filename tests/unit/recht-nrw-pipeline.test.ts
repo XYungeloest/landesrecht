@@ -15,6 +15,7 @@ import { getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/route
 import { resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
 import { RechtNrwFetchError, type FetchedDocument, type RechtNrwFetcher } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 import { readManifest } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
+import { unresolvedSourcePath } from '@landesrecht/importer-recht-nrw/common/unresolved.ts';
 import { importRechtNrwNorm, type ImportResult } from '@landesrecht/importer-recht-nrw/lrgv/pipeline.ts';
 import { createD1NormStore } from '@landesrecht/runtime/d1-store.ts';
 import { buildProjectionPlan } from '@landesrecht/runtime/projection.ts';
@@ -105,7 +106,7 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     expect(record.meta.sourceReferences.filter((reference) => reference.availability === 'versioned').map((reference) => reference.localSource)).toEqual(rawFiles);
     const manifest = await readManifest(root);
     expect(manifest.entries).toHaveLength(1);
-    expect(manifest.entries[0]).toMatchObject({ sourceIdentity: 'term:424242', targetSlug: 'testg-west', sourceValidFrom: '2020-01-01', sourceValidTo: '2023-12-15', baselineDate: '2023-12-01', importStatus: 'imported-with-warnings', parserVersion: 'recht-nrw-parser/1.0.0', contentFormat: 'legacy-file', selectedVersionUrl: BASELINE_URL });
+    expect(manifest.entries[0]).toMatchObject({ sourceIdentity: 'term:424242', targetSlug: 'testg-west', sourceValidFrom: '2020-01-01', sourceValidTo: '2023-12-15', baselineDate: '2023-12-01', importStatus: 'imported-with-warnings', parserVersion: 'recht-nrw-parser/1.1.0', contentFormat: 'legacy-file', selectedVersionUrl: BASELINE_URL });
     expect(manifest.entries[0]!.versionsConsidered.filter((entry) => entry.selected)).toHaveLength(1);
     const report = JSON.parse(await readFile(join(root, 'data', 'audits', 'recht-nrw', 'testg-west.json'), 'utf8')) as { changes: unknown[]; unresolved: unknown[]; integrity: { fetchParse: { ok: boolean } } };
     expect(report.changes.length).toBeGreaterThan(0);
@@ -180,6 +181,56 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
       expect(missing.reviewItems.map((item) => item.category)).toContain('attachment');
       expect(await readdir(join(isolated, 'content', 'norms', 'west'))).toEqual([]);
       await expect(importRechtNrwNorm({ url: NATIVE_URL, root: isolated, fetcher: failingAnnex('budget-exhausted'), now })).rejects.toMatchObject({ kind: 'budget-exhausted' });
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it('führt eine Seite ohne Stammnorm-Kennung als expliziten Datensatz statt still abzubrechen', async () => {
+    const isolated = await mkdtemp(join(tmpdir(), 'landesrecht-import-unresolved-'));
+    try {
+      await mkdir(join(isolated, 'content', 'norms', 'west'), { recursive: true });
+      await writeFile(join(isolated, 'package.json'), '{"name":"tmp"}');
+      const withoutTerm = (await readFile(join(fixtures, 'version-page-native.html'), 'utf8')).replace(/taxonomy\/term\/515151/gu, 'taxonomy/term/');
+      await writeFile(join(fixtures, '.tmp-no-term.html'), withoutTerm);
+      const result = await importRechtNrwNorm({ url: NATIVE_URL, root: isolated, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-no-term.html', [ANNEX_URL]: 'annex.htm', [ANNEX_PDF_URL]: 'annex.pdf' }), write: true, now });
+      expect(result.status).toBe('failed');
+      expect(result.findings.map((finding) => finding.code)).toContain('missing-stem-id');
+      expect(result.unresolvedReport).toBe(unresolvedSourcePath('lrgv', NATIVE_URL));
+      const record = JSON.parse(await readFile(join(isolated, result.unresolvedReport!), 'utf8')) as { url: string; reason: Array<{ code: string }>; documents: Array<{ sha256: string; httpStatus: number }> };
+      expect(record.url).toBe(NATIVE_URL);
+      expect(record.reason.map((entry) => entry.code)).toContain('missing-stem-id');
+      expect(record.documents[0]).toMatchObject({ httpStatus: 200 });
+      expect(record.documents[0]!.sha256).toMatch(/^[0-9a-f]{64}$/u);
+      // Keine erfundene Identität: weder Norm noch Manifesteintrag.
+      expect(await readdir(join(isolated, 'content', 'norms', 'west'))).toEqual([]);
+      expect((await readManifest(isolated)).entries).toEqual([]);
+    } finally {
+      await rm(join(fixtures, '.tmp-no-term.html'), { force: true });
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it('dokumentiert LRGV-Portaleinträge fremden Dokumenttyps als expliziten Datensatz ohne Abruf', async () => {
+    const isolated = await mkdtemp(join(tmpdir(), 'landesrecht-import-not-lrgv-'));
+    try {
+      await mkdir(join(isolated, 'content', 'norms', 'west'), { recursive: true });
+      await writeFile(join(isolated, 'package.json'), '{"name":"tmp"}');
+      const url = 'https://recht.nrw.de/lrgv/verwaltungsvorschrift/16012026-finanzordnung-fino-lfm-nrw';
+      const fetcher = fakeFetcher({});
+      const result = await importRechtNrwNorm({ url, root: isolated, fetcher, write: true, now });
+      expect(result.status).toBe('failed');
+      expect(result.findings[0]?.code).toBe('not-lrgv');
+      expect(fetcher.requested).toEqual([]);
+      expect(result.unresolvedReport).toBe(unresolvedSourcePath('lrgv', url));
+      const record = JSON.parse(await readFile(join(isolated, result.unresolvedReport!), 'utf8')) as { url: string; importStatus: string; reason: Array<{ code: string }>; documents: unknown[] };
+      expect(record).toMatchObject({ url, importStatus: 'failed', documents: [] });
+      expect(record.reason.map((entry) => entry.code)).toEqual(['not-lrgv']);
+      expect((await readManifest(isolated)).entries).toEqual([]);
+      // Fremde Bereiche (LRMB) gehören zum anderen Pfad und erhalten keinen LRGV-Datensatz.
+      const outside = await importRechtNrwNorm({ url: 'https://recht.nrw.de/lrmb/verwaltungsvorschrift/irgendwas', root: isolated, fetcher: fakeFetcher({}), write: true, now });
+      expect(outside.unresolvedReport).toBeUndefined();
+      expect(outside.writtenFiles.filter((file) => file.includes('/unresolved/'))).toEqual([]);
     } finally {
       await rm(isolated, { recursive: true, force: true });
     }

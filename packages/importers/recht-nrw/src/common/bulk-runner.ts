@@ -36,6 +36,7 @@ import { emptyReviewQueue, type ReviewItem, type ReviewQueue } from './review-qu
 import { parseVersionUrl } from './source-identity.ts';
 import { stableStringify } from './stable-json.ts';
 import { currentParserVersion, isStaleEntry } from './staleness.ts';
+import { recordUnresolvedSource } from './unresolved.ts';
 import { parseVersionPage } from './version-page.ts';
 
 export const RUN_SUMMARY_SCHEMA = 'recht-nrw-run-summary/1' as const;
@@ -189,7 +190,12 @@ export const defaultItemProcessor: ItemProcessor = async (item, context) => {
   const common = { url: item.entryUrl, root: context.root, fetcher: context.fetcher, write: context.write, environment: context.environment, manifest: context.manifest, reviewQueue: context.reviewQueue, now: context.now, log: (message: string) => context.log(`    … ${message}`) };
   if (context.area === 'lrgv') {
     const address = parseVersionUrl(item.entryUrl);
-    if (!address || (address.documentType !== 'gesetz' && address.documentType !== 'rechtsverordnung')) return { status: 'review', importStatus: 'needs-review', errorCodes: ['portal-type-not-importable'], message: `Portaltyp ${item.portalType} wird im Bereich LRGV nicht als Norm importiert` };
+    if (!address || (address.documentType !== 'gesetz' && address.documentType !== 'rechtsverordnung')) {
+      const message = `Portaltyp ${item.portalType} wird im Bereich LRGV nicht als Norm importiert`;
+      // Expliziter Datensatz (Adresse, Titel, Grund, kein Abruf) statt eines bloßen Review-Vermerks ohne Kennung.
+      await recordUnresolvedSource({ root: context.root, write: context.write, area: 'lrgv', url: item.entryUrl, title: item.title, importStatus: 'needs-review', findings: [{ severity: 'error', code: 'portal-type-not-importable', message }], documents: [], runId: context.runId, now: context.now().toISOString() });
+      return { status: 'review', importStatus: 'needs-review', errorCodes: ['portal-type-not-importable'], message };
+    }
     return outcomeFromResult(await importRechtNrwNorm(common));
   }
   return outcomeFromResult(await importRechtNrwLrmbDocument(common));

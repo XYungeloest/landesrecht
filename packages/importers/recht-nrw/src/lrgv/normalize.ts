@@ -64,7 +64,7 @@ export function splitTitle(raw: string): { title: string; shortTitle?: string; a
   const parenthesized = /\(([^()]+)\)/u.exec(title);
   if (parenthesized) {
     const inner = parenthesized[1]!.trim();
-    const parts = inner.split(/\s+[–-]\s+/u).map((part) => part.trim()).filter(Boolean);
+    const parts = mergeTrailingJurisdiction(inner.split(/\s+[–-]\s+/u).map((part) => part.trim()).filter(Boolean));
     let consumed = false;
     if (parts.length >= 2 && looksLikeAbbreviation(parts[parts.length - 1]!)) {
       shortTitle = parts.slice(0, -1).join(' – ');
@@ -79,11 +79,22 @@ export function splitTitle(raw: string): { title: string; shortTitle?: string; a
     }
     if (consumed) title = `${title.slice(0, parenthesized.index)}${title.slice(parenthesized.index + parenthesized[0].length)}`.replace(/\s+/gu, ' ').replace(/\s+([,;.])/gu, '$1').trim();
   }
-  // 2. Nachgestellte Abkürzung in Gedankenstrichen: „… – AbgG NRW –“
+  // 2. Nachgestellte Abkürzung in Gedankenstrichen: „… – AbgG NRW –“, auch mit getrenntem Landeskürzel
+  //    „… - AG BAföG - NRW -“ (Abkürzung „AG BAföG NRW“, nie das nackte „NRW“).
   const dashed = /^(.*?)\s+[–-]\s+([^–-]+?)\s+[–-]\s*$/u.exec(title);
-  if (dashed && !abbr && looksLikeAbbreviation(dashed[2]!.trim())) {
-    title = dashed[1]!.trim();
-    abbr = dashed[2]!.trim();
+  if (dashed && !abbr) {
+    const candidate = dashed[2]!.trim();
+    if (candidate === JURISDICTION_TOKEN) {
+      // „… - AG BAföG - NRW -“: das Kürzel steht im vorangehenden Segment, das Landeskürzel gehört dazu.
+      const inner = /^(.*?)\s+[–-]\s+([^–-]+?)\s*$/u.exec(dashed[1]!.trim());
+      if (inner && looksLikeAbbreviation(inner[2]!.trim())) {
+        title = inner[1]!.trim();
+        abbr = `${inner[2]!.trim()} ${JURISDICTION_TOKEN}`;
+      }
+    } else if (looksLikeAbbreviation(candidate)) {
+      title = dashed[1]!.trim();
+      abbr = candidate;
+    }
   }
   const result: { title: string; shortTitle?: string; abbr?: string } = { title: title.replace(/[,;]\s*$/u, '').trim() };
   if (shortTitle) result.shortTitle = shortTitle;
@@ -91,9 +102,25 @@ export function splitTitle(raw: string): { title: string; shortTitle?: string; a
   return result;
 }
 
+/** Landeskürzel der Quelle; allein ist es keine Abkürzung einer Vorschrift, sondern Bestandteil davon. */
+const JURISDICTION_TOKEN = 'NRW';
+
+/**
+ * Ein abschließend getrenntes Landeskürzel („… - AG BAföG - NRW“) gehört zum vorangehenden Kürzel:
+ * ["AG BAföG", "NRW"] → ["AG BAföG NRW"]. Ohne vorangehendes Kürzel bleibt die Liste unverändert.
+ */
+export function mergeTrailingJurisdiction(parts: readonly string[]): string[] {
+  if (parts.length >= 2 && parts[parts.length - 1] === JURISDICTION_TOKEN && looksLikeAbbreviation(parts[parts.length - 2]!)) {
+    return [...parts.slice(0, -2), `${parts[parts.length - 2]} ${JURISDICTION_TOKEN}`];
+  }
+  return [...parts];
+}
+
 export function looksLikeAbbreviation(value: string): boolean {
   const compact = value.replace(/\s+/gu, ' ').trim();
   if (compact.length > 24) return false;
+  // Das nackte Landeskürzel ist nie die Abkürzung einer Vorschrift.
+  if (compact === JURISDICTION_TOKEN) return false;
   const words = compact.split(' ');
   return words.every((word) => /^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß0-9.-]*$/u.test(word) && (/[A-Z].*[A-Z]/u.test(word) || /^[A-ZÄÖÜ]{2,}/u.test(word) || word === 'NRW' || /^\d/u.test(word) || /\.$/u.test(word))) && words.length <= 4;
 }

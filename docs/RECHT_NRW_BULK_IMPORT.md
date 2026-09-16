@@ -104,7 +104,8 @@ LRMB ≈ 2–6 (Fassungen, Ministerialblatt-Einträge, Anlagen). Bei 1,5 s Absta
 - Unveränderlich: gleicher Schlüssel mit gleichem Hash → `already-present`; anderer Hash → harter Fehler
   (Lauf endet). Nach jedem Upload Rücklesung mit Größen- und Hashprüfung.
 - `--archive staging` (Standard, ohne Zugangsdaten): Ablage unter `.cache/recht-nrw-r2-staging/`, später
-  `npm run import:recht-nrw:r2-sync -- --write` (gleiche Prüfungen). `--archive r2`: sofortiger Upload
+  `npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write [--concurrency n] [--verify readback|etag]` (R2-API mit Wrangler-OAuth-Token, bis 32 Einträge gleichzeitig; `readback` = Byte-Rücklesung je Objekt, `etag` = Listing-/MD5-Prüfung mit 2 % Byte-Stichproben; `wrangler` = Prozesse,
+  höchstens 8 Manifesteinträge gleichzeitig, je Objekt Vorabprüfung → Upload → Rücklesung). `--archive r2`: sofortiger Upload
   (S3-API mit `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` oder `wrangler`).
 - Quellenreferenz der Norm: `{ availability: "r2-archived", bucket: "landesrecht-quellen", objectKey,
   sha256, url, retrievedAt }`; nie ein Pfad unter `sources/`. Der Bulkmodus bricht ab, wenn das Archiv oder
@@ -123,6 +124,7 @@ LRMB ≈ 2–6 (Fassungen, Ministerialblatt-Einträge, Anlagen). Bei 1,5 s Absta
 | `data/imports/recht-nrw/institution-mapping.json` | Institutionen-Zuordnung |
 | `data/imports/recht-nrw/reconstructions/`, `transcriptions/` | geprüfte Rezepte und Transkriptionen |
 | `data/audits/recht-nrw/<slug>.json`, `lrgv/`, `lrmb/` | Reports übernommener und Belege nicht übernommener Dokumente |
+| `data/audits/recht-nrw/<bereich>/unresolved/<hash>.json` | Quellen ohne Stammnorm-Kennung (Seite ohne Taxonomie-Term): URL, Titel, Fehlergrund, Abrufstatus, SHA-256 – keine erfundene Identität; in der Coverage als „verarbeitet ohne Manifest“ sichtbar |
 | `data/audits/recht-nrw/coverage.json`, `COVERAGE.md`, `runs/` | Coverage und Laufberichte |
 | `content/norms/west/<slug>/` | übernommene Normen |
 

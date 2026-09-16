@@ -1,0 +1,896 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32027",
+  "slug": "gvao-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@115:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 115,
+      "end": 141,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…bahn der Gerichtsvollzieherinnen und Gerichtsvollzieher des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@79:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 79,
+      "end": 94,
+      "term": "GV. NRW. S. 310",
+      "context": "…bsatz 2 Satz 1 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) verordnet das Ministerium der Justiz im Einve…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@123:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 123,
+      "end": 145,
+      "term": "Ministerium der Justiz",
+      "context": "… 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) verordnet das Ministerium der Justiz im Einvernehmen mit den Ministerien des Innern und der Fina…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[9].children[1].children[1].text@192:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[1].children[1].text",
+      "start": 192,
+      "end": 218,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…s Einstiegsamt, im Verwaltungsdienst des Justizvollzugs des Landes Nordrhein-Westfalen bestanden und sich in diesem Dienstzweig mindestens drei Ja…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[2].children[1].children[2].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[2].children[1].children[2].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Beamtinnen und Beamte des Landes Nordrhein-Westfalen, die die Befähigung für die Laufbahngruppe 1, zweites Einst…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[2].children[1].children[3].text@17:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[2].children[1].children[3].text",
+      "start": 17,
+      "end": 43,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Beschäftigte des Landes Nordrhein-Westfalen, die eine Ausbildung mit erfolgreich abgeschlossener Prüfun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].text@262:protected:gazette-nrw",
+      "path": "body[10].children[1].children[0].text",
+      "start": 262,
+      "end": 277,
+      "term": "GV. NRW. S. 310",
+      "context": "…bsatz 2 Satz 1 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 1 des Gesetzes vom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[0].text@358:protected:gazette-nrw",
+      "path": "body[10].children[1].children[0].text",
+      "start": 358,
+      "end": 373,
+      "term": "GV. NRW. S. 764",
+      "context": "…uletzt durch Artikel 1 des Gesetzes vom 19. September 2017 (GV. NRW. S. 764) geändert worden ist, findet keine Anwendung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[1].text@77:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].text",
+      "start": 77,
+      "end": 96,
+      "term": "Nordrhein-Westfalen",
+      "context": "…che Ausbildung wird durch das Ausbildungszentrum der Justiz Nordrhein-Westfalen durchgeführt. Die Leitung obliegt der Leiterin oder dem Lei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].text@195:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].text",
+      "start": 195,
+      "end": 214,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder dem Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen. Sie oder er kann eine Lehrkraft mit der Leitung beauftrage…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[5].text@61:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[5].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…achtheoretische Ausbildung im Ausbildungszentrum der Justiz Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[4].children[1].text@64:rule:jurisdiction-name-bare",
+      "path": "body[10].children[4].children[1].text",
+      "start": 64,
+      "end": 83,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder der Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen oder die von ihr oder ihm beauftragte Lehrkraft erstellt im…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[4].children[6].text@64:rule:jurisdiction-name-bare",
+      "path": "body[10].children[4].children[6].text",
+      "start": 64,
+      "end": 83,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder der Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen erteilt über die fachtheoretische Ausbildung ein Zeugnis, w…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[6].children[1].text@129:rule:jurisdiction-name-bare",
+      "path": "body[10].children[6].children[1].text",
+      "start": 129,
+      "end": 148,
+      "term": "Nordrhein-Westfalen",
+      "context": "…sen werden, aber zuvor bereits eine Tätigkeit in der Justiz Nordrhein-Westfalen ausgeübt haben, übernehmen eine ihrer früheren Verwendung e…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[1].text@58:rule:jurisdiction-name-bare",
+      "path": "body[11].children[4].children[1].text",
+      "start": 58,
+      "end": 77,
+      "term": "Nordrhein-Westfalen",
+      "context": "Der Lehrgang wird durch das Ausbildungszentrum der Justiz Nordrhein-Westfalen durchgeführt. Die Leitung obliegt der Leiterin oder dem Lei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[1].text@176:rule:jurisdiction-name-bare",
+      "path": "body[11].children[4].children[1].text",
+      "start": 176,
+      "end": 195,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder dem Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen. Sie oder er kann eine Lehrkraft mit Aufgaben der Lehrgangs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[2].text@452:rule:jurisdiction-name-bare",
+      "path": "body[11].children[4].children[2].text",
+      "start": 452,
+      "end": 471,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder der Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen oder eine von ihr oder ihm beauftragte Lehrkraft erstellt i…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[3].children[1].text@135:rule:jurisdiction-name-bare",
+      "path": "body[11].children[4].children[3].children[1].text",
+      "start": 135,
+      "end": 154,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ständigem Ministerium und dem Ausbildungszentrum der Justiz Nordrhein-Westfalen durchgeführt werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[7].children[1].text@431:rule:jurisdiction-name-bare",
+      "path": "body[11].children[7].children[1].text",
+      "start": 431,
+      "end": 450,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder den Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen oder eine von ihr oder ihm beauftragte Lehrkraft in einem d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[8].children[0].text@89:rule:jurisdiction-name-bare",
+      "path": "body[11].children[8].children[0].text",
+      "start": 89,
+      "end": 108,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Teilnehmer, die zuvor bereits eine Tätigkeit in der Justiz Nordrhein-Westfalen ausgeübt haben, die an sie zu stellenden Anforderungen in k…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[1].text@94:rule:jurisdiction-name-bare",
+      "path": "body[12].children[4].children[1].text",
+      "start": 94,
+      "end": 113,
+      "term": "Nordrhein-Westfalen",
+      "context": "… werden durch Lehrkräfte des Ausbildungszentrums der Justiz Nordrhein-Westfalen erstellt und mit Musterlösungen versehen. In jeder Aufgabe …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[1].text@441:rule:jurisdiction-name-bare",
+      "path": "body[12].children[4].children[1].text",
+      "start": 441,
+      "end": 460,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder den Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[2].text@116:rule:jurisdiction-name-bare",
+      "path": "body[12].children[4].children[2].text",
+      "start": 116,
+      "end": 135,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder der Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen oder eine von ihr oder ihm beauftragte Lehrkraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[3].text@509:rule:jurisdiction-name-bare",
+      "path": "body[12].children[4].children[3].text",
+      "start": 509,
+      "end": 528,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder der Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen oder eine von ihr oder ihm beauftragte Lehrkraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[4].text@174:rule:jurisdiction-name-bare",
+      "path": "body[12].children[4].children[4].text",
+      "start": 174,
+      "end": 193,
+      "term": "Nordrhein-Westfalen",
+      "context": "…der schriftlichen Prüfung vom Ausbildungszentrum der Justiz Nordrhein-Westfalen zugeteilt. Die zu den Kennziffern gehörenden Namen dürfen d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[6].text@231:rule:jurisdiction-name-bare",
+      "path": "body[12].children[4].children[6].text",
+      "start": 231,
+      "end": 250,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder dem Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen oder einer von ihr oder ihm beauftragten Lehrkraft in getre…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[13].children[2].text@123:rule:jurisdiction-name-bare",
+      "path": "body[12].children[13].children[2].text",
+      "start": 123,
+      "end": 142,
+      "term": "Nordrhein-Westfalen",
+      "context": "…mt er, sofern er zuvor bereits eine Tätigkeit in der Justiz Nordrhein-Westfalen ausgeübt hat, eine seiner früheren Verwendung entsprechende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[13].children[2].text@247:rule:jurisdiction-name-bare",
+      "path": "body[12].children[13].children[2].text",
+      "start": 247,
+      "end": 266,
+      "term": "Nordrhein-Westfalen",
+      "context": "…g entsprechende Tätigkeit. War er zuvor nicht in der Justiz Nordrhein-Westfalen tätig, entscheidet die Präsidentin oder der Präsident des O…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].children[0].text@1091:rule:jurisdiction-name-bare",
+      "path": "body[13].children[0].children[0].text",
+      "start": 1091,
+      "end": 1110,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Leiterin oder der Leiter des Ausbildungszentrums der Justiz Nordrhein-Westfalen und die oder der Vorsitzende des Prüfungsausschusses rechtz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].children[2].text@99:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[0].children[2].text",
+      "start": 99,
+      "end": 125,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Prüfung für die Laufbahn des Gerichtsvollzieherdienstes des Landes Nordrhein-Westfalen vom 14. März 2005 (GV. NRW. S. 203, ber. S. 824), die zulet…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].children[2].text@145:protected:gazette-nrw",
+      "path": "body[14].children[0].children[2].text",
+      "start": 145,
+      "end": 160,
+      "term": "GV. NRW. S. 203",
+      "context": "…rdienstes des Landes Nordrhein-Westfalen vom 14. März 2005 (GV. NRW. S. 203, ber. S. 824), die zuletzt durch Verordnung vom 2. Juni 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[2].text@223:protected:gazette-nrw",
+      "path": "body[14].children[0].children[2].text",
+      "start": 223,
+      "end": 238,
+      "term": "GV. NRW. S. 484",
+      "context": "…er. S. 824), die zuletzt durch Verordnung vom 2. Juni 2015 (GV. NRW. S. 484) geändert worden ist, tritt am 31. Dezember 2017 außer Kraf…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[3].children[0].text@4:ministry-portfolio",
+      "path": "body[14].children[0].children[3].children[0].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[14].children[0].children[3].children[1].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[0].children[3].children[1].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 27
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[1].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[2].children[1].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[2].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[4].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[6].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[7].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[8].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[13].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[13].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].children[3].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium der Justiz",
+      "context": "… 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) verordnet das Ministerium der Justiz im Einvernehmen mit den Ministerien des Innern und der Fina…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].children[3].children[0].text",
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 672,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…z 2 Satz 1 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) verordnet das Ministerium der Justiz …",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…z 2 Satz 1 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 1 des Gese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…zt durch Artikel 1 des Gesetzes vom 19. September 2017 (GV. NRW. S. 764) geändert worden ist, findet keine Anwendung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…rdienstes des Landes Westdeutschland vom 14. März 2005 (GV. NRW. S. 203, ber. S. 824), die zuletzt durch Verordnung vom 2. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…S. 824), die zuletzt durch Verordnung vom 2. Juni 2015 (GV. NRW. S. 484) geändert worden ist, tritt am 31. Dezember 2017 au…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium der Justiz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium der Justiz",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium der Justiz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium der Justiz",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "justizministerium"
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für die Laufbahn der Gerichtsvollzieherinnen und Gerichtsvollzieher des Landes Nordrhein-Westfalen vom 16. November 2017",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für die Laufbahn der Gerichtsvollzieherinnen und Gerichtsvollzieher des Landes Nordrhein-Westfalen vom 16. November 2017",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für die Laufbahn der Gerichtsvollzieherinnen und Gerichtsvollzieher des Landes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 39,
+          "actual": 39,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 58440,
+          "actual": 60064,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 39,
+          "actual": 39,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 672,
+          "actual": 672,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 39,
+          "actual": 39,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 60064,
+          "actual": 59960,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "39 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "39 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:26:12.816Z"
+}

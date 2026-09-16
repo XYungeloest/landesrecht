@@ -136,7 +136,7 @@ export async function evaluateReadiness(root: string, options: { env?: Record<st
     const ok = /"bucket_name":\s*"landesrecht-quellen"/u.test(wrangler) && /"bucket_name":\s*"landesrecht-quellen-staging"/u.test(wrangler) && ['R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'].every((name) => example.includes(name));
     add('r2-config', 'R2-Konfiguration vorbereitet (Bucket-Bindings, Variablen dokumentiert, Staging außerhalb von Git)', ok, ok ? 'landesrecht-quellen (+ staging); Variablen in .env.example' : 'Bucket-Binding oder dokumentierte Variablen fehlen');
     const missing = missingR2Environment(env);
-    add('r2-credentials', 'R2-Zugangsdaten in dieser Umgebung', missing.length === 0, missing.length === 0 ? 'vorhanden (sofortiger Upload möglich)' : `nicht gesetzt (${missing.join(', ')}); Bulk stagt nach .cache/recht-nrw-r2-staging, Upload später mit import:recht-nrw:r2-sync`, true);
+    add('r2-credentials', 'R2-Zugangsdaten in dieser Umgebung', missing.length === 0, missing.length === 0 ? 'vorhanden (sofortiger Upload möglich)' : `S3-Variablen nicht gesetzt (${missing.join(', ')}); Bulk stagt nach .cache/recht-nrw-r2-staging, Upload über die Wrangler-Anmeldung: import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag`, true);
   } catch (error) {
     add('r2-config', 'R2-Konfiguration vorbereitet', false, (error as Error).message);
   }

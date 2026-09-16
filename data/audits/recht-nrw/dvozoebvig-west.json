@@ -1,0 +1,1377 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31119",
+  "slug": "dvozoebvig-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@111:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 111,
+      "end": 130,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ich bestellten Vermessungsingenieurinnen und -ingenieure in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@10:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 10,
+      "end": 13,
+      "term": "NRW",
+      "context": "DVOzÖbVIG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@123:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 123,
+      "end": 142,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ich bestellten Vermessungsingenieurinnen und -ingenieure in Nordrhein-Westfalen vom 1. April 2014 (GV. NRW. S. 256) wird vom Ministerium fü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@162:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 162,
+      "end": 177,
+      "term": "GV. NRW. S. 256",
+      "context": "…n und -ingenieure in Nordrhein-Westfalen vom 1. April 2014 (GV. NRW. S. 256) wird vom Ministerium für Inneres und Kommunales verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@188:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 188,
+      "end": 236,
+      "term": "Ministerium für Inneres und Kommunales verordnet",
+      "context": "…hein-Westfalen vom 1. April 2014 (GV. NRW. S. 256) wird vom Ministerium für Inneres und Kommunales verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[24].children[0].children[1].children[0].text@150:rule:jurisdiction-name-bare",
+      "path": "body[24].children[0].children[1].children[0].text",
+      "start": 150,
+      "end": 169,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ich bestellten Vermessungsingenieurinnen und -ingenieure in Nordrhein-Westfalen (ÖbVIG NRW) vom 1. April 2014 (GV. NRW. S. 256),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[0].children[1].children[0].text@177:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[0].children[1].children[0].text",
+      "start": 177,
+      "end": 180,
+      "term": "NRW",
+      "context": "…ngenieurinnen und -ingenieure in Nordrhein-Westfalen (ÖbVIG NRW) vom 1. April 2014 (GV. NRW. S. 256),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[0].children[1].children[0].text@201:protected:gazette-nrw",
+      "path": "body[24].children[0].children[1].children[0].text",
+      "start": 201,
+      "end": 216,
+      "term": "GV. NRW. S. 256",
+      "context": "…ieure in Nordrhein-Westfalen (ÖbVIG NRW) vom 1. April 2014 (GV. NRW. S. 256),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[24].children[0].children[1].children[1].text@124:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[0].children[1].children[1].text",
+      "start": 124,
+      "end": 127,
+      "term": "NRW",
+      "context": "…igung über die Erfahrungen nach § 4 Absatz 2 Nummer 2 ÖbVIG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[0].text@127:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[0].text",
+      "start": 127,
+      "end": 130,
+      "term": "NRW",
+      "context": "…zu sechs Vermessungsgenehmigungen gemäß § 11 Absatz 3 ÖbVIG NRW nach den Vorgaben der folgenden Absätze durch die Aufsichts…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[0].text@438:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[0].text",
+      "start": 438,
+      "end": 441,
+      "term": "NRW",
+      "context": "…n für Amtshandlungen nach § 1 Absatz 2 Nummer 1 und 5 ÖbVIG NRW einsetzen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[1].text@167:protected:gazette-nrw",
+      "path": "body[24].children[1].children[1].text",
+      "start": 167,
+      "end": 182,
+      "term": "GV. NRW. S. 174",
+      "context": "…z 4 des Vermessungs- und Katastergesetzes vom 1. März 2005 (GV. NRW. S. 174), das zuletzt durch Artikel 2 des Gesetzes vom 1. April 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[24].children[1].children[1].text@245:protected:gazette-nrw",
+      "path": "body[24].children[1].children[1].text",
+      "start": 245,
+      "end": 260,
+      "term": "GV. NRW. S. 256",
+      "context": "…das zuletzt durch Artikel 2 des Gesetzes vom 1. April 2014 (GV. NRW. S. 256) geändert worden ist, sowie die Beurkundung obliegt allein …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[24].children[1].children[2].text@168:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[2].text",
+      "start": 168,
+      "end": 171,
+      "term": "NRW",
+      "context": "…de entsprechend § 5 Nummer 1 bis 3 oder § 11 Absatz 2 ÖbVIG NRW vorliegen. Sie kann die Vermessungsgenehmigung versagen, we…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[2].text@289:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[2].text",
+      "start": 289,
+      "end": 292,
+      "term": "NRW",
+      "context": "…wenn Versagungsgründe im Sinne des § 5 Nummer 4 und 5 ÖbVIG NRW vorliegen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[3].children[1].text@268:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[3].children[1].text",
+      "start": 268,
+      "end": 271,
+      "term": "NRW",
+      "context": "…führung von Amtshandlungen nach § 1 Absatz 2 Nummer 1 ÖbVIG NRW durch eine mindestens einjährige Mitwirkung erworben hat od…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[3].children[2].text@107:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[3].children[2].text",
+      "start": 107,
+      "end": 110,
+      "term": "NRW",
+      "context": "…führung von Amtshandlungen nach § 1 Absatz 2 Nummer 1 ÖbVIG NRW durch eine mindestens vierjährige Mitwirkung erworben hat.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[6].children[0].text@29:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[6].children[0].text",
+      "start": 29,
+      "end": 32,
+      "term": "NRW",
+      "context": "seine Vertretung (§ 12 ÖbVIG NRW),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[6].children[1].text@91:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[6].children[1].text",
+      "start": 91,
+      "end": 94,
+      "term": "NRW",
+      "context": "…gten Öffentlich bestellten Vermessungsingenieure (§ 7 ÖbVIG NRW),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[6].children[2].text@80:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[6].children[2].text",
+      "start": 80,
+      "end": 83,
+      "term": "NRW",
+      "context": "…ner in einer Bürogemeinschaft (§ 13 Absatz 1 Nummer 1 ÖbVIG NRW) oder",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[6].children[3].text@44:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[24].children[1].children[6].children[3].text",
+      "start": 44,
+      "end": 53,
+      "term": "ÖbVIG NRW",
+      "context": "die Kooperation nach § 13 Absatz 1 Nummer 2 ÖbVIG NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („ÖbVIG NRW“ → „ÖbVIG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "ÖbVIG West"
+    },
+    {
+      "id": "body[24].children[1].children[7].text@361:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[7].text",
+      "start": 361,
+      "end": 364,
+      "term": "NRW",
+      "context": "…n für Amtshandlungen nach § 1 Absatz 2 Nummer 1 und 5 ÖbVIG NRW durchführen. Auszubildende dürfen nur zu Ausbildungszwecken…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[1].children[7].text@617:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[1].children[7].text",
+      "start": 617,
+      "end": 620,
+      "term": "NRW",
+      "context": "…t für Amtshandlungen nach § 1 Absatz 2 Nummer 1 und 5 ÖbVIG NRW betraut werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[2].children[0].text@86:rule:jurisdiction-name-bare",
+      "path": "body[24].children[2].children[0].text",
+      "start": 86,
+      "end": 105,
+      "term": "Nordrhein-Westfalen",
+      "context": "… zuständige Ministerium stellt folgende Angaben zu jedem in Nordrhein-Westfalen bestellten Öffentlich bestellten Vermessungsingenieur für d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[2].children[0].children[3].text@46:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[24].children[2].children[0].children[3].text",
+      "start": 46,
+      "end": 55,
+      "term": "ÖbVIG NRW",
+      "context": "die Angaben zur Abwicklung gemäß § 7 Absatz 2 ÖbVIG NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („ÖbVIG NRW“ → „ÖbVIG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "ÖbVIG West"
+    },
+    {
+      "id": "body[24].children[3].children[0].children[5].text@110:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[3].children[0].children[5].text",
+      "start": 110,
+      "end": 113,
+      "term": "NRW",
+      "context": "…iner Vertretung durch die Aufsichtsbehörde gemäß § 12 ÖbVIG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[3].children[0].children[9].text@40:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[3].children[0].children[9].text",
+      "start": 40,
+      "end": 43,
+      "term": "NRW",
+      "context": "9. zu Ahndungsmaßnahmen nach § 15 ÖbVIG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[3].children[0].children[10].text@36:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[3].children[0].children[10].text",
+      "start": 36,
+      "end": 39,
+      "term": "NRW",
+      "context": "10. zur Kooperation nach § 13 ÖbVIG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[3].children[0].children[12].text@61:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[3].children[0].children[12].text",
+      "start": 61,
+      "end": 64,
+      "term": "NRW",
+      "context": "…2. zum Erlöschen der öffentlichen Bestellung nach § 6 ÖbVIG NRW und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[3].children[0].children[13].text@28:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[24].children[3].children[0].children[13].text",
+      "start": 28,
+      "end": 37,
+      "term": "ÖbVIG NRW",
+      "context": "13. zur Abwicklung nach § 7 ÖbVIG NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („ÖbVIG NRW“ → „ÖbVIG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "ÖbVIG West"
+    },
+    {
+      "id": "body[24].children[3].children[1].children[2].text@86:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[3].children[1].children[2].text",
+      "start": 86,
+      "end": 89,
+      "term": "NRW",
+      "context": "… Verpflichtung zur Verschwiegenheit nach § 3 Absatz 2 ÖbVIG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[24].children[3].children[2].children[5].text@86:rule:jurisdiction-abbreviation",
+      "path": "body[24].children[3].children[2].children[5].text",
+      "start": 86,
+      "end": 89,
+      "term": "NRW",
+      "context": "… Verpflichtung zur Verschwiegenheit nach § 3 Absatz 2 ÖbVIG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[0].children[1].text@48:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[0].children[1].text",
+      "start": 48,
+      "end": 51,
+      "term": "NRW",
+      "context": "Die Pflichtversicherung nach § 1 Absatz 4 ÖbVIG NRW ist zur Deckung der sich aus der Berufstätigkeit des Öffent…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[0].children[3].text@52:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[0].children[3].text",
+      "start": 52,
+      "end": 55,
+      "term": "NRW",
+      "context": "Bei Kooperationen nach § 13 Absatz 1 Nummer 1 ÖbVIG NRW gilt Absatz 2 für jeden einzelnen Öffentlich bestellten Ver…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[0].children[3].text@180:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[0].children[3].text",
+      "start": 180,
+      "end": 183,
+      "term": "NRW",
+      "context": "…ngsingenieur. Zudem ist § 13 Absatz 1 Nummer 3 Satz 2 ÖbVIG NRW zu beachten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[1].children[0].text@56:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[1].children[0].text",
+      "start": 56,
+      "end": 59,
+      "term": "NRW",
+      "context": "Für die Leistungen des Landes gemäß § 14 Absatz 7 ÖbVIG NRW wird von der Aufsichtsbehörde zum 20. Februar eines jeden J…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[2].children[1].children[1].text@47:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[2].children[1].children[1].text",
+      "start": 47,
+      "end": 50,
+      "term": "NRW",
+      "context": "die zur Berufsausübung nach § 1 Absatz 2 ÖbVIG NRW erforderlichen Vermessungsinstrumente und die erforderliche…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[2].children[1].children[3].text@111:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[2].children[1].children[3].text",
+      "start": 111,
+      "end": 114,
+      "term": "NRW",
+      "context": "…ie Einnahmen aus den Amtshandlungen nach § 1 Absatz 2 ÖbVIG NRW verbucht sowie der Kostenbeitrag nach § 6 abgebucht werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[3].children[0].text@170:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[3].children[0].text",
+      "start": 170,
+      "end": 173,
+      "term": "NRW",
+      "context": "…ist, über seine Geschäftsvorgänge nach den §§ 1 und 2 ÖbVIG NRW insbesondere im Interesse der Aufsicht, Vertretung und Abwi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[3].children[0].text@504:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[3].children[0].text",
+      "start": 504,
+      "end": 507,
+      "term": "NRW",
+      "context": "…ei einer Bürogemeinschaft nach § 13 Absatz 1 Nummer 1 ÖbVIG NRW kann ein gemeinsames Geschäftsbuch geführt werden, soweit d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[3].children[3].text@233:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[3].children[3].text",
+      "start": 233,
+      "end": 236,
+      "term": "NRW",
+      "context": "…oweit dies für die Wahrnehmung der Aufsicht nach § 14 ÖbVIG NRW von Bedeutung sein kann. Zeitgleich hat er die Katasterbehö…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[3].children[6].text@116:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[3].children[6].text",
+      "start": 116,
+      "end": 119,
+      "term": "NRW",
+      "context": "… Wahl der Gesellschaftsform bei Tätigkeiten gemäß § 2 ÖbVIG NRW dem Öffentlich bestellten Vermessungsingenieur unter Beacht…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[3].children[6].text@255:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[3].children[6].text",
+      "start": 255,
+      "end": 258,
+      "term": "NRW",
+      "context": "…lichten überlassen; bei Tätigkeiten nach § 1 Absatz 2 ÖbVIG NRW ist dann nur die Gesellschaftsform einer Gesellschaft bürge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[4].children[0].text@24:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[4].children[0].text",
+      "start": 24,
+      "end": 27,
+      "term": "NRW",
+      "context": "Über § 3 Absatz 4 ÖbVIG NRW hinausgehende werbende Handlungen, die das Ansehen der Öffe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[4].children[4].text@32:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[4].children[4].text",
+      "start": 32,
+      "end": 35,
+      "term": "NRW",
+      "context": "Gemäß § 1 Absatz 1 Satz 1 ÖbVIG NRW ist die Berufsbezeichnung ausschließlich auf die Person des…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[25].children[4].children[4].text@210:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[25].children[4].children[4].text",
+      "start": 210,
+      "end": 219,
+      "term": "ÖbVIG NRW",
+      "context": "…d erstreckt sich auf die Berufsausübung nach den §§ 1 und 2 ÖbVIG NRW. Die Berufsbezeichnung darf von ihm jedoch nicht verwendet …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („ÖbVIG NRW“ → „ÖbVIG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "ÖbVIG West"
+    },
+    {
+      "id": "body[25].children[4].children[4].text@592:rule:jurisdiction-abbreviation",
+      "path": "body[25].children[4].children[4].text",
+      "start": 592,
+      "end": 595,
+      "term": "NRW",
+      "context": "… würde. Bei Kooperationen nach § 13 Absatz 1 Nummer 3 ÖbVIG NRW darf er die Berufsbezeichnung nur dann verwenden, wenn deut…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[1].text@482:protected:gazette-nrw",
+      "path": "body[26].children[1].children[1].text",
+      "start": 482,
+      "end": 497,
+      "term": "GV. NRW. S. 786",
+      "context": "… Verfahren nach dem Baukammerngesetz vom 16. Dezember 2003 (GV. NRW. S. 786), das zuletzt durch Gesetz vom 9. Dezember 2008 (GV. NRW. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[1].children[1].text@547:protected:gazette-nrw",
+      "path": "body[26].children[1].children[1].text",
+      "start": 547,
+      "end": 562,
+      "term": "GV. NRW. S. 774",
+      "context": "…RW. S. 786), das zuletzt durch Gesetz vom 9. Dezember 2008 (GV. NRW. S. 774) geändert worden ist, oder mit strafrechtlichen Verfahren b…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[1].children[4].text@165:rule:jurisdiction-name",
+      "path": "body[26].children[1].children[4].text",
+      "start": 165,
+      "end": 189,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ahrensgrundsätzen des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[1].children[4].text@247:protected:gazette-nrw",
+      "path": "body[26].children[1].children[4].text",
+      "start": 247,
+      "end": 262,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 3 des Gesetzes vom 1. Oktober 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[1].children[4].text@327:protected:gazette-nrw",
+      "path": "body[26].children[1].children[4].text",
+      "start": 327,
+      "end": 342,
+      "term": "GV. NRW. S. 566",
+      "context": "…s zuletzt durch Artikel 3 des Gesetzes vom 1. Oktober 2013 (GV. NRW. S. 566) geändert worden ist, zum ermittelten Sachverhalt und zur v…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[1].children[6].text@65:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[6].text",
+      "start": 65,
+      "end": 68,
+      "term": "NRW",
+      "context": "…eine Abweichung vom rechtmäßigen Kostenanspruch (§ 10 ÖbVIG NRW) geahndet, soll die Geldbuße mindestens in doppelter Höhe d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[6].text@258:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[6].text",
+      "start": 258,
+      "end": 261,
+      "term": "NRW",
+      "context": "…ße kann hierdurch überschritten werden (§ 15 Absatz 2 ÖbVIG NRW). Ein unüblich geringes Honorar für die im Zusammenhang mit…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[6].text@379:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[6].text",
+      "start": 379,
+      "end": 382,
+      "term": "NRW",
+      "context": "…it einer Amtshandlung ausgeführten Tätigkeit nach § 2 ÖbVIG NRW ist als Kostenunterschreitung der Amtshandlung zu werten un…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[8].text@111:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[8].text",
+      "start": 111,
+      "end": 114,
+      "term": "NRW",
+      "context": "…stellten Vermessungsingenieurs ist nach § 15 Absatz 3 ÖbVIG NRW nicht mehr gewährleistet, wenn die Aufsichtsbehörde festste…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[8].children[2].text@48:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[8].children[2].text",
+      "start": 48,
+      "end": 51,
+      "term": "NRW",
+      "context": "überwiegend Tätigkeiten nach § 2 Absatz 1 ÖbVIG NRW ausführt oder",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[8].children[3].text@28:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[8].children[3].text",
+      "start": 28,
+      "end": 31,
+      "term": "NRW",
+      "context": "entgegen § 2 Absatz 3 ÖbVIG NRW einen weiteren Beruf ausübt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[1].children[9].text@86:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[1].children[9].text",
+      "start": 86,
+      "end": 89,
+      "term": "NRW",
+      "context": "… Bestellung auf Grund von § 6 Absatz 3 Nummer 1 bis 4 ÖbVIG NRW sind die Absätze 3 bis 5 entsprechend anzuwenden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 50
+    },
+    "source-citation": {
+      "protected": 8
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[24].children[0].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[24].children[0].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[0].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[3].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[3].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[6].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[6].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[6].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[6].children[3].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "ÖbVIG NRW",
+      "to": "ÖbVIG West"
+    },
+    {
+      "path": "body[24].children[1].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[1].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[24].children[2].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "ÖbVIG NRW",
+      "to": "ÖbVIG West"
+    },
+    {
+      "path": "body[24].children[3].children[0].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[3].children[0].children[9].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[3].children[0].children[10].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[3].children[0].children[12].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[3].children[0].children[13].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "ÖbVIG NRW",
+      "to": "ÖbVIG West"
+    },
+    {
+      "path": "body[24].children[3].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[24].children[3].children[2].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[2].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[2].children[1].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[3].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[3].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[3].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[4].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[4].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[25].children[4].children[4].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "ÖbVIG NRW",
+      "to": "ÖbVIG West"
+    },
+    {
+      "path": "body[25].children[4].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[1].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[8].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[8].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[1].children[9].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Inneres und Kommunales verordnet",
+      "context": "…hein-Westfalen vom 1. April 2014 (GV. NRW. S. 256) wird vom Ministerium für Inneres und Kommunales verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 322,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…n und -ingenieure in Westdeutschland vom 1. April 2014 (GV. NRW. S. 256) wird vom Ministerium für Inneres und Kommunales ve…",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[0].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…eure in Westdeutschland (ÖbVIG West) vom 1. April 2014 (GV. NRW. S. 256),",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…des Vermessungs- und Katastergesetzes vom 1. März 2005 (GV. NRW. S. 174), das zuletzt durch Artikel 2 des Gesetzes vom 1. A…",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 2 des Gesetzes vom 1. April 2014 (GV. NRW. S. 256) geändert worden ist, sowie die Beurkundung obliegt…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…fahren nach dem Baukammerngesetz vom 16. Dezember 2003 (GV. NRW. S. 786), das zuletzt durch Gesetz vom 9. Dezember 2008 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…S. 786), das zuletzt durch Gesetz vom 9. Dezember 2008 (GV. NRW. S. 774) geändert worden ist, oder mit strafrechtlichen Ver…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 3 des Gesetzes vom 1. O…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…letzt durch Artikel 3 des Gesetzes vom 1. Oktober 2013 (GV. NRW. S. 566) geändert worden ist, zum ermittelten Sachverhalt u…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Durchführungsverordnung zum Gesetz über die Öffentlich bestellten Vermessungsingenieurinnen und -ingenieure in Nordrhein-Westfalen vom 9. September 2014 (In Kraft getreten am 1. Oktober 2014 (GV. NRW. S. 491))",
+    "sourceVersion": "Durchführungsverordnung zum Gesetz über die Öffentlich bestellten Vermessungsingenieurinnen und -ingenieure in Nordrhein-Westfalen vom 9. September 2014 (In Kraft getreten am 1. Oktober 2014 (GV. NRW. S. 491))",
+    "simulation": "Durchführungsverordnung zum Gesetz über die Öffentlich bestellten Vermessungsingenieurinnen und -ingenieure in Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 29204,
+          "actual": 29029,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 186,
+          "actual": 186,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 29029,
+          "actual": 29057,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "13 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "13 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:43.460Z"
+}

@@ -8,8 +8,8 @@
  */
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
-import { buildBody, extractFootnoteMarkers, parseAnnexHeading, parseDivisionHeading, parseItem, parseSubparagraph, parseUnitHeading, tableBlock, type ParsedBody, type SourceFootnote, type SourceLine } from './body-common.ts';
-import { attr, children, classes, describeElement, elementChildren, findFirst, hasClass, isElement, isTextNode, normalizeWhitespace, parseHtml, textOf, type HtmlElement, type HtmlNode } from './html.ts';
+import { buildBody, extractFootnoteMarkers, hasConsentEvidence, parseAnnexHeading, parseDivisionHeading, parseItem, parseSubparagraph, parseTreatyHeading, parseUnitHeading, tableBlock, type ParsedBody, type SourceFootnote, type SourceLine } from './body-common.ts';
+import { attr, children, classes, describeElement, elementChildren, findFirst, hasClass, isElement, isLayoutTable, isTextNode, normalizeWhitespace, parseHtml, tableCells, tableRows, textOf, type HtmlElement, type HtmlNode } from './html.ts';
 
 export interface LegacyDocumentHead {
   /** Titelzeilen aus `p.lrueberschrift` (Langtitel, ggf. Kurzbezeichnung/Abkürzung in Folgezeilen). */
@@ -24,14 +24,47 @@ export interface LegacyParseResult extends ParsedBody {
   head: LegacyDocumentHead;
 }
 
-const IGNORED_TAGS = new Set(['hr', 'o:p', 'u5:p', 'u6:p', 'u7:p', 'u8:p', 'u9:p', 'u10:p', 'u11:p', 'u12:p', 'u13:p', 'style', 'meta', 'title', 'head', 'link']);
+// `<textend>`/`<textstart: …>`: inhaltsleere Marker des Portal-CMS (mit Metadatenattributen), ungeschlossen wie <u6:p>.
+const IGNORED_TAGS = new Set(['hr', 'o:p', 'u5:p', 'u6:p', 'u7:p', 'u8:p', 'u9:p', 'u10:p', 'u11:p', 'u12:p', 'u13:p', 'style', 'meta', 'title', 'head', 'link', 'textend', 'textstart:']);
 const INLINE_TAGS = new Set(['b', 'i', 'u', 'span', 'a', 'sup', 'sub', 'font', 'em', 'strong', 'br', 'st1:place', 'st1:personname', 'nobr', 'small', 'big']);
-const TRANSPARENT_TAGS = new Set(['p', 'div', 'td', 'th', 'tr', 'tbody', 'thead', 'table', 'center', 'blockquote']);
-const KNOWN_PARAGRAPH_CLASSES = new Set(['lrueberschrift', 'lrdetail', 'lrfundstelle', 'msonormal', 'feldinhalt', 'feldinhalt0', 'betreff', 'msobodytext', 'msolistparagraph', 'msolistparagraphcxspmiddle', 'msolistparagraphcxspfirst', 'msolistparagraphcxsplast', 'msotoc1', 'msotoc2', 'msotoc3', 'msotitle']);
+// `<dir>` (veraltete Verzeichnisliste) dient in Word-Exporten nur der Einrückung; in Zellen ist sie bedeutungslos.
+const TRANSPARENT_TAGS = new Set(['p', 'div', 'td', 'th', 'tr', 'tbody', 'thead', 'table', 'center', 'blockquote', 'dir']);
+/** Durchstreichung: ohne sichtbaren Text rein präsentational, mit Text semantisch unklar (gestrichen?) → Befund. */
+const STRUCK_TAGS = new Set(['s', 'strike', 'del']);
+/** Titel der Inhaltsübersicht („Inhaltsübersicht (Fn 7)“): Überschrift, kein Normtext. */
+const TOC_TITLE_CLASS = 'verzeichnistitelstammdokument';
+const KNOWN_PARAGRAPH_CLASSES = new Set(['lrueberschrift', 'lrdetail', 'lrfundstelle', 'msonormal', 'feldinhalt', 'feldinhalt0', 'betreff', 'msobodytext', 'msolistparagraph', 'msolistparagraphcxspmiddle', 'msolistparagraphcxspfirst', 'msolistparagraphcxsplast', 'msotoc1', 'msotoc2', 'msotoc3', 'msotitle', 'default', 'juristischerabsatznummeriert', TOC_TITLE_CLASS]);
+/**
+ * Word-Formatvorlagen ohne eigene Struktursemantik (die Struktur trägt der Text: „(1)“, „1.“):
+ * `e0`/`e1`, `1-1text`, `MsoToc9`, `MsoBodyText2`, `NummerierungStufe1` (Stufe → Einrückungsebene).
+ */
+const KNOWN_PARAGRAPH_CLASS_PATTERNS = [/^e\d+$/u, /^\d+-\d+text$/u, /^msotoc\d$/u, /^msobodytext\d*$/u, /^nummerierungstufe\d$/u];
+/** Einrückung je `<dir>`-Ebene in Punkt: Word exportiert eine Listenebene (36pt) als `<dir><dir>`. */
+const DIR_INDENT_POINTS = 18;
+/**
+ * Word-Export-Defekt: fehlendes Leerzeichen zwischen Tagname und erstem Attribut (`<pclass=MsoNormal>`,
+ * `<pstyle='margin-left:72.0pt'>`, `<ahref="#FN4">`). parse5 liest das als unbekanntes, nie geschlossenes
+ * Element, das den gesamten Restinhalt verschluckt.
+ */
+const MALFORMED_TAG_PATTERN = /<(p|a)(class|style|align|href)=/giu;
 
 function isIgnorable(node: HtmlElement): boolean {
   const name = node.tagName.toLowerCase();
   return IGNORED_TAGS.has(name) || /^u\d+:p$/u.test(name) || name === 'o:p';
+}
+
+function isKnownParagraphClass(className: string): boolean {
+  return KNOWN_PARAGRAPH_CLASSES.has(className) || KNOWN_PARAGRAPH_CLASS_PATTERNS.some((pattern) => pattern.test(className));
+}
+
+/** Repariert den Tag-Defekt kontrolliert (nur die beobachteten Tag/Attribut-Paare) und zählt die Stellen. */
+export function repairLegacyMarkup(html: string): { html: string; repaired: number } {
+  let repaired = 0;
+  const output = html.replace(MALFORMED_TAG_PATTERN, (_match, tag: string, attribute: string) => {
+    repaired += 1;
+    return `<${tag} ${attribute}=`;
+  });
+  return { html: output, repaired };
 }
 
 /** Text eines Absatzes mit `<br>`-Umbrüchen; unbekannte Inline-Elemente werden gemeldet. */
@@ -58,7 +91,11 @@ function paragraphText(node: HtmlElement, findings: ImportFinding[], context: st
       findings.push({ severity: 'error', code: 'image-in-text', message: `Bild im Text (${context}); Bilder werden nicht übernommen` });
       return;
     }
-    if (!INLINE_TAGS.has(name) && !TRANSPARENT_TAGS.has(name)) {
+    if (STRUCK_TAGS.has(name)) {
+      // <s><span><br></span></s> (Word-Export) ist reine Formatierung; durchgestrichener Text bleibt ein Befund.
+      const struck = textOf(current);
+      if (struck) findings.push({ severity: 'error', code: 'unknown-inline-element', message: `Durchgestrichener Text <${name}> in ${context}: „${struck.slice(0, 60)}“` });
+    } else if (!INLINE_TAGS.has(name) && !TRANSPARENT_TAGS.has(name)) {
       findings.push({ severity: 'error', code: 'unknown-inline-element', message: `Unbekanntes Element <${name}> in ${context}` });
     }
     if (name === 'p' && parts.length > 0) parts.push('\n');
@@ -91,10 +128,13 @@ function elementChildrenDeep(node: HtmlNode, tagName: string, output: HtmlElemen
   return output;
 }
 
-function marginLevel(node: HtmlElement): number | null {
+/** Einrückungsebene aus `margin-left`, umschließenden `<dir>`-Ebenen oder der Vorlage `NummerierungStufeN`. */
+function marginLevel(node: HtmlElement, dirDepth = 0): number | null {
+  const numberingLevel = classes(node).map((name) => /^nummerierungstufe(\d)$/iu.exec(name)).find(Boolean);
+  if (numberingLevel) return Number.parseInt(numberingLevel[1]!, 10) - 1;
   const margin = /margin-left:\s*([\d.]+)pt/u.exec(attr(node, 'style') ?? '');
-  if (!margin) return null;
-  const points = Number.parseFloat(margin[1]!);
+  if (!margin && dirDepth === 0) return null;
+  const points = (margin ? Number.parseFloat(margin[1]!) : 0) + dirDepth * DIR_INDENT_POINTS;
   if (points < 20) return null;
   if (points < 55) return 0;
   if (points < 90) return 1;
@@ -107,13 +147,18 @@ function parseTable(table: HtmlElement, findings: ImportFinding[]): { footnotes:
   const footnotes: SourceFootnote[] = [];
   let citationNote: string | undefined;
   let anchoredRows = 0;
+  let emptyRows = 0;
   const parsedRows: Array<Array<{ text: string; header: boolean; colspan?: number; rowspan?: number }>> = [];
   for (const row of rows) {
     const cells = elementChildren(row).filter((cell) => cell.tagName === 'td' || cell.tagName === 'th');
-    const anchor = cells[0] ? findFirst(cells[0], (element) => element.tagName === 'a' && /^FN\d+/u.test(attr(element, 'name') ?? '')) : undefined;
-    if (anchor && cells.length >= 2) {
+    if (cells.every((cell) => !textOf(cell))) emptyRows += 1;
+    // Ankernamen sind in der Quelle uneinheitlich geschrieben („FN1“, „Fn2“); spätere Fußnoten
+    // tragen teils nur die Beschriftung „Fn 2“ ohne Anker.
+    const anchor = cells[0] ? findFirst(cells[0], (element) => element.tagName === 'a' && /^FN\d+/iu.test(attr(element, 'name') ?? '')) : undefined;
+    const labelMatch = anchor ? /^FN(\d+)/iu.exec(attr(anchor, 'name') ?? '') : (anchoredRows > 0 && cells[0] ? /^Fn\s*(\d+)$/u.exec(textOf(cells[0])) : null);
+    if (labelMatch && cells.length >= 2) {
       anchoredRows += 1;
-      const label = /^FN(\d+)/u.exec(attr(anchor, 'name') ?? '')![1]!;
+      const label = labelMatch[1]!;
       const text = paragraphText(cells[1]!, findings, `Fußnote ${label}`);
       if (!citationNote && findFirst(cells[1]!, (element) => hasClass(element, 'lrfundstelle'))) citationNote = text;
       if (!text) findings.push({ severity: 'info', code: 'empty-footnote', message: `Fußnote ${label} ist in der Quelle leer` });
@@ -133,14 +178,17 @@ function parseTable(table: HtmlElement, findings: ImportFinding[]): { footnotes:
       return entry;
     }));
   }
-  const isFootnoteTable = anchoredRows > 0 && anchoredRows * 2 >= rows.length;
+  // Leere Schlusszeilen (Word-Export) zählen nicht gegen die Fußnotentabelle.
+  const isFootnoteTable = anchoredRows > 0 && anchoredRows * 2 >= rows.length - emptyRows;
   if (isFootnoteTable) return citationNote ? { footnotes, citationNote } : { footnotes };
-  return { block: tableBlock(parsedRows) };
+  return { block: tableBlock(parsedRows, findings) };
 }
 
 export function parseLegacyDocument(html: string): LegacyParseResult {
   const findings: ImportFinding[] = [];
-  const document = parseHtml(html);
+  const repair = repairLegacyMarkup(html);
+  if (repair.repaired > 0) findings.push({ severity: 'warning', code: 'malformed-tag-repaired', message: `${repair.repaired} Tag(s) ohne Leerzeichen vor dem Attribut (z. B. <pclass=…>) im Quellmarkup repariert` });
+  const document = parseHtml(repair.html);
   const body = findFirst(document, (element) => element.tagName === 'body');
   if (!body) throw new Error('Legacy-Dokument ohne <body>');
   // Manche Dateien enthalten vor dem eigentlichen Dokument einen Kopf mit Gliederungsnummer und
@@ -166,11 +214,20 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
   };
 
   const topLevel: HtmlElement[] = [];
-  const collect = (parent: HtmlElement): void => {
+  /** Zahl der umschließenden `<dir>`-Ebenen (Einrückung) je Blockelement; `<center>` vererbt Zentrierung. */
+  const dirDepth = new Map<HtmlElement, number>();
+  const centeredByWrapper = new Set<HtmlElement>();
+  const collect = (parent: HtmlElement, depth = 0, centered = false): void => {
     for (const node of elementChildren(parent)) {
       const name = node.tagName.toLowerCase();
-      if (name === 'div' || (isIgnorable(node) && name !== 'style' && name !== 'head')) collect(node);
-      else topLevel.push(node);
+      if (name === 'div' || name === 'dir' || name === 'center' || (isIgnorable(node) && name !== 'style' && name !== 'head')) collect(node, depth + (name === 'dir' ? 1 : 0), centered || name === 'center');
+      // Einzeilige Word-Hülltabelle um eine Tabelle: Zellinhalte (Absätze, innere Tabelle) auf Dokumentebene heben.
+      else if (name === 'table' && isLayoutTable(node)) for (const cell of tableRows(node).flatMap(tableCells)) collect(cell, depth, centered);
+      else {
+        topLevel.push(node);
+        if (depth > 0) dirDepth.set(node, depth);
+        if (centered) centeredByWrapper.add(node);
+      }
     }
   };
   collect(container);
@@ -195,16 +252,24 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
       if (stray.text) pushText(stray.text, false, false, stray.footnotes);
       continue;
     }
-    if (name !== 'p') {
+    // Word-Überschriften (<h2>Anlage</h2>) entsprechen zentrierten fetten Absätzen.
+    const isHeadingElement = /^h[1-6]$/u.test(name);
+    if (name !== 'p' && !isHeadingElement) {
       findings.push({ severity: 'error', code: 'unknown-block-element', message: `Unbekanntes Blockelement ${describeElement(node)} auf Dokumentebene` });
       continue;
     }
     const classNames = classes(node).map((entry) => entry.toLowerCase());
     for (const className of classNames) {
-      if (!KNOWN_PARAGRAPH_CLASSES.has(className)) findings.push({ severity: 'error', code: 'unknown-paragraph-class', message: `Unbekannte Absatzklasse „${className}“: ${textOf(node).slice(0, 80)}` });
+      if (!isKnownParagraphClass(className)) findings.push({ severity: 'error', code: 'unknown-paragraph-class', message: `Unbekannte Absatzklasse „${className}“: ${textOf(node).slice(0, 80)}` });
     }
     const rawText = paragraphText(node, findings, `p.${classNames[0] ?? 'default'}`);
     if (!rawText) continue;
+
+    if (classNames.includes(TOC_TITLE_CLASS)) {
+      const marker = extractFootnoteMarkers(rawText.replace(/\n/gu, ' '));
+      if (marker.text) lines.push({ kind: 'heading', text: marker.text, footnotes: marker.footnotes });
+      continue;
+    }
 
     if (hasClass(node, 'lrueberschrift')) {
       head.titleLines.push(...rawText.split('\n').map((line) => extractFootnoteMarkers(line).text).filter(Boolean));
@@ -246,8 +311,8 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
       continue;
     }
 
-    const centered = isCentered(node);
-    const bold = isBold(node);
+    const centered = isHeadingElement || centeredByWrapper.has(node) || isCentered(node);
+    const bold = isHeadingElement || isBold(node);
     const flat = rawText.replace(/\n/gu, ' ');
     const { text, footnotes: footnoteLabels } = extractFootnoteMarkers(flat);
     if (!text) continue;
@@ -264,6 +329,15 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
       if (annex && /^Anlage/u.test(text)) {
         const line: SourceLine = { kind: 'annex', label: annex.label, footnotes: footnoteLabels };
         if (annex.title) line.title = annex.title;
+        lines.push(line);
+        continue;
+      }
+      // Nachstehend veröffentlichter Vertragstext eines Zustimmungsgesetzes: eigener Container mit
+      // eigener Artikelzählung (nur nach Zustimmungsformel/Veröffentlichungsvermerk im Gesetzestext).
+      const treaty = bold && sawFirstUnit ? parseTreatyHeading(text) : null;
+      if (treaty && hasConsentEvidence(lines)) {
+        const line: SourceLine = { kind: 'annex', label: treaty.label, footnotes: footnoteLabels };
+        if (treaty.title) line.title = treaty.title;
         lines.push(line);
         continue;
       }
@@ -286,7 +360,7 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
       continue;
     }
 
-    const level = marginLevel(node);
+    const level = marginLevel(node, dirDepth.get(node) ?? 0);
     const item = parseItem(text);
     if (item && level !== null) {
       lines.push({ kind: 'item', label: item.label, text: item.text, level: Math.max(level, item.level), footnotes: footnoteLabels });

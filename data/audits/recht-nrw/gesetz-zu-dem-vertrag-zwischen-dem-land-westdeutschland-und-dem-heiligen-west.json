@@ -1,0 +1,1122 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27514",
+  "slug": "gesetz-zu-dem-vertrag-zwischen-dem-land-westdeutschland-und-dem-heiligen-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@31:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 31,
+      "end": 59,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@7:municipality",
+      "path": "body[1].children[0].text",
+      "start": 7,
+      "end": 17,
+      "term": "Düsseldorf",
+      "context": "Dem in Düsseldorf am 26. März 1984 unterzeichneten Vertrag zwischen dem Land …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@68:rule:jurisdiction-name-dative",
+      "path": "body[1].children[0].text",
+      "start": 68,
+      "end": 96,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…üsseldorf am 26. März 1984 unterzeichneten Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl sowie dem dazugehörigen Schlußprotok…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].text@201:rule:jurisdiction-name",
+      "path": "body[2].children[2].text",
+      "start": 201,
+      "end": 225,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n Kraft treten, ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekanntzumachen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].text@4:constitutional-organ-state",
+      "path": "body[3].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[3].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].text@9:rule:jurisdiction-name-dative",
+      "path": "body[5].text",
+      "start": 9,
+      "end": 37,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[6].text@223:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 223,
+      "end": 249,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…hschulen mit den anderen wissenschaftlichen Hochschulen des Landes Nordrhein-Westfalen haben die Vertragschließenden bewogen, auf der Grundlage de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].text@611:constitutional-organ-state",
+      "path": "body[6].text",
+      "start": 611,
+      "end": 661,
+      "term": "Ministerpräsidenten des Landes Nordrhein-Westfalen",
+      "context": "…rages zu treffen und zugleich den Notenwechsel zwischen dem Ministerpräsidenten des Landes Nordrhein-Westfalen und dem Apostolischen Nuntius in Deutschland über Fragen de…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[6].text@635:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 635,
+      "end": 661,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…leich den Notenwechsel zwischen dem Ministerpräsidenten des Landes Nordrhein-Westfalen und dem Apostolischen Nuntius in Deutschland über Fragen de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[0].text@61:rule:jurisdiction-name-dative",
+      "path": "body[15].children[0].text",
+      "start": 61,
+      "end": 88,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…ür die wissenschaftliche Vorbildung der Geistlichen bleiben im Land Nordrhein-Westfalen die katholisch-theologischen Fachbereiche an den Universitä…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[0].text@152:municipality",
+      "path": "body[15].children[0].text",
+      "start": 152,
+      "end": 158,
+      "term": "Bochum",
+      "context": "… katholisch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen. Die Bestimmungen des Artikels 1…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@160:municipality",
+      "path": "body[15].children[0].text",
+      "start": 160,
+      "end": 164,
+      "term": "Bonn",
+      "context": "…sch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen. Die Bestimmungen des Artikels 12 des …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@169:municipality",
+      "path": "body[15].children[0].text",
+      "start": 169,
+      "end": 176,
+      "term": "Münster",
+      "context": "…ogischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen. Die Bestimmungen des Artikels 12 des Vertrages de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@422:municipality",
+      "path": "body[15].children[0].text",
+      "start": 422,
+      "end": 428,
+      "term": "Bochum",
+      "context": "…uf den katholisch-theologischen Fachbereich der Universität Bochum.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[21].children[0].text@26:rule:jurisdiction-name-bare",
+      "path": "body[21].children[0].text",
+      "start": 26,
+      "end": 45,
+      "term": "Nordrhein-Westfalen",
+      "context": "Betreiben die Diözesen in Nordrhein-Westfalen Lehrerfortbildung, so wird das Land Lehrern im Rahmen der d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[21].children[2].text@91:rule:jurisdiction-name-bare",
+      "path": "body[21].children[2].text",
+      "start": 91,
+      "end": 110,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung zwischen der Landesregierung und den (Erz-)Bistümern in Nordrhein-Westfalen geregelt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[22].children[0].text@30:constitutional-organ-state",
+      "path": "body[22].children[0].text",
+      "start": 30,
+      "end": 80,
+      "term": "Ministerpräsidenten des Landes Nordrhein-Westfalen",
+      "context": "Der Notenwechsel zwischen dem Ministerpräsidenten des Landes Nordrhein-Westfalen und dem Apostolischen Nuntius in Deutschland über Fragen de…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[22].children[0].text@54:rule:jurisdiction-name-genitive",
+      "path": "body[22].children[0].text",
+      "start": 54,
+      "end": 80,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Notenwechsel zwischen dem Ministerpräsidenten des Landes Nordrhein-Westfalen und dem Apostolischen Nuntius in Deutschland über Fragen de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[24].children[2].text@0:municipality",
+      "path": "body[24].children[2].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[5].text@77:rule:jurisdiction-name-dative",
+      "path": "body[24].children[5].text",
+      "start": 77,
+      "end": 105,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…hnung des am heutigen Tage geschlossenen Vertrages zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl haben die ordnungsgemäß bevollmächti…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[24].children[7].text@522:rule:jurisdiction-name-dative",
+      "path": "body[24].children[7].text",
+      "start": 522,
+      "end": 549,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…hbereiche an den staatlichen wissenschaftlichen Hochschulen im Land Nordrhein-Westfalen zur kirchlichen Behörde zur Zeit des Vertragsabschlusses di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[24].children[9].text@30:constitutional-organ-state",
+      "path": "body[24].children[9].text",
+      "start": 30,
+      "end": 80,
+      "term": "Ministerpräsidenten des Landes Nordrhein-Westfalen",
+      "context": "Der Notenwechsel zwischen dem Ministerpräsidenten des Landes Nordrhein-Westfalen und dem Apostolischen Nuntius in Deutschland vom 20./29. De…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[24].children[9].text@54:rule:jurisdiction-name-genitive",
+      "path": "body[24].children[9].text",
+      "start": 54,
+      "end": 80,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Notenwechsel zwischen dem Ministerpräsidenten des Landes Nordrhein-Westfalen und dem Apostolischen Nuntius in Deutschland vom 20./29. De…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[24].children[9].text@199:geography-region",
+      "path": "body[24].children[9].text",
+      "start": 199,
+      "end": 203,
+      "term": "Ruhr",
+      "context": "…ezember 1967 über die Katholisch-Theologische Abteilung der Ruhr-Universität Bochum bleibt im übrigen unberührt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[24].children[9].text@216:municipality",
+      "path": "body[24].children[9].text",
+      "start": 216,
+      "end": 222,
+      "term": "Bochum",
+      "context": "… die Katholisch-Theologische Abteilung der Ruhr-Universität Bochum bleibt im übrigen unberührt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[17].text@155:rule:jurisdiction-name-bare",
+      "path": "body[24].children[17].text",
+      "start": 155,
+      "end": 174,
+      "term": "Nordrhein-Westfalen",
+      "context": "…e in der Lehrerausbildung werden mit den (Erz-)Bistümern in Nordrhein-Westfalen geregelt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[18].text@0:municipality",
+      "path": "body[24].children[18].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[31].text@158:municipality",
+      "path": "body[24].children[31].text",
+      "start": 158,
+      "end": 164,
+      "term": "Bochum",
+      "context": "…a, i Dipartimenti di Teologia cattolica delle Università di Bochum, Bonn e Münster. Le disposizioni dell'articolo 12 della Con…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[31].text@166:municipality",
+      "path": "body[24].children[31].text",
+      "start": 166,
+      "end": 170,
+      "term": "Bonn",
+      "context": "…artimenti di Teologia cattolica delle Università di Bochum, Bonn e Münster. Le disposizioni dell'articolo 12 della Convenzio…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[31].text@173:municipality",
+      "path": "body[24].children[31].text",
+      "start": 173,
+      "end": 180,
+      "term": "Münster",
+      "context": "…ti di Teologia cattolica delle Università di Bochum, Bonn e Münster. Le disposizioni dell'articolo 12 della Convenzione fra la …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[31].text@394:municipality",
+      "path": "body[24].children[31].text",
+      "start": 394,
+      "end": 400,
+      "term": "Bochum",
+      "context": "…he al Dipartimento di Teologia cattolica dell'Università di Bochum.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[45].children[2].text@0:municipality",
+      "path": "body[24].children[45].children[2].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26 marzo 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[45].children[9].text@232:geography-region",
+      "path": "body[24].children[45].children[9].text",
+      "start": 232,
+      "end": 236,
+      "term": "Ruhr",
+      "context": "…il Dipartimento di Teologia cattolica dell'Università della Ruhr in Bochum.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[24].children[45].children[9].text@232:geography-river",
+      "path": "body[24].children[45].children[9].text",
+      "start": 232,
+      "end": 236,
+      "term": "Ruhr",
+      "context": "…il Dipartimento di Teologia cattolica dell'Università della Ruhr in Bochum.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[24].children[45].children[9].text@240:municipality",
+      "path": "body[24].children[45].children[9].text",
+      "start": 240,
+      "end": 246,
+      "term": "Bochum",
+      "context": "…timento di Teologia cattolica dell'Università della Ruhr in Bochum.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[45].children[18].text@0:municipality",
+      "path": "body[24].children[45].children[18].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26 marzo 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[24].children[45].children[22].text@61:rule:jurisdiction-name-dative",
+      "path": "body[24].children[45].children[22].text",
+      "start": 61,
+      "end": 89,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…ufgrund des Artikels 2 des Gesetzes zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl vom 18. September 1984 (GV. NW. S. 5…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[24].children[45].children[22].text@137:protected:gazette-nw",
+      "path": "body[24].children[45].children[22].text",
+      "start": 137,
+      "end": 151,
+      "term": "GV. NW. S. 582",
+      "context": "…in-Westfalen und dem Heiligen Stuhl vom 18. September 1984 (GV. NW. S. 582) wird hiermit bekanntgemacht, daß der Vertrag und das Schlu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[25].text@4:constitutional-organ-state",
+      "path": "body[25].text",
+      "start": 4,
+      "end": 52,
+      "term": "Ministerpräsident des Landes Nordrhein-Westfalen",
+      "context": "Der Ministerpräsident des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[25].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[25].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Ministerpräsident des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[26].text@4:protected:gazette-nw",
+      "path": "body[26].text",
+      "start": 4,
+      "end": 23,
+      "term": "GV. NW. 1984 S. 803",
+      "context": "Fn1 GV. NW. 1984 S. 803.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 17
+    },
+    "municipality": {
+      "manual-review": 15
+    },
+    "institution": {
+      "safe-auto-transform": 5
+    },
+    "geography": {
+      "manual-review": 3
+    },
+    "source-citation": {
+      "protected": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[21].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[21].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[22].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[24].children[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[24].children[7].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[24].children[9].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[24].children[17].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[24].children[45].children[22].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[25].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[0].text",
+      "term": "Düsseldorf",
+      "context": "Dem in Düsseldorf am 26. März 1984 unterzeichneten Vertrag zwischen dem Land …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Bochum",
+      "context": "… katholisch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen. Die Bestimmungen des Artikels 1…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Bonn",
+      "context": "…sch-theologischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen. Die Bestimmungen des Artikels 12 des …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Münster",
+      "context": "…ogischen Fachbereiche an den Universitäten Bochum, Bonn und Münster bestehen. Die Bestimmungen des Artikels 12 des Vertrages de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Bochum",
+      "context": "…uf den katholisch-theologischen Fachbereich der Universität Bochum.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[2].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[9].text",
+      "term": "Ruhr",
+      "context": "…ezember 1967 über die Katholisch-Theologische Abteilung der Ruhr-Universität Bochum bleibt im übrigen unberührt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[9].text",
+      "term": "Bochum",
+      "context": "… die Katholisch-Theologische Abteilung der Ruhr-Universität Bochum bleibt im übrigen unberührt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[18].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26. März 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[31].text",
+      "term": "Bochum",
+      "context": "…a, i Dipartimenti di Teologia cattolica delle Università di Bochum, Bonn e Münster. Le disposizioni dell'articolo 12 della Con…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[31].text",
+      "term": "Bonn",
+      "context": "…artimenti di Teologia cattolica delle Università di Bochum, Bonn e Münster. Le disposizioni dell'articolo 12 della Convenzio…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[31].text",
+      "term": "Münster",
+      "context": "…ti di Teologia cattolica delle Università di Bochum, Bonn e Münster. Le disposizioni dell'articolo 12 della Convenzione fra la …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[31].text",
+      "term": "Bochum",
+      "context": "…he al Dipartimento di Teologia cattolica dell'Università di Bochum.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[45].children[2].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26 marzo 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[45].children[9].text",
+      "term": "Ruhr",
+      "context": "…il Dipartimento di Teologia cattolica dell'Università della Ruhr in Bochum.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[45].children[9].text",
+      "term": "Ruhr",
+      "context": "…il Dipartimento di Teologia cattolica dell'Università della Ruhr in Bochum.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[45].children[9].text",
+      "term": "Bochum",
+      "context": "…timento di Teologia cattolica dell'Università della Ruhr in Bochum.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].children[45].children[18].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, 26 marzo 1984",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 168,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl vom 18. September 1984",
+    "sourceVersion": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl vom 18. September 1984",
+    "simulation": "Gesetz zu dem Vertrag zwischen dem Land Westdeutschland und dem Heiligen Stuhl in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 22040,
+          "actual": 22207,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 131,
+          "actual": 131,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 22207,
+          "actual": 22143,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "13 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "13 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": true,
+    "treatyTextLocation": "unknown",
+    "evidence": [
+      "Titel: „Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl“"
+    ],
+    "treatyTitle": "Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl"
+  },
+  "generatedAt": "2026-09-16T15:25:29.874Z"
+}

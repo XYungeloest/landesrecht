@@ -1,0 +1,859 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31157",
+  "slug": "apg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.shortTitle@24:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 24,
+      "end": 43,
+      "term": "Nordrhein-Westfalen",
+      "context": "Alten- und Pflegegesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@4:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "APG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@45:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 45,
+      "end": 60,
+      "term": "GV. NRW. S. 625",
+      "context": "(Artikel 1 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 625))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].text@57:rule:jurisdiction-name-bare",
+      "path": "body[6].children[1].text",
+      "start": 57,
+      "end": 76,
+      "term": "Nordrhein-Westfalen",
+      "context": "§ 20 Bericht der Landesregierung zur Lage der Älteren in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].children[0].text@93:regional-body-association",
+      "path": "body[8].children[2].children[0].text",
+      "start": 93,
+      "end": 112,
+      "term": "Landschaftsverbände",
+      "context": "…te nach diesem Gesetz können insbesondere die Kommunen, die Landschaftsverbände, die Trägerinnen und Träger der Pflegeversicherung, die Med…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[8].children[2].children[1].text@274:rule:jurisdiction-name-bare",
+      "path": "body[8].children[2].children[1].text",
+      "start": 274,
+      "end": 293,
+      "term": "Nordrhein-Westfalen",
+      "context": "…genannten Institutionen und Verbände sowie die Pflegekammer Nordrhein-Westfalen und Interessenvertretungen der Beschäftigten an.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[5].children[0].text@811:regional-body-association",
+      "path": "body[8].children[5].children[0].text",
+      "start": 811,
+      "end": 831,
+      "term": "Landschaftsverbänden",
+      "context": "…vereinbarungen mit den Kreisen und kreisfreien Städten, den Landschaftsverbänden, den Pflegekassen und Dachverbänden sonstiger in der Beratu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[8].children[7].children[2].children[2].text@81:protected:gazette-nrw",
+      "path": "body[8].children[7].children[2].children[2].text",
+      "start": 81,
+      "end": 96,
+      "term": "GV. NRW. S. 625",
+      "context": "…ch § 16 des Wohn- und Teilhabegesetzes vom 2. Oktober 2014 (GV. NRW. S. 625),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[4].children[0].text@67:rule:jurisdiction-name-bare",
+      "path": "body[9].children[4].children[0].text",
+      "start": 67,
+      "end": 86,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ohngeld wird in vollstationären Dauerpflegeeinrichtungen in Nordrhein-Westfalen als Unterstützung der Personen (Anspruchsberechtigte) gewäh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[4].children[5].text@370:rule:jurisdiction-name-dative",
+      "path": "body[9].children[4].children[5].text",
+      "start": 370,
+      "end": 397,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…013 (BGBl. I S. 3836) geändert worden ist, vor Heimeintritt im Land Nordrhein-Westfalen gehabt haben. Dies gilt nicht, sofern die pflegebedürftige …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[9].children[4].children[5].text@562:rule:jurisdiction-name-adjective",
+      "path": "body[9].children[4].children[5].text",
+      "start": 562,
+      "end": 585,
+      "term": "nordrhein-westfälischen",
+      "context": "…kreisfreien Stadt oder einer daran unmittelbar angrenzenden nordrhein-westfälischen Gebietskörperschaft, in dem oder in der die Pflegeeinrichtu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective übergeleitet („nordrhein-westfälischen“ → „westdeutschen“).",
+      "transformRule": "jurisdiction-name-adjective",
+      "replacement": "westdeutschen"
+    },
+    {
+      "id": "body[9].children[6].children[3].children[0].text@4:authority-district-government",
+      "path": "body[9].children[6].children[3].children[0].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "die Bezirksregierung als Aufsichtsbehörde über die in ihrem Zuständigkeitsbereic…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[9].children[3].text@184:rule:jurisdiction-name-bare",
+      "path": "body[9].children[9].children[3].text",
+      "start": 184,
+      "end": 203,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n § 3 genannten Trägerinnen und Träger und der Pflegekammer Nordrhein-Westfalen. Die Ergebnisse der Landesberichterstattung nach § 20 sowie…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[10].title@52:rule:jurisdiction-name-bare",
+      "path": "body[9].children[10].title",
+      "start": 52,
+      "end": 71,
+      "term": "Nordrhein-Westfalen",
+      "context": "Bericht der Landesregierung zur Lage der Älteren in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[10].children[0].text@168:rule:jurisdiction-name-bare",
+      "path": "body[9].children[10].children[0].text",
+      "start": 168,
+      "end": 187,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ode einen Bericht als Gesamtanalyse zur Lage der Älteren in Nordrhein-Westfalen. Dieser dient zugleich als Planungsgrundlage für den Landes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[12].children[0].text@362:rule:jurisdiction-name-bare",
+      "path": "body[9].children[12].children[0].text",
+      "start": 362,
+      "end": 381,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ng, die auf der Grundlage des § 13 des Landespflegegesetzes Nordrhein-Westfalen vom 19. März 1996 (GV. NRW. S. 137), das zuletzt durch Arti…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[12].children[0].text@401:protected:gazette-nrw",
+      "path": "body[9].children[12].children[0].text",
+      "start": 401,
+      "end": 416,
+      "term": "GV. NRW. S. 137",
+      "context": "…Landespflegegesetzes Nordrhein-Westfalen vom 19. März 1996 (GV. NRW. S. 137), das zuletzt durch Artikel 17 des Gesetzes vom 3. Mai 2005…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[12].children[0].text@478:protected:gazette-nrw",
+      "path": "body[9].children[12].children[0].text",
+      "start": 478,
+      "end": 493,
+      "term": "GV. NRW. S. 498",
+      "context": "… das zuletzt durch Artikel 17 des Gesetzes vom 3. Mai 2005 (GV. NRW. S. 498) geändert worden ist, für den Zeitraum bis zum 31. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[12].children[0].text@702:rule:jurisdiction-name-bare",
+      "path": "body[9].children[12].children[0].text",
+      "start": 702,
+      "end": 721,
+      "term": "Nordrhein-Westfalen",
+      "context": "… einen Bescheid auf Grundlage des Alten- und Pflegegesetzes Nordrhein-Westfalen verfügen, gilt der in dem Bescheid mit Wirkung bis zum 31. …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[12].children[1].text@875:rule:jurisdiction-name-bare",
+      "path": "body[9].children[12].children[1].text",
+      "start": 875,
+      "end": 894,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ereits über einen Bescheid nach dem Alten- und Pflegegesetz Nordrhein-Westfalen verfügen, kann auch ein Antrag auf Erteilung eines neuen Be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[13].children[0].text@99:rule:jurisdiction-name-bare",
+      "path": "body[9].children[13].children[0].text",
+      "start": 99,
+      "end": 118,
+      "term": "Nordrhein-Westfalen",
+      "context": "…kündung in Kraft. Gleichzeitig tritt das Landespflegegesetz Nordrhein-Westfalen außer Kraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].text@0:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 0,
+      "end": 19,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[16].text@0:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 0,
+      "end": 57,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[20].text@17:ministry-compound",
+      "path": "body[20].text",
+      "start": 17,
+      "end": 31,
+      "term": "Finanzminister",
+      "context": "zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[26].text@0:ministry-portfolio",
+      "path": "body[26].text",
+      "start": 0,
+      "end": 56,
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[27].text@8:ministry-portfolio",
+      "path": "body[27].text",
+      "start": 8,
+      "end": 63,
+      "term": "Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "context": "und die Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[28].text@4:ministry-compound",
+      "path": "body[28].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[38].text@52:protected:gazette-nrw",
+      "path": "body[38].text",
+      "start": 52,
+      "end": 67,
+      "term": "GV. NRW. S. 650",
+      "context": "Artikel 12 Absatz 2 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[39].children[1].text@46:protected:gazette-nrw",
+      "path": "body[39].children[1].text",
+      "start": 46,
+      "end": 62,
+      "term": "GV. NRW. S. 1466",
+      "context": "Artikel 7 des Gesetzes vom 17. Dezember 2021 (GV. NRW. S. 1466)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[39].children[2].text@68:rule:jurisdiction-name-bare",
+      "path": "body[39].children[2].text",
+      "start": 68,
+      "end": 87,
+      "term": "Nordrhein-Westfalen",
+      "context": "…el 12 Absatz 2 des Gesetzes zur Errichtung der Pflegekammer Nordrhein-Westfalen vom 30. Juni 2020 (GV. NRW. S. 650) wird die Angabe „1. Mai…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[39].children[2].text@107:protected:gazette-nrw",
+      "path": "body[39].children[2].text",
+      "start": 107,
+      "end": 122,
+      "term": "GV. NRW. S. 650",
+      "context": "…ung der Pflegekammer Nordrhein-Westfalen vom 30. Juni 2020 (GV. NRW. S. 650) wird die Angabe „1. Mai 2022“ durch die Angabe „31. Januar…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 16
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "regional-body": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[4].children[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[9].children[4].children[5].text",
+      "rule": "jurisdiction-name-adjective",
+      "from": "nordrhein-westfälischen",
+      "to": "westdeutschen"
+    },
+    {
+      "path": "body[9].children[9].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[10].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[10].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[12].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[12].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[12].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[13].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[39].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[8].children[2].children[0].text",
+      "term": "Landschaftsverbände",
+      "context": "…te nach diesem Gesetz können insbesondere die Kommunen, die Landschaftsverbände, die Trägerinnen und Träger der Pflegeversicherung, die Med…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[5].children[0].text",
+      "term": "Landschaftsverbänden",
+      "context": "…vereinbarungen mit den Kreisen und kreisfreien Städten, den Landschaftsverbänden, den Pflegekassen und Dachverbänden sonstiger in der Beratu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[6].children[3].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "die Bezirksregierung als Aufsichtsbehörde über die in ihrem Zuständigkeitsbereic…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Finanzminister",
+      "context": "zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].text",
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[27].text",
+      "term": "Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "context": "und die Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[28].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 369,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "(Artikel 1 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 625))",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[7].children[2].children[2].text",
+        "term": "NRW",
+        "context": "… 16 des Wohn- und Teilhabegesetzes vom 2. Oktober 2014 (GV. NRW. S. 625),",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[12].children[0].text",
+        "term": "NRW",
+        "context": "…Landespflegegesetzes Westdeutschland vom 19. März 1996 (GV. NRW. S. 137), das zuletzt durch Artikel 17 des Gesetzes vom 3. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[12].children[0].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 17 des Gesetzes vom 3. Mai 2005 (GV. NRW. S. 498) geändert worden ist, für den Zeitraum bis zum 31. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[38].text",
+        "term": "NRW",
+        "context": "Artikel 12 Absatz 2 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650)",
+        "status": "protected"
+      },
+      {
+        "path": "body[39].children[1].text",
+        "term": "NRW",
+        "context": "Artikel 7 des Gesetzes vom 17. Dezember 2021 (GV. NRW. S. 1466)",
+        "status": "protected"
+      },
+      {
+        "path": "body[39].children[2].text",
+        "term": "NRW",
+        "context": "…ung der Pflegekammer Westdeutschland vom 30. Juni 2020 (GV. NRW. S. 650) wird die Angabe „1. Mai 2022“ durch die Angabe „31…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Weiterentwicklung des Landespflegerechtes und Sicherung einer unterstützenden Infrastruktur für ältere Menschen, pflegebedürftige Menschen und deren Angehörige vom 2. Oktober 2014 (In Kraft getreten am 16. Oktober 2014 (GV. NRW. S.\n625))",
+    "sourceVersion": "Gesetz zur Weiterentwicklung des Landespflegerechtes und Sicherung einer unterstützenden Infrastruktur für ältere Menschen, pflegebedürftige Menschen und deren Angehörige vom 2. Oktober 2014 (In Kraft getreten am 16. Oktober 2014 (GV. NRW. S.\n625))",
+    "simulation": "Gesetz zur Weiterentwicklung des Landespflegerechtes und Sicherung einer unterstützenden Infrastruktur für ältere Menschen, pflegebedürftige Menschen und deren Angehörige in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 49596,
+          "actual": 49327,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 230,
+          "actual": 230,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 49327,
+          "actual": 49265,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "23 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "23 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:44.625Z"
+}

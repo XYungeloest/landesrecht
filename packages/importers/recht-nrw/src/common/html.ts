@@ -115,6 +115,33 @@ export function normalizeWhitespace(value: string, keepBreaks = false): string {
     .trim();
 }
 
+/** Direkte Zeilen einer Tabelle (ohne die Zeilen verschachtelter Tabellen). */
+export function tableRows(table: HtmlElement, output: HtmlElement[] = []): HtmlElement[] {
+  for (const child of children(table)) {
+    if (!isElement(child)) continue;
+    if (child.tagName === 'tr') output.push(child);
+    else if (child.tagName !== 'table') tableRows(child, output);
+  }
+  return output;
+}
+
+/**
+ * Einzeilige Hülltabelle (Word-Layout) um eine verschachtelte Tabelle: reine Formatierung ohne
+ * eigenen Tabelleninhalt. Parser und Integritätszählung lösen sie einheitlich in ihre Zellinhalte
+ * auf; mehrzeilige Tabellen mit verschachtelten Tabellen bleiben unverändert (Prüfung meldet sie).
+ */
+export function isLayoutTable(table: HtmlElement): boolean {
+  const rows = tableRows(table);
+  if (rows.length !== 1 || !findFirst(table, (element) => element.tagName === 'table')) return false;
+  // Text direkt in einer Hüllzelle (ohne Absatz) würde beim Auflösen verloren gehen: dann keine Hülle.
+  return tableCells(rows[0]!).every((cell) => children(cell).every((node) => !isTextNode(node) || node.value.trim() === ''));
+}
+
+/** Zellen einer Tabellenzeile (`td`/`th`). */
+export function tableCells(row: HtmlElement): HtmlElement[] {
+  return elementChildren(row).filter((cell) => cell.tagName === 'td' || cell.tagName === 'th');
+}
+
 /** Serialisiert die Tag-Namen eines Elements zur Diagnose („p.lrdetail > a“). */
 export function describeElement(element: HtmlElement): string {
   const className = classes(element).slice(0, 2).join('.');

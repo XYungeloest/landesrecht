@@ -289,7 +289,7 @@ describe('R2-Archiv verzögert: Staging außerhalb von Git und r2-sync', () => {
     const transport = createMemoryR2Transport();
 
     const result = await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: true });
-    expect(result).toEqual({ pending: 1, uploaded: 0, alreadyPresent: 0, missingStaging: [] });
+    expect(result).toMatchObject({ pending: 1, uploaded: 0, alreadyPresent: 0, missingStaging: [] });
     expect(transport.calls).toEqual([]);
     expect(transport.objects.size).toBe(0);
     expect(manifest.entries[0]!.rawDocuments[0]!.archiveStatus).toBe('staged');
@@ -306,15 +306,105 @@ describe('R2-Archiv verzögert: Staging außerhalb von Git und r2-sync', () => {
     const log: string[] = [];
 
     const result = await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false, log: (line) => log.push(line) });
-    expect(result).toEqual({ pending: 1, uploaded: 1, alreadyPresent: 0, missingStaging: [] });
+    expect(result).toMatchObject({ pending: 1, uploaded: 1, alreadyPresent: 0, missingStaging: [] });
     expect(sha256(transport.objects.get(LHUNDG_KEY)!.bytes)).toBe(document.sha256);
     expect(JSON.parse(decode(transport.objects.get(envelopeKey(LHUNDG_KEY))!.bytes))).toMatchObject({ objectKey: LHUNDG_KEY, termId: '23528', sourceArea: 'lrmb' });
-    expect(log).toEqual([`hochgeladen: ${LHUNDG_KEY}`]);
+    expect(log).toHaveLength(1);
+    expect(log[0]).toMatch(new RegExp(`^hochgeladen: ${LHUNDG_KEY} \\(\\d+ KiB, \\d+ ms, 1 parallel\\)$`, 'u'));
     const written = await readManifestEntry(root, 'lrmb', 'term:23528');
     expect(written?.rawDocuments[0]).toMatchObject({ objectKey: LHUNDG_KEY, archiveStatus: 'verified' });
 
     const repeat = await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false });
-    expect(repeat).toEqual({ pending: 0, uploaded: 0, alreadyPresent: 0, missingStaging: [] });
+    expect(repeat).toMatchObject({ pending: 0, uploaded: 0, alreadyPresent: 0, missingStaging: [] });
+  });
+
+  it('r2-sync mit begrenzter Parallelität behält Vorabprüfung, Rücklesung und Manifestschreibung je Eintrag', async () => {
+    const root = await tempDir('landesrecht-r2-root-');
+    const stagingDir = await tempDir('landesrecht-r2-staging-');
+    const archive = createR2Archive({ root, stagingDir, upload: 'deferred' });
+    const manifest = manifestWith(rawDocumentOf(await archive.store(await lhundgDocument(), archive.locate(await lhundgDocument(), META))));
+    manifest.entries = [];
+    const keys: string[] = [];
+    for (let index = 0; index < 5; index += 1) {
+      const document = fetched(new TextEncoder().encode(`<html>Fassung ${index}</html>`), `${LHUNDG_URL}-${index}`);
+      const meta = { ...META, termId: `9000${index}` } as const;
+      const object = await archive.store(document, archive.locate(document, meta));
+      keys.push(object.objectKey!);
+      manifest.entries.push({ ...manifestWith(rawDocumentOf(object)).entries[0]!, sourceIdentity: `term:9000${index}`, stemUrl: `https://recht.nrw.de/taxonomy/term/9000${index}` });
+    }
+    const transport = createMemoryR2Transport();
+    const result = await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false, concurrency: 3 });
+    expect(result).toMatchObject({ pending: 5, uploaded: 5, alreadyPresent: 0, missingStaging: [] });
+    for (const [index, key] of keys.entries()) {
+      // Je Objekt: Vorabprüfung (head) → Upload (put) → Rücklesung (get), auch für den Umschlag.
+      for (const objectKey of [key, envelopeKey(key)]) {
+        const order = ['head', 'put', 'get'].map((verb) => transport.calls.indexOf(`${verb} ${objectKey}`));
+        expect(order.every((position) => position >= 0)).toBe(true);
+        expect(order[0]! < order[1]! && order[1]! < order[2]!).toBe(true);
+      }
+      expect((await readManifestEntry(root, 'lrmb', `term:9000${index}`))?.rawDocuments[0]).toMatchObject({ objectKey: key, archiveStatus: 'verified' });
+    }
+    // Wiederholung: nichts mehr offen (wiederaufnehmbar über den Manifeststatus).
+    expect(await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false, concurrency: 8 })).toMatchObject({ pending: 0, uploaded: 0, alreadyPresent: 0, missingStaging: [] });
+
+    // Ein Transportfehler bricht den Lauf ab; der betroffene Eintrag bleibt „staged“ (kein Manifest geschrieben).
+    for (const entry of manifest.entries) entry.rawDocuments[0]!.archiveStatus = 'staged';
+    const failing = createMemoryR2Transport({ failPut: (key) => key === keys[3] });
+    await expect(syncStagedObjects({ root, manifest, transport: failing, stagingDir, dryRun: false, concurrency: 2 })).rejects.toThrow();
+    expect(manifest.entries[3]!.rawDocuments[0]!.archiveStatus).toBe('staged');
+  });
+
+  it('r2-sync im Etag-Regime: Listing-Vorabprüfung, Upload, Listing-Nachprüfung, Stichproben, Unveränderlichkeit', async () => {
+    const root = await tempDir('landesrecht-r2-root-');
+    const stagingDir = await tempDir('landesrecht-r2-staging-');
+    const archive = createR2Archive({ root, stagingDir, upload: 'deferred' });
+    const manifest = manifestWith(rawDocumentOf(await archive.store(await lhundgDocument(), archive.locate(await lhundgDocument(), META))));
+    manifest.entries = [];
+    const keys: string[] = [];
+    const payloads: Uint8Array[] = [];
+    for (let index = 0; index < 4; index += 1) {
+      const document = fetched(new TextEncoder().encode(`<html>Etag ${index}</html>`), `${LHUNDG_URL}-etag-${index}`);
+      const object = await archive.store(document, archive.locate(document, { ...META, termId: `9100${index}` } as const));
+      keys.push(object.objectKey!);
+      payloads.push(document.bytes);
+      manifest.entries.push({ ...manifestWith(rawDocumentOf(object)).entries[0]!, sourceIdentity: `term:9100${index}`, stemUrl: `https://recht.nrw.de/taxonomy/term/9100${index}` });
+    }
+    const transport = createMemoryR2Transport();
+    // Objekt 0 liegt bereits mit gleichem Inhalt vor → „bereits vorhanden“ ohne Upload.
+    await transport.put(keys[0]!, payloads[0]!, { contentType: HTML, metadata: {} });
+    transport.calls.length = 0;
+    const result = await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false, concurrency: 2, verification: 'etag', random: () => 0 });
+    expect(result).toMatchObject({ pending: 4, uploaded: 3, alreadyPresent: 1, missingStaging: [], verification: 'etag', verifiedByListing: 7, sampledReadbacks: 3, listingCalls: 2 });
+    // Kein Rücklesen je Objekt: nur Listings, Uploads und die Stichproben-GETs.
+    expect(transport.calls.filter((call) => call.startsWith('head '))).toEqual([]);
+    expect(transport.calls.filter((call) => call.startsWith('list '))).toHaveLength(2);
+    expect(transport.calls.filter((call) => call.startsWith('put '))).toHaveLength(7);
+    expect(transport.calls.filter((call) => call.startsWith('get '))).toHaveLength(3);
+    for (const [index, key] of keys.entries()) {
+      expect(sha256(transport.objects.get(key)!.bytes)).toBe(sha256(payloads[index]!));
+      expect(transport.objects.has(envelopeKey(key))).toBe(true);
+      expect((await readManifestEntry(root, 'lrmb', `term:9100${index}`))?.rawDocuments[0]).toMatchObject({ objectKey: key, archiveStatus: 'verified' });
+    }
+    expect(await syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false, verification: 'etag' })).toMatchObject({ pending: 0, uploaded: 0, alreadyPresent: 0 });
+
+    // Unveränderlichkeit: vorhandener Schlüssel mit anderem Inhalt ist ein harter Fehler, nichts wird überschrieben.
+    manifest.entries[1]!.rawDocuments[0]!.archiveStatus = 'staged';
+    transport.objects.set(keys[1]!, { bytes: new TextEncoder().encode('fremder Inhalt'), contentType: HTML, metadata: {} });
+    const conflict = await archiveError(() => syncStagedObjects({ root, manifest, transport, stagingDir, dryRun: false, verification: 'etag' }));
+    expect(conflict.kind).toBe('conflict');
+    expect(new TextDecoder().decode(transport.objects.get(keys[1]!)!.bytes)).toBe('fremder Inhalt');
+    expect(manifest.entries[1]!.rawDocuments[0]!.archiveStatus).toBe('staged');
+
+    // Beschädigter Upload (gespeicherte Bytes weichen ab) fällt in der Listing-Nachprüfung auf.
+    manifest.entries[2]!.rawDocuments[0]!.archiveStatus = 'staged';
+    const corrupt = createMemoryR2Transport({ corruptReadback: true });
+    const failed = await archiveError(() => syncStagedObjects({ root, manifest, transport: corrupt, stagingDir, dryRun: false, verification: 'etag' }));
+    expect(failed.kind).toBe('verification');
+    expect(manifest.entries[2]!.rawDocuments[0]!.archiveStatus).toBe('staged');
+
+    // Ohne Listing-Fähigkeit ist das Etag-Regime nicht möglich (fail-closed).
+    const { list: _list, ...withoutList } = createMemoryR2Transport();
+    expect((await archiveError(() => syncStagedObjects({ root, manifest, transport: withoutList, stagingDir, dryRun: false, verification: 'etag' }))).kind).toBe('guard');
   });
 
   it('fehlende Staging-Datei wird gemeldet; manipulierte Staging-Datei ist ein Prüfungsfehler', async () => {
@@ -325,7 +415,7 @@ describe('R2-Archiv verzögert: Staging außerhalb von Git und r2-sync', () => {
     const transport = createMemoryR2Transport();
 
     const missing = await syncStagedObjects({ root, manifest: manifestWith(rawDocumentOf(located)), transport, stagingDir, dryRun: false });
-    expect(missing).toEqual({ pending: 1, uploaded: 0, alreadyPresent: 0, missingStaging: [LHUNDG_KEY] });
+    expect(missing).toMatchObject({ pending: 1, uploaded: 0, alreadyPresent: 0, missingStaging: [LHUNDG_KEY] });
     expect(transport.objects.size).toBe(0);
 
     const archive = createR2Archive({ root, stagingDir, upload: 'deferred' });

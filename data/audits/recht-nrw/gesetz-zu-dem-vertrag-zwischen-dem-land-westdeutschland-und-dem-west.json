@@ -1,0 +1,1104 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27520",
+  "slug": "gesetz-zu-dem-vertrag-zwischen-dem-land-westdeutschland-und-dem-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@31:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 31,
+      "end": 59,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "meta.title@208:geography-region",
+      "path": "meta.title",
+      "start": 208,
+      "end": 223,
+      "term": "Westfalen-Lippe",
+      "context": "…hen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@218:geography-river",
+      "path": "meta.title",
+      "start": 218,
+      "end": 223,
+      "term": "Lippe",
+      "context": "… –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@289:municipality",
+      "path": "meta.title",
+      "start": 289,
+      "end": 293,
+      "term": "Köln",
+      "context": "…perschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "meta.title@393:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 393,
+      "end": 412,
+      "term": "Nordrhein-Westfalen",
+      "context": "…– und dem Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen e.V.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].text@111:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 111,
+      "end": 126,
+      "term": "GV. NRW. S. 574",
+      "context": "…ch Gesetz zum Sechsten Änderungsvertrag vom 13. April 2022 (GV. NRW. S. 574), in Kraft getreten am 30. April 2022.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@7:municipality",
+      "path": "body[2].children[0].text",
+      "start": 7,
+      "end": 17,
+      "term": "Düsseldorf",
+      "context": "Dem in Düsseldorf am 1. Dezember 1992 unterzeichneten Vertrag samt Protokollv…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@93:rule:jurisdiction-name-dative",
+      "path": "body[2].children[0].text",
+      "start": 93,
+      "end": 121,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…1992 unterzeichneten Vertrag samt Protokollvermerk zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@245:geography-region",
+      "path": "body[2].children[0].text",
+      "start": 245,
+      "end": 254,
+      "term": "Westfalen",
+      "context": "…d.ö.R., dem Landesverband der Jüdischen Kultusgemeinden von Westfalen, K.d.ö.R., und der Synagogen-Gemeinde Köln, K.d.ö.R., wird …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@293:municipality",
+      "path": "body[2].children[0].text",
+      "start": 293,
+      "end": 297,
+      "term": "Köln",
+      "context": "…meinden von Westfalen, K.d.ö.R., und der Synagogen-Gemeinde Köln, K.d.ö.R., wird zugestimmt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@199:rule:jurisdiction-name",
+      "path": "body[3].children[2].text",
+      "start": 199,
+      "end": 223,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n Kraft treten, ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt zu machen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].text@4:constitutional-organ-state",
+      "path": "body[4].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[4].text@20:rule:jurisdiction-name-bare",
+      "path": "body[4].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].text@4:ministry-compound",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 18,
+      "term": "Kultusminister",
+      "context": "Der Kultusminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[7].text@4:ministry-compound",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@9:rule:jurisdiction-name-dative",
+      "path": "body[8].children[0].text",
+      "start": 9,
+      "end": 37,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].text@186:geography-region",
+      "path": "body[8].children[0].text",
+      "start": 186,
+      "end": 201,
+      "term": "Westfalen-Lippe",
+      "context": "…hen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@196:geography-river",
+      "path": "body[8].children[0].text",
+      "start": 196,
+      "end": 201,
+      "term": "Lippe",
+      "context": "… –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@267:municipality",
+      "path": "body[8].children[0].text",
+      "start": 267,
+      "end": 271,
+      "term": "Köln",
+      "context": "…perschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@358:rule:jurisdiction-name-bare",
+      "path": "body[8].children[0].text",
+      "start": 358,
+      "end": 377,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ichen Rechts – und dem Landesverband Jüdischer Gemeinden in Nordrhein-Westfalen e. V.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].text@246:rule:jurisdiction-name-bare",
+      "path": "body[8].children[2].text",
+      "start": 246,
+      "end": 265,
+      "term": "Nordrhein-Westfalen",
+      "context": "…st es das Anliegen des Landes, die jüdische Gemeinschaft in Nordrhein-Westfalen bei der Erfüllung ihrer Aufgaben zu unterstützen und dadurc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[3].text@0:rule:jurisdiction-name-dative",
+      "path": "body[8].children[3].text",
+      "start": 0,
+      "end": 28,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "dem Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[6].text@46:geography-region",
+      "path": "body[8].children[6].text",
+      "start": 46,
+      "end": 61,
+      "term": "Westfalen-Lippe",
+      "context": "dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[6].text@56:geography-river",
+      "path": "body[8].children[6].text",
+      "start": 56,
+      "end": 61,
+      "term": "Lippe",
+      "context": "dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[7].text@23:municipality",
+      "path": "body[8].children[7].text",
+      "start": 23,
+      "end": 27,
+      "term": "Köln",
+      "context": "der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts –,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[9].text@54:rule:jurisdiction-name-bare",
+      "path": "body[8].children[9].text",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "dem Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[12].children[1].text@49:rule:jurisdiction-name-bare",
+      "path": "body[8].children[12].children[1].text",
+      "start": 49,
+      "end": 68,
+      "term": "Nordrhein-Westfalen",
+      "context": "Zur Erhaltung und Pflege des jüdischen Lebens in Nordrhein-Westfalen beteiligt sich das Land an den laufenden Ausgaben der jüdis…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[12].children[1].text@152:rule:jurisdiction-name-bare",
+      "path": "body[8].children[12].children[1].text",
+      "start": 152,
+      "end": 171,
+      "term": "Nordrhein-Westfalen",
+      "context": "… an den laufenden Ausgaben der jüdischen Vertragspartner in Nordrhein-Westfalen für deren religiöse, soziale und kulturelle Bedürfnisse, fü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[13].children[3].text@343:rule:jurisdiction-name-bare",
+      "path": "body[8].children[13].children[3].text",
+      "start": 343,
+      "end": 362,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ngen. Der Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen erhält 1,5 Prozent. Die Aufteilung auf die übrigen jüdische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[13].children[3].text@1025:rule:jurisdiction-name-bare",
+      "path": "body[8].children[13].children[3].text",
+      "start": 1025,
+      "end": 1044,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tipliziert. Es werden nur Mitglieder berücksichtigt, die in Nordrhein-Westfalen ihren ersten Wohnsitz haben. Gehört ein Mitglied eines jüdi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[15].children[1].text@157:rule:jurisdiction-name-bare",
+      "path": "body[8].children[15].children[1].text",
+      "start": 157,
+      "end": 176,
+      "term": "Nordrhein-Westfalen",
+      "context": "…haltung und Pflege der geschlossenen jüdischen Friedhöfe in Nordrhein-Westfalen, wobei der gegenwärtige Umfang staatlicher Förderung für di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[19].children[1].text@226:rule:jurisdiction-name",
+      "path": "body[8].children[19].children[1].text",
+      "start": 226,
+      "end": 250,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…enenbildung durch das Land einbezogen, wenn sie die für das Land Nordrhein-Westfalen geltenden Bewilligungsbedingungen für die staatliche Förder…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[23].children[3].text@87:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[23].children[3].text",
+      "start": 87,
+      "end": 113,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ft, an dem den jüdischen Vertragspartnern die Erklärung des Landes Nordrhein-Westfalen zugegangen ist, dass die Vereinbarung durch Landesgesetz be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].children[23].children[3].children[4].text@61:rule:jurisdiction-name-dative",
+      "path": "body[8].children[23].children[3].children[4].text",
+      "start": 61,
+      "end": 89,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…ufgrund des Artikels 2 des Gesetzes zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[23].children[3].children[4].text@241:geography-region",
+      "path": "body[8].children[23].children[3].children[4].text",
+      "start": 241,
+      "end": 250,
+      "term": "Westfalen",
+      "context": "…Rechts, dem Landesverband der Jüdischen Kultusgemeinden von Westfalen, Körperschaft des öffentlichen Rechts, und der Synagogen-Ge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[23].children[3].children[4].text@317:municipality",
+      "path": "body[8].children[23].children[3].children[4].text",
+      "start": 317,
+      "end": 321,
+      "term": "Köln",
+      "context": "…rschaft des öffentlichen Rechts, und der Synagogen-Gemeinde Köln, Körperschaft des öffentlichen Rechts, vom 8. Juni 1993 (GV…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[23].children[3].children[4].text@379:protected:gazette-nw",
+      "path": "body[8].children[23].children[3].children[4].text",
+      "start": 379,
+      "end": 393,
+      "term": "GV. NW. S. 314",
+      "context": "…ln, Körperschaft des öffentlichen Rechts, vom 8. Juni 1993 (GV. NW. S. 314) wird hiermit bekanntgemacht, daß der Vertrag und der Proto…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[23].children[3].children[5].text@0:municipality",
+      "path": "body[8].children[23].children[3].children[5].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 17. August 1993",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[23].children[3].children[6].text@23:constitutional-organ-state",
+      "path": "body[8].children[23].children[3].children[6].text",
+      "start": 23,
+      "end": 73,
+      "term": "Ministerpräsidenten des Landes Nordrhein-Westfalen",
+      "context": "Der Stellvertreter des Ministerpräsidenten des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[8].children[23].children[3].children[6].text@47:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[23].children[3].children[6].text",
+      "start": 47,
+      "end": 73,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Stellvertreter des Ministerpräsidenten des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].children[23].children[3].children[7].children[0].children[1].text@0:protected:gazette-nw",
+      "path": "body[8].children[23].children[3].children[7].children[0].children[1].text",
+      "start": 0,
+      "end": 19,
+      "term": "GV. NW. 1993 S. 589",
+      "context": "GV. NW. 1993 S. 589.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 19
+    },
+    "geography": {
+      "manual-review": 8
+    },
+    "municipality": {
+      "manual-review": 7
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "institution": {
+      "safe-auto-transform": 2
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[12].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[12].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[13].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[13].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[15].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[19].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[23].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[8].children[23].children[3].children[4].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[23].children[3].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Westfalen-Lippe",
+      "context": "…hen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Lippe",
+      "context": "… –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Köln",
+      "context": "…perschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Düsseldorf",
+      "context": "Dem in Düsseldorf am 1. Dezember 1992 unterzeichneten Vertrag samt Protokollv…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Westfalen",
+      "context": "…d.ö.R., dem Landesverband der Jüdischen Kultusgemeinden von Westfalen, K.d.ö.R., und der Synagogen-Gemeinde Köln, K.d.ö.R., wird …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Köln",
+      "context": "…meinden von Westfalen, K.d.ö.R., und der Synagogen-Gemeinde Köln, K.d.ö.R., wird zugestimmt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].text",
+      "term": "Kultusminister",
+      "context": "Der Kultusminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].text",
+      "term": "Westfalen-Lippe",
+      "context": "…hen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].text",
+      "term": "Lippe",
+      "context": "… –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].text",
+      "term": "Köln",
+      "context": "…perschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[6].text",
+      "term": "Westfalen-Lippe",
+      "context": "dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[6].text",
+      "term": "Lippe",
+      "context": "dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[7].text",
+      "term": "Köln",
+      "context": "der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts –,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[23].children[3].children[4].text",
+      "term": "Westfalen",
+      "context": "…Rechts, dem Landesverband der Jüdischen Kultusgemeinden von Westfalen, Körperschaft des öffentlichen Rechts, und der Synagogen-Ge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[23].children[3].children[4].text",
+      "term": "Köln",
+      "context": "…rschaft des öffentlichen Rechts, und der Synagogen-Gemeinde Köln, Körperschaft des öffentlichen Rechts, vom 8. Juni 1993 (GV…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[23].children[3].children[5].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 17. August 1993",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 92,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…esetz zum Sechsten Änderungsvertrag vom 13. April 2022 (GV. NRW. S. 574), in Kraft getreten am 30. April 2022.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein – Körperschaft des öffentlichen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen e.V. vom 8. Juni 1993",
+    "sourceVersion": "Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein – Körperschaft des öffentlichen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen e.V. vom 8. Juni 1993",
+    "simulation": "Gesetz zu dem Vertrag zwischen dem Land Westdeutschland und dem Landesverband der Jüdischen Gemeinden von Nordrhein – Körperschaft des öffentlichen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverband progressiver jüdischer Gemeinden in Westdeutschland e.V. in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12452,
+          "actual": 13116,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13116,
+          "actual": 13048,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": true,
+    "treatyTextLocation": "html-annex",
+    "evidence": [
+      "Titel: „Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein – Körperschaft des öffentlichen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen e.V.“"
+    ],
+    "treatyTitle": "Vertrag zwischen dem Land Nordrhein-Westfalen und dem Landesverband der Jüdischen Gemeinden von Nordrhein – Körperschaft des öffentlichen Rechts –, dem Landesverband der Jüdischen Gemeinden von Westfalen-Lippe – Körperschaft des öffentlichen Rechts –, der Synagogen-Gemeinde Köln – Körperschaft des öffentlichen Rechts – und dem Landesverband progressiver jüdischer Gemeinden in Nordrhein-Westfalen e.V."
+  },
+  "generatedAt": "2026-09-16T15:25:30.434Z"
+}

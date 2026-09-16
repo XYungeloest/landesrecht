@@ -14,6 +14,7 @@
  * Der Objektschlüssel ist aus dem Inhalt abgeleitet und damit schon beim Schreiben der Norm endgültig;
  * die Quellenreferenz der Fassung ändert sich durch den späteren Upload nicht.
  */
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 
@@ -23,8 +24,10 @@ import type { SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 import { writeFileAtomic, writeJsonAtomic } from './atomic.ts';
 import { SOURCE_SYSTEM, TARGET_JURISDICTION } from './constants.ts';
 import { sha256Hex, type FetchedDocument } from './fetcher.ts';
-import { RAW_ARCHIVE_DIR, writeManifestEntry, type ImportManifest, type ManifestRawDocument, type RawDocumentRole, type SourceArea } from './manifest.ts';
-import type { R2Transport } from './r2-transport.ts';
+import { RAW_ARCHIVE_DIR, writeManifestEntry, type ImportManifest, type ManifestEntry, type ManifestRawDocument, type RawDocumentRole, type SourceArea } from './manifest.ts';
+import type { R2ListedObject, R2Transport } from './r2-transport.ts';
+
+const md5Hex = (value: Uint8Array): string => createHash('md5').update(value).digest('hex');
 
 export const R2_SOURCES_BUCKET = 'landesrecht-quellen';
 export const DEFAULT_R2_STAGING_DIR = join('.cache', 'recht-nrw-r2-staging');
@@ -237,38 +240,217 @@ export function assertArchiveAllowed(root: string, mode: 'sample' | 'bulk', arch
   }
 }
 
-/** Überträgt gestagte Objekte der Manifesteinträge nach R2 (Rückleseprüfung) und markiert sie als geprüft. */
-export async function syncStagedObjects(options: { root: string; manifest: ImportManifest; transport: R2Transport; stagingDir?: string; dryRun: boolean; limit?: number; log?: (line: string) => void }): Promise<{ pending: number; uploaded: number; alreadyPresent: number; missingStaging: string[] }> {
+/**
+ * Obergrenze gleichzeitiger Manifesteinträge beim R2-Sync (jeder Eintrag bleibt intern sequenziell: Vorabprüfung →
+ * Upload → Rücklesung). Prozessgestützte Transporte (`wrangler`) sind CPU-gebunden (ein Wrangler-Start je Aufruf),
+ * HTTP-Transporte (`wrangler-api`, `s3`) nur latenzgebunden.
+ */
+export const MAX_SYNC_CONCURRENCY = 8;
+export const MAX_SYNC_CONCURRENCY_HTTP = 32;
+export function maxSyncConcurrency(transport: Pick<R2Transport, 'name'>): number {
+  return transport.name === 'wrangler' ? MAX_SYNC_CONCURRENCY : MAX_SYNC_CONCURRENCY_HTTP;
+}
+
+/**
+ * Prüfregime des Syncs:
+ *  - `readback`: je Objekt Vorabprüfung (Rücklesen), Upload, Rücklesen mit SHA-256-Vergleich (6 API-Aufrufe je
+ *    Objekt samt Umschlag; mit dem API-Ratenlimit ≈0,6 Objekte/s).
+ *  - `etag`: Vorabprüfung und Nachprüfung über das Bucket-Listing (1 Aufruf je 1000 Objekte: Existenz, Größe, Etag
+ *    = von R2 berechneter MD5 der gespeicherten Bytes, verglichen mit dem lokalen MD5) statt Byte-Rücklesung je
+ *    Objekt; zusätzlich zufällige Byte-Rücklesungen (ETAG_SAMPLE_RATE) mit SHA-256-Vergleich. 2 Aufrufe je Objekt.
+ *    Unveränderlichkeit bleibt: vorhandener Schlüssel mit anderem MD5/Größe ist ein harter Fehler.
+ */
+export type SyncVerification = 'readback' | 'etag';
+export const ETAG_SAMPLE_RATE = 0.02;
+/** Einträge je Etag-Charge: Upload → Listing-Nachprüfung → Stichproben → Manifestschreibung (wiederaufnehmbar). */
+const ETAG_BATCH_ENTRIES = 800;
+
+export interface SyncStagedOptions {
+  root: string;
+  manifest: ImportManifest;
+  transport: R2Transport;
+  stagingDir?: string;
+  dryRun: boolean;
+  limit?: number;
+  concurrency?: number;
+  verification?: SyncVerification;
+  sampleRate?: number;
+  random?: () => number;
+  log?: (line: string) => void;
+}
+
+export interface SyncStagedResult {
+  pending: number;
+  uploaded: number;
+  alreadyPresent: number;
+  missingStaging: string[];
+  verification: SyncVerification;
+  /** Objekte (samt Umschlägen), deren Upload über Listing-Etag und Größe nachgeprüft wurde. */
+  verifiedByListing: number;
+  /** Zufällige Byte-Rücklesungen mit SHA-256-Vergleich im Etag-Regime. */
+  sampledReadbacks: number;
+  listingCalls: number;
+}
+
+/** Gemeinsames Schlüsselpräfix (ganze Pfadsegmente) – Bereich des Listings. */
+export function commonKeyPrefix(keys: readonly string[]): string {
+  if (keys.length === 0) return '';
+  let segments = keys[0]!.split('/').slice(0, -1);
+  for (const key of keys) {
+    const parts = key.split('/').slice(0, -1);
+    let shared = 0;
+    while (shared < segments.length && shared < parts.length && segments[shared] === parts[shared]) shared += 1;
+    segments = segments.slice(0, shared);
+  }
+  return segments.length > 0 ? `${segments.join('/')}/` : '';
+}
+
+/**
+ * Überträgt gestagte Objekte der Manifesteinträge nach R2 und markiert sie als geprüft. `concurrency`
+ * verarbeitet mehrere Manifesteinträge gleichzeitig; jeder Eintrag schreibt sein Manifest erst nach vollständiger
+ * Prüfung seiner Objekte (wiederaufnehmbar). Der erste Fehler bricht den Lauf ab.
+ */
+export async function syncStagedObjects(options: SyncStagedOptions): Promise<SyncStagedResult> {
   const stagingDir = resolve(options.root, options.stagingDir ?? DEFAULT_R2_STAGING_DIR);
-  const result = { pending: 0, uploaded: 0, alreadyPresent: 0, missingStaging: [] as string[] };
-  let processed = 0;
+  const verification: SyncVerification = options.verification ?? 'readback';
+  const result: SyncStagedResult = { pending: 0, uploaded: 0, alreadyPresent: 0, missingStaging: [], verification, verifiedByListing: 0, sampledReadbacks: 0, listingCalls: 0 };
+  const concurrency = Math.min(maxSyncConcurrency(options.transport), Math.max(1, Math.floor(options.concurrency ?? 1)));
+  const selected: Array<{ entry: ManifestEntry; staged: ManifestRawDocument[] }> = [];
   for (const entry of options.manifest.entries) {
     const staged = entry.rawDocuments.filter((raw) => raw.objectKey && raw.archiveStatus === 'staged');
     if (staged.length === 0) continue;
     result.pending += staged.length;
-    if (options.dryRun || (options.limit !== undefined && processed >= options.limit)) continue;
-    let changed = false;
-    for (const raw of staged) {
-      let bytes: Uint8Array;
-      try {
-        bytes = new Uint8Array(await readFile(join(stagingDir, raw.objectKey!)));
-      } catch {
-        result.missingStaging.push(raw.objectKey!);
-        continue;
-      }
-      if (sha256Hex(bytes) !== raw.sha256) throw new ArchiveError('verification', `Staging ${raw.objectKey}: SHA-256 weicht vom Manifest ab`);
-      const object: ArchivedObject = { role: raw.role, archiveRole: archiveRoleFor(raw.role), termId: entry.sourceIdentity.replace(/^term:/u, ''), sourceArea: entry.sourceArea, url: raw.url, finalUrl: raw.finalUrl, sha256: raw.sha256, byteLength: raw.byteLength, contentType: raw.contentType, retrievedAt: raw.retrievedAt, bucket: raw.bucket ?? options.transport.bucket, objectKey: raw.objectKey!, status: 'staged' };
-      const outcome = await uploadVerified(options.transport, raw.objectKey!, bytes, { contentType: raw.contentType, metadata: objectMetadata(object), sha256: raw.sha256 });
-      const envelope = new TextEncoder().encode(`${JSON.stringify(envelopeFor(object), null, 2)}\n`);
-      await uploadVerified(options.transport, envelopeKey(raw.objectKey!), envelope, { contentType: 'application/json', metadata: { sha256: sha256Hex(envelope), role: 'envelope', 'term-id': object.termId }, sha256: sha256Hex(envelope), immutableEnvelope: true });
-      if (outcome === 'verified') result.uploaded += 1;
-      else result.alreadyPresent += 1;
-      raw.archiveStatus = 'verified';
-      changed = true;
-      options.log?.(`${outcome === 'verified' ? 'hochgeladen' : 'bereits vorhanden'}: ${raw.objectKey}`);
+    if (options.dryRun || (options.limit !== undefined && selected.length >= options.limit)) continue;
+    selected.push({ entry, staged });
+  }
+  if (verification === 'etag' && !options.transport.list) throw new ArchiveError('guard', `Transport ${options.transport.name} bietet kein Listing; Etag-Prüfung nicht möglich (--verify readback)`);
+
+  const loadStaged = async (raw: ManifestRawDocument): Promise<Uint8Array | null> => {
+    let bytes: Uint8Array;
+    try {
+      bytes = new Uint8Array(await readFile(join(stagingDir, raw.objectKey!)));
+    } catch {
+      result.missingStaging.push(raw.objectKey!);
+      return null;
     }
-    if (changed) await writeManifestEntry(options.root, entry);
-    processed += 1;
+    if (sha256Hex(bytes) !== raw.sha256) throw new ArchiveError('verification', `Staging ${raw.objectKey}: SHA-256 weicht vom Manifest ab`);
+    return bytes;
+  };
+  const objectFor = (entry: ManifestEntry, raw: ManifestRawDocument): ArchivedObject => ({ role: raw.role, archiveRole: archiveRoleFor(raw.role), termId: entry.sourceIdentity.replace(/^term:/u, ''), sourceArea: entry.sourceArea, url: raw.url, finalUrl: raw.finalUrl, sha256: raw.sha256, byteLength: raw.byteLength, contentType: raw.contentType, retrievedAt: raw.retrievedAt, bucket: raw.bucket ?? options.transport.bucket, objectKey: raw.objectKey!, status: 'staged' });
+
+  // Begrenzter Arbeitsvorrat: höchstens `concurrency` Einträge gleichzeitig, Reihenfolge der Aufnahme bleibt die
+  // Manifestreihenfolge; ein Fehler stoppt die Aufnahme neuer Einträge und wird nach Abschluss der laufenden geworfen.
+  const runWorkers = async <T>(items: readonly T[], work: (item: T) => Promise<void>): Promise<void> => {
+    let next = 0;
+    let failure: unknown;
+    const worker = async (): Promise<void> => {
+      while (failure === undefined && next < items.length) {
+        const item = items[next++]!;
+        try {
+          await work(item);
+        } catch (error) {
+          failure ??= error;
+        }
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, () => worker()));
+    if (failure !== undefined) throw failure;
+  };
+
+  if (verification === 'readback') {
+    let inFlight = 0;
+    await runWorkers(selected, async ({ entry, staged }) => {
+      let changed = false;
+      inFlight += 1;
+      for (const raw of staged) {
+        const startedAt = Date.now();
+        const bytes = await loadStaged(raw);
+        if (!bytes) continue;
+        const object = objectFor(entry, raw);
+        const outcome = await uploadVerified(options.transport, raw.objectKey!, bytes, { contentType: raw.contentType, metadata: objectMetadata(object), sha256: raw.sha256 });
+        const envelope = new TextEncoder().encode(`${JSON.stringify(envelopeFor(object), null, 2)}\n`);
+        await uploadVerified(options.transport, envelopeKey(raw.objectKey!), envelope, { contentType: 'application/json', metadata: { sha256: sha256Hex(envelope), role: 'envelope', 'term-id': object.termId }, sha256: sha256Hex(envelope), immutableEnvelope: true });
+        if (outcome === 'verified') result.uploaded += 1;
+        else result.alreadyPresent += 1;
+        raw.archiveStatus = 'verified';
+        changed = true;
+        options.log?.(`${outcome === 'verified' ? 'hochgeladen' : 'bereits vorhanden'}: ${raw.objectKey} (${Math.round(bytes.byteLength / 1024)} KiB, ${Date.now() - startedAt} ms, ${inFlight} parallel)`);
+      }
+      inFlight -= 1;
+      if (changed) await writeManifestEntry(options.root, entry);
+    });
+    return result;
+  }
+
+  // Etag-Regime, chargenweise: Listing → Upload fehlender Objekte → Listing-Nachprüfung → Stichproben → Manifest.
+  const list = options.transport.list!.bind(options.transport);
+  const sampleRate = options.sampleRate ?? ETAG_SAMPLE_RATE;
+  const random = options.random ?? Math.random;
+  const prefix = commonKeyPrefix(selected.flatMap(({ staged }) => staged.map((raw) => raw.objectKey!)));
+  const listing = async (): Promise<Map<string, R2ListedObject>> => {
+    result.listingCalls += 1;
+    return new Map((await list(prefix)).map((object) => [object.key, object]));
+  };
+  interface Upload { key: string; md5: string; size: number; sha256: string; envelope: boolean }
+  for (let start = 0; start < selected.length; start += ETAG_BATCH_ENTRIES) {
+    const batch = selected.slice(start, start + ETAG_BATCH_ENTRIES);
+    const before = await listing();
+    const uploads: Upload[] = [];
+    const uploadedByEntry = new Map<ManifestEntry, Upload[]>();
+    await runWorkers(batch, async ({ entry, staged }) => {
+      for (const raw of staged) {
+        const bytes = await loadStaged(raw);
+        if (!bytes) continue;
+        const object = objectFor(entry, raw);
+        const envelope = new TextEncoder().encode(`${JSON.stringify(envelopeFor(object), null, 2)}\n`);
+        for (const [key, payload, contentType, metadata, isEnvelope] of [
+          [raw.objectKey!, bytes, raw.contentType, objectMetadata(object), false],
+          [envelopeKey(raw.objectKey!), envelope, 'application/json', { sha256: sha256Hex(envelope), role: 'envelope', 'term-id': object.termId }, true],
+        ] as const) {
+          const md5 = md5Hex(payload);
+          const existing = before.get(key);
+          if (existing) {
+            // Unveränderlichkeit: vorhandene Rohquellen werden nie überschrieben; Umschläge gelten als eingefroren.
+            if (!isEnvelope && (existing.size !== payload.byteLength || (existing.md5 && existing.md5 !== md5))) throw new ArchiveError('conflict', `R2-Objekt ${key} existiert mit anderem Inhalt (Größe ${existing.size}, MD5 ${existing.md5 ?? '?'}); Rohquellen werden nie überschrieben`);
+            if (!isEnvelope) result.alreadyPresent += 1;
+            continue;
+          }
+          await options.transport.put(key, payload, { contentType, metadata });
+          const upload: Upload = { key, md5, size: payload.byteLength, sha256: sha256Hex(payload), envelope: isEnvelope };
+          uploads.push(upload);
+          uploadedByEntry.set(entry, [...(uploadedByEntry.get(entry) ?? []), upload]);
+        }
+      }
+    });
+
+    // Nachprüfung über ein frisches Listing: jedes hochgeladene Objekt muss mit Größe und MD5 vorliegen.
+    const after = uploads.length > 0 ? await listing() : before;
+    for (const upload of uploads) {
+      const listed = after.get(upload.key);
+      if (!listed) throw new ArchiveError('verification', `R2-Objekt ${upload.key} nach dem Upload nicht im Listing`);
+      if (listed.size !== upload.size || !listed.md5 || listed.md5 !== upload.md5) throw new ArchiveError('verification', `Etag-Prüfung ${upload.key} fehlgeschlagen (Größe ${listed.size} statt ${upload.size}, MD5 ${listed.md5 ?? '?'} statt ${upload.md5})`);
+      result.verifiedByListing += 1;
+    }
+    // Zufällige Byte-Rücklesungen (nur Objekte, keine Umschläge) mit SHA-256-Vergleich.
+    const samples = uploads.filter((upload) => !upload.envelope && random() < sampleRate);
+    await runWorkers(samples, async (upload) => {
+      const readback = await options.transport.get(upload.key);
+      if (!readback || readback.byteLength !== upload.size || sha256Hex(readback) !== upload.sha256) throw new ArchiveError('verification', `Stichproben-Rücklesung ${upload.key} fehlgeschlagen`);
+      result.sampledReadbacks += 1;
+    });
+    // Erst jetzt gelten die Objekte der Charge als geprüft; Manifest je Eintrag schreiben.
+    for (const { entry, staged } of batch) {
+      let changed = false;
+      for (const raw of staged) {
+        if (result.missingStaging.includes(raw.objectKey!)) continue;
+        raw.archiveStatus = 'verified';
+        changed = true;
+        const uploaded = uploadedByEntry.get(entry)?.some((upload) => upload.key === raw.objectKey) ?? false;
+        if (uploaded) result.uploaded += 1;
+        options.log?.(`${uploaded ? 'hochgeladen (Listing/Etag geprüft)' : 'bereits vorhanden (Etag gleich)'}: ${raw.objectKey}`);
+      }
+      if (changed) await writeManifestEntry(options.root, entry);
+    }
   }
   return result;
 }

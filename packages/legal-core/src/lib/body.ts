@@ -54,7 +54,9 @@ export type AnchorMap = Map<string, string>;
 /**
  * Berechnet kollisionsfreie, semantische Sprungziele („paragraph-3“, „artikel-7a“) für alle
  * Gliederungsblöcke. Schlüssel ist der Pfad („0.2“). Zitierte Vorschriften erhalten den
- * Namensraum `zitat`, damit sie die Adressen der eigenen Norm nicht belegen.
+ * Namensraum `zitat`, damit sie die Adressen der eigenen Norm nicht belegen. Blöcke innerhalb
+ * eines Artikels oder einer Anlage tragen dessen Sprungziel als Namensraum
+ * („artikel-12-paragraph-1“, „anlage-2-paragraph-1“), weil dort die Zählung neu beginnt.
  */
 export function buildAnchorMap(blocks: readonly NormBodyBlock[]): AnchorMap {
   const anchors: AnchorMap = new Map();
@@ -76,7 +78,9 @@ export function buildAnchorMap(blocks: readonly NormBodyBlock[]): AnchorMap {
         used.add(candidate);
         anchors.set(currentPath.join('.'), candidate);
       }
-      if (block.children) visit(block.children, currentPath, block.type === 'quotedProvision' ? 'zitat' : namespace);
+      if (!block.children) return;
+      const scoped = (block.type === 'article' || block.type === 'annex') ? anchors.get(currentPath.join('.')) : undefined;
+      visit(block.children, currentPath, block.type === 'quotedProvision' ? 'zitat' : scoped ?? namespace);
     });
   }
 
@@ -141,8 +145,10 @@ export interface StructuralReference {
   number?: string;
 }
 
+/** Nummer aus einem Einheitenkennzeichen: „§ 3a“ → „3a“; römische Artikel („Artikel IV“) → „iv“. */
 export function getStructuralReferenceNumber(label: string | undefined): string | undefined {
-  return (label ?? '').trim().toLowerCase().match(/[0-9]+[a-z]?/u)?.[0];
+  const normalized = (label ?? '').trim().toLowerCase();
+  return normalized.match(/[0-9]+[a-z]?/u)?.[0] ?? normalized.match(/^(?:artikel|art\.?)\s+([ivxlcdm]+)$/u)?.[1];
 }
 
 export function getSubsectionNumber(block: NormBodyBlock): string | undefined {

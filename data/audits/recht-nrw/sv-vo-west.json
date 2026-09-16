@@ -1,0 +1,1681 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28042",
+  "slug": "sv-vo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@65:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 65,
+      "end": 68,
+      "term": "NRW",
+      "context": "…und des § 85 Abs. 2 Satz 1 Nr. 4 der Landesbauordnung (BauO NRW) vom 7. März 1995 (GV. NRW. S. 218), zuletzt geändert durch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@88:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 88,
+      "end": 103,
+      "term": "GV. NRW. S. 218",
+      "context": "…z 1 Nr. 4 der Landesbauordnung (BauO NRW) vom 7. März 1995 (GV. NRW. S. 218), zuletzt geändert durch Gesetz vom 9. November 1999 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@158:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 158,
+      "end": 173,
+      "term": "GV. NRW. S. 622",
+      "context": "…. 218), zuletzt geändert durch Gesetz vom 9. November 1999 (GV. NRW. S. 622), wird nach Anhörung des Ausschusses für Städtebau und Wohn…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[37].children[1].text@329:rule:jurisdiction-name-bare",
+      "path": "body[37].children[1].text",
+      "start": 329,
+      "end": 348,
+      "term": "Nordrhein-Westfalen",
+      "context": "…wer auf Grund dieser Verordnung durch die Architektenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen anerkannt …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[37].children[1].text@378:rule:jurisdiction-name-bare",
+      "path": "body[37].children[1].text",
+      "start": 378,
+      "end": 397,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen anerkannt oder diesen Personen gemäß § 4 gleichgestellt ist…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[37].children[2].text@117:protected:gazette-nrw",
+      "path": "body[37].children[2].text",
+      "start": 117,
+      "end": 132,
+      "term": "GV. NRW. S. 421",
+      "context": "…r Vorschriften der Landesbauordnung 2018 vom 21. Juli 2018 (GV. NRW. S. 421) in der jeweils geltenden Fassung berechtigt, in ihren Fach…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[38].children[1].text@63:rule:jurisdiction-name-bare",
+      "path": "body[38].children[1].text",
+      "start": 63,
+      "end": 82,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Antrag erfolgt die Anerkennung durch die Architektenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen; sie kann …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[38].children[1].text@112:rule:jurisdiction-name-bare",
+      "path": "body[38].children[1].text",
+      "start": 112,
+      "end": 131,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen; sie kann für einen oder mehrere Fachbereiche gemäß § 1 Abs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[38].children[1].children[0].text@143:rule:jurisdiction-name-bare",
+      "path": "body[38].children[1].children[0].text",
+      "start": 143,
+      "end": 162,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lied einer Ingenieurkammer sind, an die Ingenieurkammer-Bau Nordrhein-Westfalen und in den Fällen des § 1 Absatz 3 Nummer 2 und 4 von Perso…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[38].children[1].children[0].text@295:rule:jurisdiction-name-bare",
+      "path": "body[38].children[1].children[0].text",
+      "start": 295,
+      "end": 314,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lied einer Architektenkammer sind, an die Architektenkammer Nordrhein-Westfalen zu richten. In dem Antrag sind der beantragte Fachbereich u…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[38].children[3].text@241:rule:jurisdiction-abbreviation",
+      "path": "body[38].children[3].text",
+      "start": 241,
+      "end": 244,
+      "term": "NRW",
+      "context": "…t eine Empfangsbestätigung nach § 71 b Absatz 3 und 4 VwVfG NRW aus. Hat sie nicht innerhalb einer Frist von drei Monaten e…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[38].children[3].text@371:rule:jurisdiction-abbreviation",
+      "path": "body[38].children[3].text",
+      "start": 371,
+      "end": 374,
+      "term": "NRW",
+      "context": "…den, gilt die Anerkennung als erteilt. Es gilt § 42 a VwVfG NRW mit der Maßgabe, dass die Fristverlängerung zwei Monate nic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[39].children[2].text@80:rule:jurisdiction-name-bare",
+      "path": "body[39].children[2].text",
+      "start": 80,
+      "end": 99,
+      "term": "Nordrhein-Westfalen",
+      "context": "…aussetzungen erfüllt, wer Mitglied in der Architektenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen ist und mi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[39].children[2].text@129:rule:jurisdiction-name-bare",
+      "path": "body[39].children[2].text",
+      "start": 129,
+      "end": 148,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen ist und mindestens drei Jahre Berufserfahrung in dem Bereic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[40].children[1].text@86:rule:jurisdiction-name-dative",
+      "path": "body[40].children[1].text",
+      "start": 86,
+      "end": 113,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…n anderer Länder der Bundesrepublik Deutschland gelten auch im Land Nordrhein-Westfalen. Die nach § 2 Absatz 1 zuständige Kammer stellt die Verglei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[42].children[3].text@52:rule:jurisdiction-name-bare",
+      "path": "body[42].children[3].text",
+      "start": 52,
+      "end": 71,
+      "term": "Nordrhein-Westfalen",
+      "context": "Will eine der in § 1 Absatz 1 genannten Personen in Nordrhein-Westfalen eine weitere Niederlassung begründen, so hat sie dies der A…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[42].children[3].text@148:rule:jurisdiction-name-bare",
+      "path": "body[42].children[3].text",
+      "start": 148,
+      "end": 167,
+      "term": "Nordrhein-Westfalen",
+      "context": "…derlassung begründen, so hat sie dies der Architektenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen in Textfor…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[42].children[3].text@197:rule:jurisdiction-name-bare",
+      "path": "body[42].children[3].text",
+      "start": 197,
+      "end": 216,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen in Textform mitzuteilen. In der Mitteilung ist auch die Adr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[42].children[7].text@124:rule:jurisdiction-name-bare",
+      "path": "body[42].children[7].text",
+      "start": 124,
+      "end": 143,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ig an den Fortbildungsveranstaltungen der Architektenkammer Nordrhein-Westfalen oder Ingenieurkammer-Bau Nordrhein-Westfalen oder anderer F…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[42].children[7].text@169:rule:jurisdiction-name-bare",
+      "path": "body[42].children[7].text",
+      "start": 169,
+      "end": 188,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hitektenkammer Nordrhein-Westfalen oder Ingenieurkammer-Bau Nordrhein-Westfalen oder anderer Fortbildungsträger teilzunehmen; die Kammern k…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[42].children[11].text@238:rule:jurisdiction-name-bare",
+      "path": "body[42].children[11].text",
+      "start": 238,
+      "end": 257,
+      "term": "Nordrhein-Westfalen",
+      "context": "… zu führen und dieses auf Anforderung der Architektenkammer Nordrhein-Westfalen oder Ingenieurkammer-Bau Nordrhein-Westfalen vorzulegen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[42].children[11].text@283:rule:jurisdiction-name-bare",
+      "path": "body[42].children[11].text",
+      "start": 283,
+      "end": 302,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hitektenkammer Nordrhein-Westfalen oder Ingenieurkammer-Bau Nordrhein-Westfalen vorzulegen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[45].children[2].text@160:protected:gazette-nrw",
+      "path": "body[45].children[2].text",
+      "start": 160,
+      "end": 174,
+      "term": "GV.NRW. S. 470",
+      "context": "…sche Prüfung von Bauvorhaben (PrüfingVO) vom 19. Juli 1962 (GV.NRW. S. 470), zuletzt geändert durch Verordnung vom 24. Mai 1969 (GV.NR…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[45].children[2].text@229:protected:gazette-nrw",
+      "path": "body[45].children[2].text",
+      "start": 229,
+      "end": 243,
+      "term": "GV.NRW. S. 281",
+      "context": "…. 470), zuletzt geändert durch Verordnung vom 24. Mai 1969 (GV.NRW. S. 281), oder aufgrund der Verordnung über bautechnische Prüfungen…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[45].children[2].text@367:rule:jurisdiction-name-bare",
+      "path": "body[45].children[2].text",
+      "start": 367,
+      "end": 386,
+      "term": "Nordrhein-Westfalen",
+      "context": "…uPrüfVO) anerkannt sind, werden von der Ingenieurkammer-Bau Nordrhein-Westfalen auf Antrag als Sachverständige für die Prüfung der Standsic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[46].children[0].text@145:rule:jurisdiction-name-bare",
+      "path": "body[46].children[0].text",
+      "start": 145,
+      "end": 164,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung der Standsicherheit entscheidet die Ingenieurkammer-Bau Nordrhein-Westfalen auf der Grundlage der Entscheidung des Prüfungsausschusses.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[46].children[1].text@119:rule:jurisdiction-name-bare",
+      "path": "body[46].children[1].text",
+      "start": 119,
+      "end": 138,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s entscheidet ein Prüfungsausschuss der Ingenieurkammer-Bau Nordrhein-Westfalen in einem Prüfungsverfahren.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[46].children[2].text@24:rule:jurisdiction-name-bare",
+      "path": "body[46].children[2].text",
+      "start": 24,
+      "end": 43,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Ingenieurkammer-Bau Nordrhein-Westfalen regelt das Prüfungsverfahren in einer Prüfungsordnung, die …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[47].children[0].text@55:rule:jurisdiction-name-bare",
+      "path": "body[47].children[0].text",
+      "start": 55,
+      "end": 74,
+      "term": "Nordrhein-Westfalen",
+      "context": "Der Prüfungsausschuss wird bei der Ingenieurkammer-Bau Nordrhein-Westfalen eingerichtet.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[47].children[1].children[3].text@61:rule:jurisdiction-name-bare",
+      "path": "body[47].children[1].children[3].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…iner Vertreterin oder einem Vertreter der Architektenkammer Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[47].children[1].children[5].text@108:rule:jurisdiction-name-bare",
+      "path": "body[47].children[1].children[5].text",
+      "start": 108,
+      "end": 127,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nd Beratenden Ingenieure werden von der Ingenieurkammer-Bau Nordrhein-Westfalen, die Vertreterin oder der Vertreter der Architektenkammer N…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[47].children[1].children[5].text@186:rule:jurisdiction-name-bare",
+      "path": "body[47].children[1].children[5].text",
+      "start": 186,
+      "end": 205,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n, die Vertreterin oder der Vertreter der Architektenkammer Nordrhein-Westfalen von ihr berufen; die übrigen Mitglieder werden von der ober…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[47].children[6].text@24:rule:jurisdiction-name-bare",
+      "path": "body[47].children[6].text",
+      "start": 24,
+      "end": 43,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Ingenieurkammer-Bau Nordrhein-Westfalen regelt im Einvernehmen mit dem Prüfungsausschuss dessen Ges…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[50].children[0].text@164:rule:jurisdiction-name-bare",
+      "path": "body[50].children[0].text",
+      "start": 164,
+      "end": 183,
+      "term": "Nordrhein-Westfalen",
+      "context": "…es entscheidet je nach Mitgliedschaft die Architektenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen auf der Gr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[50].children[0].text@213:rule:jurisdiction-name-bare",
+      "path": "body[50].children[0].text",
+      "start": 213,
+      "end": 232,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen auf der Grundlage der Entscheidung des jeweiligen Prüfungsa…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[50].children[1].text@117:rule:jurisdiction-name-bare",
+      "path": "body[50].children[1].text",
+      "start": 117,
+      "end": 136,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ers entscheidet ein Prüfungsausschuss der Architektenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen in einem P…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[50].children[1].text@166:rule:jurisdiction-name-bare",
+      "path": "body[50].children[1].text",
+      "start": 166,
+      "end": 185,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen in einem Prüfungsverfahren. Die Kammern erlassen inhaltsgle…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[1].text@22:rule:jurisdiction-name-bare",
+      "path": "body[51].children[1].text",
+      "start": 22,
+      "end": 41,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Architektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen bilden jewe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[1].text@70:rule:jurisdiction-name-bare",
+      "path": "body[51].children[1].text",
+      "start": 70,
+      "end": 89,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen bilden jeweils einen Prüfungsausschuss.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[2].children[0].text@58:rule:jurisdiction-name-bare",
+      "path": "body[51].children[2].children[0].text",
+      "start": 58,
+      "end": 77,
+      "term": "Nordrhein-Westfalen",
+      "context": "zwei Vertreterinnen oder Vertretern der Architektenkammer Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[2].children[1].text@60:rule:jurisdiction-name-bare",
+      "path": "body[51].children[2].children[1].text",
+      "start": 60,
+      "end": 79,
+      "term": "Nordrhein-Westfalen",
+      "context": "zwei Vertreterinnen oder Vertretern der Ingenieurkammer-Bau Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[2].children[5].text@171:ministry-compound",
+      "path": "body[51].children[2].children[5].text",
+      "start": 171,
+      "end": 187,
+      "term": "Innenministerium",
+      "context": "…treterinnen oder Vertreter der Brandschutzdienststellen vom Innenministerium, die Vertreterin oder der Vertreter der Industrie- und Hand…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[51].children[2].children[5].text@320:rule:jurisdiction-name-bare",
+      "path": "body[51].children[2].children[5].text",
+      "start": 320,
+      "end": 339,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rd von der Vereinigung der Industrie- und Handelskammern in Nordrhein-Westfalen berufen; die übrigen Vertreterinnen oder Vertreter werden v…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[4].text@22:rule:jurisdiction-name-bare",
+      "path": "body[51].children[4].text",
+      "start": 22,
+      "end": 41,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Architektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen regeln im E…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[51].children[4].text@70:rule:jurisdiction-name-bare",
+      "path": "body[51].children[4].text",
+      "start": 70,
+      "end": 89,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen regeln im Einvernehmen mit den Prüfungsausschüssen deren Ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[52].children[1].text@114:rule:jurisdiction-abbreviation",
+      "path": "body[52].children[1].text",
+      "start": 114,
+      "end": 117,
+      "term": "NRW",
+      "context": "…ung des Brandschutzes Bescheinigungen nach 68 Absatz 2 BauO NRW 2018 ausstellen, sind sie verpflichtet, den zur Wahrung der…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[52].children[1].text@375:protected:gazette-nrw",
+      "path": "body[52].children[1].text",
+      "start": 375,
+      "end": 390,
+      "term": "GV. NRW. S. 886",
+      "context": "…eleistung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886) in der jeweils geltenden Fassung] zu entsprechen. Hat die …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[53].children[1].text@130:rule:jurisdiction-abbreviation",
+      "path": "body[53].children[1].text",
+      "start": 130,
+      "end": 133,
+      "term": "NRW",
+      "context": "…s der Erd- und Grundbauinstitute für den Bereich des Landes NRW geführten Personen werden auf Antrag von der Ingenieurkamme…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[53].children[1].text@199:rule:jurisdiction-name-bare",
+      "path": "body[53].children[1].text",
+      "start": 199,
+      "end": 218,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rten Personen werden auf Antrag von der Ingenieurkammer-Bau Nordrhein-Westfalen als staatlich anerkannte Sachverständige für Erd- und Grund…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[53].children[1].text@457:rule:jurisdiction-name-bare",
+      "path": "body[53].children[1].text",
+      "start": 457,
+      "end": 476,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ngen nicht erfüllen, gelten als von der Ingenieurkammer-Bau Nordrhein-Westfalen anerkannt; sie werden von der Ingenieurkammer-Bau Nordrhein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[53].children[1].text@527:rule:jurisdiction-name-bare",
+      "path": "body[53].children[1].text",
+      "start": 527,
+      "end": 546,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Westfalen anerkannt; sie werden von der Ingenieurkammer-Bau Nordrhein-Westfalen in einem gesonderten Verzeichnis geführt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[54].children[1].text@24:rule:jurisdiction-name-bare",
+      "path": "body[54].children[1].text",
+      "start": 24,
+      "end": 43,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Ingenieurkammer-Bau Nordrhein-Westfalen holt für ihre Entscheidung über den Antrag auf Anerkennung …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[57].children[0].text@158:rule:jurisdiction-name-bare",
+      "path": "body[57].children[0].text",
+      "start": 158,
+      "end": 177,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tz entscheidet je nach Mitgliedschaft die Architektenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen auf der Gr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[57].children[0].text@207:rule:jurisdiction-name-bare",
+      "path": "body[57].children[0].text",
+      "start": 207,
+      "end": 226,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder die Ingenieurkammer-Bau Nordrhein-Westfalen auf der Grundlage der Entscheidung des jeweiligen Anerkennu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[57].children[1].text@121:rule:jurisdiction-name-bare",
+      "path": "body[57].children[1].text",
+      "start": 121,
+      "end": 140,
+      "term": "Nordrhein-Westfalen",
+      "context": "…entscheidet ein Anerkennungsausschuss der Architektenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen. Die Kamme…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[57].children[1].text@170:rule:jurisdiction-name-bare",
+      "path": "body[57].children[1].text",
+      "start": 170,
+      "end": 189,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ktenkammer Nordrhein-Westfalen oder der Ingenieurkammer-Bau Nordrhein-Westfalen. Die Kammern erlassen jeweils inhaltsgleiche Verfahrensordn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[1].text@22:rule:jurisdiction-name-bare",
+      "path": "body[58].children[1].text",
+      "start": 22,
+      "end": 41,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Architektenkammer Nordrhein-Westfalen und Ingenieurkammer-Bau Nordrhein-Westfalen bilden Anerkenn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[1].text@66:rule:jurisdiction-name-bare",
+      "path": "body[58].children[1].text",
+      "start": 66,
+      "end": 85,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chitektenkammer Nordrhein-Westfalen und Ingenieurkammer-Bau Nordrhein-Westfalen bilden Anerkennungsausschüsse.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[2].children[0].text@58:rule:jurisdiction-name-bare",
+      "path": "body[58].children[2].children[0].text",
+      "start": 58,
+      "end": 77,
+      "term": "Nordrhein-Westfalen",
+      "context": "drei Vertreterinnen oder Vertretern der Architektenkammer Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[2].children[1].text@60:rule:jurisdiction-name-bare",
+      "path": "body[58].children[2].children[1].text",
+      "start": 60,
+      "end": 79,
+      "term": "Nordrhein-Westfalen",
+      "context": "drei Vertreterinnen oder Vertretern der Ingenieurkammer-Bau Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[2].children[4].text@22:rule:jurisdiction-name-bare",
+      "path": "body[58].children[2].children[4].text",
+      "start": 22,
+      "end": 41,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Architektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen berufen jew…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[2].children[4].text@70:rule:jurisdiction-name-bare",
+      "path": "body[58].children[2].children[4].text",
+      "start": 70,
+      "end": 89,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen berufen jeweils ihre Vertreterinnen oder Vertreter. Die Ver…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[2].children[4].text@273:rule:jurisdiction-name-bare",
+      "path": "body[58].children[2].children[4].text",
+      "start": 273,
+      "end": 292,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rd von der Vereinigung der Industrie- und Handelskammern in Nordrhein-Westfalen, die Vertreterin oder der Vertreter der Bauaufsichtsbehörde…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[5].text@22:rule:jurisdiction-name-bare",
+      "path": "body[58].children[5].text",
+      "start": 22,
+      "end": 41,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Architektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen regeln im E…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[5].text@70:rule:jurisdiction-name-bare",
+      "path": "body[58].children[5].text",
+      "start": 70,
+      "end": 89,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen regeln im Einvernehmen mit den Anerkennungsausschüssen dere…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[61].children[3].text@117:rule:jurisdiction-name-bare",
+      "path": "body[61].children[3].text",
+      "start": 117,
+      "end": 136,
+      "term": "Nordrhein-Westfalen",
+      "context": "…setzes über Ordnungswidrigkeiten sind die Architektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[61].children[3].text@165:rule:jurisdiction-name-bare",
+      "path": "body[61].children[3].text",
+      "start": 165,
+      "end": 184,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ektenkammer Nordrhein-Westfalen und die Ingenieurkammer-Bau Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[62].children[2].text@4:ministry-portfolio",
+      "path": "body[62].children[2].text",
+      "start": 4,
+      "end": 33,
+      "term": "Minister für Bauen und Wohnen",
+      "context": "Der Minister für Bauen und Wohnen des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[62].children[2].text@38:rule:jurisdiction-name-genitive",
+      "path": "body[62].children[2].text",
+      "start": 38,
+      "end": 64,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Bauen und Wohnen des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[62].children[4].text@99:protected:gazette-nrw",
+      "path": "body[62].children[4].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 332",
+      "context": "… (Artikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[63].children[2].text@118:rule:jurisdiction-abbreviation",
+      "path": "body[63].children[2].text",
+      "start": 118,
+      "end": 121,
+      "term": "NRW",
+      "context": "…00)0,8 (Fn): Anlage 1 geändert durch Artikel 59 d. EuroAnpG NRW v. 25.9.2001 (GV. NRW. S. 708); in Kraft getreten am 1. Jan…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[63].children[2].text@136:protected:gazette-nrw",
+      "path": "body[63].children[2].text",
+      "start": 136,
+      "end": 151,
+      "term": "GV. NRW. S. 708",
+      "context": "…e 1 geändert durch Artikel 59 d. EuroAnpG NRW v. 25.9.2001 (GV. NRW. S. 708); in Kraft getreten am 1. Januar 2002.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[64].children[2].text@116:rule:jurisdiction-abbreviation",
+      "path": "body[64].children[2].text",
+      "start": 116,
+      "end": 119,
+      "term": "NRW",
+      "context": "…K0,625 (Fn): Anlage 2 geändert durch Artikel 59 d. EuroAnpG NRW v. 25.9.2001 (GV. NRW. S. 708); in Kraft getreten am 1. Jan…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[64].children[2].text@134:protected:gazette-nrw",
+      "path": "body[64].children[2].text",
+      "start": 134,
+      "end": 149,
+      "term": "GV. NRW. S. 708",
+      "context": "…e 2 geändert durch Artikel 59 d. EuroAnpG NRW v. 25.9.2001 (GV. NRW. S. 708); in Kraft getreten am 1. Januar 2002.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 63
+    },
+    "source-citation": {
+      "protected": 9
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[37].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[37].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[38].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[38].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[38].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[38].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[38].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[38].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[39].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[39].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[40].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[42].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[42].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[42].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[42].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[42].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[42].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[42].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[45].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[46].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[46].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[46].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[47].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[47].children[1].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[47].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[47].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[47].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[50].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[50].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[50].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[50].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[2].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[51].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[52].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[53].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[53].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[53].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[53].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[54].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[57].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[57].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[57].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[57].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[2].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[2].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[2].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[61].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[61].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[62].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[63].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[64].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[51].children[2].children[5].text",
+      "term": "Innenministerium",
+      "context": "…treterinnen oder Vertreter der Brandschutzdienststellen vom Innenministerium, die Vertreterin oder der Vertreter der Industrie- und Hand…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[62].children[2].text",
+      "term": "Minister für Bauen und Wohnen",
+      "context": "Der Minister für Bauen und Wohnen des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 862,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…r. 4 der Landesbauordnung (BauO West) vom 7. März 1995 (GV. NRW. S. 218), zuletzt geändert durch Gesetz vom 9. November 199…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…8), zuletzt geändert durch Gesetz vom 9. November 1999 (GV. NRW. S. 622), wird nach Anhörung des Ausschusses für Städtebau …",
+        "status": "protected"
+      },
+      {
+        "path": "body[37].children[2].text",
+        "term": "NRW",
+        "context": "…rschriften der Landesbauordnung 2018 vom 21. Juli 2018 (GV. NRW. S. 421) in der jeweils geltenden Fassung berechtigt, in ih…",
+        "status": "protected"
+      },
+      {
+        "path": "body[45].children[2].text",
+        "term": "NRW",
+        "context": "…e Prüfung von Bauvorhaben (PrüfingVO) vom 19. Juli 1962 (GV.NRW. S. 470), zuletzt geändert durch Verordnung vom 24. Mai 196…",
+        "status": "protected"
+      },
+      {
+        "path": "body[45].children[2].text",
+        "term": "NRW",
+        "context": "…70), zuletzt geändert durch Verordnung vom 24. Mai 1969 (GV.NRW. S. 281), oder aufgrund der Verordnung über bautechnische P…",
+        "status": "protected"
+      },
+      {
+        "path": "body[52].children[1].text",
+        "term": "NRW",
+        "context": "…stung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886) in der jeweils geltenden Fassung] zu entsprechen. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[62].children[4].text",
+        "term": "NRW",
+        "context": "…tikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+        "status": "protected"
+      },
+      {
+        "path": "body[63].children[2].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 59 d. EuroAnpG West v. 25.9.2001 (GV. NRW. S. 708); in Kraft getreten am 1. Januar 2002.",
+        "status": "protected"
+      },
+      {
+        "path": "body[64].children[2].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 59 d. EuroAnpG West v. 25.9.2001 (GV. NRW. S. 708); in Kraft getreten am 1. Januar 2002.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über staatlich anerkannte Sachverständige nach der Landesbauordnung 2018 (Fn 9) vom 29. April 2000 (GV. NRW. S. 422)",
+    "sourceVersion": "Verordnung über staatlich anerkannte Sachverständige nach der Landesbauordnung 2018 (Fn 9) vom 29. April 2000 (GV. NRW. S. 422)",
+    "simulation": "Verordnung über staatlich anerkannte Sachverständige nach der Landesbauordnung 2018 (Fn 9) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 42795,
+          "actual": 42560,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 746,
+          "actual": 746,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 46024,
+          "actual": 45807,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "26 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "26 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:33.148Z"
+}

@@ -1,0 +1,714 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27307",
+  "slug": "ntv-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@68:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 68,
+      "end": 87,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ng über die Nebentätigkeit der Beamten und Richter im Lande Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@117:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 117,
+      "end": 131,
+      "term": "GV. NW. S. 234",
+      "context": "…es (LBG) in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NW. S. 234) , geändert durch Gesetz vom 13. Juli 1982 (GV. NW. S. 338)…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@176:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 176,
+      "end": 190,
+      "term": "GV. NW. S. 338",
+      "context": "…(GV. NW. S. 234) , geändert durch Gesetz vom 13. Juli 1982 (GV. NW. S. 338), und des § 4 Abs. 1 Satz 1 des Landesrichtergesetzes vom 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@264:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 264,
+      "end": 278,
+      "term": "GV. NW. S. 217",
+      "context": "… Abs. 1 Satz 1 des Landesrichtergesetzes vom 29. März 1966 (GV. NW. S. 217) , zuletzt geändert durch Gesetz vom 24. November 1981 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@335:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 335,
+      "end": 349,
+      "term": "GV. NW. S. 669",
+      "context": "…217) , zuletzt geändert durch Gesetz vom 24. November 1981 (GV. NW. S. 669), wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].children[2].text@98:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].children[2].text",
+      "start": 98,
+      "end": 101,
+      "term": "NRW",
+      "context": "…haftliche und künstlerische Personal im Sinne des § 121 LBG NRW sowie für entpflichtete Professoren (§ 134 LBG NRW), soweit…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[0].children[2].text@149:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].children[2].text",
+      "start": 149,
+      "end": 152,
+      "term": "NRW",
+      "context": "… 121 LBG NRW sowie für entpflichtete Professoren (§ 134 LBG NRW), soweit in der Hochschulnebentätigkeitsverordnung nichts A…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[0].children[2].text@300:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].children[2].text",
+      "start": 300,
+      "end": 303,
+      "term": "NRW",
+      "context": "…e gilt nicht für Ehrenbeamte (§ 108 Abs. 1 Nr. 2 Satz 1 LBG NRW).",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[1].children[4].children[5].children[0].text@112:municipality",
+      "path": "body[2].children[1].children[4].children[5].children[0].text",
+      "start": 112,
+      "end": 116,
+      "term": "Köln",
+      "context": "…usschusses nach dem Gesetz über den \"Westdeutschen Rundfunk Köln\" (WDR-Gesetz),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[4].children[5].children[1].text@60:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[1].children[4].children[5].children[1].text",
+      "start": 60,
+      "end": 63,
+      "term": "NRW",
+      "context": "der Rundfunkkommission nach dem Rundfunkgesetz für das Land NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[4].children[1].text@145:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[4].children[1].text",
+      "start": 145,
+      "end": 148,
+      "term": "NRW",
+      "context": "…vorgeschlagen oder veranlaßt werden (§ 52 Abs. 1 Satz 1 LBG NRW), wenn ein dienstliches oder ein besonderes öffentliches In…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].children[3].text@279:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].children[3].text",
+      "start": 279,
+      "end": 282,
+      "term": "NRW",
+      "context": "…bestand im Sinne des § 49 Abs. 2 Satz 2 Nr. 2, 3 oder 4 LBG NRW vor. Fordert ein Gericht oder eine Behörde das Gutachten od…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].children[4].children[0].text@96:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].children[4].children[0].text",
+      "start": 96,
+      "end": 99,
+      "term": "NRW",
+      "context": "…trächtigung dienstlicher Interessen ergibt (§ 49 Abs. 3 LBG NRW) oder",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[1].children[1].text@38:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[1].children[1].text",
+      "start": 38,
+      "end": 41,
+      "term": "NRW",
+      "context": "Eine nach § 49 Abs. 1 Nr. 1 bis 3 LBG NRW genehmigungspflichtige Nebentätigkeit ist allgemein genehmi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[3].children[1].text@135:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[3].children[1].text",
+      "start": 135,
+      "end": 138,
+      "term": "NRW",
+      "context": "…ten sind nicht genehmigungspflichtig (§ 51 Abs. 1 Nr. 2 LBG NRW). Mit den dienstlichen Interessen können aber vertragliche …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[3].children[2].text@63:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[3].children[2].text",
+      "start": 63,
+      "end": 66,
+      "term": "NRW",
+      "context": "… Gutachtertätigkeit ist nur dann nach § 51 Abs. 1 Nr. 3 LBG NRW nicht genehmigungspflichtig, wenn der Beamte das Gutachten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[1].text@107:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[1].text",
+      "start": 107,
+      "end": 110,
+      "term": "NRW",
+      "context": "…entätigkeiten im Sinne des § 51 Abs. 1 Nr. 2, 3 und 4 b LBG NRW, die er gegen Vergütung ausüben will, seinem Dienstvorgeset…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[1].text@247:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[1].text",
+      "start": 247,
+      "end": 250,
+      "term": "NRW",
+      "context": "… schriftlich oder elektronisch anzuzeigen; § 126 Abs. 2 LBG NRW bleibt unberührt. Die Verpflichtung besteht unabhängig davo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].children[1].text@442:protected:gazette-nrw",
+      "path": "body[5].children[2].children[1].text",
+      "start": 442,
+      "end": 457,
+      "term": "GV. NRW. S. 696",
+      "context": "…ß § 18 Satz 3 des Sparkassengesetzes vom 18. November 2008 (GV. NRW. S. 696), in der jeweils geltenden Fassung, erhalten, gelten abweic…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[2].children[1].children[3].text@844:protected:gazette-nrw",
+      "path": "body[5].children[2].children[1].children[3].text",
+      "start": 844,
+      "end": 859,
+      "term": "GV. NRW. S. 310",
+      "context": "…g A (Anlage 1 zum Landesbesoldungsgesetz vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642)) in der jeweils geltenden Fassung anzupassen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[4].children[1].text@223:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[4].children[1].text",
+      "start": 223,
+      "end": 226,
+      "term": "NRW",
+      "context": "…gungspflichtige oder nach § 51 Abs. 1 Nr. 2, 3 oder 4 b LBG NRW nicht genehmigungspflichtige Nebentätigkeiten innerhalb und…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].children[5].text@777:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[6].children[0].children[5].text",
+      "start": 777,
+      "end": 784,
+      "term": "LBG NRW",
+      "context": "… der Arbeitszeit gewährt, so gilt § 42 BeamtStG i.V.m. § 59 LBG NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („LBG NRW“ → „LBG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "LBG West"
+    },
+    {
+      "id": "body[6].children[5].children[1].text@56:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[5].children[1].text",
+      "start": 56,
+      "end": 59,
+      "term": "NRW",
+      "context": "Ein Zusammenhang mit dem Hauptamt im Sinne des § 56 LBG NRW besteht dann, wenn die Nebentätigkeit durch Rechtsvorschrif…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[1].children[3].text@197:protected:gazette-nrw",
+      "path": "body[7].children[1].children[3].text",
+      "start": 197,
+      "end": 211,
+      "term": "GV.NRW. S. 148",
+      "context": "…1. Dezember 1999 (Art. IX des Gesetzes vom 20. April 1999 - GV.NRW. S. 148).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].text@4:constitutional-organ-state",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[8].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[8].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].text@99:protected:gazette-nrw",
+      "path": "body[10].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 274",
+      "context": "… (Artikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 17
+    },
+    "source-citation": {
+      "protected": 8
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[1].children[4].children[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].children[4].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[3].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[0].children[5].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "LBG NRW",
+      "to": "LBG West"
+    },
+    {
+      "path": "body[6].children[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[1].children[4].children[5].children[0].text",
+      "term": "Köln",
+      "context": "…usschusses nach dem Gesetz über den \"Westdeutschen Rundfunk Köln\" (WDR-Gesetz),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 320,
+    "residuals": [
+      {
+        "path": "body[5].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…18 Satz 3 des Sparkassengesetzes vom 18. November 2008 (GV. NRW. S. 696), in der jeweils geltenden Fassung, erhalten, gelte…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[2].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…(Anlage 1 zum Landesbesoldungsgesetz vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642)) in der jeweils geltenden Fassung anz…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…Dezember 1999 (Art. IX des Gesetzes vom 20. April 1999 - GV.NRW. S. 148).",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].text",
+        "term": "NRW",
+        "context": "…tikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Nebentätigkeit der Beamten und Richter im Lande Nordrhein-Westfalen vom 21. September 1982 (GV. NW. 1982 S. 605)",
+    "sourceVersion": "Verordnung über die Nebentätigkeit der Beamten und Richter im Lande Nordrhein-Westfalen vom 21. September 1982 (GV. NW. 1982 S. 605)",
+    "simulation": "Verordnung über die Nebentätigkeit der Beamten und Richter im Lande Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 30419,
+          "actual": 30113,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 194,
+          "actual": 194,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 30113,
+          "actual": 30124,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "25 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "25 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:28.497Z"
+}

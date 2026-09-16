@@ -4,25 +4,25 @@ Stichtag 2023-12-01. Erzeugt mit `npm run import:recht-nrw:coverage -- --write`.
 
 ## LRGV (Gesetze, Rechtsverordnungen)
 
-Umfang: Bulk (Enumeration) · Basis: enumerierte Stammnorm-Kandidaten (Enumeration; Dubletten werden im Bulk-Lauf zusammengeführt) = 3164
+Umfang: Bulk (Enumeration) · Basis: enumerierte Stammnorm-Kandidaten (Enumeration; Dubletten werden im Bulk-Lauf zusammengeführt) = 3168
 
 | Kennzahl | Anzahl | Anteil |
 | --- | ---: | ---: |
-| Enumerierte Stammnormen (Basis) | 3164 | 100,0 % |
-| Verarbeitet (Manifesteintrag) | 3125 | 98,8 % |
-| Noch nicht verarbeitet | 0 | 0,0 % |
-| Am Stichtag geltend | 1411 | 44,6 % |
-| Am Stichtag nicht geltend | 1705 | 53,9 % |
-| Übernommen | 1156 | 36,5 % |
-| davon mit Warnungen | 1080 | 34,1 % |
-| Review | 188 | 5,9 % |
-| Fehlgeschlagen | 78 | 2,5 % |
+| Enumerierte Stammnormen (Basis) | 3168 | 100,0 % |
+| Verarbeitet (Manifesteintrag) | 3157 | 99,7 % |
+| Noch nicht verarbeitet | 3 | 0,1 % |
+| Am Stichtag geltend | 1357 | 42,8 % |
+| Am Stichtag nicht geltend | 1792 | 56,6 % |
+| Übernommen | 1225 | 38,7 % |
+| davon mit Warnungen | 1147 | 36,2 % |
+| Review | 118 | 3,7 % |
+| Fehlgeschlagen | 22 | 0,7 % |
 | Stichtagsfassung nicht darstellbar | 0 | 0,0 % |
-| PDF-Anlagen (Review, nicht blockierend) | 215 | 6,8 % |
-| Konflikt der Stichtagsauswahl | 187 | 5,9 % |
+| PDF-Anlagen (Review, nicht blockierend) | 221 | 7,0 % |
+| Konflikt der Stichtagsauswahl | 117 | 3,7 % |
 | Ausgeschlossen | 0 | 0,0 % |
 | Zustimmungsgesetze | 0 | 0,0 % |
-| Bekanntmachungen (Evidenzquellen, keine Normen) | 698 | 22,1 % |
+| Bekanntmachungen (Evidenzquellen, keine Normen) | 698 | 22,0 % |
 
 **Abgleich Sitemap ↔ Suchindex ↔ Manifest**
 
@@ -37,13 +37,13 @@ Umfang: Bulk (Enumeration) · Basis: enumerierte Stammnorm-Kandidaten (Enumerati
 | Schnittmenge | 3171 |
 | nur Sitemap | 167 |
 | nur Suchindex | 0 |
-| Einträge | 3916 |
-| aufgelöste Term-IDs | 3853 |
-| Vorklassifikation Review | 194 |
+| Einträge | 3957 |
+| aufgelöste Term-IDs | 3872 |
+| Vorklassifikation Review | 72 |
 | ohne Seitenabruf ausgeschlossen | 698 |
 | Adressen ohne Eintrag | 0 |
 | Adressen mehrfach zugeordnet | 0 |
-| Term-Konflikte | 680 |
+| Term-Konflikte | 681 |
 | Manifest ohne Enumeration | 0 |
 | Verarbeitet ohne Manifest | 8 |
 
@@ -53,11 +53,11 @@ Veraltete Importe (Parser/Transformer): 0
 
 ## LRMB (Verwaltungsvorschriften)
 
-Umfang: Bulk (Enumeration) · Basis: enumerierte Stammnorm-Kandidaten (Enumeration; Dubletten werden im Bulk-Lauf zusammengeführt) = 6145
+Umfang: Bulk (Enumeration) · Basis: enumerierte Stammnorm-Kandidaten (Enumeration; Dubletten werden im Bulk-Lauf zusammengeführt) = 6144
 
 | Kennzahl | Anzahl | Anteil |
 | --- | ---: | ---: |
-| Enumerierte Stammnormen (Basis) | 6145 | 100,0 % |
+| Enumerierte Stammnormen (Basis) | 6144 | 100,0 % |
 | Verarbeitet (Manifesteintrag) | 5978 | 97,3 % |
 | Noch nicht verarbeitet | 0 | 0,0 % |
 | Voraussichtlich normativ | 3133 | 51,0 % |
@@ -110,45 +110,45 @@ Veraltete Importe (Parser/Transformer): 0
 
 ## Review-Queue
 
-Offen: 11621 (blockierend 6338, 6793 Quellen)
+Offen: 11303 (blockierend 5946, 6736 Quellen)
 
 | Kategorie | offen |
 | --- | ---: |
-| attachment | 947 |
-| document-identity | 473 |
-| historical-gap | 2399 |
-| institution-mapping | 2914 |
-| metadata-conflict | 503 |
+| attachment | 954 |
+| document-identity | 470 |
+| historical-gap | 2397 |
+| institution-mapping | 2953 |
+| metadata-conflict | 436 |
 | normativity | 2333 |
-| other | 23 |
+| other | 25 |
 | reconstruction-required | 9 |
 | reconstruction-uncertain | 42 |
-| slug-collision | 108 |
-| text-integrity | 84 |
-| unknown-structure | 1775 |
-| version-selection | 11 |
+| slug-collision | 113 |
+| text-integrity | 39 |
+| unknown-structure | 1522 |
+| version-selection | 10 |
 
-Status aller Fälle: open 11621, superseded 14
+Status aller Fälle: open 11303, superseded 401
 
 ## Institutionen
 
-Offene Bezeichnungen ohne Entsprechung: 15458 (authority 2078, enacting-body 367, geography 1649, institution 12, jurisdiction-name 215, ministry 4002, municipality 6277, public-body 49, regional-body 809); Erlassorgan ohne Simulationsorgan: 362; Zuordnungseinträge: safe-transform 3, review 16.
+Offene Bezeichnungen ohne Entsprechung: 15708 (authority 2110, enacting-body 374, geography 1704, institution 12, jurisdiction-name 217, ministry 4056, municipality 6364, public-body 49, regional-body 822); Erlassorgan ohne Simulationsorgan: 369; Zuordnungseinträge: safe-transform 3, review 16.
 
 ## Rohquellen, Rekonstruktion, Qualität
 
-- Archivstatus der Rohquellen: staged 10909, versioned 53
+- Archivstatus der Rohquellen: verified 10870, versioned 81
 - Rekonstruktion: erforderlich 51, rekonstruiert 1, Rezepte 1, unsicher 42
-- Integritätsfehler 0, Prüfung nach Transformation fehlgeschlagen 0, manuelle Entscheidungen 15091, fehlgeschlagene Importe 76, Dokumentidentität Widerspruch 21 / Review 452
+- Integritätsfehler 0, Prüfung nach Transformation fehlgeschlagen 0, manuelle Entscheidungen 15338, fehlgeschlagene Importe 22, Dokumentidentität Widerspruch 21 / Review 449
 
 ## Letzte Läufe
 
-- recht-nrw-2023-12-01-lrgv-20260916T093838Z: completed, 1 verarbeitet (Ende 2026-09-16T09:38:38.436Z)
-- recht-nrw-2023-12-01-lrgv-20260916T093752Z: completed, 1 verarbeitet (Ende 2026-09-16T09:37:52.913Z)
-- recht-nrw-2023-12-01-lrgv-20260916T093538Z: completed, 5 verarbeitet (Ende 2026-09-16T09:35:39.228Z)
-- recht-nrw-2023-12-01-lrgv-20260916T062239Z: completed, 85 verarbeitet (Ende 2026-09-16T06:22:52.495Z)
-- recht-nrw-2023-12-01-lrgv-20260916T061938Z: aborted-systemic, 20 verarbeitet (Ende 2026-09-16T06:19:41.475Z)
+- recht-nrw-2023-12-01-lrgv-20260916T190442Z: completed, 3 verarbeitet (Ende 2026-09-16T19:04:43.583Z)
+- recht-nrw-2023-12-01-lrgv-20260916T190413Z: completed, 19 verarbeitet (Ende 2026-09-16T19:04:21.036Z)
+- recht-nrw-2023-12-01-lrgv-20260916T154410Z: completed, 1 verarbeitet (Ende 2026-09-16T15:44:11.353Z)
+- recht-nrw-2023-12-01-lrgv-20260916T154401Z: completed, 1 verarbeitet (Ende 2026-09-16T15:44:01.630Z)
+- recht-nrw-2023-12-01-lrgv-20260916T154132Z: completed, 5 verarbeitet (Ende 2026-09-16T15:41:33.646Z)
+- recht-nrw-2023-12-01-lrmb-20260916T152650Z: completed, 20 verarbeitet (Ende 2026-09-16T15:26:56.552Z)
+- recht-nrw-2023-12-01-lrmb-20260916T145757Z: completed, 5467 verarbeitet (Ende 2026-09-16T15:25:16.111Z)
 - recht-nrw-2023-12-01-lrmb-20260916T093540Z: completed, 2 verarbeitet (Ende 2026-09-16T09:35:41.424Z)
 - recht-nrw-2023-12-01-lrmb-20260916T093207Z: completed, 20 verarbeitet (Ende 2026-09-16T09:32:10.204Z)
 - recht-nrw-2023-12-01-lrmb-20260916T093115Z: completed, 1 verarbeitet (Ende 2026-09-16T09:31:15.773Z)
-- recht-nrw-2023-12-01-lrmb-20260916T093111Z: completed, 2 verarbeitet (Ende 2026-09-16T09:31:13.128Z)
-- recht-nrw-2023-12-01-lrmb-20260916T092936Z: completed, 34 verarbeitet (Ende 2026-09-16T09:31:07.288Z)

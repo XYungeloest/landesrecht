@@ -1,0 +1,707 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31559",
+  "slug": "apo-flfs-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@46:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 46,
+      "end": 61,
+      "term": "GV. NRW. S. 216",
+      "context": "(Artikel 3 der Verordnung vom 25. April 2016 (GV. NRW. S. 216))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@73:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 73,
+      "end": 88,
+      "term": "GV. NRW. S. 224",
+      "context": "… § 6 Absatz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224), der durch Artikel 1 des Gesetzes vom 17. Dezember 2015 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@147:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 147,
+      "end": 162,
+      "term": "GV. NRW. S. 938",
+      "context": "…4), der durch Artikel 1 des Gesetzes vom 17. Dezember 2015 (GV. NRW. S. 938) geändert worden ist, in Verbindung mit § 60 der Laufbahnve…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@252:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 252,
+      "end": 266,
+      "term": "GV. NRW. S. 22",
+      "context": "…indung mit § 60 der Laufbahnverordnung vom 28. Januar 2014 (GV. NRW. S. 22, ber. S. 203), verordnet das Ministerium für Schule und Wei…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@296:ministry-portfolio",
+      "path": "body[3].text",
+      "start": 296,
+      "end": 336,
+      "term": "Ministerium für Schule und Weiterbildung",
+      "context": "…8. Januar 2014 (GV. NRW. S. 22, ber. S. 203), verordnet das Ministerium für Schule und Weiterbildung im Einvernehmen mit dem Ministerium für Inneres und Kommuna…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[3].text@361:ministry-portfolio",
+      "path": "body[3].text",
+      "start": 361,
+      "end": 425,
+      "term": "Ministerium für Inneres und Kommunales und dem Finanzministerium",
+      "context": "…terium für Schule und Weiterbildung im Einvernehmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[3].text@408:ministry-compound",
+      "path": "body[3].text",
+      "start": 408,
+      "end": 425,
+      "term": "Finanzministerium",
+      "context": "…hmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[8].children[2].children[0].text@56:authority-district-government",
+      "path": "body[8].children[2].children[0].text",
+      "start": 56,
+      "end": 72,
+      "term": "Bezirksregierung",
+      "context": "Der Antrag auf Zulassung zum Ausbildungsgang ist an die Bezirksregierung zu richten, in deren Bezirk die Ausbildung angestrebt wird.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[3].children[1].text@46:authority-district-government",
+      "path": "body[8].children[3].children[1].text",
+      "start": 46,
+      "end": 62,
+      "term": "Bezirksregierung",
+      "context": "Über den Antrag auf Zulassung entscheidet die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[5].children[3].text@48:authority-district-government",
+      "path": "body[8].children[5].children[3].text",
+      "start": 48,
+      "end": 64,
+      "term": "Bezirksregierung",
+      "context": "Die Entscheidung über die Entlassung trifft die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[6].children[0].text@27:authority-district-government",
+      "path": "body[8].children[6].children[0].text",
+      "start": 27,
+      "end": 43,
+      "term": "Bezirksregierung",
+      "context": "Ausbildungsbehörde ist die Bezirksregierung, in deren Bezirk die Ausbildung durchgeführt wird.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[9].children[1].text@219:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[9].children[1].text",
+      "start": 219,
+      "end": 222,
+      "term": "NRW",
+      "context": "…schulen im Sinne des § 100 Absatz 2 bis 4 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102), das zuletzt durch G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[9].children[1].text@245:protected:gazette-nrw",
+      "path": "body[8].children[9].children[1].text",
+      "start": 245,
+      "end": 260,
+      "term": "GV. NRW. S. 102",
+      "context": "… Absatz 2 bis 4 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102), das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 4…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[9].children[1].text@307:protected:gazette-nrw",
+      "path": "body[8].children[9].children[1].text",
+      "start": 307,
+      "end": 322,
+      "term": "GV. NRW. S. 499",
+      "context": "…. NRW. S. 102), das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 499) geändert worden ist, können mit Zustimmung des Trägers Aus…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[3].children[0].text@4:authority-district-government",
+      "path": "body[9].children[3].children[0].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung bildet für die Prüfungen der Teilnehmerinnen und Teilnehmer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[5].children[0].text@57:authority-district-government",
+      "path": "body[9].children[5].children[0].text",
+      "start": 57,
+      "end": 73,
+      "term": "Bezirksregierung",
+      "context": "Die oder der Vorsitzende der Prüfungskommission legt der Bezirksregierung zu Beginn des letzten Halbjahres des Ausbildungsganges folg…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[8].children[1].text@445:authority-district-government",
+      "path": "body[9].children[8].children[1].text",
+      "start": 445,
+      "end": 461,
+      "term": "Bezirksregierung",
+      "context": "…unterrichtet wird, teilt der Prüfling dies unverzüglich der Bezirksregierung über das Zentrum für schulpraktische Lehrerausbildung in Te…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[0].text@362:protected:gazette-nrw",
+      "path": "body[10].children[0].children[0].text",
+      "start": 362,
+      "end": 377,
+      "term": "GV. NRW. S. 410",
+      "context": "…on seh- oder hörgeschädigten Kindern vom 9. September 1983 (GV. NRW. S. 410), die zuletzt durch Artikel 26 des Gesetzes vom 5. April 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[0].text@441:protected:gazette-nrw",
+      "path": "body[10].children[0].children[0].text",
+      "start": 441,
+      "end": 456,
+      "term": "GV. NRW. S. 274",
+      "context": "…ie zuletzt durch Artikel 26 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist, weiter anzuwenden.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[0].text@4:ministry-portfolio",
+      "path": "body[10].children[1].children[1].children[0].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[10].children[1].children[1].children[0].text@48:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[1].children[1].children[0].text",
+      "start": 48,
+      "end": 74,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Ministerin für Schule und Weiterbildung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 8
+    },
+    "ministry": {
+      "manual-review": 4
+    },
+    "authority": {
+      "manual-review": 7
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[8].children[9].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].text",
+      "term": "Ministerium für Schule und Weiterbildung",
+      "context": "…8. Januar 2014 (GV. NRW. S. 22, ber. S. 203), verordnet das Ministerium für Schule und Weiterbildung im Einvernehmen mit dem Ministerium für Inneres und Kommuna…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].text",
+      "term": "Ministerium für Inneres und Kommunales und dem Finanzministerium",
+      "context": "…terium für Schule und Weiterbildung im Einvernehmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].text",
+      "term": "Finanzministerium",
+      "context": "…hmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Der Antrag auf Zulassung zum Ausbildungsgang ist an die Bezirksregierung zu richten, in deren Bezirk die Ausbildung angestrebt wird.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[3].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "Über den Antrag auf Zulassung entscheidet die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[5].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Die Entscheidung über die Entlassung trifft die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[6].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Ausbildungsbehörde ist die Bezirksregierung, in deren Bezirk die Ausbildung durchgeführt wird.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[3].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung bildet für die Prüfungen der Teilnehmerinnen und Teilnehmer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[5].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Die oder der Vorsitzende der Prüfungskommission legt der Bezirksregierung zu Beginn des letzten Halbjahres des Ausbildungsganges folg…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[8].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…unterrichtet wird, teilt der Prüfling dies unverzüglich der Bezirksregierung über das Zentrum für schulpraktische Lehrerausbildung in Te…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].children[1].children[0].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 443,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "(Artikel 3 der Verordnung vom 25. April 2016 (GV. NRW. S. 216))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "… Absatz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224), der durch Artikel 1 des Gesetzes vom 17. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…der durch Artikel 1 des Gesetzes vom 17. Dezember 2015 (GV. NRW. S. 938) geändert worden ist, in Verbindung mit § 60 der La…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…ng mit § 60 der Laufbahnverordnung vom 28. Januar 2014 (GV. NRW. S. 22, ber. S. 203), verordnet das Ministerium für Schule …",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[9].children[1].text",
+        "term": "NRW",
+        "context": "…tz 2 bis 4 des Schulgesetzes West vom 15. Februar 2005 (GV. NRW. S. 102), das zuletzt durch Gesetz vom 25. Juni 2015 (GV. N…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[9].children[1].text",
+        "term": "NRW",
+        "context": "…W. S. 102), das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 499) geändert worden ist, können mit Zustimmung des Trä…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…eh- oder hörgeschädigten Kindern vom 9. September 1983 (GV. NRW. S. 410), die zuletzt durch Artikel 26 des Gesetzes vom 5. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…uletzt durch Artikel 26 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist, weiter anzuwenden.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Schule und Weiterbildung",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Schule und Weiterbildung",
+        "path": "body[3].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Schule und Weiterbildung",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Schule und Weiterbildung",
+      "path": "body[3].text"
+    },
+    "mappingEntry": "schulministerium"
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für Fachlehrerinnen und Fachlehrer an Förderschulen und in der pädagogischen Frühförderung vom 25. April 2016 (In Kraft getreten am 8. Mai 2016 (GV. NRW. S. 216))",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für Fachlehrerinnen und Fachlehrer an Förderschulen und in der pädagogischen Frühförderung vom 25. April 2016 (In Kraft getreten am 8. Mai 2016 (GV. NRW. S. 216))",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für Fachlehrerinnen und Fachlehrer an Förderschulen und in der pädagogischen Frühförderung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 40147,
+          "actual": 40105,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 263,
+          "actual": 263,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 40105,
+          "actual": 40102,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "33 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "33 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25771-40800-sgv_223_20160425_2_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:45.247Z"
+}

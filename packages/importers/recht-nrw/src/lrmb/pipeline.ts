@@ -29,6 +29,7 @@ import { loadImportEnvironment, slugReservationFor, type ImportEnvironment } fro
 import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
 import { bodyMetrics, checkTransformIntegrity, type IntegrityCheck, type IntegrityReport } from '../common/integrity.ts';
 import { AUDIT_DIR, isImportedStatus, readManifest, readManifestEntry, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type ReconstructionPlan } from '../common/manifest.ts';
+import { recordUnresolvedSource } from '../common/unresolved.ts';
 import { overridesFor, overrideValue, type ImportOverride } from '../common/overrides.ts';
 import { assessTextCompleteness, type AttachmentInput, type TextCompletenessAssessment } from '../common/pdf.ts';
 import { FileWriter, persistReview, writeInitialNorm } from '../common/persist.ts';
@@ -70,6 +71,8 @@ export interface LrmbImportOptions {
 export interface LrmbImportResult {
   status: ManifestEntry['importStatus'];
   stage: string;
+  /** Datensatz einer Quelle ohne Stammnorm-Kennung (`data/audits/recht-nrw/lrmb/unresolved/`). */
+  unresolvedReport?: string;
   findings: ImportFinding[];
   page?: RechtNrwVersionPage;
   latestPage?: RechtNrwVersionPage;
@@ -175,6 +178,10 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   result.versionUrls = versionUrlsOf(page);
   if (!page.stemTermId) {
     findings.push({ severity: 'error', code: 'missing-stem-id', message: 'Keine Stammnorm-Kennung (Taxonomie-Term)' });
+    // Expliziter Datensatz statt stillem Abbruch (URL, Titel, Grund, Abrufstatus, Hashes); keine Kennung wird erfunden.
+    const unresolved = await recordUnresolvedSource({ root: options.root, write: Boolean(options.write), area: 'lrmb', url: address.url, ...(page.title ? { title: page.title } : {}), importStatus: 'failed', findings, documents: rawEntries, ...(env.runId ? { runId: env.runId } : {}), now: options.now().toISOString() });
+    result.unresolvedReport = unresolved.path;
+    if (unresolved.written) result.writtenFiles.push(unresolved.path);
     return { ...result, status: 'failed' };
   }
   const termId = page.stemTermId;
@@ -657,9 +664,15 @@ async function finishLrmb(input: {
   result.manifestEntry = entry;
   const imported = (isImportedStatus(status) || status === 'dry-run') && state.record !== undefined;
   if (imported && state.slugs) state.slugs.commit();
-  if (!options.write || status === 'dry-run' || status === 'failed') return result;
+  if (!options.write || status === 'dry-run') return result;
+  if (status === 'failed' && env.mode !== 'bulk') {
+    // Außerhalb des Bulkmodus werden Rohquellen gescheiterter Importe nicht abgelegt: kein Archivstatus ohne Datei.
+    for (const raw of entry.rawDocuments) { delete raw.archiveStatus; delete raw.bucket; delete raw.objectKey; }
+    return result;
+  }
 
   // Reihenfolge der Checkpoints: Rohquellen → Slug-Registry → Norm → Report; Manifest und Queue danach.
+  // Im Bulkmodus auch für gescheiterte Importe (Beleg für die Fehleranalyse), die danach ohne Norm enden.
   const writer = new FileWriter(env.root);
   for (const raw of input.rawEntries) {
     const object = input.locate(raw.document, raw.role);
@@ -668,6 +681,7 @@ async function finishLrmb(input: {
     if (manifestRaw) manifestRaw.archiveStatus = stored.status;
     if (object.localSource) writer.written.push(object.localSource);
   }
+  if (status === 'failed') return result;
   if (imported && state.record) {
     result.stage = 'write-canonical-json';
     await writeSlugRegistry(env.root, env.slugRegistry);

@@ -230,6 +230,9 @@ Nicht Teil des Ausgangsimports, jeweils nur mit gesonderter Freigabe:
 
 ```sh
 npm run import:recht-nrw:r2-sync                                      # Dry-run: gestagte Objekte
-npm run import:recht-nrw:r2-sync -- --write                           # Upload mit Rücklesung (R2-Zugangsdaten nötig)
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --limit 25   # kontrollierter Uploadtest über die Wrangler-Anmeldung
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag   # vollständiger Sync über die R2-API (Wrangler-OAuth-Token); Listing-/Etag-Prüfung + 2 % Byte-Stichproben, ≈2 Objekte/s
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32   # dasselbe mit Byte-Rücklesung je Objekt (6 API-Aufrufe je Objekt, durch das API-Ratenlimit ≈0,6 Objekte/s)
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --concurrency 6   # Alternative über Wrangler-Prozesse (gleiches Ratenlimit; höchstens 8 Einträge gleichzeitig)
 npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remote landesrecht-west
 ```

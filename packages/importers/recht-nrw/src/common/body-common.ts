@@ -80,12 +80,27 @@ export function parseDivisionHeading(text: string): { level: DivisionLevel; labe
 }
 
 const UNIT_PATTERN = /^(§{1,2}|Art\.|Artikel)\s*(\d+\s?[a-z]?)\b\s*(.*)$/u;
+/**
+ * Römisch nummerierte Artikel („Artikel I“, „Art. XLVIII“): nur die vollständige, wohlgeformte
+ * Zahl ohne Zusatz. Spannen („Artikel I bis III“, „Artikel XXVIII und XXIX“) bleiben unerkannt,
+ * weil ihre Zuordnung mehrdeutig ist (fail-closed).
+ */
+const ROMAN_ARTICLE_PATTERN = /^(Art\.|Artikel)\s+(?=[IVXLCDM])(M{0,3}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3}))$/u;
+
+export interface UnitHeadingOptions {
+  /** Römische Artikelnummern zulassen – nur bei eindeutigem Markup (natives `field--field_num`). */
+  romanArticles?: boolean;
+}
 
 /** „§ 5“, „§ 3a“, „Artikel 12“, „Art. 4“ → Einheit; Rest ist Überschrift. */
-export function parseUnitHeading(text: string): { unitType: 'paragraph' | 'article'; label: string; title?: string } | null {
+export function parseUnitHeading(text: string, options: UnitHeadingOptions = {}): { unitType: 'paragraph' | 'article'; label: string; title?: string } | null {
   const cleaned = text.replace(/\s+/gu, ' ').trim();
   const match = UNIT_PATTERN.exec(cleaned);
-  if (!match) return null;
+  if (!match) {
+    if (!options.romanArticles) return null;
+    const roman = ROMAN_ARTICLE_PATTERN.exec(cleaned);
+    return roman ? { unitType: 'article', label: `${roman[1]} ${roman[2]}` } : null;
+  }
   const marker = match[1]!;
   const number = match[2]!.replace(/\s+/gu, '');
   const unitType = marker.startsWith('§') ? 'paragraph' : 'article';
@@ -100,6 +115,28 @@ export function parseAnnexHeading(text: string): { label: string; title?: string
   if (!match) return null;
   const title = match[2]!.trim();
   return title ? { label: match[1]!, title } : { label: match[1]! };
+}
+
+/**
+ * Überschrift eines im Zustimmungsgesetz nachstehend veröffentlichten Vertragstexts („Vertrag“,
+ * „Abkommen zur Bereinigung …“, „Staatsvertrag über …“). Der Vertragstext hat eine eigene
+ * Artikel-/§-Zählung und wird als Anlage-Container geführt (docs/LEGAL_SCOPE.md, Staatsverträge).
+ * Nur in Verbindung mit einem Zustimmungsbeleg im vorangehenden Text (`hasConsentEvidence`).
+ */
+const TREATY_HEADING_PATTERN = /^(Vertrag|Staatsvertrag|Abkommen|Verwaltungsabkommen|Übereinkommen|Vereinbarung)(?:\s+(.*))?$/u;
+
+export function parseTreatyHeading(text: string): { label: string; title?: string } | null {
+  const cleaned = text.replace(/\s+/gu, ' ').trim();
+  const match = TREATY_HEADING_PATTERN.exec(cleaned);
+  if (!match) return null;
+  const title = (match[2] ?? '').replace(/^[\s:–—-]+/u, '').trim();
+  return title ? { label: match[1]!, title } : { label: match[1]! };
+}
+
+/** Zustimmungsformel oder Veröffentlichungsvermerk („… wird zugestimmt“, „wird nachstehend veröffentlicht“) in bereits gelesenen Zeilen. */
+export function hasConsentEvidence(lines: readonly SourceLine[]): boolean {
+  const pattern = /\bwird\s+(?:hiermit\s+)?zugestimmt\b|\b(?:wird|werden)\s+nachstehend\b[^.]{0,80}?\bveröffentlicht\b/u;
+  return lines.some((line) => (line.kind === 'text' || line.kind === 'subparagraph' || line.kind === 'item') && pattern.test(line.text));
 }
 
 const SUBPARAGRAPH_PATTERN = /^\((\d+[a-z]?)\)\s*(.*)$/su;
@@ -138,8 +175,8 @@ export function extractFootnoteMarkers(text: string): { text: string; footnotes:
   return { text: cleaned, footnotes };
 }
 
-export function tableBlock(rows: Array<Array<{ text: string; header: boolean; colspan?: number; rowspan?: number }>>): NormBodyBlock {
-  return {
+export function tableBlock(rows: Array<Array<{ text: string; header: boolean; colspan?: number; rowspan?: number }>>, findings?: ImportFinding[]): NormBodyBlock {
+  const table: NormBodyBlock = {
     type: 'table',
     children: rows.map((cells) => ({
       type: 'tableRow' as StructureType,
@@ -152,6 +189,38 @@ export function tableBlock(rows: Array<Array<{ text: string; header: boolean; co
       }),
     })),
   };
+  padShortTableRows(table, findings);
+  return table;
+}
+
+/**
+ * Zeilen mit weniger Zellen als die Tabelle Spalten hat (HTML lässt fehlende Zellen am Zeilenende
+ * einfach leer) werden mit leeren Zellen aufgefüllt – das entspricht der Darstellung der Quelle
+ * und verliert keinen Text. Rowspan/Colspan werden wie in der Schemaprüfung belegt.
+ */
+function padShortTableRows(table: NormBodyBlock, findings?: ImportFinding[]): void {
+  const rows = table.children ?? [];
+  const occupied: boolean[][] = [];
+  rows.forEach((row, rowIndex) => {
+    occupied[rowIndex] ??= [];
+    let column = 0;
+    for (const cell of row.children ?? []) {
+      while (occupied[rowIndex]![column]) column += 1;
+      for (let rowOffset = 0; rowOffset < (cell.rowspan ?? 1); rowOffset += 1) {
+        occupied[rowIndex + rowOffset] ??= [];
+        for (let columnOffset = 0; columnOffset < (cell.colspan ?? 1); columnOffset += 1) occupied[rowIndex + rowOffset]![column + columnOffset] = true;
+      }
+      column += cell.colspan ?? 1;
+    }
+  });
+  const width = Math.max(0, ...occupied.map((row) => row.length));
+  let padded = 0;
+  rows.forEach((row, rowIndex) => {
+    const missing = width - (occupied[rowIndex] ?? []).filter(Boolean).length;
+    for (let index = 0; index < missing; index += 1) (row.children ??= []).push({ type: 'tableCell', text: '' });
+    if (missing > 0) padded += 1;
+  });
+  if (padded > 0) findings?.push({ severity: 'info', code: 'table-row-padded', message: `${padded} Tabellenzeile(n) mit fehlenden Zellen am Zeilenende um leere Zellen ergänzt` });
 }
 
 /**
@@ -185,11 +254,15 @@ export function buildBody(lines: readonly SourceLine[], footnotes: readonly Sour
     }
   };
   const openUnit = (line: Extract<SourceLine, { kind: 'unit' }>): void => {
-    popTo(10);
+    // Artikel (Rang 9) sind Container für nachfolgende Paragraphen (Rang 10): in Mantel- und
+    // Ausführungsgesetzen beginnt die §-Zählung je Artikel neu („Artikel 12 § 1“, „Artikel 15 § 1“).
+    // Ein neuer Artikel schließt Paragraphen und Artikel, ein Paragraph nur Paragraphen.
+    const rank = line.unitType === 'article' ? 9 : 10;
+    popTo(rank);
     const block: NormBodyBlock = { type: line.unitType, label: line.label, children: [] };
     if (line.title) block.title = line.title;
     container().push(block);
-    stack.push({ block, rank: 10, kind: 'unit' });
+    stack.push({ block, rank, kind: 'unit' });
     stats.units += 1;
     stats.unitLabels.push(line.label);
     attachFootnotes(block, line.footnotes);

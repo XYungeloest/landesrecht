@@ -1,0 +1,284 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26476",
+  "slug": "ausfuehrungsgesetz-zum-buergerlichen-gesetzbuch-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[28].children[1].text@14:rule:jurisdiction-name-genitive",
+      "path": "body[28].children[1].text",
+      "start": 14,
+      "end": 40,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Im Gebiet des Landes Nordrhein-Westfalen gelten die folgenden Vorschriften:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[45].children[1].text@438:rule:jurisdiction-name-bare",
+      "path": "body[45].children[1].text",
+      "start": 438,
+      "end": 457,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Absatz 2 und § 49 Absatz 1 Satz 2 des Landesbeamtengesetzes Nordrhein-Westfalen vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zulet…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[45].children[1].text@477:protected:gazette-nrw",
+      "path": "body[45].children[1].text",
+      "start": 477,
+      "end": 492,
+      "term": "GV. NRW. S. 310",
+      "context": "…andesbeamtengesetzes Nordrhein-Westfalen vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 1 des Gesetzes vom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[45].children[1].text@569:protected:gazette-nrw",
+      "path": "body[45].children[1].text",
+      "start": 569,
+      "end": 584,
+      "term": "GV. NRW. S. 524",
+      "context": "…as zuletzt durch Artikel 1 des Gesetzes vom 13. April 2022 (GV. NRW. S. 524) geändert worden ist, bleiben unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[48].children[0].children[1].text@8:rule:jurisdiction-name-bare",
+      "path": "body[48].children[0].children[1].text",
+      "start": 8,
+      "end": 27,
+      "term": "Nordrhein-Westfalen",
+      "context": "Eine in Nordrhein-Westfalen bestehende öffentliche Sparkasse kann durch den Regierungsp…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[28].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[45].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[48].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 288,
+    "residuals": [
+      {
+        "path": "body[45].children[1].text",
+        "term": "NRW",
+        "context": "…andesbeamtengesetzes Westdeutschland vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 1 des Gese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[45].children[1].text",
+        "term": "NRW",
+        "context": "…uletzt durch Artikel 1 des Gesetzes vom 13. April 2022 (GV. NRW. S. 524) geändert worden ist, bleiben unberührt.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Ausführungsgesetz zum Bürgerlichen Gesetzbuch vom 20. September 1999",
+    "sourceVersion": "Ausführungsgesetz zum Bürgerlichen Gesetzbuch vom 20. September 1999",
+    "simulation": "Ausführungsgesetz zum Bürgerlichen Gesetzbuch in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 100,
+          "actual": 100,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 21540,
+          "actual": 22472,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 100,
+          "actual": 100,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 308,
+          "actual": 308,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 72,
+          "actual": 72,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 100,
+          "actual": 100,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 22472,
+          "actual": 22460,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "100 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "100 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:22.292Z"
+}

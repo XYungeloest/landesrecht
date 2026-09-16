@@ -1,0 +1,506 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31121",
+  "slug": "ktrstzulvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@193:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 193,
+      "end": 220,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…onellen Spezialitäten für Agrarerzeugnisse und Lebensmittel im Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@37:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 37,
+      "end": 40,
+      "term": "NRW",
+      "context": "Kontrollstellen-Zulassungsverordnung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].title@193:rule:jurisdiction-name-dative",
+      "path": "body[0].title",
+      "start": 193,
+      "end": 220,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…onellen Spezialitäten für Agrarerzeugnisse und Lebensmittel im Land Nordrhein-Westfalen (Kontrollstellen-Zulassungsverordnung NRW - KtrStZulVO)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[0].title@259:rule:jurisdiction-abbreviation",
+      "path": "body[0].title",
+      "start": 259,
+      "end": 262,
+      "term": "NRW",
+      "context": "…d Nordrhein-Westfalen (Kontrollstellen-Zulassungsverordnung NRW - KtrStZulVO)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@634:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 634,
+      "end": 649,
+      "term": "GV. NRW. S. 732",
+      "context": "…gen für Bereiche der Agrarwirtschaft vom 11. November 2008 (GV. NRW. S. 732) in der jeweils geltenden Fassung, verordnet das Landesamt …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@699:authority-state-office",
+      "path": "body[2].text",
+      "start": 699,
+      "end": 718,
+      "term": "Landesamt für Natur",
+      "context": "…RW. S. 732) in der jeweils geltenden Fassung, verordnet das Landesamt für Natur, Umwelt und Verbraucherschutz:",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@104:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 104,
+      "end": 123,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nung (EU) Nr. 1151/2012 als Produktzertifizierungsstelle in Nordrhein-Westfalen tätig werden will, bedarf der Zulassung durch das Landesamt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@174:authority-state-office",
+      "path": "body[3].children[0].text",
+      "start": 174,
+      "end": 193,
+      "term": "Landesamt für Natur",
+      "context": "…Westfalen tätig werden will, bedarf der Zulassung durch das Landesamt für Natur, Umwelt und Verbraucherschutz (LANUV). Sie muss eine Nieder…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[5].children[1].text@292:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 292,
+      "end": 311,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ollstelle über sämtliche Betriebsstätten des Herstellers in Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].text@141:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].text",
+      "start": 141,
+      "end": 160,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erzeichnis über alle zu kontrollierenden Betriebsstätten in Nordrhein-Westfalen bis zum 31. Januar des Folgejahres dem LANUV in elektronisc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@235:rule:jurisdiction-name-dative",
+      "path": "body[6].children[0].text",
+      "start": 235,
+      "end": 262,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…rsprungsbezeichnungen für Agrarerzeugnisse und Lebensmittel im Land Nordrhein-Westfalen vom 2. Dezember 2009 (GV. NRW. S. 826) außer Kraft. Gleichz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@285:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 285,
+      "end": 300,
+      "term": "GV. NRW. S. 826",
+      "context": "…ensmittel im Land Nordrhein-Westfalen vom 2. Dezember 2009 (GV. NRW. S. 826) außer Kraft. Gleichzeitig tritt die Kontrollstellen-Zulass…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@375:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[0].text",
+      "start": 375,
+      "end": 378,
+      "term": "NRW",
+      "context": "…Gleichzeitig tritt die Kontrollstellen-Zulassungsverordnung NRW vom 23. Mai 2014 (GV. NRW. S. 320) außer Kraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].text@397:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 397,
+      "end": 412,
+      "term": "GV. NRW. S. 320",
+      "context": "… Kontrollstellen-Zulassungsverordnung NRW vom 23. Mai 2014 (GV. NRW. S. 320) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[2].children[0].text@70:rule:jurisdiction-name-bare",
+      "path": "body[6].children[2].children[0].text",
+      "start": 70,
+      "end": 89,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ent des Landesamtes für Natur, Umwelt und Verbraucherschutz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 10
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "authority": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Landesamt für Natur",
+      "context": "…RW. S. 732) in der jeweils geltenden Fassung, verordnet das Landesamt für Natur, Umwelt und Verbraucherschutz:",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "…Westfalen tätig werden will, bedarf der Zulassung durch das Landesamt für Natur, Umwelt und Verbraucherschutz (LANUV). Sie muss eine Nieder…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 50,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…für Bereiche der Agrarwirtschaft vom 11. November 2008 (GV. NRW. S. 732) in der jeweils geltenden Fassung, verordnet das La…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…ensmittel im Land Westdeutschland vom 2. Dezember 2009 (GV. NRW. S. 826) außer Kraft. Gleichzeitig tritt die Kontrollstelle…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…rollstellen-Zulassungsverordnung West vom 23. Mai 2014 (GV. NRW. S. 320) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Zulassung privater Kontrollstellen zum Schutz von geografischen Angaben, Ursprungsbezeichnungen und garantiert traditionellen Spezialitäten für Agrarerzeugnisse und Lebensmittel im Land Nordrhein-Westfalen vom 23. Mai 2014 (In Kraft getreten am 28. Juni 2014 (GV. NRW. S. 333))",
+    "sourceVersion": "Verordnung zur Zulassung privater Kontrollstellen zum Schutz von geografischen Angaben, Ursprungsbezeichnungen und garantiert traditionellen Spezialitäten für Agrarerzeugnisse und Lebensmittel im Land Nordrhein-Westfalen vom 23. Mai 2014 (In Kraft getreten am 28. Juni 2014 (GV. NRW. S. 333))",
+    "simulation": "Verordnung zur Zulassung privater Kontrollstellen zum Schutz von geografischen Angaben, Ursprungsbezeichnungen und garantiert traditionellen Spezialitäten für Agrarerzeugnisse und Lebensmittel im Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6323,
+          "actual": 6309,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6309,
+          "actual": 6287,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T15:25:43.742Z"
+}

@@ -32,6 +32,12 @@ export interface NormSummaryQuery {
   limit?: number;
 }
 
+/** Anzahl der Normen je Normtyp über den gesamten Bestand der Jurisdiktion (unabhängig von Listenlimits). */
+export interface NormTypeCount {
+  type: NormType;
+  count: number;
+}
+
 export interface StoreStats {
   normCount: number;
   versionCount: number;
@@ -43,6 +49,8 @@ export interface NormStore {
   readonly kind: 'd1' | 'files';
   readonly jurisdiction: JurisdictionId;
   listNormSummaries(query?: NormSummaryQuery): Promise<NormSummary[]>;
+  /** Aggregierte Zählung je Typ über alle Normen (Typfilter und Länderseite; nie aus einer begrenzten Liste). */
+  countNormsByType(): Promise<NormTypeCount[]>;
   getNormSummary(slug: string): Promise<NormSummary | null>;
   /** Vollständiger Datensatz; `bodies` steuert, welche Fassungen ihren Körper tragen. */
   getNorm(slug: string, bodies?: BodySelection): Promise<NormRecord | null>;

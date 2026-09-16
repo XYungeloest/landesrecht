@@ -27,7 +27,8 @@ import { bodyTextLength, parseDivisionHeading, parseItem, tableBlock, type Sourc
 import { allByClass, attr, children, describeElement, elementChildren, hasClass, isElement, isTextNode, normalizeWhitespace, parseHtmlFragment, textOf, type HtmlElement, type HtmlNode } from '../common/html.ts';
 import { parseLrmbHead, type LrmbHead } from './text-metadata.ts';
 
-export const LRMB_PARSER_VERSION = 'recht-nrw-lrmb-parser/1.0.0';
+/** 1.1.0: gemeinsame Parserbausteine geändert (Tabellenraster, Zählbereiche, Legacy-Wrapper) – Bestand wird aus dem Cache regeneriert. */
+export const LRMB_PARSER_VERSION = 'recht-nrw-lrmb-parser/1.1.0';
 
 interface Line {
   text: string;

@@ -9,6 +9,7 @@
  *       lokale Miniflare-D1 (apps/web/.wrangler/state)
  *   node scripts/d1-apply-batches.ts --database landesrecht-west --execute --confirm-remote landesrecht-west [--resume]
  *       Remote-D1: Datei für Datei, Wiederholung bei vorübergehenden Fehlern, Protokoll apply-state.json
+ *       (lokale Läufe protokollieren getrennt in apply-state.local.json)
  *
  * Nach der letzten Datei wird state.json als Remote-Projektionszustand übernommen
  * (data/runtime/projection-state-<jur>.remote.json), damit die nächste inkrementelle Projektion darauf aufsetzt.
@@ -37,8 +38,14 @@ const confirmed = readOption('confirm-remote') === database;
 const root = resolveRepositoryRoot();
 const directory = join(root, 'data', 'runtime', 'd1-batches', database);
 const plan = JSON.parse(readFileSync(join(directory, 'plan.json'), 'utf8')) as SqlBatchPlan & { targetFingerprint?: string };
-const stateFile = join(directory, 'apply-state.json');
-const applyState = existsSync(stateFile) ? (JSON.parse(readFileSync(stateFile, 'utf8')) as { target: string; applied: Array<{ name: string; sha256: string; appliedAt: string }> }) : { target: local ? 'local' : 'remote', applied: [] };
+// Getrennte Protokolle je Ziel: ein lokal eingespielter Plan darf remote nicht als „bereits eingespielt“ gelten.
+const target = local ? 'local' : 'remote';
+const stateFile = join(directory, local ? 'apply-state.local.json' : 'apply-state.json');
+const applyState = existsSync(stateFile) ? (JSON.parse(readFileSync(stateFile, 'utf8')) as { target: string; applied: Array<{ name: string; sha256: string; appliedAt: string }> }) : { target, applied: [] };
+if (applyState.target !== target) {
+  console.error(`${stateFile}: Protokoll gehört zum Ziel „${applyState.target}“, nicht „${target}“ – Datei umbenennen oder entfernen`);
+  process.exit(1);
+}
 
 for (const file of plan.files) {
   const digest = createHash('sha256').update(readFileSync(join(directory, file.name), 'utf8')).digest('hex');

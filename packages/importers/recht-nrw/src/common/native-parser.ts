@@ -8,8 +8,8 @@
  */
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
-import { buildBody, extractFootnoteMarkers, parseAnnexHeading, parseDivisionHeading, parseItem, parseSubparagraph, parseUnitHeading, tableBlock, type ParsedBody, type SourceFootnote, type SourceLine } from './body-common.ts';
-import { allByClass, attr, byClass, children, classes, describeElement, elementChildren, findFirst, hasClass, isElement, isTextNode, normalizeWhitespace, parseHtmlFragment, textOf, type HtmlElement, type HtmlNode } from './html.ts';
+import { buildBody, extractFootnoteMarkers, hasConsentEvidence, parseAnnexHeading, parseDivisionHeading, parseItem, parseSubparagraph, parseTreatyHeading, parseUnitHeading, tableBlock, type ParsedBody, type SourceFootnote, type SourceLine } from './body-common.ts';
+import { allByClass, attr, byClass, children, classes, describeElement, elementChildren, findFirst, hasClass, isElement, isLayoutTable, isTextNode, normalizeWhitespace, parseHtmlFragment, tableCells, tableRows, textOf, type HtmlElement, type HtmlNode } from './html.ts';
 
 export interface NativeParseResult extends ParsedBody {
   issuedLine?: string;
@@ -62,7 +62,7 @@ function parseTable(table: HtmlElement, findings: ImportFinding[]): SourceLine {
       return entry;
     }));
   }
-  return { kind: 'table', block: tableBlock(rows), footnotes: [] };
+  return { kind: 'table', block: tableBlock(rows, findings), footnotes: [] };
 }
 
 function allByTagDeep(node: HtmlNode, tagName: string, output: HtmlElement[] = []): HtmlElement[] {
@@ -82,7 +82,9 @@ function parseTextField(field: HtmlElement, findings: ImportFinding[], lines: So
   for (const node of elementChildren(wrapper)) {
     const name = node.tagName.toLowerCase();
     if (name === 'table') {
-      lines.push(parseTable(node, findings));
+      // Einzeilige Hülltabelle um eine Tabelle (Word-Layout): Zellinhalte wie Absätze des Felds lesen.
+      if (isLayoutTable(node)) for (const cell of tableRows(node).flatMap(tableCells)) parseTextField(cell, findings, lines, state, unitFootnotes);
+      else lines.push(parseTable(node, findings));
       continue;
     }
     if (name === 'ul' || name === 'ol') {
@@ -133,6 +135,15 @@ function parseTextField(field: HtmlElement, findings: ImportFinding[], lines: So
         lines.push(line);
         continue;
       }
+      // Nachstehend veröffentlichter Vertragstext eines Zustimmungsgesetzes: eigener Container mit
+      // eigener Artikelzählung (nur nach Zustimmungsformel/Veröffentlichungsvermerk im Gesetzestext).
+      const treaty = bold && state.sawUnit ? parseTreatyHeading(text) : null;
+      if (treaty && hasConsentEvidence(lines)) {
+        const line: SourceLine = { kind: 'annex', label: treaty.label, footnotes };
+        if (treaty.title) line.title = treaty.title;
+        lines.push(line);
+        continue;
+      }
       if (/^(Die Landesregierung|Der Ministerpräsident|Die Ministerpräsidentin|Für die Landesregierung)/u.test(text) && state.sawUnit) {
         lines.push({ kind: 'signature', text });
         continue;
@@ -160,6 +171,99 @@ function parseTextField(field: HtmlElement, findings: ImportFinding[], lines: So
   void unitFootnotes;
 }
 
+export interface TocSectionDetection {
+  /** Sektionen der Inhaltsübersicht (leer, wenn keine Inhaltsübersicht als Sektionen vorliegt). */
+  sections: Set<HtmlElement>;
+  /** Anzahl der nummerierten Sektionen in der Inhaltsübersicht. */
+  units: number;
+  /** Gesetzt, wenn die Region wie eine Inhaltsübersicht aussieht, aber nicht sicher aufgelöst werden kann. */
+  reason?: string;
+}
+
+function unitLabelOf(section: HtmlElement): string | undefined {
+  const numText = textOf(byClass(section, 'field--field_num'));
+  if (!numText) return undefined;
+  return parseUnitHeading(extractFootnoteMarkers(numText).text, { romanArticles: true })?.label;
+}
+
+/**
+ * Inhaltsübersicht, die das Portal als eigene Einheitensektionen angelegt hat (z. B. die
+ * Wasserverbandsgesetze): auf die zentrierte fette Überschrift „Inhaltsübersicht“ folgen
+ * nummerierte Sektionen („Artikel 1“ mit den Gliederungszeilen als Text, „Artikel 2 …“ ohne
+ * Text), bis die Einheitenfolge mit derselben Kennung neu beginnt. Die Region gilt nur dann als
+ * Inhaltsübersicht, wenn alle ihre Zeilen Überschriftenzeilen sind (Einheiten- oder Gliederungs-
+ * kennzeichen, keine Absätze, Nummerierungen oder Tabellen) und jede Kennung später als echte
+ * Einheit wiederkehrt. Andernfalls bleibt sie unangetastet (fail-closed) und wird gemeldet.
+ * Wird auch von der Integritätsprüfung (`rawMetrics`) genutzt, damit Roh- und Parsezählung
+ * dieselben Sektionen ausnehmen.
+ */
+export function detectTocSections(root: HtmlNode): TocSectionDetection {
+  const none: TocSectionDetection = { sections: new Set(), units: 0 };
+  const sections = allByClass(root, 'legaldoc-article');
+  const isTocHeading = (paragraph: HtmlElement): boolean => hasClass(paragraph, 'text-align-center') && /^Inhalts(?:übersicht|verzeichnis)$/u.test(textOf(paragraph));
+  const paragraphsOf = (section: HtmlElement): HtmlElement[] => {
+    const field = byClass(section, 'field--field_text');
+    return field ? allByTagDeep(field, 'p') : [];
+  };
+  let start = -1;
+  const preamble = byClass(root, 'field--field_preamble');
+  if (preamble && allByTagDeep(preamble, 'p').some(isTocHeading)) start = 0;
+  else {
+    const headingIndex = sections.findIndex((section) => paragraphsOf(section).some(isTocHeading));
+    if (headingIndex >= 0) start = headingIndex + 1;
+  }
+  if (start < 0) return none;
+
+  const labels = sections.map(unitLabelOf);
+  let first = -1;
+  let restart = -1;
+  for (let index = start; index < sections.length; index += 1) {
+    const label = labels[index];
+    if (!label) continue;
+    if (first < 0) first = index;
+    else if (label === labels[first]) {
+      restart = index;
+      break;
+    }
+  }
+  if (first < 0 || restart < 0) return none;
+  let last = first;
+  for (let index = first; index < restart; index += 1) if (labels[index]) last = index;
+  const region = sections.slice(first, last + 1);
+
+  // Nur Überschriftenzeilen: Einheitenkennzeichen („§ 1 Rechtsform …“) oder Gliederung („Erster Teil …“).
+  for (const section of region) {
+    const field = byClass(section, 'field--field_text');
+    const wrapper = field ? byClass(field, 'tex2jax_process') ?? field : undefined;
+    if (wrapper && elementChildren(wrapper).some((node) => node.tagName.toLowerCase() !== 'p')) return none;
+    for (const paragraph of paragraphsOf(section)) {
+      const text = extractFootnoteMarkers(textOf(paragraph)).text;
+      if (text && !parseUnitHeading(text) && !parseDivisionHeading(text)) return none;
+    }
+  }
+  const later = new Set(labels.slice(restart).filter((label): label is string => Boolean(label)));
+  const tocLabels = region.map(unitLabelOf).filter((label): label is string => Boolean(label));
+  const missing = tocLabels.filter((label) => !later.has(label));
+  if (missing.length > 0) return { ...none, reason: `Kennzeichen ${missing.join(', ')} der Inhaltsübersicht kehren im Text nicht wieder` };
+  return { sections: new Set(region), units: tocLabels.length };
+}
+
+/** Zeile einer Inhaltsübersicht: Einheiten und Gliederungen werden zu schlichtem Text (kein Sprungziel, keine Einheit). */
+function asTocText(line: SourceLine): SourceLine {
+  switch (line.kind) {
+    case 'division':
+    case 'unit':
+    case 'annex':
+      return { kind: 'text', text: [line.label, line.title].filter(Boolean).join(' '), centered: false, bold: false, footnotes: line.footnotes };
+    case 'heading':
+      return { kind: 'text', text: line.text, centered: false, bold: false, footnotes: line.footnotes };
+    case 'text':
+      return { ...line, centered: false, bold: false };
+    default:
+      return line;
+  }
+}
+
 export function parseNativeDocument(bodyHtml: string): NativeParseResult {
   const findings: ImportFinding[] = [];
   const fragment = parseHtmlFragment(bodyHtml);
@@ -170,6 +274,10 @@ export function parseNativeDocument(bodyHtml: string): NativeParseResult {
 
   const sections = allByClass(fragment, 'legaldoc-article');
   if (sections.length === 0) findings.push({ severity: 'error', code: 'no-sections', message: 'Natives Dokument ohne legaldoc-article-Sektionen' });
+
+  const toc = detectTocSections(fragment);
+  if (toc.reason) findings.push({ severity: 'error', code: 'toc-sections-unresolved', message: `Inhaltsübersicht als Einheitensektionen angelegt, aber nicht auflösbar: ${toc.reason}` });
+  else if (toc.units > 0) findings.push({ severity: 'info', code: 'toc-sections-demoted', message: `Inhaltsübersicht: ${toc.units} Einheitensektion(en) als Text übernommen (keine Einheiten)` });
 
   // Vorspann (field--field_preamble): Ausfertigungsdatum, Eingangsformel
   const preamble = byClass(fragment, 'field--field_preamble');
@@ -186,9 +294,24 @@ export function parseNativeDocument(bodyHtml: string): NativeParseResult {
       footnotes.push({ label, text: inlineText(item, findings, `Fußnote ${label}`).replace(/\n/gu, ' ') });
       unitFootnoteLabels.push(label);
     }
+    if (toc.sections.has(section)) {
+      // Inhaltsübersicht als Sektionen: Kennzeichen und Zeilen als Text übernehmen, keine Einheiten.
+      const before = lines.length;
+      if (numText) {
+        const { text: cleanNum, footnotes: markers } = extractFootnoteMarkers(numText);
+        lines.push({ kind: 'text', text: [cleanNum, extractFootnoteMarkers(headlineText).text].filter(Boolean).join(' '), centered: false, bold: false, footnotes: [...markers, ...unitFootnoteLabels] });
+      } else {
+        for (const label of unitFootnoteLabels) lines.push({ kind: 'text', text: `Fn ${label}: ${footnotes.find((entry) => entry.label === label)?.text ?? ''}`, centered: false, bold: false, footnotes: [] });
+      }
+      const tocField = byClass(section, 'field--field_text');
+      if (tocField) parseTextField(tocField, findings, lines, state, unitFootnoteLabels);
+      for (let index = before; index < lines.length; index += 1) lines[index] = asTocText(lines[index]!);
+      continue;
+    }
     if (numText) {
       const { text: cleanNum, footnotes: markers } = extractFootnoteMarkers(numText);
-      const unit = parseUnitHeading(cleanNum);
+      // Römische Artikelnummern nur hier: `field--field_num` ist das eindeutige Nummernfeld des Portals.
+      const unit = parseUnitHeading(cleanNum, { romanArticles: true });
       if (unit) {
         state.sawUnit = true;
         const line: SourceLine = { kind: 'unit', unitType: unit.unitType, label: unit.label, footnotes: [...markers, ...unitFootnoteLabels] };

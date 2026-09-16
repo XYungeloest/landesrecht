@@ -37,7 +37,7 @@ import {
 
 import type { D1Database } from './d1-types.ts';
 import { normId, RUNTIME_META_KEYS } from './projection.ts';
-import { selectVersionIds, type BodySelection, type NormStore, type NormSummary, type NormSummaryQuery, type StoreStats } from './store.ts';
+import { selectVersionIds, type BodySelection, type NormStore, type NormSummary, type NormSummaryQuery, type NormTypeCount, type StoreStats } from './store.ts';
 
 interface NormRow {
   jurisdiction: string;
@@ -86,6 +86,8 @@ const SUMMARY_COLUMNS = 'jurisdiction, slug, title, short_title, abbr, type, sta
 const MAX_UNITS_PER_HIT = 8;
 /** Obergrenze der Nachsuche nach Identitätstreffern (exakte Bezeichnung) außerhalb der Kandidatenseite. */
 const IDENTITY_SCAN_LIMIT = 500;
+/** Normkennungen je Sammelabfrage (D1 erlaubt höchstens 100 gebundene Parameter je Anweisung). */
+const D1_MAX_BIND_CHUNK = 40;
 
 function toSummary(row: NormRow): NormSummary {
   const summary: NormSummary = {
@@ -190,64 +192,113 @@ function orderBy(sort: SearchState['sort'], ranked: boolean): string {
 }
 
 export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId): NormStore {
-  async function loadDocument(id: string, versionId: string, unitsMatch: string | null, references: readonly StructuralIntent[]): Promise<SearchDocument | null> {
-    const row = await db.prepare('SELECT search_document_json FROM law_versions WHERE norm_id = ? AND version_id = ?').bind(id, versionId).first<{ search_document_json: string }>();
-    if (!row) return null;
-    const document = JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>;
+  /**
+   * Lädt die Suchdokumente einer Kandidatenliste in Kandidatenreihenfolge (null für fehlende Fassungen).
+   * Alle Kandidaten einer Seite werden gemeinsam abgefragt: Eine Volltextabfrage je Kandidat müsste die gesamten
+   * FTS-Postings des Suchausdrucks erneut durchlaufen (bei häufigen Präfixen wie „west“* ≈ 300 ms D1-Zeit je
+   * Kandidat); mit `row_number() OVER (PARTITION BY norm_id, version_id ORDER BY rank)` bleibt die Auswahl je
+   * Fassung identisch (die bestbewerteten MAX_UNITS_PER_HIT Einheiten), die Postings werden aber nur einmal gelesen.
+   */
+  async function loadDocuments(candidates: readonly CandidateRow[], unitsMatch: string | null, references: readonly StructuralIntent[]): Promise<Array<SearchDocument | null>> {
+    if (candidates.length === 0) return [];
+    const pairKey = (row: { norm_id: string; version_id: string }): string => `${row.norm_id}#${row.version_id}`;
+    const wanted = new Set(candidates.map(pairKey));
+    const normIds = [...new Set(candidates.map((candidate) => candidate.norm_id))];
+    const documents = new Map<string, Omit<SearchDocument, 'units'>>();
+    const referenceRows = new Map<string, UnitRow[]>();
+    const unitRows = new Map<string, UnitRow[]>();
+    const collect = (target: Map<string, UnitRow[]>, rows: Array<UnitRow & CandidateRow>): void => {
+      for (const row of rows) {
+        const key = pairKey(row);
+        if (!wanted.has(key)) continue;
+        const list = target.get(key) ?? [];
+        list.push(row);
+        target.set(key, list);
+      }
+    };
 
-    // Einheiten der Strukturadresse zuerst (sonst könnte „§ 28“ bei großen Normen hinter den acht
-    // bestbewerteten Volltext-Einheiten verschwinden), dann die Volltext-Treffer.
-    const referenceRows: UnitRow[] = references.length > 0
-      ? (await (() => {
-          const { conditions, params } = referenceUnitConditions(references);
-          return db.prepare(
-            `SELECT u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body FROM law_search_units u
-             WHERE u.norm_id = ? AND u.version_id = ?${conditions.map((condition) => ` AND ${condition}`).join('')} ORDER BY u.unit_index LIMIT ?`,
-          ).bind(id, versionId, ...params, MAX_UNITS_PER_HIT).all<UnitRow>();
-        })()).results
-      : [];
+    // Höchstens D1_MAX_BIND_CHUNK Normkennungen je Anweisung (D1 begrenzt die gebundenen Parameter).
+    for (let start = 0; start < normIds.length; start += D1_MAX_BIND_CHUNK) {
+      const chunk = normIds.slice(start, start + D1_MAX_BIND_CHUNK);
+      const placeholders = chunk.map(() => '?').join(', ');
+      const documentQuery = db.prepare(`SELECT norm_id, version_id, search_document_json FROM law_versions WHERE norm_id IN (${placeholders})`).bind(...chunk)
+        .all<{ norm_id: string; version_id: string; search_document_json: string }>().then((result) => result.results);
 
-    let unitRows: UnitRow[];
-    if (unitsMatch) {
-      unitRows = (await db.prepare(
-        `SELECT unit_index, anchor, block_type, references_json, label, heading, body FROM (
-           SELECT s.unit_index, s.anchor, s.block_type, s.references_json, s.label, s.heading, s.body,
-                  row_number() OVER (ORDER BY rank) AS position
-           FROM law_search s WHERE law_search MATCH ? AND s.norm_id = ? AND s.version_id = ? AND rank MATCH ?
-         ) WHERE position <= ? ORDER BY unit_index`,
-      ).bind(unitsMatch, id, versionId, SEARCH_RANK_WEIGHTS, MAX_UNITS_PER_HIT).all<UnitRow>()).results;
-    } else if (references.length > 0) {
-      unitRows = [];
-    } else {
-      unitRows = (await db.prepare(
-        'SELECT unit_index, anchor, block_type, references_json, label, heading, body FROM law_search_units WHERE norm_id = ? AND version_id = ? ORDER BY unit_index LIMIT ?',
-      ).bind(id, versionId, MAX_UNITS_PER_HIT).all<UnitRow>()).results;
+      // Einheiten der Strukturadresse zuerst (sonst könnte „§ 28“ bei großen Normen hinter den acht
+      // bestbewerteten Volltext-Einheiten verschwinden), dann die Volltext-Treffer.
+      const referenceQuery: Promise<Array<UnitRow & CandidateRow>> = references.length > 0
+        ? (() => {
+            const { conditions, params } = referenceUnitConditions(references);
+            return db.prepare(
+              `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
+                 SELECT u.norm_id, u.version_id, u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
+                        row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY u.unit_index) AS position
+                 FROM law_search_units u WHERE u.norm_id IN (${placeholders})${conditions.map((condition) => ` AND ${condition}`).join('')}
+               ) WHERE position <= ? ORDER BY norm_id, version_id, unit_index`,
+            ).bind(...chunk, ...params, MAX_UNITS_PER_HIT).all<UnitRow & CandidateRow>().then((result) => result.results);
+          })()
+        : Promise.resolve([]);
+
+      let unitQuery: Promise<Array<UnitRow & CandidateRow>>;
+      if (unitsMatch) {
+        unitQuery = db.prepare(
+          `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
+             SELECT s.norm_id, s.version_id, s.unit_index, s.anchor, s.block_type, s.references_json, s.label, s.heading, s.body,
+                    row_number() OVER (PARTITION BY s.norm_id, s.version_id ORDER BY rank) AS position
+             FROM law_search s WHERE law_search MATCH ? AND s.norm_id IN (${placeholders}) AND rank MATCH ?
+           ) WHERE position <= ? ORDER BY norm_id, version_id, unit_index`,
+        ).bind(unitsMatch, ...chunk, SEARCH_RANK_WEIGHTS, MAX_UNITS_PER_HIT).all<UnitRow & CandidateRow>().then((result) => result.results);
+      } else if (references.length > 0) {
+        unitQuery = Promise.resolve([]);
+      } else {
+        unitQuery = db.prepare(
+          `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
+             SELECT u.norm_id, u.version_id, u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
+                    row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY u.unit_index) AS position
+             FROM law_search_units u WHERE u.norm_id IN (${placeholders})
+           ) WHERE position <= ? ORDER BY norm_id, version_id, unit_index`,
+        ).bind(...chunk, MAX_UNITS_PER_HIT).all<UnitRow & CandidateRow>().then((result) => result.results);
+      }
+      const [documentRows, referenceResult, unitResult] = await Promise.all([documentQuery, referenceQuery, unitQuery]);
+      for (const row of documentRows) if (wanted.has(pairKey(row))) documents.set(pairKey(row), JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>);
+      collect(referenceRows, referenceResult);
+      collect(unitRows, unitResult);
     }
 
-    const seen = new Set<number>();
-    const merged = [...referenceRows, ...unitRows].filter((unit) => {
-      if (seen.has(Number(unit.unit_index))) return false;
-      seen.add(Number(unit.unit_index));
-      return true;
+    return candidates.map((candidate) => {
+      const key = pairKey(candidate);
+      const document = documents.get(key);
+      if (!document) return null;
+      const seen = new Set<number>();
+      const merged = [...(referenceRows.get(key) ?? []), ...(unitRows.get(key) ?? [])].filter((unit) => {
+        if (seen.has(Number(unit.unit_index))) return false;
+        seen.add(Number(unit.unit_index));
+        return true;
+      });
+      const units: SearchUnit[] = merged.map((unit) => {
+        const entry: SearchUnit = {
+          index: Number(unit.unit_index),
+          type: unit.block_type as SearchUnit['type'],
+          anchor: unit.anchor,
+          label: unit.label,
+          heading: unit.heading,
+          body: unit.body,
+        };
+        if (unit.references_json) entry.references = JSON.parse(unit.references_json) as SearchUnit['references'];
+        return entry;
+      });
+      return { ...document, units };
     });
-    const units: SearchUnit[] = merged.map((unit) => {
-      const entry: SearchUnit = {
-        index: Number(unit.unit_index),
-        type: unit.block_type as SearchUnit['type'],
-        anchor: unit.anchor,
-        label: unit.label,
-        heading: unit.heading,
-        body: unit.body,
-      };
-      if (unit.references_json) entry.references = JSON.parse(unit.references_json) as SearchUnit['references'];
-      return entry;
-    });
-    return { ...document, units };
   }
 
   return {
     kind: 'd1',
     jurisdiction,
+
+    async countNormsByType(): Promise<NormTypeCount[]> {
+      const rows = await db.prepare('SELECT n.type AS type, COUNT(*) AS count FROM law_norms n WHERE n.jurisdiction = ? GROUP BY n.type ORDER BY n.type').bind(jurisdiction).all<{ type: string; count: number }>();
+      return rows.results.map((row) => ({ type: row.type as NormType, count: Number(row.count) }));
+    },
 
     async listNormSummaries(query = {}) {
       const clauses = ['n.jurisdiction = ?'];
@@ -348,16 +399,14 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
            ORDER BY ${orderBy(state.sort, true)} LIMIT ?`,
         ).bind(match, SEARCH_RANK_WEIGHTS, jurisdiction, ...relaxed.params, pageLimit).all<CandidateRow>();
         const titleHits: SearchHit[] = [];
-        for (const candidate of rows.results) {
-          if (known.has(`${candidate.norm_id}#${candidate.version_id}`)) continue;
-          const document = await loadDocument(candidate.norm_id, candidate.version_id, match, []);
+        const unknown = rows.results.filter((candidate) => !known.has(`${candidate.norm_id}#${candidate.version_id}`));
+        for (const document of await loadDocuments(unknown, match, [])) {
           const hit = document ? evaluateDocument(document, plan) : null;
           if (hit) titleHits.push(hit);
         }
         if (titleHits.length > 0) {
           const referenceHits: SearchHit[] = [];
-          for (const candidate of candidates) {
-            const document = await loadDocument(candidate.norm_id, candidate.version_id, match, plan.references);
+          for (const document of await loadDocuments(candidates, match, plan.references)) {
             if (document) referenceHits.push(evaluateDocument(document, plan) ?? fallbackHit(document));
           }
           const merged = [...referenceHits, ...titleHits].sort((left, right) => compareHits(left, right, state.sort));
@@ -366,8 +415,8 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
       }
 
       const hits: SearchHit[] = [];
-      for (const candidate of candidates.slice(state.offset)) {
-        const document = await loadDocument(candidate.norm_id, candidate.version_id, match, plan.references);
+      // Kandidaten der Seite gemeinsam laden (Reihenfolge bleibt die der Kandidatenliste).
+      for (const document of await loadDocuments(candidates.slice(state.offset), match, plan.references)) {
         if (!document) continue;
         const hit = evaluateDocument(document, plan) ?? fallbackHit(document);
         hits.push(hit);
@@ -386,11 +435,12 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
         ).bind(match, jurisdiction, ...filters.params, IDENTITY_SCAN_LIMIT).all<{ norm_id: string; version_id: string; title: string; short_title: string | null; abbr: string | null }>();
         const known = new Set(candidates.map((candidate) => `${candidate.norm_id}#${candidate.version_id}`));
         const identityHits: SearchHit[] = [];
-        for (const row of rows.results) {
-          if (known.has(`${row.norm_id}#${row.version_id}`)) continue;
+        const nameMatches = rows.results.filter((row) => {
+          if (known.has(`${row.norm_id}#${row.version_id}`)) return false;
           const names = [row.title, row.short_title, row.abbr].filter((value): value is string => Boolean(value));
-          if (!names.some((name) => buildSearchVariants(name).some((variant) => plan.identityVariants.includes(variant)))) continue;
-          const document = await loadDocument(row.norm_id, row.version_id, match, plan.references);
+          return names.some((name) => buildSearchVariants(name).some((variant) => plan.identityVariants.includes(variant)));
+        });
+        for (const document of await loadDocuments(nameMatches, match, plan.references)) {
           const hit = document ? evaluateDocument(document, plan) : null;
           if (hit?.matchKind === 'identity') identityHits.push(hit);
         }
