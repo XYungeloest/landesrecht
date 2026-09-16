@@ -1,0 +1,764 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31654",
+  "slug": "notvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@75:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 75,
+      "end": 102,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…Regelung von Angelegenheiten auf dem Gebiet des Notarwesens im Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@16:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 16,
+      "end": 19,
+      "term": "NRW",
+      "context": "Notarverordnung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.abbr@6:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 6,
+      "end": 9,
+      "term": "NRW",
+      "context": "NotVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@631:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 631,
+      "end": 646,
+      "term": "GV. NRW. S. 208",
+      "context": "…ung zur Ausführung der Bundesnotarordnung vom 18. Mai 1999 (GV. NRW. S. 208) und § 1 der Verordnung über die Übertragung von Ermächtigu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@786:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 786,
+      "end": 801,
+      "term": "GV. NRW. S. 285",
+      "context": "…rung zum Erlaß von Rechtsverordnungen vom 17. Oktober 1961 (GV. NRW. S. 285), verordnet das Justizministerium:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@818:ministry-compound",
+      "path": "body[2].text",
+      "start": 818,
+      "end": 835,
+      "term": "Justizministerium",
+      "context": "…ungen vom 17. Oktober 1961 (GV. NRW. S. 285), verordnet das Justizministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@85:municipality",
+      "path": "body[4].children[1].text",
+      "start": 85,
+      "end": 89,
+      "term": "Köln",
+      "context": "…der Präsidentin oder des Präsidenten des Oberlandesgerichts Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[10].children[1].title@81:municipality",
+      "path": "body[10].children[1].title",
+      "start": 81,
+      "end": 85,
+      "term": "Köln",
+      "context": "…der Präsidentin oder des Präsidenten des Oberlandesgerichts Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[10].children[1].children[0].text@64:municipality",
+      "path": "body[10].children[1].children[0].text",
+      "start": 64,
+      "end": 68,
+      "term": "Köln",
+      "context": "…die Präsidentin oder den Präsidenten des Oberlandesgerichts Köln werden die Befugnisse übertragen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[2].text@431:rule:jurisdiction-name-bare",
+      "path": "body[11].children[2].children[2].text",
+      "start": 431,
+      "end": 450,
+      "term": "Nordrhein-Westfalen",
+      "context": "… zu bewerten; § 17 Absatz 1 des Juristenausbildungsgesetzes Nordrhein-Westfalen vom 11. März 2003 (GV. NRW. S. 135, ber. S. 431) in der jew…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].children[2].text@470:protected:gazette-nrw",
+      "path": "body[11].children[2].children[2].text",
+      "start": 470,
+      "end": 485,
+      "term": "GV. NRW. S. 135",
+      "context": "…nausbildungsgesetzes Nordrhein-Westfalen vom 11. März 2003 (GV. NRW. S. 135, ber. S. 431) in der jeweils geltenden Fassung findet insow…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[6].children[0].text@215:protected:gazette-nrw",
+      "path": "body[11].children[6].children[0].text",
+      "start": 215,
+      "end": 230,
+      "term": "GV. NRW. S. 812",
+      "context": "…desrichter- und Staatsanwältegesetzes vom 8. Dezember 2015 (GV. NRW. S. 812) in der jeweils geltenden Fassung in Verbindung mit der Fre…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[6].children[0].text@324:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[6].children[0].text",
+      "start": 324,
+      "end": 327,
+      "term": "NRW",
+      "context": "… in Verbindung mit der Freistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jewe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[6].children[0].text@349:protected:gazette-nrw",
+      "path": "body[11].children[6].children[0].text",
+      "start": 349,
+      "end": 362,
+      "term": "GV. NRW. S. 2",
+      "context": "…eistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[0].children[3].children[2].text@134:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[0].children[3].children[2].text",
+      "start": 134,
+      "end": 160,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…d, insbesondere die Beschäftigung der im Anwärterdienst des Landes Nordrhein-Westfalen befindlichen Notarassessorinnen oder Notarassessoren nicht …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].children[1].text@100:protected:gazette-nrw",
+      "path": "body[14].children[0].children[1].text",
+      "start": 100,
+      "end": 114,
+      "term": "GV. NRW. S. 94",
+      "context": "…fugnissen nach der Bundesnotarordnung vom 26. Februar 2002 (GV. NRW. S. 94), die zuletzt durch Verordnung vom 3. November 2010 (GV. NR…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[1].text@168:protected:gazette-nrw",
+      "path": "body[14].children[0].children[1].text",
+      "start": 168,
+      "end": 183,
+      "term": "GV. NRW. S. 595",
+      "context": "… S. 94), die zuletzt durch Verordnung vom 3. November 2010 (GV. NRW. S. 595) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[2].text@103:protected:gazette-nrw",
+      "path": "body[14].children[0].children[2].text",
+      "start": 103,
+      "end": 118,
+      "term": "GV. NRW. S. 577",
+      "context": "…otarassessorinnen und Notarassessoren vom 18. Oktober 1999 (GV. NRW. S. 577), die zuletzt durch Artikel 23 der Verordnung vom 24. Septe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[2].text@189:protected:gazette-nrw",
+      "path": "body[14].children[0].children[2].text",
+      "start": 189,
+      "end": 204,
+      "term": "GV. NRW. S. 647",
+      "context": "…tzt durch Artikel 23 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[3].text@141:protected:gazette-nrw",
+      "path": "body[14].children[0].children[3].text",
+      "start": 141,
+      "end": 156,
+      "term": "GV. NRW. S. 532",
+      "context": "…es und auf die bisherige Amtstätigkeit vom 17. August 1999 (GV. NRW. S. 532), die zuletzt durch Artikel 22 der Verordnung vom 24. Septe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[3].text@227:protected:gazette-nrw",
+      "path": "body[14].children[0].children[3].text",
+      "start": 227,
+      "end": 242,
+      "term": "GV. NRW. S. 647",
+      "context": "…tzt durch Artikel 22 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[4].text@98:protected:gazette-nrw",
+      "path": "body[14].children[0].children[4].text",
+      "start": 98,
+      "end": 112,
+      "term": "GV. NRW. S. 51",
+      "context": "…Berufsausübung hauptberuflicher Notare vom 19. Januar 2000 (GV. NRW. S. 51), die zuletzt durch Artikel 24 der Verordnung vom 24. Septe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[4].text@183:protected:gazette-nrw",
+      "path": "body[14].children[0].children[4].text",
+      "start": 183,
+      "end": 198,
+      "term": "GV. NRW. S. 647",
+      "context": "…tzt durch Artikel 24 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist und",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[5].text@208:protected:gazette-nrw",
+      "path": "body[14].children[0].children[5].text",
+      "start": 208,
+      "end": 223,
+      "term": "GV. NRW. S. 484",
+      "context": "…snotars oder Abschluss als Diplom-Jurist vom 23. Juli 1999 (GV. NRW. S. 484), die zuletzt durch Artikel 21 der Verordnung vom 24. Septe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[5].text@294:protected:gazette-nrw",
+      "path": "body[14].children[0].children[5].text",
+      "start": 294,
+      "end": 309,
+      "term": "GV. NRW. S. 647",
+      "context": "…tzt durch Artikel 21 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[6].text@4:ministry-compound",
+      "path": "body[14].children[0].children[6].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[14].children[0].children[6].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[0].children[6].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 7
+    },
+    "source-citation": {
+      "protected": 15
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "municipality": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[6].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[0].children[3].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Justizministerium",
+      "context": "…ungen vom 17. Oktober 1961 (GV. NRW. S. 285), verordnet das Justizministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Köln",
+      "context": "…der Präsidentin oder des Präsidenten des Oberlandesgerichts Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].title",
+      "term": "Köln",
+      "context": "…der Präsidentin oder des Präsidenten des Oberlandesgerichts Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].children[0].text",
+      "term": "Köln",
+      "context": "…die Präsidentin oder den Präsidenten des Oberlandesgerichts Köln werden die Befugnisse übertragen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].children[6].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 226,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…zur Ausführung der Bundesnotarordnung vom 18. Mai 1999 (GV. NRW. S. 208) und § 1 der Verordnung über die Übertragung von Er…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… zum Erlaß von Rechtsverordnungen vom 17. Oktober 1961 (GV. NRW. S. 285), verordnet das Justizministerium:",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…nausbildungsgesetzes Westdeutschland vom 11. März 2003 (GV. NRW. S. 135, ber. S. 431) in der jeweils geltenden Fassung find…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[6].children[0].text",
+        "term": "NRW",
+        "context": "…ichter- und Staatsanwältegesetzes vom 8. Dezember 2015 (GV. NRW. S. 812) in der jeweils geltenden Fassung in Verbindung mit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[6].children[0].text",
+        "term": "NRW",
+        "context": "…llungs- und Urlaubsverordnung West vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…issen nach der Bundesnotarordnung vom 26. Februar 2002 (GV. NRW. S. 94), die zuletzt durch Verordnung vom 3. November 2010 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…94), die zuletzt durch Verordnung vom 3. November 2010 (GV. NRW. S. 595) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…assessorinnen und Notarassessoren vom 18. Oktober 1999 (GV. NRW. S. 577), die zuletzt durch Artikel 23 der Verordnung vom 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…durch Artikel 23 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…nd auf die bisherige Amtstätigkeit vom 17. August 1999 (GV. NRW. S. 532), die zuletzt durch Artikel 22 der Verordnung vom 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…durch Artikel 22 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…fsausübung hauptberuflicher Notare vom 19. Januar 2000 (GV. NRW. S. 51), die zuletzt durch Artikel 24 der Verordnung vom 24…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…durch Artikel 24 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist und",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[5].text",
+        "term": "NRW",
+        "context": "…ars oder Abschluss als Diplom-Jurist vom 23. Juli 1999 (GV. NRW. S. 484), die zuletzt durch Artikel 21 der Verordnung vom 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[5].text",
+        "term": "NRW",
+        "context": "…durch Artikel 21 der Verordnung vom 24. September 2014 (GV. NRW. S. 647) geändert worden ist.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Justizministerium",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Justizministerium",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Justizministerium",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Justizministerium",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "justizministerium"
+  },
+  "citations": {
+    "source": "Verordnung zur Regelung von Angelegenheiten auf dem Gebiet des Notarwesens im Land Nordrhein-Westfalen vom 5. Oktober 2016 (In Kraft getreten am 20. Oktober 2016 (GV. NRW. S.\n840))",
+    "sourceVersion": "Verordnung zur Regelung von Angelegenheiten auf dem Gebiet des Notarwesens im Land Nordrhein-Westfalen vom 5. Oktober 2016 (In Kraft getreten am 20. Oktober 2016 (GV. NRW. S.\n840))",
+    "simulation": "Verordnung zur Regelung von Angelegenheiten auf dem Gebiet des Notarwesens im Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 23417,
+          "actual": 23203,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 160,
+          "actual": 160,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 23203,
+          "actual": 23192,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "22 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "22 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:32:32.814Z"
+}

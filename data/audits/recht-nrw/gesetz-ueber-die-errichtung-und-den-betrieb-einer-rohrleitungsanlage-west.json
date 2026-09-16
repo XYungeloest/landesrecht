@@ -1,0 +1,418 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28734",
+  "slug": "gesetz-ueber-die-errichtung-und-den-betrieb-einer-rohrleitungsanlage-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[0].text@287:municipality",
+      "path": "body[1].children[0].text",
+      "start": 287,
+      "end": 291,
+      "term": "Köln",
+      "context": "…ie Durchleitung von Propylen von der Gemeinde Selfkant über Köln, Oberhausen nach Marl sowie weitere Leitungsabschnitte, die…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@293:municipality",
+      "path": "body[1].children[0].text",
+      "start": 293,
+      "end": 303,
+      "term": "Oberhausen",
+      "context": "…chleitung von Propylen von der Gemeinde Selfkant über Köln, Oberhausen nach Marl sowie weitere Leitungsabschnitte, die in Wesselin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@370:municipality",
+      "path": "body[1].children[0].text",
+      "start": 370,
+      "end": 375,
+      "term": "Moers",
+      "context": "…arl sowie weitere Leitungsabschnitte, die in Wesseling bzw. Moers enden, dienen dem Wohl der Allgemeinheit gemäß Artikel 14 A…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[1].children[2].text@187:rule:jurisdiction-name-bare",
+      "path": "body[1].children[1].children[2].text",
+      "start": 187,
+      "end": 206,
+      "term": "Nordrhein-Westfalen",
+      "context": "…andort der chemischen und weiterverarbeitenden Industrie in Nordrhein-Westfalen und damit Arbeitsplätze zu sichern sowie",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[3].text@90:rule:jurisdiction-name",
+      "path": "body[3].children[3].text",
+      "start": 90,
+      "end": 114,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ften des Gesetzes über Enteignung und Entschädigung für das Land Nordrhein-Westfalen (Landesenteignungs- und Entschädigungsgesetz - EEG NW -) vo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[3].text@191:protected:gazette-nrw",
+      "path": "body[3].children[3].text",
+      "start": 191,
+      "end": 206,
+      "term": "GV. NRW. S. 366",
+      "context": "…gs- und Entschädigungsgesetz - EEG NW -) vom 20. Juni 1989 (GV. NRW. S. 366, ber. S. 570).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].text@426:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].text",
+      "start": 426,
+      "end": 429,
+      "term": "NRW",
+      "context": "…ändige oberste Landesbehörde im Ministerialblatt das Landes NRW und in den jeweils örtlichen Tageszeitungen. § 206 BGB gilt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].text@4:constitutional-organ-state",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[6].text@20:rule:jurisdiction-name-bare",
+      "path": "body[6].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].text@4:ministry-portfolio",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 38,
+      "term": "Minister für Wirtschaft und Arbeit",
+      "context": "Der Minister für Wirtschaft und Arbeit",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 3
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "source-citation": {
+      "protected": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[1].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[0].text",
+      "term": "Köln",
+      "context": "…ie Durchleitung von Propylen von der Gemeinde Selfkant über Köln, Oberhausen nach Marl sowie weitere Leitungsabschnitte, die…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[0].text",
+      "term": "Oberhausen",
+      "context": "…chleitung von Propylen von der Gemeinde Selfkant über Köln, Oberhausen nach Marl sowie weitere Leitungsabschnitte, die in Wesselin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[0].text",
+      "term": "Moers",
+      "context": "…arl sowie weitere Leitungsabschnitte, die in Wesseling bzw. Moers enden, dienen dem Wohl der Allgemeinheit gemäß Artikel 14 A…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].text",
+      "term": "Minister für Wirtschaft und Arbeit",
+      "context": "Der Minister für Wirtschaft und Arbeit",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 43,
+    "residuals": [
+      {
+        "path": "body[3].children[3].text",
+        "term": "NRW",
+        "context": "…und Entschädigungsgesetz - EEG NW -) vom 20. Juni 1989 (GV. NRW. S. 366, ber. S. 570).",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Errichtung und den Betrieb einer Rohrleitungsanlage zwischen Selfkant und Marl vom 21. Juli 2004",
+    "sourceVersion": "Gesetz über die Errichtung und den Betrieb einer Rohrleitungsanlage zwischen Selfkant und Marl vom 21. Juli 2004",
+    "simulation": "Gesetz über die Errichtung und den Betrieb einer Rohrleitungsanlage zwischen Selfkant und Marl in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4280,
+          "actual": 4466,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4466,
+          "actual": 4455,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:15:45.822Z"
+}

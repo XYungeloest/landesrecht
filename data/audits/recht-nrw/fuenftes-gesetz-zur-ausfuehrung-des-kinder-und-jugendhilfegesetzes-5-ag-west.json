@@ -1,0 +1,996 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31436",
+  "slug": "fuenftes-gesetz-zur-ausfuehrung-des-kinder-und-jugendhilfegesetzes-5-ag-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].children[0].text@309:regional-body-association",
+      "path": "body[2].children[0].text",
+      "start": 309,
+      "end": 327,
+      "term": "Landschaftsverband",
+      "context": "… überörtliche Träger der Jugendhilfe (Landesjugendamt) beim Landschaftsverband Rheinland als Landesstelle für die Verteilung unbegleitete…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@328:geography-region",
+      "path": "body[2].children[0].text",
+      "start": 328,
+      "end": 337,
+      "term": "Rheinland",
+      "context": "…r der Jugendhilfe (Landesjugendamt) beim Landschaftsverband Rheinland als Landesstelle für die Verteilung unbegleiteter ausländi…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@421:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].text",
+      "start": 421,
+      "end": 440,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ie Verteilung unbegleiteter ausländischer Minderjähriger in Nordrhein-Westfalen (Landesstelle NRW) wahr.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@456:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].text",
+      "start": 456,
+      "end": 459,
+      "term": "NRW",
+      "context": "…ischer Minderjähriger in Nordrhein-Westfalen (Landesstelle NRW) wahr.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[1].text@17:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[1].text",
+      "start": 17,
+      "end": 20,
+      "term": "NRW",
+      "context": "Die Landesstelle NRW unterstützt die Landesjugendämter bei der Förderung des Kom…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[1].text@431:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[1].text",
+      "start": 431,
+      "end": 434,
+      "term": "NRW",
+      "context": "… Achten Buches Sozialgesetzbuch kooperiert die Landesstelle NRW mit den in den anderen Ländern zuständigen Landesstellen un…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[1].text@565:rule:jurisdiction-name-bare",
+      "path": "body[2].children[1].text",
+      "start": 565,
+      "end": 584,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chen Trägern der öffentlichen Jugendhilfe (Jugendämtern) in Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].text@17:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[2].text",
+      "start": 17,
+      "end": 20,
+      "term": "NRW",
+      "context": "Die Landesstelle NRW führt die Aufgaben nach diesem Gesetz als Pflichtaufgabe zu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].text@53:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 53,
+      "end": 56,
+      "term": "NRW",
+      "context": "Das Jugendamt ist verpflichtet, von der Landesstelle NRW zugewiesene unbegleitete ausländische Minderjährige zur Ino…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[1].text@201:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[1].text",
+      "start": 201,
+      "end": 204,
+      "term": "NRW",
+      "context": "…im Einzelfall bei Zuweisungsentscheidungen der Landesstelle NRW der Umfang der Aufnahmepflicht nach § 3 Absatz 2 vorübergeh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].text@130:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].text",
+      "start": 130,
+      "end": 149,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nteils eines Jugendamtsbezirkes an der Gesamtbevölkerung in Nordrhein-Westfalen nach dem jeweils aktuellen amtlichen Stand zum 31. Dezember…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@234:authority-state-enterprise",
+      "path": "body[4].children[0].text",
+      "start": 234,
+      "end": 259,
+      "term": "Landesbetrieb Information",
+      "context": "…en amtlichen Stand zum 31. Dezember eines Jahres in der vom Landesbetrieb Information und Technik Nordrhein-Westfalen veröffentlichten Statistik …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@272:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].text",
+      "start": 272,
+      "end": 291,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nes Jahres in der vom Landesbetrieb Information und Technik Nordrhein-Westfalen veröffentlichten Statistik ermittelt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@190:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].text",
+      "start": 190,
+      "end": 209,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nne des Absatzes 3, der Anzahl vorläufiger Inobhutnahmen in Nordrhein-Westfalen sowie der Anzahl der aus anderen Bundesländern Nordrhein-We…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@257:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].text",
+      "start": 257,
+      "end": 276,
+      "term": "Nordrhein-Westfalen",
+      "context": "…in-Westfalen sowie der Anzahl der aus anderen Bundesländern Nordrhein-Westfalen zur Aufnahme zugewiesenen unbegleiteten ausländischen Minde…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[4].text@90:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[4].text",
+      "start": 90,
+      "end": 93,
+      "term": "NRW",
+      "context": "…r Aufnahmepflicht nach Absatz 2 wird durch die Landesstelle NRW wöchentlich in geeigneter Form den Jugendämtern mitgeteilt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[1].text@158:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].text",
+      "start": 158,
+      "end": 161,
+      "term": "NRW",
+      "context": "…tstagen nach Beginn der Maßnahme gegenüber der Landesstelle NRW an. Hierbei sind zu übermitteln",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].text@65:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].text",
+      "start": 65,
+      "end": 68,
+      "term": "NRW",
+      "context": "…ufgabenwahrnehmung nach § 1 Absatz 1 weist die Landesstelle NRW unbegleitete ausländische Minderjährige einem Jugendamt zu.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].text@146:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].text",
+      "start": 146,
+      "end": 149,
+      "term": "NRW",
+      "context": "…ändische Minderjährige einem Jugendamt zu. Die Landesstelle NRW berücksichtigt bei ihrer Entscheidung das Kindeswohl und be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].children[7].text@141:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].children[7].text",
+      "start": 141,
+      "end": 144,
+      "term": "NRW",
+      "context": "…net sind, richtet sich die Zuweisung durch die Landesstelle NRW nach der Erfüllung der Aufnahmepflicht. Im Übrigen gelten d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].children[7].text@371:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].children[7].text",
+      "start": 371,
+      "end": 374,
+      "term": "NRW",
+      "context": "…Mit der Zuweisungsentscheidung übermittelt die Landesstelle NRW den Zuweisungsbescheid mit Angaben zu Vorname, Name, Staats…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[3].text@304:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[3].text",
+      "start": 304,
+      "end": 307,
+      "term": "NRW",
+      "context": "…buch einzutreten. In Fällen des Satz 1 ist die Landesstelle NRW darüber innerhalb von sieben Arbeitstagen zu informieren.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[0].text@123:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 123,
+      "end": 126,
+      "term": "NRW",
+      "context": "…en nach diesem Gesetz erforderlichen Daten der Landesstelle NRW mitzuteilen. Die Landesstelle NRW ist berechtigt und verpfl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[0].text@157:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 157,
+      "end": 160,
+      "term": "NRW",
+      "context": "…en Daten der Landesstelle NRW mitzuteilen. Die Landesstelle NRW ist berechtigt und verpflichtet, die Daten, die zur Erfüllu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[1].text@219:authority-state-enterprise",
+      "path": "body[7].children[1].text",
+      "start": 219,
+      "end": 244,
+      "term": "Landesbetrieb Information",
+      "context": "…ch § 42b Absatz 6 des Achten Buches Sozialgesetzbuch an den Landesbetrieb Information und Technik Nordrhein-Westfalen, an die Oberste Landesjugen…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@257:rule:jurisdiction-name-bare",
+      "path": "body[7].children[1].text",
+      "start": 257,
+      "end": 276,
+      "term": "Nordrhein-Westfalen",
+      "context": "…zialgesetzbuch an den Landesbetrieb Information und Technik Nordrhein-Westfalen, an die Oberste Landesjugendbehörde und die Landesjugendämt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[2].text@22:ministry-compound",
+      "path": "body[9].children[2].text",
+      "start": 22,
+      "end": 40,
+      "term": "Finanzministeriums",
+      "context": "2. mit Zustimmung des Finanzministeriums eine Anpassung der Bemessungsgrundlagen und der Höhe der Ve…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@299:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[0].text",
+      "start": 299,
+      "end": 325,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nschaft der Spitzenverbände der Freien Wohlfahrtspflege des Landes Nordrhein-Westfalen, des Deutschen Kinderschutzbundes Landesverband NRW e.V. un…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].text@374:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[0].text",
+      "start": 374,
+      "end": 377,
+      "term": "NRW",
+      "context": "…n-Westfalen, des Deutschen Kinderschutzbundes Landesverband NRW e.V. und des Flüchtlingsrates NRW e.V. über die Auswirkunge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[0].text@408:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[0].text",
+      "start": 408,
+      "end": 411,
+      "term": "NRW",
+      "context": "…chutzbundes Landesverband NRW e.V. und des Flüchtlingsrates NRW e.V. über die Auswirkungen dieses Gesetzes.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[12].text@4:constitutional-organ-state",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[12].text@20:rule:jurisdiction-name-bare",
+      "path": "body[12].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].text@4:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].text@4:ministry-compound",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 49,
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "regional-body": {
+      "manual-review": 1
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 26
+    },
+    "authority": {
+      "manual-review": 2
+    },
+    "ministry": {
+      "manual-review": 6
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[0].text",
+      "term": "Landschaftsverband",
+      "context": "… überörtliche Träger der Jugendhilfe (Landesjugendamt) beim Landschaftsverband Rheinland als Landesstelle für die Verteilung unbegleitete…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Rheinland",
+      "context": "…r der Jugendhilfe (Landesjugendamt) beim Landschaftsverband Rheinland als Landesstelle für die Verteilung unbegleiteter ausländi…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Landesbetrieb Information",
+      "context": "…en amtlichen Stand zum 31. Dezember eines Jahres in der vom Landesbetrieb Information und Technik Nordrhein-Westfalen veröffentlichten Statistik …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "…ch § 42b Absatz 6 des Achten Buches Sozialgesetzbuch an den Landesbetrieb Information und Technik Nordrhein-Westfalen, an die Oberste Landesjugen…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].text",
+      "term": "Finanzministeriums",
+      "context": "2. mit Zustimmung des Finanzministeriums eine Anpassung der Bemessungsgrundlagen und der Höhe der Ve…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 113,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Fünftes Gesetz zur Ausführung des Kinder- und Jugendhilfegesetzes (5. AG-KJHG) vom 8. Dezember 2015 (In Kraft getreten am 17. Dezember 2015 und am 1.\nJanuar 2016 (GV. NRW. 2015 S. 832))",
+    "sourceVersion": "Fünftes Gesetz zur Ausführung des Kinder- und Jugendhilfegesetzes (5. AG-KJHG) vom 8. Dezember 2015 (In Kraft getreten am 17. Dezember 2015 und am 1.\nJanuar 2016 (GV. NRW. 2015 S. 832))",
+    "simulation": "Fünftes Gesetz zur Ausführung des Kinder- und Jugendhilfegesetzes (5. AG-KJHG) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11988,
+          "actual": 11974,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 66,
+          "actual": 66,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11974,
+          "actual": 11955,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:11:32.123Z"
+}

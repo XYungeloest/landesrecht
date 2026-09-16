@@ -1,0 +1,874 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33020",
+  "slug": "gewvollzvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@76:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 76,
+      "end": 102,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…den Vollzug der Freiheitsentziehung im Polizeigewahrsam des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[0].title@76:rule:jurisdiction-name-genitive",
+      "path": "body[0].title",
+      "start": 76,
+      "end": 102,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…den Vollzug der Freiheitsentziehung im Polizeigewahrsam des Landes Nordrhein-Westfalen (Gewahrsamsvollzugsverordnung – GewvollzVO)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].text@140:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 441",
+      "context": "…-falen in der Fassung der Bekanntmachung vom 25. Juli 2003 (GV. NRW. S. 441), der durch Artikel 1 des Gesetzes vom 19. Dezember 2019 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@214:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 214,
+      "end": 229,
+      "term": "GV. NRW. S. 995",
+      "context": "…1), der durch Artikel 1 des Gesetzes vom 19. Dezember 2019 (GV. NRW. S. 995) eingefügt worden ist, verordnet das Ministerium des Innern…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@267:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 267,
+      "end": 289,
+      "term": "Ministerium des Innern",
+      "context": "… 2019 (GV. NRW. S. 995) eingefügt worden ist, verordnet das Ministerium des Innern:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[6].text@90:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 90,
+      "end": 116,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n im Sinne des § 37 Absatz 4 Satz 1 des Polizeigesetzes des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].title@86:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[1].title",
+      "start": 86,
+      "end": 112,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n im Sinne des § 37 Absatz 4 Satz 1 des Polizeigesetzes des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].children[0].text@168:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[1].children[0].text",
+      "start": 168,
+      "end": 194,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…e im Sinne des § 37 Absatz 4 Satz 1 des Polizeigesetzes des Landes Nordrhein-Westfalen vom 25. Juli 2003 (GV. NRW. S. 441) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].children[0].text@214:protected:gazette-nrw",
+      "path": "body[15].children[1].children[0].text",
+      "start": 214,
+      "end": 229,
+      "term": "GV. NRW. S. 441",
+      "context": "…igesetzes des Landes Nordrhein-Westfalen vom 25. Juli 2003 (GV. NRW. S. 441) in der jeweils geltenden Fassung, im Folgenden: PolG NRW),…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[1].children[0].text@284:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[0].text",
+      "start": 284,
+      "end": 287,
+      "term": "NRW",
+      "context": "…. 441) in der jeweils geltenden Fassung, im Folgenden: PolG NRW), haben die folgenden Befugnisse nach dem PolG NRW, soweit …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[0].text@335:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[0].text",
+      "start": 335,
+      "end": 338,
+      "term": "NRW",
+      "context": "…en: PolG NRW), haben die folgenden Befugnisse nach dem PolG NRW, soweit dies für ihre Aufgabenerfüllung in polizeilichen Ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[0].children[0].text@54:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[0].children[0].text",
+      "start": 54,
+      "end": 57,
+      "term": "NRW",
+      "context": "Allgemeine Datenerhebung und Befragung gemäß § 9 PolG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[0].children[1].text@80:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[0].children[1].text",
+      "start": 80,
+      "end": 83,
+      "term": "NRW",
+      "context": "…ng gemäß § 12 Absatz 1 Nummer 1, Absatz 2 Satz 1 und 2 PolG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[0].children[2].text@40:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[0].children[2].text",
+      "start": 40,
+      "end": 43,
+      "term": "NRW",
+      "context": "Durchsuchung von Sachen gemäß § 40 PolG NRW und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[0].children[3].text@26:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[15].children[1].children[0].children[3].text",
+      "start": 26,
+      "end": 34,
+      "term": "PolG NRW",
+      "context": "Sicherstellung gemäß § 43 PolG NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („PolG NRW“ → „PolG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "PolG West"
+    },
+    {
+      "id": "body[15].children[1].children[1].text@113:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[1].text",
+      "start": 113,
+      "end": 116,
+      "term": "NRW",
+      "context": "…nen die Bediensteten im Sinne des § 37 Absatz 4 Satz 1 PolG NRW erhobene Daten nach den §§ 22 bis 25 PolG NRW weiterverarbe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[1].text@159:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[1].text",
+      "start": 159,
+      "end": 162,
+      "term": "NRW",
+      "context": "…4 Satz 1 PolG NRW erhobene Daten nach den §§ 22 bis 25 PolG NRW weiterverarbeiten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[2].text@51:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[1].children[2].text",
+      "start": 51,
+      "end": 54,
+      "term": "NRW",
+      "context": "Bedienstete im Sinne des § 37 Absatz 4 Satz 1 PolG NRW dürfen mit Aufgaben in polizeilichen Gewahrsamseinrichtunge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[1].children[2].text@479:rule:jurisdiction-name-bare",
+      "path": "body[15].children[1].children[2].text",
+      "start": 479,
+      "end": 498,
+      "term": "Nordrhein-Westfalen",
+      "context": "…auf der Grundlage des § 18 Absatz 1 des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].children[2].text@517:protected:gazette-nrw",
+      "path": "body[15].children[1].children[2].text",
+      "start": 517,
+      "end": 532,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) in der jeweils geltenden Fassung i…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[3].children[1].text@53:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[15].children[3].children[1].text",
+      "start": 53,
+      "end": 61,
+      "term": "PolG NRW",
+      "context": "Die weitere Speicherung der Daten erfolgt gemäß § 32 PolG NRW. Die danach verbleibenden Nachweise sind zwei Jahre aufzube…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („PolG NRW“ → „PolG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "PolG West"
+    },
+    {
+      "id": "body[16].children[2].children[0].text@76:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[2].children[0].text",
+      "start": 76,
+      "end": 79,
+      "term": "NRW",
+      "context": "…ommene Personen sind bei ihrer Einlieferung gemäß § 39 PolG NRW zu durchsuchen. Dies gilt auch bei der Wiedereinlieferung n…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[2].children[0].text@370:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[2].children[0].text",
+      "start": 370,
+      "end": 373,
+      "term": "NRW",
+      "context": "…ertigen, dass die Person Gegenstände im Sinne von § 43 PolG NRW verborgen hält oder bei sich trägt und diese Gegenstände an…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[2].children[2].text@37:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[2].children[2].text",
+      "start": 37,
+      "end": 40,
+      "term": "NRW",
+      "context": "Ist eine Durchsuchung nach § 39 PolG NRW durch eine Person gleichen Geschlechts nicht möglich, ist d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[2].children[3].text@96:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[2].children[3].text",
+      "start": 96,
+      "end": 99,
+      "term": "NRW",
+      "context": "…erson sind Sicherstellungen auf der Grundlage des § 43 PolG NRW zu prüfen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[17].children[0].children[1].text@534:protected:gazette-nrw",
+      "path": "body[17].children[0].children[1].text",
+      "start": 534,
+      "end": 549,
+      "term": "GV. NRW. S. 662",
+      "context": "…aßnahmen bei psychischen Krankheiten vom 17. Dezember 1999 (GV. NRW. S. 662), das zuletzt durch Artikel 5 des Gesetzes vom 2. Juli 2019…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].children[0].children[1].text@611:protected:gazette-nrw",
+      "path": "body[17].children[0].children[1].text",
+      "start": 611,
+      "end": 626,
+      "term": "GV. NRW. S. 339",
+      "context": "… das zuletzt durch Artikel 5 des Gesetzes vom 2. Juli 2019 (GV. NRW. S. 339) geändert worden ist, bleiben davon unberührt. Sollte die U…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].children[0].children[2].text@61:rule:jurisdiction-abbreviation",
+      "path": "body[17].children[0].children[2].text",
+      "start": 61,
+      "end": 64,
+      "term": "NRW",
+      "context": "…n Gewahrsam genommene Personen sind nach § 37 Absatz 3 PolG NRW getrennt nach Geschlechtern, Jugendliche getrennt von Erwac…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[19].children[1].children[0].children[0].text@26:rule:jurisdiction-abbreviation",
+      "path": "body[19].children[1].children[0].children[0].text",
+      "start": 26,
+      "end": 29,
+      "term": "NRW",
+      "context": "Fesselung gemäß § 62 PolG NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[19].children[1].children[1].text@148:rule:jurisdiction-name-bare",
+      "path": "body[19].children[1].children[1].text",
+      "start": 148,
+      "end": 167,
+      "term": "Nordrhein-Westfalen",
+      "context": "…stellen in Form von Griffmulden mittels der bei der Polizei Nordrhein-Westfalen zulässigen Fixierungsmittel. Fixierungen haben grundsätzlic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[19].children[1].children[2].text@189:rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "path": "body[19].children[1].children[2].text",
+      "start": 189,
+      "end": 197,
+      "term": "PolG NRW",
+      "context": "… absehbar von nicht nur kurzfristiger Dauer ist, gilt § 37a PolG NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-sentence-end übergeleitet („PolG NRW“ → „PolG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "replacement": "PolG West"
+    },
+    {
+      "id": "body[21].children[0].children[1].text@4:ministry-portfolio",
+      "path": "body[21].children[0].children[1].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[21].children[0].children[1].text@28:rule:jurisdiction-name-genitive",
+      "path": "body[21].children[0].children[1].text",
+      "start": 28,
+      "end": 54,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister des Innern des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 25
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[1].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "PolG NRW",
+      "to": "PolG West"
+    },
+    {
+      "path": "body[15].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[3].children[1].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "PolG NRW",
+      "to": "PolG West"
+    },
+    {
+      "path": "body[16].children[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[2].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[17].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[19].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[19].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[19].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation-known-law-sentence-end",
+      "from": "PolG NRW",
+      "to": "PolG West"
+    },
+    {
+      "path": "body[21].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium des Innern",
+      "context": "… 2019 (GV. NRW. S. 995) eingefügt worden ist, verordnet das Ministerium des Innern:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[0].children[1].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 230,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…en in der Fassung der Bekanntmachung vom 25. Juli 2003 (GV. NRW. S. 441), der durch Artikel 1 des Gesetzes vom 19. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…der durch Artikel 1 des Gesetzes vom 19. Dezember 2019 (GV. NRW. S. 995) eingefügt worden ist, verordnet das Ministerium de…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…igesetzes des Landes Westdeutschland vom 25. Juli 2003 (GV. NRW. S. 441) in der jeweils geltenden Fassung, im Folgenden: Po…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) in der jeweils geltenden F…",
+        "status": "protected"
+      },
+      {
+        "path": "body[17].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…hmen bei psychischen Krankheiten vom 17. Dezember 1999 (GV. NRW. S. 662), das zuletzt durch Artikel 5 des Gesetzes vom 2. J…",
+        "status": "protected"
+      },
+      {
+        "path": "body[17].children[0].children[1].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 5 des Gesetzes vom 2. Juli 2019 (GV. NRW. S. 339) geändert worden ist, bleiben davon unberührt. Soll…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium des Innern",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium des Innern",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium des Innern",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium des Innern",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "innenministerium"
+  },
+  "citations": {
+    "source": "Verordnung über den Vollzug der Freiheitsentziehung im Polizeigewahrsam des Landes Nordrhein-Westfalen vom 19. März 2021 (In Kraft getreten am 1. Mai 2021 (GV. NRW. S. 344).)",
+    "sourceVersion": "Verordnung über den Vollzug der Freiheitsentziehung im Polizeigewahrsam des Landes Nordrhein-Westfalen vom 19. März 2021 (In Kraft getreten am 1. Mai 2021 (GV. NRW. S. 344).)",
+    "simulation": "Verordnung über den Vollzug der Freiheitsentziehung im Polizeigewahrsam des Landes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 20596,
+          "actual": 20589,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 131,
+          "actual": 131,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 20589,
+          "actual": 20578,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "22 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "22 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:46:36.428Z"
+}

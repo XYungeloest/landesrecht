@@ -242,6 +242,62 @@ const tempLeftovers = async (root: string): Promise<string[]> => (await listFile
 
 /* ------------------------------------------------------------------------------------------ */
 
+describe('Bulk-Runner: Abtrennung fremder Adressen (Regression)', () => {
+  /**
+   * Regression aus dem echten LRGV-Bulk: Der Schlüssel eines abgetrennten Eintrags trug bei jeder Verarbeitung
+   * ein weiteres „@datum“; die Dublettenprüfung griff nie, die Enumeration wuchs unbegrenzt (4 642 statt 3 342
+   * Einträge, Schlüssel mit 13 Segmenten) und der Lauf terminierte nicht.
+   */
+  it('hält den Schlüssel stabil und terminiert: keine Mehrfachsuffixe, keine wachsende Enumeration', async () => {
+    const { root } = await prepareRoot(3);
+    const seeded = await enumerationOnDisk(root);
+    // Dritte Fassungsadresse je Stammnorm, damit auch ein abgetrennter Eintrag erneut abtrennen kann.
+    for (const item of seeded.items) item.urls = [...new Set([...item.urls, item.urls[0]!.replace(/\/\d{8}-/u, '/01012010-')])].sort();
+    await writeEnumeration(root, seeded);
+
+    const onlyFirstUrl = (item: EnumerationItem): string[] => [item.urls[0]!];
+    const first = await runBulkImport(runOptions(root, { processor: stubProcessor({ versionUrls: onlyFirstUrl }).processor, runId: 'split-1' }));
+    expect(first.summary.outcomes.split).toBe(3);
+    const afterFirst = await enumerationOnDisk(root);
+    expect(afterFirst.items).toHaveLength(6);
+    expect(statusCounts(afterFirst)).toMatchObject({ pending: 3 });
+
+    const second = await runBulkImport(runOptions(root, { processor: stubProcessor({ versionUrls: onlyFirstUrl }).processor, resume: true, runId: 'split-2' }));
+    expect(second.summary.runStatus).toBe('completed');
+    const afterSecond = await enumerationOnDisk(root);
+    expect(afterSecond.items.every((item) => (item.key.match(/@/gu) ?? []).length <= 1)).toBe(true);
+
+    // Dritter Lauf: nichts mehr offen, keine weiteren Einträge – die Kette terminiert.
+    const third = await runBulkImport(runOptions(root, { processor: stubProcessor({ versionUrls: onlyFirstUrl }).processor, resume: true, runId: 'split-3' }));
+    expect(third.summary.outcomes.split).toBe(0);
+    const afterThird = await enumerationOnDisk(root);
+    expect(afterThird.items).toHaveLength(afterSecond.items.length);
+    expect(statusCounts(afterThird).pending).toBeUndefined();
+  });
+
+  /**
+   * Regression aus dem echten LRGV-Bulk: `--retry-failed` wählt ausschließlich fehlgeschlagene Stammnormen aus.
+   * Bleiben deren Fehler reproduzierbar, meldete die Systemerkennung nach 20 Wiederholungen „aborted-systemic“ und
+   * brach ab; die übrigen Einträge wurden nie erneut versucht.
+   */
+  it('bricht bei --retry-failed nicht systemisch ab, wenn sich bekannte Fehler wiederholen', async () => {
+    const { root } = await prepareRoot(60);
+    const everyThird = (item: EnumerationItem): { status: ItemOutcome['status']; code?: string } => (indexOf(item.key) % 3 === 0 ? { status: 'failed', code: 'quellfall' } : { status: 'done' });
+    const base = await runBulkImport(runOptions(root, { processor: stubProcessor({ decide: everyThird }).processor, runId: 'retry-basis' }));
+    expect(base.summary).toMatchObject({ runStatus: 'completed', processed: 60 });
+    expect(base.summary.outcomes.failed).toBe(20);
+
+    const retry = await runBulkImport(runOptions(root, { processor: stubProcessor({ decide: () => ({ status: 'failed', code: 'quellfall' }) }).processor, resume: true, retryFailed: true, runId: 'retry-lauf' }));
+    expect(retry.summary).toMatchObject({ runStatus: 'completed', selected: 20, processed: 20 });
+    expect((await enumerationOnDisk(root)).items.filter((item) => item.status === 'failed').every((item) => item.attempts === 2)).toBe(true);
+
+    // Neue Fehlschläge in Folge lösen weiterhin den systemischen Abbruch aus.
+    const fresh = await prepareRoot(40);
+    const systemic = await runBulkImport(runOptions(fresh.root, { processor: stubProcessor({ decide: () => ({ status: 'failed', code: 'portalstruktur' }) }).processor, runId: 'systemisch' }));
+    expect(systemic.summary.runStatus).toBe('aborted-systemic');
+  });
+});
+
 describe('Bulk-Runner: Dry-run und Schreiblauf', () => {
   it('schreibt im Dry-run nichts: Enumeration bytegleich, keine Manifest- oder Review-Dateien, keine Laufzusammenfassung', async () => {
     const { root } = await prepareRoot(100);

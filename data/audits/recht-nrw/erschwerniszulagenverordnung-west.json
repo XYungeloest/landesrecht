@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32408",
+  "slug": "erschwerniszulagenverordnung-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@99:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 234",
+      "context": "…s Landesbesoldungsgesetzes in der Fassung vom 16. Mai 2013 (GV. NRW. S. 234) in Landesrecht übergeleitete, auf Grund des Bundesbesoldun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@344:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 344,
+      "end": 359,
+      "term": "GV. NRW. S. 310",
+      "context": "…(gemäß § 92 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642)) bis zum Inkrafttreten jeweiliger neuer Recht…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[1].children[2].text@150:protected:gazette-nrw",
+      "path": "body[3].children[0].children[1].children[2].text",
+      "start": 150,
+      "end": 165,
+      "term": "GV. NRW. S. 310",
+      "context": "…§ 49 und 50 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung sowie für Be…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[2].children[1].text@140:protected:gazette-nrw",
+      "path": "body[3].children[0].children[2].children[1].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 310",
+      "context": "… 43 des Landesbeamtenversorgungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. 642) in der jeweils geltenden Fassung wird Beamten de…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[3].children[4].text@191:legislature-state",
+      "path": "body[3].children[0].children[3].children[4].text",
+      "start": 191,
+      "end": 229,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "…zentren oder Leitstellen oberster Landesbehörden sowie beim Landtag des Landes Nordrhein-Westfalen auch Polizeivollzugsbeamte der Besoldungsgruppen A 10 bis A…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[3].children[4].text@203:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[0].children[3].children[4].text",
+      "start": 203,
+      "end": 229,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… Leitstellen oberster Landesbehörden sowie beim Landtag des Landes Nordrhein-Westfalen auch Polizeivollzugsbeamte der Besoldungsgruppen A 10 bis A…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[4].children[0].children[3].text@41:authority-named",
+      "path": "body[4].children[4].children[0].children[3].text",
+      "start": 41,
+      "end": 58,
+      "term": "Landeskriminalamt",
+      "context": "in der Fahndungsgruppe Staatsschutz beim Landeskriminalamt oder als Beamtin oder Beamter unter einer verliehenen, auf …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-named",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 4
+    },
+    "legislature": {
+      "safe-auto-transform": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 1
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].children[0].children[3].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].children[4].children[0].children[3].text",
+      "term": "Landeskriminalamt",
+      "context": "in der Fahndungsgruppe Staatsschutz beim Landeskriminalamt oder als Beamtin oder Beamter unter einer verliehenen, auf …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 639,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…ndesbesoldungsgesetzes in der Fassung vom 16. Mai 2013 (GV. NRW. S. 234) in Landesrecht übergeleitete, auf Grund des Bundes…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…äß § 92 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642)) bis zum Inkrafttreten jeweiliger neu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[1].children[2].text",
+        "term": "NRW",
+        "context": "… und 50 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung sowi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…des Landesbeamtenversorgungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. 642) in der jeweils geltenden Fassung wird Be…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Gewährung von Erschwerniszulagen vom unbekanntem Datum ((BGBl. I S. 3498))",
+    "sourceVersion": "Verordnung über die Gewährung von Erschwerniszulagen vom unbekanntem Datum ((BGBl. I S. 3498))",
+    "simulation": "Verordnung über die Gewährung von Erschwerniszulagen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 43,
+          "actual": 43,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 49083,
+          "actual": 48898,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 43,
+          "actual": 43,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 495,
+          "actual": 495,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 43,
+          "actual": 43,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 48898,
+          "actual": 48894,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "43 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "43 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:23:53.733Z"
+}

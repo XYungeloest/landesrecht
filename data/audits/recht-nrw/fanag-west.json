@@ -1,0 +1,1056 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33308",
+  "slug": "fanag-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@37:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 37,
+      "end": 63,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Fahrrad- und Nahmobilitätsgesetz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[0].title@37:rule:jurisdiction-name-genitive",
+      "path": "body[0].title",
+      "start": 37,
+      "end": 63,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Fahrrad- und Nahmobilitätsgesetz des Landes Nordrhein-Westfalen (Fahrrad- und Nahmobilitätsgesetz - FaNaG)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].text@46:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 46,
+      "end": 62,
+      "term": "GV. NRW. S. 1201",
+      "context": "(Artikel 1 des Gesetzes vom 9. November 2021 (GV. NRW. S. 1201))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[2].text@94:rule:jurisdiction-name-dative",
+      "path": "body[11].children[2].text",
+      "start": 94,
+      "end": 121,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…sserung des Radverkehrs und anderer Formen der Nahmobilität im Land Nordrhein-Westfalen und damit einen Beitrag für eine insgesamt nachhaltige Mobi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[11].children[5].text@4:rule:jurisdiction-name",
+      "path": "body[11].children[5].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen orientiert sich bei der Verbesserung des Radverkehrs und an…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[0].text@91:rule:jurisdiction-abbreviation",
+      "path": "body[12].children[4].children[0].text",
+      "start": 91,
+      "end": 94,
+      "term": "NRW",
+      "context": "…er- und fahrradfreundlicher Städte, Gemeinden und Kreise in NRW e.V., im Folgenden AGFS genannt, unterstützt Gemeinden und …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[1].children[1].text@97:rule:jurisdiction-name-bare",
+      "path": "body[13].children[1].children[1].text",
+      "start": 97,
+      "end": 116,
+      "term": "Nordrhein-Westfalen",
+      "context": "…wird durch den Deutsche Verkehrswacht - Landesverkehrswacht Nordrhein-Westfalen e.V. unterstützt. Das für Verkehr zuständige Ministerium fö…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[1].children[1].text@231:rule:jurisdiction-name-bare",
+      "path": "body[13].children[1].children[1].text",
+      "start": 231,
+      "end": 250,
+      "term": "Nordrhein-Westfalen",
+      "context": "…um fördert den Deutsche Verkehrswacht - Landesverkehrswacht Nordrhein-Westfalen e.V. nach Maßgabe der im Haushaltsplan jährlich vorgesehene…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[3].children[0].text@109:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[3].children[0].text",
+      "start": 109,
+      "end": 112,
+      "term": "NRW",
+      "context": "…ldung auf der Grundlage des § 29 Absatz 1 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils gelte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[3].children[0].text@135:protected:gazette-nrw",
+      "path": "body[13].children[3].children[0].text",
+      "start": 135,
+      "end": 150,
+      "term": "GV. NRW. S. 102",
+      "context": "…s § 29 Absatz 1 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils geltenden Fassung wird durch Aktivitäten de…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[4].children[1].text@182:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[1].text",
+      "start": 182,
+      "end": 206,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…s neun Sitzplätzen einschließlich Fahrersitzplatz durch das Land Nordrhein-Westfalen ist nur möglich, wenn diese mit einem Abbiegeassistenzsyste…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[14].children[1].children[0].text@112:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[1].children[0].text",
+      "start": 112,
+      "end": 138,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… gilt § 9 Absatz 2 Satz 2 des Straßen- und Wegegesetzes des Landes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 23. September 1995 (G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[14].children[1].children[0].text@197:protected:gazette-nrw",
+      "path": "body[14].children[1].children[0].text",
+      "start": 197,
+      "end": 213,
+      "term": "GV. NRW. S. 1028",
+      "context": "…n in der Fassung der Bekanntmachung vom 23. September 1995 (GV. NRW. S. 1028, ber. 1996, S. 81, S. 141, S. 216,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[3].text@71:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[2].children[3].text",
+      "start": 71,
+      "end": 97,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…erungen gilt § 9 Absatz 2 des Straßen- und Wegegesetzes des Landes Nordrhein-Westfalen. Sie müssen grundsätzlich für den Fußverkehr nach den allge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[0].children[2].text@4:rule:jurisdiction-name",
+      "path": "body[15].children[0].children[2].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen baut die Radverkehrsinfrastruktur in seiner Baulast weiter …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].children[0].text@89:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[2].children[0].text",
+      "start": 89,
+      "end": 115,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ie in § 3 Absatz 2 Satz 2 des Straßen- und Wegegesetzes des Landes Nordrhein-Westfalen definierten Wege, Straßen oder Teile von diesen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[3].children[0].text@152:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[3].children[0].text",
+      "start": 152,
+      "end": 178,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…wesentliche Änderung bestehender Radschnellverbindungen des Landes Nordrhein-Westfalen, im Folgenden Bedarfsplan für Radschnellverbindungen genann…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[5].children[0].text@88:rule:jurisdiction-name",
+      "path": "body[15].children[5].children[0].text",
+      "start": 88,
+      "end": 112,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…t erfassen regelmäßig den Zustand der Radverkehrsnetze. Das Land Nordrhein-Westfalen unterstützt die Gemeinden und Gemeindeverbände bei der Zust…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[6].children[0].text@57:rule:jurisdiction-name",
+      "path": "body[15].children[6].children[0].text",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Geeignete Wirtschafts- und Betriebswege können durch das Land Nordrhein-Westfalen für eine Nutzung als Radwege ertüchtigt, für den Radverkehr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[6].children[0].text@306:rule:jurisdiction-name-dative",
+      "path": "body[15].children[6].children[0].text",
+      "start": 306,
+      "end": 334,
+      "term": "vom Land Nordrhein-Westfalen",
+      "context": "…riebswegen auf die Eignung für die Nutzung als Radwege wird vom Land Nordrhein-Westfalen gefördert. Vor Freigabe eines Wirtschafts- und Betriebswegs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („vom Land Nordrhein-Westfalen“ → „vom Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "vom Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[9].children[0].text@40:rule:jurisdiction-name-bare",
+      "path": "body[15].children[9].children[0].text",
+      "start": 40,
+      "end": 59,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die wegweisende Radwegebeschilderung in Nordrhein-Westfalen wird wie eine Beschilderung nach der Straßenverkehrs-Ordnun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[9].children[0].text@380:rule:jurisdiction-name-bare",
+      "path": "body[15].children[9].children[0].text",
+      "start": 380,
+      "end": 399,
+      "term": "Nordrhein-Westfalen",
+      "context": "…weisen zur wegweisenden Beschilderung für den Radverkehr in Nordrhein-Westfalen auszuführen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[11].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[15].children[11].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen nimmt als moderner, fahrradfreundlicher Arbeitgeber eine Vo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[11].children[0].text@112:rule:jurisdiction-name",
+      "path": "body[15].children[11].children[0].text",
+      "start": 112,
+      "end": 136,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…rradfreundlicher Arbeitgeber eine Vorbildfunktion wahr. Das Land Nordrhein-Westfalen ergreift geeignete Maßnahmen, um seine Dienststellen fahrra…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[11].children[1].text@92:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[11].children[1].text",
+      "start": 92,
+      "end": 118,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ndervermögen, Organe der Rechtspflege und Einrichtungen des Landes Nordrhein-Westfalen sollen bis zum 31. Dezember 2026 für jede fünfte regelmäßig…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[11].children[2].text@42:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[11].children[2].text",
+      "start": 42,
+      "end": 68,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Absatz 1 gilt auch für Liegenschaften des Landes Nordrhein-Westfalen, die vermietet werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[13].children[1].text@26:rule:jurisdiction-name",
+      "path": "body[15].children[13].children[1].text",
+      "start": 26,
+      "end": 50,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Ergänzend unterstützt das Land Nordrhein-Westfalen den Wandel initial nach Maßgabe einer Förderrichtlinie zur …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[17].children[1].children[1].text@74:jurisdiction-name-residual",
+      "path": "body[17].children[1].children[1].text",
+      "start": 74,
+      "end": 77,
+      "term": "NRW",
+      "context": "…r zuständige Ministerium fördert das Zukunftsnetz Mobilität NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[19].text@4:constitutional-organ-state",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[19].text@20:rule:jurisdiction-name-bare",
+      "path": "body[19].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[21].text@4:ministry-portfolio",
+      "path": "body[21].text",
+      "start": 4,
+      "end": 112,
+      "term": "Minister für Kinder, Familie, Flüchtlinge und Integration Zugleich für die Ministerin für Schule und Bildung",
+      "context": "Der Minister für Kinder, Familie, Flüchtlinge und Integration Zugleich für die Ministerin für Schule und Bildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[22].text@4:ministry-portfolio",
+      "path": "body[22].text",
+      "start": 4,
+      "end": 107,
+      "term": "Minister der Finanzen Zugleich für den Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister der Finanzen Zugleich für den Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[23].text@4:ministry-portfolio",
+      "path": "body[23].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[24].text@4:ministry-portfolio",
+      "path": "body[24].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[25].text@4:ministry-portfolio",
+      "path": "body[25].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[26].text@4:ministry-portfolio",
+      "path": "body[26].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[27].text@4:ministry-portfolio",
+      "path": "body[27].text",
+      "start": 4,
+      "end": 26,
+      "term": "Ministerin für Verkehr",
+      "context": "Die Ministerin für Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[28].text@4:ministry-portfolio",
+      "path": "body[28].text",
+      "start": 4,
+      "end": 71,
+      "term": "Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[29].text@4:ministry-portfolio",
+      "path": "body[29].text",
+      "start": 4,
+      "end": 42,
+      "term": "Ministerin für Kultur und Wissenschaft",
+      "context": "Die Ministerin für Kultur und Wissenschaft",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[30].text@4:ministry-portfolio",
+      "path": "body[30].text",
+      "start": 4,
+      "end": 72,
+      "term": "Minister für Bundes- und Europaangelegenheiten sowie Internationales",
+      "context": "Der Minister für Bundes- und Europaangelegenheiten sowie Internationales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "staatskanzlei",
+        "group": "Landesregierung NRW"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 25,
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 10
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[2].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[11].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[14].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[14].children[2].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[0].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[3].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[5].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[6].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[6].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "vom Land Nordrhein-Westfalen",
+      "to": "vom Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[9].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[9].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[11].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[11].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[11].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[11].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].children[13].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[19].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[17].children[1].children[1].text",
+      "term": "NRW",
+      "context": "…r zuständige Ministerium fördert das Zukunftsnetz Mobilität NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].text",
+      "term": "Minister für Kinder, Familie, Flüchtlinge und Integration Zugleich für die Ministerin für Schule und Bildung",
+      "context": "Der Minister für Kinder, Familie, Flüchtlinge und Integration Zugleich für die Ministerin für Schule und Bildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].text",
+      "term": "Minister der Finanzen Zugleich für den Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister der Finanzen Zugleich für den Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[25].text",
+      "term": "Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].text",
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[27].text",
+      "term": "Ministerin für Verkehr",
+      "context": "Die Ministerin für Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[28].text",
+      "term": "Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[29].text",
+      "term": "Ministerin für Kultur und Wissenschaft",
+      "context": "Die Ministerin für Kultur und Wissenschaft",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[30].text",
+      "term": "Minister für Bundes- und Europaangelegenheiten sowie Internationales",
+      "context": "Der Minister für Bundes- und Europaangelegenheiten sowie Internationales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung staatskanzlei (review): Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 298,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "(Artikel 1 des Gesetzes vom 9. November 2021 (GV. NRW. S. 1201))",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…9 Absatz 1 des Schulgesetzes West vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils geltenden Fassung wird durch Aktivi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[0].text",
+        "term": "NRW",
+        "context": "… der Fassung der Bekanntmachung vom 23. September 1995 (GV. NRW. S. 1028, ber. 1996, S. 81, S. 141, S. 216,",
+        "status": "protected"
+      },
+      {
+        "path": "body[17].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…r zuständige Ministerium fördert das Zukunftsnetz Mobilität NRW.",
+        "status": "documented",
+        "detectionId": "body[17].children[1].children[1].text@74:jurisdiction-name-residual"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Fahrrad- und Nahmobilitätsgesetz des Landes Nordrhein-Westfalen vom 9. November 2021",
+    "sourceVersion": "Fahrrad- und Nahmobilitätsgesetz des Landes Nordrhein-Westfalen vom 9. November 2021",
+    "simulation": "Fahrrad- und Nahmobilitätsgesetz des Landes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 27052,
+          "actual": 28432,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 184,
+          "actual": 184,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 28432,
+          "actual": 28346,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "34 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "34 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:11:23.093Z"
+}

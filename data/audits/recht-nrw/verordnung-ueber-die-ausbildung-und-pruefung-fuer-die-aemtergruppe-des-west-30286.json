@@ -1,0 +1,762 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30286",
+  "slug": "verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-aemtergruppe-des-west-30286",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@158:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 158,
+      "end": 184,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…bahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Nordrhein-Westfalen (VOAP 1.2 StAV)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@60:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 60,
+      "end": 75,
+      "term": "GV. NRW. S. 224",
+      "context": "Auf Grund des § 6 Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) , geändert durch Artikel 3 des Gesetzes vom 10. November 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@140:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 570",
+      "context": "…eändert durch Artikel 3 des Gesetzes vom 10. November 2009 (GV. NRW. S. 570), wird im Einvernehmen mit dem für Inneres zuständigen Mini…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@231:ministry-compound",
+      "path": "body[1].text",
+      "start": 231,
+      "end": 248,
+      "term": "Finanzministerium",
+      "context": "…rnehmen mit dem für Inneres zuständigen Ministerium und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@248:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[1].children[0].text",
+      "start": 248,
+      "end": 274,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…bahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].children[0].text@115:authority-district-government",
+      "path": "body[2].children[2].children[0].text",
+      "start": 115,
+      "end": 131,
+      "term": "Bezirksregierung",
+      "context": "…ind an die für den gewünschten Beschäftigungsort zuständige Bezirksregierung oder an die mit dem Personalauswahlverfahren beauftragte Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[0].text@189:authority-district-government",
+      "path": "body[2].children[2].children[0].text",
+      "start": 189,
+      "end": 205,
+      "term": "Bezirksregierung",
+      "context": "…ng oder an die mit dem Personalauswahlverfahren beauftragte Bezirksregierung zu richten. Dem Bewerbungsverfahren geht eine Stellenaussch…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[0].text@133:authority-district-government",
+      "path": "body[2].children[3].children[0].text",
+      "start": 133,
+      "end": 149,
+      "term": "Bezirksregierung",
+      "context": "…reitungsdienst entscheidet die nach § 3 Absatz 1 zuständige Bezirksregierung. Sie trifft ihre Entscheidung auf Grund der Bewerbungsunter…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[0].text@463:authority-district-government",
+      "path": "body[2].children[3].children[0].text",
+      "start": 463,
+      "end": 479,
+      "term": "Bezirksregierung",
+      "context": "…uswahlverfahren einbezogen. Die Auswahlmethode bestimmt die Bezirksregierung unter Berücksichtigung der in Wissenschaft und Praxis sich …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[4].children[0].text@72:authority-district-government",
+      "path": "body[2].children[4].children[0].text",
+      "start": 72,
+      "end": 88,
+      "term": "Bezirksregierung",
+      "context": "…lten Bewerberinnen und Bewerber werden von der ausbildenden Bezirksregierung (Ausbildungsbehörde) in den Vorbereitungsdienst eingestellt…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[3].text@54:authority-district-government",
+      "path": "body[3].children[3].children[3].text",
+      "start": 54,
+      "end": 72,
+      "term": "Bezirksregierungen",
+      "context": "Für die Ausbildung in den Arbeitsschutzdezernaten der Bezirksregierungen sind die jeweiligen Dezernentinnen oder Dezernenten verantw…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[5].children[1].text@594:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[5].children[1].text",
+      "start": 594,
+      "end": 620,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…bahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Nordrhein-Westfalen wahrzunehmen. Die Ausbildungsleitung bespricht den Ausbildu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[0].text@157:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[0].children[0].text",
+      "start": 157,
+      "end": 183,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…bahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Nordrhein-Westfalen“. Er führt das kleine Landessiegel.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[15].children[0].text@451:authority-district-government",
+      "path": "body[4].children[15].children[0].text",
+      "start": 451,
+      "end": 467,
+      "term": "Bezirksregierung",
+      "context": "…t die Ausbildungsleitung in Abstimmung mit der ausbildenden Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@4:ministry-portfolio",
+      "path": "body[5].children[0].children[1].text",
+      "start": 4,
+      "end": 49,
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@54:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].children[1].text",
+      "start": 54,
+      "end": 80,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Arbeit, Integration und Soziales des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[5].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Finanzministerium",
+      "context": "…rnehmen mit dem für Inneres zuständigen Ministerium und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…ind an die für den gewünschten Beschäftigungsort zuständige Bezirksregierung oder an die mit dem Personalauswahlverfahren beauftragte Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…ng oder an die mit dem Personalauswahlverfahren beauftragte Bezirksregierung zu richten. Dem Bewerbungsverfahren geht eine Stellenaussch…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…reitungsdienst entscheidet die nach § 3 Absatz 1 zuständige Bezirksregierung. Sie trifft ihre Entscheidung auf Grund der Bewerbungsunter…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…uswahlverfahren einbezogen. Die Auswahlmethode bestimmt die Bezirksregierung unter Berücksichtigung der in Wissenschaft und Praxis sich …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[4].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…lten Bewerberinnen und Bewerber werden von der ausbildenden Bezirksregierung (Ausbildungsbehörde) in den Vorbereitungsdienst eingestellt…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[3].text",
+      "term": "Bezirksregierungen",
+      "context": "Für die Ausbildung in den Arbeitsschutzdezernaten der Bezirksregierungen sind die jeweiligen Dezernentinnen oder Dezernenten verantw…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[15].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…t die Ausbildungsleitung in Abstimmung mit der ausbildenden Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 258,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…Grund des § 6 Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) , geändert durch Artikel 3 des Gesetzes vom 10. No…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 3 des Gesetzes vom 10. November 2009 (GV. NRW. S. 570), wird im Einvernehmen mit dem für Inneres zuständi…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für die Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Nordrhein-Westfalen (VOAP 1.2 StAV) vom 21. April 2011 (GV. NRW. S. 231)",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für die Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Nordrhein-Westfalen (VOAP 1.2 StAV) vom 21. April 2011 (GV. NRW. S. 231)",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für die Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 1 in der Staatlichen Arbeitsschutzverwaltung des Landes Westdeutschland (VOAP 1.2 StAV) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 29680,
+          "actual": 29435,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 148,
+          "actual": 148,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 29435,
+          "actual": 29419,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "33 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "33 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40623-sgv_203015_20110421_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 3,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40624-sgv_203015_20110421_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40625-sgv_203015_20110421_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40626-sgv_203015_20110421_1_anlage4a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4b (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40627-sgv_203015_20110421_1_anlage4b.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4c (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40628-sgv_203015_20110421_1_anlage4c.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40629-sgv_203015_20110421_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 6 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40630-sgv_203015_20110421_1_anlage6.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 7 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40631-sgv_203015_20110421_1_anlage7.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 8 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25607-40632-sgv_203015_20110421_1_anlage8.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4a (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4b (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4c (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 6 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 7 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 8 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:19:56.639Z"
+}

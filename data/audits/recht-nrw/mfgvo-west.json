@@ -1,0 +1,523 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33501",
+  "slug": "mfgvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@85:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 85,
+      "end": 100,
+      "term": "GV. NRW. S. 673",
+      "context": "…7 des Mittelstandsförderungsgesetzes vom 18. Dezember 2012 (GV. NRW. S. 673), der durch Gesetz vom 25. März 2022 (GV. NRW. S. 419) neu …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@139:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 139,
+      "end": 154,
+      "term": "GV. NRW. S. 419",
+      "context": "…2012 (GV. NRW. S. 673), der durch Gesetz vom 25. März 2022 (GV. NRW. S. 419) neu gefasst worden ist, verordnet die Landesregierung:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].children[0].text@177:protected:gazette-nrw",
+      "path": "body[2].children[0].children[0].text",
+      "start": 177,
+      "end": 192,
+      "term": "GV. NRW. S. 673",
+      "context": "…2 des Mittelstandsförderungsgesetzes vom 18. Dezember 2012 (GV. NRW. S. 673) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].text@159:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[0].text",
+      "start": 159,
+      "end": 185,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…elt die Gemeinsame Geschäftsordnung für die Ministerien des Landes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 19. Dezember 2014 (MB…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@243:protected:gazette-nrw",
+      "path": "body[4].children[0].text",
+      "start": 243,
+      "end": 259,
+      "term": "MBl. NRW. S. 826",
+      "context": "…en in der Fassung der Bekanntmachung vom 19. Dezember 2014 (MBl. NRW. S. 826) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[0].text@337:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[0].text",
+      "start": 337,
+      "end": 363,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…elt die Gemeinsame Geschäftsordnung für die Ministerien des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].text@4:constitutional-organ-state",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[12].text@20:rule:jurisdiction-name-bare",
+      "path": "body[12].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].text@4:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 61,
+      "term": "Minister für Kinder, Familie, Flüchtlinge und Integration",
+      "context": "Der Minister für Kinder, Familie, Flüchtlinge und Integration",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].text@4:ministry-portfolio",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 120,
+      "term": "Minister der Finanzen Zugleich für das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz insofern",
+      "context": "Der Minister der Finanzen Zugleich für das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz insofern mit der Wahrung der Geschäfte beauftragt",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 60,
+      "term": "Minister des Innern Zugleich für den Minister der Justiz",
+      "context": "Der Minister des Innern Zugleich für den Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].text@4:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 37,
+      "term": "Ministerin für Schule und Bildung",
+      "context": "Die Ministerin für Schule und Bildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 4
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 6
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[8].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[14].text",
+      "term": "Minister für Kinder, Familie, Flüchtlinge und Integration",
+      "context": "Der Minister für Kinder, Familie, Flüchtlinge und Integration",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Minister der Finanzen Zugleich für das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz insofern",
+      "context": "Der Minister der Finanzen Zugleich für das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz insofern mit der Wahrung der Geschäfte beauftragt",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Minister des Innern Zugleich für den Minister der Justiz",
+      "context": "Der Minister des Innern Zugleich für den Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Ministerin für Schule und Bildung",
+      "context": "Die Ministerin für Schule und Bildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 78,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…s Mittelstandsförderungsgesetzes vom 18. Dezember 2012 (GV. NRW. S. 673), der durch Gesetz vom 25. März 2022 (GV. NRW. S. 4…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… (GV. NRW. S. 673), der durch Gesetz vom 25. März 2022 (GV. NRW. S. 419) neu gefasst worden ist, verordnet die Landesregier…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…s Mittelstandsförderungsgesetzes vom 18. Dezember 2012 (GV. NRW. S. 673) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].text",
+        "term": "NRW",
+        "context": "… der Fassung der Bekanntmachung vom 19. Dezember 2014 (MBl. NRW. S. 826) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Landesregierung",
+        "formula": "ordinance-formula",
+        "text": "verordnet die Landesregierung",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "safe-auto-transform",
+    "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird übergeleitet.",
+    "source": {
+      "name": "Landesregierung",
+      "formula": "ordinance-formula",
+      "text": "verordnet die Landesregierung",
+      "path": "body[1].text"
+    },
+    "enactingBody": "Landesregierung"
+  },
+  "citations": {
+    "source": "Verordnung zum Mittelstandsförderungsgesetz vom 26. April 2022",
+    "sourceVersion": "Verordnung zum Mittelstandsförderungsgesetz vom 26. April 2022",
+    "simulation": "Verordnung zum Mittelstandsförderungsgesetz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6329,
+          "actual": 6842,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6842,
+          "actual": 6830,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:36:41.139Z"
+}

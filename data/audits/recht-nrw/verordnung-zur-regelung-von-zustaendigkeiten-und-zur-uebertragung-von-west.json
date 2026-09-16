@@ -1,0 +1,599 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30046",
+  "slug": "verordnung-zur-regelung-von-zustaendigkeiten-und-zur-uebertragung-von-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[6].children[0].text@137:authority-district-government",
+      "path": "body[6].children[0].text",
+      "start": 137,
+      "end": 153,
+      "term": "Bezirksregierung",
+      "context": "…dlage dieses Gesetzes erlassenen Rechtsverordnungen ist die Bezirksregierung Arnsberg soweit sich aus den Absätzen 2 und 3 nichts andere…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@154:municipality",
+      "path": "body[6].children[0].text",
+      "start": 154,
+      "end": 162,
+      "term": "Arnsberg",
+      "context": "…tzes erlassenen Rechtsverordnungen ist die Bezirksregierung Arnsberg soweit sich aus den Absätzen 2 und 3 nichts anderes ergibt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@131:authority-district-government",
+      "path": "body[7].children[1].text",
+      "start": 131,
+      "end": 147,
+      "term": "Bezirksregierung",
+      "context": "…ch § 68 Absatz 1 Satz 1 des Bundesberggesetzes wird auf die Bezirksregierung Arnsberg übertragen. Vor dem Erlass von Bergverordnungen, d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@148:municipality",
+      "path": "body[7].children[1].text",
+      "start": 148,
+      "end": 156,
+      "term": "Arnsberg",
+      "context": "…Satz 1 des Bundesberggesetzes wird auf die Bezirksregierung Arnsberg übertragen. Vor dem Erlass von Bergverordnungen, die den Sc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@374:authority-district-government",
+      "path": "body[7].children[1].text",
+      "start": 374,
+      "end": 390,
+      "term": "Bezirksregierung",
+      "context": "…chaft anzuhören. Die Bergverordnungen sind im Amtsblatt der Bezirksregierung zu verkünden, in deren Bezirk sie gelten sollen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@23:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[1].text",
+      "start": 23,
+      "end": 26,
+      "term": "NRW",
+      "context": "Der Geologische Dienst NRW – Landesbetrieb – ist zuständige Behörde im Sinne des Geolo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[2].text@119:authority-district-government",
+      "path": "body[8].children[2].text",
+      "start": 119,
+      "end": 135,
+      "term": "Bezirksregierung",
+      "context": "…ngswidrigkeiten nach § 39 des Geologiedatengesetzes ist die Bezirksregierung Arnsberg.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@136:municipality",
+      "path": "body[8].children[2].text",
+      "start": 136,
+      "end": 144,
+      "term": "Arnsberg",
+      "context": "…ach § 39 des Geologiedatengesetzes ist die Bezirksregierung Arnsberg.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@55:authority-district-government",
+      "path": "body[9].children[0].text",
+      "start": 55,
+      "end": 71,
+      "term": "Bezirksregierung",
+      "context": "Zuständige Behörde nach dem Markscheidergesetz ist die Bezirksregierung Arnsberg.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@72:municipality",
+      "path": "body[9].children[0].text",
+      "start": 72,
+      "end": 80,
+      "term": "Arnsberg",
+      "context": "…ehörde nach dem Markscheidergesetz ist die Bezirksregierung Arnsberg.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[0].text@86:protected:gazette-nrw",
+      "path": "body[10].children[0].children[0].text",
+      "start": 86,
+      "end": 99,
+      "term": "GV. NRW. S. 2",
+      "context": "…ständigkeiten nach dem Bundesberggesetz vom 5. Januar 1982 (GV. NRW. S. 2),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[1].text@161:protected:gazette-nrw",
+      "path": "body[10].children[0].children[1].text",
+      "start": 161,
+      "end": 175,
+      "term": "GV. NRW. S. 44",
+      "context": "…rggesetzes erlassenen Bergverordnungen vom 13. Januar 1983 (GV. NRW. S. 44),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[2].text@156:protected:gazette-nrw",
+      "path": "body[10].children[0].children[2].text",
+      "start": 156,
+      "end": 171,
+      "term": "GV. NRW. S. 751",
+      "context": "…zuständigkeitsverordnung-LgstZustVO) vom 12. Dezember 2000 (GV. NRW. S. 751) und die",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[3].text@133:protected:gazette-nrw",
+      "path": "body[10].children[0].children[3].text",
+      "start": 133,
+      "end": 149,
+      "term": "GV. NRW. S. 1091",
+      "context": "…rordnungen nach dem Bundesberggesetz vom 16. Dezember 1980 (GV. NRW. S. 1091).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].text@4:constitutional-organ-state",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[11].text@20:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].text@4:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 54,
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "authority": {
+      "manual-review": 5
+    },
+    "municipality": {
+      "manual-review": 4
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[8].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[6].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…dlage dieses Gesetzes erlassenen Rechtsverordnungen ist die Bezirksregierung Arnsberg soweit sich aus den Absätzen 2 und 3 nichts andere…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Arnsberg",
+      "context": "…tzes erlassenen Rechtsverordnungen ist die Bezirksregierung Arnsberg soweit sich aus den Absätzen 2 und 3 nichts anderes ergibt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…ch § 68 Absatz 1 Satz 1 des Bundesberggesetzes wird auf die Bezirksregierung Arnsberg übertragen. Vor dem Erlass von Bergverordnungen, d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Arnsberg",
+      "context": "…Satz 1 des Bundesberggesetzes wird auf die Bezirksregierung Arnsberg übertragen. Vor dem Erlass von Bergverordnungen, die den Sc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…chaft anzuhören. Die Bergverordnungen sind im Amtsblatt der Bezirksregierung zu verkünden, in deren Bezirk sie gelten sollen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…ngswidrigkeiten nach § 39 des Geologiedatengesetzes ist die Bezirksregierung Arnsberg.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Arnsberg",
+      "context": "…ach § 39 des Geologiedatengesetzes ist die Bezirksregierung Arnsberg.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Zuständige Behörde nach dem Markscheidergesetz ist die Bezirksregierung Arnsberg.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Arnsberg",
+      "context": "…ehörde nach dem Markscheidergesetz ist die Bezirksregierung Arnsberg.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 54,
+    "residuals": [
+      {
+        "path": "body[10].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…digkeiten nach dem Bundesberggesetz vom 5. Januar 1982 (GV. NRW. S. 2),",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…setzes erlassenen Bergverordnungen vom 13. Januar 1983 (GV. NRW. S. 44),",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…ändigkeitsverordnung-LgstZustVO) vom 12. Dezember 2000 (GV. NRW. S. 751) und die",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…nungen nach dem Bundesberggesetz vom 16. Dezember 1980 (GV. NRW. S. 1091).",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Regelung von Zuständigkeiten und zur Übertragung von Verordnungsermächtigungen auf dem Gebiet des Bergrechts vom 2. März 2010",
+    "sourceVersion": "Verordnung zur Regelung von Zuständigkeiten und zur Übertragung von Verordnungsermächtigungen auf dem Gebiet des Bergrechts vom 2. März 2010",
+    "simulation": "Verordnung zur Regelung von Zuständigkeiten und zur Übertragung von Verordnungsermächtigungen auf dem Gebiet des Bergrechts in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3402,
+          "actual": 3631,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3631,
+          "actual": 3628,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:47:35.924Z"
+}

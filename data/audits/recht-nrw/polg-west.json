@@ -1,0 +1,1297 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28315",
+  "slug": "polg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@18:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 18,
+      "end": 44,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Polizeigesetz des Landes Nordrhein-Westfalen; Bekanntmachung der Neufassung",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@5:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 5,
+      "end": 8,
+      "term": "NRW",
+      "context": "PolG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@118:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 118,
+      "end": 133,
+      "term": "GV. NRW. S. 410",
+      "context": "…izeigesetzes und Ordnungsbehördengesetzes vom 8. Juli 2003 (GV. NRW. S. 410) wird nachstehend der Wortlaut des Polizeigesetzes des Land…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@189:rule:jurisdiction-name-genitive",
+      "path": "body[1].text",
+      "start": 189,
+      "end": 215,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 410) wird nachstehend der Wortlaut des Polizeigesetzes des Landes Nordrhein-Westfalen (PolG NRW) in der vom 25. Juli 2003 an geltenden Fassung be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@222:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 222,
+      "end": 225,
+      "term": "NRW",
+      "context": "…ut des Polizeigesetzes des Landes Nordrhein-Westfalen (PolG NRW) in der vom 25. Juli 2003 an geltenden Fassung bekannt gema…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@53:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 53,
+      "end": 67,
+      "term": "GV. NRW. S. 70",
+      "context": "die Fassung der Bekanntmachung vom 24. Februar 1990 (GV. NRW. S. 70, ber. S. 580),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@43:protected:gazette-nrw",
+      "path": "body[4].text",
+      "start": 43,
+      "end": 58,
+      "term": "GV. NRW. S. 446",
+      "context": "das Änderungsgesetz vom 24. November 1992 (GV. NRW. S. 446),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@37:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 37,
+      "end": 52,
+      "term": "GV. NRW. S. 452",
+      "context": "das Änderungsgesetz vom 9. Mai 2000 (GV. NRW. S. 452),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@43:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 43,
+      "end": 58,
+      "term": "GV. NRW. S. 870",
+      "context": "das Änderungsgesetz vom 18. Dezember 2001 (GV. NRW. S. 870),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].text@0:municipality",
+      "path": "body[8].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 25. Juli 2003",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].text@4:ministry-compound",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[9].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[9].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].title@18:rule:jurisdiction-name-genitive",
+      "path": "body[11].title",
+      "start": 18,
+      "end": 44,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Polizeigesetz des Landes Nordrhein-Westfalen (PolG NRW) in der Fassung der Bekanntmachung vom 25. Juli 2…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].title@51:rule:jurisdiction-abbreviation",
+      "path": "body[11].title",
+      "start": 51,
+      "end": 54,
+      "term": "NRW",
+      "context": "Polizeigesetz des Landes Nordrhein-Westfalen (PolG NRW) in der Fassung der Bekanntmachung vom 25. Juli 2003",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[2].children[1].children[1].children[1].text@72:rule:jurisdiction-name-bare",
+      "path": "body[15].children[2].children[1].children[1].children[1].text",
+      "start": 72,
+      "end": 91,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ne Person wirksam im Sinne des § 38 des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].children[1].children[1].children[1].text@110:protected:gazette-nrw",
+      "path": "body[15].children[2].children[1].children[1].children[1].text",
+      "start": 110,
+      "end": 125,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) eingewilligt hat.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[2].children[5].children[2].text@227:authority-state-office",
+      "path": "body[15].children[2].children[5].children[2].text",
+      "start": 227,
+      "end": 270,
+      "term": "Landesamt für Zentrale Polizeiliche Dienste",
+      "context": "…uständigkeit mehrerer Behörden, so trifft die Anordnung das Landesamt für Zentrale Polizeiliche Dienste. Die Anordnung ist zeitlich und örtlich auf den in Absatz 1…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[15].children[2].children[24].children[1].text@79:rule:jurisdiction-name-bare",
+      "path": "body[15].children[2].children[24].children[1].text",
+      "start": 79,
+      "end": 98,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n Daten im Sinne des § 36 Nummer 18 des Datenschutzgesetzes Nordrhein-Westfalen ist nur zulässig, wenn dies zur polizeilichen Aufgabenerfül…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].children[24].children[2].text@289:rule:jurisdiction-name-bare",
+      "path": "body[15].children[2].children[24].children[2].text",
+      "start": 289,
+      "end": 308,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rbeiter im Sinne des § 36 Nummer 10 des Datenschutzgesetzes Nordrhein-Westfalen. Durch geeignete technische und organisatorische Maßnahmen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].children[25].children[1].children[1].text@84:rule:jurisdiction-name-bare",
+      "path": "body[15].children[2].children[25].children[1].children[1].text",
+      "start": 84,
+      "end": 103,
+      "term": "Nordrhein-Westfalen",
+      "context": "…roffener Personen im Sinne des § 42 des Datenschutzgesetzes Nordrhein-Westfalen, zu denen die zur Identifizierung dienenden Daten angelegt …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].children[25].children[4].text@271:rule:jurisdiction-name-bare",
+      "path": "body[15].children[2].children[25].children[4].text",
+      "start": 271,
+      "end": 290,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Verfahrensverzeichnisses gemäß § 8 des Datenschutzgesetzes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].children[25].children[4].text@343:protected:gazette-nrw",
+      "path": "body[15].children[2].children[25].children[4].text",
+      "start": 343,
+      "end": 358,
+      "term": "GV. NRW. S. 542",
+      "context": "…stfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542), das zuletzt durch Artikel 2 des Gesetzes vom 6. Dezember …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[2].children[25].children[4].text@424:protected:gazette-nrw",
+      "path": "body[15].children[2].children[25].children[4].text",
+      "start": 424,
+      "end": 440,
+      "term": "GV. NRW. S. 1052",
+      "context": "… zuletzt durch Artikel 2 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1052) geändert worden ist, in der bis zum 24. Mai 2018 geltenden…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[2].children[28].children[1].text@56:rule:jurisdiction-name-bare",
+      "path": "body[15].children[2].children[28].children[1].text",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "Abweichend von den §§ 17 und 40 des Datenschutzgesetzes Nordrhein-Westfalen ist eine Weiterverarbeitung oder Übermittlung von personenb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[3].children[1].children[4].text@45:rule:jurisdiction-name-bare",
+      "path": "body[15].children[3].children[1].children[4].text",
+      "start": 45,
+      "end": 64,
+      "term": "Nordrhein-Westfalen",
+      "context": "§ 54 Absatz 3 Satz 2 des Datenschutzgesetzes Nordrhein-Westfalen bleibt unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[3].children[4].children[1].text@266:rule:jurisdiction-name-bare",
+      "path": "body[15].children[3].children[4].children[1].text",
+      "start": 266,
+      "end": 285,
+      "term": "Nordrhein-Westfalen",
+      "context": "…st unter Beachtung der §§ 62 bis 65 des Datenschutzgesetzes Nordrhein-Westfalen zulässig, soweit dies zur Erfüllung polizeilicher Aufgaben …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[1].text@112:rule:jurisdiction-name-bare",
+      "path": "body[15].children[4].children[0].children[1].text",
+      "start": 112,
+      "end": 131,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Verbindung mit § 50 Absatz 3 bis 5 des Datenschutzgesetzes Nordrhein-Westfalen zu berichtigen, zu löschen oder in der Verarbeitung einzusc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[2].text@130:rule:jurisdiction-name-bare",
+      "path": "body[15].children[4].children[0].children[2].text",
+      "start": 130,
+      "end": 149,
+      "term": "Nordrhein-Westfalen",
+      "context": "…g sind, ist die gemäß § 54 Absatz 1 des Datenschutzgesetzes Nordrhein-Westfalen genannte Berichtigungspflicht dadurch zu erfüllen, dass die…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[2].text@710:rule:jurisdiction-name-bare",
+      "path": "body[15].children[4].children[0].children[2].text",
+      "start": 710,
+      "end": 729,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chränkung nach § 50 Absatz 1 Satz 3 des Datenschutzgesetzes Nordrhein-Westfalen zu ermöglichen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[3].text@86:rule:jurisdiction-name-bare",
+      "path": "body[15].children[4].children[0].children[3].text",
+      "start": 86,
+      "end": 105,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nterbleiben in den in § 50 Absatz 3 des Datenschutzgesetzes Nordrhein-Westfalen genannten Fällen. Darüber hinaus unterbleiben Löschung und …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[4].text@95:rule:jurisdiction-name-bare",
+      "path": "body[15].children[4].children[0].children[4].text",
+      "start": 95,
+      "end": 114,
+      "term": "Nordrhein-Westfalen",
+      "context": "… ist ein Anbieten für eine Übernahme durch das Landesarchiv Nordrhein-Westfalen gemäß § 4 Absatz 1 des Archivgesetzes Nordrhein-Westfalen v…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[4].text@153:rule:jurisdiction-name-bare",
+      "path": "body[15].children[4].children[0].children[4].text",
+      "start": 153,
+      "end": 172,
+      "term": "Nordrhein-Westfalen",
+      "context": "…v Nordrhein-Westfalen gemäß § 4 Absatz 1 des Archivgesetzes Nordrhein-Westfalen vom 16. März 2010 (GV. NRW. S. 188), das zuletzt durch Gese…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[4].text@192:protected:gazette-nrw",
+      "path": "body[15].children[4].children[0].children[4].text",
+      "start": 192,
+      "end": 207,
+      "term": "GV. NRW. S. 188",
+      "context": "…1 des Archivgesetzes Nordrhein-Westfalen vom 16. März 2010 (GV. NRW. S. 188), das zuletzt durch Gesetz vom 16. September 2014 (GV. NRW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[4].children[0].children[4].text@259:protected:gazette-nrw",
+      "path": "body[15].children[4].children[0].children[4].text",
+      "start": 259,
+      "end": 274,
+      "term": "GV. NRW. S. 603",
+      "context": "…. S. 188), das zuletzt durch Gesetz vom 16. September 2014 (GV. NRW. S. 603) geändert worden ist, zu prüfen, soweit archivrechtliche Re…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[5].children[0].children[6].text@115:rule:jurisdiction-name-bare",
+      "path": "body[15].children[5].children[0].children[6].text",
+      "start": 115,
+      "end": 134,
+      "term": "Nordrhein-Westfalen",
+      "context": "…aben des § 48 Absatz 1 und Absatz 3 des Datenschutzgesetzes Nordrhein-Westfalen. Außerdem ist auf die Möglichkeit nachträglichen Rechtsschu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[5].children[1].children[4].text@90:rule:jurisdiction-name-bare",
+      "path": "body[15].children[5].children[1].children[4].text",
+      "start": 90,
+      "end": 109,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chtigung unter den in § 48 Absatz 2 des Datenschutzgesetzes Nordrhein-Westfalen genannten Voraussetzungen aufschieben, einschränken oder un…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[5].children[1].children[5].text@552:rule:jurisdiction-name-bare",
+      "path": "body[15].children[5].children[1].children[5].text",
+      "start": 552,
+      "end": 571,
+      "term": "Nordrhein-Westfalen",
+      "context": "…im Sinne des Absatzes 1 führt. § 59 des Datenschutzgesetzes Nordrhein-Westfalen bleibt unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[5].children[2].children[5].text@29:rule:jurisdiction-name-bare",
+      "path": "body[15].children[5].children[2].children[5].text",
+      "start": 29,
+      "end": 48,
+      "term": "Nordrhein-Westfalen",
+      "context": "§ 55 des Datenschutzgesetzes Nordrhein-Westfalen bleibt unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[6].children[3].children[5].text@75:rule:jurisdiction-name-bare",
+      "path": "body[15].children[6].children[3].children[5].text",
+      "start": 75,
+      "end": 94,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Daten ist unter Beachtung des § 55 des Datenschutzgesetzes Nordrhein-Westfalen zu protokollieren. Die Protokolldaten sind spätestens nach …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[7].children[2].children[4].text@241:ministry-compound",
+      "path": "body[15].children[7].children[2].children[4].text",
+      "start": 241,
+      "end": 257,
+      "term": "Innenministerium",
+      "context": "…n oder Polizeivollzugsbeamte sind, wahrgenommen werden. Das Innenministerium wird ermächtigt, durch Rechtsverordnung den Umfang der dies…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[15].children[7].children[2].children[5].text@173:rule:jurisdiction-name",
+      "path": "body[15].children[7].children[2].children[5].text",
+      "start": 173,
+      "end": 197,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… die Amtshilfe nach dem Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen bleiben unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[7].children[3].children[1].text@262:rule:jurisdiction-name-bare",
+      "path": "body[15].children[7].children[3].children[1].text",
+      "start": 262,
+      "end": 281,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n § 69 Absatz 7 und § 70 Absatz 4 des Strafvollzugsgesetzes Nordrhein-Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Art…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[7].children[3].children[1].text@303:protected:gazette-nrw",
+      "path": "body[15].children[7].children[3].children[1].text",
+      "start": 303,
+      "end": 317,
+      "term": "GV. NRW. S. 76",
+      "context": "…afvollzugsgesetzes Nordrhein-Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Artikel 1 des Gesetzes vom 2. Juli 2019…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[7].children[3].children[1].text@379:protected:gazette-nrw",
+      "path": "body[15].children[7].children[3].children[1].text",
+      "start": 379,
+      "end": 394,
+      "term": "GV. NRW. S. 339",
+      "context": "… das zuletzt durch Artikel 1 des Gesetzes vom 2. Juli 2019 (GV. NRW. S. 339) geändert worden ist, entsprechend. Eine Fixierung nach Sat…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[7].children[3].children[1].text@874:rule:jurisdiction-name-bare",
+      "path": "body[15].children[7].children[3].children[1].text",
+      "start": 874,
+      "end": 893,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n gilt § 70 Absatz 5 Satz 4 und 5 des Strafvollzugsgesetzes Nordrhein-Westfalen entsprechend. Für die Anordnung ist das Amtsgericht zuständ…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].children[1].children[1].children[5].text@32:rule:jurisdiction-name-bare",
+      "path": "body[17].children[1].children[1].children[5].text",
+      "start": 32,
+      "end": 51,
+      "term": "Nordrhein-Westfalen",
+      "context": "Wird die Bundespolizei im Lande Nordrhein-Westfalen zur Unterstützung der Polizei in den Fällen des Artikels 35…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].children[1].children[9].children[1].text@244:rule:jurisdiction-name-genitive",
+      "path": "body[17].children[1].children[9].children[1].text",
+      "start": 244,
+      "end": 270,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… Abs. 1 des Grundgesetzes zur Unterstützung der Polizei des Landes Nordrhein-Westfalen eingesetzt wird, und nur mit Zustimmung des Innenministers …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[17].children[1].children[9].children[1].text@315:ministry-compound",
+      "path": "body[17].children[1].children[9].children[1].text",
+      "start": 315,
+      "end": 329,
+      "term": "Innenministers",
+      "context": "…rhein-Westfalen eingesetzt wird, und nur mit Zustimmung des Innenministers des Landes Nordrhein-Westfalen oder eines von ihm im Einzel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[17].children[1].children[9].children[1].text@334:rule:jurisdiction-name-genitive",
+      "path": "body[17].children[1].children[9].children[1].text",
+      "start": 334,
+      "end": 360,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…gesetzt wird, und nur mit Zustimmung des Innenministers des Landes Nordrhein-Westfalen oder eines von ihm im Einzelfall Beauftragten angewendet we…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[1].children[2].text@50:protected:gazette-nrw",
+      "path": "body[18].children[1].children[2].text",
+      "start": 50,
+      "end": 65,
+      "term": "GV. NRW. S. 473",
+      "context": "Zusatz: (Artikel 2 des Gesetzes v. 10. Juni 2008 (GV. NRW. S. 473))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[4].text@53:protected:gazette-nrw",
+      "path": "body[18].children[1].children[4].text",
+      "start": 53,
+      "end": 68,
+      "term": "GV. NRW. S. 132",
+      "context": "Zusatz: (Artikel 2 des Gesetzes vom 9. Februar 2010 (GV. NRW. S. 132))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[6].text@54:protected:gazette-nrw",
+      "path": "body[18].children[1].children[6].text",
+      "start": 54,
+      "end": 70,
+      "term": "GV. NRW. S. 1061",
+      "context": "Zusatz: (Artikel 2 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1061))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[8].text@55:protected:gazette-nrw",
+      "path": "body[18].children[1].children[8].text",
+      "start": 55,
+      "end": 70,
+      "term": "GV. NRW. S. 684",
+      "context": "Zusatz: (Artikel 2 des Gesetzes vom 13. Dezember 2018 (GV. NRW. S. 684))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[10].text@55:protected:gazette-nrw",
+      "path": "body[18].children[1].children[10].text",
+      "start": 55,
+      "end": 70,
+      "term": "GV. NRW. S. 741",
+      "context": "Zusatz: (Artikel 3 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 741))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[12].title@56:protected:gazette-nrw",
+      "path": "body[18].children[1].children[12].title",
+      "start": 56,
+      "end": 71,
+      "term": "GV. NRW. S. 684",
+      "context": "Hinweis: (Artikel 3 des Gesetzes vom 13. Dezember 2018 (GV. NRW. S. 684))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 32
+    },
+    "source-citation": {
+      "protected": 18
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[2].children[1].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[2].children[24].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[2].children[24].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[2].children[25].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[2].children[25].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[2].children[28].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[3].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[3].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[0].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[5].children[0].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[5].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[5].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[5].children[2].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[6].children[3].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[7].children[2].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[7].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[7].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[17].children[1].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[17].children[1].children[9].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[17].children[1].children[9].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[8].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 25. Juli 2003",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[2].children[5].children[2].text",
+      "term": "Landesamt für Zentrale Polizeiliche Dienste",
+      "context": "…uständigkeit mehrerer Behörden, so trifft die Anordnung das Landesamt für Zentrale Polizeiliche Dienste. Die Anordnung ist zeitlich und örtlich auf den in Absatz 1…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[7].children[2].children[4].text",
+      "term": "Innenministerium",
+      "context": "…n oder Polizeivollzugsbeamte sind, wahrgenommen werden. Das Innenministerium wird ermächtigt, durch Rechtsverordnung den Umfang der dies…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[1].children[9].children[1].text",
+      "term": "Innenministers",
+      "context": "…rhein-Westfalen eingesetzt wird, und nur mit Zustimmung des Innenministers des Landes Nordrhein-Westfalen oder eines von ihm im Einzel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1595,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…gesetzes und Ordnungsbehördengesetzes vom 8. Juli 2003 (GV. NRW. S. 410) wird nachstehend der Wortlaut des Polizeigesetzes …",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "die Fassung der Bekanntmachung vom 24. Februar 1990 (GV. NRW. S. 70, ber. S. 580),",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].text",
+        "term": "NRW",
+        "context": "das Änderungsgesetz vom 24. November 1992 (GV. NRW. S. 446),",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "das Änderungsgesetz vom 9. Mai 2000 (GV. NRW. S. 452),",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "das Änderungsgesetz vom 18. Dezember 2001 (GV. NRW. S. 870),",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[2].children[1].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) eingewilligt hat.",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[2].children[25].children[4].text",
+        "term": "NRW",
+        "context": "…and in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542), das zuletzt durch Artikel 2 des Gesetzes vom 6. D…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[2].children[25].children[4].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 2 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1052) geändert worden ist, in der bis zum 24. Mai 2018 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[4].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…1 des Archivgesetzes Westdeutschland vom 16. März 2010 (GV. NRW. S. 188), das zuletzt durch Gesetz vom 16. September 2014 (…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[4].children[0].children[4].text",
+        "term": "NRW",
+        "context": "… 188), das zuletzt durch Gesetz vom 16. September 2014 (GV. NRW. S. 603) geändert worden ist, zu prüfen, soweit archivrecht…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[7].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…afvollzugsgesetzes Westdeutschland vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Artikel 1 des Gesetzes vom 2. Ju…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[7].children[3].children[1].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 2. Juli 2019 (GV. NRW. S. 339) geändert worden ist, entsprechend. Eine Fixierung …",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[2].text",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 2 des Gesetzes v. 10. Juni 2008 (GV. NRW. S. 473))",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[4].text",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 2 des Gesetzes vom 9. Februar 2010 (GV. NRW. S. 132))",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[6].text",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 2 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1061))",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[8].text",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 2 des Gesetzes vom 13. Dezember 2018 (GV. NRW. S. 684))",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[10].text",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 3 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 741))",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[12].title",
+        "term": "NRW",
+        "context": "Hinweis: (Artikel 3 des Gesetzes vom 13. Dezember 2018 (GV. NRW. S. 684))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Polizeigesetz des Landes Nordrhein-Westfalen; Bekanntmachung der Neufassung vom 25. Juli 2003 (GV. NRW. S. 441)",
+    "sourceVersion": "Polizeigesetz des Landes Nordrhein-Westfalen; Bekanntmachung der Neufassung vom 25. Juli 2003 (GV. NRW. S. 441)",
+    "simulation": "Polizeigesetz des Landes Westdeutschland; Bekanntmachung der Neufassung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 88,
+          "actual": 88,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 149508,
+          "actual": 148982,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 88,
+          "actual": 88,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 1122,
+          "actual": 1122,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 59,
+          "actual": 59,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 88,
+          "actual": 88,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 148982,
+          "actual": 148872,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "88 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "88 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:32:49.529Z"
+}

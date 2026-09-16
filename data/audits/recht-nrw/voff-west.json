@@ -1,0 +1,452 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31866",
+  "slug": "voff-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@61:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 61,
+      "end": 88,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…erordnung über das Ehrenamt in den Freiwilligen Feuerwehren im Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@5:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 5,
+      "end": 8,
+      "term": "NRW",
+      "context": "VOFF NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@140:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 886",
+      "context": "…eleistung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886) wird folgende Verordnung erlassen:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[2].children[2].text@46:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[2].children[2].text",
+      "start": 46,
+      "end": 72,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Über die Gleichwertigkeit einer außerhalb des Landes Nordrhein-Westfalen erworbenen Qualifikation entscheidet das für Inneres zustän…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[5].children[2].text@107:protected:gazette-nrw",
+      "path": "body[3].children[5].children[2].text",
+      "start": 107,
+      "end": 122,
+      "term": "GV. NRW. S. 310",
+      "context": "… § 83 Absatz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) gilt entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].children[2].text@54:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].children[2].text",
+      "start": 54,
+      "end": 57,
+      "term": "NRW",
+      "context": "Die Teilnahme an Lehrgängen am Institut der Feuerwehr NRW ist ebenso wie bei Angehörigen der Einsatzabteilung möglich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[3].children[8].text@76:protected:gazette-nrw",
+      "path": "body[7].children[3].children[8].text",
+      "start": 76,
+      "end": 91,
+      "term": "GV. NRW. S. 624",
+      "context": "…n findet das Landesdisziplinargesetz vom 16. November 2004 (GV. NRW. S. 624) in der jeweils geltenden Fassung sinngemäß ergänzend Anwen…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].children[0].text@360:protected:gazette-nrw",
+      "path": "body[8].children[1].children[0].text",
+      "start": 360,
+      "end": 374,
+      "term": "GV. NRW. S. 53",
+      "context": "…Angehörigen der Freiwilligen Feuerwehr vom 1. Februar 2002 (GV. NRW. S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].children[0].text@425:protected:gazette-nrw",
+      "path": "body[8].children[1].children[0].text",
+      "start": 425,
+      "end": 440,
+      "term": "GV. NRW. S. 182",
+      "context": "…RW. S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV. NRW. S. 182) geändert worden ist, über die Vollendung des 60. Lebensjah…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].children[1].text@131:protected:gazette-nrw",
+      "path": "body[8].children[2].children[1].text",
+      "start": 131,
+      "end": 145,
+      "term": "GV. NRW. S. 53",
+      "context": "…Angehörigen der Freiwilligen Feuerwehr vom 1. Februar 2002 (GV. NRW. S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].children[1].text@196:protected:gazette-nrw",
+      "path": "body[8].children[2].children[1].text",
+      "start": 196,
+      "end": 211,
+      "term": "GV. NRW. S. 182",
+      "context": "…RW. S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV. NRW. S. 182) geändert worden ist, außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].children[1].children[2].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[2].children[1].children[2].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "source-citation": {
+      "protected": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[2].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[2].children[1].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 324,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…stung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886) wird folgende Verordnung erlassen:",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[5].children[2].text",
+        "term": "NRW",
+        "context": "…3 Absatz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) gilt entsprechend.",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[3].children[8].text",
+        "term": "NRW",
+        "context": "…ndet das Landesdisziplinargesetz vom 16. November 2004 (GV. NRW. S. 624) in der jeweils geltenden Fassung sinngemäß ergänze…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…hörigen der Freiwilligen Feuerwehr vom 1. Februar 2002 (GV. NRW. S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV. NRW. S. 182) geändert worden ist, über die Vollendung des 60. L…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…hörigen der Freiwilligen Feuerwehr vom 1. Februar 2002 (GV. NRW. S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…S. 53), die zuletzt durch Verordnung vom 10. März 2016 (GV. NRW. S. 182) geändert worden ist, außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über das Ehrenamt in den Freiwilligen Feuerwehren im Land Nordrhein-Westfalen vom 9. Mai 2017",
+    "sourceVersion": "Verordnung über das Ehrenamt in den Freiwilligen Feuerwehren im Land Nordrhein-Westfalen vom 9. Mai 2017",
+    "simulation": "Verordnung über das Ehrenamt in den Freiwilligen Feuerwehren im Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 28203,
+          "actual": 29208,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 165,
+          "actual": 165,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 29208,
+          "actual": 29201,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "26 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "26 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/36824-34321-sgv_213_20170509_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/36824-34322-sgv_213_20170509_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:55:22.948Z"
+}

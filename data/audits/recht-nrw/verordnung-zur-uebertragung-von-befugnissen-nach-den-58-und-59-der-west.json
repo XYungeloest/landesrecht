@@ -1,0 +1,322 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32566",
+  "slug": "verordnung-zur-uebertragung-von-befugnissen-nach-den-58-und-59-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@106:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 106,
+      "end": 121,
+      "term": "GV. NRW. S. 158",
+      "context": "…atz 1 Satz 2 der Landeshaushaltsordnung vom 26. April 1999 (GV. NRW. S. 158), zuletzt geändert durch Artikel 1 des Gesetzes vom 18. Dez…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@193:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 193,
+      "end": 208,
+      "term": "GV. NRW. S. 803",
+      "context": "…eändert durch Artikel 1 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 803), verordnet das Ministerium für Kinder, Familie, Flüchtling…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@225:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 225,
+      "end": 285,
+      "term": "Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+      "context": "…tzes vom 18. Dezember 2018 (GV. NRW. S. 803), verordnet das Ministerium für Kinder, Familie, Flüchtlinge und Integration, soweit erforderlich im Einvernehmen mit dem Ministerium de…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@331:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 331,
+      "end": 355,
+      "term": "Ministerium der Finanzen",
+      "context": "…nd Integration, soweit erforderlich im Einvernehmen mit dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 2
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+      "context": "…tzes vom 18. Dezember 2018 (GV. NRW. S. 803), verordnet das Ministerium für Kinder, Familie, Flüchtlinge und Integration, soweit erforderlich im Einvernehmen mit dem Ministerium de…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium der Finanzen",
+      "context": "…nd Integration, soweit erforderlich im Einvernehmen mit dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 59,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…1 Satz 2 der Landeshaushaltsordnung vom 26. April 1999 (GV. NRW. S. 158), zuletzt geändert durch Artikel 1 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 1 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 803), verordnet das Ministerium für Kinder, Familie, Fl…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zur Übertragung von Befugnissen nach den §§ 58 und 59 der Landeshaushaltsordnung im Geschäftsbereich des Ministeriums für Kinder, Familie, Flüchtlinge und Integration vom 13. Dezember 2019",
+    "sourceVersion": "Verordnung zur Übertragung von Befugnissen nach den §§ 58 und 59 der Landeshaushaltsordnung im Geschäftsbereich des Ministeriums für Kinder, Familie, Flüchtlinge und Integration vom 13. Dezember 2019",
+    "simulation": "Verordnung zur Übertragung von Befugnissen nach den §§ 58 und 59 der Landeshaushaltsordnung im Geschäftsbereich des Ministeriums für Kinder, Familie, Flüchtlinge und Integration in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6069,
+          "actual": 6090,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 37,
+          "actual": 37,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6090,
+          "actual": 6086,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T06:06:27.561Z"
+}

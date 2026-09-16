@@ -1,0 +1,662 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32228",
+  "slug": "verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-aemtergruppe-des-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@167:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 167,
+      "end": 193,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…e 2 in der Umweltverwaltung, Fachrichtung Umwelttechnik des Landes Nordrhein-Westfalen (Ausbildungs- und Prüfungsverordnung Umwelt 2.2 – VAP U 2.2…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@72:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 72,
+      "end": 87,
+      "term": "GV. NRW. S. 310",
+      "context": "…s § 7 Absatz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), verordnet das Ministerium für Umwelt, Landwi…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@117:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 117,
+      "end": 185,
+      "term": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), verordnet das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Ministerium des Innern und dem Mini…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@210:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 210,
+      "end": 265,
+      "term": "Ministerium des Innern und dem Ministerium der Finanzen",
+      "context": "…chaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Ministerium des Innern und dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[45].children[0].text@210:rule:jurisdiction-name-genitive",
+      "path": "body[45].children[0].text",
+      "start": 210,
+      "end": 236,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…tiegsamtes der Laufbahngruppe 2 in der Umweltverwaltung des Landes Nordrhein-Westfalen, Fachrichtung Umwelttechnik.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[45].children[1].children[6].text@194:protected:gazette-nrw",
+      "path": "body[45].children[1].children[6].text",
+      "start": 194,
+      "end": 209,
+      "term": "GV. NRW. S. 310",
+      "context": "…Absatz 3 und 6 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 1 des Gesetzes vom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[45].children[1].children[6].text@290:protected:gazette-nrw",
+      "path": "body[45].children[1].children[6].text",
+      "start": 290,
+      "end": 305,
+      "term": "GV. NRW. S. 764",
+      "context": "…uletzt durch Artikel 1 des Gesetzes vom 19. September 2017 (GV. NRW. S. 764) geändert worden ist, festgelegten Altersgrenzen um mindest…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[51].children[0].text@29:authority-district-government",
+      "path": "body[51].children[0].text",
+      "start": 29,
+      "end": 47,
+      "term": "Bezirksregierungen",
+      "context": "Ausbildungsbehörden sind die Bezirksregierungen. Ausbildungsstellen sind neben den Bezirksregierungen das L…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[51].children[0].text@83:authority-district-government",
+      "path": "body[51].children[0].text",
+      "start": 83,
+      "end": 101,
+      "term": "Bezirksregierungen",
+      "context": "…d die Bezirksregierungen. Ausbildungsstellen sind neben den Bezirksregierungen das Landesamt für Natur, Umwelt und Verbraucherschutz und w…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[51].children[0].text@106:authority-state-office",
+      "path": "body[51].children[0].text",
+      "start": 106,
+      "end": 125,
+      "term": "Landesamt für Natur",
+      "context": "…n. Ausbildungsstellen sind neben den Bezirksregierungen das Landesamt für Natur, Umwelt und Verbraucherschutz und weitere Wahlstationen. Di…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[51].children[0].text@220:authority-district-government",
+      "path": "body[51].children[0].text",
+      "start": 220,
+      "end": 236,
+      "term": "Bezirksregierung",
+      "context": "…weitere Wahlstationen. Die Einstellungsbehörde bestimmt die Bezirksregierung, der die Referendarin oder der Referendar zur Ausbildung zu…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[72].children[0].text@106:rule:jurisdiction-name-dative",
+      "path": "body[72].children[0].text",
+      "start": 106,
+      "end": 133,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…Einstiegsamtes der Laufbahngruppe 2 in der Umweltverwaltung im Land Nordrhein-Westfalen erwerben die Laufbahnbefähigung für die Ämtergruppe des zwe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[72].children[0].text@262:rule:jurisdiction-name-genitive",
+      "path": "body[72].children[0].text",
+      "start": 262,
+      "end": 288,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…tiegsamtes der Laufbahngruppe 2 in der Umweltverwaltung des Landes Nordrhein-Westfalen nach Maßgabe der Vorschriften zur beruflichen Entwicklung i…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[72].children[0].text@420:protected:gazette-nrw",
+      "path": "body[72].children[0].text",
+      "start": 420,
+      "end": 435,
+      "term": "GV. NRW. S. 461",
+      "context": "… Laufbahngruppe 2 der Laufbahnverordnung vom 21. Juni 2016 (GV. NRW. S. 461) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[74].children[1].text@117:protected:gazette-nrw",
+      "path": "body[74].children[1].text",
+      "start": 117,
+      "end": 132,
+      "term": "GV. NRW. S. 462",
+      "context": "…g höherer Dienst in der Umweltverwaltung vom 20. Juni 2001 (GV. NRW. S. 462) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[74].children[1].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[74].children[1].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 4
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[45].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[72].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[72].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[74].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), verordnet das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Ministerium des Innern und dem Mini…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium des Innern und dem Ministerium der Finanzen",
+      "context": "…chaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Ministerium des Innern und dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[51].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "Ausbildungsbehörden sind die Bezirksregierungen. Ausbildungsstellen sind neben den Bezirksregierungen das L…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[51].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…d die Bezirksregierungen. Ausbildungsstellen sind neben den Bezirksregierungen das Landesamt für Natur, Umwelt und Verbraucherschutz und w…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[51].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "…n. Ausbildungsstellen sind neben den Bezirksregierungen das Landesamt für Natur, Umwelt und Verbraucherschutz und weitere Wahlstationen. Di…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[51].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…weitere Wahlstationen. Die Einstellungsbehörde bestimmt die Bezirksregierung, der die Referendarin oder der Referendar zur Ausbildung zu…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 397,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…7 Absatz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), verordnet das Ministerium für Umwelt…",
+        "status": "protected"
+      },
+      {
+        "path": "body[45].children[1].children[6].text",
+        "term": "NRW",
+        "context": "…tz 3 und 6 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 1 des Gese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[45].children[1].children[6].text",
+        "term": "NRW",
+        "context": "…zt durch Artikel 1 des Gesetzes vom 19. September 2017 (GV. NRW. S. 764) geändert worden ist, festgelegten Altersgrenzen um…",
+        "status": "protected"
+      },
+      {
+        "path": "body[72].children[0].text",
+        "term": "NRW",
+        "context": "…fbahngruppe 2 der Laufbahnverordnung vom 21. Juni 2016 (GV. NRW. S. 461) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[74].children[1].text",
+        "term": "NRW",
+        "context": "…herer Dienst in der Umweltverwaltung vom 20. Juni 2001 (GV. NRW. S. 462) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für die Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 2 in der Umweltverwaltung, Fachrichtung Umwelttechnik des Landes Nordrhein-Westfalen (Ausbildungs- und Prüfungsverordnung Umwelt 2.2 – VAP U 2.2) vom 3. September 2018 (In Kraft getreten am 14. September 2018 (GV. NRW. S.\n512)",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für die Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 2 in der Umweltverwaltung, Fachrichtung Umwelttechnik des Landes Nordrhein-Westfalen (Ausbildungs- und Prüfungsverordnung Umwelt 2.2 – VAP U 2.2) vom 3. September 2018 (In Kraft getreten am 14. September 2018 (GV. NRW. S.\n512)",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für die Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 2 in der Umweltverwaltung, Fachrichtung Umwelttechnik des Landes Westdeutschland (Ausbildungs- und Prüfungsverordnung Umwelt 2.2 – VAP U 2.2) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 30,
+          "actual": 30,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 39097,
+          "actual": 38838,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 30,
+          "actual": 30,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 255,
+          "actual": 255,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 30,
+          "actual": 30,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 38838,
+          "actual": 38822,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "30 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (0.92)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "30 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 0.92
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/23458-40465-sgv_203015_20180903_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 4,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/23458-40466-sgv_203015_20180903_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/23458-40467-sgv_203015_20180903_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/23458-40468-sgv_203015_20180903_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/23458-40469-sgv_203015_20180903_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 8,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:41:14.107Z"
+}

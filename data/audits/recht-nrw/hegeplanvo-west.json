@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30081",
+  "slug": "hegeplanvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@126:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 126,
+      "end": 140,
+      "term": "GV. NRW. S.516",
+      "context": "…FischG) in der Fassung der Bekanntmachung vom 22. Juni 1994(GV. NRW. S.516, ber. S. 864), zuletzt geändert durch Gesetz vom 9. Februar…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@207:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 207,
+      "end": 222,
+      "term": "GV. NRW. S. 137",
+      "context": "…S. 864), zuletzt geändert durch Gesetz vom 9. Februar 2010 (GV. NRW. S. 137), wird nach Anhörung des zuständigen Landtagsausschusses un…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].text@129:protected:gazette-nrw",
+      "path": "body[4].children[2].text",
+      "start": 129,
+      "end": 148,
+      "term": "GV. NRW. 1998 S. 28",
+      "context": "…fischereigesetz (Hegeplanverordnung) vom 12. Dezember 1997 (GV. NRW. 1998 S. 28) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[3].text@4:ministry-portfolio",
+      "path": "body[4].children[3].text",
+      "start": 4,
+      "end": 77,
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[4].children[3].text@82:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[3].text",
+      "start": 82,
+      "end": 108,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 3
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].children[3].text",
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 13,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…hG) in der Fassung der Bekanntmachung vom 22. Juni 1994(GV. NRW. S.516, ber. S. 864), zuletzt geändert durch Gesetz vom 9. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…64), zuletzt geändert durch Gesetz vom 9. Februar 2010 (GV. NRW. S. 137), wird nach Anhörung des zuständigen Landtagsaussch…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[2].text",
+        "term": "NRW",
+        "context": "…hereigesetz (Hegeplanverordnung) vom 12. Dezember 1997 (GV. NRW. 1998 S. 28) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Hegepläne - Hegeplanverordnung vom 19. April 2010",
+    "sourceVersion": "Verordnung über die Hegepläne - Hegeplanverordnung vom 19. April 2010",
+    "simulation": "Verordnung über die Hegepläne - Hegeplanverordnung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1076,
+          "actual": 1124,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1124,
+          "actual": 1120,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/14204-41701-sgv_793_20100419_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/14204-41702-sgv_793_20100419_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 11,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:24:28.415Z"
+}

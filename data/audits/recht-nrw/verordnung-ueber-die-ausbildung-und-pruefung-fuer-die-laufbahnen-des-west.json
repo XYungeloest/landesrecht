@@ -1,0 +1,891 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31424",
+  "slug": "verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-laufbahnen-des-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@128:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 128,
+      "end": 147,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ttleren und des gehobenen eichtechnischen Dienstes im Lande Nordrhein-Westfalen (VAP Eich)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@128:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 128,
+      "end": 147,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ttleren und des gehobenen eichtechnischen Dienstes im Lande Nordrhein-Westfalen (VAP Eich)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@73:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 73,
+      "end": 88,
+      "term": "GV. NRW. S. 224",
+      "context": "… § 6 Absatz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) verordnet das Ministerium für Wirtschaft, Energie, Industr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@104:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 104,
+      "end": 176,
+      "term": "Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "…gesetzes vom 21. April 2009 (GV. NRW. S. 224) verordnet das Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk im Einvernehmen mit dem Ministerium für Inneres und Kommuna…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].text@201:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 201,
+      "end": 265,
+      "term": "Ministerium für Inneres und Kommunales und dem Finanzministerium",
+      "context": "…Industrie, Mittelstand und Handwerk im Einvernehmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[2].text@248:ministry-compound",
+      "path": "body[2].text",
+      "start": 248,
+      "end": 265,
+      "term": "Finanzministerium",
+      "context": "…hmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].children[2].text@193:protected:gazette-nrw",
+      "path": "body[3].children[0].children[0].children[2].text",
+      "start": 193,
+      "end": 207,
+      "term": "GV. NRW. S. 22",
+      "context": "…in § 8 Absatz 1 der Laufbahnverordnung vom 28. Januar 2014 (GV. NRW. S. 22, ber. S. 203) festgelegte Altersgrenze um mindestens zwölf …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].children[1].text@103:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[1].text",
+      "start": 103,
+      "end": 122,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gsweise den Direktor des Landesbetriebs Mess- und Eichwesen Nordrhein-Westfalen (LBME NRW) zu richten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[1].text@129:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[1].children[1].text",
+      "start": 129,
+      "end": 132,
+      "term": "NRW",
+      "context": "…andesbetriebs Mess- und Eichwesen Nordrhein-Westfalen (LBME NRW) zu richten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[2].children[0].text@42:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[2].children[0].text",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Die Direktorin oder der Direktor des LBME NRW stellt die Befähigung und Eignung der Bewerberin beziehungs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[3].children[0].text@106:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[3].children[0].text",
+      "start": 106,
+      "end": 109,
+      "term": "NRW",
+      "context": "…rd von der Direktorin beziehungsweise dem Direktor des LBME NRW in das Beamtenverhältnis auf Widerruf berufen. Sie beziehun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[3].children[1].text@130:jurisdiction-name-residual",
+      "path": "body[3].children[3].children[1].text",
+      "start": 130,
+      "end": 133,
+      "term": "NRW",
+      "context": "… und Anwärter ist die Direktorin oder der Direktor des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[0].children[0].children[0].text@60:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[0].children[0].text",
+      "start": 60,
+      "end": 63,
+      "term": "NRW",
+      "context": "Der Vorbereitungsdienst umfasst die Ausbildung bei dem LBME NRW sowie im Anschluss daran die Ausbildung bei der Deutschen A…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[0].children[3].text@77:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[0].children[3].text",
+      "start": 77,
+      "end": 80,
+      "term": "NRW",
+      "context": "…dienst kann durch die Direktorin oder den Direktor des LBME NRW um insgesamt höchstens ein Jahr verlängert werden,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[0].children[4].text@125:jurisdiction-name-residual",
+      "path": "body[4].children[0].children[0].children[4].text",
+      "start": 125,
+      "end": 128,
+      "term": "NRW",
+      "context": "…eiten entscheidet die Direktorin oder der Direktor des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[1].title@21:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].title",
+      "start": 21,
+      "end": 24,
+      "term": "NRW",
+      "context": "Ausbildung beim LBME NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[0].children[0].text@32:jurisdiction-name-residual",
+      "path": "body[4].children[1].children[0].children[0].text",
+      "start": 32,
+      "end": 35,
+      "term": "NRW",
+      "context": "Ausbildungsbehörde ist der LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[1].children[0].children[1].text@42:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].children[0].children[1].text",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Die Direktorin oder der Direktor des LBME NRW bestellt eine Beamtin oder einen Beamten des höheren eichte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[1].children[1].text@42:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].children[1].children[1].text",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Die Direktorin oder der Direktor des LBME NRW kann in begründeten Einzelfällen die Reihenfolge und die Da…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[4].children[0].text@33:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].children[4].children[0].text",
+      "start": 33,
+      "end": 36,
+      "term": "NRW",
+      "context": "Während der Ausbildung beim LBME NRW hat die Anwärterin oder der Anwärter für jedes Thema aus de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[5].children[2].text@231:jurisdiction-name-residual",
+      "path": "body[4].children[1].children[5].children[2].text",
+      "start": 231,
+      "end": 234,
+      "term": "NRW",
+      "context": "…tscheidung trifft die Direktorin oder der Direktor des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[2].children[1].children[0].text@53:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].children[1].children[0].text",
+      "start": 53,
+      "end": 56,
+      "term": "NRW",
+      "context": "Die Anwärterin oder der Anwärter wird durch den LBME NRW zum Laufbahnlehrgang (Ausbildungsabschnitt III) zugelassen,…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].children[3].children[1].text@298:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].children[3].children[1].text",
+      "start": 298,
+      "end": 301,
+      "term": "NRW",
+      "context": "…lt er auf Antrag der Direktorin oder des Direktors des LBME NRW fest, dass die Prüfung für die Laufbahn des mittleren eicht…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[2].text@53:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[2].text",
+      "start": 53,
+      "end": 56,
+      "term": "NRW",
+      "context": "Über die Zulassung zum Aufstieg entscheidet der LBME NRW im Einvernehmen mit der obersten Dienstbehörde.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].children[0].text@264:protected:gazette-nrw",
+      "path": "body[6].children[0].children[0].text",
+      "start": 264,
+      "end": 279,
+      "term": "GV. NRW. S. 285",
+      "context": "…rufsqualifikationen als Laufbahnbefähigung vom 6. Mai 2010 (GV. NRW. S. 285).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].children[1].text@184:jurisdiction-name-residual",
+      "path": "body[6].children[0].children[1].text",
+      "start": 184,
+      "end": 187,
+      "term": "NRW",
+      "context": "…t durch die oberste Dienstbehörde unter Mitwirkung des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[7].children[0].children[0].text@211:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].children[0].text",
+      "start": 211,
+      "end": 230,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ttleren und des gehobenen eichtechnischen Dienstes im Lande Nordrhein-Westfalen vom 5. April 2005 (GV. NRW. S. 274) außer Kraft. Das für Wi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].children[0].text@250:protected:gazette-nrw",
+      "path": "body[7].children[0].children[0].text",
+      "start": 250,
+      "end": 265,
+      "term": "GV. NRW. S. 274",
+      "context": "…en Dienstes im Lande Nordrhein-Westfalen vom 5. April 2005 (GV. NRW. S. 274) außer Kraft. Das für Wirtschaft zuständige Ministerium ber…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].children[1].text@4:ministry-portfolio",
+      "path": "body[7].children[0].children[1].text",
+      "start": 4,
+      "end": 73,
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Der Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[0].children[1].text@78:rule:jurisdiction-name-genitive",
+      "path": "body[7].children[0].children[1].text",
+      "start": 78,
+      "end": 104,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…irtschaft, Energie, Industrie, Mittelstand und Handwerk des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 17,
+      "manual-review": 5
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 4
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[0].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].children[4].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].children[3].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "…gesetzes vom 21. April 2009 (GV. NRW. S. 224) verordnet das Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk im Einvernehmen mit dem Ministerium für Inneres und Kommuna…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Inneres und Kommunales und dem Finanzministerium",
+      "context": "…Industrie, Mittelstand und Handwerk im Einvernehmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Finanzministerium",
+      "context": "…hmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "term": "NRW",
+      "context": "… und Anwärter ist die Direktorin oder der Direktor des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[0].children[4].text",
+      "term": "NRW",
+      "context": "…eiten entscheidet die Direktorin oder der Direktor des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[0].children[0].text",
+      "term": "NRW",
+      "context": "Ausbildungsbehörde ist der LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[5].children[2].text",
+      "term": "NRW",
+      "context": "…tscheidung trifft die Direktorin oder der Direktor des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].children[1].text",
+      "term": "NRW",
+      "context": "…t durch die oberste Dienstbehörde unter Mitwirkung des LBME NRW.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[0].children[1].text",
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Der Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 226,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… Absatz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) verordnet das Ministerium für Wirtschaft, Energie,…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[0].children[2].text",
+        "term": "NRW",
+        "context": "… 8 Absatz 1 der Laufbahnverordnung vom 28. Januar 2014 (GV. NRW. S. 22, ber. S. 203) festgelegte Altersgrenze um mindestens…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[3].children[1].text",
+        "term": "NRW",
+        "context": "… und Anwärter ist die Direktorin oder der Direktor des LBME NRW.",
+        "status": "documented",
+        "detectionId": "body[3].children[3].children[1].text@130:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[4].children[0].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…eiten entscheidet die Direktorin oder der Direktor des LBME NRW.",
+        "status": "documented",
+        "detectionId": "body[4].children[0].children[0].children[4].text@125:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[4].children[1].children[0].children[0].text",
+        "term": "NRW",
+        "context": "Ausbildungsbehörde ist der LBME NRW.",
+        "status": "documented",
+        "detectionId": "body[4].children[1].children[0].children[0].text@32:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[4].children[1].children[5].children[2].text",
+        "term": "NRW",
+        "context": "…tscheidung trifft die Direktorin oder der Direktor des LBME NRW.",
+        "status": "documented",
+        "detectionId": "body[4].children[1].children[5].children[2].text@231:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[6].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…qualifikationen als Laufbahnbefähigung vom 6. Mai 2010 (GV. NRW. S. 285).",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…t durch die oberste Dienstbehörde unter Mitwirkung des LBME NRW.",
+        "status": "documented",
+        "detectionId": "body[6].children[0].children[1].text@184:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[7].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…en Dienstes im Lande Westdeutschland vom 5. April 2005 (GV. NRW. S. 274) außer Kraft. Das für Wirtschaft zuständige Ministe…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für die Laufbahnen des mittleren und des gehobenen eichtechnischen Dienstes im Lande Nordrhein-Westfalen (VAP Eich) vom 20. November 2015",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für die Laufbahnen des mittleren und des gehobenen eichtechnischen Dienstes im Lande Nordrhein-Westfalen (VAP Eich) vom 20. November 2015",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für die Laufbahnen des mittleren und des gehobenen eichtechnischen Dienstes im Lande Westdeutschland (VAP Eich) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16858,
+          "actual": 17539,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 119,
+          "actual": 119,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17539,
+          "actual": 17535,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "22 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "22 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/32784-29862-sgv_203015_20151120_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:57:23.629Z"
+}

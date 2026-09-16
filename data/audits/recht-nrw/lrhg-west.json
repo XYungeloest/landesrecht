@@ -1,0 +1,376 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26728",
+  "slug": "lrhg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@16:constitutional-organ-state",
+      "path": "meta.title",
+      "start": 16,
+      "end": 54,
+      "term": "Landesrechnungshof Nordrhein-Westfalen",
+      "context": "Gesetz über den Landesrechnungshof Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "meta.title@35:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 35,
+      "end": 54,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz über den Landesrechnungshof Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@20:constitutional-organ-state",
+      "path": "body[1].text",
+      "start": 20,
+      "end": 58,
+      "term": "Landesrechnungshof Nordrhein-Westfalen",
+      "context": "Das Gesetz über den Landesrechnungshof Nordrhein-Westfalen (LRHG) vom 14. Dezember 1971 (GV. NW. S. 410) wird wie folg…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[1].text@39:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 39,
+      "end": 58,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Gesetz über den Landesrechnungshof Nordrhein-Westfalen (LRHG) vom 14. Dezember 1971 (GV. NW. S. 410) wird wie folg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@89:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 89,
+      "end": 103,
+      "term": "GV. NW. S. 410",
+      "context": "…hnungshof Nordrhein-Westfalen (LRHG) vom 14. Dezember 1971 (GV. NW. S. 410) wird wie folgt geändert und neugefaßt:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@4:constitutional-organ-state",
+      "path": "body[2].children[0].text",
+      "start": 4,
+      "end": 42,
+      "term": "Landesrechnungshof Nordrhein-Westfalen",
+      "context": "Der Landesrechnungshof Nordrhein-Westfalen ist eine selbständige oberste Landesbehörde und als unabhän…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@23:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].text",
+      "start": 23,
+      "end": 42,
+      "term": "Nordrhein-Westfalen",
+      "context": "Der Landesrechnungshof Nordrhein-Westfalen ist eine selbständige oberste Landesbehörde und als unabhän…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@42:municipality",
+      "path": "body[2].children[1].text",
+      "start": 42,
+      "end": 52,
+      "term": "Düsseldorf",
+      "context": "Der Landesrechnungshof hat seinen Sitz in Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].text@192:protected:gazette-nrw",
+      "path": "body[6].children[2].text",
+      "start": 192,
+      "end": 207,
+      "term": "GV. NRW. S. 812",
+      "context": "…andesrichter- und Staatsanwältegesetz vom 8. Dezember 2015 (GV. NRW. S. 812) in der jeweils geltenden Fassung entscheiden die Richterdi…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[1].text@197:rule:jurisdiction-name",
+      "path": "body[12].children[1].text",
+      "start": 197,
+      "end": 221,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e des § 20 Abs. 5 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen beteiligt gewesen sind oder für die sie selbst oder für die…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "institution": {
+      "safe-auto-transform": 3
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "municipality": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[1].text",
+      "term": "Düsseldorf",
+      "context": "Der Landesrechnungshof hat seinen Sitz in Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 131,
+    "residuals": [
+      {
+        "path": "body[6].children[2].text",
+        "term": "NRW",
+        "context": "…srichter- und Staatsanwältegesetz vom 8. Dezember 2015 (GV. NRW. S. 812) in der jeweils geltenden Fassung entscheiden die R…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über den Landesrechnungshof Nordrhein-Westfalen vom 19. Juni 1994",
+    "sourceVersion": "Gesetz über den Landesrechnungshof Nordrhein-Westfalen vom 19. Juni 1994",
+    "simulation": "Gesetz über den Landesrechnungshof Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13869,
+          "actual": 14341,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 69,
+          "actual": 69,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14341,
+          "actual": 14329,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:12:54.734Z"
+}

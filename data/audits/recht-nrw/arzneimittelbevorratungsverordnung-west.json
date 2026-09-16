@@ -1,0 +1,658 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28065",
+  "slug": "arzneimittelbevorratungsverordnung-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@116:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 116,
+      "end": 143,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…dizinprodukten für Großschadensereignisse in Krankenhäusern im Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[0].text@62:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 62,
+      "end": 77,
+      "term": "GV. NRW. S. 865",
+      "context": "… 1: Anlage 3 ersetzt durch Verordnung vom 6. November 2014 (GV. NRW. S. 865), in Kraft getreten am 9. Dezember 2014",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@6:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 6,
+      "end": 15,
+      "term": "SGV. NRW.",
+      "context": "Fn 2: SGV. NRW. 2128.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@49:rule:jurisdiction-name-genitive",
+      "path": "body[3].text",
+      "start": 49,
+      "end": 75,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Aufgrund § 11 Abs. 4 des Krankenhausgesetzes des Landes Nordrhein-Westfalen - KHG NRW - vom 16. Dezember 1998 (GV. NRW. S. 696), geände…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].text@82:rule:jurisdiction-abbreviation",
+      "path": "body[3].text",
+      "start": 82,
+      "end": 85,
+      "term": "NRW",
+      "context": "…es Krankenhausgesetzes des Landes Nordrhein-Westfalen - KHG NRW - vom 16. Dezember 1998 (GV. NRW. S. 696), geändert durch G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@111:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 111,
+      "end": 126,
+      "term": "GV. NRW. S. 696",
+      "context": "…ndes Nordrhein-Westfalen - KHG NRW - vom 16. Dezember 1998 (GV. NRW. S. 696), geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 403), …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@168:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 168,
+      "end": 183,
+      "term": "GV. NRW. S. 403",
+      "context": "…8 (GV. NRW. S. 696), geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 403), wird im Einvernehmen mit dem Innenministerium und Ministe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@215:ministry-compound",
+      "path": "body[3].text",
+      "start": 215,
+      "end": 231,
+      "term": "Innenministerium",
+      "context": "…9. Mai 2000 (GV. NRW. S. 403), wird im Einvernehmen mit dem Innenministerium und Ministerium für Schule, Wissenschaft und Forschung vero…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[3].text@236:ministry-portfolio",
+      "path": "body[3].text",
+      "start": 236,
+      "end": 296,
+      "term": "Ministerium für Schule, Wissenschaft und Forschung verordnet",
+      "context": "… S. 403), wird im Einvernehmen mit dem Innenministerium und Ministerium für Schule, Wissenschaft und Forschung verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@303:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[1].text",
+      "start": 303,
+      "end": 306,
+      "term": "NRW",
+      "context": "… 2Auf § 8 Abs. 2 (Nachbarschaftshilfe) des Rettungsgesetzes NRW - RettG NRW - vom 24. November 1992 (GV. NRW. S. 458) sowie…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[1].text@315:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[1].text",
+      "start": 315,
+      "end": 318,
+      "term": "NRW",
+      "context": "…s. 2 (Nachbarschaftshilfe) des Rettungsgesetzes NRW - RettG NRW - vom 24. November 1992 (GV. NRW. S. 458) sowie § 4 (Amtshi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[1].text@344:protected:gazette-nrw",
+      "path": "body[6].children[1].text",
+      "start": 344,
+      "end": 359,
+      "term": "GV. NRW. S. 458",
+      "context": "…s Rettungsgesetzes NRW - RettG NRW - vom 24. November 1992 (GV. NRW. S. 458) sowie § 4 (Amtshilfe) des Verwaltungsverfahrensgesetzes fü…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].text@425:rule:jurisdiction-name",
+      "path": "body[6].children[1].text",
+      "start": 425,
+      "end": 449,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e § 4 (Amtshilfe) des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen - VwVfG.NRW - in der Fassung der Bekanntmachung vom 12. Nov…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].text@458:jurisdiction-name-residual",
+      "path": "body[6].children[1].text",
+      "start": 458,
+      "end": 461,
+      "term": "NRW",
+      "context": "…verfahrensgesetzes für das Land Nordrhein-Westfalen - VwVfG.NRW - in der Fassung der Bekanntmachung vom 12. November 1999 (…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[6].children[1].text@521:protected:gazette-nrw",
+      "path": "body[6].children[1].text",
+      "start": 521,
+      "end": 536,
+      "term": "GV. NRW. S. 602",
+      "context": "… - in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) - in der jeweils geltenden Fassung - wird verwiesen. 3Die …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].text@10:authority-district-government",
+      "path": "body[7].children[0].text",
+      "start": 10,
+      "end": 26,
+      "term": "Bezirksregierung",
+      "context": "Das Land (Bezirksregierung) erstattet die notwendigen Kosten für die Beschaffung von A…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[4].text@4:ministry-portfolio",
+      "path": "body[8].children[4].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Frauen, Jugend, Familie und Gesundheit",
+      "context": "Die Ministerin für Frauen, Jugend, Familie und Gesundheit des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].children[4].text@62:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[4].text",
+      "start": 62,
+      "end": 88,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…e Ministerin für Frauen, Jugend, Familie und Gesundheit des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].children[6].text@99:protected:gazette-nrw",
+      "path": "body[8].children[6].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 332",
+      "context": "… (Artikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 7,
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].text",
+      "term": "Innenministerium",
+      "context": "…9. Mai 2000 (GV. NRW. S. 403), wird im Einvernehmen mit dem Innenministerium und Ministerium für Schule, Wissenschaft und Forschung vero…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].text",
+      "term": "Ministerium für Schule, Wissenschaft und Forschung verordnet",
+      "context": "… S. 403), wird im Einvernehmen mit dem Innenministerium und Ministerium für Schule, Wissenschaft und Forschung verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].text",
+      "term": "NRW",
+      "context": "…verfahrensgesetzes für das Land Nordrhein-Westfalen - VwVfG.NRW - in der Fassung der Bekanntmachung vom 12. November 1999 (…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Das Land (Bezirksregierung) erstattet die notwendigen Kosten für die Beschaffung von A…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[4].text",
+      "term": "Ministerin für Frauen, Jugend, Familie und Gesundheit",
+      "context": "Die Ministerin für Frauen, Jugend, Familie und Gesundheit des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 29,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…Anlage 3 ersetzt durch Verordnung vom 6. November 2014 (GV. NRW. S. 865), in Kraft getreten am 9. Dezember 2014",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "Fn 2: SGV. NRW. 2128.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…des Westdeutschland - KHG West - vom 16. Dezember 1998 (GV. NRW. S. 696), geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. S…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…V. NRW. S. 696), geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 403), wird im Einvernehmen mit dem Innenministerium und…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].text",
+        "term": "NRW",
+        "context": "…ungsgesetzes West - RettG West - vom 24. November 1992 (GV. NRW. S. 458) sowie § 4 (Amtshilfe) des Verwaltungsverfahrensges…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].text",
+        "term": "NRW",
+        "context": "…ungsverfahrensgesetzes für das Land Westdeutschland - VwVfG.NRW - in der Fassung der Bekanntmachung vom 12. November 1999 (…",
+        "status": "documented",
+        "detectionId": "body[6].children[1].text@344:protected:gazette-nrw"
+      },
+      {
+        "path": "body[6].children[1].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) - in der jeweils geltenden Fassung - wird verwiese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[6].text",
+        "term": "NRW",
+        "context": "…tikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Bevorratung von Arzneimitteln und Medizinprodukten für Großschadensereignisse in Krankenhäusern im Land Nordrhein-Westfalen vom 30. August 2000",
+    "sourceVersion": "Verordnung über die Bevorratung von Arzneimitteln und Medizinprodukten für Großschadensereignisse in Krankenhäusern im Land Nordrhein-Westfalen vom 30. August 2000",
+    "simulation": "Verordnung über die Bevorratung von Arzneimitteln und Medizinprodukten für Großschadensereignisse in Krankenhäusern im Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3362,
+          "actual": 3528,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 27,
+          "actual": 27,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3528,
+          "actual": 3519,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4917-9602-sgv_2128_20000830_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4917-9603-sgv_2128_20000830_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 7,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4917-25862-sgv_2128_20000830_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 7,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:06:15.335Z"
+}

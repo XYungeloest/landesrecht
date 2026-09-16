@@ -1,0 +1,612 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27553",
+  "slug": "verordnung-ueber-den-erwerb-der-fachgebundenen-hochschulreife-waehrend-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@96:rule:jurisdiction-name-genitive",
+      "path": "body[2].text",
+      "start": 96,
+      "end": 122,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 4 des Gesetzes über die wissenschaftlichen Hochschulen des Landes Nordrhein-Westfalen (WissHG) vom 20. November 1979 (GV. NW. S. 926), geändert d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].text@155:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 155,
+      "end": 169,
+      "term": "GV. NW. S. 926",
+      "context": "… Landes Nordrhein-Westfalen (WissHG) vom 20. November 1979 (GV. NW. S. 926), geändert durch Gesetz vom 25. März 1980 (GV. NW. S. 248),…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@213:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 213,
+      "end": 227,
+      "term": "GV. NW. S. 248",
+      "context": "… (GV. NW. S. 926), geändert durch Gesetz vom 25. März 1980 (GV. NW. S. 248), wird für den Erwerb der fachgebundenen Hochschulreife wäh…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@373:rule:jurisdiction-name-genitive",
+      "path": "body[2].text",
+      "start": 373,
+      "end": 399,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…rierten Studiengängen an wissenschaftlichen Hochschulen des Landes Nordrhein-Westfalen verordnet:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@51:ministry-portfolio",
+      "path": "body[3].children[0].text",
+      "start": 51,
+      "end": 141,
+      "term": "Minister für Wissenschaft und Forschung als integrierte Studiengänge genehmigt worden sind",
+      "context": "Zugangsvoraussetzung für die Studiengänge, die vom Minister für Wissenschaft und Forschung als integrierte Studiengänge genehmigt worden sind, ist ein Zeugnis der Hochschulreife oder ein Zeugnis der Fa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@231:ministry-compound",
+      "path": "body[3].children[0].text",
+      "start": 231,
+      "end": 245,
+      "term": "Kultusminister",
+      "context": "…lreife oder ein Zeugnis der Fachhochschulreife oder ein vom Kultusminister als gleichwertig anerkanntes Zeugnis.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@370:ministry-compound",
+      "path": "body[4].children[1].text",
+      "start": 370,
+      "end": 385,
+      "term": "Kultusministers",
+      "context": "…immung des Ministers für Wissenschaft und Forschung und des Kultusministers vorgesehen werden.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[4].children[3].text@274:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[3].text",
+      "start": 274,
+      "end": 300,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ule oder an einer anderen wissenschaftlichen Hochschule des Landes Nordrhein-Westfalen fortsetzen. Die der fachgebundenen Hochschulreife zugeordne…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@135:ministry-compound",
+      "path": "body[5].children[3].text",
+      "start": 135,
+      "end": 150,
+      "term": "Kultusministers",
+      "context": "…Asylanten sind und aufgrund von Verwaltungsvorschriften des Kultusministers des Landes Nordrhein-Westfalen für den Erwerb der Fachhochs…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@155:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[3].text",
+      "start": 155,
+      "end": 181,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ufgrund von Verwaltungsvorschriften des Kultusministers des Landes Nordrhein-Westfalen für den Erwerb der Fachhochschulreife in der Bundesrepublik…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@79:ministry-portfolio",
+      "path": "body[6].children[0].text",
+      "start": 79,
+      "end": 141,
+      "term": "Minister für Wissenschaft und Forschung und der Kultusminister",
+      "context": "…en für die Anforderungen an die Abschlußklausuren legen der Minister für Wissenschaft und Forschung und der Kultusminister im Benehmen mit den Hochschulen fest.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@127:ministry-compound",
+      "path": "body[6].children[0].text",
+      "start": 127,
+      "end": 141,
+      "term": "Kultusminister",
+      "context": "…n legen der Minister für Wissenschaft und Forschung und der Kultusminister im Benehmen mit den Hochschulen fest.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@583:ministry-portfolio",
+      "path": "body[6].children[1].text",
+      "start": 583,
+      "end": 633,
+      "term": "Minister für Wissenschaft und Forschung anzuzeigen",
+      "context": "…atz 1. Die Ordnung ist entsprechend § 108 Abs. 1 WissHG dem Minister für Wissenschaft und Forschung anzuzeigen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].children[3].text@4:ministry-portfolio",
+      "path": "body[9].children[3].text",
+      "start": 4,
+      "end": 43,
+      "term": "Minister für Wissenschaft und Forschung",
+      "context": "Der Minister für Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].children[3].text@48:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[3].text",
+      "start": 48,
+      "end": 74,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[4].text@4:ministry-compound",
+      "path": "body[9].children[4].text",
+      "start": 4,
+      "end": 18,
+      "term": "Kultusminister",
+      "context": "Der Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[9].children[4].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[4].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[6].text@99:protected:gazette-nrw",
+      "path": "body[9].children[6].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 274",
+      "context": "… (Artikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "ministry": {
+      "manual-review": 9
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[0].text",
+      "term": "Minister für Wissenschaft und Forschung als integrierte Studiengänge genehmigt worden sind",
+      "context": "Zugangsvoraussetzung für die Studiengänge, die vom Minister für Wissenschaft und Forschung als integrierte Studiengänge genehmigt worden sind, ist ein Zeugnis der Hochschulreife oder ein Zeugnis der Fa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Kultusminister",
+      "context": "…lreife oder ein Zeugnis der Fachhochschulreife oder ein vom Kultusminister als gleichwertig anerkanntes Zeugnis.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Kultusministers",
+      "context": "…immung des Ministers für Wissenschaft und Forschung und des Kultusministers vorgesehen werden.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Kultusministers",
+      "context": "…Asylanten sind und aufgrund von Verwaltungsvorschriften des Kultusministers des Landes Nordrhein-Westfalen für den Erwerb der Fachhochs…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Minister für Wissenschaft und Forschung und der Kultusminister",
+      "context": "…en für die Anforderungen an die Abschlußklausuren legen der Minister für Wissenschaft und Forschung und der Kultusminister im Benehmen mit den Hochschulen fest.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Kultusminister",
+      "context": "…n legen der Minister für Wissenschaft und Forschung und der Kultusminister im Benehmen mit den Hochschulen fest.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].text",
+      "term": "Minister für Wissenschaft und Forschung anzuzeigen",
+      "context": "…atz 1. Die Ordnung ist entsprechend § 108 Abs. 1 WissHG dem Minister für Wissenschaft und Forschung anzuzeigen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[3].text",
+      "term": "Minister für Wissenschaft und Forschung",
+      "context": "Der Minister für Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[4].text",
+      "term": "Kultusminister",
+      "context": "Der Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 419,
+    "residuals": [
+      {
+        "path": "body[9].children[6].text",
+        "term": "NRW",
+        "context": "…tikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über den Erwerb der fachgebundenen Hochschulreife während des Studiums in integrierten Studiengängen vom 23. September 1981",
+    "sourceVersion": "Verordnung über den Erwerb der fachgebundenen Hochschulreife während des Studiums in integrierten Studiengängen vom 23. September 1981",
+    "simulation": "Verordnung über den Erwerb der fachgebundenen Hochschulreife während des Studiums in integrierten Studiengängen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6889,
+          "actual": 7146,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 1058,
+          "actual": 1058,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 15422,
+          "actual": 15398,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4396-2859-sgv_221_19810923_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:57:22.877Z"
+}

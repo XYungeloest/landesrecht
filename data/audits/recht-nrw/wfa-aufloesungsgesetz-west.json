@@ -1,0 +1,751 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29999",
+  "slug": "wfa-aufloesungsgesetz-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@54:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz zur Auflösung der Wohnungsbauförderungsanstalt Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@122:protected:external-nrw-dot-names",
+      "path": "body[1].text",
+      "start": 122,
+      "end": 130,
+      "term": "NRW.BANK",
+      "context": "…m Wohnungswesen, zur Steigerung der Fördermöglichkeiten der NRW.BANK und zur Änderung anderer Gesetze vom 8. Dezember 2009 (GV. …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@186:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 186,
+      "end": 201,
+      "term": "GV. NRW. S. 772",
+      "context": "…BANK und zur Änderung anderer Gesetze vom 8. Dezember 2009 (GV. NRW. S. 772))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].title@43:rule:jurisdiction-name-bare",
+      "path": "body[2].title",
+      "start": 43,
+      "end": 62,
+      "term": "Nordrhein-Westfalen",
+      "context": "Auflösung der Wohnungsbauförderungsanstalt Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@33:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].text",
+      "start": 33,
+      "end": 52,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Wohnungsbauförderungsanstalt Nordrhein-Westfalen wird mit Wirkung vom 1. Januar 2010 aufgelöst.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].title@54:jurisdiction-name-residual",
+      "path": "body[3].title",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "Vermögen und Aufgaben der WohnungsbauförderungsanstaltNordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[3].children[0].text@46:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 46,
+      "end": 65,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Vermögen der Wohnungsbauförderungsanstalt Nordrhein-Westfalen verbleibt bei der NRW.BANK.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@84:protected:external-nrw-dot-names",
+      "path": "body[3].children[0].text",
+      "start": 84,
+      "end": 92,
+      "term": "NRW.BANK",
+      "context": "…sbauförderungsanstalt Nordrhein-Westfalen verbleibt bei der NRW.BANK.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@4:protected:external-nrw-dot-names",
+      "path": "body[3].children[1].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "Die NRW.BANK übernimmt alle Aufgaben und Geschäfte der Wohnungsbauförder…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@84:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 84,
+      "end": 103,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lle Aufgaben und Geschäfte der Wohnungsbauförderungsanstalt Nordrhein-Westfalen. Sie tritt in alle Rechte und Pflichten der Wohnungsbauförd…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@177:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 177,
+      "end": 196,
+      "term": "Nordrhein-Westfalen",
+      "context": "… alle Rechte und Pflichten der Wohnungsbauförderungsanstalt Nordrhein-Westfalen ein, die dieser im Rahmen ihrer Teilrechtsfähigkeit zugeord…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@46:rule:jurisdiction-name-bare",
+      "path": "body[3].children[2].text",
+      "start": 46,
+      "end": 65,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Vermögen der Wohnungsbauförderungsanstalt Nordrhein-Westfalen wird Stammkapital der NRW.BANK.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@88:protected:external-nrw-dot-names",
+      "path": "body[3].children[2].text",
+      "start": 88,
+      "end": 96,
+      "term": "NRW.BANK",
+      "context": "…förderungsanstalt Nordrhein-Westfalen wird Stammkapital der NRW.BANK.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].text@96:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].text",
+      "start": 96,
+      "end": 115,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Übertragung des Vermögens der Wohnungsbauförderungsanstalt Nordrhein-Westfalen auf die NRW.BANK erforderlich werden, sind gebührenfrei. Da…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@124:protected:external-nrw-dot-names",
+      "path": "body[4].children[0].text",
+      "start": 124,
+      "end": 132,
+      "term": "NRW.BANK",
+      "context": "…er Wohnungsbauförderungsanstalt Nordrhein-Westfalen auf die NRW.BANK erforderlich werden, sind gebührenfrei. Das gilt auch für B…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@36:protected:external-nrw-dot-names",
+      "path": "body[5].children[0].text",
+      "start": 36,
+      "end": 44,
+      "term": "NRW.BANK",
+      "context": "Aus dem mit dem Jahresabschluss der NRW.BANK festgestellten Jahresüberschuss der Wohnungsbauförderungsan…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].text@147:protected:gazette-nrw",
+      "path": "body[6].children[1].text",
+      "start": 147,
+      "end": 162,
+      "term": "GV. NRW. S. 561",
+      "context": "…Westdeutsche Landesbank Girozentrale vom 18. Dezember 1991 (GV. NRW. S. 561) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@4:constitutional-organ-state",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[7].text@20:rule:jurisdiction-name-bare",
+      "path": "body[7].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].text@4:ministry-portfolio",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[10].text@4:ministry-portfolio",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 54,
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[10].text@72:ministry-compound",
+      "path": "body[10].text",
+      "start": 72,
+      "end": 86,
+      "term": "Finanzminister",
+      "context": "…in für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[11].text@4:ministry-portfolio",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].text@66:ministry-compound",
+      "path": "body[11].text",
+      "start": 66,
+      "end": 79,
+      "term": "Innenminister",
+      "context": "…nister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[12].text@8:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 8,
+      "end": 96,
+      "term": "Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "context": "Für den Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].text@4:ministry-compound",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 20,
+      "term": "Justizministerin",
+      "context": "Die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9,
+      "manual-review": 1
+    },
+    "external-name": {
+      "protected": 6
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].title",
+      "term": "Nordrhein-Westfalen",
+      "context": "Vermögen und Aufgaben der WohnungsbauförderungsanstaltNordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].text",
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].text",
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].text",
+      "term": "Finanzminister",
+      "context": "…in für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Innenminister",
+      "context": "…nister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "context": "Für den Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Justizministerin",
+      "context": "Die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 32,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…m Wohnungswesen, zur Steigerung der Fördermöglichkeiten der NRW.BANK und zur Änderung anderer Gesetze vom 8. Dezember 2009 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… und zur Änderung anderer Gesetze vom 8. Dezember 2009 (GV. NRW. S. 772))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].title",
+        "term": "Nordrhein-Westfalen",
+        "context": "Vermögen und Aufgaben der WohnungsbauförderungsanstaltNordrhein-Westfalen",
+        "status": "documented",
+        "detectionId": "body[3].title@54:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…nungsbauförderungsanstalt Westdeutschland verbleibt bei der NRW.BANK.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "Die NRW.BANK übernimmt alle Aufgaben und Geschäfte der Wohnungsbauf…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].text",
+        "term": "NRW",
+        "context": "…sbauförderungsanstalt Westdeutschland wird Stammkapital der NRW.BANK.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].text",
+        "term": "NRW",
+        "context": "…ns der Wohnungsbauförderungsanstalt Westdeutschland auf die NRW.BANK erforderlich werden, sind gebührenfrei. Das gilt auch …",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "Aus dem mit dem Jahresabschluss der NRW.BANK festgestellten Jahresüberschuss der Wohnungsbauförderu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].text",
+        "term": "NRW",
+        "context": "…deutsche Landesbank Girozentrale vom 18. Dezember 1991 (GV. NRW. S. 561) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Auflösung der Wohnungsbauförderungsanstalt Nordrhein-Westfalen vom 8. Dezember 2009",
+    "sourceVersion": "Gesetz zur Auflösung der Wohnungsbauförderungsanstalt Nordrhein-Westfalen vom 8. Dezember 2009",
+    "simulation": "Gesetz zur Auflösung der Wohnungsbauförderungsanstalt Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2155,
+          "actual": 2376,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2376,
+          "actual": 2344,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:22:38.898Z"
+}

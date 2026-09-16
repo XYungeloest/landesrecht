@@ -1,0 +1,2100 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31453",
+  "slug": "lristag-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@41:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Richter- und Staatsanwältegesetz für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].text@46:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 46,
+      "end": 61,
+      "term": "GV. NRW. S. 812",
+      "context": "(Artikel 1 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 812))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[131].children[1].children[3].text@138:protected:gazette-nrw",
+      "path": "body[131].children[1].children[3].text",
+      "start": 138,
+      "end": 153,
+      "term": "GV. NRW. S. 310",
+      "context": "…usschuss (§ 94 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung) an die Stelle der von de…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[131].children[1].children[3].text@370:ministry-compound",
+      "path": "body[131].children[1].children[3].text",
+      "start": 370,
+      "end": 387,
+      "term": "Justizministerium",
+      "context": "…tenden Mitglieder des Landespersonalausschusses je zwei vom Justizministerium zu benennende Mitglieder und an die Stelle der von den Spit…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[131].children[1].children[3].text@733:ministry-compound",
+      "path": "body[131].children[1].children[3].text",
+      "start": 733,
+      "end": 750,
+      "term": "Justizministerium",
+      "context": "…en Gerichtszweige angemessen berücksichtigt werden. Die vom Justizministerium und den zuständigen Berufsverbänden zu benennenden Mitglied…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[131].children[1].children[3].text@898:ministry-compound",
+      "path": "body[131].children[1].children[3].text",
+      "start": 898,
+      "end": 915,
+      "term": "Justizministerium",
+      "context": "…Richter auf Lebenszeit sein. Vorsitzende Person ist das vom Justizministerium bestimmte Mitglied (§ 95 Absatz 6 des Landesbeamtengesetzes…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[131].children[2].children[0].text@326:rule:jurisdiction-name",
+      "path": "body[131].children[2].children[0].text",
+      "start": 326,
+      "end": 350,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e Bundesrepublik Deutschland, getreu der Verfassung für das Land Nordrhein-Westfalen und getreu dem Gesetz auszuüben, nach bestem Wissen und Gew…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[131].children[5].children[2].text@238:rule:jurisdiction-name",
+      "path": "body[131].children[5].children[2].text",
+      "start": 238,
+      "end": 262,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e Bundesrepublik Deutschland, getreu der Verfassung für das Land Nordrhein-Westfalen und getreu dem Gesetz zu erfüllen, nach bestem Wissen und G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[131].children[5].children[3].text@329:rule:jurisdiction-name",
+      "path": "body[131].children[5].children[3].text",
+      "start": 329,
+      "end": 353,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e Bundesrepublik Deutschland, getreu der Verfassung für das Land Nordrhein-Westfalen und getreu dem Gesetz zu erfüllen, nach bestem Wissen und G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[131].children[5].children[5].text@265:rule:jurisdiction-name",
+      "path": "body[131].children[5].children[5].text",
+      "start": 265,
+      "end": 289,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e Bundesrepublik Deutschland, getreu der Verfassung für das Land Nordrhein-Westfalen und getreu dem Gesetz zu erfüllen, das Steuergeheimnis zu w…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[131].children[9].children[3].children[0].text@468:protected:gazette-nrw",
+      "path": "body[131].children[9].children[3].children[0].text",
+      "start": 468,
+      "end": 483,
+      "term": "GV. NRW. S. 310",
+      "context": "…tirbt. § 15 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310) bleibt unberührt. In Fällen des § 7 besteht ein Rückkehran…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[131].children[14].children[1].text@409:protected:gazette-nrw",
+      "path": "body[131].children[14].children[1].text",
+      "start": 409,
+      "end": 417,
+      "term": "GV. NRW.",
+      "context": "…rschriften des Justizneutralitätsgesetzes vom 9. März 2021 (GV. NRW. 290) in der jeweils geltenden Fassung zu erlassen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[132].children[0].children[2].children[3].text@98:protected:gazette-nrw",
+      "path": "body[132].children[0].children[2].children[3].text",
+      "start": 98,
+      "end": 114,
+      "term": "GV. NRW. S. 1514",
+      "context": "…des Landespersonalvertretungsgesetzes vom 3. Dezember 1974 (GV. NRW. S. 1514) in der jeweils geltenden Fassung entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[132].children[0].children[8].children[6].text@121:ministry-compound",
+      "path": "body[132].children[0].children[8].children[6].text",
+      "start": 121,
+      "end": 138,
+      "term": "Justizministerium",
+      "context": "…en nach § 41 Absatz 1 zum Gegenstand haben, entscheidet das Justizministerium endgültig.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[8].children[7].text@208:ministry-compound",
+      "path": "body[132].children[0].children[8].children[7].text",
+      "start": 208,
+      "end": 225,
+      "term": "Justizministerium",
+      "context": "…satz 2 bis 4 seiner Mitbestimmung unterliegen, zwischen dem Justizministerium und der dort bestehenden zuständigen Richtervertretung kein…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[9].children[1].text@8:ministry-compound",
+      "path": "body[132].children[0].children[9].children[1].text",
+      "start": 8,
+      "end": 25,
+      "term": "Justizministerium",
+      "context": "Bei dem Justizministerium wird für die Dauer der Wahlperiode der Richter- und Staatsa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[9].children[1].text@366:ministry-compound",
+      "path": "body[132].children[0].children[9].children[1].text",
+      "start": 366,
+      "end": 383,
+      "term": "Justizministerium",
+      "context": "…d deren Stellvertreterin oder Stellvertreter haben sich das Justizministerium und die bei ihm gebildeten Richtervertretungen sowie der Ha…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[9].children[1].text@596:ministry-compound",
+      "path": "body[132].children[0].children[9].children[1].text",
+      "start": 596,
+      "end": 614,
+      "term": "Justizministeriums",
+      "context": "…eine Einigung nicht zustande, so entscheidet auf Antrag des Justizministeriums oder einer Vertretung die Präsidentin oder der Präsident de…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[9].children[1].text@787:ministry-compound",
+      "path": "body[132].children[0].children[9].children[1].text",
+      "start": 787,
+      "end": 804,
+      "term": "Justizministerium",
+      "context": "…ür das jeweilige Einigungsstellenverfahren benannt. Die vom Justizministerium vorgeschlagenen Beisitzerinnen und Beisitzer müssen Bediens…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[9].children[2].text@623:protected:gazette-nrw",
+      "path": "body[132].children[0].children[9].children[2].text",
+      "start": 623,
+      "end": 638,
+      "term": "GV. NRW. S. 624",
+      "context": "… und 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624) in der jeweils geltenden Fassung bezeichneten Voraussetzun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[132].children[0].children[9].children[3].text@216:ministry-compound",
+      "path": "body[132].children[0].children[9].children[3].text",
+      "start": 216,
+      "end": 234,
+      "term": "Justizministeriums",
+      "context": "… sechs Beisitzerinnen und Beisitzern, die auf Vorschlag des Justizministeriums und der Vertretung je zur Hälfte benannt werden.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[132].children[0].children[15].children[2].children[1].text@4:ministry-compound",
+      "path": "body[132].children[0].children[15].children[2].children[1].text",
+      "start": 4,
+      "end": 22,
+      "term": "Justizministeriums",
+      "context": "des Justizministeriums",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[0].children[0].children[2].text@71:ministry-compound",
+      "path": "body[132].children[1].children[0].children[0].children[2].text",
+      "start": 71,
+      "end": 88,
+      "term": "Justizministerium",
+      "context": "…rräte werden für die Gerichte jedes Gerichtszweiges bei dem Justizministerium gebildet.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[0].children[10].children[1].children[9].text@144:rule:jurisdiction-abbreviation",
+      "path": "body[132].children[1].children[0].children[10].children[1].children[9].text",
+      "start": 144,
+      "end": 147,
+      "term": "NRW",
+      "context": "… 10 und Teil 3 und der Freistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jewe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[132].children[1].children[0].children[10].children[1].children[9].text@169:protected:gazette-nrw",
+      "path": "body[132].children[1].children[0].children[10].children[1].children[9].text",
+      "start": 169,
+      "end": 182,
+      "term": "GV. NRW. S. 2",
+      "context": "…eistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jeweils geltenden Fassung,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[132].children[1].children[0].children[14].children[0].text@315:ministry-compound",
+      "path": "body[132].children[1].children[0].children[14].children[0].text",
+      "start": 315,
+      "end": 333,
+      "term": "Justizministeriums",
+      "context": "…legenheiten, in denen die Landesregierung auf Vorschlag des Justizministeriums entscheidet oder das Justizministerium eine Entscheidung mi…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[0].children[14].children[0].text@355:ministry-compound",
+      "path": "body[132].children[1].children[0].children[14].children[0].text",
+      "start": 355,
+      "end": 372,
+      "term": "Justizministerium",
+      "context": "…g auf Vorschlag des Justizministeriums entscheidet oder das Justizministerium eine Entscheidung mit Wirkung über seinen Geschäftsbereich …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[1].children[0].children[0].text@186:ministry-compound",
+      "path": "body[132].children[1].children[1].children[0].children[0].text",
+      "start": 186,
+      "end": 203,
+      "term": "Justizministerium",
+      "context": "…tschaften werden zudem Bezirksstaatsanwaltsräte und bei dem Justizministerium ein Hauptstaatsanwaltsrat gebildet.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[2].children[0].children[5].text@1355:ministry-compound",
+      "path": "body[132].children[1].children[2].children[0].children[5].text",
+      "start": 1355,
+      "end": 1372,
+      "term": "Justizministerium",
+      "context": "…tung ist die Maßnahme vor der Beschlussfassung zwischen dem Justizministerium und den betroffenen Vertretungen mit dem Ziel einer Verstän…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[2].children[2].children[0].text@8:ministry-compound",
+      "path": "body[132].children[1].children[2].children[2].children[0].text",
+      "start": 8,
+      "end": 25,
+      "term": "Justizministerium",
+      "context": "Bei dem Justizministerium wird für die Dauer der Wahlperiode der Richter- und Staatsa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[1].children[2].children[2].children[0].text@986:ministry-compound",
+      "path": "body[132].children[1].children[2].children[2].children[0].text",
+      "start": 986,
+      "end": 1003,
+      "term": "Justizministerium",
+      "context": "…ersonalrat beteiligt, wird von den Vertretungen und von dem Justizministerium je eine weitere Besitzerin oder ein weiterer Beisitzer für …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[1].children[1].text@74:municipality",
+      "path": "body[132].children[2].children[1].children[1].text",
+      "start": 74,
+      "end": 78,
+      "term": "Hamm",
+      "context": "…en Mitgliedern müssen vier aus dem Oberlandesgerichtsbezirk Hamm und je zwei aus den Oberlandesgerichtsbezirken Düsseldorf u…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[1].children[1].text@126:municipality",
+      "path": "body[132].children[2].children[1].children[1].text",
+      "start": 126,
+      "end": 136,
+      "term": "Düsseldorf",
+      "context": "…sbezirk Hamm und je zwei aus den Oberlandesgerichtsbezirken Düsseldorf und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[1].children[1].text@141:municipality",
+      "path": "body[132].children[2].children[1].children[1].text",
+      "start": 141,
+      "end": 145,
+      "term": "Köln",
+      "context": "…d je zwei aus den Oberlandesgerichtsbezirken Düsseldorf und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[3].children[1].text@73:municipality",
+      "path": "body[132].children[2].children[3].children[1].text",
+      "start": 73,
+      "end": 83,
+      "term": "Düsseldorf",
+      "context": "…ren Mitgliedern muss je eins aus den Finanzgerichtsbezirken Düsseldorf, Köln und Münster kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[3].children[1].text@85:municipality",
+      "path": "body[132].children[2].children[3].children[1].text",
+      "start": 85,
+      "end": 89,
+      "term": "Köln",
+      "context": "…ern muss je eins aus den Finanzgerichtsbezirken Düsseldorf, Köln und Münster kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[3].children[1].text@94:municipality",
+      "path": "body[132].children[2].children[3].children[1].text",
+      "start": 94,
+      "end": 101,
+      "term": "Münster",
+      "context": "…je eins aus den Finanzgerichtsbezirken Düsseldorf, Köln und Münster kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[4].children[1].text@80:municipality",
+      "path": "body[132].children[2].children[4].children[1].text",
+      "start": 80,
+      "end": 90,
+      "term": "Düsseldorf",
+      "context": "…gliedern muss je eins aus den Landesarbeitsgerichtsbezirken Düsseldorf, Hamm und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[4].children[1].text@92:municipality",
+      "path": "body[132].children[2].children[4].children[1].text",
+      "start": 92,
+      "end": 96,
+      "term": "Hamm",
+      "context": "…s je eins aus den Landesarbeitsgerichtsbezirken Düsseldorf, Hamm und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[4].children[1].text@101:municipality",
+      "path": "body[132].children[2].children[4].children[1].text",
+      "start": 101,
+      "end": 105,
+      "term": "Köln",
+      "context": "… aus den Landesarbeitsgerichtsbezirken Düsseldorf, Hamm und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[10].children[1].children[1].text@4:ministry-compound",
+      "path": "body[132].children[2].children[10].children[1].children[1].text",
+      "start": 4,
+      "end": 21,
+      "term": "Justizministerium",
+      "context": "das Justizministerium.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[11].children[1].text@75:ministry-compound",
+      "path": "body[132].children[2].children[11].children[1].text",
+      "start": 75,
+      "end": 93,
+      "term": "Justizministeriums",
+      "context": "…estens der Hälfte der Mitglieder des Präsidialrats oder des Justizministeriums kann ein Mitglied wegen grober Verletzung seiner Pflichten …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[13].children[1].children[0].text@17:ministry-compound",
+      "path": "body[132].children[2].children[13].children[1].children[0].text",
+      "start": 17,
+      "end": 34,
+      "term": "Justizministerium",
+      "context": "der oder dem das Justizministerium im Sinne des Absatzes 1 Nummer 1 ein Richteramt mit höherem…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[132].children[2].children[13].children[1].children[1].text@17:ministry-compound",
+      "path": "body[132].children[2].children[13].children[1].children[1].text",
+      "start": 17,
+      "end": 34,
+      "term": "Justizministerium",
+      "context": "die oder den das Justizministerium im Sinne des Absatzes 1 Nummer 2 versetzen oder zur Versetz…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[133].children[0].children[0].children[0].children[1].text@43:municipality",
+      "path": "body[133].children[0].children[0].children[0].children[1].text",
+      "start": 43,
+      "end": 53,
+      "term": "Düsseldorf",
+      "context": "Das Dienstgericht wird bei dem Landgericht Düsseldorf, der Dienstgerichtshof bei dem Oberlandesgericht Hamm erric…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[133].children[0].children[0].children[0].children[1].text@103:municipality",
+      "path": "body[133].children[0].children[0].children[0].children[1].text",
+      "start": 103,
+      "end": 107,
+      "term": "Hamm",
+      "context": "…Düsseldorf, der Dienstgerichtshof bei dem Oberlandesgericht Hamm errichtet.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[133].children[0].children[0].children[0].children[4].text@60:ministry-compound",
+      "path": "body[133].children[0].children[0].children[0].children[4].text",
+      "start": 60,
+      "end": 77,
+      "term": "Justizministerium",
+      "context": "Die Dienstaufsicht über die Richterdienstgerichte steht dem Justizministerium zu.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[133].children[0].children[0].children[1].children[16].text@144:rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "path": "body[133].children[0].children[0].children[1].children[16].text",
+      "start": 144,
+      "end": 147,
+      "term": "NRW",
+      "context": "…0 und Teil 3 und 4 der Freistellungs- und Urlaubsverordnung NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
+    },
+    {
+      "id": "body[133].children[0].children[0].children[3].children[2].text@141:rule:jurisdiction-name-adjective",
+      "path": "body[133].children[0].children[0].children[3].children[2].text",
+      "start": 141,
+      "end": 164,
+      "term": "nordrhein-westfälischen",
+      "context": "…und Rechtsanwälte berufen werden, die in den Vorstand einer nordrhein-westfälischen Rechtsanwaltskammer gewählt werden können. Sie dürfen nicht…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective übergeleitet („nordrhein-westfälischen“ → „westdeutschen“).",
+      "transformRule": "jurisdiction-name-adjective",
+      "replacement": "westdeutschen"
+    },
+    {
+      "id": "body[133].children[0].children[0].children[3].children[4].text@148:protected:gazette-nrw",
+      "path": "body[133].children[0].children[0].children[3].children[4].text",
+      "start": 148,
+      "end": 163,
+      "term": "GV. NRW. S. 738",
+      "context": "…endung des Landesreisekostengesetzes vom 16. Dezember 1998 (GV. NRW. S. 738) in der jeweils geltenden Fassung, wenn sie weder ihren Woh…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[133].children[0].children[1].children[1].children[2].text@543:municipality",
+      "path": "body[133].children[0].children[1].children[1].children[2].text",
+      "start": 543,
+      "end": 553,
+      "term": "Düsseldorf",
+      "context": "…verhältnismäßig der Mitgliederzahl der Rechtsanwaltskammern Düsseldorf, Hamm und Köln entsprechen. Das Präsidium bestimmt die erfo…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[133].children[0].children[1].children[1].children[2].text@555:municipality",
+      "path": "body[133].children[0].children[1].children[1].children[2].text",
+      "start": 555,
+      "end": 559,
+      "term": "Hamm",
+      "context": "…ßig der Mitgliederzahl der Rechtsanwaltskammern Düsseldorf, Hamm und Köln entsprechen. Das Präsidium bestimmt die erforderli…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[133].children[0].children[1].children[1].children[2].text@564:municipality",
+      "path": "body[133].children[0].children[1].children[1].children[2].text",
+      "start": 564,
+      "end": 568,
+      "term": "Köln",
+      "context": "…itgliederzahl der Rechtsanwaltskammern Düsseldorf, Hamm und Köln entsprechen. Das Präsidium bestimmt die erforderliche Zahl …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[133].children[1].children[3].children[1].text@4:ministry-compound",
+      "path": "body[133].children[1].children[3].children[1].text",
+      "start": 4,
+      "end": 21,
+      "term": "Justizministerium",
+      "context": "Das Justizministerium kann ein Disziplinarverfahren einleiten oder ein Disziplina…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[133].children[1].children[3].children[2].text@34:ministry-compound",
+      "path": "body[133].children[1].children[3].children[2].text",
+      "start": 34,
+      "end": 51,
+      "term": "Justizministerium",
+      "context": "Die Disziplinarklage wird von dem Justizministerium erhoben.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[133].children[1].children[4].children[0].text@45:ministry-compound",
+      "path": "body[133].children[1].children[4].children[0].text",
+      "start": 45,
+      "end": 63,
+      "term": "Justizministeriums",
+      "context": "Das Dienstgericht entscheidet auf Antrag des Justizministeriums durch Beschluss über die vorläufige Dienstenthebung, die Ei…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[1].children[4].children[0].text@261:ministry-compound",
+      "path": "body[133].children[1].children[4].children[0].text",
+      "start": 261,
+      "end": 278,
+      "term": "Justizministerium",
+      "context": "…sowie die Aufhebung dieser Maßnahmen. Der Beschluss ist dem Justizministerium und der Richterin oder dem Richter zuzustellen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[133].children[1].children[4].children[1].text@179:ministry-compound",
+      "path": "body[133].children[1].children[4].children[1].text",
+      "start": 179,
+      "end": 197,
+      "term": "Justizministeriums",
+      "context": "…g dieser Maßnahmen kann das Dienstgericht nach Anhörung des Justizministeriums auch von Amts wegen anordnen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[1].children[5].children[0].text@167:rule:jurisdiction-name",
+      "path": "body[133].children[1].children[5].children[0].text",
+      "start": 167,
+      "end": 191,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ichters nach § 16 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[133].children[1].children[5].children[0].text@249:protected:gazette-nrw",
+      "path": "body[133].children[1].children[5].children[0].text",
+      "start": 249,
+      "end": 264,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung bestellt werden.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[133].children[1].children[6].children[0].text@361:ministry-compound",
+      "path": "body[133].children[1].children[6].children[0].text",
+      "start": 361,
+      "end": 379,
+      "term": "Justizministeriums",
+      "context": "…ist oder das Gericht entgegen dem Antrag des Vertreters des Justizministeriums diese Maßnahme nicht verhängt hat.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[2].children[0].children[0].children[0].text@276:rule:jurisdiction-name-bare",
+      "path": "body[133].children[2].children[0].children[0].children[0].text",
+      "start": 276,
+      "end": 295,
+      "term": "Nordrhein-Westfalen",
+      "context": "…86) in der jeweils geltenden Fassung und des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30) in der jeweils geltend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[133].children[2].children[0].children[0].children[0].text@317:protected:gazette-nrw",
+      "path": "body[133].children[2].children[0].children[0].children[0].text",
+      "start": 317,
+      "end": 331,
+      "term": "GV. NRW. S. 30",
+      "context": "…des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30) in der jeweils geltenden Fassung entsprechend, soweit dies…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[133].children[2].children[1].children[0].children[0].text@53:ministry-compound",
+      "path": "body[133].children[2].children[1].children[0].children[0].text",
+      "start": 53,
+      "end": 71,
+      "term": "Justizministeriums",
+      "context": "Das Versetzungsverfahren wird durch einen Antrag des Justizministeriums eingeleitet. Ein Vorverfahren findet nicht statt.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[2].children[2].children[0].children[0].text@82:ministry-compound",
+      "path": "body[133].children[2].children[2].children[0].children[0].text",
+      "start": 82,
+      "end": 100,
+      "term": "Justizministeriums",
+      "context": "…wird in den Fällen des § 67 Nummer 3 durch einen Antrag des Justizministeriums, in den Fällen der Nummer 4 durch einen Antrag der Richteri…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[2].children[2].children[1].children[0].text@471:ministry-compound",
+      "path": "body[133].children[2].children[2].children[1].children[0].text",
+      "start": 471,
+      "end": 489,
+      "term": "Justizministeriums",
+      "context": "…. Das Nähere zur Ausführung wird durch Rechtsverordnung des Justizministeriums geregelt.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[2].children[2].children[2].children[2].text@153:ministry-compound",
+      "path": "body[133].children[2].children[2].children[2].children[2].text",
+      "start": 153,
+      "end": 170,
+      "term": "Justizministerium",
+      "context": "… nicht innerhalb eines Monats schriftlich zu, so stellt das Justizministerium das Verfahren ein oder beantragt beim Dienstgericht die Zul…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[133].children[2].children[2].children[2].children[3].text@38:ministry-compound",
+      "path": "body[133].children[2].children[2].children[2].children[3].text",
+      "start": 38,
+      "end": 56,
+      "term": "Justizministeriums",
+      "context": "Gibt das Dienstgericht dem Antrag des Justizministeriums statt, so ist die Richterin oder der Richter mit dem Ende d…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[2].children[2].children[6].children[0].text@207:ministry-compound",
+      "path": "body[133].children[2].children[2].children[6].children[0].text",
+      "start": 207,
+      "end": 225,
+      "term": "Justizministeriums",
+      "context": "…weit der Staatskasse auferlegen, als es nach dem Antrag des Justizministeriums erkannt und die Richterin oder der Richter diesem Antrag ni…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[3].children[1].children[0].text@273:ministry-compound",
+      "path": "body[133].children[3].children[1].children[0].text",
+      "start": 273,
+      "end": 291,
+      "term": "Justizministeriums",
+      "context": "…haben. Sie werden von der Landesregierung auf Vorschlag des Justizministeriums für fünf Geschäftsjahre als ehrenamtliche Richterinnen oder…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[133].children[3].children[1].children[0].text@412:ministry-compound",
+      "path": "body[133].children[3].children[1].children[0].text",
+      "start": 412,
+      "end": 429,
+      "term": "Justizministerium",
+      "context": "…Richter bestellt. Die zuständigen Berufsverbände können dem Justizministerium Beisitzerinnen und Beisitzer vorschlagen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[134].children[0].children[0].text@157:ministry-compound",
+      "path": "body[134].children[0].children[0].text",
+      "start": 157,
+      "end": 174,
+      "term": "Finanzministerium",
+      "context": "… (§ 2 Absatz 2) das für Inneres zuständige Ministerium, das Finanzministerium oder beide gemeinsam zum Erlass von Rechts- oder Verwaltung…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[134].children[0].children[0].text@345:ministry-compound",
+      "path": "body[134].children[0].children[0].text",
+      "start": 345,
+      "end": 363,
+      "term": "Justizministeriums",
+      "context": "…egelungen für Richterinnen und Richter das Einvernehmen des Justizministeriums erforderlich.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[134].children[5].children[1].text@255:rule:jurisdiction-abbreviation",
+      "path": "body[134].children[5].children[1].text",
+      "start": 255,
+      "end": 258,
+      "term": "NRW",
+      "context": "…Staatsanwältinnen und Staatsanwälte“ vom 2. Mai 2005 (JMBl. NRW S. 121), die zuletzt durch Allgemeine Verfügung vom 4. Juli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[134].children[5].children[1].text@331:rule:jurisdiction-abbreviation",
+      "path": "body[134].children[5].children[1].text",
+      "start": 331,
+      "end": 334,
+      "term": "NRW",
+      "context": "… zuletzt durch Allgemeine Verfügung vom 4. Juli 2016 (JMBl. NRW S. 191) geändert worden ist, weiterhin anwendbar.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[134].children[5].children[2].text@239:rule:jurisdiction-abbreviation",
+      "path": "body[134].children[5].children[2].text",
+      "start": 239,
+      "end": 242,
+      "term": "NRW",
+      "context": "…taatsanwältinnen und Staatsanwälten“ vom 2. Mai 2005 (JMBl. NRW S. 136), die durch Allgemeine Verfügung vom 9. Juli 2014 (J…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[134].children[5].children[2].text@307:rule:jurisdiction-abbreviation",
+      "path": "body[134].children[5].children[2].text",
+      "start": 307,
+      "end": 310,
+      "term": "NRW",
+      "context": "…36), die durch Allgemeine Verfügung vom 9. Juli 2014 (JMBl. NRW S. 191) geändert worden ist, weiterhin anwendbar.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[136].text@0:rule:jurisdiction-name-bare",
+      "path": "body[136].text",
+      "start": 0,
+      "end": 19,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[138].text@4:ministry-compound",
+      "path": "body[138].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[141].text@4:ministry-compound",
+      "path": "body[141].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[143].text@55:protected:gazette-nrw",
+      "path": "body[143].text",
+      "start": 55,
+      "end": 70,
+      "term": "GV. NRW. S. 812",
+      "context": "Artikel 11 Absatz 2 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 812):",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 15
+    },
+    "source-citation": {
+      "protected": 11
+    },
+    "ministry": {
+      "manual-review": 41
+    },
+    "municipality": {
+      "manual-review": 14
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[131].children[2].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[131].children[5].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[131].children[5].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[131].children[5].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[132].children[1].children[0].children[10].children[1].children[9].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[133].children[0].children[0].children[1].children[16].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[133].children[0].children[0].children[3].children[2].text",
+      "rule": "jurisdiction-name-adjective",
+      "from": "nordrhein-westfälischen",
+      "to": "westdeutschen"
+    },
+    {
+      "path": "body[133].children[1].children[5].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[133].children[2].children[0].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[134].children[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[134].children[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[134].children[5].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[134].children[5].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[136].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[131].children[1].children[3].text",
+      "term": "Justizministerium",
+      "context": "…tenden Mitglieder des Landespersonalausschusses je zwei vom Justizministerium zu benennende Mitglieder und an die Stelle der von den Spit…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[131].children[1].children[3].text",
+      "term": "Justizministerium",
+      "context": "…en Gerichtszweige angemessen berücksichtigt werden. Die vom Justizministerium und den zuständigen Berufsverbänden zu benennenden Mitglied…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[131].children[1].children[3].text",
+      "term": "Justizministerium",
+      "context": "…Richter auf Lebenszeit sein. Vorsitzende Person ist das vom Justizministerium bestimmte Mitglied (§ 95 Absatz 6 des Landesbeamtengesetzes…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[8].children[6].text",
+      "term": "Justizministerium",
+      "context": "…en nach § 41 Absatz 1 zum Gegenstand haben, entscheidet das Justizministerium endgültig.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[8].children[7].text",
+      "term": "Justizministerium",
+      "context": "…satz 2 bis 4 seiner Mitbestimmung unterliegen, zwischen dem Justizministerium und der dort bestehenden zuständigen Richtervertretung kein…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[9].children[1].text",
+      "term": "Justizministerium",
+      "context": "Bei dem Justizministerium wird für die Dauer der Wahlperiode der Richter- und Staatsa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[9].children[1].text",
+      "term": "Justizministerium",
+      "context": "…d deren Stellvertreterin oder Stellvertreter haben sich das Justizministerium und die bei ihm gebildeten Richtervertretungen sowie der Ha…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[9].children[1].text",
+      "term": "Justizministeriums",
+      "context": "…eine Einigung nicht zustande, so entscheidet auf Antrag des Justizministeriums oder einer Vertretung die Präsidentin oder der Präsident de…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[9].children[1].text",
+      "term": "Justizministerium",
+      "context": "…ür das jeweilige Einigungsstellenverfahren benannt. Die vom Justizministerium vorgeschlagenen Beisitzerinnen und Beisitzer müssen Bediens…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[9].children[3].text",
+      "term": "Justizministeriums",
+      "context": "… sechs Beisitzerinnen und Beisitzern, die auf Vorschlag des Justizministeriums und der Vertretung je zur Hälfte benannt werden.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[0].children[15].children[2].children[1].text",
+      "term": "Justizministeriums",
+      "context": "des Justizministeriums",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[0].children[0].children[2].text",
+      "term": "Justizministerium",
+      "context": "…rräte werden für die Gerichte jedes Gerichtszweiges bei dem Justizministerium gebildet.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[0].children[14].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…legenheiten, in denen die Landesregierung auf Vorschlag des Justizministeriums entscheidet oder das Justizministerium eine Entscheidung mi…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[0].children[14].children[0].text",
+      "term": "Justizministerium",
+      "context": "…g auf Vorschlag des Justizministeriums entscheidet oder das Justizministerium eine Entscheidung mit Wirkung über seinen Geschäftsbereich …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[1].children[0].children[0].text",
+      "term": "Justizministerium",
+      "context": "…tschaften werden zudem Bezirksstaatsanwaltsräte und bei dem Justizministerium ein Hauptstaatsanwaltsrat gebildet.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[2].children[0].children[5].text",
+      "term": "Justizministerium",
+      "context": "…tung ist die Maßnahme vor der Beschlussfassung zwischen dem Justizministerium und den betroffenen Vertretungen mit dem Ziel einer Verstän…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[2].children[2].children[0].text",
+      "term": "Justizministerium",
+      "context": "Bei dem Justizministerium wird für die Dauer der Wahlperiode der Richter- und Staatsa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[1].children[2].children[2].children[0].text",
+      "term": "Justizministerium",
+      "context": "…ersonalrat beteiligt, wird von den Vertretungen und von dem Justizministerium je eine weitere Besitzerin oder ein weiterer Beisitzer für …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[1].children[1].text",
+      "term": "Hamm",
+      "context": "…en Mitgliedern müssen vier aus dem Oberlandesgerichtsbezirk Hamm und je zwei aus den Oberlandesgerichtsbezirken Düsseldorf u…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[1].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…sbezirk Hamm und je zwei aus den Oberlandesgerichtsbezirken Düsseldorf und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[1].children[1].text",
+      "term": "Köln",
+      "context": "…d je zwei aus den Oberlandesgerichtsbezirken Düsseldorf und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[3].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…ren Mitgliedern muss je eins aus den Finanzgerichtsbezirken Düsseldorf, Köln und Münster kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[3].children[1].text",
+      "term": "Köln",
+      "context": "…ern muss je eins aus den Finanzgerichtsbezirken Düsseldorf, Köln und Münster kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[3].children[1].text",
+      "term": "Münster",
+      "context": "…je eins aus den Finanzgerichtsbezirken Düsseldorf, Köln und Münster kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[4].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…gliedern muss je eins aus den Landesarbeitsgerichtsbezirken Düsseldorf, Hamm und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[4].children[1].text",
+      "term": "Hamm",
+      "context": "…s je eins aus den Landesarbeitsgerichtsbezirken Düsseldorf, Hamm und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[4].children[1].text",
+      "term": "Köln",
+      "context": "… aus den Landesarbeitsgerichtsbezirken Düsseldorf, Hamm und Köln kommen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[10].children[1].children[1].text",
+      "term": "Justizministerium",
+      "context": "das Justizministerium.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[11].children[1].text",
+      "term": "Justizministeriums",
+      "context": "…estens der Hälfte der Mitglieder des Präsidialrats oder des Justizministeriums kann ein Mitglied wegen grober Verletzung seiner Pflichten …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[13].children[1].children[0].text",
+      "term": "Justizministerium",
+      "context": "der oder dem das Justizministerium im Sinne des Absatzes 1 Nummer 1 ein Richteramt mit höherem…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[132].children[2].children[13].children[1].children[1].text",
+      "term": "Justizministerium",
+      "context": "die oder den das Justizministerium im Sinne des Absatzes 1 Nummer 2 versetzen oder zur Versetz…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[0].children[0].children[0].children[1].text",
+      "term": "Düsseldorf",
+      "context": "Das Dienstgericht wird bei dem Landgericht Düsseldorf, der Dienstgerichtshof bei dem Oberlandesgericht Hamm erric…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[0].children[0].children[0].children[1].text",
+      "term": "Hamm",
+      "context": "…Düsseldorf, der Dienstgerichtshof bei dem Oberlandesgericht Hamm errichtet.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[0].children[0].children[0].children[4].text",
+      "term": "Justizministerium",
+      "context": "Die Dienstaufsicht über die Richterdienstgerichte steht dem Justizministerium zu.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[0].children[1].children[1].children[2].text",
+      "term": "Düsseldorf",
+      "context": "…verhältnismäßig der Mitgliederzahl der Rechtsanwaltskammern Düsseldorf, Hamm und Köln entsprechen. Das Präsidium bestimmt die erfo…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[0].children[1].children[1].children[2].text",
+      "term": "Hamm",
+      "context": "…ßig der Mitgliederzahl der Rechtsanwaltskammern Düsseldorf, Hamm und Köln entsprechen. Das Präsidium bestimmt die erforderli…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[0].children[1].children[1].children[2].text",
+      "term": "Köln",
+      "context": "…itgliederzahl der Rechtsanwaltskammern Düsseldorf, Hamm und Köln entsprechen. Das Präsidium bestimmt die erforderliche Zahl …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[1].children[3].children[1].text",
+      "term": "Justizministerium",
+      "context": "Das Justizministerium kann ein Disziplinarverfahren einleiten oder ein Disziplina…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[1].children[3].children[2].text",
+      "term": "Justizministerium",
+      "context": "Die Disziplinarklage wird von dem Justizministerium erhoben.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[1].children[4].children[0].text",
+      "term": "Justizministeriums",
+      "context": "Das Dienstgericht entscheidet auf Antrag des Justizministeriums durch Beschluss über die vorläufige Dienstenthebung, die Ei…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[1].children[4].children[0].text",
+      "term": "Justizministerium",
+      "context": "…sowie die Aufhebung dieser Maßnahmen. Der Beschluss ist dem Justizministerium und der Richterin oder dem Richter zuzustellen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[1].children[4].children[1].text",
+      "term": "Justizministeriums",
+      "context": "…g dieser Maßnahmen kann das Dienstgericht nach Anhörung des Justizministeriums auch von Amts wegen anordnen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[1].children[6].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…ist oder das Gericht entgegen dem Antrag des Vertreters des Justizministeriums diese Maßnahme nicht verhängt hat.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[2].children[1].children[0].children[0].text",
+      "term": "Justizministeriums",
+      "context": "Das Versetzungsverfahren wird durch einen Antrag des Justizministeriums eingeleitet. Ein Vorverfahren findet nicht statt.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[2].children[2].children[0].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…wird in den Fällen des § 67 Nummer 3 durch einen Antrag des Justizministeriums, in den Fällen der Nummer 4 durch einen Antrag der Richteri…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[2].children[2].children[1].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…. Das Nähere zur Ausführung wird durch Rechtsverordnung des Justizministeriums geregelt.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[2].children[2].children[2].children[2].text",
+      "term": "Justizministerium",
+      "context": "… nicht innerhalb eines Monats schriftlich zu, so stellt das Justizministerium das Verfahren ein oder beantragt beim Dienstgericht die Zul…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[2].children[2].children[2].children[3].text",
+      "term": "Justizministeriums",
+      "context": "Gibt das Dienstgericht dem Antrag des Justizministeriums statt, so ist die Richterin oder der Richter mit dem Ende d…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[2].children[2].children[6].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…weit der Staatskasse auferlegen, als es nach dem Antrag des Justizministeriums erkannt und die Richterin oder der Richter diesem Antrag ni…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[3].children[1].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…haben. Sie werden von der Landesregierung auf Vorschlag des Justizministeriums für fünf Geschäftsjahre als ehrenamtliche Richterinnen oder…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[133].children[3].children[1].children[0].text",
+      "term": "Justizministerium",
+      "context": "…Richter bestellt. Die zuständigen Berufsverbände können dem Justizministerium Beisitzerinnen und Beisitzer vorschlagen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[134].children[0].children[0].text",
+      "term": "Finanzministerium",
+      "context": "… (§ 2 Absatz 2) das für Inneres zuständige Ministerium, das Finanzministerium oder beide gemeinsam zum Erlass von Rechts- oder Verwaltung…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[134].children[0].children[0].text",
+      "term": "Justizministeriums",
+      "context": "…egelungen für Richterinnen und Richter das Einvernehmen des Justizministeriums erforderlich.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[138].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[141].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1210,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "(Artikel 1 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 812))",
+        "status": "protected"
+      },
+      {
+        "path": "body[131].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…huss (§ 94 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung) an die Stelle de…",
+        "status": "protected"
+      },
+      {
+        "path": "body[131].children[9].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…t. § 15 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310) bleibt unberührt. In Fällen des § 7 besteht ein Rü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[131].children[14].children[1].text",
+        "term": "NRW",
+        "context": "…riften des Justizneutralitätsgesetzes vom 9. März 2021 (GV. NRW. 290) in der jeweils geltenden Fassung zu erlassen.",
+        "status": "protected"
+      },
+      {
+        "path": "body[132].children[0].children[2].children[3].text",
+        "term": "NRW",
+        "context": "…Landespersonalvertretungsgesetzes vom 3. Dezember 1974 (GV. NRW. S. 1514) in der jeweils geltenden Fassung entsprechend.",
+        "status": "protected"
+      },
+      {
+        "path": "body[132].children[0].children[9].children[2].text",
+        "term": "NRW",
+        "context": "… 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624) in der jeweils geltenden Fassung bezeichneten Vora…",
+        "status": "protected"
+      },
+      {
+        "path": "body[132].children[1].children[0].children[10].children[1].children[9].text",
+        "term": "NRW",
+        "context": "…llungs- und Urlaubsverordnung West vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jeweils geltenden Fassung,",
+        "status": "protected"
+      },
+      {
+        "path": "body[133].children[0].children[0].children[3].children[4].text",
+        "term": "NRW",
+        "context": "…ng des Landesreisekostengesetzes vom 16. Dezember 1998 (GV. NRW. S. 738) in der jeweils geltenden Fassung, wenn sie weder i…",
+        "status": "protected"
+      },
+      {
+        "path": "body[133].children[1].children[5].children[0].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung bestellt werden.",
+        "status": "protected"
+      },
+      {
+        "path": "body[133].children[2].children[0].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…des Justizgesetzes Westdeutschland vom 26. Januar 2010 (GV. NRW. S. 30) in der jeweils geltenden Fassung entsprechend, sowe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[143].text",
+        "term": "NRW",
+        "context": "Artikel 11 Absatz 2 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 812):",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Richter- und Staatsanwältegesetz für das Land Nordrhein-Westfalen vom 8. Dezember 2015 (In Kraft getreten am 1. Januar 2016)",
+    "sourceVersion": "Richter- und Staatsanwältegesetz für das Land Nordrhein-Westfalen vom 8. Dezember 2015 (In Kraft getreten am 1. Januar 2016)",
+    "simulation": "Richter- und Staatsanwältegesetz für das Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 107,
+          "actual": 107,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 111295,
+          "actual": 111040,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 107,
+          "actual": 107,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 803,
+          "actual": 803,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 19,
+          "actual": 19,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 107,
+          "actual": 107,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 111040,
+          "actual": 111008,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "107 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "107 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:32:10.478Z"
+}

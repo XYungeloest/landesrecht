@@ -1,0 +1,2736 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31156",
+  "slug": "apg-dvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@56:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "Verordnung zur Ausführung des Alten- und Pflegegesetzes Nordrhein-Westfalen und nach § 8a SGB XI",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@8:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 8,
+      "end": 11,
+      "term": "NRW",
+      "context": "APG DVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@305:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 305,
+      "end": 324,
+      "term": "Nordrhein-Westfalen",
+      "context": "…den ist, und des § 3 Absatz 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen vom 2. Oktober 2014 (Artikel 1 des Gesetzes zur Entwicklung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@660:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 660,
+      "end": 675,
+      "term": "GV. NRW. S. 619",
+      "context": "…n mit Behinderung und ihre Angehörigen vom 2. Oktober 2014 (GV. NRW. S. 619)) verordnet die Landesregierung im Einvernehmen mit dem Lan…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@869:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 869,
+      "end": 888,
+      "term": "Nordrhein-Westfalen",
+      "context": "…, 13 Absatz 2 und 14 Absatz 9 des Alten- und Pflegegesetzes Nordrhein-Westfalen verordnet das Ministerium für Gesundheit, Emanzipation, Pfl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@903:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 903,
+      "end": 961,
+      "term": "Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "…Alten- und Pflegegesetzes Nordrhein-Westfalen verordnet das Ministerium für Gesundheit, Emanzipation, Pflege und Alter im Einvernehmen mit dem Landtag:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[0].children[1].title@26:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].children[1].title",
+      "start": 26,
+      "end": 45,
+      "term": "Nordrhein-Westfalen",
+      "context": "Alten- und Pflegegesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].title@100:rule:jurisdiction-name-bare",
+      "path": "body[6].children[4].title",
+      "start": 100,
+      "end": 119,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung nach § 11 Absatz 7 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].children[0].text@86:rule:jurisdiction-name-bare",
+      "path": "body[6].children[4].children[0].text",
+      "start": 86,
+      "end": 105,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Beschluss nach § 11 Absatz 7 Satz 1 Alten- und Pflegegesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[0].children[0].text@107:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[0].children[0].text",
+      "start": 107,
+      "end": 126,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en im Sinne des § 10 Absatz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen vom 2. Oktober 2014 (GV. NRW. S. 625), das zuletzt durch Ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[0].children[0].text@148:protected:gazette-nrw",
+      "path": "body[10].children[1].children[0].children[0].children[0].text",
+      "start": 148,
+      "end": 163,
+      "term": "GV. NRW. S. 625",
+      "context": "…und Pflegegesetzes Nordrhein-Westfalen vom 2. Oktober 2014 (GV. NRW. S. 625), das zuletzt durch Gesetz vom 12. Juli 2019 (GV. NRW. S. 3…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[0].children[0].text@210:protected:gazette-nrw",
+      "path": "body[10].children[1].children[0].children[0].children[0].text",
+      "start": 210,
+      "end": 225,
+      "term": "GV. NRW. S. 374",
+      "context": "…. NRW. S. 625), das zuletzt durch Gesetz vom 12. Juli 2019 (GV. NRW. S. 374) geändert worden ist, erfolgt nach Maßgabe der nachfolgende…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[1].children[1].text@840:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[1].children[1].text",
+      "start": 840,
+      "end": 859,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Preisindizes für Wohngebäude (Bauleistungen am Bauwerk) in Nordrhein-Westfalen (Basisjahr 2015=100) für die Folgejahre jeweils auf Basis d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@100:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 100,
+      "end": 119,
+      "term": "Nordrhein-Westfalen",
+      "context": "…inne des § 10 Absatz 6 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen sind unabhängig von den in dieser Verordnung festgesetzten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@436:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 436,
+      "end": 455,
+      "term": "Nordrhein-Westfalen",
+      "context": "…inne des § 10 Absatz 6 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen sind im Rahmen des § 10 Absatz 6 Satz 4 des Alten- und Pfle…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@526:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 526,
+      "end": 545,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hmen des § 10 Absatz 6 Satz 4 des Alten- und Pflegegesetzes Nordrhein-Westfalen die für einen Neubau im Jahr der Folgeinvestition geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@772:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 772,
+      "end": 791,
+      "term": "Nordrhein-Westfalen",
+      "context": "…§ 10 Absatz 3 Nummer 2 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen zugelassen wird. Für anerkannte Maßnahmen im Sinne des § 10…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@898:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 898,
+      "end": 917,
+      "term": "Nordrhein-Westfalen",
+      "context": "…inne des § 10 Absatz 6 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen, die zumindest auch eine wesentliche Modernisierung, einen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@1281:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 1281,
+      "end": 1300,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung nach § 10 Absatz 6 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen kann zudem nur erfolgen, wenn zuvor die zwingend umzusetzen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[0].text@1442:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "start": 1442,
+      "end": 1461,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ben nach § 10 Absatz 6 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfüllt sind.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[1].text@85:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[1].text",
+      "start": 85,
+      "end": 104,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fwendungen nach § 10 Absatz 6 des Alten- und Pflegegesetzes Nordrhein-Westfalen bleiben Aufwendungen für Maßnahmen unberücksichtigt, die au…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[2].text@534:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[2].text",
+      "start": 534,
+      "end": 553,
+      "term": "Nordrhein-Westfalen",
+      "context": "…itt festgesetzten Aufwendungen aller Pflegeeinrichtungen in Nordrhein-Westfalen nicht übersteigen. Die oberste Landesbehörde ermittelt die …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[3].text@92:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "start": 92,
+      "end": 111,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hme nach § 10 Absatz 6 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen zwingend zu einer Reduzierung der verfügbaren Platzzahl in …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[3].text@434:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "start": 434,
+      "end": 453,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hme nach § 10 Absatz 6 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen durchgeführt werden, als Teil dieser Maßnahme betrachtet. Ü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[3].text@617:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "start": 617,
+      "end": 636,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung nach § 10 Absatz 6 Satz 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen entscheidet der örtliche Träger der Sozialhilfe auf der Gru…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[3].text@757:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "start": 757,
+      "end": 776,
+      "term": "Nordrhein-Westfalen",
+      "context": "…dlage seiner Planung nach § 7 des Alten- und Pflegegesetzes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[4].text@62:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[4].text",
+      "start": 62,
+      "end": 81,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fwendungen nach § 10 Absatz 6 des Alten- und Pflegegesetzes Nordrhein-Westfalen sind auf einen Zeitraum von 25 Jahren linear zu verteilen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[5].text@115:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[5].text",
+      "start": 115,
+      "end": 134,
+      "term": "Nordrhein-Westfalen",
+      "context": "…men nach § 10 Absatz 6 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen einschließlich der vor der Maßnahme noch bestehenden Restwe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[2].children[6].text@92:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[2].children[6].text",
+      "start": 92,
+      "end": 111,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hme nach § 10 Absatz 6 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen in einer oder mehreren Einrichtungen einer Trägerin oder ei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[3].children[0].text@542:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[3].children[0].text",
+      "start": 542,
+      "end": 561,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Preisindizes für Wohngebäude (Bauleistungen am Bauwerk) in Nordrhein-Westfalen (Basisjahr 2015=100) fortgeschrieben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[5].children[1].text@98:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[5].children[1].text",
+      "start": 98,
+      "end": 117,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Preisindizes für Wohngebäude (Bauleistungen am Bauwerk) in Nordrhein-Westfalen (Basisjahr 2015=100) fortgeschrieben und jährlich von der o…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[7].children[8].text@440:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[7].children[8].text",
+      "start": 440,
+      "end": 459,
+      "term": "Nordrhein-Westfalen",
+      "context": "…014 im Rahmen von Festsetzungen nach dem Landespflegegesetz Nordrhein-Westfalen von den zuständigen Behörden als betriebsnotwendig anerkann…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[7].children[11].text@268:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[0].children[7].children[11].text",
+      "start": 268,
+      "end": 287,
+      "term": "Nordrhein-Westfalen",
+      "context": "…§ 10 Absatz 3 Nummer 2 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen zur Überschreitung der nach Absatz 3 bis 8 zu berechnenden …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[0].children[0].text@269:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[0].children[0].text",
+      "start": 269,
+      "end": 288,
+      "term": "Nordrhein-Westfalen",
+      "context": "…wendungen gemäß § 10 Absatz 4 des Alten- und Pflegegesetzes Nordrhein-Westfalen (Beratungsverfahren). Auf Antrag der Trägerin oder des Träg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[0].children[0].children[0].text@152:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[0].children[0].children[0].text",
+      "start": 152,
+      "end": 171,
+      "term": "Nordrhein-Westfalen",
+      "context": "…er Vorgaben des § 11 Absatz 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen und die Einordnung von Maßnahmen nach § 10 Absatz 6 des Alt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[0].children[0].children[0].text@254:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[0].children[0].children[0].text",
+      "start": 254,
+      "end": 273,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Maßnahmen nach § 10 Absatz 6 des Alten- und Pflegegesetzes Nordrhein-Westfalen (Abstimmungsverfahren),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[1].children[0].text@336:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[1].children[0].text",
+      "start": 336,
+      "end": 355,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en im Sinne des § 10 Absatz 4 des Alten- und Pflegegesetzes Nordrhein-Westfalen vorzulegen (§ 9 Absatz 1 Satz 1). Der örtliche Träger der S…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[1].children[2].text@210:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[1].children[2].text",
+      "start": 210,
+      "end": 229,
+      "term": "Nordrhein-Westfalen",
+      "context": "…aßnahme nach den §§ 13 und 14 des Alten- und Pflegegesetzes Nordrhein-Westfalen mit Bindungswirkung für das spätere Feststellungs- beziehun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[0].text@398:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "start": 398,
+      "end": 417,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ungen des § 11 Absatz 2 und 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfüllt und bei Einrichtungen, die nach dem Inkrafttreten d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[0].text@506:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "start": 506,
+      "end": 525,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n, die nach dem Inkrafttreten des Alten- und Pflegegesetzes Nordrhein-Westfalen erstmals den Betrieb aufgenommen haben, der Nachweis nicht …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[0].text@1181:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "start": 1181,
+      "end": 1200,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Möglichkeit des § 11 Absatz 7 des Alten- und Pflegegesetzes Nordrhein-Westfalen Gebrauch gemacht hat, erfolgt für die Einrichtungen, für di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[0].text@1347:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "start": 1347,
+      "end": 1366,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ss gemäß § 11 Absatz 7 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen ein Antrag auf Förderung gestellt wurde, die Feststellung n…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[0].children[3].text@110:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[0].children[3].text",
+      "start": 110,
+      "end": 129,
+      "term": "Nordrhein-Westfalen",
+      "context": "…§ 10 Absatz 3 Nummer 2 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[0].children[8].text@98:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[0].children[8].text",
+      "start": 98,
+      "end": 117,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Preisindizes für Wohngebäude (Bauleistungen am Bauwerk) in Nordrhein-Westfalen ermittelt werden, ist für die Feststellung auf der Grundlag…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[1].text@77:protected:gazette-nrw",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[1].text",
+      "start": 77,
+      "end": 92,
+      "term": "GV. NRW. S. 625",
+      "context": "… der nach dem Wohn- und Teilhabegesetz vom 2. Oktober 2014 (GV. NRW. S. 625), das zuletzt durch Gesetz vom 11. April 2019 (GV. NRW. S. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[1].text@140:protected:gazette-nrw",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[1].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 210",
+      "context": "… NRW. S. 625), das zuletzt durch Gesetz vom 11. April 2019 (GV. NRW. S. 210) geändert worden ist, zuständigen Behörde über die Erfüllun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[1].text@340:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[1].text",
+      "start": 340,
+      "end": 359,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ng im Sinne des § 11 Absatz 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen) oder den Hinweis, dass zunächst noch von der Übergangsfris…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[13].text@76:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[13].text",
+      "start": 76,
+      "end": 95,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n, die nach dem Inkrafttreten des Alten- und Pflegegesetzes Nordrhein-Westfalen erstmals den Betrieb aufgenommen haben, den Nachweis, dass …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[13].text@282:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[13].text",
+      "start": 282,
+      "end": 301,
+      "term": "Nordrhein-Westfalen",
+      "context": "… und Pflegekonferenz nach § 8 des Alten- und Pflegegesetzes Nordrhein-Westfalen vorgestellt wurde, oder ersatzweise einen Beleg dafür, dass…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[14].text@176:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[14].text",
+      "start": 176,
+      "end": 195,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Möglichkeit des § 11 Absatz 7 des Alten- und Pflegegesetzes Nordrhein-Westfalen Gebrauch gemacht hat, bei Einrichtungen, für die erstmals n…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[1].children[14].text@330:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[1].children[14].text",
+      "start": 330,
+      "end": 349,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ss gemäß § 11 Absatz 7 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen ein Antrag auf Förderung gestellt wurde, die Bedarfsbestäti…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[2].children[5].text@599:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[2].children[5].text",
+      "start": 599,
+      "end": 618,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Preisindizes für Wohngebäude (Bauleistungen am Bauwerk) in Nordrhein-Westfalen (Basisjahr 2015=100, Mai-Index des der Feststellung vorange…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].children[3].children[4].text@85:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].children[3].children[4].text",
+      "start": 85,
+      "end": 104,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Preisindizes für Wohngebäude (Bauleistungen am Bauwerk) in Nordrhein-Westfalen fortgeschrieben werden, ist für den gesamten Festsetzungsze…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[0].title@40:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[0].title",
+      "start": 40,
+      "end": 59,
+      "term": "Nordrhein-Westfalen",
+      "context": "nach § 14 des Alten- und Pflegegesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[1].children[0].text@306:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[1].children[0].text",
+      "start": 306,
+      "end": 325,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fwendungen nach § 11 Absatz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen gewährt. Es gilt als öffentliche Förderung im Sinne des § 9…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[1].children[1].text@203:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[1].children[1].text",
+      "start": 203,
+      "end": 222,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gen nach § 11 Absätze 2 und 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfüllen, über eine Feststellung des Gesamtbetrages der als…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[3].children[0].text@119:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[3].children[0].text",
+      "start": 119,
+      "end": 138,
+      "term": "Nordrhein-Westfalen",
+      "context": "…d Vermögens erfolgt nach § 14 des Alten- und Pflegegesetzes Nordrhein-Westfalen. Die ab dem 1. Januar 2020 zu gewährende Bekleidungspauscha…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[4].children[0].text@475:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[4].children[0].text",
+      "start": 475,
+      "end": 494,
+      "term": "Nordrhein-Westfalen",
+      "context": "…inne von § 14 Absatz 6 Satz 2 des Alten- und Pflegegesetzes Nordrhein-Westfalen ist die Behörde oder der Träger der Kriegsopferfürsorge zus…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[4].children[1].text@859:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[4].children[1].text",
+      "start": 859,
+      "end": 878,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fwendungen nach § 11 Absatz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen hervorgeht.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[4].children[2].text@715:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[4].children[2].text",
+      "start": 715,
+      "end": 734,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hneten Aufwendungen nach § 11 des Alten- und Pflegegesetzes Nordrhein-Westfalen durch vorsätzlich oder grob fahrlässig unrichtige oder unvo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[0].children[4].children[3].text@188:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[0].children[4].children[3].text",
+      "start": 188,
+      "end": 207,
+      "term": "Nordrhein-Westfalen",
+      "context": "…genden Aufwendungen nach § 11 des Alten- und Pflegegesetzes Nordrhein-Westfalen. Die pflegebedürftige Person erhält hierüber einen Bescheid…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[1].children[0].children[0].text@253:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[1].children[0].children[0].text",
+      "start": 253,
+      "end": 272,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fwendungen nach § 11 Absatz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen, die der Kurzzeitpflege gemäß § 42 des Elften Buches Sozial…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[1].children[0].children[1].text@87:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[1].children[0].children[1].text",
+      "start": 87,
+      "end": 106,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hme einer Förderung nach § 13 des Alten- und Pflegegesetzes Nordrhein-Westfalen sind vollstationäre Pflegeeinrichtungen, die die Voraussetz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[1].children[0].children[1].text@228:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[1].children[0].children[1].text",
+      "start": 228,
+      "end": 247,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gen nach § 11 Absätze 2 und 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfüllen und den Pflegebedürftigen keine förderfähigen Aufw…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[2].children[0].children[0].text@135:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[2].children[0].children[0].text",
+      "start": 135,
+      "end": 154,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Finanzierung ihrer nach § 11 des Alten- und Pflegegesetzes Nordrhein-Westfalen förderfähigen Aufwendungen eine öffentliche Förderung entsp…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[2].children[0].children[1].text@87:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[2].children[0].children[1].text",
+      "start": 87,
+      "end": 106,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hme einer Förderung nach § 13 des Alten- und Pflegegesetzes Nordrhein-Westfalen sind Tages- und Nachtpflegeeinrichtungen, die die Vorausset…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[2].children[0].children[1].text@229:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[2].children[0].children[1].text",
+      "start": 229,
+      "end": 248,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gen nach § 11 Absätze 2 und 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfüllen und den Pflegebedürftigen keine Aufwendungen berec…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[0].children[0].text@141:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[0].children[0].text",
+      "start": 141,
+      "end": 160,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ngen nach § 11 Absatz 2 und 3 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfüllen und den Pflegebedürftigen nicht neben der Inanspru…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[0].children[0].text@389:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[0].children[0].text",
+      "start": 389,
+      "end": 408,
+      "term": "Nordrhein-Westfalen",
+      "context": "…uch berechnen, sind nach § 12 des Alten- und Pflegegesetzes Nordrhein-Westfalen berechtigt, zur Finanzierung ihrer betriebsnotwendigen Aufw…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[1].children[0].text@63:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[1].children[0].text",
+      "start": 63,
+      "end": 82,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Förderung nach § 12 Absatz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen wird als pauschale Förderung gewährt. Sie beträgt 2,15 Euro…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[2].children[3].children[3].title@15:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[2].children[3].children[3].title",
+      "start": 15,
+      "end": 34,
+      "term": "Nordrhein-Westfalen",
+      "context": "Pflegegesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[3].title@81:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[3].title",
+      "start": 81,
+      "end": 100,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Beschluss nach § 11 Absatz 7 Satz 1 Alten- und Pflegegesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[3].children[0].text@106:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[3].children[0].text",
+      "start": 106,
+      "end": 125,
+      "term": "Nordrhein-Westfalen",
+      "context": "…uss nach § 11 Absatz 7 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen auf die Förderung vollstationärer oder die Förderung teilst…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[3].children[1].text@103:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[3].children[1].text",
+      "start": 103,
+      "end": 122,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ses nach § 11 Absatz 7 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen erfolgt nach den einschlägigen örtlichen Bekanntmachungsvor…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[4].children[0].text@85:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[4].children[0].text",
+      "start": 85,
+      "end": 104,
+      "term": "Nordrhein-Westfalen",
+      "context": "…arfsplanung nach § 7 Absatz 6 des Alten- und Pflegegesetzes Nordrhein-Westfalen einen Bedarf an zusätzlichen Plätzen in teil- oder vollstat…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[4].children[1].text@179:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[4].children[1].text",
+      "start": 179,
+      "end": 198,
+      "term": "Nordrhein-Westfalen",
+      "context": "…uss nach § 11 Absatz 7 Satz 1 des Alten- und Pflegegesetzes Nordrhein-Westfalen eine Bedarfsabhängigkeit der Förderung neuer Plätze vorsieh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[4].children[1].text@614:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[4].children[1].text",
+      "start": 614,
+      "end": 633,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Beschluss nach § 11 Absatz 7 des Alten- und Pflegegesetzes Nordrhein-Westfalen vor, dass auch ein sozialräumlicher Bedarf Grundlage einer …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[4].children[2].text@443:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[4].children[2].text",
+      "start": 443,
+      "end": 462,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ialgesetzbuch beziehungsweise des Alten- und Pflegegesetzes Nordrhein-Westfalen dienen. Zur Erreichung einer sozialraumintegrierten Versorg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[4].children[4].text@273:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[4].children[4].text",
+      "start": 273,
+      "end": 292,
+      "term": "Nordrhein-Westfalen",
+      "context": "…dungen, die den Anforderungen des Alten- und Pflegegesetzes Nordrhein-Westfalen und dieser Verordnung entsprechen, bis zur Erzielung einer …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[3].children[4].children[4].text@574:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[3].children[4].children[4].text",
+      "start": 574,
+      "end": 593,
+      "term": "Nordrhein-Westfalen",
+      "context": "…wirklichung der Zielsetzungen des Alten- und Pflegegesetzes Nordrhein-Westfalen erwarten lassen. Die Auswahlentscheidung ist anhand nachvol…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[3].children[1].children[0].text@74:rule:jurisdiction-name-bare",
+      "path": "body[10].children[3].children[1].children[0].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fentliche Förderung nach § 11 des Alten- und Pflegegesetzes Nordrhein-Westfalen die nach § 12 ermittelten Beträge nicht vollständig abdeckt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[3].children[2].children[0].text@160:rule:jurisdiction-name-bare",
+      "path": "body[10].children[3].children[2].children[0].text",
+      "start": 160,
+      "end": 179,
+      "term": "Nordrhein-Westfalen",
+      "context": "… von Pflegewohngeld nach § 14 des Alten- und Pflegegesetzes Nordrhein-Westfalen, so hat sie ihre gesonderte Berechnung gemäß § 82 Absatz 4 …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[0].text@152:rule:jurisdiction-name-bare",
+      "path": "body[11].children[0].children[0].text",
+      "start": 152,
+      "end": 171,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n- und Pflegepolitik im Sinne des Alten- und Pflegegesetzes Nordrhein-Westfalen beraten und dabei Empfehlungen abgeben. Bei Empfehlungen zu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[1].children[4].text@3:regional-body-association",
+      "path": "body[11].children[0].children[1].children[4].text",
+      "start": 3,
+      "end": 21,
+      "term": "Landschaftsverband",
+      "context": "je Landschaftsverband,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[11].children[0].children[1].children[7].text@110:rule:jurisdiction-name-bare",
+      "path": "body[11].children[0].children[1].children[7].text",
+      "start": 110,
+      "end": 129,
+      "term": "Nordrhein-Westfalen",
+      "context": "…schaften für Belange im Sinne des Alten- und Pflegegesetzes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[1].children[9].text@17:rule:jurisdiction-name-bare",
+      "path": "body[11].children[0].children[1].children[9].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "der Pflegekammer Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[1].children[13].text@93:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[1].children[13].text",
+      "start": 93,
+      "end": 96,
+      "term": "NRW",
+      "context": "…n im Sinne der Nummer 1 für die Alten- und Pflegepolitik in NRW im Sinne des Alten- und Pflegegesetzes Nordrhein-Westfalen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[0].children[1].children[13].text@136:rule:jurisdiction-name-bare",
+      "path": "body[11].children[0].children[1].children[13].text",
+      "start": 136,
+      "end": 155,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Pflegepolitik in NRW im Sinne des Alten- und Pflegegesetzes Nordrhein-Westfalen mit überregionaler Bedeutung engagieren, die keine landesve…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[1].children[13].text@606:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[1].children[13].text",
+      "start": 606,
+      "end": 609,
+      "term": "NRW",
+      "context": "…schen mit Behinderung und der Patientinnen und Patienten in NRW dem Landesausschuss Alter und Pflege mit beratender Stimme …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[2].children[5].text@551:protected:gazette-nrw",
+      "path": "body[11].children[2].children[5].text",
+      "start": 551,
+      "end": 566,
+      "term": "GV. NRW. S. 880",
+      "context": "…. Mai 1958, das zuletzt durch Gesetz vom 19. Dezember 2013 (GV. NRW. S. 880) geändert worden ist, erstattet werden. Sofern es sich bei …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[0].children[0].text@95:rule:jurisdiction-name-bare",
+      "path": "body[12].children[0].children[0].text",
+      "start": 95,
+      "end": 114,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n dieser Verordnung ist das für das Alten- und Pflegegesetz Nordrhein-Westfalen zuständige Ministerium.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[2].text@116:rule:jurisdiction-name-bare",
+      "path": "body[12].children[1].children[2].text",
+      "start": 116,
+      "end": 135,
+      "term": "Nordrhein-Westfalen",
+      "context": "…etzes zum Schutz personenbezogener Daten (Datenschutzgesetz Nordrhein-Westfalen) in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[2].text@189:protected:gazette-nrw",
+      "path": "body[12].children[1].children[2].text",
+      "start": 189,
+      "end": 204,
+      "term": "GV. NRW. S. 542",
+      "context": "…tfalen) in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542), zuletzt geändert durch Artikel 1 des Gesetzes vom 5. Juli…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[1].children[2].text@271:protected:gazette-nrw",
+      "path": "body[12].children[1].children[2].text",
+      "start": 271,
+      "end": 286,
+      "term": "GV. NRW. S. 338",
+      "context": "…tzt geändert durch Artikel 1 des Gesetzes vom 5. Juli 2011 (GV. NRW. S. 338), ist die Stelle, die im Rahmen ihrer Zuständigkeit nach di…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[2].children[1].children[0].text@163:protected:gazette-nrw",
+      "path": "body[12].children[2].children[1].children[0].text",
+      "start": 163,
+      "end": 178,
+      "term": "GV. NRW. S. 611",
+      "context": "…ichtungen nach dem Landespflegegesetz vom 15. Oktober 2003 (GV. NRW. S. 611),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[2].children[1].children[1].text@135:protected:gazette-nrw",
+      "path": "body[12].children[2].children[1].children[1].text",
+      "start": 135,
+      "end": 150,
+      "term": "GV. NRW. S. 610",
+      "context": "…ichtungen nach dem Landespflegegesetz vom 15. Oktober 2003 (GV. NRW. S. 610),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[2].children[1].children[2].text@110:protected:gazette-nrw",
+      "path": "body[12].children[2].children[1].children[2].text",
+      "start": 110,
+      "end": 125,
+      "term": "GV. NRW. S. 197",
+      "context": "…einrichtungen nach dem Landespflegegesetz vom 4. Juni 1996 (GV. NRW. S. 197),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[2].children[1].children[3].text@61:protected:gazette-nrw",
+      "path": "body[12].children[2].children[1].children[3].text",
+      "start": 61,
+      "end": 76,
+      "term": "GV. NRW. S. 613",
+      "context": "…ie Pflegeeinrichtungsförderverordnung vom 15. Oktober 2003 (GV. NRW. S. 613) sowie",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[2].children[1].children[4].text@58:protected:gazette-nrw",
+      "path": "body[12].children[2].children[1].children[4].text",
+      "start": 58,
+      "end": 73,
+      "term": "GV. NRW. S. 116",
+      "context": "die Landespflegeausschuss-Verordnung vom 7. Februar 1995 (GV. NRW. S. 116)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].text@0:rule:jurisdiction-name-bare",
+      "path": "body[14].text",
+      "start": 0,
+      "end": 19,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[19].text@52:protected:gazette-nrw",
+      "path": "body[19].text",
+      "start": 52,
+      "end": 67,
+      "term": "GV. NRW. S. 650",
+      "context": "Artikel 12 Absatz 2 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[1].text@46:protected:gazette-nrw",
+      "path": "body[20].children[1].text",
+      "start": 46,
+      "end": 62,
+      "term": "GV. NRW. S. 1466",
+      "context": "Artikel 7 des Gesetzes vom 17. Dezember 2021 (GV. NRW. S. 1466)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[2].text@68:rule:jurisdiction-name-bare",
+      "path": "body[20].children[2].text",
+      "start": 68,
+      "end": 87,
+      "term": "Nordrhein-Westfalen",
+      "context": "…el 12 Absatz 2 des Gesetzes zur Errichtung der Pflegekammer Nordrhein-Westfalen vom 30. Juni 2020 (GV. NRW. S. 650) wird die Angabe „1. Mai…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[20].children[2].text@107:protected:gazette-nrw",
+      "path": "body[20].children[2].text",
+      "start": 107,
+      "end": 122,
+      "term": "GV. NRW. S. 650",
+      "context": "…ung der Pflegekammer Nordrhein-Westfalen vom 30. Juni 2020 (GV. NRW. S. 650) wird die Angabe „1. Mai 2022“ durch die Angabe „31. Januar…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@39:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 39,
+      "end": 54,
+      "term": "GV. NRW. S.\n656",
+      "context": "In Kraft getreten am 2. November 2014 (GV. NRW. S.\n656), geändert durch VO vom 25. Juni 2015 (GV. NRW. S. 501), in…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@94:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 94,
+      "end": 109,
+      "term": "GV. NRW. S. 501",
+      "context": "…014 (GV. NRW. S.\n656), geändert durch VO vom 25. Juni 2015 (GV. NRW. S. 501), in Kraft\ngetreten am 4. Juli 2015; Verordnung vom 21. Dez…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@181:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 181,
+      "end": 196,
+      "term": "GV. NRW. S. 970",
+      "context": "…getreten am 4. Juli 2015; Verordnung vom 21. Dezember 2015 (GV. NRW. S. 970),\nin Kraft getreten am 31. Dezember 2015; Verordnung vom 13…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@269:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 269,
+      "end": 284,
+      "term": "GV.\nNRW. S. 674",
+      "context": "…etreten am 31. Dezember 2015; Verordnung vom 13. Juli 2016 (GV.\nNRW. S. 674), in Kraft getreten am 11. August 2016; Verordnung vom 15.\n…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@358:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 358,
+      "end": 373,
+      "term": "GV. NRW. S. 305",
+      "context": "…treten am 11. August 2016; Verordnung vom 15.\nFebruar 2017 (GV. NRW. S. 305), in Kraft getreten am 4. März 2017; Verordnung\nvom 6. Deze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@444:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 444,
+      "end": 459,
+      "term": "GV. NRW. S. 950",
+      "context": "… getreten am 4. März 2017; Verordnung\nvom 6. Dezember 2017 (GV. NRW. S. 950), in Kraft getreten am 21. Dezember\n2017; Artikel 11 des Ge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@545:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 545,
+      "end": 560,
+      "term": "GV. NRW. S. 172",
+      "context": "…. Dezember\n2017; Artikel 11 des Gesetzes vom 22. März 2018 (GV. NRW. S. 172), in Kraft\ngetreten am 30. März 2018; Verordnung vom 23. No…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@633:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 633,
+      "end": 648,
+      "term": "GV. NRW. S.\n593",
+      "context": "…etreten am 30. März 2018; Verordnung vom 23. November 2018 (GV. NRW. S.\n593), in Kraft getreten am 5. Dezember 2018; Artikel 10 des Ges…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@733:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 733,
+      "end": 748,
+      "term": "GV. NRW. S. 650",
+      "context": "…. Dezember 2018; Artikel 10 des Gesetzes vom 30.\nJuni 2020 (GV. NRW. S. 650), in Kraft getreten am 31. Januar 2023 (siehe\nHinweise); Ve…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@838:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 838,
+      "end": 853,
+      "term": "GV. NRW. S. 766",
+      "context": "…nuar 2023 (siehe\nHinweise); Verordnung vom 25. August 2020 (GV. NRW. S. 766, ber. S. 897), in\nKraft getreten am 5. September 2020; Arti…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].children[1].text@954:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].children[1].text",
+      "start": 954,
+      "end": 969,
+      "term": "GV. NRW. S. 122",
+      "context": "…eptember 2020; Artikel 66 des Gesetzes vom 1. Februar\n2022 (GV. NRW. S. 122), in Kraft getreten am 19. Februar 2022.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[1].children[1].text@68:protected:gazette-nrw",
+      "path": "body[20].children[3].children[1].children[1].text",
+      "start": 68,
+      "end": 83,
+      "term": "GV. NRW. S. 501",
+      "context": "…bersicht, §§ 10 und 13 geändert durch VO vom\n25. Juni 2015 (GV. NRW. S. 501), in Kraft getreten am 4. Juli 2015.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[2].children[1].text@122:protected:gazette-nrw",
+      "path": "body[20].children[3].children[2].children[1].text",
+      "start": 122,
+      "end": 137,
+      "term": "GV. NRW. S.\n501",
+      "context": "…(alt) umbenannt in §§ 28 bis 35 durch VO vom 25. Juni 2015 (GV. NRW. S.\n501), in Kraft getreten am 4. Juli 2015; § 27 Absatz 1 und 2, §…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[2].children[1].text@281:protected:gazette-nrw",
+      "path": "body[20].children[3].children[2].children[1].text",
+      "start": 281,
+      "end": 296,
+      "term": "GV.\nNRW. S. 766",
+      "context": "… 32 Absatz 3 geändert durch Verordnung vom 25. August 2020 (GV.\nNRW. S. 766), in Kraft getreten am 5. September 2020; § 30 Absatz 5 und…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[2].children[1].text@431:protected:gazette-nrw",
+      "path": "body[20].children[3].children[2].children[1].text",
+      "start": 431,
+      "end": 446,
+      "term": "GV. NRW.\nS. 122",
+      "context": "…geändert durch Artikel 66 des Gesetzes vom 1. Februar 2022 (GV. NRW.\nS. 122), in Kraft getreten am 19. Februar 2022; § 30 Absatz 2 geän…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[2].children[1].text@560:protected:gazette-nrw",
+      "path": "body[20].children[3].children[2].children[1].text",
+      "start": 560,
+      "end": 575,
+      "term": "GV. NRW. S. 650",
+      "context": "…2 geändert durch Artikel\n10 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650), in Kraft getreten am 31.\nJanuar 2023 (siehe Hinweise).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[3].children[1].text@72:protected:gazette-nrw",
+      "path": "body[20].children[3].children[3].children[1].text",
+      "start": 72,
+      "end": 87,
+      "term": "GV. NRW. S. 172",
+      "context": "…6 angefügt durch Artikel 11 des Gesetzes\nvom 22. März 2018 (GV. NRW. S. 172), in Kraft getreten am 30. März 2018;\nAbsatz 3 (alt) aufgeh…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[3].children[1].text@247:protected:gazette-nrw",
+      "path": "body[20].children[3].children[3].children[1].text",
+      "start": 247,
+      "end": 262,
+      "term": "GV. NRW. S. 593",
+      "context": "… in Absätze 3\nbis 5 durch Verordnung vom 23. November 2018 (GV. NRW. S. 593), in Kraft\ngetreten am 5. Dezember 2018; Absatz 3 (alt) auf…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[3].children[1].text@447:protected:gazette-nrw",
+      "path": "body[20].children[3].children[3].children[1].text",
+      "start": 447,
+      "end": 462,
+      "term": "GV. NRW. S. 766",
+      "context": "…wie Absatz 5 angefügt durch Verordnung\nvom 25. August 2020 (GV. NRW. S. 766, ber. S. 897), in Kraft getreten am 5.\nSeptember 2020.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[4].children[1].text@70:protected:gazette-nrw",
+      "path": "body[20].children[3].children[4].children[1].text",
+      "start": 70,
+      "end": 85,
+      "term": "GV. NRW. S. 172",
+      "context": "…t geändert durch Artikel 11 des Gesetzes vom\n22. März 2018 (GV. NRW. S. 172), in Kraft getreten am 30. März 2018.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[5].children[1].text@65:protected:gazette-nrw",
+      "path": "body[20].children[3].children[5].children[1].text",
+      "start": 65,
+      "end": 80,
+      "term": "GV. NRW. S. 593",
+      "context": "… und 25 neu gefasst durch Verordnung vom 23.\nNovember 2018 (GV. NRW. S. 593), in Kraft getreten am 5. Dezember 2018; 3 24\nAbsatz 3 aufg…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[5].children[1].text@218:protected:gazette-nrw",
+      "path": "body[20].children[3].children[5].children[1].text",
+      "start": 218,
+      "end": 233,
+      "term": "GV. NRW. S. 766",
+      "context": "…satz 3 und 4 geändert durch Verordnung vom 25.\nAugust 2020 (GV. NRW. S. 766), in Kraft getreten am 5. September 2020; § 25\nAbsatz 1 geä…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[5].children[1].text@350:protected:gazette-nrw",
+      "path": "body[20].children[3].children[5].children[1].text",
+      "start": 350,
+      "end": 365,
+      "term": "GV. NRW.\nS. 122",
+      "context": "…geändert durch Artikel 66 des Gesetzes vom 1. Februar 2022 (GV. NRW.\nS. 122), in Kraft getreten am 19. Februar 2022.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[6].children[1].text@289:protected:gazette-nrw",
+      "path": "body[20].children[3].children[6].children[1].text",
+      "start": 289,
+      "end": 304,
+      "term": "GV. NRW. S. 766",
+      "context": "…§ 16 zuletzt geändert durch Verordnung vom 25.\nAugust 2020 (GV. NRW. S. 766), in Kraft getreten am 5. September 2020.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 86
+    },
+    "source-citation": {
+      "protected": 40
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "regional-body": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].children[1].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[4].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[2].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[7].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[0].children[7].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[0].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[0].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[1].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[0].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[0].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[1].children[14].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[1].children[14].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[2].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].children[3].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[0].children[4].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[1].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[1].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[2].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[2].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[2].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[2].children[3].children[3].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[3].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[4].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[3].children[4].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[3].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[3].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[1].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[1].children[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[1].children[13].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[0].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[1].children[13].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[20].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "…Alten- und Pflegegesetzes Nordrhein-Westfalen verordnet das Ministerium für Gesundheit, Emanzipation, Pflege und Alter im Einvernehmen mit dem Landtag:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[0].children[1].children[4].text",
+      "term": "Landschaftsverband",
+      "context": "je Landschaftsverband,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 673,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…t Behinderung und ihre Angehörigen vom 2. Oktober 2014 (GV. NRW. S. 619)) verordnet die Landesregierung im Einvernehmen mit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[0].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…und Pflegegesetzes Westdeutschland vom 2. Oktober 2014 (GV. NRW. S. 625), das zuletzt durch Gesetz vom 12. Juli 2019 (GV. N…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[0].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…W. S. 625), das zuletzt durch Gesetz vom 12. Juli 2019 (GV. NRW. S. 374) geändert worden ist, erfolgt nach Maßgabe der nach…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[1].children[2].children[1].children[1].text",
+        "term": "NRW",
+        "context": "… nach dem Wohn- und Teilhabegesetz vom 2. Oktober 2014 (GV. NRW. S. 625), das zuletzt durch Gesetz vom 11. April 2019 (GV. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[1].children[2].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…. S. 625), das zuletzt durch Gesetz vom 11. April 2019 (GV. NRW. S. 210) geändert worden ist, zuständigen Behörde über die …",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[2].children[5].text",
+        "term": "NRW",
+        "context": "…i 1958, das zuletzt durch Gesetz vom 19. Dezember 2013 (GV. NRW. S. 880) geändert worden ist, erstattet werden. Sofern es s…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…nd) in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542), zuletzt geändert durch Artikel 1 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…geändert durch Artikel 1 des Gesetzes vom 5. Juli 2011 (GV. NRW. S. 338), ist die Stelle, die im Rahmen ihrer Zuständigkeit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[2].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…ungen nach dem Landespflegegesetz vom 15. Oktober 2003 (GV. NRW. S. 611),",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[2].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ungen nach dem Landespflegegesetz vom 15. Oktober 2003 (GV. NRW. S. 610),",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[2].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…ichtungen nach dem Landespflegegesetz vom 4. Juni 1996 (GV. NRW. S. 197),",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[2].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…flegeeinrichtungsförderverordnung vom 15. Oktober 2003 (GV. NRW. S. 613) sowie",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[2].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…e Landespflegeausschuss-Verordnung vom 7. Februar 1995 (GV. NRW. S. 116)",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].text",
+        "term": "NRW",
+        "context": "Artikel 12 Absatz 2 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650)",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[1].text",
+        "term": "NRW",
+        "context": "Artikel 7 des Gesetzes vom 17. Dezember 2021 (GV. NRW. S. 1466)",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[2].text",
+        "term": "NRW",
+        "context": "…ung der Pflegekammer Westdeutschland vom 30. Juni 2020 (GV. NRW. S. 650) wird die Angabe „1. Mai 2022“ durch die Angabe „31…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "In Kraft getreten am 2. November 2014 (GV. NRW. S.\n656), geändert durch VO vom 25. Juni 2015 (GV. NRW. S. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…(GV. NRW. S.\n656), geändert durch VO vom 25. Juni 2015 (GV. NRW. S. 501), in Kraft\ngetreten am 4. Juli 2015; Verordnung vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…eten am 4. Juli 2015; Verordnung vom 21. Dezember 2015 (GV. NRW. S. 970),\nin Kraft getreten am 31. Dezember 2015; Verordnun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ten am 31. Dezember 2015; Verordnung vom 13. Juli 2016 (GV.\nNRW. S. 674), in Kraft getreten am 11. August 2016; Verordnung …",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…en am 11. August 2016; Verordnung vom 15.\nFebruar 2017 (GV. NRW. S. 305), in Kraft getreten am 4. März 2017; Verordnung\nvom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…reten am 4. März 2017; Verordnung\nvom 6. Dezember 2017 (GV. NRW. S. 950), in Kraft getreten am 21. Dezember\n2017; Artikel 1…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…zember\n2017; Artikel 11 des Gesetzes vom 22. März 2018 (GV. NRW. S. 172), in Kraft\ngetreten am 30. März 2018; Verordnung vo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ten am 30. März 2018; Verordnung vom 23. November 2018 (GV. NRW. S.\n593), in Kraft getreten am 5. Dezember 2018; Artikel 10…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…zember 2018; Artikel 10 des Gesetzes vom 30.\nJuni 2020 (GV. NRW. S. 650), in Kraft getreten am 31. Januar 2023 (siehe\nHinwe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "… 2023 (siehe\nHinweise); Verordnung vom 25. August 2020 (GV. NRW. S. 766, ber. S. 897), in\nKraft getreten am 5. September 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…mber 2020; Artikel 66 des Gesetzes vom 1. Februar\n2022 (GV. NRW. S. 122), in Kraft getreten am 19. Februar 2022.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…icht, §§ 10 und 13 geändert durch VO vom\n25. Juni 2015 (GV. NRW. S. 501), in Kraft getreten am 4. Juli 2015.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…) umbenannt in §§ 28 bis 35 durch VO vom 25. Juni 2015 (GV. NRW. S.\n501), in Kraft getreten am 4. Juli 2015; § 27 Absatz 1 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…Absatz 3 geändert durch Verordnung vom 25. August 2020 (GV.\nNRW. S. 766), in Kraft getreten am 5. September 2020; § 30 Absa…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 66 des Gesetzes vom 1. Februar 2022 (GV. NRW.\nS. 122), in Kraft getreten am 19. Februar 2022; § 30 Absat…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel\n10 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650), in Kraft getreten am 31.\nJanuar 2023 (siehe Hinwe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…gefügt durch Artikel 11 des Gesetzes\nvom 22. März 2018 (GV. NRW. S. 172), in Kraft getreten am 30. März 2018;\nAbsatz 3 (alt…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…Absätze 3\nbis 5 durch Verordnung vom 23. November 2018 (GV. NRW. S. 593), in Kraft\ngetreten am 5. Dezember 2018; Absatz 3 (…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…Absatz 5 angefügt durch Verordnung\nvom 25. August 2020 (GV. NRW. S. 766, ber. S. 897), in Kraft getreten am 5.\nSeptember 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel 11 des Gesetzes vom\n22. März 2018 (GV. NRW. S. 172), in Kraft getreten am 30. März 2018.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[5].children[1].text",
+        "term": "NRW",
+        "context": "… 25 neu gefasst durch Verordnung vom 23.\nNovember 2018 (GV. NRW. S. 593), in Kraft getreten am 5. Dezember 2018; 3 24\nAbsat…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[5].children[1].text",
+        "term": "NRW",
+        "context": "… 3 und 4 geändert durch Verordnung vom 25.\nAugust 2020 (GV. NRW. S. 766), in Kraft getreten am 5. September 2020; § 25\nAbsa…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 66 des Gesetzes vom 1. Februar 2022 (GV. NRW.\nS. 122), in Kraft getreten am 19. Februar 2022.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[6].children[1].text",
+        "term": "NRW",
+        "context": "… zuletzt geändert durch Verordnung vom 25.\nAugust 2020 (GV. NRW. S. 766), in Kraft getreten am 5. September 2020.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Landesregierung",
+        "formula": "ordinance-formula",
+        "text": "verordnet die Landesregierung",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "safe-auto-transform",
+    "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird übergeleitet.",
+    "source": {
+      "name": "Landesregierung",
+      "formula": "ordinance-formula",
+      "text": "verordnet die Landesregierung",
+      "path": "body[1].text"
+    },
+    "enactingBody": "Landesregierung"
+  },
+  "citations": {
+    "source": "Verordnung zur Ausführung des Alten- und Pflegegesetzes Nordrhein-Westfalen und nach § 8a SGB XI vom 21. Oktober 2014",
+    "sourceVersion": "Verordnung zur Ausführung des Alten- und Pflegegesetzes Nordrhein-Westfalen und nach § 8a SGB XI vom 21. Oktober 2014",
+    "simulation": "Verordnung zur Ausführung des Alten- und Pflegegesetzes Westdeutschland und nach § 8a SGB XI in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 35,
+          "actual": 35,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 106985,
+          "actual": 106651,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 35,
+          "actual": 35,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 389,
+          "actual": 389,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 35,
+          "actual": 35,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 106651,
+          "actual": 106325,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "35 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "35 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25961-40526-sgv_820_20141021_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 3,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:37:47.269Z"
+}

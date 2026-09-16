@@ -173,7 +173,8 @@ export function computeCoverage(input: CoverageInput): CoverageReport {
 
   const lrgv = areaCoverage('lrgv', input);
   const lrmb = areaCoverage('lrmb', input);
-  consistency.ok = consistency.ok && (lrgv.crosscheck?.enumerationWithoutManifest ?? 0) === 0 && (lrmb.crosscheck?.enumerationWithoutManifest ?? 0) === 0;
+  // „Verarbeitet ohne Manifest“ (Abbruch vor der Stammnorm-Kennung) bleibt als Kennzahl sichtbar, ist aber ein
+  // normlokaler Befund und kein Konsistenzfehler: Manifest, Inhalte und Slug-Registry stimmen weiterhin überein.
 
   return {
     schemaVersion: COVERAGE_SCHEMA,

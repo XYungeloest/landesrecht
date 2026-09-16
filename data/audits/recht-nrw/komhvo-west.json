@@ -1,0 +1,825 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32311",
+  "slug": "komhvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@48:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 48,
+      "end": 75,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Verordnung über das Haushaltswesen der Kommunen im Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@28:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 28,
+      "end": 47,
+      "term": "Nordrhein-Westfalen",
+      "context": "Kommunalhaushaltsverordnung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@7:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 7,
+      "end": 10,
+      "term": "NRW",
+      "context": "KomHVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@85:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 85,
+      "end": 101,
+      "term": "GV. NRW. S. 1049",
+      "context": "…ändert durch Artikel 1 der Verordnung vom 30. Oktober 2020 (GV. NRW. S. 1049), in Kraft getreten am 10. November 2020; § 33a Absatz 1, 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[0].text@216:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 216,
+      "end": 232,
+      "term": "GV. NRW. S. 1442",
+      "context": "… 1, 2 und 3 geändert durch Verordnung vom 9. Dezember 2021 (GV. NRW. S. 1442), in Kraft getreten am 21. Dezember 2021.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@63:rule:jurisdiction-name",
+      "path": "body[2].text",
+      "start": 63,
+      "end": 87,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Grund des § 133 Absatz 1 und 2 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].text@141:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 141,
+      "end": 156,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), der zuletzt durch Artikel 15 des Gesetzes vom 23. Januar …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@222:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 222,
+      "end": 236,
+      "term": "GV. NRW. S. 90",
+      "context": "… zuletzt durch Artikel 15 des Gesetzes vom 23. Januar 2018 (GV. NRW. S. 90) geändert worden ist, verordnet das Ministerium für Heimat,…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@273:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 273,
+      "end": 331,
+      "term": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "…ar 2018 (GV. NRW. S. 90) geändert worden ist, verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung im Einvernehmen mit dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].text@356:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 356,
+      "end": 380,
+      "term": "Ministerium der Finanzen",
+      "context": "… Kommunales, Bau und Gleichstellung im Einvernehmen mit dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[17].children[1].children[2].text@155:protected:gazette-nrw",
+      "path": "body[17].children[1].children[2].text",
+      "start": 155,
+      "end": 170,
+      "term": "GV. NRW. S. 916",
+      "context": "…OVID-19-Ukraine-Isolierungsgesetzes vom 29. September 2020 (GV. NRW. S. 916), das zuletzt durch Artikel 2 des Gesetzes vom 9. Dezember …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].children[1].children[2].text@236:protected:gazette-nrw",
+      "path": "body[17].children[1].children[2].text",
+      "start": 236,
+      "end": 252,
+      "term": "GV. NRW. S. 1063",
+      "context": "… zuletzt durch Artikel 2 des Gesetzes vom 9. Dezember 2022 (GV. NRW. S. 1063) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].children[6].children[0].text@520:rule:jurisdiction-name-genitive",
+      "path": "body[17].children[6].children[0].text",
+      "start": 520,
+      "end": 546,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…en nach § 75 des Gesetz über die Beamtinnen und Beamten des Landes Nordrhein-Westfalen sowie andere Ansprüche außerhalb des Beamtenversorgungsgese…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[17].children[6].children[0].text@617:rule:jurisdiction-name",
+      "path": "body[17].children[6].children[0].text",
+      "start": 617,
+      "end": 641,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…re Ansprüche außerhalb des Beamtenversorgungsgesetz für das Land Nordrhein-Westfalen kann als prozentualer Anteil der Rückstellungen für Versorg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[17].children[6].children[4].text@577:rule:jurisdiction-name",
+      "path": "body[17].children[6].children[4].text",
+      "start": 577,
+      "end": 601,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…öhte Heranziehung zu Umlagen nach § 56 Kreisordnung für das Land Nordrhein-Westfalen, § 22 Landschaftsverbandsordnung für das Land Nordrhein-Wes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[17].children[6].children[4].text@643:rule:jurisdiction-name",
+      "path": "body[17].children[6].children[4].text",
+      "start": 643,
+      "end": 667,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ordrhein-Westfalen, § 22 Landschaftsverbandsordnung für das Land Nordrhein-Westfalen, § 2 Städteregion Aachen Gesetz, § 19 des Gesetzes über den…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[17].children[6].children[4].text@686:municipality",
+      "path": "body[17].children[6].children[4].text",
+      "start": 686,
+      "end": 692,
+      "term": "Aachen",
+      "context": "…sordnung für das Land Nordrhein-Westfalen, § 2 Städteregion Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr auf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[17].children[6].children[4].text@728:regional-body-association",
+      "path": "body[17].children[6].children[4].text",
+      "start": 728,
+      "end": 748,
+      "term": "Regionalverband Ruhr",
+      "context": "… § 2 Städteregion Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr aufgrund von ungewöhnlich hohen Steuereinzahlungen des Haus…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[17].children[6].children[4].text@744:geography-region",
+      "path": "body[17].children[6].children[4].text",
+      "start": 744,
+      "end": 748,
+      "term": "Ruhr",
+      "context": "…n Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr aufgrund von ungewöhnlich hohen Steuereinzahlungen des Haus…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[17].children[6].children[4].text@744:geography-river",
+      "path": "body[17].children[6].children[4].text",
+      "start": 744,
+      "end": 748,
+      "term": "Ruhr",
+      "context": "…n Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr aufgrund von ungewöhnlich hohen Steuereinzahlungen des Haus…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[17].children[6].children[4].text@932:rule:jurisdiction-name-genitive",
+      "path": "body[17].children[6].children[4].text",
+      "start": 932,
+      "end": 958,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…m jeweils geltenden Gesetz zur Regelung der Zuweisungen des Landes Nordrhein-Westfalen an die Gemeinden und Gemeindeverbände einbezogen werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[6].children[5].text@142:rule:jurisdiction-name",
+      "path": "body[18].children[6].children[5].text",
+      "start": 142,
+      "end": 166,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…eitraumes, die nach § 6 des Kommunalabgabengesetzes für das Land Nordrhein-Westfalen ausgeglichen werden müssen, sind als Sonderposten für den G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[18].children[7].children[1].children[12].text@159:rule:jurisdiction-name",
+      "path": "body[18].children[7].children[1].children[12].text",
+      "start": 159,
+      "end": 183,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Gesetzes zur Gleichstellung von Frauen und Männern für das Land Nordrhein-Westfalen vorliegt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[20].children[3].children[0].text@187:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].text",
+      "start": 187,
+      "end": 202,
+      "term": "GV. NRW. S. 886",
+      "context": "…eleistung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886) in der jeweils geltenden Fassung und im Gesetz über den Re…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[0].text@366:protected:gazette-nrw",
+      "path": "body[20].children[3].children[0].text",
+      "start": 366,
+      "end": 381,
+      "term": "GV. NRW. S. 458",
+      "context": "…n Krankentransport durch Unternehmer vom 24. November 1992 (GV. NRW. S. 458) in der jeweils geltenden Fassung benannten Aufgabenbereich…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[2].children[0].text@102:rule:jurisdiction-abbreviation",
+      "path": "body[21].children[2].children[0].text",
+      "start": 102,
+      "end": 105,
+      "term": "NRW",
+      "context": "…n Kraft. Gleichzeitig tritt die Gemeindehaushaltsverordnung NRW vom 16. November 2004 (GV. NRW. S. 644, ber. 2005 S. 15), d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[21].children[2].children[0].text@129:protected:gazette-nrw",
+      "path": "body[21].children[2].children[0].text",
+      "start": 129,
+      "end": 144,
+      "term": "GV. NRW. S. 644",
+      "context": "… die Gemeindehaushaltsverordnung NRW vom 16. November 2004 (GV. NRW. S. 644, ber. 2005 S. 15), die zuletzt durch Verordnung vom 27. Apr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[2].children[0].text@213:protected:gazette-nrw",
+      "path": "body[21].children[2].children[0].text",
+      "start": 213,
+      "end": 228,
+      "term": "GV. NRW. S. 239",
+      "context": "…05 S. 15), die zuletzt durch Verordnung vom 27. April 2018 (GV. NRW. S. 239) geändert worden ist, außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[2].children[1].text@4:ministry-portfolio",
+      "path": "body[21].children[2].children[1].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 12
+    },
+    "source-citation": {
+      "protected": 10
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "geography": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[17].children[6].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[17].children[6].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[18].children[6].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[18].children[7].children[1].children[12].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[21].children[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "…ar 2018 (GV. NRW. S. 90) geändert worden ist, verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung im Einvernehmen mit dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium der Finanzen",
+      "context": "… Kommunales, Bau und Gleichstellung im Einvernehmen mit dem Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "term": "Aachen",
+      "context": "…sordnung für das Land Nordrhein-Westfalen, § 2 Städteregion Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr auf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "term": "Regionalverband Ruhr",
+      "context": "… § 2 Städteregion Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr aufgrund von ungewöhnlich hohen Steuereinzahlungen des Haus…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "term": "Ruhr",
+      "context": "…n Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr aufgrund von ungewöhnlich hohen Steuereinzahlungen des Haus…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[6].children[4].text",
+      "term": "Ruhr",
+      "context": "…n Aachen Gesetz, § 19 des Gesetzes über den Regionalverband Ruhr aufgrund von ungewöhnlich hohen Steuereinzahlungen des Haus…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[2].children[1].text",
+      "term": "Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1136,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…rt durch Artikel 1 der Verordnung vom 30. Oktober 2020 (GV. NRW. S. 1049), in Kraft getreten am 10. November 2020; § 33a Ab…",
+        "status": "protected"
+      },
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…2 und 3 geändert durch Verordnung vom 9. Dezember 2021 (GV. NRW. S. 1442), in Kraft getreten am 21. Dezember 2021.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), der zuletzt durch Artikel 15 des Gesetzes vom 23.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 15 des Gesetzes vom 23. Januar 2018 (GV. NRW. S. 90) geändert worden ist, verordnet das Ministerium für …",
+        "status": "protected"
+      },
+      {
+        "path": "body[17].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…-19-Ukraine-Isolierungsgesetzes vom 29. September 2020 (GV. NRW. S. 916), das zuletzt durch Artikel 2 des Gesetzes vom 9. D…",
+        "status": "protected"
+      },
+      {
+        "path": "body[17].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 2 des Gesetzes vom 9. Dezember 2022 (GV. NRW. S. 1063) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…stung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886) in der jeweils geltenden Fassung und im Gesetz übe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…ankentransport durch Unternehmer vom 24. November 1992 (GV. NRW. S. 458) in der jeweils geltenden Fassung benannten Aufgabe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…Gemeindehaushaltsverordnung West vom 16. November 2004 (GV. NRW. S. 644, ber. 2005 S. 15), die zuletzt durch Verordnung vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…. 15), die zuletzt durch Verordnung vom 27. April 2018 (GV. NRW. S. 239) geändert worden ist, außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über das Haushaltswesen der Kommunen im Land Nordrhein-Westfalen vom 12. Dezember 2018",
+    "sourceVersion": "Verordnung über das Haushaltswesen der Kommunen im Land Nordrhein-Westfalen vom 12. Dezember 2018",
+    "simulation": "Verordnung über das Haushaltswesen der Kommunen im Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 63,
+          "actual": 63,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 87897,
+          "actual": 90333,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 63,
+          "actual": 63,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 645,
+          "actual": 645,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 63,
+          "actual": 63,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 90333,
+          "actual": 90302,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "63 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "63 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:47:20.141Z"
+}

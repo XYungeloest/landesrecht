@@ -1,0 +1,457 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27531",
+  "slug": "ingg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].children[6].text@191:rule:jurisdiction-name-bare",
+      "path": "body[2].children[6].text",
+      "start": 191,
+      "end": 210,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Gleichwertigkeit ausländischer Bildungsqualifikationen in Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@70:authority-district-government",
+      "path": "body[5].children[1].text",
+      "start": 70,
+      "end": 86,
+      "term": "Bezirksregierung",
+      "context": "… Behörde im Sinne der §§ 2, 3 und 4 dieses Gesetzes ist die Bezirksregierung, in deren Bezirk die Person, welche die in § 1 genannte Ber…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].text@600:authority-district-government",
+      "path": "body[5].children[1].text",
+      "start": 600,
+      "end": 616,
+      "term": "Bezirksregierung",
+      "context": "…ibt sich auch hiernach keine zuständige Behörde, so ist die Bezirksregierung zuständig, in deren Bezirk die Berufstätigkeit ausgeübt wer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@104:authority-district-government",
+      "path": "body[5].children[2].text",
+      "start": 104,
+      "end": 120,
+      "term": "Bezirksregierung",
+      "context": "… Gesetzes eine Zuständigkeit mehrfach begründet, so ist die Bezirksregierung zuständig, die zuerst mit der Sache befasst worden ist. Sie…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@240:authority-district-government",
+      "path": "body[5].children[2].text",
+      "start": 240,
+      "end": 256,
+      "term": "Bezirksregierung",
+      "context": "… kann ein Verfahren an eine andere nach Absatz 1 zuständige Bezirksregierung abgeben, wenn dies zweckmäßig erscheint. In Zweifelsfällen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@395:authority-district-government",
+      "path": "body[5].children[2].text",
+      "start": 395,
+      "end": 411,
+      "term": "Bezirksregierung",
+      "context": "…eses Gesetz zuständige oberste Landesbehörde die zuständige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@45:authority-district-government",
+      "path": "body[5].children[3].text",
+      "start": 45,
+      "end": 63,
+      "term": "Bezirksregierungen",
+      "context": "Absatz 2 Satz 1 und 2 gilt im Verhältnis der Bezirksregierungen zu den zuständigen Verwaltungsbehörden der anderen Länder e…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[4].text@105:authority-district-government",
+      "path": "body[5].children[4].text",
+      "start": 105,
+      "end": 121,
+      "term": "Bezirksregierung",
+      "context": "…tsprechend der §§ 2 bis 4 dieses Gesetzes auf eine einzelne Bezirksregierung übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[6].text@108:authority-district-government",
+      "path": "body[9].children[6].text",
+      "start": 108,
+      "end": 124,
+      "term": "Bezirksregierung",
+      "context": "…Abs. 1 Nr. 1 des Gesetzes über Ordnungswidrigkeiten ist die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].text@4:constitutional-organ-state",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[11].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[11].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "authority": {
+      "manual-review": 8
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[5].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "… Behörde im Sinne der §§ 2, 3 und 4 dieses Gesetzes ist die Bezirksregierung, in deren Bezirk die Person, welche die in § 1 genannte Ber…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…ibt sich auch hiernach keine zuständige Behörde, so ist die Bezirksregierung zuständig, in deren Bezirk die Berufstätigkeit ausgeübt wer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "… Gesetzes eine Zuständigkeit mehrfach begründet, so ist die Bezirksregierung zuständig, die zuerst mit der Sache befasst worden ist. Sie…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "… kann ein Verfahren an eine andere nach Absatz 1 zuständige Bezirksregierung abgeben, wenn dies zweckmäßig erscheint. In Zweifelsfällen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…eses Gesetz zuständige oberste Landesbehörde die zuständige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Bezirksregierungen",
+      "context": "Absatz 2 Satz 1 und 2 gilt im Verhältnis der Bezirksregierungen zu den zuständigen Verwaltungsbehörden der anderen Länder e…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…tsprechend der §§ 2 bis 4 dieses Gesetzes auf eine einzelne Bezirksregierung übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[6].text",
+      "term": "Bezirksregierung",
+      "context": "…Abs. 1 Nr. 1 des Gesetzes über Ordnungswidrigkeiten ist die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 74,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zum Schutze der Berufsbezeichnung,,Ingenieur/Ingenieurin“ vom 5. Mai 1970",
+    "sourceVersion": "Gesetz zum Schutze der Berufsbezeichnung,,Ingenieur/Ingenieurin“ vom 5. Mai 1970",
+    "simulation": "Gesetz zum Schutze der Berufsbezeichnung,,Ingenieur/Ingenieurin“ in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8111,
+          "actual": 8162,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 55,
+          "actual": 55,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8162,
+          "actual": 8154,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:21:49.419Z"
+}

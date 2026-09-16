@@ -1,0 +1,2113 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29510",
+  "slug": "gesetz-ueber-die-kunsthochschulen-des-landes-westdeutschland",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@37:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 37,
+      "end": 63,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Gesetz über die Kunsthochschulen des Landes Nordrhein-Westfalen (Kunsthochschulgesetz - KunstHG -)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@84:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 84,
+      "end": 99,
+      "term": "GV. NRW. S. 195",
+      "context": "…zur Neuregelung des Kunsthochschulrechts vom 13. März 2008 (GV. NRW. S. 195))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@48:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[1].text",
+      "start": 48,
+      "end": 74,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Dieses Gesetz gilt für die Kunsthochschulen des Landes Nordrhein-Westfalen im Sinne des Absatzes 2 und nach Maßgabe der Absätze 4 bis …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@188:municipality",
+      "path": "body[3].children[1].text",
+      "start": 188,
+      "end": 195,
+      "term": "Münster",
+      "context": "…4 bis 6 für den Fachbereich Musikhochschule der Universität Münster. Für die Anerkennung von Bildungseinrichtungen als Kunsthoc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@21:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[2].text",
+      "start": 21,
+      "end": 47,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Kunsthochschulen des Landes Nordrhein-Westfalen sind:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].children[0].text@25:municipality",
+      "path": "body[3].children[2].children[0].text",
+      "start": 25,
+      "end": 32,
+      "term": "Detmold",
+      "context": "die Hochschule für Musik Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[1].text@18:municipality",
+      "path": "body[3].children[2].children[1].text",
+      "start": 18,
+      "end": 28,
+      "term": "Düsseldorf",
+      "context": "die Kunstakademie Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[2].text@31:municipality",
+      "path": "body[3].children[2].children[2].text",
+      "start": 31,
+      "end": 41,
+      "term": "Düsseldorf",
+      "context": "die Robert-Schumann Hochschule Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[4].text@34:municipality",
+      "path": "body[3].children[2].children[4].text",
+      "start": 34,
+      "end": 38,
+      "term": "Köln",
+      "context": "die Hochschule für Musik und Tanz Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[5].text@31:municipality",
+      "path": "body[3].children[2].children[5].text",
+      "start": 31,
+      "end": 35,
+      "term": "Köln",
+      "context": "die Kunsthochschule für Medien Köln und",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[6].text@18:municipality",
+      "path": "body[3].children[2].children[6].text",
+      "start": 18,
+      "end": 25,
+      "term": "Münster",
+      "context": "die Kunstakademie Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@61:municipality",
+      "path": "body[3].children[3].text",
+      "start": 61,
+      "end": 66,
+      "term": "Essen",
+      "context": "…s bestehen Standorte der Folkwang Universität der Künste in Essen, Duisburg und Bochum sowie der Hochschule für Musik und Tan…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@68:municipality",
+      "path": "body[3].children[3].text",
+      "start": 68,
+      "end": 76,
+      "term": "Duisburg",
+      "context": "…hen Standorte der Folkwang Universität der Künste in Essen, Duisburg und Bochum sowie der Hochschule für Musik und Tanz Köln in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@81:municipality",
+      "path": "body[3].children[3].text",
+      "start": 81,
+      "end": 87,
+      "term": "Bochum",
+      "context": "… der Folkwang Universität der Künste in Essen, Duisburg und Bochum sowie der Hochschule für Musik und Tanz Köln in Aachen und …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@128:municipality",
+      "path": "body[3].children[3].text",
+      "start": 128,
+      "end": 132,
+      "term": "Köln",
+      "context": "…Duisburg und Bochum sowie der Hochschule für Musik und Tanz Köln in Aachen und Wuppertal; das Ministerium wird ermächtigt, d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@136:municipality",
+      "path": "body[3].children[3].text",
+      "start": 136,
+      "end": 142,
+      "term": "Aachen",
+      "context": "… und Bochum sowie der Hochschule für Musik und Tanz Köln in Aachen und Wuppertal; das Ministerium wird ermächtigt, durch Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@147:municipality",
+      "path": "body[3].children[3].text",
+      "start": 147,
+      "end": 156,
+      "term": "Wuppertal",
+      "context": "… sowie der Hochschule für Musik und Tanz Köln in Aachen und Wuppertal; das Ministerium wird ermächtigt, durch Rechtsverordnung St…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@336:municipality",
+      "path": "body[3].children[3].text",
+      "start": 336,
+      "end": 341,
+      "term": "Essen",
+      "context": "…Künste im Sinne der Vorschriften über den Gerichtsstand ist Essen. Das Orchesterzentrum NRW in Dortmund ist eine gemeinsame E…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@364:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[3].text",
+      "start": 364,
+      "end": 367,
+      "term": "NRW",
+      "context": "…ften über den Gerichtsstand ist Essen. Das Orchesterzentrum NRW in Dortmund ist eine gemeinsame Einrichtung der Hochschule …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[3].text@371:municipality",
+      "path": "body[3].children[3].text",
+      "start": 371,
+      "end": 379,
+      "term": "Dortmund",
+      "context": "…er den Gerichtsstand ist Essen. Das Orchesterzentrum NRW in Dortmund ist eine gemeinsame Einrichtung der Hochschule für Musik De…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@437:municipality",
+      "path": "body[3].children[3].text",
+      "start": 437,
+      "end": 444,
+      "term": "Detmold",
+      "context": "…nd ist eine gemeinsame Einrichtung der Hochschule für Musik Detmold, der Robert-Schumann Hochschule Düsseldorf, der Folkwang Un…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@477:municipality",
+      "path": "body[3].children[3].text",
+      "start": 477,
+      "end": 487,
+      "term": "Düsseldorf",
+      "context": "…ochschule für Musik Detmold, der Robert-Schumann Hochschule Düsseldorf, der Folkwang Universität der Künste sowie der Hochschule f…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@565:municipality",
+      "path": "body[3].children[3].text",
+      "start": 565,
+      "end": 569,
+      "term": "Köln",
+      "context": "…versität der Künste sowie der Hochschule für Musik und Tanz Köln mit der organisatorischen Anbindung an die Folkwang Univers…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[4].text@48:municipality",
+      "path": "body[3].children[4].text",
+      "start": 48,
+      "end": 55,
+      "term": "Münster",
+      "context": "Der Fachbereich Musikhochschule der Universität Münster nimmt die in § 3 Absatz 1 beschriebenen Aufgaben der Kunsth…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@111:municipality",
+      "path": "body[3].children[5].text",
+      "start": 111,
+      "end": 118,
+      "term": "Münster",
+      "context": "…tzungen des dem Fachbereich Musikhochschule der Universität Münster zugeordneten wissenschaftlichen und künstlerischen Personal…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@475:municipality",
+      "path": "body[3].children[5].text",
+      "start": 475,
+      "end": 482,
+      "term": "Münster",
+      "context": "… Professoren am Fachbereich Musikhochschule der Universität Münster können im Dienstvertrag besondere Regelungen über die Anwen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@95:municipality",
+      "path": "body[3].children[6].text",
+      "start": 95,
+      "end": 102,
+      "term": "Münster",
+      "context": "… und Professoren sind als solche Mitglieder der Universität Münster. Hinsichtlich der Verleihung der mitgliedschaftlichen Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@361:municipality",
+      "path": "body[3].children[6].text",
+      "start": 361,
+      "end": 368,
+      "term": "Münster",
+      "context": "… 10 Absatz 2 Satz 2 und 3. Die Grundordnung der Universität Münster oder die Fachbereichsordnung kann vorsehen, dass die Mitgli…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[1].text@391:rule:jurisdiction-name",
+      "path": "body[4].children[0].children[1].text",
+      "start": 391,
+      "end": 415,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…men der Gesetze (Artikel 16 Absatz 1 der Verfassung für das Land Nordrhein-Westfalen). Bei der Auslegung dieses Gesetzes ist auf die besonderen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[4].text@639:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[4].text",
+      "start": 639,
+      "end": 658,
+      "term": "Nordrhein-Westfalen",
+      "context": "…In diesem Fall gilt § 19 Absatz 2 des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[4].text@677:protected:gazette-nrw",
+      "path": "body[4].children[0].children[4].text",
+      "start": 677,
+      "end": 692,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung entsprechend. Die Grundor…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[6].text@200:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[6].text",
+      "start": 200,
+      "end": 203,
+      "term": "NRW",
+      "context": "… des Landes oder seitens des Bau- und Liegenschaftsbetriebs NRW überlassenen Liegenschaften zur Erfüllung ihrer öffentliche…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[5].children[1].text@235:protected:gazette-nrw",
+      "path": "body[4].children[5].children[1].text",
+      "start": 235,
+      "end": 250,
+      "term": "GV. NRW. S. 806",
+      "context": "…des Studienakkreditierungsstaatsvertrags vom 12. Juni 2017 (GV. NRW. S. 806) und der auf seiner Grundlage erlassenen Vorschriften unter…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[4].children[5].text@738:protected:gazette-nrw",
+      "path": "body[6].children[4].children[5].text",
+      "start": 738,
+      "end": 753,
+      "term": "GV. NRW. S. 310",
+      "context": "… § 16 Absatz 4 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 7 des Gesetzes vom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[4].children[5].text@828:protected:gazette-nrw",
+      "path": "body[6].children[4].children[5].text",
+      "start": 828,
+      "end": 843,
+      "term": "GV. NRW. S. 244",
+      "context": "… das zuletzt durch Artikel 7 des Gesetzes vom 17. Mai 2018 (GV. NRW. S. 244) geändert worden ist, ist nicht anwendbar. Die Rechte und P…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[12].children[4].text@297:ministry-portfolio",
+      "path": "body[6].children[12].children[4].text",
+      "start": 297,
+      "end": 355,
+      "term": "Ministerium für Verwaltungstätigkeiten und Benutzungsarten",
+      "context": "…erium kann im Einvernehmen mit dem für Finanzen zuständigen Ministerium für Verwaltungstätigkeiten und Benutzungsarten nach Satz 1 die Gebührentatbestände, die Gebührensätze sowi…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[12].children[4].text@906:rule:jurisdiction-name",
+      "path": "body[6].children[12].children[4].text",
+      "start": 906,
+      "end": 930,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… 22, 25 Absatz 1 und 26 bis 28 des Gebührengesetzes für das Land Nordrhein-Westfalen entsprechende Anwendung, soweit gesetzlich oder in der Rech…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[6].children[5].text@582:rule:jurisdiction-name-bare",
+      "path": "body[7].children[6].children[5].text",
+      "start": 582,
+      "end": 601,
+      "term": "Nordrhein-Westfalen",
+      "context": "…und fortbestehender Auswirkungen der SARS-CoV-2-Pandemie in Nordrhein-Westfalen geboten erscheint; die Verlängerungsmöglichkeit ist auch au…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[7].children[2].text@232:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[7].children[2].text",
+      "start": 232,
+      "end": 235,
+      "term": "NRW",
+      "context": "… des § 34 Absatz 2 der Freistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jewe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[7].children[2].text@257:protected:gazette-nrw",
+      "path": "body[7].children[7].children[2].text",
+      "start": 257,
+      "end": 270,
+      "term": "GV. NRW. S. 2",
+      "context": "…eistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jeweils geltenden Fassung, 3. der tatsä…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[12].children[8].text@634:rule:jurisdiction-name-bare",
+      "path": "body[7].children[12].children[8].text",
+      "start": 634,
+      "end": 653,
+      "term": "Nordrhein-Westfalen",
+      "context": "…und fortbestehender Auswirkungen der SARS-CoV-2-Pandemie in Nordrhein-Westfalen geboten erscheint; die Verlängerungsmöglichkeit ist auch au…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[5].children[3].text@362:rule:jurisdiction-name",
+      "path": "body[8].children[5].children[3].text",
+      "start": 362,
+      "end": 386,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… der §§ 63 bis 71 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[5].children[3].text@444:protected:gazette-nrw",
+      "path": "body[8].children[5].children[3].text",
+      "start": 444,
+      "end": 459,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung anzuwenden. Behörde im Si…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[3].children[4].text@210:protected:gazette-nrw",
+      "path": "body[9].children[3].children[4].text",
+      "start": 210,
+      "end": 225,
+      "term": "GV. NRW. S. 190",
+      "context": "…des § 96 Absatz 1 Satz 3 Hochschulgesetz vom 14. März 2000 (GV. NRW. S. 190) in der Fassung des Gesetzes zur Weiterentwicklung der Hoch…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[3].children[4].text@374:protected:gazette-nrw",
+      "path": "body[9].children[3].children[4].text",
+      "start": 374,
+      "end": 389,
+      "term": "GV. NRW. S. 752",
+      "context": "…m-Weiterentwicklungsgesetz) - HRWG - vom 30. November 2004 (GV. NRW. S. 752) führen, zu einem Angebot von Studiengängen um, welche zum …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[3].children[5].text@167:protected:gazette-nrw",
+      "path": "body[9].children[3].children[5].text",
+      "start": 167,
+      "end": 182,
+      "term": "GV. NRW. S. 190",
+      "context": "…96 Absatz 1 Satz 3 des Hochschulgesetzes vom 14. März 2000 (GV. NRW. S. 190) in der Fassung des Hochschulreform-Weiterentwicklungsgeset…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[3].children[5].text@269:protected:gazette-nrw",
+      "path": "body[9].children[3].children[5].text",
+      "start": 269,
+      "end": 284,
+      "term": "GV. NRW. S. 752",
+      "context": "…hulreform-Weiterentwicklungsgesetzes vom 30. November 2004 (GV. NRW. S. 752) führen, werden keine Studienanfänger mehr aufgenommen; die…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[8].children[7].text@788:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[8].children[7].text",
+      "start": 788,
+      "end": 814,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…19 des Gesetzes über den öffentlichen Gesundheitsdienst des Landes Nordrhein-Westfalen findet nicht statt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[5].text@104:rule:jurisdiction-name",
+      "path": "body[10].children[0].children[5].text",
+      "start": 104,
+      "end": 128,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…48 Absatz 1 und 3 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen. Die Rücknahme ist nur innerhalb von fünf Jahren seit dem Z…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[3].children[2].text@941:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[3].children[2].text",
+      "start": 941,
+      "end": 967,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…h der Dienstleistungen des Hochschulbibliothekszentrums des Landes Nordrhein-Westfalen. Sie sollen den Einsatz der Datenverarbeitung in den Hochsc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[3].children[2].text@1095:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[3].children[2].text",
+      "start": 1095,
+      "end": 1121,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…otheken im Benehmen mit dem Hochschulbibliothekszentrum des Landes Nordrhein-Westfalen planen. Das Nähere zu dem Zusammenwirken kann durch öffentl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].children[3].text@263:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[3].text",
+      "start": 263,
+      "end": 287,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…d der Zustimmungserlass werden im Minister­ialblatt für das Land Nordrhein-Westfalen bekanntgemacht. Die Stiftung, die Anstalt oder der Hochschu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[5].children[1].text@159:protected:gazette-nrw",
+      "path": "body[13].children[5].children[1].text",
+      "start": 159,
+      "end": 174,
+      "term": "GV. NRW. S. 308",
+      "context": "…ne des § 16 des Lehrerausbildungsgesetzes vom 12. Mai 2009 (GV. NRW. S. 308), das zuletzt durch Artikel 5 des Gesetzes vom 1. September…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[5].children[1].text@241:protected:gazette-nrw",
+      "path": "body[13].children[5].children[1].text",
+      "start": 241,
+      "end": 256,
+      "term": "GV. NRW. S. 890",
+      "context": "…zuletzt durch Artikel 5 des Gesetzes vom 1. September 2020 (GV. NRW. S. 890) geändert worden ist, erforderlich ist, gilt § 77d des Hoch…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[7].children[2].text@45:ministry-portfolio",
+      "path": "body[13].children[7].children[2].text",
+      "start": 45,
+      "end": 112,
+      "term": "Ministerium für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Ministerium im Sinne dieses Gesetzes ist das Ministerium für Innovation, Wissenschaft, Forschung und Technologie des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].children[7].children[2].text@117:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[7].children[2].text",
+      "start": 117,
+      "end": 143,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…für Innovation, Wissenschaft, Forschung und Technologie des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[7].children[3].text@237:rule:jurisdiction-name",
+      "path": "body[13].children[7].children[3].text",
+      "start": 237,
+      "end": 261,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… zu bestimmen. Die §§ 3 bis 22 des Gebührengesetzes für das Land Nordrhein-Westfalen finden entsprechende Anwendung, soweit gesetzlich oder in d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[8].children[1].children[1].text@93:protected:gazette-nrw",
+      "path": "body[13].children[8].children[1].children[1].text",
+      "start": 93,
+      "end": 109,
+      "term": "GV. NRW. S. 218b",
+      "context": "… Infektionsschutz- und Befugnisgesetzes vom 14. April 2020 (GV. NRW. S. 218b), das zuletzt durch das Gesetz vom 4. Mai 2021 (GV. NRW. S.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[8].children[1].children[1].text@158:protected:gazette-nrw",
+      "path": "body[13].children[8].children[1].children[1].text",
+      "start": 158,
+      "end": 173,
+      "term": "GV. NRW. S. 566",
+      "context": "…RW. S. 218b), das zuletzt durch das Gesetz vom 4. Mai 2021 (GV. NRW. S. 566) geändert worden ist, eine epidemische Lage von landesweite…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[8].children[3].text@198:protected:gazette-nrw",
+      "path": "body[13].children[8].children[3].text",
+      "start": 198,
+      "end": 213,
+      "term": "GV. NRW. S. 886",
+      "context": "…eleistung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886), das zuletzt durch Artikel 6 des Gesetzes vom 23. Juni 202…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[8].children[3].text@276:protected:gazette-nrw",
+      "path": "body[13].children[8].children[3].text",
+      "start": 276,
+      "end": 291,
+      "term": "GV. NRW. S. 762",
+      "context": "…das zuletzt durch Artikel 6 des Gesetzes vom 23. Juni 2021 (GV. NRW. S. 762) geändert worden ist, an Hochschulen der Lehr- oder Prüfung…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[2].text@84:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[2].text",
+      "start": 84,
+      "end": 99,
+      "term": "GV. NRW. S. 195",
+      "context": "…zur Neuregelung des Kunsthochschulrechts vom 13. März 2008 (GV. NRW. S. 195))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[3].text@84:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[3].text",
+      "start": 84,
+      "end": 99,
+      "term": "GV. NRW. S. 331",
+      "context": "…en durch Artikel 6 Nummer 1 des Gesetzes vom 25. März 2021 (GV. NRW. S. 331), in Kraft getreten am 15. April 2021",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[5].text@538:ministry-portfolio",
+      "path": "body[13].children[9].children[4].children[5].text",
+      "start": 538,
+      "end": 605,
+      "term": "Ministerium für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "…chule notwendig sind, aber nicht getroffen werden, kann das Ministerium für Innovation, Wissenschaft, Forschung und Technologie nach Anhörung der Kunsthochschule entsprechende Regelungen …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[8].text@168:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[8].text",
+      "start": 168,
+      "end": 183,
+      "term": "GV. NRW. S. 474",
+      "context": "… (Artikel 2 Hochschulfreiheitsgesetz) vom 31. Oktober 2006 (GV. NRW. S. 474) für diejenigen Kunsthochschulen fort, die im Zeitpunkt des…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[11].text@332:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[11].text",
+      "start": 332,
+      "end": 347,
+      "term": "GV. NRW. S. 474",
+      "context": "…kel 8 Nr. 10 Hochschulfreiheitsgesetz vom 31. Oktober 2006 (GV. NRW. S. 474) für die Bearbeitung der Beihilfe der an den Kunsthochschul…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@57:municipality",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 57,
+      "end": 65,
+      "term": "Duisburg",
+      "context": "6. Artikel 1 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen vom 18. Deze…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@66:municipality",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 66,
+      "end": 71,
+      "term": "Essen",
+      "context": "…ikel 1 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen vom 18. Dezember 2…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@136:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 136,
+      "end": 151,
+      "term": "GV. NRW. S. 644",
+      "context": "…zur Umwandlung der Gesamthochschulen vom 18. Dezember 2002 (GV. NRW. S. 644), geändert durch Artikel 9 des Gesetzes vom 30. November 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@215:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 215,
+      "end": 230,
+      "term": "GV. NRW. S. 752",
+      "context": "…eändert durch Artikel 9 des Gesetzes vom 30. November 2004 (GV. NRW. S. 752), tritt mit Inkrafttreten dieses Gesetzes außer Kraft. In A…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@349:municipality",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 349,
+      "end": 357,
+      "term": "Duisburg",
+      "context": "…Artikel 3 Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen wird die Zah…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@358:municipality",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 358,
+      "end": 363,
+      "term": "Essen",
+      "context": "… Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen wird die Zahl 200…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@517:municipality",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 517,
+      "end": 525,
+      "term": "Duisburg",
+      "context": "…Artikel 3 Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen tritt zum 1.…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[12].text@526:municipality",
+      "path": "body[13].children[9].children[4].children[12].text",
+      "start": 526,
+      "end": 531,
+      "term": "Essen",
+      "context": "… Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen tritt zum 1. Oktob…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[13].children[9].children[4].children[13].text@83:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[13].text",
+      "start": 83,
+      "end": 98,
+      "term": "GV. NRW. S. 547",
+      "context": "…ch Artikel 17 Nummer 5 des Gesetzes vom 16. September 2014 (GV. NRW. S. 547), in Kraft getreten am 1. Oktober 2014 (7. Für eine Übergan…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[9].children[4].children[14].text@100:protected:gazette-nrw",
+      "path": "body[13].children[9].children[4].children[14].text",
+      "start": 100,
+      "end": 115,
+      "term": "GV. NRW. S. 331",
+      "context": "…n) durch Artikel 6 Nummer 2 des Gesetzes vom 25. März 2021 (GV. NRW. S. 331), in Kraft getreten am 15. April 2021",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].text@4:constitutional-organ-state",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[14].text@20:rule:jurisdiction-name-bare",
+      "path": "body[14].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[16].text@4:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-compound",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister zugleich für die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[17].text@35:ministry-compound",
+      "path": "body[17].text",
+      "start": 35,
+      "end": 51,
+      "term": "Justizministerin",
+      "context": "Der Innenminister zugleich für die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].text@4:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 57,
+      "term": "Minister für Bauen und Verkehr für den Finanzminister",
+      "context": "Der Minister für Bauen und Verkehr für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].text@43:ministry-compound",
+      "path": "body[19].text",
+      "start": 43,
+      "end": 57,
+      "term": "Finanzminister",
+      "context": "Der Minister für Bauen und Verkehr für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[20].text@4:ministry-portfolio",
+      "path": "body[20].text",
+      "start": 4,
+      "end": 62,
+      "term": "Minister für Generationen, Familie, Frauen und Integration",
+      "context": "Der Minister für Generationen, Familie, Frauen und Integration zugleich für die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[20].text@80:ministry-portfolio",
+      "path": "body[20].text",
+      "start": 80,
+      "end": 119,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "…erationen, Familie, Frauen und Integration zugleich für die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 20
+    },
+    "source-citation": {
+      "protected": 25
+    },
+    "municipality": {
+      "manual-review": 29
+    },
+    "ministry": {
+      "manual-review": 11
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[12].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[6].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[7].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[12].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[5].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[9].children[8].children[7].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[3].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[3].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[4].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[7].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[7].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[14].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[1].text",
+      "term": "Münster",
+      "context": "…4 bis 6 für den Fachbereich Musikhochschule der Universität Münster. Für die Anerkennung von Bildungseinrichtungen als Kunsthoc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[0].text",
+      "term": "Detmold",
+      "context": "die Hochschule für Musik Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[1].text",
+      "term": "Düsseldorf",
+      "context": "die Kunstakademie Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[2].text",
+      "term": "Düsseldorf",
+      "context": "die Robert-Schumann Hochschule Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[4].text",
+      "term": "Köln",
+      "context": "die Hochschule für Musik und Tanz Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[5].text",
+      "term": "Köln",
+      "context": "die Kunsthochschule für Medien Köln und",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[6].text",
+      "term": "Münster",
+      "context": "die Kunstakademie Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Essen",
+      "context": "…s bestehen Standorte der Folkwang Universität der Künste in Essen, Duisburg und Bochum sowie der Hochschule für Musik und Tan…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "…hen Standorte der Folkwang Universität der Künste in Essen, Duisburg und Bochum sowie der Hochschule für Musik und Tanz Köln in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Bochum",
+      "context": "… der Folkwang Universität der Künste in Essen, Duisburg und Bochum sowie der Hochschule für Musik und Tanz Köln in Aachen und …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Köln",
+      "context": "…Duisburg und Bochum sowie der Hochschule für Musik und Tanz Köln in Aachen und Wuppertal; das Ministerium wird ermächtigt, d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Aachen",
+      "context": "… und Bochum sowie der Hochschule für Musik und Tanz Köln in Aachen und Wuppertal; das Ministerium wird ermächtigt, durch Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Wuppertal",
+      "context": "… sowie der Hochschule für Musik und Tanz Köln in Aachen und Wuppertal; das Ministerium wird ermächtigt, durch Rechtsverordnung St…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Essen",
+      "context": "…Künste im Sinne der Vorschriften über den Gerichtsstand ist Essen. Das Orchesterzentrum NRW in Dortmund ist eine gemeinsame E…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Dortmund",
+      "context": "…er den Gerichtsstand ist Essen. Das Orchesterzentrum NRW in Dortmund ist eine gemeinsame Einrichtung der Hochschule für Musik De…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Detmold",
+      "context": "…nd ist eine gemeinsame Einrichtung der Hochschule für Musik Detmold, der Robert-Schumann Hochschule Düsseldorf, der Folkwang Un…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Düsseldorf",
+      "context": "…ochschule für Musik Detmold, der Robert-Schumann Hochschule Düsseldorf, der Folkwang Universität der Künste sowie der Hochschule f…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Köln",
+      "context": "…versität der Künste sowie der Hochschule für Musik und Tanz Köln mit der organisatorischen Anbindung an die Folkwang Univers…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[4].text",
+      "term": "Münster",
+      "context": "Der Fachbereich Musikhochschule der Universität Münster nimmt die in § 3 Absatz 1 beschriebenen Aufgaben der Kunsth…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Münster",
+      "context": "…tzungen des dem Fachbereich Musikhochschule der Universität Münster zugeordneten wissenschaftlichen und künstlerischen Personal…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Münster",
+      "context": "… Professoren am Fachbereich Musikhochschule der Universität Münster können im Dienstvertrag besondere Regelungen über die Anwen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Münster",
+      "context": "… und Professoren sind als solche Mitglieder der Universität Münster. Hinsichtlich der Verleihung der mitgliedschaftlichen Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Münster",
+      "context": "… 10 Absatz 2 Satz 2 und 3. Die Grundordnung der Universität Münster oder die Fachbereichsordnung kann vorsehen, dass die Mitgli…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[12].children[4].text",
+      "term": "Ministerium für Verwaltungstätigkeiten und Benutzungsarten",
+      "context": "…erium kann im Einvernehmen mit dem für Finanzen zuständigen Ministerium für Verwaltungstätigkeiten und Benutzungsarten nach Satz 1 die Gebührentatbestände, die Gebührensätze sowi…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[7].children[2].text",
+      "term": "Ministerium für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Ministerium im Sinne dieses Gesetzes ist das Ministerium für Innovation, Wissenschaft, Forschung und Technologie des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[5].text",
+      "term": "Ministerium für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "…chule notwendig sind, aber nicht getroffen werden, kann das Ministerium für Innovation, Wissenschaft, Forschung und Technologie nach Anhörung der Kunsthochschule entsprechende Regelungen …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[12].text",
+      "term": "Duisburg",
+      "context": "6. Artikel 1 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen vom 18. Deze…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[12].text",
+      "term": "Essen",
+      "context": "…ikel 1 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen vom 18. Dezember 2…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[12].text",
+      "term": "Duisburg",
+      "context": "…Artikel 3 Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen wird die Zah…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[12].text",
+      "term": "Essen",
+      "context": "… Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen wird die Zahl 200…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[12].text",
+      "term": "Duisburg",
+      "context": "…Artikel 3 Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen tritt zum 1.…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[9].children[4].children[12].text",
+      "term": "Essen",
+      "context": "… Nr. 2 des Gesetzes zur Errichtung der Universität Duisburg-Essen und zur Umwandlung der Gesamthochschulen tritt zum 1. Oktob…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister zugleich für die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Justizministerin",
+      "context": "Der Innenminister zugleich für die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Minister für Bauen und Verkehr für den Finanzminister",
+      "context": "Der Minister für Bauen und Verkehr für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Finanzminister",
+      "context": "Der Minister für Bauen und Verkehr für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Minister für Generationen, Familie, Frauen und Integration",
+      "context": "Der Minister für Generationen, Familie, Frauen und Integration zugleich für die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "…erationen, Familie, Frauen und Integration zugleich für die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1437,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…Neuregelung des Kunsthochschulrechts vom 13. März 2008 (GV. NRW. S. 195))",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung entsprechend. Die…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…Studienakkreditierungsstaatsvertrags vom 12. Juni 2017 (GV. NRW. S. 806) und der auf seiner Grundlage erlassenen Vorschrift…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[4].children[5].text",
+        "term": "NRW",
+        "context": "…6 Absatz 4 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das zuletzt durch Artikel 7 des Gese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[4].children[5].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 7 des Gesetzes vom 17. Mai 2018 (GV. NRW. S. 244) geändert worden ist, ist nicht anwendbar. Die Rech…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[7].children[2].text",
+        "term": "NRW",
+        "context": "…llungs- und Urlaubsverordnung West vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92) in der jeweils geltenden Fassung, 3. der…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[5].children[3].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung anzuwenden. Behör…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[3].children[4].text",
+        "term": "NRW",
+        "context": "…§ 96 Absatz 1 Satz 3 Hochschulgesetz vom 14. März 2000 (GV. NRW. S. 190) in der Fassung des Gesetzes zur Weiterentwicklung …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[3].children[4].text",
+        "term": "NRW",
+        "context": "…iterentwicklungsgesetz) - HRWG - vom 30. November 2004 (GV. NRW. S. 752) führen, zu einem Angebot von Studiengängen um, wel…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[3].children[5].text",
+        "term": "NRW",
+        "context": "…bsatz 1 Satz 3 des Hochschulgesetzes vom 14. März 2000 (GV. NRW. S. 190) in der Fassung des Hochschulreform-Weiterentwicklu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[3].children[5].text",
+        "term": "NRW",
+        "context": "…eform-Weiterentwicklungsgesetzes vom 30. November 2004 (GV. NRW. S. 752) führen, werden keine Studienanfänger mehr aufgenom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…es § 16 des Lehrerausbildungsgesetzes vom 12. Mai 2009 (GV. NRW. S. 308), das zuletzt durch Artikel 5 des Gesetzes vom 1. S…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 5 des Gesetzes vom 1. September 2020 (GV. NRW. S. 890) geändert worden ist, erforderlich ist, gilt § 77d …",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[8].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ektionsschutz- und Befugnisgesetzes vom 14. April 2020 (GV. NRW. S. 218b), das zuletzt durch das Gesetz vom 4. Mai 2021 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[8].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…S. 218b), das zuletzt durch das Gesetz vom 4. Mai 2021 (GV. NRW. S. 566) geändert worden ist, eine epidemische Lage von lan…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[8].children[3].text",
+        "term": "NRW",
+        "context": "…stung und den Katastrophenschutz vom 17. Dezember 2015 (GV. NRW. S. 886), das zuletzt durch Artikel 6 des Gesetzes vom 23. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[8].children[3].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 6 des Gesetzes vom 23. Juni 2021 (GV. NRW. S. 762) geändert worden ist, an Hochschulen der Lehr- oder…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…Neuregelung des Kunsthochschulrechts vom 13. März 2008 (GV. NRW. S. 195))",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…urch Artikel 6 Nummer 1 des Gesetzes vom 25. März 2021 (GV. NRW. S. 331), in Kraft getreten am 15. April 2021",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[8].text",
+        "term": "NRW",
+        "context": "…tikel 2 Hochschulfreiheitsgesetz) vom 31. Oktober 2006 (GV. NRW. S. 474) für diejenigen Kunsthochschulen fort, die im Zeitp…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[11].text",
+        "term": "NRW",
+        "context": "…8 Nr. 10 Hochschulfreiheitsgesetz vom 31. Oktober 2006 (GV. NRW. S. 474) für die Bearbeitung der Beihilfe der an den Kunsth…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[12].text",
+        "term": "NRW",
+        "context": "…Umwandlung der Gesamthochschulen vom 18. Dezember 2002 (GV. NRW. S. 644), geändert durch Artikel 9 des Gesetzes vom 30. Nov…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[12].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 9 des Gesetzes vom 30. November 2004 (GV. NRW. S. 752), tritt mit Inkrafttreten dieses Gesetzes außer Kra…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[13].text",
+        "term": "NRW",
+        "context": "…rtikel 17 Nummer 5 des Gesetzes vom 16. September 2014 (GV. NRW. S. 547), in Kraft getreten am 1. Oktober 2014 (7. Für eine…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[9].children[4].children[14].text",
+        "term": "NRW",
+        "context": "…urch Artikel 6 Nummer 2 des Gesetzes vom 25. März 2021 (GV. NRW. S. 331), in Kraft getreten am 15. April 2021",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Kunsthochschulen des Landes Nordrhein-Westfalen (Kunsthochschulgesetz - KunstHG -) vom 13. März 2008 (GV. NRW. S. 195)",
+    "sourceVersion": "Gesetz über die Kunsthochschulen des Landes Nordrhein-Westfalen (Kunsthochschulgesetz - KunstHG -) vom 13. März 2008 (GV. NRW. S. 195)",
+    "simulation": "Gesetz über die Kunsthochschulen des Landes Westdeutschland (Kunsthochschulgesetz - KunstHG -) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 85,
+          "actual": 85,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 223910,
+          "actual": 223278,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 85,
+          "actual": 85,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 1105,
+          "actual": 1105,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 71,
+          "actual": 71,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 85,
+          "actual": 85,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 223278,
+          "actual": 223217,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "85 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "85 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:17:04.080Z"
+}

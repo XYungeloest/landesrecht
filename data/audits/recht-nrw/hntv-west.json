@@ -1,0 +1,364 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31235",
+  "slug": "hntv-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@110:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 110,
+      "end": 136,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…tlichen und künstlerischen Personals an den Hochschulen des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@59:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 59,
+      "end": 74,
+      "term": "GV. NRW. S. 224",
+      "context": "Auf Grund des § 57 Landesbeamtengesetz vom 21. April 2009 (GV. NRW. S. 224) und auf Grund des § 126 Absatz 3 Landesbeamtengesetz wird …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@158:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 158,
+      "end": 232,
+      "term": "Ministerium für Inneres und Kommunales und dem Finanzministerium verordnet",
+      "context": "…6 Absatz 3 Landesbeamtengesetz wird im Einvernehmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[1].text@205:ministry-compound",
+      "path": "body[1].text",
+      "start": 205,
+      "end": 222,
+      "term": "Finanzministerium",
+      "context": "…hmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[1].text@54:protected:gazette-nrw",
+      "path": "body[8].children[1].children[1].text",
+      "start": 54,
+      "end": 69,
+      "term": "GV. NRW. S. 605",
+      "context": "Die Nebentätigkeitsverordnung vom 21. September 1982 (GV. NRW. S. 605, ber. S. 689) in der jeweils geltenden Fassung findet auf d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[0].children[5].text@132:protected:gazette-nrw",
+      "path": "body[10].children[1].children[0].children[5].text",
+      "start": 132,
+      "end": 147,
+      "term": "GV. NRW. S. 547",
+      "context": "…satz 7 Satz 1 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[1].children[0].text@141:protected:gazette-nrw",
+      "path": "body[12].children[1].children[0].text",
+      "start": 141,
+      "end": 156,
+      "term": "GV. NRW. S. 726",
+      "context": "…e Hochschulnebentätigkeitsverordnung vom 11. Dezember 1981 (GV. NRW. S. 726) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[1].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[1].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Inneres und Kommunales und dem Finanzministerium verordnet",
+      "context": "…6 Absatz 3 Landesbeamtengesetz wird im Einvernehmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Finanzministerium",
+      "context": "…hmen mit dem Ministerium für Inneres und Kommunales und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 212,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… Grund des § 57 Landesbeamtengesetz vom 21. April 2009 (GV. NRW. S. 224) und auf Grund des § 126 Absatz 3 Landesbeamtengese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].children[1].text",
+        "term": "NRW",
+        "context": "Die Nebentätigkeitsverordnung vom 21. September 1982 (GV. NRW. S. 605, ber. S. 689) in der jeweils geltenden Fassung find…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[0].children[5].text",
+        "term": "NRW",
+        "context": "… 7 Satz 1 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…chschulnebentätigkeitsverordnung vom 11. Dezember 1981 (GV. NRW. S. 726) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Nebentätigkeit des wissenschaftlichen und künstlerischen Personals an den Hochschulen des Landes Nordrhein-Westfalen vom 19. Dezember 2014",
+    "sourceVersion": "Verordnung über die Nebentätigkeit des wissenschaftlichen und künstlerischen Personals an den Hochschulen des Landes Nordrhein-Westfalen vom 19. Dezember 2014",
+    "simulation": "Verordnung über die Nebentätigkeit des wissenschaftlichen und künstlerischen Personals an den Hochschulen des Landes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16200,
+          "actual": 16791,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 123,
+          "actual": 123,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16791,
+          "actual": 16787,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "16 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "16 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:25:40.359Z"
+}

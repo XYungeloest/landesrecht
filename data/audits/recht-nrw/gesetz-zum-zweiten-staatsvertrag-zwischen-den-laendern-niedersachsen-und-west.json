@@ -1,0 +1,680 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27887",
+  "slug": "gesetz-zum-zweiten-staatsvertrag-zwischen-den-laendern-niedersachsen-und-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@72:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 72,
+      "end": 91,
+      "term": "Nordrhein-Westfalen",
+      "context": "…weiten Staatsvertrag zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@118:rule:jurisdiction-name-bare",
+      "path": "body[1].children[0].text",
+      "start": 118,
+      "end": 137,
+      "term": "Nordrhein-Westfalen",
+      "context": "…taatsvertrag zwischen dem Lande Niedersachsen und dem Lande Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze - Anlage zu di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@74:authority-district-government",
+      "path": "body[2].children[0].text",
+      "start": 74,
+      "end": 92,
+      "term": "Bezirksregierungen",
+      "context": "… 1 Abs. 1 des Staatsvertrages genannte Anlage liegt bei den Bezirksregierungen Detmold und Münster sowie - in dem die jeweiligen Grenzabsc…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@93:municipality",
+      "path": "body[2].children[0].text",
+      "start": 93,
+      "end": 100,
+      "term": "Detmold",
+      "context": "…svertrages genannte Anlage liegt bei den Bezirksregierungen Detmold und Münster sowie - in dem die jeweiligen Grenzabschnitte b…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@105:municipality",
+      "path": "body[2].children[0].text",
+      "start": 105,
+      "end": 112,
+      "term": "Münster",
+      "context": "…enannte Anlage liegt bei den Bezirksregierungen Detmold und Münster sowie - in dem die jeweiligen Grenzabschnitte betreffenden …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@123:rule:jurisdiction-name",
+      "path": "body[4].children[0].text",
+      "start": 123,
+      "end": 147,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…in Kraft tritt, ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekanntzumachen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].text@4:constitutional-organ-state",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[6].text@20:rule:jurisdiction-name-bare",
+      "path": "body[6].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].text@4:ministry-compound",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[10].text@39:rule:jurisdiction-name-bare",
+      "path": "body[10].text",
+      "start": 39,
+      "end": 58,
+      "term": "Nordrhein-Westfalen",
+      "context": "zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].text@178:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 178,
+      "end": 197,
+      "term": "Nordrhein-Westfalen",
+      "context": "…enheiten anzupassen, schließen die Länder Niedersachsen und Nordrhein-Westfalen - im Folgenden: Länder - nach Anhörung der betroffenen komm…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[0].children[0].text@56:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[0].children[0].text",
+      "start": 56,
+      "end": 80,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Niedersachsen geht folgendes Flurstück auf das Land Nordrhein-Westfalen über:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[1].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[1].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Nordrhein-Westfalen geht folgende Flurstücke auf das",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[4].children[0].text@57:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[4].children[0].text",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Niedersachsen gehen folgende Flurstücke auf das Land Nordrhein-Westfalen über:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[7].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[7].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Nordrhein-Westfalen gehen folgende Flurstücke auf das Land Niedersachsen über:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[12].children[0].text@57:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[12].children[0].text",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Niedersachsen gehen folgende Flurstücke auf das Land Nordrhein-Westfalen über:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[14].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[14].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Nordrhein-Westfalen gehen folgende Flurstücke auf das Land Niedersachsen über:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[19].text@57:rule:jurisdiction-name",
+      "path": "body[12].children[1].children[19].text",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Vom Land Niedersachsen gehen folgende Flurstücke auf das Land Nordrhein-Westfalen über:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].children[1].text@91:ministry-compound",
+      "path": "body[15].children[1].children[1].text",
+      "start": 91,
+      "end": 107,
+      "term": "Innenministerium",
+      "context": "…den Niedersächsischen Ministerpräsidenten Niedersächsisches Innenministerium Gerhard Glogowski",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[15].children[1].children[2].text@0:municipality",
+      "path": "body[15].children[1].children[2].text",
+      "start": 0,
+      "end": 10,
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 21. November 1997",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[1].children[3].text@8:rule:jurisdiction-name",
+      "path": "body[15].children[1].children[3].text",
+      "start": 8,
+      "end": 32,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Für das Land Nordrhein-Westfalen Namens des Ministerpräsidenten Der Innenminister Franz-Jose…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].children[3].text@68:ministry-compound",
+      "path": "body[15].children[1].children[3].text",
+      "start": 68,
+      "end": 81,
+      "term": "Innenminister",
+      "context": "…Land Nordrhein-Westfalen Namens des Ministerpräsidenten Der Innenminister Franz-Josef Kniola",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 14
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[1].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[4].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[7].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[12].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[14].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[19].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[1].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "… 1 Abs. 1 des Staatsvertrages genannte Anlage liegt bei den Bezirksregierungen Detmold und Münster sowie - in dem die jeweiligen Grenzabsc…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Detmold",
+      "context": "…svertrages genannte Anlage liegt bei den Bezirksregierungen Detmold und Münster sowie - in dem die jeweiligen Grenzabschnitte b…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Münster",
+      "context": "…enannte Anlage liegt bei den Bezirksregierungen Detmold und Münster sowie - in dem die jeweiligen Grenzabschnitte betreffenden …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].children[1].text",
+      "term": "Innenministerium",
+      "context": "…den Niedersächsischen Ministerpräsidenten Niedersächsisches Innenministerium Gerhard Glogowski",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].children[2].text",
+      "term": "Düsseldorf",
+      "context": "Düsseldorf, den 21. November 1997",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].children[3].text",
+      "term": "Innenminister",
+      "context": "…Land Nordrhein-Westfalen Namens des Ministerpräsidenten Der Innenminister Franz-Josef Kniola",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 101,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zum Zweiten Staatsvertrag zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze vom 10. Februar 1998",
+    "sourceVersion": "Gesetz zum Zweiten Staatsvertrag zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze vom 10. Februar 1998",
+    "simulation": "Gesetz zum Zweiten Staatsvertrag zwischen den Ländern Niedersachsen und Westdeutschland über Änderungen der gemeinsamen Landesgrenze in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6604,
+          "actual": 6674,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 65,
+          "actual": 65,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6769,
+          "actual": 6717,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "9 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "9 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": true,
+    "treatyTextLocation": "inline",
+    "evidence": [
+      "Titel: „Gesetz zum Zweiten Staatsvertrag zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze“"
+    ],
+    "treatyTitle": "Zweiten Staatsvertrag zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über Änderungen der gemeinsamen Landesgrenze"
+  },
+  "generatedAt": "2026-09-16T04:22:11.857Z"
+}

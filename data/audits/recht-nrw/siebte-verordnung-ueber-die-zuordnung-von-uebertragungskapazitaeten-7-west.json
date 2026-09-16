@@ -1,0 +1,528 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27682",
+  "slug": "siebte-verordnung-ueber-die-zuordnung-von-uebertragungskapazitaeten-7-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@49:rule:jurisdiction-name",
+      "path": "body[2].text",
+      "start": 49,
+      "end": 73,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Aufgrund § 3 Abs. 1 des Rundfunkgesetzes für das Land Nordrhein-Westfalen (LRG NW) in der Fassung der Bekanntmachung vom 31. März 199…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].text@136:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 136,
+      "end": 150,
+      "term": "GV. NW. S. 172",
+      "context": "…RG NW) in der Fassung der Bekanntmachung vom 31. März 1993 (GV. NW. S. 172), zuletzt geändert durch Gesetz vom 11. Oktober 1994 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@205:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 205,
+      "end": 219,
+      "term": "GV. NW. S. 868",
+      "context": "…. 172), zuletzt geändert durch Gesetz vom 11. Oktober 1994 (GV. NW. S. 868), in Verbindung mit Artikel 2 Abs. 9 des 3. Rundfunkänderun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@309:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 309,
+      "end": 323,
+      "term": "GV. NW. S. 254",
+      "context": "… Abs. 9 des 3. Rundfunkänderungsgesetzes vom 18. Juni 1991 (GV. NW. S. 254) und Artikel 5 Abs. 2 des 5. Rundfunkänderungsgesetzes vom …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@403:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 403,
+      "end": 417,
+      "term": "GV. NW. S. 346",
+      "context": "… 2 des 5. Rundfunkänderungsgesetzes vom 22. September 1992 (GV. NW. S. 346), wird mit Zustimmung des Hauptausschusses des Landtags ver…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@78:municipality",
+      "path": "body[5].children[0].text",
+      "start": 78,
+      "end": 82,
+      "term": "Köln",
+      "context": "…2 Satz 3 Nr. 1 des Gesetzes über den Westdeutschen Rundfunk Köln (WDR-Gesetz) in der Fassung der Bekanntmachung vom 31. März…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@149:protected:gazette-nw",
+      "path": "body[5].children[0].text",
+      "start": 149,
+      "end": 163,
+      "term": "GV. NW. S. 158",
+      "context": "…esetz) in der Fassung der Bekanntmachung vom 31. März 1993 (GV. NW. S. 158) erfolgte Zuordnung folgender Übertragungskapazitäten zur p…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@290:municipality",
+      "path": "body[5].children[0].text",
+      "start": 290,
+      "end": 294,
+      "term": "Köln",
+      "context": "…lichen Nutzung für Hörfunk durch den Westdeutschen Rundfunk Köln (WDR) wird aufgehoben:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[1].children[0].text@0:municipality",
+      "path": "body[5].children[1].children[1].children[0].text",
+      "start": 0,
+      "end": 4,
+      "term": "Köln",
+      "context": "Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].children[0].text@0:municipality",
+      "path": "body[5].children[1].children[2].children[0].text",
+      "start": 0,
+      "end": 6,
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[3].children[0].text@0:municipality",
+      "path": "body[5].children[1].children[3].children[0].text",
+      "start": 0,
+      "end": 6,
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[1].children[0].text@0:municipality",
+      "path": "body[7].children[1].children[1].children[0].text",
+      "start": 0,
+      "end": 6,
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[3].children[0].text@0:municipality",
+      "path": "body[8].children[1].children[3].children[0].text",
+      "start": 0,
+      "end": 6,
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[4].children[0].text@0:municipality",
+      "path": "body[8].children[1].children[4].children[0].text",
+      "start": 0,
+      "end": 6,
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].text@4:constitutional-organ-state",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[11].text@20:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "municipality": {
+      "manual-review": 8
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[5].children[0].text",
+      "term": "Köln",
+      "context": "…2 Satz 3 Nr. 1 des Gesetzes über den Westdeutschen Rundfunk Köln (WDR-Gesetz) in der Fassung der Bekanntmachung vom 31. März…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Köln",
+      "context": "…lichen Nutzung für Hörfunk durch den Westdeutschen Rundfunk Köln (WDR) wird aufgehoben:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].children[0].text",
+      "term": "Köln",
+      "context": "Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].children[0].text",
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[3].children[0].text",
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[1].children[0].text",
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[3].children[0].text",
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[4].children[0].text",
+      "term": "Siegen",
+      "context": "Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 84,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Siebte Verordnung über die Zuordnung von Übertragungskapazitäten - 7. FrequenzVO - vom 9. Dezember 1994",
+    "sourceVersion": "Siebte Verordnung über die Zuordnung von Übertragungskapazitäten - 7. FrequenzVO - vom 9. Dezember 1994",
+    "simulation": "Siebte Verordnung über die Zuordnung von Übertragungskapazitäten - 7. FrequenzVO - in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2144,
+          "actual": 2203,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 104,
+          "actual": 104,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2203,
+          "actual": 2195,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "8 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "8 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:53:04.590Z"
+}

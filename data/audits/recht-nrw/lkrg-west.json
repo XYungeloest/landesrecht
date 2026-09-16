@@ -1,0 +1,1166 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31479",
+  "slug": "lkrg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@86:geography-region",
+      "path": "meta.title",
+      "start": 86,
+      "end": 95,
+      "term": "Westfalen",
+      "context": "…und epidemiologische Krebsregistrierung im Land Nordrhein – Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.abbr@5:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 5,
+      "end": 8,
+      "term": "NRW",
+      "context": "LKRG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@69:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 69,
+      "end": 84,
+      "term": "GV. NRW. S. 999",
+      "context": "…altsübersicht: geändert durch Gesetz vom 19. Dezember 2019 (GV. NRW. S. 999), in Kraft getreten am 31. Dezember 201; geändert durch Ges…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[0].text@170:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 170,
+      "end": 186,
+      "term": "GV. NRW. S. 1168",
+      "context": "…. Dezember 201; geändert durch Gesetz vom 31. Oktober 2023 (GV. NRW. S. 1168), in Kraft getreten am 18. November 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@45:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 45,
+      "end": 59,
+      "term": "GV. NRW. S. 94",
+      "context": "(Artikel 1 des Gesetzes vom 2. Februar 2016 (GV. NRW. S. 94))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[0].children[1].text@193:rule:jurisdiction-name-bare",
+      "path": "body[12].children[0].children[1].text",
+      "start": 193,
+      "end": 212,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Gesundheit zuständige Ministerium das Landeskrebsregister Nordrhein-Westfalen (Landeskrebsregister) geführt. Es erfüllt die dem Land durc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[11].text@269:rule:jurisdiction-name-bare",
+      "path": "body[12].children[1].children[11].text",
+      "start": 269,
+      "end": 288,
+      "term": "Nordrhein-Westfalen",
+      "context": "…e Stellen im Sinne des § 5 Absatz 1 des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].children[11].text@307:protected:gazette-nrw",
+      "path": "body[12].children[1].children[11].text",
+      "start": 307,
+      "end": 322,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) in der jeweils geltenden Fassung, …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[2].children[4].children[9].text@160:rule:jurisdiction-name-bare",
+      "path": "body[12].children[2].children[4].children[9].text",
+      "start": 160,
+      "end": 179,
+      "term": "Nordrhein-Westfalen",
+      "context": "…on Therapieergebnissen mit den Ergebnissen der insgesamt in Nordrhein-Westfalen behandelten Patientinnen und Patienten nach Tumorentitäten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[3].children[2].text@79:geography-region",
+      "path": "body[12].children[3].children[2].text",
+      "start": 79,
+      "end": 94,
+      "term": "Westfalen-Lippe",
+      "context": "…ntrollnummernstelle werden der Kassenärztlichen Vereinigung Westfalen-Lippe zugewiesen. Die durch die Aufgabenerfüllung entstehenden er…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[3].children[2].text@89:geography-river",
+      "path": "body[12].children[3].children[2].text",
+      "start": 89,
+      "end": 94,
+      "term": "Lippe",
+      "context": "…ernstelle werden der Kassenärztlichen Vereinigung Westfalen-Lippe zugewiesen. Die durch die Aufgabenerfüllung entstehenden er…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[3].children[3].text@57:rule:jurisdiction-name",
+      "path": "body[12].children[3].children[3].text",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Eine Beleihung erfolgt durch im Ministerialblatt für das Land Nordrhein-Westfalen zu veröffentlichenden Verwaltungsakt. Sie darf nur erfolgen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[5].children[1].text@364:protected:gazette-nrw",
+      "path": "body[12].children[5].children[1].text",
+      "start": 364,
+      "end": 379,
+      "term": "GV. NRW. S. 590",
+      "context": "…z 1 des Landesgleichstellungsgesetzes vom 9. November 1999 (GV. NRW. S. 590), das zuletzt durch Artikel 16 des Gesetzes vom 1. Februar …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[5].children[1].text@445:protected:gazette-nrw",
+      "path": "body[12].children[5].children[1].text",
+      "start": 445,
+      "end": 460,
+      "term": "GV. NRW. S. 122",
+      "context": "… zuletzt durch Artikel 16 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 122) geändert worden ist. Die Mitglieder des Beirates üben ihre…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[10].children[5].text@223:protected:gazette-nrw",
+      "path": "body[12].children[10].children[5].text",
+      "start": 223,
+      "end": 238,
+      "term": "GV. NRW. S. 414",
+      "context": "…, die aufgrund des Krebsregistergesetzes vom 5. April 2005 (GV. NRW. S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV. NRW. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[10].children[5].text@288:protected:gazette-nrw",
+      "path": "body[12].children[10].children[5].text",
+      "start": 288,
+      "end": 303,
+      "term": "GV. NRW. S. 624",
+      "context": "…RW. S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV. NRW. S. 624) geändert worden ist, erzeugt wurden. Eine Umverschlüsselun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[11].children[1].text@594:rule:jurisdiction-name-bare",
+      "path": "body[12].children[11].children[1].text",
+      "start": 594,
+      "end": 613,
+      "term": "Nordrhein-Westfalen",
+      "context": "…weisen, dass nach den Erfahrungen der Krebsregistrierung in Nordrhein-Westfalen eine hohe Wahrscheinlichkeit für eine Personenidentität bes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[11].children[1].text@950:rule:jurisdiction-name-bare",
+      "path": "body[12].children[11].children[1].text",
+      "start": 950,
+      "end": 969,
+      "term": "Nordrhein-Westfalen",
+      "context": "…weisen, dass nach den Erfahrungen der Krebsregistrierung in Nordrhein-Westfalen eine hohe Wahrscheinlichkeit für eine Personenmehrheit best…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].children[1].text@578:rule:jurisdiction-abbreviation",
+      "path": "body[14].children[0].children[1].text",
+      "start": 578,
+      "end": 581,
+      "term": "NRW",
+      "context": "…enübermittlung durch die Meldebehörden nach dem Meldegesetz NRW in der Fassung der Bekanntmachung vom 16. September 1997 (G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[0].children[1].text@640:protected:gazette-nrw",
+      "path": "body[14].children[0].children[1].text",
+      "start": 640,
+      "end": 655,
+      "term": "GV. NRW. S. 332",
+      "context": "…W in der Fassung der Bekanntmachung vom 16. September 1997 (GV. NRW. S. 332, ber. S. 386) in der jeweils geltenden Fassung und der dazu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[0].children[2].text@610:geography-region",
+      "path": "body[14].children[0].children[2].text",
+      "start": 610,
+      "end": 625,
+      "term": "Westfalen-Lippe",
+      "context": "…tellen bei den Kassenärztlichen Vereinigungen Nordrhein und Westfalen-Lippe die in den Richtlinien vorgesehenen Früherkennungsuntersuch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[14].children[0].children[2].text@620:geography-river",
+      "path": "body[14].children[0].children[2].text",
+      "start": 620,
+      "end": 625,
+      "term": "Lippe",
+      "context": "… den Kassenärztlichen Vereinigungen Nordrhein und Westfalen-Lippe die in den Richtlinien vorgesehenen Früherkennungsuntersuch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[14].children[1].children[1].text@184:authority-state-enterprise",
+      "path": "body[14].children[1].children[1].text",
+      "start": 184,
+      "end": 209,
+      "term": "Landesbetrieb Information",
+      "context": "…m Mortalitätsabgleich übermitteln die Meldebehörden und der Landesbetrieb Information und Technik - Geschäftsbereich Statistik - regelmäßig zu je…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[14].children[1].children[4].text@129:rule:jurisdiction-abbreviation",
+      "path": "body[14].children[1].children[4].text",
+      "start": 129,
+      "end": 132,
+      "term": "NRW",
+      "context": "… Meldebehörden sowie des Datenabrufs regelt das Meldegesetz NRW in der Fassung der Bekanntmachung vom 16. September 1997 (G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[1].children[4].text@191:protected:gazette-nrw",
+      "path": "body[14].children[1].children[4].text",
+      "start": 191,
+      "end": 206,
+      "term": "GV. NRW. S. 332",
+      "context": "…W in der Fassung der Bekanntmachung vom 16. September 1997 (GV. NRW. S. 332, ber. S. 386) in der jeweils geltenden Fassung sowie die vo…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[1].children[0].children[0].text@10:jurisdiction-name-residual",
+      "path": "body[14].children[2].children[1].children[0].children[0].text",
+      "start": 10,
+      "end": 30,
+      "term": "Nordrhein-Westfalens",
+      "context": "innerhalb Nordrhein-Westfalens ärztlich behandelt werden oder wurden und die im sonstigen …",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[14].children[2].children[1].children[0].children[1].text@10:jurisdiction-name-residual",
+      "path": "body[14].children[2].children[1].children[0].children[1].text",
+      "start": 10,
+      "end": 30,
+      "term": "Nordrhein-Westfalens",
+      "context": "innerhalb Nordrhein-Westfalens ihren Wohnsitz oder gewöhnlichen Aufenthalt haben oder hatt…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[17].children[0].children[3].text@282:authority-district-government",
+      "path": "body[17].children[0].children[3].text",
+      "start": 282,
+      "end": 298,
+      "term": "Bezirksregierung",
+      "context": "… 13. Mai 2015 (BGBl. I S. 706) geändert worden ist, ist die Bezirksregierung. Liegen dem Landeskrebsregister Anhaltspunkte für eine Tat …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[17].children[0].children[3].text@430:authority-district-government",
+      "path": "body[17].children[0].children[3].text",
+      "start": 430,
+      "end": 446,
+      "term": "Bezirksregierung",
+      "context": "…1 Satz 1 vor, benachrichtigt es unverzüglich die zuständige Bezirksregierung. Eine Benachrichtigung durch die Datenannahmestelle darf Id…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[18].children[0].children[3].text@272:ministry-compound",
+      "path": "body[18].children[0].children[3].text",
+      "start": 272,
+      "end": 289,
+      "term": "Finanzministerium",
+      "context": "…ungen nach Absatz 1 Nummer 6 werden im Einvernehmen mit dem Finanzministerium, mit dem Justizministerium und dem für Kommunales zuständig…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[18].children[0].children[3].text@299:ministry-compound",
+      "path": "body[18].children[0].children[3].text",
+      "start": 299,
+      "end": 316,
+      "term": "Justizministerium",
+      "context": "…6 werden im Einvernehmen mit dem Finanzministerium, mit dem Justizministerium und dem für Kommunales zuständigen Ministerium erlassen. Vo…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[18].children[0].children[4].children[2].text@123:rule:jurisdiction-name",
+      "path": "body[18].children[0].children[4].children[2].text",
+      "start": 123,
+      "end": 147,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…chriften enthält, gilt ergänzend das Gebührengesetz für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 23. August 1999 (GV. …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[18].children[0].children[4].children[2].text@203:protected:gazette-nrw",
+      "path": "body[18].children[0].children[4].children[2].text",
+      "start": 203,
+      "end": 218,
+      "term": "GV. NRW. S. 524",
+      "context": "…alen in der Fassung der Bekanntmachung vom 23. August 1999 (GV. NRW. S. 524) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[2].children[1].text@351:rule:jurisdiction-name",
+      "path": "body[18].children[2].children[1].text",
+      "start": 351,
+      "end": 375,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… auf Datenschutz (Artikel 4 Absatz 2 der Verfassung für das Land Nordrhein-Westfalen) eingeschränkt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[18].children[3].children[1].text@138:protected:gazette-nrw",
+      "path": "body[18].children[3].children[1].text",
+      "start": 138,
+      "end": 153,
+      "term": "GV. NRW. S. 414",
+      "context": "…eichzeitig tritt das Krebsregistergesetz vom 5. April 2005 (GV. NRW. S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV. NRW. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[3].children[1].text@203:protected:gazette-nrw",
+      "path": "body[18].children[3].children[1].text",
+      "start": 203,
+      "end": 218,
+      "term": "GV. NRW. S. 624",
+      "context": "…RW. S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV. NRW. S. 624) geändert worden ist, außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].text@4:constitutional-organ-state",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[19].text@20:rule:jurisdiction-name-bare",
+      "path": "body[19].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[20].text@32:ministry-portfolio",
+      "path": "body[20].text",
+      "start": 32,
+      "end": 71,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Für die Ministerpräsidentin Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[21].text@4:ministry-compound",
+      "path": "body[21].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[22].text@4:ministry-portfolio",
+      "path": "body[22].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[23].text@4:ministry-compound",
+      "path": "body[23].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[24].text@8:ministry-portfolio",
+      "path": "body[24].text",
+      "start": 8,
+      "end": 122,
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Für die Ministerin für Innovation, Wissenschaft und Forschung Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[25].text@4:ministry-portfolio",
+      "path": "body[25].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "geography": {
+      "manual-review": 5
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 12,
+      "manual-review": 2
+    },
+    "source-citation": {
+      "protected": 13
+    },
+    "authority": {
+      "manual-review": 3
+    },
+    "ministry": {
+      "manual-review": 8
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[2].children[4].children[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[3].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[11].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[11].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[14].children[1].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[0].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[18].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[19].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Westfalen",
+      "context": "…und epidemiologische Krebsregistrierung im Land Nordrhein – Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[3].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…ntrollnummernstelle werden der Kassenärztlichen Vereinigung Westfalen-Lippe zugewiesen. Die durch die Aufgabenerfüllung entstehenden er…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[3].children[2].text",
+      "term": "Lippe",
+      "context": "…ernstelle werden der Kassenärztlichen Vereinigung Westfalen-Lippe zugewiesen. Die durch die Aufgabenerfüllung entstehenden er…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…tellen bei den Kassenärztlichen Vereinigungen Nordrhein und Westfalen-Lippe die in den Richtlinien vorgesehenen Früherkennungsuntersuch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].children[2].text",
+      "term": "Lippe",
+      "context": "… den Kassenärztlichen Vereinigungen Nordrhein und Westfalen-Lippe die in den Richtlinien vorgesehenen Früherkennungsuntersuch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[1].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "…m Mortalitätsabgleich übermitteln die Meldebehörden und der Landesbetrieb Information und Technik - Geschäftsbereich Statistik - regelmäßig zu je…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[2].children[1].children[0].children[0].text",
+      "term": "Nordrhein-Westfalens",
+      "context": "innerhalb Nordrhein-Westfalens ärztlich behandelt werden oder wurden und die im sonstigen …",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[2].children[1].children[0].children[1].text",
+      "term": "Nordrhein-Westfalens",
+      "context": "innerhalb Nordrhein-Westfalens ihren Wohnsitz oder gewöhnlichen Aufenthalt haben oder hatt…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[0].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "… 13. Mai 2015 (BGBl. I S. 706) geändert worden ist, ist die Bezirksregierung. Liegen dem Landeskrebsregister Anhaltspunkte für eine Tat …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[0].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…1 Satz 1 vor, benachrichtigt es unverzüglich die zuständige Bezirksregierung. Eine Benachrichtigung durch die Datenannahmestelle darf Id…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[0].children[3].text",
+      "term": "Finanzministerium",
+      "context": "…ungen nach Absatz 1 Nummer 6 werden im Einvernehmen mit dem Finanzministerium, mit dem Justizministerium und dem für Kommunales zuständig…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[0].children[3].text",
+      "term": "Justizministerium",
+      "context": "…6 werden im Einvernehmen mit dem Finanzministerium, mit dem Justizministerium und dem für Kommunales zuständigen Ministerium erlassen. Vo…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Für die Ministerpräsidentin Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].text",
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Für die Ministerin für Innovation, Wissenschaft und Forschung Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[25].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 697,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…übersicht: geändert durch Gesetz vom 19. Dezember 2019 (GV. NRW. S. 999), in Kraft getreten am 31. Dezember 201; geändert d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…zember 201; geändert durch Gesetz vom 31. Oktober 2023 (GV. NRW. S. 1168), in Kraft getreten am 18. November 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "(Artikel 1 des Gesetzes vom 2. Februar 2016 (GV. NRW. S. 94))",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[1].children[11].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) in der jeweils geltenden F…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…des Landesgleichstellungsgesetzes vom 9. November 1999 (GV. NRW. S. 590), das zuletzt durch Artikel 16 des Gesetzes vom 1. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 16 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 122) geändert worden ist. Die Mitglieder des Beirates ü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[10].children[5].text",
+        "term": "NRW",
+        "context": "…e aufgrund des Krebsregistergesetzes vom 5. April 2005 (GV. NRW. S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[10].children[5].text",
+        "term": "NRW",
+        "context": "…S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV. NRW. S. 624) geändert worden ist, erzeugt wurden. Eine Umversch…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[0].children[1].text",
+        "term": "NRW",
+        "context": "… der Fassung der Bekanntmachung vom 16. September 1997 (GV. NRW. S. 332, ber. S. 386) in der jeweils geltenden Fassung und …",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[4].text",
+        "term": "NRW",
+        "context": "… der Fassung der Bekanntmachung vom 16. September 1997 (GV. NRW. S. 332, ber. S. 386) in der jeweils geltenden Fassung sowi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[2].children[1].children[0].children[0].text",
+        "term": "Nordrhein-Westfalens",
+        "context": "innerhalb Nordrhein-Westfalens ärztlich behandelt werden oder wurden und die im sonstigen …",
+        "status": "documented",
+        "detectionId": "body[14].children[2].children[1].children[0].children[0].text@10:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[14].children[2].children[1].children[0].children[1].text",
+        "term": "Nordrhein-Westfalens",
+        "context": "innerhalb Nordrhein-Westfalens ihren Wohnsitz oder gewöhnlichen Aufenthalt haben oder hatt…",
+        "status": "documented",
+        "detectionId": "body[14].children[2].children[1].children[0].children[1].text@10:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[18].children[0].children[4].children[2].text",
+        "term": "NRW",
+        "context": "… in der Fassung der Bekanntmachung vom 23. August 1999 (GV. NRW. S. 524) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…zeitig tritt das Krebsregistergesetz vom 5. April 2005 (GV. NRW. S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…S. 414), das zuletzt durch Gesetz vom 5. November 2013 (GV. NRW. S. 624) geändert worden ist, außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die klinische und epidemiologische Krebsregistrierung im Land Nordrhein – Westfalen vom 2. Februar 2016",
+    "sourceVersion": "Gesetz über die klinische und epidemiologische Krebsregistrierung im Land Nordrhein – Westfalen vom 2. Februar 2016",
+    "simulation": "Gesetz über die klinische und epidemiologische Krebsregistrierung im Land Nordrhein – Westfalen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 76843,
+          "actual": 78025,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 418,
+          "actual": 418,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 82428,
+          "actual": 82394,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "31 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "31 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:16:57.880Z"
+}

@@ -1,0 +1,2725 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31127",
+  "slug": "stwg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@34:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 34,
+      "end": 61,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Gesetz über die Studierendenwerke im Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[1].text@65:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 65,
+      "end": 80,
+      "term": "GV. NRW. S. 547",
+      "context": "…kel 4 des Hochschulzukunftsgesetzes vom 16. September 2014 (GV. NRW. S. 547)).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@34:municipality",
+      "path": "body[2].children[0].text",
+      "start": 34,
+      "end": 40,
+      "term": "Aachen",
+      "context": "Die Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@42:municipality",
+      "path": "body[2].children[0].text",
+      "start": 42,
+      "end": 51,
+      "term": "Bielefeld",
+      "context": "Die Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@53:municipality",
+      "path": "body[2].children[0].text",
+      "start": 53,
+      "end": 59,
+      "term": "Bochum",
+      "context": "Die Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderbor…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@61:municipality",
+      "path": "body[2].children[0].text",
+      "start": 61,
+      "end": 65,
+      "term": "Bonn",
+      "context": "…ie Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Sie…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@67:municipality",
+      "path": "body[2].children[0].text",
+      "start": 67,
+      "end": 75,
+      "term": "Dortmund",
+      "context": "…dierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@77:municipality",
+      "path": "body[2].children[0].text",
+      "start": 77,
+      "end": 87,
+      "term": "Düsseldorf",
+      "context": "…erke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@89:municipality",
+      "path": "body[2].children[0].text",
+      "start": 89,
+      "end": 94,
+      "term": "Essen",
+      "context": "…z in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechts…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@96:municipality",
+      "path": "body[2].children[0].text",
+      "start": 96,
+      "end": 100,
+      "term": "Köln",
+      "context": "…chen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@102:municipality",
+      "path": "body[2].children[0].text",
+      "start": 102,
+      "end": 109,
+      "term": "Münster",
+      "context": "…Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalte…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@111:municipality",
+      "path": "body[2].children[0].text",
+      "start": 111,
+      "end": 120,
+      "term": "Paderborn",
+      "context": "…, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalten des öffen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@122:municipality",
+      "path": "body[2].children[0].text",
+      "start": 122,
+      "end": 128,
+      "term": "Siegen",
+      "context": "…onn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalten des öffentlichen …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@133:municipality",
+      "path": "body[2].children[0].text",
+      "start": 133,
+      "end": 142,
+      "term": "Wuppertal",
+      "context": "…nd, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalten des öffentlichen Rechts mit dem…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[0].text@21:municipality",
+      "path": "body[2].children[2].children[0].text",
+      "start": 21,
+      "end": 27,
+      "term": "Aachen",
+      "context": "das Studierendenwerk Aachen für die Technische Hochschule Aachen, die Fachhochschule Aa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[0].text@58:municipality",
+      "path": "body[2].children[2].children[0].text",
+      "start": 58,
+      "end": 64,
+      "term": "Aachen",
+      "context": "das Studierendenwerk Aachen für die Technische Hochschule Aachen, die Fachhochschule Aachen und die Hochschule für Musik Köl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[0].text@85:municipality",
+      "path": "body[2].children[2].children[0].text",
+      "start": 85,
+      "end": 91,
+      "term": "Aachen",
+      "context": "…en für die Technische Hochschule Aachen, die Fachhochschule Aachen und die Hochschule für Musik Köln, Standort Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[0].text@121:municipality",
+      "path": "body[2].children[2].children[0].text",
+      "start": 121,
+      "end": 125,
+      "term": "Köln",
+      "context": "…hen, die Fachhochschule Aachen und die Hochschule für Musik Köln, Standort Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[0].text@136:municipality",
+      "path": "body[2].children[2].children[0].text",
+      "start": 136,
+      "end": 142,
+      "term": "Aachen",
+      "context": "…chschule Aachen und die Hochschule für Musik Köln, Standort Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@21:municipality",
+      "path": "body[2].children[2].children[1].text",
+      "start": 21,
+      "end": 30,
+      "term": "Bielefeld",
+      "context": "das Studierendenwerk Bielefeld für die Universität Bielefeld, die Fachhochschule Bielefeld…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@51:municipality",
+      "path": "body[2].children[2].children[1].text",
+      "start": 51,
+      "end": 60,
+      "term": "Bielefeld",
+      "context": "das Studierendenwerk Bielefeld für die Universität Bielefeld, die Fachhochschule Bielefeld, die Fachhochschule Ostwestfa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@81:municipality",
+      "path": "body[2].children[2].children[1].text",
+      "start": 81,
+      "end": 90,
+      "term": "Bielefeld",
+      "context": "…Bielefeld für die Universität Bielefeld, die Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hoc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@111:geography-region",
+      "path": "body[2].children[2].children[1].text",
+      "start": 111,
+      "end": 123,
+      "term": "Ostwestfalen",
+      "context": "…Bielefeld, die Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@124:geography-region",
+      "path": "body[2].children[2].children[1].text",
+      "start": 124,
+      "end": 129,
+      "term": "Lippe",
+      "context": "…e Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@124:geography-river",
+      "path": "body[2].children[2].children[1].text",
+      "start": 124,
+      "end": 129,
+      "term": "Lippe",
+      "context": "…e Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@168:municipality",
+      "path": "body[2].children[2].children[1].text",
+      "start": 168,
+      "end": 175,
+      "term": "Detmold",
+      "context": "…le Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[2].text@21:municipality",
+      "path": "body[2].children[2].children[2].text",
+      "start": 21,
+      "end": 27,
+      "term": "Bochum",
+      "context": "das Studierendenwerk Bochum für die Universität Bochum, die Fachhochschule Bochum, die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[2].text@48:municipality",
+      "path": "body[2].children[2].children[2].text",
+      "start": 48,
+      "end": 54,
+      "term": "Bochum",
+      "context": "das Studierendenwerk Bochum für die Universität Bochum, die Fachhochschule Bochum, die Fachhochschule Gelsenkirche…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[2].text@75:municipality",
+      "path": "body[2].children[2].children[2].text",
+      "start": 75,
+      "end": 81,
+      "term": "Bochum",
+      "context": "…nwerk Bochum für die Universität Bochum, die Fachhochschule Bochum, die Fachhochschule Gelsenkirchen, die Folkwang Hochschule,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[2].text@102:municipality",
+      "path": "body[2].children[2].children[2].text",
+      "start": 102,
+      "end": 115,
+      "term": "Gelsenkirchen",
+      "context": "…sität Bochum, die Fachhochschule Bochum, die Fachhochschule Gelsenkirchen, die Folkwang Hochschule, Standort Bochum, und die Fachhoch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[2].text@151:municipality",
+      "path": "body[2].children[2].children[2].text",
+      "start": 151,
+      "end": 157,
+      "term": "Bochum",
+      "context": "…hochschule Gelsenkirchen, die Folkwang Hochschule, Standort Bochum, und die Fachhochschule für Gesundheitsberufe in Bochum,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[2].text@207:municipality",
+      "path": "body[2].children[2].children[2].text",
+      "start": 207,
+      "end": 213,
+      "term": "Bochum",
+      "context": "…ort Bochum, und die Fachhochschule für Gesundheitsberufe in Bochum,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[3].text@21:municipality",
+      "path": "body[2].children[2].children[3].text",
+      "start": 21,
+      "end": 25,
+      "term": "Bonn",
+      "context": "das Studierendenwerk Bonn für die Universität Bonn und die Fachhochschule Bonn-Rhein-…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[3].text@46:municipality",
+      "path": "body[2].children[2].children[3].text",
+      "start": 46,
+      "end": 50,
+      "term": "Bonn",
+      "context": "das Studierendenwerk Bonn für die Universität Bonn und die Fachhochschule Bonn-Rhein-Sieg in Sankt Augustin,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[3].text@74:municipality",
+      "path": "body[2].children[2].children[3].text",
+      "start": 74,
+      "end": 78,
+      "term": "Bonn",
+      "context": "…enwerk Bonn für die Universität Bonn und die Fachhochschule Bonn-Rhein-Sieg in Sankt Augustin,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[3].text@85:geography-river",
+      "path": "body[2].children[2].children[3].text",
+      "start": 85,
+      "end": 89,
+      "term": "Sieg",
+      "context": "… für die Universität Bonn und die Fachhochschule Bonn-Rhein-Sieg in Sankt Augustin,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[4].text@21:municipality",
+      "path": "body[2].children[2].children[4].text",
+      "start": 21,
+      "end": 29,
+      "term": "Dortmund",
+      "context": "das Studierendenwerk Dortmund für die Universität Dortmund, die Fachhochschule Dortmund, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[4].text@50:municipality",
+      "path": "body[2].children[2].children[4].text",
+      "start": 50,
+      "end": 58,
+      "term": "Dortmund",
+      "context": "das Studierendenwerk Dortmund für die Universität Dortmund, die Fachhochschule Dortmund, die Folkwang Hochschule, Stan…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[4].text@79:municipality",
+      "path": "body[2].children[2].children[4].text",
+      "start": 79,
+      "end": 87,
+      "term": "Dortmund",
+      "context": "…k Dortmund für die Universität Dortmund, die Fachhochschule Dortmund, die Folkwang Hochschule, Standort Dortmund, die Fernuniver…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[4].text@123:municipality",
+      "path": "body[2].children[2].children[4].text",
+      "start": 123,
+      "end": 131,
+      "term": "Dortmund",
+      "context": "… Fachhochschule Dortmund, die Folkwang Hochschule, Standort Dortmund, die Fernuniversität in Hagen und die Fachhochschule Südwes…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[4].text@156:municipality",
+      "path": "body[2].children[2].children[4].text",
+      "start": 156,
+      "end": 161,
+      "term": "Hagen",
+      "context": "…kwang Hochschule, Standort Dortmund, die Fernuniversität in Hagen und die Fachhochschule Südwestfalen in Iserlohn,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@21:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 21,
+      "end": 31,
+      "term": "Düsseldorf",
+      "context": "das Studierendenwerk Düsseldorf für die Universität Düsseldorf, die Fachhochschule Düsseldo…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@52:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 52,
+      "end": 62,
+      "term": "Düsseldorf",
+      "context": "das Studierendenwerk Düsseldorf für die Universität Düsseldorf, die Fachhochschule Düsseldorf, die Kunstakademie Düsseldor…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@83:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 83,
+      "end": 93,
+      "term": "Düsseldorf",
+      "context": "…sseldorf für die Universität Düsseldorf, die Fachhochschule Düsseldorf, die Kunstakademie Düsseldorf, die Robert-Schumann-Hochschu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@113:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 113,
+      "end": 123,
+      "term": "Düsseldorf",
+      "context": "…üsseldorf, die Fachhochschule Düsseldorf, die Kunstakademie Düsseldorf, die Robert-Schumann-Hochschule Düsseldorf, die Fachhochsch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@156:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 156,
+      "end": 166,
+      "term": "Düsseldorf",
+      "context": "…ie Kunstakademie Düsseldorf, die Robert-Schumann-Hochschule Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@187:geography-region",
+      "path": "body[2].children[2].children[5].text",
+      "start": 187,
+      "end": 198,
+      "term": "Niederrhein",
+      "context": "…e Robert-Schumann-Hochschule Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladbach sowie die Fachhochschule Rhe…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@202:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 202,
+      "end": 209,
+      "term": "Krefeld",
+      "context": "…nn-Hochschule Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladbach sowie die Fachhochschule Rhein-Waal in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@214:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 214,
+      "end": 229,
+      "term": "Mönchengladbach",
+      "context": "…e Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladbach sowie die Fachhochschule Rhein-Waal in Kleve,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[5].text@269:municipality",
+      "path": "body[2].children[2].children[5].text",
+      "start": 269,
+      "end": 274,
+      "term": "Kleve",
+      "context": "… und Mönchengladbach sowie die Fachhochschule Rhein-Waal in Kleve,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@21:municipality",
+      "path": "body[2].children[2].children[6].text",
+      "start": 21,
+      "end": 26,
+      "term": "Essen",
+      "context": "das Studierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-H…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@27:municipality",
+      "path": "body[2].children[2].children[6].text",
+      "start": 27,
+      "end": 35,
+      "term": "Duisburg",
+      "context": "das Studierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-Hochschule…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@56:municipality",
+      "path": "body[2].children[2].children[6].text",
+      "start": 56,
+      "end": 64,
+      "term": "Duisburg",
+      "context": "das Studierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisbur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@65:municipality",
+      "path": "body[2].children[2].children[6].text",
+      "start": 65,
+      "end": 70,
+      "term": "Essen",
+      "context": "…tudierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisburg sowi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@107:municipality",
+      "path": "body[2].children[2].children[6].text",
+      "start": 107,
+      "end": 112,
+      "term": "Essen",
+      "context": "…versität Duisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisburg sowie die Fachhochschule Ruhr-West in Mülheim,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@117:municipality",
+      "path": "body[2].children[2].children[6].text",
+      "start": 117,
+      "end": 125,
+      "term": "Duisburg",
+      "context": "…uisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisburg sowie die Fachhochschule Ruhr-West in Mülheim,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[6].text@151:geography-region",
+      "path": "body[2].children[2].children[6].text",
+      "start": 151,
+      "end": 155,
+      "term": "Ruhr",
+      "context": "…hule, Standorte Essen und Duisburg sowie die Fachhochschule Ruhr-West in Mülheim,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@21:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "das Studierendenwerk Köln für die Universität Köln, die Deutsche Sporthochschule Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@46:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 46,
+      "end": 50,
+      "term": "Köln",
+      "context": "das Studierendenwerk Köln für die Universität Köln, die Deutsche Sporthochschule Köln, die Fachhochschule Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@81:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 81,
+      "end": 85,
+      "term": "Köln",
+      "context": "…Köln für die Universität Köln, die Deutsche Sporthochschule Köln, die Fachhochschule Köln, die Hochschule für Musik Köln, St…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@106:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 106,
+      "end": 110,
+      "term": "Köln",
+      "context": "…Köln, die Deutsche Sporthochschule Köln, die Fachhochschule Köln, die Hochschule für Musik Köln, Standort Köln, und die Kuns…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@137:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 137,
+      "end": 141,
+      "term": "Köln",
+      "context": "…ule Köln, die Fachhochschule Köln, die Hochschule für Musik Köln, Standort Köln, und die Kunsthochschule für Medien Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@152:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 152,
+      "end": 156,
+      "term": "Köln",
+      "context": "…achhochschule Köln, die Hochschule für Musik Köln, Standort Köln, und die Kunsthochschule für Medien Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[7].text@193:municipality",
+      "path": "body[2].children[2].children[7].text",
+      "start": 193,
+      "end": 197,
+      "term": "Köln",
+      "context": "…sik Köln, Standort Köln, und die Kunsthochschule für Medien Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[8].text@21:municipality",
+      "path": "body[2].children[2].children[8].text",
+      "start": 21,
+      "end": 28,
+      "term": "Münster",
+      "context": "das Studierendenwerk Münster für die Universität Münster, die Fachhochschule Münster und…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[8].text@49:municipality",
+      "path": "body[2].children[2].children[8].text",
+      "start": 49,
+      "end": 56,
+      "term": "Münster",
+      "context": "das Studierendenwerk Münster für die Universität Münster, die Fachhochschule Münster und die Kunstakademie Münster,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[8].text@77:municipality",
+      "path": "body[2].children[2].children[8].text",
+      "start": 77,
+      "end": 84,
+      "term": "Münster",
+      "context": "…erk Münster für die Universität Münster, die Fachhochschule Münster und die Kunstakademie Münster,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[8].text@107:municipality",
+      "path": "body[2].children[2].children[8].text",
+      "start": 107,
+      "end": 114,
+      "term": "Münster",
+      "context": "…t Münster, die Fachhochschule Münster und die Kunstakademie Münster,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[9].text@21:municipality",
+      "path": "body[2].children[2].children[9].text",
+      "start": 21,
+      "end": 30,
+      "term": "Paderborn",
+      "context": "das Studierendenwerk Paderborn für die Universität Paderborn sowie die Fachhochschule Hamm…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[9].text@51:municipality",
+      "path": "body[2].children[2].children[9].text",
+      "start": 51,
+      "end": 60,
+      "term": "Paderborn",
+      "context": "das Studierendenwerk Paderborn für die Universität Paderborn sowie die Fachhochschule Hamm-Lippstadt in Hamm und Lippsta…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[9].text@86:municipality",
+      "path": "body[2].children[2].children[9].text",
+      "start": 86,
+      "end": 90,
+      "term": "Hamm",
+      "context": "…born für die Universität Paderborn sowie die Fachhochschule Hamm-Lippstadt in Hamm und Lippstadt,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[9].text@104:municipality",
+      "path": "body[2].children[2].children[9].text",
+      "start": 104,
+      "end": 108,
+      "term": "Hamm",
+      "context": "…rsität Paderborn sowie die Fachhochschule Hamm-Lippstadt in Hamm und Lippstadt,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[10].text@21:municipality",
+      "path": "body[2].children[2].children[10].text",
+      "start": 21,
+      "end": 27,
+      "term": "Siegen",
+      "context": "das Studierendenwerk Siegen für die Universität Siegen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[10].text@48:municipality",
+      "path": "body[2].children[2].children[10].text",
+      "start": 48,
+      "end": 54,
+      "term": "Siegen",
+      "context": "das Studierendenwerk Siegen für die Universität Siegen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[11].text@21:municipality",
+      "path": "body[2].children[2].children[11].text",
+      "start": 21,
+      "end": 30,
+      "term": "Wuppertal",
+      "context": "das Studierendenwerk Wuppertal für die Universität Wuppertal und die Hochschule für Musik …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[11].text@51:municipality",
+      "path": "body[2].children[2].children[11].text",
+      "start": 51,
+      "end": 60,
+      "term": "Wuppertal",
+      "context": "das Studierendenwerk Wuppertal für die Universität Wuppertal und die Hochschule für Musik Köln, Standort Wuppertal.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[11].text@90:municipality",
+      "path": "body[2].children[2].children[11].text",
+      "start": 90,
+      "end": 94,
+      "term": "Köln",
+      "context": "… für die Universität Wuppertal und die Hochschule für Musik Köln, Standort Wuppertal.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[11].text@105:municipality",
+      "path": "body[2].children[2].children[11].text",
+      "start": 105,
+      "end": 114,
+      "term": "Wuppertal",
+      "context": "…sität Wuppertal und die Hochschule für Musik Köln, Standort Wuppertal.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[3].text@45:ministry-compound",
+      "path": "body[2].children[3].text",
+      "start": 45,
+      "end": 62,
+      "term": "Finanzministerium",
+      "context": "Das Ministerium kann im Einvernehmen mit dem Finanzministerium und im Benehmen mit den jeweiligen Hochschulen nach Absatz …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@45:ministry-compound",
+      "path": "body[3].children[1].text",
+      "start": 45,
+      "end": 62,
+      "term": "Finanzministerium",
+      "context": "Das Ministerium kann im Einvernehmen mit dem Finanzministerium den Studierendenwerken durch Rechtsverordnung weitere Diens…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@72:municipality",
+      "path": "body[3].children[3].text",
+      "start": 72,
+      "end": 77,
+      "term": "Hagen",
+      "context": "…ndenwerke gestatten den Studierenden der Fernuniversität in Hagen die Benutzung ihrer Einrichtungen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[0].children[2].text@17:ministry-portfolio",
+      "path": "body[7].children[0].children[2].text",
+      "start": 17,
+      "end": 98,
+      "term": "Ministerium für die Bestellung und Abberufung der Mitglieder der Geschäftsführung",
+      "context": "Vorschlag an das Ministerium für die Bestellung und Abberufung der Mitglieder der Geschäftsführung; der Vorschlag für die Abberufung bedarf der Mehrheit der M…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].children[3].text@483:constitutional-organ-state",
+      "path": "body[12].children[3].text",
+      "start": 483,
+      "end": 521,
+      "term": "Landesrechnungshof Nordrhein-Westfalen",
+      "context": "…irtschaftsprüfungsberichts ist der Aufsichtsbehörde und dem Landesrechnungshof Nordrhein-Westfalen zuzuleiten.",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[12].children[3].text@502:rule:jurisdiction-name-bare",
+      "path": "body[12].children[3].text",
+      "start": 502,
+      "end": 521,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erichts ist der Aufsichtsbehörde und dem Landesrechnungshof Nordrhein-Westfalen zuzuleiten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[1].text@4:rule:jurisdiction-name",
+      "path": "body[13].children[1].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen stellt den Studierendenwerken Zuschüsse nach Maßgabe des La…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].text@116:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[0].text",
+      "start": 116,
+      "end": 142,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…r Studierendenwerke sind nach den für die Beschäftigten des Landes Nordrhein-Westfalen geltenden Bestimmungen, insbesondere nach dem Tarifvertrag …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[17].text@4:constitutional-organ-state",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[17].text@20:rule:jurisdiction-name-bare",
+      "path": "body[17].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[19].text@4:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[20].text@4:ministry-compound",
+      "path": "body[20].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[21].text@4:ministry-portfolio",
+      "path": "body[21].text",
+      "start": 4,
+      "end": 73,
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Der Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[22].text@4:ministry-portfolio",
+      "path": "body[22].text",
+      "start": 4,
+      "end": 71,
+      "term": "Minister für Inneres und Kommunales Zugleich für den Justizminister",
+      "context": "Der Minister für Inneres und Kommunales Zugleich für den Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[22].text@57:ministry-compound",
+      "path": "body[22].text",
+      "start": 57,
+      "end": 71,
+      "term": "Justizminister",
+      "context": "Der Minister für Inneres und Kommunales Zugleich für den Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[23].text@4:ministry-portfolio",
+      "path": "body[23].text",
+      "start": 4,
+      "end": 49,
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[24].text@4:ministry-portfolio",
+      "path": "body[24].text",
+      "start": 4,
+      "end": 82,
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[25].text@4:ministry-portfolio",
+      "path": "body[25].text",
+      "start": 4,
+      "end": 60,
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[26].text@4:ministry-portfolio",
+      "path": "body[26].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[27].text@4:ministry-portfolio",
+      "path": "body[27].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[28].text@4:ministry-portfolio",
+      "path": "body[28].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "source-citation": {
+      "protected": 1
+    },
+    "municipality": {
+      "manual-review": 71
+    },
+    "geography": {
+      "manual-review": 6
+    },
+    "ministry": {
+      "manual-review": 14
+    },
+    "institution": {
+      "safe-auto-transform": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[17].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[0].text",
+      "term": "Aachen",
+      "context": "Die Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Bielefeld",
+      "context": "Die Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Bochum",
+      "context": "Die Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderbor…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Bonn",
+      "context": "…ie Studierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Sie…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Dortmund",
+      "context": "…dierendenwerke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…erke mit Sitz in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Essen",
+      "context": "…z in Aachen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechts…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Köln",
+      "context": "…chen, Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Münster",
+      "context": "…Bielefeld, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalte…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Paderborn",
+      "context": "…, Bochum, Bonn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalten des öffen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Siegen",
+      "context": "…onn, Dortmund, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalten des öffentlichen …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Wuppertal",
+      "context": "…nd, Düsseldorf, Essen, Köln, Münster, Paderborn, Siegen und Wuppertal sind rechtsfähige Anstalten des öffentlichen Rechts mit dem…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Aachen",
+      "context": "das Studierendenwerk Aachen für die Technische Hochschule Aachen, die Fachhochschule Aa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Aachen",
+      "context": "das Studierendenwerk Aachen für die Technische Hochschule Aachen, die Fachhochschule Aachen und die Hochschule für Musik Köl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Aachen",
+      "context": "…en für die Technische Hochschule Aachen, die Fachhochschule Aachen und die Hochschule für Musik Köln, Standort Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Köln",
+      "context": "…hen, die Fachhochschule Aachen und die Hochschule für Musik Köln, Standort Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "term": "Aachen",
+      "context": "…chschule Aachen und die Hochschule für Musik Köln, Standort Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Bielefeld",
+      "context": "das Studierendenwerk Bielefeld für die Universität Bielefeld, die Fachhochschule Bielefeld…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Bielefeld",
+      "context": "das Studierendenwerk Bielefeld für die Universität Bielefeld, die Fachhochschule Bielefeld, die Fachhochschule Ostwestfa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Bielefeld",
+      "context": "…Bielefeld für die Universität Bielefeld, die Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hoc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Ostwestfalen",
+      "context": "…Bielefeld, die Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Lippe",
+      "context": "…e Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Lippe",
+      "context": "…e Fachhochschule Bielefeld, die Fachhochschule Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Detmold",
+      "context": "…le Ostwestfalen-Lippe in Lemgo und die Hochschule für Musik Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "term": "Bochum",
+      "context": "das Studierendenwerk Bochum für die Universität Bochum, die Fachhochschule Bochum, die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "term": "Bochum",
+      "context": "das Studierendenwerk Bochum für die Universität Bochum, die Fachhochschule Bochum, die Fachhochschule Gelsenkirche…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "term": "Bochum",
+      "context": "…nwerk Bochum für die Universität Bochum, die Fachhochschule Bochum, die Fachhochschule Gelsenkirchen, die Folkwang Hochschule,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "term": "Gelsenkirchen",
+      "context": "…sität Bochum, die Fachhochschule Bochum, die Fachhochschule Gelsenkirchen, die Folkwang Hochschule, Standort Bochum, und die Fachhoch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "term": "Bochum",
+      "context": "…hochschule Gelsenkirchen, die Folkwang Hochschule, Standort Bochum, und die Fachhochschule für Gesundheitsberufe in Bochum,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "term": "Bochum",
+      "context": "…ort Bochum, und die Fachhochschule für Gesundheitsberufe in Bochum,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[3].text",
+      "term": "Bonn",
+      "context": "das Studierendenwerk Bonn für die Universität Bonn und die Fachhochschule Bonn-Rhein-…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[3].text",
+      "term": "Bonn",
+      "context": "das Studierendenwerk Bonn für die Universität Bonn und die Fachhochschule Bonn-Rhein-Sieg in Sankt Augustin,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[3].text",
+      "term": "Bonn",
+      "context": "…enwerk Bonn für die Universität Bonn und die Fachhochschule Bonn-Rhein-Sieg in Sankt Augustin,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[3].text",
+      "term": "Sieg",
+      "context": "… für die Universität Bonn und die Fachhochschule Bonn-Rhein-Sieg in Sankt Augustin,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[4].text",
+      "term": "Dortmund",
+      "context": "das Studierendenwerk Dortmund für die Universität Dortmund, die Fachhochschule Dortmund, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[4].text",
+      "term": "Dortmund",
+      "context": "das Studierendenwerk Dortmund für die Universität Dortmund, die Fachhochschule Dortmund, die Folkwang Hochschule, Stan…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[4].text",
+      "term": "Dortmund",
+      "context": "…k Dortmund für die Universität Dortmund, die Fachhochschule Dortmund, die Folkwang Hochschule, Standort Dortmund, die Fernuniver…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[4].text",
+      "term": "Dortmund",
+      "context": "… Fachhochschule Dortmund, die Folkwang Hochschule, Standort Dortmund, die Fernuniversität in Hagen und die Fachhochschule Südwes…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[4].text",
+      "term": "Hagen",
+      "context": "…kwang Hochschule, Standort Dortmund, die Fernuniversität in Hagen und die Fachhochschule Südwestfalen in Iserlohn,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Düsseldorf",
+      "context": "das Studierendenwerk Düsseldorf für die Universität Düsseldorf, die Fachhochschule Düsseldo…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Düsseldorf",
+      "context": "das Studierendenwerk Düsseldorf für die Universität Düsseldorf, die Fachhochschule Düsseldorf, die Kunstakademie Düsseldor…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Düsseldorf",
+      "context": "…sseldorf für die Universität Düsseldorf, die Fachhochschule Düsseldorf, die Kunstakademie Düsseldorf, die Robert-Schumann-Hochschu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Düsseldorf",
+      "context": "…üsseldorf, die Fachhochschule Düsseldorf, die Kunstakademie Düsseldorf, die Robert-Schumann-Hochschule Düsseldorf, die Fachhochsch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Düsseldorf",
+      "context": "…ie Kunstakademie Düsseldorf, die Robert-Schumann-Hochschule Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Niederrhein",
+      "context": "…e Robert-Schumann-Hochschule Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladbach sowie die Fachhochschule Rhe…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Krefeld",
+      "context": "…nn-Hochschule Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladbach sowie die Fachhochschule Rhein-Waal in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Mönchengladbach",
+      "context": "…e Düsseldorf, die Fachhochschule Niederrhein in Krefeld und Mönchengladbach sowie die Fachhochschule Rhein-Waal in Kleve,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[5].text",
+      "term": "Kleve",
+      "context": "… und Mönchengladbach sowie die Fachhochschule Rhein-Waal in Kleve,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Essen",
+      "context": "das Studierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-H…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Duisburg",
+      "context": "das Studierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-Hochschule…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Duisburg",
+      "context": "das Studierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisbur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Essen",
+      "context": "…tudierendenwerk Essen-Duisburg für die Universität Duisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisburg sowi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Essen",
+      "context": "…versität Duisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisburg sowie die Fachhochschule Ruhr-West in Mülheim,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Duisburg",
+      "context": "…uisburg-Essen, die Folkwang-Hochschule, Standorte Essen und Duisburg sowie die Fachhochschule Ruhr-West in Mülheim,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[6].text",
+      "term": "Ruhr",
+      "context": "…hule, Standorte Essen und Duisburg sowie die Fachhochschule Ruhr-West in Mülheim,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "das Studierendenwerk Köln für die Universität Köln, die Deutsche Sporthochschule Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "das Studierendenwerk Köln für die Universität Köln, die Deutsche Sporthochschule Köln, die Fachhochschule Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "…Köln für die Universität Köln, die Deutsche Sporthochschule Köln, die Fachhochschule Köln, die Hochschule für Musik Köln, St…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "…Köln, die Deutsche Sporthochschule Köln, die Fachhochschule Köln, die Hochschule für Musik Köln, Standort Köln, und die Kuns…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "…ule Köln, die Fachhochschule Köln, die Hochschule für Musik Köln, Standort Köln, und die Kunsthochschule für Medien Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "…achhochschule Köln, die Hochschule für Musik Köln, Standort Köln, und die Kunsthochschule für Medien Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[7].text",
+      "term": "Köln",
+      "context": "…sik Köln, Standort Köln, und die Kunsthochschule für Medien Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[8].text",
+      "term": "Münster",
+      "context": "das Studierendenwerk Münster für die Universität Münster, die Fachhochschule Münster und…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[8].text",
+      "term": "Münster",
+      "context": "das Studierendenwerk Münster für die Universität Münster, die Fachhochschule Münster und die Kunstakademie Münster,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[8].text",
+      "term": "Münster",
+      "context": "…erk Münster für die Universität Münster, die Fachhochschule Münster und die Kunstakademie Münster,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[8].text",
+      "term": "Münster",
+      "context": "…t Münster, die Fachhochschule Münster und die Kunstakademie Münster,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[9].text",
+      "term": "Paderborn",
+      "context": "das Studierendenwerk Paderborn für die Universität Paderborn sowie die Fachhochschule Hamm…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[9].text",
+      "term": "Paderborn",
+      "context": "das Studierendenwerk Paderborn für die Universität Paderborn sowie die Fachhochschule Hamm-Lippstadt in Hamm und Lippsta…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[9].text",
+      "term": "Hamm",
+      "context": "…born für die Universität Paderborn sowie die Fachhochschule Hamm-Lippstadt in Hamm und Lippstadt,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[9].text",
+      "term": "Hamm",
+      "context": "…rsität Paderborn sowie die Fachhochschule Hamm-Lippstadt in Hamm und Lippstadt,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[10].text",
+      "term": "Siegen",
+      "context": "das Studierendenwerk Siegen für die Universität Siegen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[10].text",
+      "term": "Siegen",
+      "context": "das Studierendenwerk Siegen für die Universität Siegen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[11].text",
+      "term": "Wuppertal",
+      "context": "das Studierendenwerk Wuppertal für die Universität Wuppertal und die Hochschule für Musik …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[11].text",
+      "term": "Wuppertal",
+      "context": "das Studierendenwerk Wuppertal für die Universität Wuppertal und die Hochschule für Musik Köln, Standort Wuppertal.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[11].text",
+      "term": "Köln",
+      "context": "… für die Universität Wuppertal und die Hochschule für Musik Köln, Standort Wuppertal.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[11].text",
+      "term": "Wuppertal",
+      "context": "…sität Wuppertal und die Hochschule für Musik Köln, Standort Wuppertal.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].text",
+      "term": "Finanzministerium",
+      "context": "Das Ministerium kann im Einvernehmen mit dem Finanzministerium und im Benehmen mit den jeweiligen Hochschulen nach Absatz …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Finanzministerium",
+      "context": "Das Ministerium kann im Einvernehmen mit dem Finanzministerium den Studierendenwerken durch Rechtsverordnung weitere Diens…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Hagen",
+      "context": "…ndenwerke gestatten den Studierenden der Fernuniversität in Hagen die Benutzung ihrer Einrichtungen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[0].children[2].text",
+      "term": "Ministerium für die Bestellung und Abberufung der Mitglieder der Geschäftsführung",
+      "context": "Vorschlag an das Ministerium für die Bestellung und Abberufung der Mitglieder der Geschäftsführung; der Vorschlag für die Abberufung bedarf der Mehrheit der M…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].text",
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Der Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].text",
+      "term": "Minister für Inneres und Kommunales Zugleich für den Justizminister",
+      "context": "Der Minister für Inneres und Kommunales Zugleich für den Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].text",
+      "term": "Justizminister",
+      "context": "Der Minister für Inneres und Kommunales Zugleich für den Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].text",
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].text",
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[25].text",
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].text",
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[27].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[28].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 237,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…4 des Hochschulzukunftsgesetzes vom 16. September 2014 (GV. NRW. S. 547)).",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Studierendenwerke im Land Nordrhein-Westfalen vom 16. September 2014 (In Kraft getreten am 1. Oktober 2014 (GV. NRW. S. 547))",
+    "sourceVersion": "Gesetz über die Studierendenwerke im Land Nordrhein-Westfalen vom 16. September 2014 (In Kraft getreten am 1. Oktober 2014 (GV. NRW. S. 547))",
+    "simulation": "Gesetz über die Studierendenwerke im Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 23304,
+          "actual": 23195,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 130,
+          "actual": 130,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 23195,
+          "actual": 23179,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "15 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "15 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:18:27.905Z"
+}

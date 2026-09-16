@@ -1,0 +1,834 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30017",
+  "slug": "wbvo-pflege-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.abbr@12:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 12,
+      "end": 15,
+      "term": "NRW",
+      "context": "WBVO-Pflege-NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@257:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 257,
+      "end": 272,
+      "term": "GV. NRW. S. 904",
+      "context": "…ur Evaluierung weiterer Verordnungen vom 15. Dezember 2009 (GV. NRW. S. 904))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@98:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 98,
+      "end": 112,
+      "term": "GV. NRW. S.270",
+      "context": "…ten- und Gesundheits- und Krankenpflege vom 24. April 1990 (GV. NRW. S.270), zuletzt geändert durch Artikel 10 des Gesetzes vom 20. No…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@185:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 185,
+      "end": 200,
+      "term": "GV. NRW. S. 572",
+      "context": "…ändert durch Artikel 10 des Gesetzes vom 20. November 2007 (GV. NRW. S. 572), wird nach Anhörung des zuständigen Ausschusses des Landta…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[0].children[0].text@101:authority-district-government",
+      "path": "body[3].children[0].children[0].children[0].text",
+      "start": 101,
+      "end": 117,
+      "term": "Bezirksregierung",
+      "context": "…g werden an Weiterbildungsstätten durchgeführt, die von der Bezirksregierung zugelassen sind. Die Voraussetzungen für die staatliche Ane…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[1].children[1].text@80:rule:jurisdiction-name-bare",
+      "path": "body[3].children[3].children[1].children[1].text",
+      "start": 80,
+      "end": 99,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Bundesland erteilte Weiterbildungsbezeichnung gilt auch in Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[2].text@78:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[2].children[2].text",
+      "start": 78,
+      "end": 81,
+      "term": "NRW",
+      "context": "… verbunden ist, an denen nach dem geltenden Krankenhausplan NRW mindestens sechs fachgebundene oder acht interdisziplinäre …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[2].children[2].text@78:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].children[2].children[2].text",
+      "start": 78,
+      "end": 81,
+      "term": "NRW",
+      "context": "… verbunden ist, an denen nach dem geltenden Krankenhausplan NRW mindestens eine allgemein-chirurgische Fachdisziplin und mi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@64:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[2].children[0].text",
+      "start": 64,
+      "end": 90,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Verwaltungsverfahren kann über eine Einheitliche Stelle des Landes Nordrhein-Westfalen abgewickelt werden. Das Gesetz über den einheitlichen Anspr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@164:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].children[0].text",
+      "start": 164,
+      "end": 183,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erden. Das Gesetz über den einheitlichen Ansprechpartner in Nordrhein-Westfalen vom 8. Dezember 2009 (GV. NRW. S. 748) sowie die §§ 71a – 7…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@206:protected:gazette-nrw",
+      "path": "body[5].children[2].children[0].text",
+      "start": 206,
+      "end": 221,
+      "term": "GV. NRW. S. 748",
+      "context": "…nsprechpartner in Nordrhein-Westfalen vom 8. Dezember 2009 (GV. NRW. S. 748) sowie die §§ 71a – 71e des Verwaltungsverfahrensgesetzes f…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@288:rule:jurisdiction-name",
+      "path": "body[5].children[2].children[0].text",
+      "start": 288,
+      "end": 312,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… die §§ 71a – 71e des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen finden Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[6].children[0].text@4:authority-district-government",
+      "path": "body[5].children[6].children[0].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung ist die zuständige Behörde für die Durchführung der Richtli…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[7].children[1].text@43:rule:jurisdiction-name-bare",
+      "path": "body[5].children[7].children[1].text",
+      "start": 43,
+      "end": 62,
+      "term": "Nordrhein-Westfalen",
+      "context": "Ab dem 1. Januar 2024 ist die Pflegekammer Nordrhein-Westfalen für die Durchführung von Weiterbildungen in den Pflegeberuf…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[7].children[1].text@291:protected:gazette-nrw",
+      "path": "body[5].children[7].children[1].text",
+      "start": 291,
+      "end": 306,
+      "term": "GV. NRW. S. 403",
+      "context": "… Übrigen gilt § 120 des Heilberufsgesetzes vom 9. Mai 2000 (GV. NRW. S. 403) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].children[2].text@175:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[0].children[2].text",
+      "start": 175,
+      "end": 201,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…rsion des entsprechenden Gesetz- und Verordnungsblattes des Landes Nordrhein-Westfalen(GV. NRW.) und in der Sammlung aller geltenden Gesetze und V…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].children[2].text@202:protected:gazette-nrw",
+      "path": "body[6].children[0].children[2].text",
+      "start": 202,
+      "end": 210,
+      "term": "GV. NRW.",
+      "context": "…setz- und Verordnungsblattes des Landes Nordrhein-Westfalen(GV. NRW.) und in der Sammlung aller geltenden Gesetze und Verordnung…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].children[2].text@277:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[0].children[2].text",
+      "start": 277,
+      "end": 303,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n der Sammlung aller geltenden Gesetze und Verordnungen des Landes Nordrhein-Westfalen(SGV. NRW.) veröffentlicht (http://sgv.im.nrw.de).",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].children[2].text@304:protected:gazette-nrw",
+      "path": "body[6].children[0].children[2].text",
+      "start": 304,
+      "end": 313,
+      "term": "SGV. NRW.",
+      "context": "…den Gesetze und Verordnungen des Landes Nordrhein-Westfalen(SGV. NRW.) veröffentlicht (http://sgv.im.nrw.de).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].children[2].children[0].text@4:ministry-portfolio",
+      "path": "body[6].children[0].children[2].children[0].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[0].children[2].children[0].text@53:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[0].children[2].children[0].text",
+      "start": 53,
+      "end": 79,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].children[2].children[1].text@61:protected:gazette-nrw",
+      "path": "body[6].children[0].children[2].children[1].text",
+      "start": 61,
+      "end": 76,
+      "term": "GV. NRW. S. 650",
+      "context": "…inweis: Artikel 12 Absatz 3 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650) (3) Artikel 2 Nummer 1, 3 und Nummer 4 Buchstabe b, Artike…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 11
+    },
+    "source-citation": {
+      "protected": 8
+    },
+    "authority": {
+      "manual-review": 2
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[3].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].children[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[7].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[0].children[0].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…g werden an Weiterbildungsstätten durchgeführt, die von der Bezirksregierung zugelassen sind. Die Voraussetzungen für die staatliche Ane…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[6].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung ist die zuständige Behörde für die Durchführung der Richtli…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].children[2].children[0].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 401,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…valuierung weiterer Verordnungen vom 15. Dezember 2009 (GV. NRW. S. 904))",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… und Gesundheits- und Krankenpflege vom 24. April 1990 (GV. NRW. S.270), zuletzt geändert durch Artikel 10 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…rt durch Artikel 10 des Gesetzes vom 20. November 2007 (GV. NRW. S. 572), wird nach Anhörung des zuständigen Ausschusses de…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…nsprechpartner in Westdeutschland vom 8. Dezember 2009 (GV. NRW. S. 748) sowie die §§ 71a – 71e des Verwaltungsverfahrensge…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…igen gilt § 120 des Heilberufsgesetzes vom 9. Mai 2000 (GV. NRW. S. 403) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…setz- und Verordnungsblattes des Landes Westdeutschland(GV. NRW.) und in der Sammlung aller geltenden Gesetze und Verordnun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…en Gesetze und Verordnungen des Landes Westdeutschland(SGV. NRW.) veröffentlicht (http://sgv.im.nrw.de).",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…is: Artikel 12 Absatz 3 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 650) (3) Artikel 2 Nummer 1, 3 und Nummer 4 Buchstabe b…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Weiterbildungs- und Prüfungsverordnung für Pflegeberufe vom 15. Dezember 2009 (GV. NRW. S. 904)",
+    "sourceVersion": "Weiterbildungs- und Prüfungsverordnung für Pflegeberufe vom 15. Dezember 2009 (GV. NRW. S. 904)",
+    "simulation": "Weiterbildungs- und Prüfungsverordnung für Pflegeberufe in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 36224,
+          "actual": 35970,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 251,
+          "actual": 251,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 35970,
+          "actual": 35940,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "46 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "46 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 01 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40492-sgv_2124_20091215_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 33,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 02 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40493-sgv_2124_20091215_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 03 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40494-sgv_2124_20091215_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 04 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40495-sgv_2124_20091215_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 05 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40496-sgv_2124_20091215_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 06 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40497-sgv_2124_20091215_1_anlage6.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 07 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40498-sgv_2124_20091215_1_anlage7.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 08 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40499-sgv_2124_20091215_1_anlage8.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 09 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40500-sgv_2124_20091215_1_anlage9.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 10 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25523-40501-sgv_2124_20091215_1_anlage10.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 01 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 02 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 03 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 04 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 05 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 06 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 07 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 08 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 09 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 10 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:52:33.533Z"
+}

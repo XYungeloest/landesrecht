@@ -1,0 +1,2015 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29040",
+  "slug": "verordnung-ueber-die-bestimmung-der-sitze-und-bezirke-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@142:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 142,
+      "end": 161,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Geschäftsführer der Kreisstellen der Landwirtschaftskammer Nordrhein-Westfalen als Landesbeauftragte im Kreise",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].text@6:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 6,
+      "end": 15,
+      "term": "SGV. NRW.",
+      "context": "Fn 1: SGV. NRW. 2005.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@112:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 112,
+      "end": 127,
+      "term": "GV. NRW. S. 421",
+      "context": "…4 Satz 1 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), zuletzt geändert durch Gesetz vom 1. März 2005 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@178:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 178,
+      "end": 192,
+      "term": "GV. NRW. S. 69",
+      "context": "…W. S. 421), zuletzt geändert durch Gesetz vom 1. März 2005 (GV. NRW. S. 69), wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@105:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 105,
+      "end": 124,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Geschäftsführer der Kreisstellen der Landwirtschaftskammer Nordrhein-Westfalen als Landesbeauftragte im Kreise werden wie folgt bestimmt (…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@0:municipality",
+      "path": "body[3].children[2].text",
+      "start": 0,
+      "end": 5,
+      "term": "Soest",
+      "context": "Soest - Kreis Soest - Bad-Sassendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@14:municipality",
+      "path": "body[3].children[2].text",
+      "start": 14,
+      "end": 19,
+      "term": "Soest",
+      "context": "Soest - Kreis Soest - Bad-Sassendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@0:geography-region",
+      "path": "body[3].children[5].text",
+      "start": 0,
+      "end": 5,
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@0:geography-river",
+      "path": "body[3].children[5].text",
+      "start": 0,
+      "end": 5,
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@14:geography-region",
+      "path": "body[3].children[5].text",
+      "start": 14,
+      "end": 19,
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@14:geography-river",
+      "path": "body[3].children[5].text",
+      "start": 14,
+      "end": 19,
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@0:municipality",
+      "path": "body[3].children[6].text",
+      "start": 0,
+      "end": 9,
+      "term": "Paderborn",
+      "context": "Paderborn - Kreis Paderborn - Brakel",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@18:municipality",
+      "path": "body[3].children[6].text",
+      "start": 18,
+      "end": 27,
+      "term": "Paderborn",
+      "context": "Paderborn - Kreis Paderborn - Brakel",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@0:municipality",
+      "path": "body[3].children[8].text",
+      "start": 0,
+      "end": 14,
+      "term": "Recklinghausen",
+      "context": "Recklinghausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Reckli…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@35:municipality",
+      "path": "body[3].children[8].text",
+      "start": 35,
+      "end": 42,
+      "term": "Bottrop",
+      "context": "Recklinghausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Recklinghausen - Coesfeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@47:municipality",
+      "path": "body[3].children[8].text",
+      "start": 47,
+      "end": 60,
+      "term": "Gelsenkirchen",
+      "context": "Recklinghausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Recklinghausen - Coesfeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@68:municipality",
+      "path": "body[3].children[8].text",
+      "start": 68,
+      "end": 82,
+      "term": "Recklinghausen",
+      "context": "…hausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Recklinghausen - Coesfeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[9].text@0:municipality",
+      "path": "body[3].children[9].text",
+      "start": 0,
+      "end": 6,
+      "term": "Aachen",
+      "context": "Aachen - kreisfreie Stadt Aachen, Kreis Aachen - Düren",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[9].text@26:municipality",
+      "path": "body[3].children[9].text",
+      "start": 26,
+      "end": 32,
+      "term": "Aachen",
+      "context": "Aachen - kreisfreie Stadt Aachen, Kreis Aachen - Düren",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[9].text@40:municipality",
+      "path": "body[3].children[9].text",
+      "start": 40,
+      "end": 46,
+      "term": "Aachen",
+      "context": "Aachen - kreisfreie Stadt Aachen, Kreis Aachen - Düren",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[12].text@0:municipality",
+      "path": "body[3].children[12].text",
+      "start": 0,
+      "end": 5,
+      "term": "Kleve",
+      "context": "Kleve - Kreis Kleve - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[12].text@14:municipality",
+      "path": "body[3].children[12].text",
+      "start": 14,
+      "end": 19,
+      "term": "Kleve",
+      "context": "Kleve - Kreis Kleve - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[12].text@22:municipality",
+      "path": "body[3].children[12].text",
+      "start": 22,
+      "end": 27,
+      "term": "Kleve",
+      "context": "Kleve - Kreis Kleve - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[13].text@22:municipality",
+      "path": "body[3].children[13].text",
+      "start": 22,
+      "end": 27,
+      "term": "Kleve",
+      "context": "Wesel - Kreis Wesel - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].text@35:municipality",
+      "path": "body[3].children[14].text",
+      "start": 35,
+      "end": 39,
+      "term": "Köln",
+      "context": "Rhein-Erftkreis - kreisfreie Stadt Köln, Rhein-Erftkreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].text@59:municipality",
+      "path": "body[3].children[14].text",
+      "start": 59,
+      "end": 63,
+      "term": "Köln",
+      "context": "Rhein-Erftkreis - kreisfreie Stadt Köln, Rhein-Erftkreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].text@12:municipality",
+      "path": "body[3].children[15].text",
+      "start": 12,
+      "end": 17,
+      "term": "Neuss",
+      "context": "Rhein-Kreis Neuss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].text@37:municipality",
+      "path": "body[3].children[15].text",
+      "start": 37,
+      "end": 52,
+      "term": "Mönchengladbach",
+      "context": "Rhein-Kreis Neuss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].text@66:municipality",
+      "path": "body[3].children[15].text",
+      "start": 66,
+      "end": 71,
+      "term": "Neuss",
+      "context": "…Kreis Neuss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].text@74:municipality",
+      "path": "body[3].children[15].text",
+      "start": 74,
+      "end": 78,
+      "term": "Köln",
+      "context": "…uss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[16].text@36:municipality",
+      "path": "body[3].children[16].text",
+      "start": 36,
+      "end": 40,
+      "term": "Bonn",
+      "context": "Rhein-Sieg-Kreis - kreisfreie Stadt Bonn, Rhein-Sieg-Kreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[16].text@61:municipality",
+      "path": "body[3].children[16].text",
+      "start": 61,
+      "end": 65,
+      "term": "Köln",
+      "context": "…hein-Sieg-Kreis - kreisfreie Stadt Bonn, Rhein-Sieg-Kreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@29:municipality",
+      "path": "body[3].children[17].text",
+      "start": 29,
+      "end": 39,
+      "term": "Düsseldorf",
+      "context": "Mettmann - kreisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@41:municipality",
+      "path": "body[3].children[17].text",
+      "start": 41,
+      "end": 49,
+      "term": "Duisburg",
+      "context": "Mettmann - kreisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@51:municipality",
+      "path": "body[3].children[17].text",
+      "start": 51,
+      "end": 56,
+      "term": "Essen",
+      "context": "Mettmann - kreisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@72:geography-region",
+      "path": "body[3].children[17].text",
+      "start": 72,
+      "end": 76,
+      "term": "Ruhr",
+      "context": "…reisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettm…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@72:geography-river",
+      "path": "body[3].children[17].text",
+      "start": 72,
+      "end": 76,
+      "term": "Ruhr",
+      "context": "…reisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettm…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@78:municipality",
+      "path": "body[3].children[17].text",
+      "start": 78,
+      "end": 88,
+      "term": "Oberhausen",
+      "context": "…eie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindla…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@90:municipality",
+      "path": "body[3].children[17].text",
+      "start": 90,
+      "end": 99,
+      "term": "Remscheid",
+      "context": "…üsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@101:municipality",
+      "path": "body[3].children[17].text",
+      "start": 101,
+      "end": 109,
+      "term": "Solingen",
+      "context": "…Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@114:municipality",
+      "path": "body[3].children[17].text",
+      "start": 114,
+      "end": 123,
+      "term": "Wuppertal",
+      "context": "…en, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[19].text@46:municipality",
+      "path": "body[3].children[19].text",
+      "start": 46,
+      "end": 56,
+      "term": "Leverkusen",
+      "context": "Rheinisch-Bergischer Kreis - kreisfreie Stadt Leverkusen, Rheinisch-Bergischer Kreis - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[20].text@8:municipality",
+      "path": "body[3].children[20].text",
+      "start": 8,
+      "end": 17,
+      "term": "Bielefeld",
+      "context": "Herford-Bielefeld - kreisfreie Stadt Bielefeld, Kreis Herford - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[20].text@37:municipality",
+      "path": "body[3].children[20].text",
+      "start": 37,
+      "end": 46,
+      "term": "Bielefeld",
+      "context": "Herford-Bielefeld - kreisfreie Stadt Bielefeld, Kreis Herford - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].text@0:municipality",
+      "path": "body[3].children[21].text",
+      "start": 0,
+      "end": 6,
+      "term": "Minden",
+      "context": "Minden-Lübbecke - Kreis Minden-Lübbecke - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].text@24:municipality",
+      "path": "body[3].children[21].text",
+      "start": 24,
+      "end": 30,
+      "term": "Minden",
+      "context": "Minden-Lübbecke - Kreis Minden-Lübbecke - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].text@0:municipality",
+      "path": "body[3].children[24].text",
+      "start": 0,
+      "end": 6,
+      "term": "Siegen",
+      "context": "Siegen-Wittgenstein - Kreis Siegen-Wittgenstein - Meschede",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].text@28:municipality",
+      "path": "body[3].children[24].text",
+      "start": 28,
+      "end": 34,
+      "term": "Siegen",
+      "context": "Siegen-Wittgenstein - Kreis Siegen-Wittgenstein - Meschede",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[26].text@24:geography-region",
+      "path": "body[3].children[26].text",
+      "start": 24,
+      "end": 28,
+      "term": "Ruhr",
+      "context": "Märkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kre…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[26].text@24:geography-river",
+      "path": "body[3].children[26].text",
+      "start": 24,
+      "end": 28,
+      "term": "Ruhr",
+      "context": "Märkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kre…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[26].text@48:municipality",
+      "path": "body[3].children[26].text",
+      "start": 48,
+      "end": 53,
+      "term": "Hagen",
+      "context": "Märkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kreis - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[26].text@62:geography-region",
+      "path": "body[3].children[26].text",
+      "start": 62,
+      "end": 66,
+      "term": "Ruhr",
+      "context": "…rkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kreis - Unna",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@0:geography-region",
+      "path": "body[3].children[27].text",
+      "start": 0,
+      "end": 4,
+      "term": "Ruhr",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne,…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@5:geography-region",
+      "path": "body[3].children[27].text",
+      "start": 5,
+      "end": 10,
+      "term": "Lippe",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@5:geography-river",
+      "path": "body[3].children[27].text",
+      "start": 5,
+      "end": 10,
+      "term": "Lippe",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@31:municipality",
+      "path": "body[3].children[27].text",
+      "start": 31,
+      "end": 37,
+      "term": "Bochum",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@39:municipality",
+      "path": "body[3].children[27].text",
+      "start": 39,
+      "end": 47,
+      "term": "Dortmund",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@49:municipality",
+      "path": "body[3].children[27].text",
+      "start": 49,
+      "end": 53,
+      "term": "Hamm",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@58:municipality",
+      "path": "body[3].children[27].text",
+      "start": 58,
+      "end": 63,
+      "term": "Herne",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[29].text@27:municipality",
+      "path": "body[3].children[29].text",
+      "start": 27,
+      "end": 34,
+      "term": "Krefeld",
+      "context": "Viersen - kreisfreie Stadt Krefeld, Kreis Viersen - Viersen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@0:municipality",
+      "path": "body[3].children[30].text",
+      "start": 0,
+      "end": 9,
+      "term": "Gütersloh",
+      "context": "Gütersloh - Kreis Gütersloh - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@18:municipality",
+      "path": "body[3].children[30].text",
+      "start": 18,
+      "end": 27,
+      "term": "Gütersloh",
+      "context": "Gütersloh - Kreis Gütersloh - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[31].text@0:municipality",
+      "path": "body[3].children[31].text",
+      "start": 0,
+      "end": 7,
+      "term": "Münster",
+      "context": "Münster - kreisfreie Stadt Münster - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[31].text@27:municipality",
+      "path": "body[3].children[31].text",
+      "start": 27,
+      "end": 34,
+      "term": "Münster",
+      "context": "Münster - kreisfreie Stadt Münster - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@200:geography-region",
+      "path": "body[4].children[1].text",
+      "start": 200,
+      "end": 209,
+      "term": "Rheinland",
+      "context": "… Geschäftsführer der Kreisstellen der Landwirtschaftskammer Rheinland als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. N…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@264:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 264,
+      "end": 278,
+      "term": "GV. NRW. S. 66",
+      "context": "…nland als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. NRW. S. 66, ber. S. 223) und die Verordnung über die Bestimmung der Si…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].text@417:geography-region",
+      "path": "body[4].children[1].text",
+      "start": 417,
+      "end": 432,
+      "term": "Westfalen-Lippe",
+      "context": "… Geschäftsführer der Kreisstellen der Landwirtschaftskammer Westfalen-Lippe als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. N…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@427:geography-river",
+      "path": "body[4].children[1].text",
+      "start": 427,
+      "end": 432,
+      "term": "Lippe",
+      "context": "…führer der Kreisstellen der Landwirtschaftskammer Westfalen-Lippe als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. N…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@487:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 487,
+      "end": 501,
+      "term": "GV. NRW. S. 66",
+      "context": "…Lippe als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. NRW. S. 66) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@4:constitutional-organ-state",
+      "path": "body[5].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[5].text@20:rule:jurisdiction-name-bare",
+      "path": "body[5].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].text@4:ministry-portfolio",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 77,
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "municipality": {
+      "manual-review": 47
+    },
+    "geography": {
+      "manual-review": 15
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[2].text",
+      "term": "Soest",
+      "context": "Soest - Kreis Soest - Bad-Sassendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Soest",
+      "context": "Soest - Kreis Soest - Bad-Sassendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Lippe",
+      "context": "Lippe - Kreis Lippe - Brakel",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Paderborn",
+      "context": "Paderborn - Kreis Paderborn - Brakel",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Paderborn",
+      "context": "Paderborn - Kreis Paderborn - Brakel",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Recklinghausen",
+      "context": "Recklinghausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Reckli…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Bottrop",
+      "context": "Recklinghausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Recklinghausen - Coesfeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Gelsenkirchen",
+      "context": "Recklinghausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Recklinghausen - Coesfeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Recklinghausen",
+      "context": "…hausen - kreisfreie Städte Bottrop und Gelsenkirchen, Kreis Recklinghausen - Coesfeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[9].text",
+      "term": "Aachen",
+      "context": "Aachen - kreisfreie Stadt Aachen, Kreis Aachen - Düren",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[9].text",
+      "term": "Aachen",
+      "context": "Aachen - kreisfreie Stadt Aachen, Kreis Aachen - Düren",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[9].text",
+      "term": "Aachen",
+      "context": "Aachen - kreisfreie Stadt Aachen, Kreis Aachen - Düren",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[12].text",
+      "term": "Kleve",
+      "context": "Kleve - Kreis Kleve - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[12].text",
+      "term": "Kleve",
+      "context": "Kleve - Kreis Kleve - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[12].text",
+      "term": "Kleve",
+      "context": "Kleve - Kreis Kleve - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[13].text",
+      "term": "Kleve",
+      "context": "Wesel - Kreis Wesel - Kleve",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].text",
+      "term": "Köln",
+      "context": "Rhein-Erftkreis - kreisfreie Stadt Köln, Rhein-Erftkreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].text",
+      "term": "Köln",
+      "context": "Rhein-Erftkreis - kreisfreie Stadt Köln, Rhein-Erftkreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].text",
+      "term": "Neuss",
+      "context": "Rhein-Kreis Neuss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].text",
+      "term": "Mönchengladbach",
+      "context": "Rhein-Kreis Neuss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].text",
+      "term": "Neuss",
+      "context": "…Kreis Neuss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].text",
+      "term": "Köln",
+      "context": "…uss - kreisfreie Stadt Mönchengladbach, Rhein-Kreis Neuss - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[16].text",
+      "term": "Bonn",
+      "context": "Rhein-Sieg-Kreis - kreisfreie Stadt Bonn, Rhein-Sieg-Kreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[16].text",
+      "term": "Köln",
+      "context": "…hein-Sieg-Kreis - kreisfreie Stadt Bonn, Rhein-Sieg-Kreis - Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Düsseldorf",
+      "context": "Mettmann - kreisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Duisburg",
+      "context": "Mettmann - kreisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Essen",
+      "context": "Mettmann - kreisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Ruhr",
+      "context": "…reisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettm…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Ruhr",
+      "context": "…reisfreie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettm…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Oberhausen",
+      "context": "…eie Städte Düsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindla…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Remscheid",
+      "context": "…üsseldorf, Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Solingen",
+      "context": "…Duisburg, Essen, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Wuppertal",
+      "context": "…en, Mülheim a. d. Ruhr, Oberhausen, Remscheid, Solingen und Wuppertal, Kreis Mettmann - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[19].text",
+      "term": "Leverkusen",
+      "context": "Rheinisch-Bergischer Kreis - kreisfreie Stadt Leverkusen, Rheinisch-Bergischer Kreis - Lindlar",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[20].text",
+      "term": "Bielefeld",
+      "context": "Herford-Bielefeld - kreisfreie Stadt Bielefeld, Kreis Herford - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[20].text",
+      "term": "Bielefeld",
+      "context": "Herford-Bielefeld - kreisfreie Stadt Bielefeld, Kreis Herford - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].text",
+      "term": "Minden",
+      "context": "Minden-Lübbecke - Kreis Minden-Lübbecke - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].text",
+      "term": "Minden",
+      "context": "Minden-Lübbecke - Kreis Minden-Lübbecke - Lübbecke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].text",
+      "term": "Siegen",
+      "context": "Siegen-Wittgenstein - Kreis Siegen-Wittgenstein - Meschede",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].text",
+      "term": "Siegen",
+      "context": "Siegen-Wittgenstein - Kreis Siegen-Wittgenstein - Meschede",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[26].text",
+      "term": "Ruhr",
+      "context": "Märkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kre…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[26].text",
+      "term": "Ruhr",
+      "context": "Märkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kre…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[26].text",
+      "term": "Hagen",
+      "context": "Märkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kreis - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[26].text",
+      "term": "Ruhr",
+      "context": "…rkischer Kreis/Ennepe-Ruhr - kreisfreie Stadt Hagen, Ennepe-Ruhr-Kreis, Märkischer Kreis - Unna",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Ruhr",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne,…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Lippe",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Lippe",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Bochum",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Dortmund",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Hamm",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Herne",
+      "context": "Ruhr-Lippe - kreisfreie Städte Bochum, Dortmund, Hamm und Herne, Kreis Unna - Unna",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[29].text",
+      "term": "Krefeld",
+      "context": "Viersen - kreisfreie Stadt Krefeld, Kreis Viersen - Viersen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Gütersloh",
+      "context": "Gütersloh - Kreis Gütersloh - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Gütersloh",
+      "context": "Gütersloh - Kreis Gütersloh - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[31].text",
+      "term": "Münster",
+      "context": "Münster - kreisfreie Stadt Münster - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[31].text",
+      "term": "Münster",
+      "context": "Münster - kreisfreie Stadt Münster - Warendorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Rheinland",
+      "context": "… Geschäftsführer der Kreisstellen der Landwirtschaftskammer Rheinland als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. N…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "… Geschäftsführer der Kreisstellen der Landwirtschaftskammer Westfalen-Lippe als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. N…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Lippe",
+      "context": "…führer der Kreisstellen der Landwirtschaftskammer Westfalen-Lippe als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. N…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].text",
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 73,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "Fn 1: SGV. NRW. 2005.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…tz 1 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), zuletzt geändert durch Gesetz vom 1. März 2005 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…. 421), zuletzt geändert durch Gesetz vom 1. März 2005 (GV. NRW. S. 69), wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…d als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. NRW. S. 66, ber. S. 223) und die Verordnung über die Bestimmung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…e als Landesbeauftragte im Kreise vom 13. Februar 1990 (GV. NRW. S. 66) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Bestimmung der Sitze und Bezirke der Geschäftsführerinnen oder Geschäftsführer der Kreisstellen der Landwirtschaftskammer Nordrhein-Westfalen als Landesbeauftragte im Kreise vom 8. November 2005",
+    "sourceVersion": "Verordnung über die Bestimmung der Sitze und Bezirke der Geschäftsführerinnen oder Geschäftsführer der Kreisstellen der Landwirtschaftskammer Nordrhein-Westfalen als Landesbeauftragte im Kreise vom 8. November 2005",
+    "simulation": "Verordnung über die Bestimmung der Sitze und Bezirke der Geschäftsführerinnen oder Geschäftsführer der Kreisstellen der Landwirtschaftskammer Westdeutschland als Landesbeauftragte im Kreise in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2906,
+          "actual": 2939,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 43,
+          "actual": 43,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2939,
+          "actual": 2931,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "2 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "2 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:05:06.167Z"
+}

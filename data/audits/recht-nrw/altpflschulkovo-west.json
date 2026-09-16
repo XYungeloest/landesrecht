@@ -1,0 +1,481 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31265",
+  "slug": "altpflschulkovo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@76:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 76,
+      "end": 91,
+      "term": "GV. NRW. S. 290",
+      "context": "…5 Absatz 6 des Landesaltenpflegegesetzes vom 27. Juni 2006 (GV. NRW. S. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@142:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 142,
+      "end": 157,
+      "term": "GV. NRW. S. 930",
+      "context": "…W. S. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (GV. NRW. S. 930) geändert worden ist, verordnet das Ministerium für Gesundh…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@194:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 194,
+      "end": 252,
+      "term": "Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "…r 2014 (GV. NRW. S. 930) geändert worden ist, verordnet das Ministerium für Gesundheit, Emanzipation, Pflege und Alter mit Zustimmung des Finanzministeriums des Landes Nordrhein-…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@272:ministry-compound",
+      "path": "body[1].text",
+      "start": 272,
+      "end": 290,
+      "term": "Finanzministeriums",
+      "context": "…sundheit, Emanzipation, Pflege und Alter mit Zustimmung des Finanzministeriums des Landes Nordrhein-Westfalen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[1].text@295:rule:jurisdiction-name-genitive",
+      "path": "body[1].text",
+      "start": 295,
+      "end": 321,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… Pflege und Alter mit Zustimmung des Finanzministeriums des Landes Nordrhein-Westfalen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@106:authority-district-government",
+      "path": "body[2].children[0].text",
+      "start": 106,
+      "end": 122,
+      "term": "Bezirksregierung",
+      "context": "…kostenpauschale und zur Durchführung des Verfahrens ist die Bezirksregierung, in deren Zuständigkeitsbereich sich das Fachseminar befind…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@217:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 217,
+      "end": 232,
+      "term": "GV. NRW. S. 290",
+      "context": "…mäß § 5 Absatz 4 Landesaltenpflegegesetz vom 27. Juni 2006 (GV. NRW. S. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@283:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 283,
+      "end": 298,
+      "term": "GV. NRW. S. 930",
+      "context": "…W. S. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (GV. NRW. S. 930) geändert wurde. Die Schulkostenpauschale wird durch zwei B…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].text@383:rule:jurisdiction-name",
+      "path": "body[7].children[0].text",
+      "start": 383,
+      "end": 407,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…§§ 48, 49 und 49a des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) finden in der jewei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].text@431:protected:gazette-nrw",
+      "path": "body[7].children[0].text",
+      "start": 431,
+      "end": 446,
+      "term": "GV. NRW. S. 602",
+      "context": "…zes für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) finden in der jeweils geltenden Fassung Anwendung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[2].text@226:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].text",
+      "start": 226,
+      "end": 245,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung erforderlich ist. Im Übrigen gilt das Datenschutzgesetz Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].text@298:protected:gazette-nrw",
+      "path": "body[10].children[2].text",
+      "start": 298,
+      "end": 313,
+      "term": "GV. NRW. S. 542",
+      "context": "…stfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 6
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "…r 2014 (GV. NRW. S. 930) geändert worden ist, verordnet das Ministerium für Gesundheit, Emanzipation, Pflege und Alter mit Zustimmung des Finanzministeriums des Landes Nordrhein-…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Finanzministeriums",
+      "context": "…sundheit, Emanzipation, Pflege und Alter mit Zustimmung des Finanzministeriums des Landes Nordrhein-Westfalen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…kostenpauschale und zur Durchführung des Verfahrens ist die Bezirksregierung, in deren Zuständigkeitsbereich sich das Fachseminar befind…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 110,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…satz 6 des Landesaltenpflegegesetzes vom 27. Juni 2006 (GV. NRW. S. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (GV. NRW. S. 930) geändert worden ist, verordnet das Ministerium für…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…§ 5 Absatz 4 Landesaltenpflegegesetz vom 27. Juni 2006 (GV. NRW. S. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…. 290), das zuletzt durch Gesetz vom 18. Dezember 2014 (GV. NRW. S. 930) geändert wurde. Die Schulkostenpauschale wird durc…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[0].text",
+        "term": "NRW",
+        "context": "…zes für das Land Westdeutschland vom 12. November 1999 (GV. NRW. S. 602) finden in der jeweils geltenden Fassung Anwendung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[2].text",
+        "term": "NRW",
+        "context": "…and in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Gesundheit, Emanzipation, Pflege und Alter",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über die Gewährung der Pauschale zur Beteiligung an den Schulkosten für die Ausbildung von Altenpflegerinnen und Altenpflegern vom 27. Februar 2015",
+    "sourceVersion": "Verordnung über die Gewährung der Pauschale zur Beteiligung an den Schulkosten für die Ausbildung von Altenpflegerinnen und Altenpflegern vom 27. Februar 2015",
+    "simulation": "Verordnung über die Gewährung der Pauschale zur Beteiligung an den Schulkosten für die Ausbildung von Altenpflegerinnen und Altenpflegern in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8845,
+          "actual": 9148,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 61,
+          "actual": 61,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 9148,
+          "actual": 9132,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "11 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "11 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:23:26.746Z"
+}

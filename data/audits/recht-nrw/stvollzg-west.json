@@ -1,0 +1,879 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31234",
+  "slug": "stvollzg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@57:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 57,
+      "end": 76,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz zur Regelung des Vollzuges der Freiheitsstrafe in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@20:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Strafvollzugsgesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@9:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 9,
+      "end": 12,
+      "term": "NRW",
+      "context": "StVollzG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].title@57:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 57,
+      "end": 76,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz zur Regelung des Vollzuges der Freiheitsstrafe in Nordrhein-Westfalen (Strafvollzugsgesetz Nordrhein-Westfalen - StVollzG NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@98:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 98,
+      "end": 117,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Freiheitsstrafe in Nordrhein-Westfalen (Strafvollzugsgesetz Nordrhein-Westfalen - StVollzG NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@129:rule:jurisdiction-abbreviation",
+      "path": "body[0].title",
+      "start": 129,
+      "end": 132,
+      "term": "NRW",
+      "context": "…stfalen (Strafvollzugsgesetz Nordrhein-Westfalen - StVollzG NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@45:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 45,
+      "end": 59,
+      "term": "GV. NRW. S. 76",
+      "context": "(Artikel 1 des Gesetzes vom 13. Januar 2015 (GV. NRW. S. 76))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[30].children[1].children[5].text@196:rule:jurisdiction-name-bare",
+      "path": "body[30].children[1].children[5].text",
+      "start": 196,
+      "end": 215,
+      "term": "Nordrhein-Westfalen",
+      "context": "…eitsanfrage nach § 21 des Justizvollzugsdatenschutzgesetzes Nordrhein-Westfalen vom 12. Oktober 2018 (GV. NRW. S. 555) abhängig gemacht wer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[30].children[1].children[5].text@238:protected:gazette-nrw",
+      "path": "body[30].children[1].children[5].text",
+      "start": 238,
+      "end": 253,
+      "term": "GV. NRW. S. 555",
+      "context": "…tenschutzgesetzes Nordrhein-Westfalen vom 12. Oktober 2018 (GV. NRW. S. 555) abhängig gemacht werden.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[30].children[2].children[1].text@331:rule:jurisdiction-name-bare",
+      "path": "body[30].children[2].children[1].text",
+      "start": 331,
+      "end": 350,
+      "term": "Nordrhein-Westfalen",
+      "context": "…; § 24 Absatz 5 und 6 des Justizvollzugsdatenschutzgesetzes Nordrhein-Westfalen gilt entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[30].children[7].children[5].text@135:rule:jurisdiction-name-bare",
+      "path": "body[30].children[7].children[5].text",
+      "start": 135,
+      "end": 154,
+      "term": "Nordrhein-Westfalen",
+      "context": "… 1 in Verbindung mit Absatz 5 des Verfassungsschutzgesetzes Nordrhein-Westfalen vom 20. Dezember 1994 (GV. NRW. 1995, S. 28) in der jeweils…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[30].children[7].children[5].text@178:protected:gazette-nrw",
+      "path": "body[30].children[7].children[5].text",
+      "start": 178,
+      "end": 186,
+      "term": "GV. NRW.",
+      "context": "…gsschutzgesetzes Nordrhein-Westfalen vom 20. Dezember 1994 (GV. NRW. 1995, S. 28) in der jeweils geltenden Fassung oder entsprec…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[30].children[8].children[4].children[15].text@44:rule:jurisdiction-name-genitive",
+      "path": "body[30].children[8].children[4].children[15].text",
+      "start": 44,
+      "end": 70,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "der oder dem Justizvollzugsbeauftragten des Landes Nordrhein-Westfalen und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[30].children[8].children[4].children[16].text@50:rule:jurisdiction-name-genitive",
+      "path": "body[30].children[8].children[4].children[16].text",
+      "start": 50,
+      "end": 76,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "der oder dem Beauftragten für den Opferschutz des Landes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[32].children[4].children[4].text@199:ministry-compound",
+      "path": "body[32].children[4].children[4].text",
+      "start": 199,
+      "end": 216,
+      "term": "Justizministerium",
+      "context": "…hnittlich zur Bewertung der Sachbezüge festgesetzt ist. Das Justizministerium stellt den Betrag jährlich durch Bekanntmachung fest. Bei S…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[36].children[0].children[4].text@169:rule:jurisdiction-name-bare",
+      "path": "body[36].children[0].children[4].text",
+      "start": 169,
+      "end": 188,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nach Maßgabe des § 27 des Justizvollzugsdatenschutzgesetzes Nordrhein-Westfalen aufgegeben werden, die für eine elektronische Überwachung i…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[41].children[1].children[0].text@297:rule:jurisdiction-name-genitive",
+      "path": "body[41].children[1].children[0].text",
+      "start": 297,
+      "end": 323,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…vollzugsbeauftragte oder den Justizvollzugsbeauftragten des Landes Nordrhein-Westfalen zu wenden, bleibt unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[44].children[1].children[1].text@219:rule:jurisdiction-name-bare",
+      "path": "body[44].children[1].children[1].text",
+      "start": 219,
+      "end": 238,
+      "term": "Nordrhein-Westfalen",
+      "context": "…eten. §§ 9 bis 11 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen vom 30. April 2013 (GV. NRW. S. 212) in der jeweils geltend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[44].children[1].children[1].text@259:protected:gazette-nrw",
+      "path": "body[44].children[1].children[1].text",
+      "start": 259,
+      "end": 274,
+      "term": "GV. NRW. S. 212",
+      "context": "…ngsvollzugsgesetzes Nordrhein-Westfalen vom 30. April 2013 (GV. NRW. S. 212) in der jeweils geltenden Fassung gelten entsprechend. In d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[44].children[1].children[4].text@287:rule:jurisdiction-name-bare",
+      "path": "body[44].children[1].children[4].text",
+      "start": 287,
+      "end": 306,
+      "term": "Nordrhein-Westfalen",
+      "context": "… 2 Nummer 1 und 2 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen teil, erhalten sie für die Dauer des Ausfalls der Beschäfti…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[46].children[7].children[0].text@4:ministry-compound",
+      "path": "body[46].children[7].children[0].text",
+      "start": 4,
+      "end": 21,
+      "term": "Justizministerium",
+      "context": "Das Justizministerium führt die Aufsicht über die Anstalten und sichert gemeinsam…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[47].children[5].children[1].text@404:rule:jurisdiction-name-genitive",
+      "path": "body[47].children[5].children[1].text",
+      "start": 404,
+      "end": 430,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… der Praxis und der oder des Justizvollzugsbeauftragten des Landes Nordrhein-Westfalen einfließen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[47].children[5].children[2].text@43:rule:jurisdiction-name-bare",
+      "path": "body[47].children[5].children[2].text",
+      "start": 43,
+      "end": 62,
+      "term": "Nordrhein-Westfalen",
+      "context": "§ 19 des Justizvollzugsdatenschutzgesetzes Nordrhein-Westfalen gilt entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[48].text@4:constitutional-organ-state",
+      "path": "body[48].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[48].text@20:rule:jurisdiction-name-bare",
+      "path": "body[48].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[50].text@4:ministry-portfolio",
+      "path": "body[50].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[51].text@4:ministry-compound",
+      "path": "body[51].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[52].text@4:ministry-portfolio",
+      "path": "body[52].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[53].text@8:ministry-portfolio",
+      "path": "body[53].text",
+      "start": 8,
+      "end": 114,
+      "term": "Minister für Arbeit, Integration und Soziales Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Für den Minister für Arbeit, Integration und Soziales Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[54].text@4:ministry-compound",
+      "path": "body[54].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[55].text@4:ministry-portfolio",
+      "path": "body[55].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[56].text@4:ministry-portfolio",
+      "path": "body[56].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 18
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 9
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[30].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[30].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[30].children[7].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[30].children[8].children[4].children[15].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[30].children[8].children[4].children[16].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[36].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[41].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[44].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[44].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[47].children[5].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[47].children[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[48].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[32].children[4].children[4].text",
+      "term": "Justizministerium",
+      "context": "…hnittlich zur Bewertung der Sachbezüge festgesetzt ist. Das Justizministerium stellt den Betrag jährlich durch Bekanntmachung fest. Bei S…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[46].children[7].children[0].text",
+      "term": "Justizministerium",
+      "context": "Das Justizministerium führt die Aufsicht über die Anstalten und sichert gemeinsam…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[50].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[51].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[52].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[53].text",
+      "term": "Minister für Arbeit, Integration und Soziales Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Für den Minister für Arbeit, Integration und Soziales Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[54].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[55].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[56].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1382,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "(Artikel 1 des Gesetzes vom 13. Januar 2015 (GV. NRW. S. 76))",
+        "status": "protected"
+      },
+      {
+        "path": "body[30].children[1].children[5].text",
+        "term": "NRW",
+        "context": "…tenschutzgesetzes Westdeutschland vom 12. Oktober 2018 (GV. NRW. S. 555) abhängig gemacht werden.",
+        "status": "protected"
+      },
+      {
+        "path": "body[30].children[7].children[5].text",
+        "term": "NRW",
+        "context": "…gsschutzgesetzes Westdeutschland vom 20. Dezember 1994 (GV. NRW. 1995, S. 28) in der jeweils geltenden Fassung oder entspre…",
+        "status": "protected"
+      },
+      {
+        "path": "body[44].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ngsvollzugsgesetzes Westdeutschland vom 30. April 2013 (GV. NRW. S. 212) in der jeweils geltenden Fassung gelten entspreche…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Regelung des Vollzuges der Freiheitsstrafe in Nordrhein-Westfalen vom 13. Januar 2015",
+    "sourceVersion": "Gesetz zur Regelung des Vollzuges der Freiheitsstrafe in Nordrhein-Westfalen vom 13. Januar 2015",
+    "simulation": "Gesetz zur Regelung des Vollzuges der Freiheitsstrafe in Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 114,
+          "actual": 114,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 122326,
+          "actual": 121894,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 114,
+          "actual": 114,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 840,
+          "actual": 840,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 56,
+          "actual": 56,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 114,
+          "actual": 114,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 121894,
+          "actual": 121839,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "114 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "114 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:28:16.847Z"
+}

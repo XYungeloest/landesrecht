@@ -1,0 +1,848 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31989",
+  "slug": "verordnung-ueber-die-ausschuesse-und-beiraete-im-land-westdeutschland",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@43:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 43,
+      "end": 70,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Verordnung über die Ausschüsse und Beiräte im Land Nordrhein-Westfalen, die unter das Ausschußmitglieder-Entschädigungsgesetz fall…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[1].text@91:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 91,
+      "end": 106,
+      "term": "GV. NRW. S. 193",
+      "context": "…Ausschußmitglieder-Entschädigungsgesetzes vom 13. Mai 1958 (GV. NRW. S. 193), der zuletzt durch Gesetz vom 26. Juni 1984 (GV. NRW. S. 3…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@153:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 153,
+      "end": 168,
+      "term": "GV. NRW. S. 350",
+      "context": "…. NRW. S. 193), der zuletzt durch Gesetz vom 26. Juni 1984 (GV. NRW. S. 350) geändert worden ist, verordnet das Ministerium der Finanze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@205:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 205,
+      "end": 229,
+      "term": "Ministerium der Finanzen",
+      "context": "…i 1984 (GV. NRW. S. 350) geändert worden ist, verordnet das Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@43:rule:jurisdiction-name-dative",
+      "path": "body[2].children[0].text",
+      "start": 43,
+      "end": 70,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Das Verzeichnis der Ausschüsse und Beiräte im Land Nordrhein-Westfalen, die unter die Regelung des Gesetzes fallen (Anlage zu § 1 …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@194:protected:gazette-nrw",
+      "path": "body[2].children[0].text",
+      "start": 194,
+      "end": 209,
+      "term": "GV. NRW. S. 193",
+      "context": "…Ausschußmitglieder-Entschädigungsgesetzes vom 13. Mai 1958 (GV. NRW. S. 193), das zuletzt durch Artikel 4 des Gesetzes vom 19. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@276:protected:gazette-nrw",
+      "path": "body[2].children[0].text",
+      "start": 276,
+      "end": 291,
+      "term": "GV. NRW. S. 880",
+      "context": "…zuletzt durch Artikel 4 des Gesetzes vom 19. Dezember 2013 (GV. NRW. S. 880) geändert worden ist), erhält folgende Fassung:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@40:rule:jurisdiction-name-dative",
+      "path": "body[2].children[1].text",
+      "start": 40,
+      "end": 67,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "„Verzeichnis der Ausschüsse und Beiräte im Land Nordrhein-Westfalen, die unter die Regelung des Gesetzes fallen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[6].text@19:rule:jurisdiction-name-bare",
+      "path": "body[2].children[6].text",
+      "start": 19,
+      "end": 38,
+      "term": "Nordrhein-Westfalen",
+      "context": "IT-Kooperationsrat Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[8].text@16:rule:jurisdiction-name-bare",
+      "path": "body[2].children[8].text",
+      "start": 16,
+      "end": 35,
+      "term": "Nordrhein-Westfalen",
+      "context": "Landesausschuss Nordrhein-Westfalen zur Durchführung der Deutschen Künstlerhilfe,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[10].text@81:rule:jurisdiction-name-bare",
+      "path": "body[2].children[10].text",
+      "start": 81,
+      "end": 100,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Verleihung des Staatspreises für das Kunsthandwerk im Lande Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[12].text@90:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[12].text",
+      "start": 90,
+      "end": 116,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ttlung der Förderpreisträgerinnen und Förderpreisträger des Landes Nordrhein-Westfalen für junge Künstlerinnen und Künstler,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[29].text@15:jurisdiction-name-residual",
+      "path": "body[2].children[29].text",
+      "start": 15,
+      "end": 37,
+      "term": "Nordrhein-westfälische",
+      "context": "Beirat für das Nordrhein-westfälische Landgestüt Warendorf,",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[2].children[31].text@21:ministry-portfolio",
+      "path": "body[2].children[31].text",
+      "start": 21,
+      "end": 90,
+      "term": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "context": "Wasserbeirat bei dem Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[33].text@17:rule:jurisdiction-name-bare",
+      "path": "body[2].children[33].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gebietsausschuss Nordrhein-Westfalen für das Informationsnetz in der EU,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[34].text@56:ministry-portfolio",
+      "path": "body[2].children[34].text",
+      "start": 56,
+      "end": 125,
+      "term": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "context": "Ausschuss für Verbraucher- und Agrarmarktfragen bei dem Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[52].text@94:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[52].text",
+      "start": 94,
+      "end": 120,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…26 des Gesetzes über den öffentlichen Gesundheitsdienst des Landes Nordrhein-Westfalen vom 25. November 1997 (GV. NRW. S. 430) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[52].text@144:protected:gazette-nrw",
+      "path": "body[2].children[52].text",
+      "start": 144,
+      "end": 159,
+      "term": "GV. NRW. S. 430",
+      "context": "…ienst des Landes Nordrhein-Westfalen vom 25. November 1997 (GV. NRW. S. 430) in der jeweils geltenden Fassung,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[54].text@82:protected:gazette-nrw",
+      "path": "body[2].children[54].text",
+      "start": 82,
+      "end": 97,
+      "term": "GV. NRW. S. 625",
+      "context": "…ch § 17 des Wohn- und Teilhabegesetzes vom 2. Oktober 2014 (GV. NRW. S. 625) in der jeweils geltenden Fassung,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[58].text@52:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[58].text",
+      "start": 52,
+      "end": 78,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Beirat bei der Natur- und Umweltschutz-Akademie des Landes Nordrhein-Westfalen bei dem Landesamt für Natur, Umwelt und Verbraucherschutz (…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[58].text@87:authority-state-office",
+      "path": "body[2].children[58].text",
+      "start": 87,
+      "end": 106,
+      "term": "Landesamt für Natur",
+      "context": "…mweltschutz-Akademie des Landes Nordrhein-Westfalen bei dem Landesamt für Natur, Umwelt und Verbraucherschutz (LANUV),",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[2].children[62].text@25:ministry-portfolio",
+      "path": "body[2].children[62].text",
+      "start": 25,
+      "end": 86,
+      "term": "Ministerium für Kinder, Familie, Flüchtlinge und Integration,",
+      "context": "Härtefallkommission beim Ministerium für Kinder, Familie, Flüchtlinge und Integration,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[64].text@21:rule:jurisdiction-name-bare",
+      "path": "body[2].children[64].text",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "Landespräventionsrat Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[66].text@35:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[66].text",
+      "start": 35,
+      "end": 61,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Auswahlausschuss Sportplakette des Landes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[67].text@30:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[67].text",
+      "start": 30,
+      "end": 33,
+      "term": "NRW",
+      "context": "Landesbeirat Arbeit gestalten NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[70].text@63:rule:jurisdiction-name-bare",
+      "path": "body[2].children[70].text",
+      "start": 63,
+      "end": 82,
+      "term": "Nordrhein-Westfalen",
+      "context": "…desbeirat für die Belange der Menschen mit Behinderungen in Nordrhein-Westfalen und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@128:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 128,
+      "end": 147,
+      "term": "Nordrhein-Westfalen",
+      "context": "…itt die Verordnung über die Ausschüsse und Beiräte im Lande Nordrhein-Westfalen, die unter das Ausschussmitglieder-Entschädigungsgesetz (AM…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@239:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 239,
+      "end": 253,
+      "term": "GV. NRW. S. 92",
+      "context": "…der-Entschädigungsgesetz (AMEG) fallen vom 22. Januar 2012 (GV. NRW. S. 92) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@4:ministry-portfolio",
+      "path": "body[3].children[1].text",
+      "start": 4,
+      "end": 25,
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[2].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 16,
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 5
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[10].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[12].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[33].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[52].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[58].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[64].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[66].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[67].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[70].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium der Finanzen",
+      "context": "…i 1984 (GV. NRW. S. 350) geändert worden ist, verordnet das Ministerium der Finanzen:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[29].text",
+      "term": "Nordrhein-westfälische",
+      "context": "Beirat für das Nordrhein-westfälische Landgestüt Warendorf,",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[31].text",
+      "term": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "context": "Wasserbeirat bei dem Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[34].text",
+      "term": "Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "context": "Ausschuss für Verbraucher- und Agrarmarktfragen bei dem Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[58].text",
+      "term": "Landesamt für Natur",
+      "context": "…mweltschutz-Akademie des Landes Nordrhein-Westfalen bei dem Landesamt für Natur, Umwelt und Verbraucherschutz (LANUV),",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[62].text",
+      "term": "Ministerium für Kinder, Familie, Flüchtlinge und Integration,",
+      "context": "Härtefallkommission beim Ministerium für Kinder, Familie, Flüchtlinge und Integration,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 150,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…chußmitglieder-Entschädigungsgesetzes vom 13. Mai 1958 (GV. NRW. S. 193), der zuletzt durch Gesetz vom 26. Juni 1984 (GV. N…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…W. S. 193), der zuletzt durch Gesetz vom 26. Juni 1984 (GV. NRW. S. 350) geändert worden ist, verordnet das Ministerium der…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].text",
+        "term": "NRW",
+        "context": "…chußmitglieder-Entschädigungsgesetzes vom 13. Mai 1958 (GV. NRW. S. 193), das zuletzt durch Artikel 4 des Gesetzes vom 19. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 4 des Gesetzes vom 19. Dezember 2013 (GV. NRW. S. 880) geändert worden ist), erhält folgende Fassung:",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[29].text",
+        "term": "Nordrhein-westfälische",
+        "context": "Beirat für das Nordrhein-westfälische Landgestüt Warendorf,",
+        "status": "documented",
+        "detectionId": "body[2].children[29].text@15:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[2].children[52].text",
+        "term": "NRW",
+        "context": "…ienst des Landes Westdeutschland vom 25. November 1997 (GV. NRW. S. 430) in der jeweils geltenden Fassung,",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[54].text",
+        "term": "NRW",
+        "context": "… 17 des Wohn- und Teilhabegesetzes vom 2. Oktober 2014 (GV. NRW. S. 625) in der jeweils geltenden Fassung,",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…Entschädigungsgesetz (AMEG) fallen vom 22. Januar 2012 (GV. NRW. S. 92) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium der Finanzen",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium der Finanzen",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium der Finanzen",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium der Finanzen",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "finanzministerium"
+  },
+  "citations": {
+    "source": "Verordnung über die Ausschüsse und Beiräte im Land Nordrhein-Westfalen, die unter das Ausschußmitglieder-Entschädigungsgesetz fallen vom 11. September 2017",
+    "sourceVersion": "Verordnung über die Ausschüsse und Beiräte im Land Nordrhein-Westfalen, die unter das Ausschußmitglieder-Entschädigungsgesetz fallen vom 11. September 2017",
+    "simulation": "Verordnung über die Ausschüsse und Beiräte im Land Westdeutschland, die unter das Ausschußmitglieder-Entschädigungsgesetz fallen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6579,
+          "actual": 6590,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 79,
+          "actual": 79,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6590,
+          "actual": 6535,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "2 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "2 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:04:12.135Z"
+}

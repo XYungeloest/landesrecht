@@ -1,0 +1,1359 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29853",
+  "slug": "invfoeg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@61:geography-region",
+      "path": "meta.title",
+      "start": 61,
+      "end": 70,
+      "term": "Westfalen",
+      "context": "…esetz zur Förderung zusätzlicher Investitionen in Nordrhein Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.shortTitle@29:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 29,
+      "end": 32,
+      "term": "NRW",
+      "context": "Investitionsförderungsgesetz NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@74:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Gesetzes zur Umsetzung des Zukunftsinvestitionsgesetzes in Nordrhein-Westfalen vom 2. April 2009 (GV. NRW. S. 187))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@113:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 113,
+      "end": 128,
+      "term": "GV. NRW. S. 187",
+      "context": "…estitionsgesetzes in Nordrhein-Westfalen vom 2. April 2009 (GV. NRW. S. 187))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@446:authority-state-enterprise",
+      "path": "body[3].children[0].children[0].text",
+      "start": 446,
+      "end": 471,
+      "term": "Landesbetrieb Information",
+      "context": "…einde zugerechnet. Als Zahl der Schüler gilt die in der vom Landesbetrieb Information und Technik Nordrhein-Westfalen geführten Schulstatistik fe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@484:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[0].text",
+      "start": 484,
+      "end": 503,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r gilt die in der vom Landesbetrieb Information und Technik Nordrhein-Westfalen geführten Schulstatistik festgesetzte Schülerzahl zum Stich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[1].children[1].text@39:regional-body-association",
+      "path": "body[3].children[0].children[1].children[1].text",
+      "start": 39,
+      "end": 59,
+      "term": "Landschaftsverbänden",
+      "context": "den Kreisen 20 640 133,33 Euro und den Landschaftsverbänden 29 308 989,32 Euro bereitgestellt. Die Verteilung erfolgt n…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[1].children[2].text@74:regional-body-association",
+      "path": "body[3].children[0].children[1].children[2].text",
+      "start": 74,
+      "end": 94,
+      "term": "Landschaftsverbänden",
+      "context": "…324 008 812,94 Euro, den Kreisen 48 297 911,98 Euro und den Landschaftsverbänden 40 495 941,58 Euro bereitgestellt. Die Verteilung erfolgt a…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[1].children[2].text@283:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[0].children[1].children[2].text",
+      "start": 283,
+      "end": 309,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 7, 10 und 13 des Gesetzes zur Regelung der Zuweisungen des Landes Nordrhein-Westfalen an die Gemeinden und Gemeindeverbände im Haushaltsjahr 2009…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[1].children[2].text@392:protected:gazette-nrw",
+      "path": "body[3].children[0].children[1].children[2].text",
+      "start": 392,
+      "end": 406,
+      "term": "GV. NRW. S. 54",
+      "context": "…emeindeverbände im Haushaltsjahr 2009 vom 17. Februar 2009 (GV. NRW. S. 54).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[2].text@67:authority-state-enterprise",
+      "path": "body[3].children[0].children[2].text",
+      "start": 67,
+      "end": 92,
+      "term": "Landesbetrieb Information",
+      "context": "…gebliche Einwohnerzahl im Sinne des Absatzes 2 gilt die vom Landesbetrieb Information und Technik Nordrhein-Westfalen fortgeschriebene Bevölkerun…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@105:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[2].text",
+      "start": 105,
+      "end": 124,
+      "term": "Nordrhein-Westfalen",
+      "context": "…satzes 2 gilt die vom Landesbetrieb Information und Technik Nordrhein-Westfalen fortgeschriebene Bevölkerungszahl zum Stichtag 31. Dezember…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[2].text@375:authority-state-enterprise",
+      "path": "body[3].children[0].children[2].text",
+      "start": 375,
+      "end": 400,
+      "term": "Landesbetrieb Information",
+      "context": "…esabschluss des Liegenschaftskatasters ermittelt und an den Landesbetrieb Information und Technik Nordrhein-Westfalen abgegeben wurde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@413:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[2].text",
+      "start": 413,
+      "end": 432,
+      "term": "Nordrhein-Westfalen",
+      "context": "… ermittelt und an den Landesbetrieb Information und Technik Nordrhein-Westfalen abgegeben wurde.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[2].text@486:authority-district-government",
+      "path": "body[3].children[1].children[2].text",
+      "start": 486,
+      "end": 502,
+      "term": "Bezirksregierung",
+      "context": "…ung ist von der für die jeweilige Gemeinde (GV) zuständigen Bezirksregierung schriftlich zu bestätigen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[0].text@299:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[2].children[0].text",
+      "start": 299,
+      "end": 302,
+      "term": "NRW",
+      "context": "…igen Zustimmung des Rates. § 81 und § 83 Absätze 1 und 2 GO NRW finden insoweit keine Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[3].children[0].text@146:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[3].children[0].text",
+      "start": 146,
+      "end": 149,
+      "term": "NRW",
+      "context": "… bereitgestellten Mitteln finanziert werden, findet § 82 GO NRW keine Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[0].text@244:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[0].text",
+      "start": 244,
+      "end": 247,
+      "term": "NRW",
+      "context": "…Fördermittel nach § 18 Absatz 1 Nummer 1 oder Nummer 2 KHGG NRW bewilligt wurden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[1].children[1].text@103:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[1].children[1].text",
+      "start": 103,
+      "end": 106,
+      "term": "NRW",
+      "context": "… Berechnung pauschaler Fördermittel gem. § 18 Absatz 1 KHGG NRW für das Jahr 2008 verwendeten Werte übernommen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[2].text@47:authority-district-government",
+      "path": "body[5].children[0].children[2].text",
+      "start": 47,
+      "end": 63,
+      "term": "Bezirksregierung",
+      "context": "Bewilligungsbehörde ist die örtlich zuständige Bezirksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregier…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@73:regional-body-association",
+      "path": "body[5].children[0].children[2].text",
+      "start": 73,
+      "end": 91,
+      "term": "Landschaftsverband",
+      "context": "…ehörde ist die örtlich zuständige Bezirksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@92:geography-region",
+      "path": "body[5].children[0].children[2].text",
+      "start": 92,
+      "end": 101,
+      "term": "Rheinland",
+      "context": "…ich zuständige Bezirksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde. Für den …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@110:authority-district-government",
+      "path": "body[5].children[0].children[2].text",
+      "start": 110,
+      "end": 126,
+      "term": "Bezirksregierung",
+      "context": "…irksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfa…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@127:municipality",
+      "path": "body[5].children[0].children[2].text",
+      "start": 127,
+      "end": 131,
+      "term": "Köln",
+      "context": "…r den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfalen-L…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@161:regional-body-association",
+      "path": "body[5].children[0].children[2].text",
+      "start": 161,
+      "end": 179,
+      "term": "Landschaftsverband",
+      "context": "… ist die Bezirksregierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligun…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@180:geography-region",
+      "path": "body[5].children[0].children[2].text",
+      "start": 180,
+      "end": 195,
+      "term": "Westfalen-Lippe",
+      "context": "…ierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@190:geography-river",
+      "path": "body[5].children[0].children[2].text",
+      "start": 190,
+      "end": 195,
+      "term": "Lippe",
+      "context": "…n Bewilligungsbehörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@204:authority-district-government",
+      "path": "body[5].children[0].children[2].text",
+      "start": 204,
+      "end": 220,
+      "term": "Bezirksregierung",
+      "context": "…behörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[2].text@221:municipality",
+      "path": "body[5].children[0].children[2].text",
+      "start": 221,
+      "end": 228,
+      "term": "Münster",
+      "context": "…Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[3].text@224:authority-district-government",
+      "path": "body[5].children[0].children[3].text",
+      "start": 224,
+      "end": 240,
+      "term": "Bezirksregierung",
+      "context": "…dungsnachweises und der Rückforderung regelt die zuständige Bezirksregierung gegenüber jeder Gemeinde (GV) und jedem Krankenhaus vor dem…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@220:authority-district-government",
+      "path": "body[5].children[1].children[0].text",
+      "start": 220,
+      "end": 236,
+      "term": "Bezirksregierung",
+      "context": "…für sie nach diesem Gesetz bereit gestellten Mittel bei der Bezirksregierung abrufen, sobald diese zur Begleichung erforderlicher Zahlun…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].text@38:authority-district-government",
+      "path": "body[5].children[1].children[2].text",
+      "start": 38,
+      "end": 54,
+      "term": "Bezirksregierung",
+      "context": "Die Beendigung einer Maßnahme ist der Bezirksregierung unverzüglich, spätestens 2 Monate nach der Beendigung, anzu…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[0].text@52:authority-district-government",
+      "path": "body[5].children[2].children[0].text",
+      "start": 52,
+      "end": 70,
+      "term": "Bezirksregierungen",
+      "context": "Die Gemeinden (GV) und Krankenhäuser übersenden den Bezirksregierungen vierteljährlich eine Liste der laufenden und geplanten Inve…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@76:authority-district-government",
+      "path": "body[5].children[2].children[1].text",
+      "start": 76,
+      "end": 92,
+      "term": "Bezirksregierung",
+      "context": "…V) und Krankenhäuser berichten unverzüglich der zuständigen Bezirksregierung, sobald absehbar wird, dass sie die Mittel nicht vollständi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].text@4:constitutional-organ-state",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[6].text@20:rule:jurisdiction-name-bare",
+      "path": "body[6].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].text@4:ministry-portfolio",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].text@4:ministry-compound",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[10].text@4:ministry-portfolio",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 54,
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].text@4:ministry-compound",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[12].text@4:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].text@4:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].text@4:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 34,
+      "term": "Minister für Bauen und Verkehr",
+      "context": "Der Minister für Bauen und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].text@4:ministry-compound",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 20,
+      "term": "Justizministerin",
+      "context": "Die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 77,
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 62,
+      "term": "Minister für Generationen, Familie, Frauen und Integration",
+      "context": "Der Minister für Generationen, Familie, Frauen und Integration",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 57,
+      "term": "Minister für Bundesangelegenheiten, Europa und Medien",
+      "context": "Der Minister für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "geography": {
+      "manual-review": 4
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 11
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "authority": {
+      "manual-review": 12
+    },
+    "regional-body": {
+      "manual-review": 4
+    },
+    "municipality": {
+      "manual-review": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 11
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[1].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Westfalen",
+      "context": "…esetz zur Förderung zusätzlicher Investitionen in Nordrhein Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Landesbetrieb Information",
+      "context": "…einde zugerechnet. Als Zahl der Schüler gilt die in der vom Landesbetrieb Information und Technik Nordrhein-Westfalen geführten Schulstatistik fe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[1].children[1].text",
+      "term": "Landschaftsverbänden",
+      "context": "den Kreisen 20 640 133,33 Euro und den Landschaftsverbänden 29 308 989,32 Euro bereitgestellt. Die Verteilung erfolgt n…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[1].children[2].text",
+      "term": "Landschaftsverbänden",
+      "context": "…324 008 812,94 Euro, den Kreisen 48 297 911,98 Euro und den Landschaftsverbänden 40 495 941,58 Euro bereitgestellt. Die Verteilung erfolgt a…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Landesbetrieb Information",
+      "context": "…gebliche Einwohnerzahl im Sinne des Absatzes 2 gilt die vom Landesbetrieb Information und Technik Nordrhein-Westfalen fortgeschriebene Bevölkerun…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Landesbetrieb Information",
+      "context": "…esabschluss des Liegenschaftskatasters ermittelt und an den Landesbetrieb Information und Technik Nordrhein-Westfalen abgegeben wurde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…ung ist von der für die jeweilige Gemeinde (GV) zuständigen Bezirksregierung schriftlich zu bestätigen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "Bewilligungsbehörde ist die örtlich zuständige Bezirksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregier…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Landschaftsverband",
+      "context": "…ehörde ist die örtlich zuständige Bezirksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Rheinland",
+      "context": "…ich zuständige Bezirksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde. Für den …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…irksregierung. Für den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfa…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Köln",
+      "context": "…r den Landschaftsverband Rheinland ist die Bezirksregierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfalen-L…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Landschaftsverband",
+      "context": "… ist die Bezirksregierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligun…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…ierung Köln Bewilligungsbehörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Lippe",
+      "context": "…n Bewilligungsbehörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…behörde. Für den Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Münster",
+      "context": "…Landschaftsverband Westfalen-Lippe ist die Bezirksregierung Münster Bewilligungsbehörde.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…dungsnachweises und der Rückforderung regelt die zuständige Bezirksregierung gegenüber jeder Gemeinde (GV) und jedem Krankenhaus vor dem…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…für sie nach diesem Gesetz bereit gestellten Mittel bei der Bezirksregierung abrufen, sobald diese zur Begleichung erforderlicher Zahlun…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "Die Beendigung einer Maßnahme ist der Bezirksregierung unverzüglich, spätestens 2 Monate nach der Beendigung, anzu…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "Die Gemeinden (GV) und Krankenhäuser übersenden den Bezirksregierungen vierteljährlich eine Liste der laufenden und geplanten Inve…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…V) und Krankenhäuser berichten unverzüglich der zuständigen Bezirksregierung, sobald absehbar wird, dass sie die Mittel nicht vollständi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].text",
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].text",
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Minister für Bauen und Verkehr",
+      "context": "Der Minister für Bauen und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Justizministerin",
+      "context": "Die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Minister für Generationen, Familie, Frauen und Integration",
+      "context": "Der Minister für Generationen, Familie, Frauen und Integration",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Minister für Bundesangelegenheiten, Europa und Medien",
+      "context": "Der Minister für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 158,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…estitionsgesetzes in Westdeutschland vom 2. April 2009 (GV. NRW. S. 187))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…ndeverbände im Haushaltsjahr 2009 vom 17. Februar 2009 (GV. NRW. S. 54).",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Förderung zusätzlicher Investitionen in Nordrhein Westfalen vom 2. April 2009",
+    "sourceVersion": "Gesetz zur Förderung zusätzlicher Investitionen in Nordrhein Westfalen vom 2. April 2009",
+    "simulation": "Gesetz zur Förderung zusätzlicher Investitionen in Nordrhein Westfalen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13637,
+          "actual": 14085,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 91,
+          "actual": 91,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14085,
+          "actual": 14065,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/12664-9061-sgv_201_20090402_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 9,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:26:03.143Z"
+}

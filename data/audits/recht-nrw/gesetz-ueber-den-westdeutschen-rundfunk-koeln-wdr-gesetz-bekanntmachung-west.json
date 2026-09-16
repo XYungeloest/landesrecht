@@ -1,0 +1,1856 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27889",
+  "slug": "gesetz-ueber-den-westdeutschen-rundfunk-koeln-wdr-gesetz-bekanntmachung-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@40:municipality",
+      "path": "meta.title",
+      "start": 40,
+      "end": 44,
+      "term": "Köln",
+      "context": "Gesetz über den 'Westdeutschen Rundfunk Köln' (WDR - Gesetz), Bekanntmachung der Neufassung",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].text@99:municipality",
+      "path": "body[1].text",
+      "start": 99,
+      "end": 103,
+      "term": "Köln",
+      "context": "… zur Änderung des Gesetzes über den \"Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].text@138:rule:jurisdiction-name",
+      "path": "body[1].text",
+      "start": 138,
+      "end": 162,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…stdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen (9. Rundfunkänderungsgesetz) vom 10. Februar 1998 (GV.NW.S.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].text@214:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 214,
+      "end": 225,
+      "term": "GV.NW.S.148",
+      "context": "…estfalen (9. Rundfunkänderungsgesetz) vom 10. Februar 1998 (GV.NW.S.148) wird nachstehend der Wortlaut des Gesetzes über den \"Westd…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@303:municipality",
+      "path": "body[1].text",
+      "start": 303,
+      "end": 307,
+      "term": "Köln",
+      "context": "… der Wortlaut des Gesetzes über den \"Westdeutschen Rundfunk Köln\" in der Fassung der Bekanntmachung vom 31. März 1993 (GV.NW…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].text@362:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 362,
+      "end": 373,
+      "term": "GV.NW.S.158",
+      "context": "… Köln\" in der Fassung der Bekanntmachung vom 31. März 1993 (GV.NW.S.158), zuletzt geändert durch Gesetz vom 24. April 1995 (GV. NW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@426:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 426,
+      "end": 440,
+      "term": "GV. NW. S. 340",
+      "context": "…W.S.158), zuletzt geändert durch Gesetz vom 24. April 1995 (GV. NW. S. 340), unter Berücksichtigung der Änderungen durch Artikel 1 des…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@531:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 531,
+      "end": 537,
+      "term": "GV.NW.",
+      "context": "…nderungen durch Artikel 1 des 7. Rundfunkänderungsgesetzes (GV.NW.1995 S: 340) und Artikel 1 des 9. Rundfunkänderungsgesetzes …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].title@40:municipality",
+      "path": "body[3].title",
+      "start": 40,
+      "end": 44,
+      "term": "Köln",
+      "context": "Gesetz über den \"Westdeutschen Rundfunk Köln\" (WDR-Gesetz) in der Fassung der Bekanntmachung vom 25. Apr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[90].children[1].text@48:municipality",
+      "path": "body[90].children[1].text",
+      "start": 48,
+      "end": 52,
+      "term": "Köln",
+      "context": "Das Rundfunkunternehmen \"Westdeutscher Rundfunk Köln\" (WDR) ist eine gemeinnützige Anstalt des öffentlichen Rech…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[90].children[3].text@43:protected:gazette-nrw",
+      "path": "body[90].children[3].text",
+      "start": 43,
+      "end": 58,
+      "term": "GV. NRW. S. 408",
+      "context": "Der ZDF-Staatsvertrag vom 31. August 1991 (GV. NRW. S. 408) und der Staatsvertrag über die Körperschaft des öffentlich…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[90].children[3].text@166:protected:gazette-nrw",
+      "path": "body[90].children[3].text",
+      "start": 166,
+      "end": 181,
+      "term": "GV. NRW. S. 874",
+      "context": "…s öffentlichen Rechts ,Deutschlandradio‘ vom 17. Juni 1993 (GV. NRW. S. 874) in der jeweils geltenden Fassung bleiben unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[91].children[0].text@17:municipality",
+      "path": "body[91].children[0].text",
+      "start": 17,
+      "end": 21,
+      "term": "Köln",
+      "context": "Sitz des WDR ist Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[92].children[3].children[1].text@94:jurisdiction-name-residual",
+      "path": "body[92].children[3].children[1].text",
+      "start": 94,
+      "end": 114,
+      "term": "Nordrhein-Westfalens",
+      "context": "… und aktuellen Informationen aus den verschiedenen Regionen Nordrhein-Westfalens, Deutschland und der Welt.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[92].children[3].children[2].text@85:rule:jurisdiction-name-bare",
+      "path": "body[92].children[3].children[2].text",
+      "start": 85,
+      "end": 104,
+      "term": "Nordrhein-Westfalen",
+      "context": "…programm, das sich im Schwerpunkt auf Themen der Kultur aus Nordrhein-Westfalen, Deutschland und der Welt stützt und auch der kulturellen D…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[92].children[6].text@110:rule:jurisdiction-name",
+      "path": "body[92].children[6].text",
+      "start": 110,
+      "end": 134,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Fernsehen erforderlichen Anlagen. Er ist verpflichtet, das Land Nordrhein-Westfalen (Sendegebiet) gleichwertig zu versorgen. Er nutzt",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[92].children[6].children[0].text@83:rule:jurisdiction-name",
+      "path": "body[92].children[6].children[0].text",
+      "start": 83,
+      "end": 107,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…äten, die er bei Inkrafttreten des Rundfunkgesetzes für das Land Nordrhein-Westfalen (LRG NW) vom 19. Januar 1987 (GV. NW. S. 22) genutzt hat,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[92].children[6].children[0].text@138:protected:gazette-nw",
+      "path": "body[92].children[6].children[0].text",
+      "start": 138,
+      "end": 151,
+      "term": "GV. NW. S. 22",
+      "context": "… das Land Nordrhein-Westfalen (LRG NW) vom 19. Januar 1987 (GV. NW. S. 22) genutzt hat,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[92].children[6].children[1].text@84:protected:gazette-nw",
+      "path": "body[92].children[6].children[1].text",
+      "start": 84,
+      "end": 96,
+      "term": "GV. NW. S. 6",
+      "context": "…G NW in der Fassung der Bekanntmachung vom 11. Januar 1988 (GV. NW. S. 6) aufgeführten Frequenzen,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[92].children[6].children[2].text@60:rule:jurisdiction-abbreviation",
+      "path": "body[92].children[6].children[2].text",
+      "start": 60,
+      "end": 63,
+      "term": "NRW",
+      "context": "die Übertragungskapazitäten, die ihm nach §§ 10 bis 10b LMG NRW zugeordnet werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[97].children[2].text@250:rule:jurisdiction-name-bare",
+      "path": "body[97].children[2].text",
+      "start": 250,
+      "end": 269,
+      "term": "Nordrhein-Westfalen",
+      "context": "…enten im Sinne des § 3 Absatz 2 Nummer 3 Landesmediengesetz Nordrhein-Westfalen. Die Daten sind so darzustellen, dass eine gendermäßige Aus…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[102].children[2].text@129:legislature-state",
+      "path": "body[102].children[2].text",
+      "start": 129,
+      "end": 156,
+      "term": "Landtag Nordrhein-Westfalen",
+      "context": "…um Europäischen Parlament, zum Deutschen Bundestag oder zum Landtag Nordrhein-Westfalen angemessene Sendezeit zur Wahlwerbung einzuräumen, wenn sie…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[102].children[2].text@137:rule:jurisdiction-name-bare",
+      "path": "body[102].children[2].text",
+      "start": 137,
+      "end": 156,
+      "term": "Nordrhein-Westfalen",
+      "context": "…äischen Parlament, zum Deutschen Bundestag oder zum Landtag Nordrhein-Westfalen angemessene Sendezeit zur Wahlwerbung einzuräumen, wenn sie…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[102].children[2].text@220:rule:jurisdiction-name-bare",
+      "path": "body[102].children[2].text",
+      "start": 220,
+      "end": 239,
+      "term": "Nordrhein-Westfalen",
+      "context": "…emessene Sendezeit zur Wahlwerbung einzuräumen, wenn sie in Nordrhein-Westfalen mit",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[108].children[6].text@114:rule:jurisdiction-name",
+      "path": "body[108].children[6].text",
+      "start": 114,
+      "end": 138,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ion finden §§ 20 und 21 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen entsprechende Anwendung. Mitglieder des Rundfunkrates und d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[0].text@29:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[0].text",
+      "start": 29,
+      "end": 48,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Evangelischen Kirchen in Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[2].text@61:geography-region",
+      "path": "body[112].children[3].children[2].text",
+      "start": 61,
+      "end": 76,
+      "term": "Westfalen-Lippe",
+      "context": "…ie Landesverbände der Jüdischen Gemeinden von Nordrhein und Westfalen-Lippe K.d.ö.R. und die Synagogen-Gemeinde Köln K.d.ö.R.,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[112].children[3].children[2].text@71:geography-river",
+      "path": "body[112].children[3].children[2].text",
+      "start": 71,
+      "end": 76,
+      "term": "Lippe",
+      "context": "…erbände der Jüdischen Gemeinden von Nordrhein und Westfalen-Lippe K.d.ö.R. und die Synagogen-Gemeinde Köln K.d.ö.R.,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[112].children[3].children[2].text@113:municipality",
+      "path": "body[112].children[3].children[2].text",
+      "start": 113,
+      "end": 117,
+      "term": "Köln",
+      "context": "…ein und Westfalen-Lippe K.d.ö.R. und die Synagogen-Gemeinde Köln K.d.ö.R.,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[112].children[3].children[3].text@46:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[3].text",
+      "start": 46,
+      "end": 65,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Deutschen Gewerkschaftsbund, Landesbezirk Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[4].text@42:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[4].text",
+      "start": 42,
+      "end": 61,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Deutschen Beamtenbund, DBB-Landesbund Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[5].text@47:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[5].text",
+      "start": 47,
+      "end": 66,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Landesvereinigung der Unternehmensverbände Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[6].text@13:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[6].text",
+      "start": 13,
+      "end": 16,
+      "term": "NRW",
+      "context": "den Handwerk NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[8].text@14:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[8].text",
+      "start": 14,
+      "end": 33,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Städtetag Nordrhein-Westfalen, den Städte- und Gemeindebund Nordrhein-Westfalen e.V. und …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[8].text@64:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[8].text",
+      "start": 64,
+      "end": 83,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Städtetag Nordrhein-Westfalen, den Städte- und Gemeindebund Nordrhein-Westfalen e.V. und den Landkreistag Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[8].text@110:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[8].text",
+      "start": 110,
+      "end": 129,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Gemeindebund Nordrhein-Westfalen e.V. und den Landkreistag Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[9].text@98:rule:jurisdiction-name-genitive",
+      "path": "body[112].children[3].children[9].text",
+      "start": 98,
+      "end": 124,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nschaft der Spitzenverbände der Freien Wohlfahrtspflege des Landes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[10].text@54:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[10].text",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Landesarbeitsgemeinschaft der Familienverbände in Nordrhein-Westfalen und den FrauenRat NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[10].text@92:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[10].text",
+      "start": 92,
+      "end": 95,
+      "term": "NRW",
+      "context": "…r Familienverbände in Nordrhein-Westfalen und den FrauenRat NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[11].text@40:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[11].text",
+      "start": 40,
+      "end": 59,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Landesarbeitsgemeinschaft Lesben in Nordrhein-Westfalen e.V. und Queeres Netzwerk NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[11].text@86:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[11].text",
+      "start": 86,
+      "end": 89,
+      "term": "NRW",
+      "context": "…aft Lesben in Nordrhein-Westfalen e.V. und Queeres Netzwerk NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[12].text@20:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[12].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Landessportbund Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[13].text@24:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[13].text",
+      "start": 24,
+      "end": 43,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Verbraucherzentrale Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[14].text@117:protected:gazette-nrw",
+      "path": "body[112].children[3].children[14].text",
+      "start": 117,
+      "end": 132,
+      "term": "GV. NRW. S. 568",
+      "context": "…6 Absatz 1 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November 2016 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[112].children[3].children[14].text@191:protected:gazette-nrw",
+      "path": "body[112].children[3].children[14].text",
+      "start": 191,
+      "end": 206,
+      "term": "GV. NRW. S. 934",
+      "context": "…8), das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[112].children[3].children[15].text@21:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[15].text",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Landesjugendring Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[17].text@45:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[17].text",
+      "start": 45,
+      "end": 64,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Sozialverband Deutschland, Landesverband Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[18].text@8:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[18].text",
+      "start": 8,
+      "end": 11,
+      "term": "NRW",
+      "context": "die IHK NRW – Die Industrie und Handelskammern in Nordrhein-Westfalen e…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[18].text@50:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[18].text",
+      "start": 50,
+      "end": 69,
+      "term": "Nordrhein-Westfalen",
+      "context": "die IHK NRW – Die Industrie und Handelskammern in Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[20].text@35:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[20].text",
+      "start": 35,
+      "end": 54,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Verband Freier Berufe im Lande Nordrhein-Westfalen e.V., die Familienunternehmer e.V. Landesbereich Nordrhein-…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[20].text@104:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[20].text",
+      "start": 104,
+      "end": 123,
+      "term": "Nordrhein-Westfalen",
+      "context": "…-Westfalen e.V., die Familienunternehmer e.V. Landesbereich Nordrhein-Westfalen und die Wirtschaftsjunioren Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[20].text@152:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[20].text",
+      "start": 152,
+      "end": 171,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ndesbereich Nordrhein-Westfalen und die Wirtschaftsjunioren Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[21].text@24:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[21].text",
+      "start": 24,
+      "end": 43,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Sozialverband VdK – Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[22].text@25:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[22].text",
+      "start": 25,
+      "end": 28,
+      "term": "NRW",
+      "context": "den Landesbehindertenrat NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[23].text@26:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[23].text",
+      "start": 26,
+      "end": 29,
+      "term": "NRW",
+      "context": "den Landesintegrationsrat NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[24].text@29:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[24].text",
+      "start": 29,
+      "end": 32,
+      "term": "NRW",
+      "context": "die Landesseniorenvertretung NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[25].text@27:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[25].text",
+      "start": 27,
+      "end": 30,
+      "term": "NRW",
+      "context": "den Film und Medienverband NRW e.V., das Filmbüro NW e.V. und die Arbeitsgemeinschaft Doku…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[26].text@14:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[26].text",
+      "start": 14,
+      "end": 17,
+      "term": "NRW",
+      "context": "den Kulturrat NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[27].text@19:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[27].text",
+      "start": 19,
+      "end": 38,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Landesmusikrat Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[28].text@75:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[28].text",
+      "start": 75,
+      "end": 94,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nd Bildender Künstlerinnen und Künstler e.V., Landesverband Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[29].text@42:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[29].text",
+      "start": 42,
+      "end": 61,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Gewerkschaft IG Metall Bezirksleitung Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[30].text@43:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[30].text",
+      "start": 43,
+      "end": 46,
+      "term": "NRW",
+      "context": "den Landesverband der Volkshochschulen von NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[31].text@49:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[31].text",
+      "start": 49,
+      "end": 52,
+      "term": "NRW",
+      "context": "die Landesrektorenkonferenz der Universitäten in NRW e.V. und Hochschulen NRW – Landesrektoren_innenkonferenz de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[31].text@74:rule:jurisdiction-abbreviation",
+      "path": "body[112].children[3].children[31].text",
+      "start": 74,
+      "end": 77,
+      "term": "NRW",
+      "context": "…orenkonferenz der Universitäten in NRW e.V. und Hochschulen NRW – Landesrektoren_innenkonferenz der Hochschulen für Angewan…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[3].children[32].text@101:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[32].text",
+      "start": 101,
+      "end": 120,
+      "term": "Nordrhein-Westfalen",
+      "context": "…kschaft der Journalistinnen und Journalisten, Landesverband Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[33].text@38:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[33].text",
+      "start": 38,
+      "end": 57,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Gewerkschaft ver.di, Landesbezirk Nordrhein-Westfalen, Fachgruppe Medien, Deutsche Journalistinnen- und Journalis…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[34].text@100:geography-region",
+      "path": "body[112].children[3].children[34].text",
+      "start": 100,
+      "end": 109,
+      "term": "Westfalen",
+      "context": "…chaft Bergbau, Chemie, Energie, Landesbezirke Nordrhein und Westfalen,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[112].children[3].children[35].text@68:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[35].text",
+      "start": 68,
+      "end": 87,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ssenschaft Deutscher Bühnen-Angehöriger r.V., Landesverband Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[3].children[36].text@17:rule:jurisdiction-name-bare",
+      "path": "body[112].children[3].children[36].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Europa-Union Nordrhein-Westfalen e.V.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[112].children[4].text@242:rule:jurisdiction-name-bare",
+      "path": "body[112].children[4].text",
+      "start": 242,
+      "end": 261,
+      "term": "Nordrhein-Westfalen",
+      "context": "…t der aktuellen gesellschaftlichen Strömungen und Kräfte in Nordrhein-Westfalen widerspiegeln. Verbände und sonstige nicht öffentlich-recht…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[122].children[4].text@157:rule:jurisdiction-name",
+      "path": "body[122].children[4].text",
+      "start": 157,
+      "end": 181,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…nd deren Änderungen im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[146].children[1].text@225:rule:jurisdiction-abbreviation",
+      "path": "body[146].children[1].text",
+      "start": 225,
+      "end": 228,
+      "term": "NRW",
+      "context": "…nstaatsvertrages und den ihm nach § 116 Absatz 1 Satz 2 LMG NRW zustehenden Anteil. Er verwendet diese Mittel im Rahmen sei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[146].children[1].text@367:rule:jurisdiction-abbreviation",
+      "path": "body[146].children[1].text",
+      "start": 367,
+      "end": 370,
+      "term": "NRW",
+      "context": "…e Film- und Hörspielförderung der „Film­ und Medienstiftung NRW GmbH. Durch Gesellschaftsvertrag ist sicherzustellen, dass …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[155].children[2].text@32:rule:jurisdiction-name-bare",
+      "path": "body[155].children[2].text",
+      "start": 32,
+      "end": 51,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Informationsfreiheitsgesetz Nordrhein-Westfalen findet auf den WDR Anwendung, es sei denn, dass journalisti…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[157].children[1].text@31:municipality",
+      "path": "body[157].children[1].text",
+      "start": 31,
+      "end": 35,
+      "term": "Köln",
+      "context": "Auf den Westdeutschen Rundfunk Köln finden die §§ 1 bis 4, § 5 Absatz 1, § 6 Absatz 1, § 7 Absa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[157].children[1].text@245:protected:gazette-nrw",
+      "path": "body[157].children[1].text",
+      "start": 245,
+      "end": 260,
+      "term": "GV. NRW. S. 590",
+      "context": "…z 2 des Landesgleichstellungsgesetzes vom 9. November 1999 (GV. NRW. S. 590), das zuletzt durch Artikel 1 des Gesetzes vom 6. Dezember …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[157].children[1].text@326:protected:gazette-nrw",
+      "path": "body[157].children[1].text",
+      "start": 326,
+      "end": 342,
+      "term": "GV. NRW. S. 1052",
+      "context": "… zuletzt durch Artikel 1 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1052) geändert worden ist, Anwendung. Die übrigen Vorschriften d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[157].children[1].text@473:municipality",
+      "path": "body[157].children[1].text",
+      "start": 473,
+      "end": 477,
+      "term": "Köln",
+      "context": "…eichstellungsgesetzes gelten für den Westdeutschen Rundfunk Köln dem Sinne nach, soweit dieses Gesetz keine besonderen Vorsc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[160].children[1].text@361:protected:gazette-nrw",
+      "path": "body[160].children[1].text",
+      "start": 361,
+      "end": 376,
+      "term": "GV. NRW. S. 501",
+      "context": "…25. April 1998, das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 501) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[160].children[3].text@593:protected:gazette-nrw",
+      "path": "body[160].children[3].text",
+      "start": 593,
+      "end": 608,
+      "term": "GV. NRW. S. 501",
+      "context": "…25. April 1998, das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 501) geändert worden ist. Auch in dem Zeitraum gemäß Satz 1 obl…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[160].children[6].text@278:protected:gazette-nrw",
+      "path": "body[160].children[6].text",
+      "start": 278,
+      "end": 293,
+      "term": "GV. NRW. S. 214",
+      "context": "…m 25. April 1998, das zuletzt durch Gesetz vom 8. Mai 2018 (GV. NRW. S. 214) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[160].children[7].text@187:protected:gazette-nrw",
+      "path": "body[160].children[7].text",
+      "start": 187,
+      "end": 202,
+      "term": "GV. NRW. S. 284",
+      "context": "…25. April 1998, das zuletzt durch Gesetz vom 3. April 2020 (GV. NRW. S. 284) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 9
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 52,
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 16
+    },
+    "legislature": {
+      "safe-auto-transform": 1
+    },
+    "geography": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[92].children[3].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[92].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[92].children[6].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[92].children[6].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[97].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[102].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[102].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[108].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[9].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[10].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[10].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[11].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[12].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[15].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[17].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[18].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[18].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[20].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[20].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[20].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[21].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[22].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[23].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[24].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[25].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[26].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[27].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[28].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[29].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[30].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[31].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[31].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[112].children[3].children[32].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[33].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[35].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[3].children[36].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[112].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[122].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[146].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[146].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[155].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Köln",
+      "context": "Gesetz über den 'Westdeutschen Rundfunk Köln' (WDR - Gesetz), Bekanntmachung der Neufassung",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Köln",
+      "context": "… zur Änderung des Gesetzes über den \"Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Köln",
+      "context": "… der Wortlaut des Gesetzes über den \"Westdeutschen Rundfunk Köln\" in der Fassung der Bekanntmachung vom 31. März 1993 (GV.NW…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].title",
+      "term": "Köln",
+      "context": "Gesetz über den \"Westdeutschen Rundfunk Köln\" (WDR-Gesetz) in der Fassung der Bekanntmachung vom 25. Apr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[90].children[1].text",
+      "term": "Köln",
+      "context": "Das Rundfunkunternehmen \"Westdeutscher Rundfunk Köln\" (WDR) ist eine gemeinnützige Anstalt des öffentlichen Rech…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[91].children[0].text",
+      "term": "Köln",
+      "context": "Sitz des WDR ist Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[92].children[3].children[1].text",
+      "term": "Nordrhein-Westfalens",
+      "context": "… und aktuellen Informationen aus den verschiedenen Regionen Nordrhein-Westfalens, Deutschland und der Welt.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[112].children[3].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…ie Landesverbände der Jüdischen Gemeinden von Nordrhein und Westfalen-Lippe K.d.ö.R. und die Synagogen-Gemeinde Köln K.d.ö.R.,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[112].children[3].children[2].text",
+      "term": "Lippe",
+      "context": "…erbände der Jüdischen Gemeinden von Nordrhein und Westfalen-Lippe K.d.ö.R. und die Synagogen-Gemeinde Köln K.d.ö.R.,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[112].children[3].children[2].text",
+      "term": "Köln",
+      "context": "…ein und Westfalen-Lippe K.d.ö.R. und die Synagogen-Gemeinde Köln K.d.ö.R.,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[112].children[3].children[34].text",
+      "term": "Westfalen",
+      "context": "…chaft Bergbau, Chemie, Energie, Landesbezirke Nordrhein und Westfalen,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[157].children[1].text",
+      "term": "Köln",
+      "context": "Auf den Westdeutschen Rundfunk Köln finden die §§ 1 bis 4, § 5 Absatz 1, § 6 Absatz 1, § 7 Absa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[157].children[1].text",
+      "term": "Köln",
+      "context": "…eichstellungsgesetzes gelten für den Westdeutschen Rundfunk Köln dem Sinne nach, soweit dieses Gesetz keine besonderen Vorsc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1136,
+    "residuals": [
+      {
+        "path": "body[90].children[3].text",
+        "term": "NRW",
+        "context": "Der ZDF-Staatsvertrag vom 31. August 1991 (GV. NRW. S. 408) und der Staatsvertrag über die Körperschaft des öf…",
+        "status": "protected"
+      },
+      {
+        "path": "body[90].children[3].text",
+        "term": "NRW",
+        "context": "…fentlichen Rechts ,Deutschlandradio‘ vom 17. Juni 1993 (GV. NRW. S. 874) in der jeweils geltenden Fassung bleiben unberührt…",
+        "status": "protected"
+      },
+      {
+        "path": "body[92].children[3].children[1].text",
+        "term": "Nordrhein-Westfalens",
+        "context": "… und aktuellen Informationen aus den verschiedenen Regionen Nordrhein-Westfalens, Deutschland und der Welt.",
+        "status": "documented",
+        "detectionId": "body[92].children[3].children[1].text@94:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[112].children[3].children[14].text",
+        "term": "NRW",
+        "context": "…satz 1 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November…",
+        "status": "protected"
+      },
+      {
+        "path": "body[112].children[3].children[14].text",
+        "term": "NRW",
+        "context": "…das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[157].children[1].text",
+        "term": "NRW",
+        "context": "…des Landesgleichstellungsgesetzes vom 9. November 1999 (GV. NRW. S. 590), das zuletzt durch Artikel 1 des Gesetzes vom 6. D…",
+        "status": "protected"
+      },
+      {
+        "path": "body[157].children[1].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 1 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1052) geändert worden ist, Anwendung. Die übrigen Vorsc…",
+        "status": "protected"
+      },
+      {
+        "path": "body[160].children[1].text",
+        "term": "NRW",
+        "context": "…April 1998, das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 501) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[160].children[3].text",
+        "term": "NRW",
+        "context": "…April 1998, das zuletzt durch Gesetz vom 25. Juni 2015 (GV. NRW. S. 501) geändert worden ist. Auch in dem Zeitraum gemäß Sa…",
+        "status": "protected"
+      },
+      {
+        "path": "body[160].children[6].text",
+        "term": "NRW",
+        "context": "…. April 1998, das zuletzt durch Gesetz vom 8. Mai 2018 (GV. NRW. S. 214) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[160].children[7].text",
+        "term": "NRW",
+        "context": "…April 1998, das zuletzt durch Gesetz vom 3. April 2020 (GV. NRW. S. 284) geändert worden ist.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über den 'Westdeutschen Rundfunk Köln' (WDR - Gesetz), Bekanntmachung der Neufassung vom 25. April 1998 (GV. NW. 1998 S. 265)",
+    "sourceVersion": "Gesetz über den 'Westdeutschen Rundfunk Köln' (WDR - Gesetz), Bekanntmachung der Neufassung vom 25. April 1998 (GV. NW. 1998 S. 265)",
+    "simulation": "Gesetz über den 'Westdeutschen Rundfunk Köln' (WDR - Gesetz), Bekanntmachung der Neufassung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 73,
+          "actual": 73,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 116006,
+          "actual": 115398,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 73,
+          "actual": 73,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 704,
+          "actual": 704,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 67,
+          "actual": 67,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 73,
+          "actual": 73,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 115398,
+          "actual": 115265,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "73 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "73 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:13:42.884Z"
+}

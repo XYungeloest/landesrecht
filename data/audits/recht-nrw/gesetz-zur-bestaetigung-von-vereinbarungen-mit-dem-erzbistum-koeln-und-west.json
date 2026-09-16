@@ -1,0 +1,1100 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30996",
+  "slug": "gesetz-zur-bestaetigung-von-vereinbarungen-mit-dem-erzbistum-koeln-und-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@60:municipality",
+      "path": "meta.title",
+      "start": 60,
+      "end": 64,
+      "term": "Köln",
+      "context": "Gesetz zur Bestätigung von Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "meta.title@84:municipality",
+      "path": "meta.title",
+      "start": 84,
+      "end": 91,
+      "term": "Münster",
+      "context": "…on Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].text@99:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 105",
+      "context": "…im Bereich der Schul- und Studienfonds vom 4. Februar 2014 (GV. NRW. S. 105))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].title@49:municipality",
+      "path": "body[2].title",
+      "start": 49,
+      "end": 53,
+      "term": "Köln",
+      "context": "Bestätigung einer Vereinbarung mit dem Erzbistum Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@121:rule:jurisdiction-name-dative",
+      "path": "body[2].children[0].text",
+      "start": 121,
+      "end": 149,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…hen Schulfonds und des Gymnasialfonds Münstereifel zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln wird gemäß Artikel 21 der Verfassung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@168:municipality",
+      "path": "body[2].children[0].text",
+      "start": 168,
+      "end": 172,
+      "term": "Köln",
+      "context": "…fel zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln wird gemäß Artikel 21 der Verfassung für das Land Nordrhein…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@218:rule:jurisdiction-name",
+      "path": "body[2].children[0].text",
+      "start": 218,
+      "end": 242,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Erzbistum Köln wird gemäß Artikel 21 der Verfassung für das Land Nordrhein-Westfalen bestätigt. Die Vereinbarung wird nachstehend als Anlage ver…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].title@46:municipality",
+      "path": "body[3].title",
+      "start": 46,
+      "end": 53,
+      "term": "Münster",
+      "context": "Bestätigung einer Vereinbarung mit dem Bistum Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@54:municipality",
+      "path": "body[3].children[0].text",
+      "start": 54,
+      "end": 61,
+      "term": "Münster",
+      "context": "Die Vereinbarung über die Zuordnung des Vermögens des Münster’schen Studienfonds und des Beckum-Ahlen’schen Klosterfonds …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@130:rule:jurisdiction-name-dative",
+      "path": "body[3].children[0].text",
+      "start": 130,
+      "end": 158,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…udienfonds und des Beckum-Ahlen’schen Klosterfonds zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster wird gemäß Artikel 21 der Verfassung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@174:municipality",
+      "path": "body[3].children[0].text",
+      "start": 174,
+      "end": 181,
+      "term": "Münster",
+      "context": "…rfonds zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster wird gemäß Artikel 21 der Verfassung für das Land Nordrhein…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@227:rule:jurisdiction-name",
+      "path": "body[3].children[0].text",
+      "start": 227,
+      "end": 251,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Bistum Münster wird gemäß Artikel 21 der Verfassung für das Land Nordrhein-Westfalen bestätigt. Die Vereinbarung wird nachstehend als Anlage ver…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].text@4:constitutional-organ-state",
+      "path": "body[5].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[5].text@20:rule:jurisdiction-name-bare",
+      "path": "body[5].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].text@4:ministry-compound",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[8].text@4:ministry-portfolio",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 73,
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Der Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].text@4:ministry-portfolio",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[10].text@4:ministry-compound",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[11].text@4:ministry-portfolio",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 60,
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr zugleich für den Minister für Arbeit, Integration und Sozia…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].text@78:ministry-portfolio",
+      "path": "body[11].text",
+      "start": 78,
+      "end": 123,
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "…auen, Wohnen, Stadtentwicklung und Verkehr zugleich für den Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].text@4:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].text@4:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].text@4:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter zugleich für die Ministerin für Schule und Weiterbildung un…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].text@79:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 79,
+      "end": 205,
+      "term": "Ministerin für Schule und Weiterbildung und den Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…Gesundheit, Emanzipation, Pflege und Alter zugleich für die Ministerin für Schule und Weiterbildung und den Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].title@155:rule:jurisdiction-name-dative",
+      "path": "body[15].title",
+      "start": 155,
+      "end": 183,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…hen Schulfonds und des Gymnasialfonds Münstereifel zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln sowie der Vereinbarung über die Zuor…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[15].title@202:municipality",
+      "path": "body[15].title",
+      "start": 202,
+      "end": 206,
+      "term": "Köln",
+      "context": "…fel zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln sowie der Vereinbarung über die Zuordnung des Vermögens des…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].title@267:municipality",
+      "path": "body[15].title",
+      "start": 267,
+      "end": 274,
+      "term": "Münster",
+      "context": "…sowie der Vereinbarung über die Zuordnung des Vermögens des Münster¿schen Studienfonds und des Beckum-Ahlen¿schen Klosterfonds …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].title@343:rule:jurisdiction-name-dative",
+      "path": "body[15].title",
+      "start": 343,
+      "end": 371,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…udienfonds und des Beckum-Ahlen¿schen Klosterfonds zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster jeweils vom 22. November 2013 bzw. v…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[15].title@387:municipality",
+      "path": "body[15].title",
+      "start": 387,
+      "end": 394,
+      "term": "Münster",
+      "context": "…rfonds zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster jeweils vom 22. November 2013 bzw. vom 13. Dezember 2013",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[16].text@19:protected:gazette-nrw",
+      "path": "body[16].text",
+      "start": 19,
+      "end": 34,
+      "term": "GV. NRW. S. 265",
+      "context": "Vom 3. April 2014 (GV. NRW. S. 265)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[17].text@48:rule:jurisdiction-name-dative",
+      "path": "body[17].text",
+      "start": 48,
+      "end": 76,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Nachdem der abschließende Notenwechsel zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl bis zum 26. März 2014 erfolgt ist, s…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[17].text@202:rule:jurisdiction-name-dative",
+      "path": "body[17].text",
+      "start": 202,
+      "end": 230,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…e Vereinbarungen gemäß § 8 Abs. 1 der Vereinbarung zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln bzw. gemäß § 9 Abs. 1 der Vereinbaru…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[17].text@249:municipality",
+      "path": "body[17].text",
+      "start": 249,
+      "end": 253,
+      "term": "Köln",
+      "context": "…ung zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln bzw. gemäß § 9 Abs. 1 der Vereinbarung zwischen dem Land No…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[17].text@302:rule:jurisdiction-name-dative",
+      "path": "body[17].text",
+      "start": 302,
+      "end": 330,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…bistum Köln bzw. gemäß § 9 Abs. 1 der Vereinbarung zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster am 27. März 2014 in Kraft getreten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[17].text@346:municipality",
+      "path": "body[17].text",
+      "start": 346,
+      "end": 353,
+      "term": "Münster",
+      "context": "…barung zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster am 27. März 2014 in Kraft getreten.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[18].text@4:constitutional-organ-state",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 54,
+      "term": "Ministerpräsidentin des Landes Nordrhein-Westfalen",
+      "context": "Die Ministerpräsidentin des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "ministerpraesident",
+        "group": "Landesregierung NRW",
+        "target": "Ministerpräsident des Landes Westdeutschland"
+      }
+    },
+    {
+      "id": "body[18].text@28:rule:jurisdiction-name-genitive",
+      "path": "body[18].text",
+      "start": 28,
+      "end": 54,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Ministerpräsidentin des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 12
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 11
+    },
+    "institution": {
+      "safe-auto-transform": 2
+    },
+    "ministry": {
+      "manual-review": 10
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[15].title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[17].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[17].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[17].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[18].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Köln",
+      "context": "Gesetz zur Bestätigung von Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Münster",
+      "context": "…on Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].title",
+      "term": "Köln",
+      "context": "Bestätigung einer Vereinbarung mit dem Erzbistum Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Köln",
+      "context": "…fel zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln wird gemäß Artikel 21 der Verfassung für das Land Nordrhein…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].title",
+      "term": "Münster",
+      "context": "Bestätigung einer Vereinbarung mit dem Bistum Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Münster",
+      "context": "Die Vereinbarung über die Zuordnung des Vermögens des Münster’schen Studienfonds und des Beckum-Ahlen’schen Klosterfonds …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Münster",
+      "context": "…rfonds zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster wird gemäß Artikel 21 der Verfassung für das Land Nordrhein…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].text",
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Der Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr zugleich für den Minister für Arbeit, Integration und Sozia…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "…auen, Wohnen, Stadtentwicklung und Verkehr zugleich für den Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter zugleich für die Ministerin für Schule und Weiterbildung un…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Ministerin für Schule und Weiterbildung und den Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…Gesundheit, Emanzipation, Pflege und Alter zugleich für die Ministerin für Schule und Weiterbildung und den Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].title",
+      "term": "Köln",
+      "context": "…fel zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln sowie der Vereinbarung über die Zuordnung des Vermögens des…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].title",
+      "term": "Münster",
+      "context": "…sowie der Vereinbarung über die Zuordnung des Vermögens des Münster¿schen Studienfonds und des Beckum-Ahlen¿schen Klosterfonds …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].title",
+      "term": "Münster",
+      "context": "…rfonds zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster jeweils vom 22. November 2013 bzw. vom 13. Dezember 2013",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Köln",
+      "context": "…ung zwischen dem Land Nordrhein-Westfalen und dem Erzbistum Köln bzw. gemäß § 9 Abs. 1 der Vereinbarung zwischen dem Land No…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Münster",
+      "context": "…barung zwischen dem Land Nordrhein-Westfalen und dem Bistum Münster am 27. März 2014 in Kraft getreten.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 26,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…ereich der Schul- und Studienfonds vom 4. Februar 2014 (GV. NRW. S. 105))",
+        "status": "protected"
+      },
+      {
+        "path": "body[16].text",
+        "term": "NRW",
+        "context": "Vom 3. April 2014 (GV. NRW. S. 265)",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Bestätigung von Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster vom 4. Februar 2014",
+    "sourceVersion": "Gesetz zur Bestätigung von Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster vom 4. Februar 2014",
+    "simulation": "Gesetz zur Bestätigung von Vereinbarungen mit dem Erzbistum Köln und mit dem Bistum Münster in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2427,
+          "actual": 2565,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2565,
+          "actual": 2521,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage zu § 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/26304-23222-sgv_640_20140204_2_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 15,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage zu § 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/26304-25043-sgv_640_20140204_2_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 49,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage zu § 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage zu § 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:24:02.001Z"
+}

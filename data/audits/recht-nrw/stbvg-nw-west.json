@@ -1,0 +1,504 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27931",
+  "slug": "stbvg-nw-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[0].text@99:rule:jurisdiction-name-dative",
+      "path": "body[1].children[0].text",
+      "start": 99,
+      "end": 126,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…hen Rechts mit dem Namen \"Versorgungswerk der Steuerberater im Land Nordrhein-Westfalen\" (Versorgungswerk) mit Sitz in Nordrhein-Westfalen errichte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@158:rule:jurisdiction-name-bare",
+      "path": "body[1].children[0].text",
+      "start": 158,
+      "end": 177,
+      "term": "Nordrhein-Westfalen",
+      "context": "… im Land Nordrhein-Westfalen\" (Versorgungswerk) mit Sitz in Nordrhein-Westfalen errichtet. Der Ort des Sitzes wird durch die Satzung bestim…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].children[0].text@39:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[1].children[0].text",
+      "start": 39,
+      "end": 65,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "alle Mitglieder einer der Aufsicht des Landes Nordrhein-Westfalen unterstehenden Steuerberaterkammer, soweit sie natürliche P…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].children[1].text@186:rule:jurisdiction-name-bare",
+      "path": "body[2].children[1].children[1].text",
+      "start": 186,
+      "end": 205,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Wirtschaftsprüfer und der vereidigten Buchprüfer im Lande Nordrhein-Westfalen beendet wird.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[3].text@153:rule:jurisdiction-name-bare",
+      "path": "body[2].children[3].text",
+      "start": 153,
+      "end": 172,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Wirtschaftsprüfer und der vereidigten Buchprüfer im Lande Nordrhein-Westfalen begründet wird. In diesem Fall sind die für das Mitglied an…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[3].text@498:rule:jurisdiction-name-bare",
+      "path": "body[2].children[3].text",
+      "start": 498,
+      "end": 517,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Wirtschaftsprüfer und der vereidigten Buchprüfer im Lande Nordrhein-Westfalen überzuleiten. Das Nähere bestimmt ein Überleitungsabkommen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@101:municipality",
+      "path": "body[4].children[1].text",
+      "start": 101,
+      "end": 111,
+      "term": "Düsseldorf",
+      "context": "…itgliedern, von denen jeweils neun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@113:municipality",
+      "path": "body[4].children[1].text",
+      "start": 113,
+      "end": 117,
+      "term": "Köln",
+      "context": "…von denen jeweils neun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerberater…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@122:geography-region",
+      "path": "body[4].children[1].text",
+      "start": 122,
+      "end": 137,
+      "term": "Westfalen-Lippe",
+      "context": "… jeweils neun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerberaterkammer Thüringen ang…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@132:geography-river",
+      "path": "body[4].children[1].text",
+      "start": 132,
+      "end": 137,
+      "term": "Lippe",
+      "context": "…eun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerberaterkammer Thüringen ang…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[3].text@167:rule:jurisdiction-name",
+      "path": "body[8].children[3].text",
+      "start": 167,
+      "end": 191,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…chtet sich nach dem Verwaltungsvollstreckungsgesetz für das Land Nordrhein-Westfalen in der jeweils geltenden Fassung. Die Gemeinden und Landkre…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[14].children[1].text@936:rule:jurisdiction-name-bare",
+      "path": "body[14].children[1].text",
+      "start": 936,
+      "end": 955,
+      "term": "Nordrhein-Westfalen",
+      "context": "…esondere von Gesundheitsdaten. § 15 des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].children[1].text@974:protected:gazette-nrw",
+      "path": "body[14].children[1].text",
+      "start": 974,
+      "end": 989,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) in der jeweils geltenden Fassung g…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].text@292:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[2].text",
+      "start": 292,
+      "end": 318,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n- und Austritt der Mitglieder der Steuerberaterkammern des Landes Nordrhein-Westfalen einholen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "municipality": {
+      "manual-review": 2
+    },
+    "geography": {
+      "manual-review": 2
+    },
+    "source-citation": {
+      "protected": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[14].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…itgliedern, von denen jeweils neun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Köln",
+      "context": "…von denen jeweils neun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerberater…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "… jeweils neun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerberaterkammer Thüringen ang…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Lippe",
+      "context": "…eun den Steuerberaterkammern Düsseldorf, Köln und Westfalen-Lippe sowie drei Mitglieder der Steuerberaterkammer Thüringen ang…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 150,
+    "residuals": [
+      {
+        "path": "body[14].children[1].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) in der jeweils geltenden F…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Versorgung der Steuerberaterinnen und Steuerberater vom 10. November 1998 (GV. NW. 1998 S. 661)",
+    "sourceVersion": "Gesetz über die Versorgung der Steuerberaterinnen und Steuerberater vom 10. November 1998 (GV. NW. 1998 S. 661)",
+    "simulation": "Gesetz über die Versorgung der Steuerberaterinnen und Steuerberater in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11319,
+          "actual": 11128,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 94,
+          "actual": 94,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11128,
+          "actual": 11092,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "16 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "16 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:19:25.237Z"
+}

@@ -1,0 +1,777 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32419",
+  "slug": "zustvo-mags-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@77:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 77,
+      "end": 92,
+      "term": "GV. NRW. S. 310",
+      "context": "…d § 104 Satz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@111:protected:gazette-nrw",
+      "path": "body[4].text",
+      "start": 111,
+      "end": 126,
+      "term": "GV. NRW. S. 310",
+      "context": "…79 Absatz 1 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@140:rule:jurisdiction-name-genitive",
+      "path": "body[5].text",
+      "start": 140,
+      "end": 166,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…der Beamtinnen und Beamten und Richterinnen und Richter des Landes Nordrhein-Westfalen vom 25. Februar 2014 (GV. NRW. S. 199), der durch Verordnun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].text@189:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 189,
+      "end": 204,
+      "term": "GV. NRW. S. 199",
+      "context": "…ichter des Landes Nordrhein-Westfalen vom 25. Februar 2014 (GV. NRW. S. 199), der durch Verordnung vom 9. September 2014 (GV. NRW. S. 5…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@251:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 251,
+      "end": 266,
+      "term": "GV. NRW. S. 500",
+      "context": "…. NRW. S. 199), der durch Verordnung vom 9. September 2014 (GV. NRW. S. 500) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@129:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 129,
+      "end": 144,
+      "term": "GV. NRW. S. 624",
+      "context": "…Satz 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@14:ministry-portfolio",
+      "path": "body[7].text",
+      "start": 14,
+      "end": 61,
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[0].text@4:authority-state-office",
+      "path": "body[8].children[1].children[0].text",
+      "start": 4,
+      "end": 36,
+      "term": "Landesinstitut für Arbeitsschutz",
+      "context": "das Landesinstitut für Arbeitsschutz und Arbeitsgestaltung dessen Leitung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[3].text@94:authority-district-government",
+      "path": "body[8].children[1].children[3].text",
+      "start": 94,
+      "end": 110,
+      "term": "Bezirksregierung",
+      "context": "…esundheitsschutz bei Arzneimitteln und Medizinprodukten die Bezirksregierung Köln und",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[3].text@111:municipality",
+      "path": "body[8].children[1].children[3].text",
+      "start": 111,
+      "end": 115,
+      "term": "Köln",
+      "context": "…bei Arzneimitteln und Medizinprodukten die Bezirksregierung Köln und",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[4].text@74:authority-district-government",
+      "path": "body[8].children[1].children[4].text",
+      "start": 74,
+      "end": 92,
+      "term": "Bezirksregierungen",
+      "context": "… und Beamten des Geschäftsbereichs des Ministeriums bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[4].text@107:authority-district-government",
+      "path": "body[8].children[1].children[4].text",
+      "start": 107,
+      "end": 123,
+      "term": "Bezirksregierung",
+      "context": "…s des Ministeriums bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[3].text@4:authority-district-government",
+      "path": "body[8].children[3].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln kann ihre Befugnisse mit Zustimmung des Ministeriums a…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[3].text@21:municipality",
+      "path": "body[8].children[3].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln kann ihre Befugnisse mit Zustimmung des Ministeriums auf di…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[1].text@49:authority-state-office",
+      "path": "body[9].children[2].children[1].text",
+      "start": 49,
+      "end": 81,
+      "term": "Landesinstitut für Arbeitsschutz",
+      "context": "der Leitung, Abteilungs- und Gruppenleitung beim Landesinstitut für Arbeitsschutz und Arbeitsgestaltung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[9].children[3].text@106:authority-district-government",
+      "path": "body[9].children[3].text",
+      "start": 106,
+      "end": 122,
+      "term": "Bezirksregierung",
+      "context": "…iner Hauptdezernentin oder eines Hauptdezernenten bei einer Bezirksregierung bedürfen der Zustimmung des Ministeriums, das am Auswahlver…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[1].text@141:protected:gazette-nrw",
+      "path": "body[10].children[0].children[1].text",
+      "start": 141,
+      "end": 156,
+      "term": "GV. NRW. S. 310",
+      "context": "…ß §§ 24 und 25 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung oder gemäß §…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[1].text@149:protected:gazette-nrw",
+      "path": "body[13].children[1].text",
+      "start": 149,
+      "end": 164,
+      "term": "GV. NRW. S. 624",
+      "context": "…Satz 1 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624) in der jeweils geltenden Fassung ergibt, wird zur dienstvo…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[1].text@472:authority-district-government",
+      "path": "body[13].children[1].text",
+      "start": 472,
+      "end": 488,
+      "term": "Bezirksregierung",
+      "context": "…heit die Leitung dieser Einrichtung bestimmt. Die jeweilige Bezirksregierung ist dienstvorgesetzte Stelle für die übrigen ihrer Dienstau…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[14].children[1].text@107:protected:gazette-nrw",
+      "path": "body[14].children[1].text",
+      "start": 107,
+      "end": 122,
+      "term": "GV. NRW. S. 471",
+      "context": "…g tritt die Zuständigkeitsverordnung MAIS vom 26. Mai 2008 (GV. NRW. S. 471), die zuletzt durch Verordnung vom 26. März 2012 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].text@173:protected:gazette-nrw",
+      "path": "body[14].children[1].text",
+      "start": 173,
+      "end": 188,
+      "term": "GV. NRW. S. 156",
+      "context": "…W. S. 471), die zuletzt durch Verordnung vom 26. März 2012 (GV. NRW. S. 156) geändert worden ist, außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].text@4:ministry-portfolio",
+      "path": "body[14].children[2].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].children[2].text@53:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[2].text",
+      "start": 53,
+      "end": 79,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[14].children[4].text@78:protected:gazette-nrw",
+      "path": "body[14].children[4].text",
+      "start": 78,
+      "end": 93,
+      "term": "GV. NRW. S. 226",
+      "context": "…Verweisung: „Zuständigkeitsverordnung MAGS vom 2. Mai 2019 (GV. NRW. S. 226), die zuletzt durch Verordnung vom 23. Mai 2023 (GV. NRW. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[4].text@143:protected:gazette-nrw",
+      "path": "body[14].children[4].text",
+      "start": 143,
+      "end": 158,
+      "term": "GV. NRW. S. 390",
+      "context": "…RW. S. 226), die zuletzt durch Verordnung vom 23. Mai 2023 (GV. NRW. S. 390) geändert worden ist,“",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 11
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 8
+    },
+    "municipality": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[14].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[7].text",
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[0].text",
+      "term": "Landesinstitut für Arbeitsschutz",
+      "context": "das Landesinstitut für Arbeitsschutz und Arbeitsgestaltung dessen Leitung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…esundheitsschutz bei Arzneimitteln und Medizinprodukten die Bezirksregierung Köln und",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[3].text",
+      "term": "Köln",
+      "context": "…bei Arzneimitteln und Medizinprodukten die Bezirksregierung Köln und",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[4].text",
+      "term": "Bezirksregierungen",
+      "context": "… und Beamten des Geschäftsbereichs des Ministeriums bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…s des Ministeriums bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln kann ihre Befugnisse mit Zustimmung des Ministeriums a…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[3].text",
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln kann ihre Befugnisse mit Zustimmung des Ministeriums auf di…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].children[1].text",
+      "term": "Landesinstitut für Arbeitsschutz",
+      "context": "der Leitung, Abteilungs- und Gruppenleitung beim Landesinstitut für Arbeitsschutz und Arbeitsgestaltung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…iner Hauptdezernentin oder eines Hauptdezernenten bei einer Bezirksregierung bedürfen der Zustimmung des Ministeriums, das am Auswahlver…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…heit die Leitung dieser Einrichtung bestimmt. Die jeweilige Bezirksregierung ist dienstvorgesetzte Stelle für die übrigen ihrer Dienstau…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[2].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 90,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…104 Satz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642),",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].text",
+        "term": "NRW",
+        "context": "…bsatz 1 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642),",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…ichter des Landes Westdeutschland vom 25. Februar 2014 (GV. NRW. S. 199), der durch Verordnung vom 9. September 2014 (GV. N…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…W. S. 199), der durch Verordnung vom 9. September 2014 (GV. NRW. S. 500) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "… 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624)",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[1].text",
+        "term": "NRW",
+        "context": "… 24 und 25 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung oder…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[1].text",
+        "term": "NRW",
+        "context": "… 1 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624) in der jeweils geltenden Fassung ergibt, wird zur …",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].text",
+        "term": "NRW",
+        "context": "…itt die Zuständigkeitsverordnung MAIS vom 26. Mai 2008 (GV. NRW. S. 471), die zuletzt durch Verordnung vom 26. März 2012 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].text",
+        "term": "NRW",
+        "context": "…. 471), die zuletzt durch Verordnung vom 26. März 2012 (GV. NRW. S. 156) geändert worden ist, außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[4].text",
+        "term": "NRW",
+        "context": "…eisung: „Zuständigkeitsverordnung MAGS vom 2. Mai 2019 (GV. NRW. S. 226), die zuletzt durch Verordnung vom 23. Mai 2023 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[4].text",
+        "term": "NRW",
+        "context": "…S. 226), die zuletzt durch Verordnung vom 23. Mai 2023 (GV. NRW. S. 390) geändert worden ist,“",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+        "path": "body[7].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+      "path": "body[7].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über beamtenrechtliche und disziplinarrechtliche Zuständigkeiten im Geschäftsbereich des Ministeriums für Arbeit, Gesundheit und Soziales vom 2. Mai 2019 (In Kraft getreten am 1. Juni 2019 (GV. NRW. S. 226))",
+    "sourceVersion": "Verordnung über beamtenrechtliche und disziplinarrechtliche Zuständigkeiten im Geschäftsbereich des Ministeriums für Arbeit, Gesundheit und Soziales vom 2. Mai 2019 (In Kraft getreten am 1. Juni 2019 (GV. NRW. S. 226))",
+    "simulation": "Verordnung über beamtenrechtliche und disziplinarrechtliche Zuständigkeiten im Geschäftsbereich des Ministeriums für Arbeit, Gesundheit und Soziales in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8293,
+          "actual": 8063,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 56,
+          "actual": 56,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8063,
+          "actual": 8055,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T06:11:53.944Z"
+}

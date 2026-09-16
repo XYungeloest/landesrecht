@@ -1,0 +1,353 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32892",
+  "slug": "verordnung-zur-bestimmung-der-fuer-die-verfolgung-und-ahndung-von-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@222:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 222,
+      "end": 237,
+      "term": "GV. NRW. S. 421",
+      "context": "…t § 5 Absatz 3 Landesorganisationsgesetz vom 10. Juli 1962 (GV. NRW. S. 421), der zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@299:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 299,
+      "end": 314,
+      "term": "GV. NRW. S. 462",
+      "context": "… der zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, verordnet die Landesregierung nach An…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@317:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 317,
+      "end": 332,
+      "term": "GV. NRW. S. 540",
+      "context": "…hweis zuständigen Verwaltungsbehörden vom 26. Oktober 2010 (GV. NRW. S. 540), die durch Artikel 1 der Verordnung vom 13. November 2018 …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@393:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 393,
+      "end": 408,
+      "term": "GV. NRW. S. 587",
+      "context": "…, die durch Artikel 1 der Verordnung vom 13. November 2018 (GV. NRW. S. 587) geändert worden ist, außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@4:constitutional-organ-state",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[7].text@20:rule:jurisdiction-name-bare",
+      "path": "body[7].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].text@4:ministry-portfolio",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[9].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 16,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…5 Absatz 3 Landesorganisationsgesetz vom 10. Juli 1962 (GV. NRW. S. 421), der zuletzt durch Artikel 10 des Gesetzes vom 9. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, verordnet die Landesregierung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…s zuständigen Verwaltungsbehörden vom 26. Oktober 2010 (GV. NRW. S. 540), die durch Artikel 1 der Verordnung vom 13. Novemb…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…e durch Artikel 1 der Verordnung vom 13. November 2018 (GV. NRW. S. 587) geändert worden ist, außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Landesregierung",
+        "formula": "ordinance-formula",
+        "text": "verordnet die Landesregierung",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "safe-auto-transform",
+    "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird übergeleitet.",
+    "source": {
+      "name": "Landesregierung",
+      "formula": "ordinance-formula",
+      "text": "verordnet die Landesregierung",
+      "path": "body[2].text"
+    },
+    "enactingBody": "Landesregierung"
+  },
+  "citations": {
+    "source": "Verordnung zur Bestimmung der für die Verfolgung und Ahndung von Ordnungswidrigkeiten nach dem Paßgesetz, dem Personalausweisgesetz und dem eID-Karte-Gesetz zuständigen Verwaltungsbehörden vom 1. Dezember 2020",
+    "sourceVersion": "Verordnung zur Bestimmung der für die Verfolgung und Ahndung von Ordnungswidrigkeiten nach dem Paßgesetz, dem Personalausweisgesetz und dem eID-Karte-Gesetz zuständigen Verwaltungsbehörden vom 1. Dezember 2020",
+    "simulation": "Verordnung zur Bestimmung der für die Verfolgung und Ahndung von Ordnungswidrigkeiten nach dem Paßgesetz, dem Personalausweisgesetz und dem eID-Karte-Gesetz zuständigen Verwaltungsbehörden in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2074,
+          "actual": 2095,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2095,
+          "actual": 2091,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:38:56.289Z"
+}

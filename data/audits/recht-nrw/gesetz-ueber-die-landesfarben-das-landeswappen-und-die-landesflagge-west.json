@@ -1,0 +1,282 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26523",
+  "slug": "gesetz-ueber-die-landesfarben-das-landeswappen-und-die-landesflagge-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[5].children[7].text@36:rule:jurisdiction-name-bare",
+      "path": "body[5].children[7].text",
+      "start": 36,
+      "end": 55,
+      "term": "Nordrhein-Westfalen",
+      "context": "das Aussehen und die Verwendung des Nordrhein-Westfalen-Zeichens und des Polizeisterns; im Falle einer missbräuchli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[7].text@135:rule:jurisdiction-name-bare",
+      "path": "body[5].children[7].text",
+      "start": 135,
+      "end": 154,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lizeisterns; im Falle einer missbräuchlichen Verwendung des Nordrhein-Westfalen-Zeichens die Ahndung als Ordnungswidrigkeit mit einer Geldb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[8].text@62:protected:gazette-nrw",
+      "path": "body[5].children[8].text",
+      "start": 62,
+      "end": 77,
+      "term": "GV. NRW. S. 248",
+      "context": "… 4: § 6 angefügt durch Art. 6 des Gesetzes v. 18. Mai 2004 (GV. NRW. S. 248); in Kraft getreten am 4. Juni 2004; geändert durch Artikel…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[8].text@176:protected:gazette-nrw",
+      "path": "body[5].children[8].text",
+      "start": 176,
+      "end": 191,
+      "term": "GV. NRW. S. 706",
+      "context": "…eändert durch Artikel 1 des Gesetzes vom 18. November 2008 (GV. NRW. S. 706), in Kraft getreten am 29. November 2008; aufgehoben durch …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[8].text@279:protected:gazette-nrw",
+      "path": "body[5].children[8].text",
+      "start": 279,
+      "end": 294,
+      "term": "GV. NRW. S. 617",
+      "context": "…November 2008; aufgehoben durch Gesetz vom 2. Oktober 2014 (GV. NRW. S. 617), in Kraft getreten am 11. Oktober 2014.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "body[5].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 23,
+    "residuals": [
+      {
+        "path": "body[5].children[8].text",
+        "term": "NRW",
+        "context": "…§ 6 angefügt durch Art. 6 des Gesetzes v. 18. Mai 2004 (GV. NRW. S. 248); in Kraft getreten am 4. Juni 2004; geändert durch…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[8].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 1 des Gesetzes vom 18. November 2008 (GV. NRW. S. 706), in Kraft getreten am 29. November 2008; aufgehobe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[8].text",
+        "term": "NRW",
+        "context": "…mber 2008; aufgehoben durch Gesetz vom 2. Oktober 2014 (GV. NRW. S. 617), in Kraft getreten am 11. Oktober 2014.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Landesfarben, das Landeswappen und die Landesflagge vom 10. März 1953",
+    "sourceVersion": "Gesetz über die Landesfarben, das Landeswappen und die Landesflagge vom 10. März 1953",
+    "simulation": "Gesetz über die Landesfarben, das Landeswappen und die Landesflagge in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1408,
+          "actual": 1770,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 20,
+          "actual": 20,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1770,
+          "actual": 1762,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:17:06.867Z"
+}

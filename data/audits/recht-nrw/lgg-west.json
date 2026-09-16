@@ -1,0 +1,757 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27998",
+  "slug": "lgg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@57:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Gesetz zur Gleichstellung von Frauen und Männern für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[0].text@92:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 92,
+      "end": 108,
+      "term": "GV. NRW. S. 1052",
+      "context": "…geändert durch Artikel 1 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1052), in Kraft getreten am 15. Dezember 2016.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[1].text@845:protected:external-nrw-dot-names",
+      "path": "body[9].children[1].children[1].text",
+      "start": 845,
+      "end": 853,
+      "term": "NRW.BANK",
+      "context": "…en, 10. die LBS Westdeutsche Landesbausparkasse und 11. die NRW.BANK. Dieses Gesetz gilt nicht für den Verband öffentlicher Vers…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[1].text@953:municipality",
+      "path": "body[9].children[1].children[1].text",
+      "start": 953,
+      "end": 957,
+      "term": "Köln",
+      "context": "…nd öffentlicher Versicherer. Auf den Westdeutschen Rundfunk Köln finden die §§ 1 bis 4, § 5 Absatz 1, § 6 Absatz 1, § 7 Absa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[1].children[1].text@1201:municipality",
+      "path": "body[9].children[1].children[1].text",
+      "start": 1201,
+      "end": 1205,
+      "term": "Köln",
+      "context": "…iften dieses Gesetzes gelten für den Westdeutschen Rundfunk Köln dem Sinne nach.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[1].children[2].text@890:protected:external-nrw-dot-names",
+      "path": "body[9].children[1].children[2].text",
+      "start": 890,
+      "end": 898,
+      "term": "NRW.BANK",
+      "context": "…ftstätigkeit ausgerichtet sind, sowie für Beteiligungen der NRW.BANK im Rahmen ihres Förderauftrages.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[3].text@80:protected:gazette-nrw",
+      "path": "body[9].children[1].children[3].text",
+      "start": 80,
+      "end": 95,
+      "term": "GV. NRW. S. 547",
+      "context": "…§ 81 Absatz 3 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547), das durch Artikel 9 des Gesetzes vom 14. Juni 2016 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[3].text@150:protected:gazette-nrw",
+      "path": "body[9].children[1].children[3].text",
+      "start": 150,
+      "end": 165,
+      "term": "GV. NRW. S. 310",
+      "context": "…. 547), das durch Artikel 9 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist, soll mit der staatlich anerkannten Fa…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[1].text@237:authority-district-government",
+      "path": "body[9].children[2].children[1].text",
+      "start": 237,
+      "end": 255,
+      "term": "Bezirksregierungen",
+      "context": "…enst beschäftigte pädagogische Personal an Schulen sind die Bezirksregierungen und Schulämter.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[2].text@306:protected:gazette-nrw",
+      "path": "body[9].children[2].children[2].text",
+      "start": 306,
+      "end": 321,
+      "term": "GV. NRW. S. 234",
+      "context": "…gesetzes in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NRW. S. 234), zuletzt geändert durch Gesetz vom 20. April 1999 ( GV. NR…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[2].text@375:protected:gazette-nrw",
+      "path": "body[9].children[2].children[2].text",
+      "start": 375,
+      "end": 390,
+      "term": "GV. NRW. S. 148",
+      "context": "…S. 234), zuletzt geändert durch Gesetz vom 20. April 1999 ( GV. NRW. S. 148) jederzeit in den einstweiligen Ruhestand versetzt werden k…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[3].text@236:protected:gazette-nrw",
+      "path": "body[9].children[2].children[3].text",
+      "start": 236,
+      "end": 251,
+      "term": "GV. NRW. S. 158",
+      "context": "…dnung in der Fassung der Bekanntmachung vom 26. April 1999 (GV. NRW. S. 158), das zuletzt durch Artikel 16 des Gesetzes vom 14. Juni 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[3].text@315:protected:gazette-nrw",
+      "path": "body[9].children[2].children[3].text",
+      "start": 315,
+      "end": 330,
+      "term": "GV. NRW. S. 310",
+      "context": "…as zuletzt durch Artikel 16 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].children[1].text@222:protected:gazette-nrw",
+      "path": "body[10].children[4].children[1].text",
+      "start": 222,
+      "end": 237,
+      "term": "GV. NRW. S. 310",
+      "context": "…§ 120 Absatz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das durch Artikel 7 des Gesetzes vom 7. Apri…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].children[1].text@305:protected:gazette-nrw",
+      "path": "body[10].children[4].children[1].text",
+      "start": 305,
+      "end": 320,
+      "term": "GV. NRW. S. 414",
+      "context": "…. 642), das durch Artikel 7 des Gesetzes vom 7. April 2017 (GV. NRW. S. 414) geändert worden ist, bevorzugt zu berücksichtigen. Für Bef…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].children[4].text@346:protected:gazette-nrw",
+      "path": "body[10].children[4].children[4].text",
+      "start": 346,
+      "end": 361,
+      "term": "GV. NRW. S. 547",
+      "context": "…§ 26 Absatz 5 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547), das zuletzt durch Artikel 3 des Gesetzes vom 7. April 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].children[4].text@424:protected:gazette-nrw",
+      "path": "body[10].children[4].children[4].text",
+      "start": 424,
+      "end": 439,
+      "term": "GV. NRW. S. 414",
+      "context": "…das zuletzt durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. NRW. S. 414) geändert worden ist oder § 24 Absatz 4 des Kunsthochschulg…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].children[4].text@526:protected:gazette-nrw",
+      "path": "body[10].children[4].children[4].text",
+      "start": 526,
+      "end": 541,
+      "term": "GV. NRW. S. 195",
+      "context": "…§ 24 Absatz 4 des Kunsthochschulgesetzes vom 13. März 2008 (GV. NRW. S. 195), das zuletzt durch Artikel 10 des Gesetzes vom 14. Juni 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].children[4].text@605:protected:gazette-nrw",
+      "path": "body[10].children[4].children[4].text",
+      "start": 605,
+      "end": 620,
+      "term": "GV. NRW. S. 310",
+      "context": "…as zuletzt durch Artikel 10 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist. Soweit Hochschullehrerinnen und Hochs…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[4].children[3].text@172:rule:jurisdiction-name",
+      "path": "body[12].children[4].children[3].text",
+      "start": 172,
+      "end": 196,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…echtswidrig. § 46 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[4].children[3].text@254:protected:gazette-nrw",
+      "path": "body[12].children[4].children[3].text",
+      "start": 254,
+      "end": 269,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 2 des Gesetzes vom 15. November…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[4].children[3].text@336:protected:gazette-nrw",
+      "path": "body[12].children[4].children[3].text",
+      "start": 336,
+      "end": 351,
+      "term": "GV. NRW. S. 934",
+      "context": "…zuletzt durch Artikel 2 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) geändert worden ist, bleibt unberührt. Ist eine Maßnahme, …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[4].children[4].text@340:protected:gazette-nrw",
+      "path": "body[12].children[4].children[4].text",
+      "start": 340,
+      "end": 356,
+      "term": "GV. NRW. S. 1514",
+      "context": "…des Landespersonalvertretungsgesetzes vom 3. Dezember 1974 (GV. NRW. S. 1514), das zuletzt durch Artikel 3 des Gesetzes vom 8. Dezember …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[4].children[4].text@422:protected:gazette-nrw",
+      "path": "body[12].children[4].children[4].text",
+      "start": 422,
+      "end": 438,
+      "term": "GV. NRW. S. 1052",
+      "context": "… zuletzt durch Artikel 3 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 1052) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[5].children[3].text@533:protected:gazette-nrw",
+      "path": "body[12].children[5].children[3].text",
+      "start": 533,
+      "end": 548,
+      "term": "GV. NRW. S. 303",
+      "context": "…m Fachhochschulgesetz öffentlicher Dienst vom 29. Mai 1984 (GV. NRW. S. 303), das zuletzt durch Artikel 12 des Gesetzes vom 2. Oktober …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[5].children[3].text@614:protected:gazette-nrw",
+      "path": "body[12].children[5].children[3].text",
+      "start": 614,
+      "end": 629,
+      "term": "GV. NRW. S. 622",
+      "context": "… zuletzt durch Artikel 12 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622) geändert worden ist, das gemäß § 29 Absatz 2 des Fachhochs…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[0].children[1].text@225:protected:gazette-nrw",
+      "path": "body[13].children[0].children[1].text",
+      "start": 225,
+      "end": 241,
+      "term": "GV. NRW. S. 1052",
+      "context": "…Neuregelung des Gleichstellungsrechts vom 6. Dezember 2016 (GV. NRW. S. 1052) erfolgt der nächste Bericht mit dem Stichtag 31. Dezember …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 20
+    },
+    "external-name": {
+      "protected": 2
+    },
+    "municipality": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[4].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[9].children[1].children[1].text",
+      "term": "Köln",
+      "context": "…nd öffentlicher Versicherer. Auf den Westdeutschen Rundfunk Köln finden die §§ 1 bis 4, § 5 Absatz 1, § 6 Absatz 1, § 7 Absa…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[1].children[1].text",
+      "term": "Köln",
+      "context": "…iften dieses Gesetzes gelten für den Westdeutschen Rundfunk Köln dem Sinne nach.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "…enst beschäftigte pädagogische Personal an Schulen sind die Bezirksregierungen und Schulämter.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 330,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 1 des Gesetzes vom 6. Dezember 2016 (GV. NRW. S. 1052), in Kraft getreten am 15. Dezember 2016.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…en, 10. die LBS Westdeutsche Landesbausparkasse und 11. die NRW.BANK. Dieses Gesetz gilt nicht für den Verband öffentlicher…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…ftstätigkeit ausgerichtet sind, sowie für Beteiligungen der NRW.BANK im Rahmen ihres Förderauftrages.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[3].text",
+        "term": "NRW",
+        "context": "… Absatz 3 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547), das durch Artikel 9 des Gesetzes vom 14. Juni 201…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…7), das durch Artikel 9 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist, soll mit der staatlich anerka…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…tzes in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NRW. S. 234), zuletzt geändert durch Gesetz vom 20. April 1999 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…34), zuletzt geändert durch Gesetz vom 20. April 1999 ( GV. NRW. S. 148) jederzeit in den einstweiligen Ruhestand versetzt …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[3].text",
+        "term": "NRW",
+        "context": "…g in der Fassung der Bekanntmachung vom 26. April 1999 (GV. NRW. S. 158), das zuletzt durch Artikel 16 des Gesetzes vom 14.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[3].text",
+        "term": "NRW",
+        "context": "…uletzt durch Artikel 16 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…0 Absatz 2 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das durch Artikel 7 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…2), das durch Artikel 7 des Gesetzes vom 7. April 2017 (GV. NRW. S. 414) geändert worden ist, bevorzugt zu berücksichtigen.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].children[4].text",
+        "term": "NRW",
+        "context": "… Absatz 5 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547), das zuletzt durch Artikel 3 des Gesetzes vom 7. A…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].children[4].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. NRW. S. 414) geändert worden ist oder § 24 Absatz 4 des Kunstho…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].children[4].text",
+        "term": "NRW",
+        "context": "… Absatz 4 des Kunsthochschulgesetzes vom 13. März 2008 (GV. NRW. S. 195), das zuletzt durch Artikel 10 des Gesetzes vom 14.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].children[4].text",
+        "term": "NRW",
+        "context": "…uletzt durch Artikel 10 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist. Soweit Hochschullehrerinnen u…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 2 des Gesetzes vom 15. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 2 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) geändert worden ist, bleibt unberührt. Ist eine Ma…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[4].children[4].text",
+        "term": "NRW",
+        "context": "…Landespersonalvertretungsgesetzes vom 3. Dezember 1974 (GV. NRW. S. 1514), das zuletzt durch Artikel 3 des Gesetzes vom 8. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[4].children[4].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 3 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 1052) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[5].children[3].text",
+        "term": "NRW",
+        "context": "…chhochschulgesetz öffentlicher Dienst vom 29. Mai 1984 (GV. NRW. S. 303), das zuletzt durch Artikel 12 des Gesetzes vom 2. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[5].children[3].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 12 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622) geändert worden ist, das gemäß § 29 Absatz 2 des F…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…egelung des Gleichstellungsrechts vom 6. Dezember 2016 (GV. NRW. S. 1052) erfolgt der nächste Bericht mit dem Stichtag 31. …",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Gleichstellung von Frauen und Männern für das Land Nordrhein-Westfalen vom 9. November 1999 (GV. NRW. 1999 S. 590)",
+    "sourceVersion": "Gesetz zur Gleichstellung von Frauen und Männern für das Land Nordrhein-Westfalen vom 9. November 1999 (GV. NRW. 1999 S. 590)",
+    "simulation": "Gesetz zur Gleichstellung von Frauen und Männern für das Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 46507,
+          "actual": 47744,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 210,
+          "actual": 210,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 27,
+          "actual": 27,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 47744,
+          "actual": 47740,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Fundstelle GV. NRW. 1999 S. 590"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "28 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "Fundstelle GV. NRW. 1999 S. 590",
+        "28 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4847-32962-sgv_2031_19991109_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4847-32963-sgv_2031_19991109_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:26:16.629Z"
+}

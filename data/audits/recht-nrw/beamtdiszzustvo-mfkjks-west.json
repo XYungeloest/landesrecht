@@ -1,0 +1,523 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30793",
+  "slug": "beamtdiszzustvo-mfkjks-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[3].text@84:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 84,
+      "end": 99,
+      "term": "GV. NRW. S. 224",
+      "context": "… § 105 Satz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@118:rule:jurisdiction-name-genitive",
+      "path": "body[5].text",
+      "start": 118,
+      "end": 144,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…, Entlassung und Zurruhesetzung der Beamten und Richter des Landes Nordrhein-Westfalen vom 27. Juni 1978 (GV. NRW. S. 286),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].text@164:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 164,
+      "end": 179,
+      "term": "GV. NRW. S. 286",
+      "context": "…d Richter des Landes Nordrhein-Westfalen vom 27. Juni 1978 (GV. NRW. S. 286),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@126:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 126,
+      "end": 141,
+      "term": "GV. NRW. S. 624",
+      "context": "…Satz 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624), zuletzt geändert durch Gesetz vom 27. Oktober 2009 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@196:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 196,
+      "end": 211,
+      "term": "GV. NRW. S. 530",
+      "context": "…. 624), zuletzt geändert durch Gesetz vom 27. Oktober 2009 (GV. NRW. S. 530),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[0].text@21:rule:jurisdiction-name-bare",
+      "path": "body[9].children[0].children[0].text",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "für das Landesarchiv Nordrhein-Westfalen die Präsidentin oder der Präsident und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[0].children[1].text@138:authority-district-government",
+      "path": "body[9].children[0].children[1].text",
+      "start": 138,
+      "end": 156,
+      "term": "Bezirksregierungen",
+      "context": "…ilie, Kinder Jugend, Kultur und Sport (Ministerium) bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[1].text@171:authority-district-government",
+      "path": "body[9].children[0].children[1].text",
+      "start": 171,
+      "end": 187,
+      "term": "Bezirksregierung",
+      "context": "…port (Ministerium) bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@344:authority-district-government",
+      "path": "body[10].children[0].text",
+      "start": 344,
+      "end": 362,
+      "term": "Bezirksregierungen",
+      "context": "…t oder wird, und für Beamtinnen und Beamte ohne Amt bei den Bezirksregierungen und dem Landesarchiv Nordrhein-Westfalen auf die jeweilige …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@384:rule:jurisdiction-name-bare",
+      "path": "body[10].children[0].text",
+      "start": 384,
+      "end": 403,
+      "term": "Nordrhein-Westfalen",
+      "context": "…te ohne Amt bei den Bezirksregierungen und dem Landesarchiv Nordrhein-Westfalen auf die jeweilige Behörde übertragen. Dem Ministerium vorbe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[0].text@76:rule:jurisdiction-name-bare",
+      "path": "body[10].children[0].children[0].text",
+      "start": 76,
+      "end": 95,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rtretende Leitung und Abteilungsleitungen des Landesarchivs Nordrhein-Westfalen oder",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[1].text@46:authority-district-government",
+      "path": "body[10].children[0].children[1].text",
+      "start": 46,
+      "end": 64,
+      "term": "Bezirksregierungen",
+      "context": "Hauptdezernentinnen/ Hauptdezernenten bei den Bezirksregierungen im Geschäftsbereich des Ministeriums.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[14].children[1].text@198:protected:gazette-nrw",
+      "path": "body[14].children[1].text",
+      "start": 198,
+      "end": 213,
+      "term": "GV. NRW. S. 622",
+      "context": "…r Wirtschaft, Mittelstand und Energie vom 4. November 2009 (GV. NRW. S. 622) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[0].text@4:ministry-portfolio",
+      "path": "body[14].children[2].children[0].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].children[2].children[0].text@65:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[2].children[0].text",
+      "start": 65,
+      "end": 91,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…inisterin für Familie, Kinder, Jugend, Kultur und Sport des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 5
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "authority": {
+      "manual-review": 4
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[9].children[0].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "…ilie, Kinder Jugend, Kultur und Sport (Ministerium) bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…port (Ministerium) bei den Bezirksregierungen die jeweilige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…t oder wird, und für Beamtinnen und Beamte ohne Amt bei den Bezirksregierungen und dem Landesarchiv Nordrhein-Westfalen auf die jeweilige …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "Hauptdezernentinnen/ Hauptdezernenten bei den Bezirksregierungen im Geschäftsbereich des Ministeriums.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[2].children[0].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 89,
+    "residuals": [
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…05 Satz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224),",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…d Richter des Landes Westdeutschland vom 27. Juni 1978 (GV. NRW. S. 286),",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "… 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624), zuletzt geändert durch Gesetz vom 27. Oktober 200…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "…4), zuletzt geändert durch Gesetz vom 27. Oktober 2009 (GV. NRW. S. 530),",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].text",
+        "term": "NRW",
+        "context": "…rtschaft, Mittelstand und Energie vom 4. November 2009 (GV. NRW. S. 622) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über beamtenrechtliche und disziplinarrechtliche Zuständigkeiten im Geschäftsbereich des Ministeriums für Familie, Kinder, Jugend, Kultur und Sport vom 20. März 2013",
+    "sourceVersion": "Verordnung über beamtenrechtliche und disziplinarrechtliche Zuständigkeiten im Geschäftsbereich des Ministeriums für Familie, Kinder, Jugend, Kultur und Sport vom 20. März 2013",
+    "simulation": "Verordnung über beamtenrechtliche und disziplinarrechtliche Zuständigkeiten im Geschäftsbereich des Ministeriums für Familie, Kinder, Jugend, Kultur und Sport in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6872,
+          "actual": 7052,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7052,
+          "actual": 7032,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "6 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "6 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T06:02:52.768Z"
+}

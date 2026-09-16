@@ -1,0 +1,672 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29699",
+  "slug": "ag-tiergesg-tiernebg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.abbr@21:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 21,
+      "end": 24,
+      "term": "NRW",
+      "context": "AG TierGesG TierNebG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@180:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 180,
+      "end": 195,
+      "term": "GV. NRW. S. 612",
+      "context": "…Beseitigung tierischer Nebenprodukte vom 2. September 2008 (GV. NRW. S. 612))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[2].text@28:authority-state-office",
+      "path": "body[3].children[2].text",
+      "start": 28,
+      "end": 47,
+      "term": "Landesamt für Natur",
+      "context": "a) des Ministeriums auf das Landesamt für Natur, Umwelt und Verbraucherschutz (Landesamt), b) des Ministeri…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@90:rule:jurisdiction-name-bare",
+      "path": "body[8].children[0].text",
+      "start": 90,
+      "end": 109,
+      "term": "Nordrhein-Westfalen",
+      "context": "…icht rechtsfähiges Sondervermögen der Landwirtschaftskammer Nordrhein-Westfalen mit Sitz in Münster. Es wird unter der Bezeichnung „Landwir…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].text@122:municipality",
+      "path": "body[8].children[0].text",
+      "start": 122,
+      "end": 129,
+      "term": "Münster",
+      "context": "…n der Landwirtschaftskammer Nordrhein-Westfalen mit Sitz in Münster. Es wird unter der Bezeichnung „Landwirtschaftskammer Nordr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@184:rule:jurisdiction-name-bare",
+      "path": "body[8].children[0].text",
+      "start": 184,
+      "end": 203,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nster. Es wird unter der Bezeichnung „Landwirtschaftskammer Nordrhein-Westfalen – Tierseuchenkasse“ (Tierseuchenkasse) verwaltet. Das Sonde…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[33].children[0].text@144:rule:jurisdiction-name-genitive",
+      "path": "body[33].children[0].text",
+      "start": 144,
+      "end": 170,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…immten tierischen Nebenprodukten zuständige Ministerium des Landes Nordrhein-Westfalen (Ministerium) wird ermächtigt, durch Rechtsverordnung",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[34].children[0].text@195:authority-state-office",
+      "path": "body[34].children[0].text",
+      "start": 195,
+      "end": 214,
+      "term": "Landesamt für Natur",
+      "context": "…tigungspflicht auf Dritte nach § 3 Abs. 2 TierNebG sind das Landesamt für Natur, Umwelt und Verbraucherschutz (Landesamt), der Westfälisch-…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[34].children[0].text@395:rule:jurisdiction-name-genitive",
+      "path": "body[34].children[0].text",
+      "start": 395,
+      "end": 421,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ftsverband, der Landesmarktverband für Vieh und Fleisch des Landes Nordrhein-Westfalen sowie die Tierseuchenkasse zu dem Entwurf einer Leistungsbe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[35].children[2].text@230:rule:jurisdiction-name",
+      "path": "body[35].children[2].text",
+      "start": 230,
+      "end": 254,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ial) Gebühren gemäß § 6 des Kommunalabgabengesetzes für das Land Nordrhein-Westfalen (KAG) vom 21. Oktober 1969 (GV. NRW. S. 712) in der jeweils…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[35].children[2].text@283:protected:gazette-nrw",
+      "path": "body[35].children[2].text",
+      "start": 283,
+      "end": 298,
+      "term": "GV. NRW. S. 712",
+      "context": "…ür das Land Nordrhein-Westfalen (KAG) vom 21. Oktober 1969 (GV. NRW. S. 712) in der jeweils geltenden Fassung auf der Grundlage einer S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[1].text@179:protected:gazette-nrw",
+      "path": "body[36].children[1].text",
+      "start": 179,
+      "end": 194,
+      "term": "GV. NRW. S. 754",
+      "context": "…tz in der Fassung der Bekanntmachung vom 29. November 1984 (GV. NRW. S. 754) und das Ausführungsgesetz zum Tierische Nebenprodukte-Bese…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[1].text@291:protected:gazette-nrw",
+      "path": "body[36].children[1].text",
+      "start": 291,
+      "end": 305,
+      "term": "GV. NRW. S. 95",
+      "context": "…sche Nebenprodukte-Beseitigungsgesetz vom 15. Februar 2005 (GV. NRW. S. 95) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[37].text@4:constitutional-organ-state",
+      "path": "body[37].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[37].text@20:rule:jurisdiction-name-bare",
+      "path": "body[37].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[39].text@4:ministry-portfolio",
+      "path": "body[39].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[40].text@4:ministry-compound",
+      "path": "body[40].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[41].text@4:ministry-portfolio",
+      "path": "body[41].text",
+      "start": 4,
+      "end": 54,
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[42].text@4:ministry-compound",
+      "path": "body[42].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[43].text@4:ministry-portfolio",
+      "path": "body[43].text",
+      "start": 4,
+      "end": 77,
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[44].text@4:ministry-portfolio",
+      "path": "body[44].text",
+      "start": 4,
+      "end": 34,
+      "term": "Minister für Bauen und Verkehr",
+      "context": "Der Minister für Bauen und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 7
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "authority": {
+      "manual-review": 2
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 6
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[33].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[34].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[35].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[37].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[2].text",
+      "term": "Landesamt für Natur",
+      "context": "a) des Ministeriums auf das Landesamt für Natur, Umwelt und Verbraucherschutz (Landesamt), b) des Ministeri…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].text",
+      "term": "Münster",
+      "context": "…n der Landwirtschaftskammer Nordrhein-Westfalen mit Sitz in Münster. Es wird unter der Bezeichnung „Landwirtschaftskammer Nordr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[34].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "…tigungspflicht auf Dritte nach § 3 Abs. 2 TierNebG sind das Landesamt für Natur, Umwelt und Verbraucherschutz (Landesamt), der Westfälisch-…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[39].text",
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[40].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[41].text",
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[42].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[43].text",
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[44].text",
+      "term": "Minister für Bauen und Verkehr",
+      "context": "Der Minister für Bauen und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 299,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…itigung tierischer Nebenprodukte vom 2. September 2008 (GV. NRW. S. 612))",
+        "status": "protected"
+      },
+      {
+        "path": "body[35].children[2].text",
+        "term": "NRW",
+        "context": "…ür das Land Westdeutschland (KAG) vom 21. Oktober 1969 (GV. NRW. S. 712) in der jeweils geltenden Fassung auf der Grundlage…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[1].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 29. November 1984 (GV. NRW. S. 754) und das Ausführungsgesetz zum Tierische Nebenprodu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[1].text",
+        "term": "NRW",
+        "context": "… Nebenprodukte-Beseitigungsgesetz vom 15. Februar 2005 (GV. NRW. S. 95) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Ausführungsgesetz zum Tiergesundheitsgesetz und zum Tierische Nebenprodukte-Beseitigungsgesetz vom 2. September 2008 (GV. NRW. S. 612)",
+    "sourceVersion": "Ausführungsgesetz zum Tiergesundheitsgesetz und zum Tierische Nebenprodukte-Beseitigungsgesetz vom 2. September 2008 (GV. NRW. S. 612)",
+    "simulation": "Ausführungsgesetz zum Tiergesundheitsgesetz und zum Tierische Nebenprodukte-Beseitigungsgesetz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 32563,
+          "actual": 32280,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 195,
+          "actual": 195,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 32280,
+          "actual": 32256,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "34 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "34 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:08:18.434Z"
+}

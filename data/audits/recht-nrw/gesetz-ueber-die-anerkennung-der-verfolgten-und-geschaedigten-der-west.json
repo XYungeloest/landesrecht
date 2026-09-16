@@ -1,0 +1,560 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27988",
+  "slug": "gesetz-ueber-die-anerkennung-der-verfolgten-und-geschaedigten-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[8].children[1].text@260:ministry-compound",
+      "path": "body[1].children[8].children[1].text",
+      "start": 260,
+      "end": 273,
+      "term": "Innenminister",
+      "context": "…ädigten zu berücksichtigen. Die Rechtsverordnung erläßt der Innenminister im Einvernehmen mit dem zuständigen Ausschuß des Landtags.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[1].children[9].children[0].text@89:rule:jurisdiction-name-bare",
+      "path": "body[1].children[9].children[0].text",
+      "start": 89,
+      "end": 108,
+      "term": "Nordrhein-Westfalen",
+      "context": "…beschränkt sich auf folgende Personen mit Wohnsitz im Lande Nordrhein-Westfalen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].children[9].children[3].text@99:rule:jurisdiction-name-bare",
+      "path": "body[1].children[9].children[3].text",
+      "start": 99,
+      "end": 118,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chleppte oder geflüchtete Juden, sofern sie den Wohnsitz in Nordrhein-Westfalen bis zum 1. Januar 1948 begründet haben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].children[10].children[0].text@34:rule:jurisdiction-name-bare",
+      "path": "body[1].children[10].children[0].text",
+      "start": 34,
+      "end": 53,
+      "term": "Nordrhein-Westfalen",
+      "context": "Anerkennungen, die nicht im Lande Nordrhein-Westfalen ausgesprochen wurden, sind für das Land Nordrhein-Westfalen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].children[10].children[0].text@89:rule:jurisdiction-name",
+      "path": "body[1].children[10].children[0].text",
+      "start": 89,
+      "end": 113,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ande Nordrhein-Westfalen ausgesprochen wurden, sind für das Land Nordrhein-Westfalen nicht verbindlich.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[12].children[1].text@116:municipality",
+      "path": "body[1].children[12].children[1].text",
+      "start": 116,
+      "end": 126,
+      "term": "Düsseldorf",
+      "context": "…Bezirks-Anerkennungs-Ausschuß beim Regierungspräsidenten in Düsseldorf mit Zustimmung des Innenministers eine Anerkennung verleihe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[12].children[1].text@146:ministry-compound",
+      "path": "body[1].children[12].children[1].text",
+      "start": 146,
+      "end": 160,
+      "term": "Innenministers",
+      "context": "…beim Regierungspräsidenten in Düsseldorf mit Zustimmung des Innenministers eine Anerkennung verleihen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[1].text@56:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[1].text",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nach Maßgabe der folgenden Bestimmungen werden im Lande Nordrhein-Westfalen anerkannte Verfolgte (§§ 1 bis 8, 10 und 13) betreut, die",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[1].children[0].text@78:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[0].children[1].children[0].text",
+      "start": 78,
+      "end": 104,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…r dauernden Aufenthalt bis zum 1. Januar 1950 im Gebiet des Landes Nordrhein-Westfalen befugt genommen haben,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[2].text@133:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[0].children[2].text",
+      "start": 133,
+      "end": 159,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…aren Gefahr für Leib, Leben oder Freiheit in das Gebiet des Landes Nordrhein-Westfalen geflüchtet sind und nach dem 1. Januar 1947 hier ihren Wohn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[2].text@303:ministry-compound",
+      "path": "body[3].children[0].children[2].text",
+      "start": 303,
+      "end": 317,
+      "term": "Innenministers",
+      "context": "…nthalt befugt genommen haben, können durch Entscheidung des Innenministers, die der Zustimmung des Sozialministers bedarf, den im Absa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@342:ministry-compound",
+      "path": "body[3].children[0].children[2].text",
+      "start": 342,
+      "end": 357,
+      "term": "Sozialministers",
+      "context": "…rch Entscheidung des Innenministers, die der Zustimmung des Sozialministers bedarf, den im Absatz 1 Ziffer 2 bezeichneten Personen glei…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@177:protected:gazette-nw",
+      "path": "body[3].children[1].children[1].text",
+      "start": 177,
+      "end": 191,
+      "term": "GV. NW. S. 225",
+      "context": "…renten an die Opfer der Naziunterdrükkung vom 5. März 1947 (GV. NW. S. 225) leistungsberechtigt sind, erhalten vom Lande gesundheitlic…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[3].children[1].text@117:rule:jurisdiction-name-bare",
+      "path": "body[3].children[3].children[1].text",
+      "start": 117,
+      "end": 136,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ion, der Kriegsgefangenschaft oder als Flüchtlinge im Lande Nordrhein-Westfalen ihren Wohnsitz nehmen, ist bevorzugt angemessener Wohnraum …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[3].text@129:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[3].text",
+      "start": 129,
+      "end": 148,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en, so hat der für den derzeitigen oder letzten Wohnsitz in Nordrhein-Westfalen zuständige Kreis-Anerkennungs-Ausschuß auf Antrag des Vertr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[2].children[0].text@187:ministry-compound",
+      "path": "body[4].children[2].children[0].text",
+      "start": 187,
+      "end": 202,
+      "term": "Sozialministers",
+      "context": "…angenen Ergänzungsbestimmungen (Zusammenfassender Erlaß des Sozialministers vom Oktober 1947 zur Durchführung und Ergänzung der genannt…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[0].text@85:ministry-compound",
+      "path": "body[4].children[3].children[0].text",
+      "start": 85,
+      "end": 98,
+      "term": "Innenminister",
+      "context": "… Gesetzes erforderlichen Verwaltungsverordnungen erläßt der Innenminister.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "ministry": {
+      "manual-review": 6
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[9].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].children[9].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].children[10].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].children[10].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[8].children[1].text",
+      "term": "Innenminister",
+      "context": "…ädigten zu berücksichtigen. Die Rechtsverordnung erläßt der Innenminister im Einvernehmen mit dem zuständigen Ausschuß des Landtags.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[12].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…Bezirks-Anerkennungs-Ausschuß beim Regierungspräsidenten in Düsseldorf mit Zustimmung des Innenministers eine Anerkennung verleihe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[12].children[1].text",
+      "term": "Innenministers",
+      "context": "…beim Regierungspräsidenten in Düsseldorf mit Zustimmung des Innenministers eine Anerkennung verleihen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Innenministers",
+      "context": "…nthalt befugt genommen haben, können durch Entscheidung des Innenministers, die der Zustimmung des Sozialministers bedarf, den im Absa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Sozialministers",
+      "context": "…rch Entscheidung des Innenministers, die der Zustimmung des Sozialministers bedarf, den im Absatz 1 Ziffer 2 bezeichneten Personen glei…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[0].text",
+      "term": "Sozialministers",
+      "context": "…angenen Ergänzungsbestimmungen (Zusammenfassender Erlaß des Sozialministers vom Oktober 1947 zur Durchführung und Ergänzung der genannt…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[0].text",
+      "term": "Innenminister",
+      "context": "… Gesetzes erforderlichen Verwaltungsverordnungen erläßt der Innenminister.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 171,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Anerkennung der Verfolgten und Geschädigten der nationalsozialistischen Gewaltherrschaft und über die Betreuung der Verfolgten vom 4. März 1952",
+    "sourceVersion": "Gesetz über die Anerkennung der Verfolgten und Geschädigten der nationalsozialistischen Gewaltherrschaft und über die Betreuung der Verfolgten vom 4. März 1952",
+    "simulation": "Gesetz über die Anerkennung der Verfolgten und Geschädigten der nationalsozialistischen Gewaltherrschaft und über die Betreuung der Verfolgten in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17611,
+          "actual": 17757,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 113,
+          "actual": 113,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17757,
+          "actual": 17721,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "24 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "24 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:14:12.865Z"
+}

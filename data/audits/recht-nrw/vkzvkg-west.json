@@ -1,0 +1,1533 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27230",
+  "slug": "vkzvkg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@118:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 118,
+      "end": 137,
+      "term": "Nordrhein-Westfalen",
+      "context": "…alen Versorgungskassen und Zusatzversorgungskassen im Lande Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@96:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 96,
+      "end": 110,
+      "term": "GV. NW. S. 370",
+      "context": "…n Gesetzes zur Funktionalreform (3. FRG) vom 26. Juni 1984 (GV. NW. S. 370) wird nachstehend der vom 1. Januar 1985 an geltende Wortla…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@261:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 261,
+      "end": 280,
+      "term": "Nordrhein-Westfalen",
+      "context": "…alen Versorgungskassen und Zusatzversorgungskassen im Lande Nordrhein-Westfalen - VKZVKG - vom 8. April 1975 (GV. NW. S. 286) unter Berücks…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@311:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 311,
+      "end": 325,
+      "term": "GV. NW. S. 286",
+      "context": "… im Lande Nordrhein-Westfalen - VKZVKG - vom 8. April 1975 (GV. NW. S. 286) unter Berücksichtigung der Änderungen durch Artikel 9 des …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@450:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 450,
+      "end": 464,
+      "term": "GV. NW. S. 290",
+      "context": "…n Gesetzes zur Funktionalreform (1. FRG) vom 11. Juli 1978 (GV. NW. S. 290) und Artikel 33 des Dritten Gesetzes zur Funktionalreform (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@551:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 551,
+      "end": 565,
+      "term": "GV. NW. S. 370",
+      "context": "…n Gesetzes zur Funktionalreform (3. FRG) vom 26. Juni 1984 (GV. NW. S. 370)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@4:ministry-compound",
+      "path": "body[3].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[3].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[3].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].title@82:rule:jurisdiction-name-bare",
+      "path": "body[4].title",
+      "start": 82,
+      "end": 101,
+      "term": "Nordrhein-Westfalen",
+      "context": "…alen Versorgungskassen und Zusatzversorgungskassen im Lande Nordrhein-Westfalen - VKZVKG - in der Fassung der Bekanntmachung vom 6. Novembe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[0].children[0].text@53:municipality",
+      "path": "body[5].children[0].children[0].children[0].text",
+      "start": 53,
+      "end": 57,
+      "term": "Köln",
+      "context": "die „Rheinische Versorgungskassen“ (RVK) mit Sitz in Köln für das Gebiet des Landschaftsverbandes Rheinland,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[0].text@77:regional-body-association",
+      "path": "body[5].children[0].children[0].children[0].text",
+      "start": 77,
+      "end": 97,
+      "term": "Landschaftsverbandes",
+      "context": "…ersorgungskassen“ (RVK) mit Sitz in Köln für das Gebiet des Landschaftsverbandes Rheinland,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[0].text@98:geography-region",
+      "path": "body[5].children[0].children[0].children[0].text",
+      "start": 98,
+      "end": 107,
+      "term": "Rheinland",
+      "context": "…K) mit Sitz in Köln für das Gebiet des Landschaftsverbandes Rheinland,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[1].text@34:geography-region",
+      "path": "body[5].children[0].children[0].children[1].text",
+      "start": 34,
+      "end": 49,
+      "term": "Westfalen-Lippe",
+      "context": "die „Kommunale Versorgungskassen“ Westfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[1].text@44:geography-river",
+      "path": "body[5].children[0].children[0].children[1].text",
+      "start": 44,
+      "end": 49,
+      "term": "Lippe",
+      "context": "die „Kommunale Versorgungskassen“ Westfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[1].text@68:municipality",
+      "path": "body[5].children[0].children[0].children[1].text",
+      "start": 68,
+      "end": 75,
+      "term": "Münster",
+      "context": "…munale Versorgungskassen“ Westfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[1].text@95:regional-body-association",
+      "path": "body[5].children[0].children[0].children[1].text",
+      "start": 95,
+      "end": 115,
+      "term": "Landschaftsverbandes",
+      "context": "…estfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[1].text@116:geography-region",
+      "path": "body[5].children[0].children[0].children[1].text",
+      "start": 116,
+      "end": 131,
+      "term": "Westfalen-Lippe",
+      "context": "…mit Sitz in Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[0].children[1].text@126:geography-river",
+      "path": "body[5].children[0].children[0].children[1].text",
+      "start": 126,
+      "end": 131,
+      "term": "Lippe",
+      "context": "…n Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@111:regional-body-association",
+      "path": "body[5].children[0].children[1].text",
+      "start": 111,
+      "end": 129,
+      "term": "Landschaftsverband",
+      "context": "…n des öffentlichen Rechts. Die Geschäftsführung obliegt dem Landschaftsverband (§ 5 Abs. 1 Buchstabe c) Nr. 3 Landschaftsverbandsordnung),…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@344:regional-body-association",
+      "path": "body[5].children[0].children[1].text",
+      "start": 344,
+      "end": 362,
+      "term": "Landschaftsverband",
+      "context": "…nd des Leiters der Versorgungskassen bleiben unberührt. Der Landschaftsverband hat die Versorgungskassen mit dem notwendigen Personal ausz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@451:regional-body-association",
+      "path": "body[5].children[0].children[1].text",
+      "start": 451,
+      "end": 469,
+      "term": "Landschaftsverband",
+      "context": "…t dem notwendigen Personal auszustatten. Zudem erbringt der Landschaftsverband für die Versorgungskassen, für die ihm die Geschäftsführung…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@750:regional-body-association",
+      "path": "body[5].children[0].children[1].text",
+      "start": 750,
+      "end": 768,
+      "term": "Landschaftsverband",
+      "context": "…e Leistungen nicht selbst erbringen, können sie nur von dem Landschaftsverband für diese erbracht werden. Soweit der Landschaftsverband un…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@807:regional-body-association",
+      "path": "body[5].children[0].children[1].text",
+      "start": 807,
+      "end": 825,
+      "term": "Landschaftsverband",
+      "context": "…em Landschaftsverband für diese erbracht werden. Soweit der Landschaftsverband und seine wie Eigenbetriebe geführten Einrichtungen die in …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[4].text@411:geography-region",
+      "path": "body[5].children[1].children[4].text",
+      "start": 411,
+      "end": 420,
+      "term": "Rheinland",
+      "context": "…gungsrücklage nach den gesetzlichen Vorschriften des Landes Rheinland-Pfalz verwalten.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@96:rule:jurisdiction-name",
+      "path": "body[5].children[2].children[1].text",
+      "start": 96,
+      "end": 120,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…r Versorgungskassen im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt zu machen. Die Bekanntmachung erfolgt frühestens ei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].children[1].text@164:regional-body-district",
+      "path": "body[5].children[3].children[1].text",
+      "start": 164,
+      "end": 182,
+      "term": "Regierungsbezirken",
+      "context": "…Personen des öffentlichen Rechts mit Sitz in den ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz als Mitglieder…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[3].children[1].text@212:geography-region",
+      "path": "body[5].children[3].children[1].text",
+      "start": 212,
+      "end": 221,
+      "term": "Rheinland",
+      "context": "… ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz als Mitglieder angehören. Absatz 1 Satz 3 gilt entspr…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[1].text@411:regional-body-association",
+      "path": "body[5].children[4].children[1].text",
+      "start": 411,
+      "end": 431,
+      "term": "Landschaftsverbandes",
+      "context": "…s und die Stellvertreter werden vom Landschaftsausschuß des Landschaftsverbandes aus dem Kreis der Kassenmitglieder auf die Dauer von fünf J…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[2].text@109:regional-body-association",
+      "path": "body[5].children[4].children[2].text",
+      "start": 109,
+      "end": 129,
+      "term": "Landschaftsverbandes",
+      "context": "…orsitzenden und dessen Stellvertreter. Sind Bedienstete des Landschaftsverbandes Mitglied des Verwaltungsrates, dürfen sie nicht zum Vorsitz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[3].text@223:regional-body-association",
+      "path": "body[5].children[4].children[3].text",
+      "start": 223,
+      "end": 245,
+      "term": "Landschaftsversammlung",
+      "context": "…öhe richtet sich nach den Regelungen für die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes. Über Ausschließungsgrü…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[3].text@261:regional-body-association",
+      "path": "body[5].children[4].children[3].text",
+      "start": 261,
+      "end": 281,
+      "term": "Landschaftsverbandes",
+      "context": "…ür die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes. Über Ausschließungsgründe bei den Mitgliedern des Verwaltu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[5].children[0].text@50:regional-body-association",
+      "path": "body[5].children[5].children[0].text",
+      "start": 50,
+      "end": 70,
+      "term": "Landschaftsverbandes",
+      "context": "Leiter der Versorgungskassen ist der Direktor des Landschaftsverbandes, in dessen Gebiet die Versorgungskassen ihren Sitz haben. E…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[5].children[2].text@138:regional-body-association",
+      "path": "body[5].children[5].children[2].text",
+      "start": 138,
+      "end": 158,
+      "term": "Landschaftsverbandes",
+      "context": "…werden in der Satzung geregelt. Die für das Finanzwesen des Landschaftsverbandes zuständigen Bediensteten dürfen den Leiter der Versorgungsk…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[6].children[1].text@64:regional-body-association",
+      "path": "body[5].children[6].children[1].text",
+      "start": 64,
+      "end": 84,
+      "term": "Landschaftsverbandes",
+      "context": "…Jahresabschluss wird von der örtlichen Rechnungsprüfung des Landschaftsverbandes geprüft. Der Verwaltungsrat kann mit der Prüfung des Jahres…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[7].children[1].text@165:regional-body-association",
+      "path": "body[5].children[7].children[1].text",
+      "start": 165,
+      "end": 187,
+      "term": "Landschaftsversammlung",
+      "context": "…sverbandsordnung entsprechende Anwendung; an die Stelle der Landschaftsversammlung tritt der Verwaltungsrat.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[0].text@112:regional-body-association",
+      "path": "body[6].children[2].children[1].children[0].text",
+      "start": 112,
+      "end": 132,
+      "term": "Landschaftsverbandes",
+      "context": "…kasse der Rheinischen Versorgungskassen, für das Gebiet des Landschaftsverbandes Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[0].text@133:geography-region",
+      "path": "body[6].children[2].children[1].children[0].text",
+      "start": 133,
+      "end": 142,
+      "term": "Rheinland",
+      "context": "… Versorgungskassen, für das Gebiet des Landschaftsverbandes Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[2].text@37:geography-region",
+      "path": "body[6].children[2].children[1].children[2].text",
+      "start": 37,
+      "end": 52,
+      "term": "Westfalen-Lippe",
+      "context": "die Kommunale Zusatzversorgungskasse Westfalen-Lippe (kvw-Zusatzversorgung), Sonderkasse der Kommunalen Versorgu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[2].text@47:geography-river",
+      "path": "body[6].children[2].children[1].children[2].text",
+      "start": 47,
+      "end": 52,
+      "term": "Lippe",
+      "context": "die Kommunale Zusatzversorgungskasse Westfalen-Lippe (kvw-Zusatzversorgung), Sonderkasse der Kommunalen Versorgu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[2].text@122:geography-region",
+      "path": "body[6].children[2].children[1].children[2].text",
+      "start": 122,
+      "end": 137,
+      "term": "Westfalen-Lippe",
+      "context": "…tzversorgung), Sonderkasse der Kommunalen Versorgungskassen Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[2].text@132:geography-river",
+      "path": "body[6].children[2].children[1].children[2].text",
+      "start": 132,
+      "end": 137,
+      "term": "Lippe",
+      "context": "…ng), Sonderkasse der Kommunalen Versorgungskassen Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[2].text@158:regional-body-association",
+      "path": "body[6].children[2].children[1].children[2].text",
+      "start": 158,
+      "end": 178,
+      "term": "Landschaftsverbandes",
+      "context": "…nalen Versorgungskassen Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[2].text@179:geography-region",
+      "path": "body[6].children[2].children[1].children[2].text",
+      "start": 179,
+      "end": 194,
+      "term": "Westfalen-Lippe",
+      "context": "…en Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].children[4].text@18:municipality",
+      "path": "body[6].children[2].children[1].children[4].text",
+      "start": 18,
+      "end": 22,
+      "term": "Köln",
+      "context": "die bei der Stadt Köln nach bisherigem Recht genehmigte Zusatzversorgungskasse als…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[3].text@143:rule:jurisdiction-name",
+      "path": "body[6].children[5].children[3].text",
+      "start": 143,
+      "end": 167,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…atzversorgungskasse im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt zu machen. Für die Bekanntmachung der Satzung der ö…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[5].children[3].text@335:rule:jurisdiction-name",
+      "path": "body[6].children[5].children[3].text",
+      "start": 335,
+      "end": 359,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ungen gelten § 7 Absatz 5 und 6 der Gemeindeordnung für das Land Nordrhein-Westfalen und die dazu erlassenen Vorschriften. Die Bekanntmachung ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[6].children[1].text@515:regional-body-association",
+      "path": "body[6].children[6].children[1].text",
+      "start": 515,
+      "end": 535,
+      "term": "Landschaftsverbandes",
+      "context": "…s und die Stellvertreter werden vom Landschaftsausschuß des Landschaftsverbandes auf die Dauer von fünf Jahren gewählt. Soweit bei der Rhein…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[6].children[3].text@107:rule:jurisdiction-name",
+      "path": "body[6].children[6].children[3].text",
+      "start": 107,
+      "end": 131,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…amtlich tätig. Die §§ 30 bis 33 der Gemeindeordnung für das Land Nordrhein-Westfalen gelten sinngemäß. Es besteht ein Anspruch auf Sitzungsgeld.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[6].children[3].text@257:regional-body-association",
+      "path": "body[6].children[6].children[3].text",
+      "start": 257,
+      "end": 279,
+      "term": "Landschaftsversammlung",
+      "context": "…öhe richtet sich nach den Regelungen für die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes beziehungsweise den Reg…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[6].children[3].text@295:regional-body-association",
+      "path": "body[6].children[6].children[3].text",
+      "start": 295,
+      "end": 315,
+      "term": "Landschaftsverbandes",
+      "context": "…ür die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes beziehungsweise den Regelungen des Rechtsträgers. Über Auss…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[8].children[2].text@332:regional-body-association",
+      "path": "body[6].children[8].children[2].text",
+      "start": 332,
+      "end": 350,
+      "term": "Landschaftsverband",
+      "context": "…sen haftet der Rechtsträger oder der die Geschäfte führende Landschaftsverband nicht für Verbindlichkeiten der Zusatzversorgungskasse.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[11].children[3].text@223:regional-body-district",
+      "path": "body[6].children[11].children[3].text",
+      "start": 223,
+      "end": 241,
+      "term": "Regierungsbezirken",
+      "context": "…aktionen kommunaler Vertretungen mit Sitz in den ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz nach Maßgabe d…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[11].children[3].text@271:geography-region",
+      "path": "body[6].children[11].children[3].text",
+      "start": 271,
+      "end": 280,
+      "term": "Rheinland",
+      "context": "… ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz nach Maßgabe der Satzung als Mitglieder angehören. Ab…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[12].children[0].text@55:regional-body-association",
+      "path": "body[6].children[12].children[0].text",
+      "start": 55,
+      "end": 75,
+      "term": "Landschaftsverbandes",
+      "context": "Leiter der Zusatzversorgungskasse ist der Direktor des Landschaftsverbandes, in dessen Gebiet die Zusatzversorgungskasse ihren Sitz hat…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[14].children[0].text@168:regional-body-association",
+      "path": "body[6].children[14].children[0].text",
+      "start": 168,
+      "end": 190,
+      "term": "Landschaftsversammlung",
+      "context": "…sverbandsordnung entsprechende Anwendung; an die Stelle der Landschaftsversammlung tritt der Kassenausschuß.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 8
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "regional-body": {
+      "manual-review": 25
+    },
+    "geography": {
+      "manual-review": 14
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[5].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[5].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[6].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[0].text",
+      "term": "Köln",
+      "context": "die „Rheinische Versorgungskassen“ (RVK) mit Sitz in Köln für das Gebiet des Landschaftsverbandes Rheinland,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…ersorgungskassen“ (RVK) mit Sitz in Köln für das Gebiet des Landschaftsverbandes Rheinland,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[0].text",
+      "term": "Rheinland",
+      "context": "…K) mit Sitz in Köln für das Gebiet des Landschaftsverbandes Rheinland,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "die „Kommunale Versorgungskassen“ Westfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[1].text",
+      "term": "Lippe",
+      "context": "die „Kommunale Versorgungskassen“ Westfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[1].text",
+      "term": "Münster",
+      "context": "…munale Versorgungskassen“ Westfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…estfalen-Lippe (kvw) mit Sitz in Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "…mit Sitz in Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[0].children[1].text",
+      "term": "Lippe",
+      "context": "…n Münster für das Gebiet des Landschaftsverbandes Westfalen-Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…n des öffentlichen Rechts. Die Geschäftsführung obliegt dem Landschaftsverband (§ 5 Abs. 1 Buchstabe c) Nr. 3 Landschaftsverbandsordnung),…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…nd des Leiters der Versorgungskassen bleiben unberührt. Der Landschaftsverband hat die Versorgungskassen mit dem notwendigen Personal ausz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…t dem notwendigen Personal auszustatten. Zudem erbringt der Landschaftsverband für die Versorgungskassen, für die ihm die Geschäftsführung…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…e Leistungen nicht selbst erbringen, können sie nur von dem Landschaftsverband für diese erbracht werden. Soweit der Landschaftsverband un…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…em Landschaftsverband für diese erbracht werden. Soweit der Landschaftsverband und seine wie Eigenbetriebe geführten Einrichtungen die in …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[4].text",
+      "term": "Rheinland",
+      "context": "…gungsrücklage nach den gesetzlichen Vorschriften des Landes Rheinland-Pfalz verwalten.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].children[1].text",
+      "term": "Regierungsbezirken",
+      "context": "…Personen des öffentlichen Rechts mit Sitz in den ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz als Mitglieder…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].children[1].text",
+      "term": "Rheinland",
+      "context": "… ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz als Mitglieder angehören. Absatz 1 Satz 3 gilt entspr…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…s und die Stellvertreter werden vom Landschaftsausschuß des Landschaftsverbandes aus dem Kreis der Kassenmitglieder auf die Dauer von fünf J…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…orsitzenden und dessen Stellvertreter. Sind Bedienstete des Landschaftsverbandes Mitglied des Verwaltungsrates, dürfen sie nicht zum Vorsitz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[3].text",
+      "term": "Landschaftsversammlung",
+      "context": "…öhe richtet sich nach den Regelungen für die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes. Über Ausschließungsgrü…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "…ür die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes. Über Ausschließungsgründe bei den Mitgliedern des Verwaltu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Leiter der Versorgungskassen ist der Direktor des Landschaftsverbandes, in dessen Gebiet die Versorgungskassen ihren Sitz haben. E…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…werden in der Satzung geregelt. Die für das Finanzwesen des Landschaftsverbandes zuständigen Bediensteten dürfen den Leiter der Versorgungsk…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[6].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…Jahresabschluss wird von der örtlichen Rechnungsprüfung des Landschaftsverbandes geprüft. Der Verwaltungsrat kann mit der Prüfung des Jahres…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[7].children[1].text",
+      "term": "Landschaftsversammlung",
+      "context": "…sverbandsordnung entsprechende Anwendung; an die Stelle der Landschaftsversammlung tritt der Verwaltungsrat.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…kasse der Rheinischen Versorgungskassen, für das Gebiet des Landschaftsverbandes Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[0].text",
+      "term": "Rheinland",
+      "context": "… Versorgungskassen, für das Gebiet des Landschaftsverbandes Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "die Kommunale Zusatzversorgungskasse Westfalen-Lippe (kvw-Zusatzversorgung), Sonderkasse der Kommunalen Versorgu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[2].text",
+      "term": "Lippe",
+      "context": "die Kommunale Zusatzversorgungskasse Westfalen-Lippe (kvw-Zusatzversorgung), Sonderkasse der Kommunalen Versorgu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…tzversorgung), Sonderkasse der Kommunalen Versorgungskassen Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[2].text",
+      "term": "Lippe",
+      "context": "…ng), Sonderkasse der Kommunalen Versorgungskassen Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…nalen Versorgungskassen Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…en Westfalen-Lippe, für das Gebiet des Landschaftsverbandes Westfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].children[4].text",
+      "term": "Köln",
+      "context": "die bei der Stadt Köln nach bisherigem Recht genehmigte Zusatzversorgungskasse als…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[6].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…s und die Stellvertreter werden vom Landschaftsausschuß des Landschaftsverbandes auf die Dauer von fünf Jahren gewählt. Soweit bei der Rhein…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[6].children[3].text",
+      "term": "Landschaftsversammlung",
+      "context": "…öhe richtet sich nach den Regelungen für die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes beziehungsweise den Reg…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[6].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "…ür die Mitglieder der Landschaftsversammlung des jeweiligen Landschaftsverbandes beziehungsweise den Regelungen des Rechtsträgers. Über Auss…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[8].children[2].text",
+      "term": "Landschaftsverband",
+      "context": "…sen haftet der Rechtsträger oder der die Geschäfte führende Landschaftsverband nicht für Verbindlichkeiten der Zusatzversorgungskasse.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[11].children[3].text",
+      "term": "Regierungsbezirken",
+      "context": "…aktionen kommunaler Vertretungen mit Sitz in den ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz nach Maßgabe d…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[11].children[3].text",
+      "term": "Rheinland",
+      "context": "… ehemaligen Regierungsbezirken Koblenz und Trier des Landes Rheinland-Pfalz nach Maßgabe der Satzung als Mitglieder angehören. Ab…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[12].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Leiter der Zusatzversorgungskasse ist der Direktor des Landschaftsverbandes, in dessen Gebiet die Zusatzversorgungskasse ihren Sitz hat…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[14].children[0].text",
+      "term": "Landschaftsversammlung",
+      "context": "…sverbandsordnung entsprechende Anwendung; an die Stelle der Landschaftsversammlung tritt der Kassenausschuß.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 226,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Bekanntmachung der Neufassung des Gesetzes über die kommunalen Versorgungskassen und Zusatzversorgungskassen im Lande Nordrhein-Westfalen vom 6. November 1984 (GV. NW. 1984 S. 694)",
+    "sourceVersion": "Bekanntmachung der Neufassung des Gesetzes über die kommunalen Versorgungskassen und Zusatzversorgungskassen im Lande Nordrhein-Westfalen vom 6. November 1984 (GV. NW. 1984 S. 694)",
+    "simulation": "Bekanntmachung der Neufassung des Gesetzes über die kommunalen Versorgungskassen und Zusatzversorgungskassen im Lande Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 25432,
+          "actual": 25236,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 135,
+          "actual": 135,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 25236,
+          "actual": 25208,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "32 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "32 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:09:28.963Z"
+}

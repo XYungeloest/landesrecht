@@ -1,0 +1,627 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30337",
+  "slug": "verordnung-ueber-die-bildung-gemeinsamer-kartellgerichte-und-ueber-die-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[5].text@58:rule:jurisdiction-name-bare",
+      "path": "body[5].text",
+      "start": 58,
+      "end": 77,
+      "term": "Nordrhein-Westfalen",
+      "context": "jeweils in Verbindung mit § 1 Absatz 2 des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artike…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].text@99:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 99,
+      "end": 113,
+      "term": "GV. NRW. S. 30",
+      "context": "…des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artikel 1 des Gesetzes vom 5. April 2011 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@173:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 173,
+      "end": 188,
+      "term": "GV. NRW. S. 199",
+      "context": "…), geändert durch Artikel 1 des Gesetzes vom 5. April 2011 (GV. NRW. S. 199), -",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].text@16:municipality",
+      "path": "body[7].children[1].text",
+      "start": 16,
+      "end": 26,
+      "term": "Düsseldorf",
+      "context": "dem Landgericht Düsseldorf für den Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@60:municipality",
+      "path": "body[7].children[1].text",
+      "start": 60,
+      "end": 70,
+      "term": "Düsseldorf",
+      "context": "dem Landgericht Düsseldorf für den Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@16:municipality",
+      "path": "body[7].children[2].text",
+      "start": 16,
+      "end": 24,
+      "term": "Dortmund",
+      "context": "dem Landgericht Dortmund für den Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@58:municipality",
+      "path": "body[7].children[2].text",
+      "start": 58,
+      "end": 62,
+      "term": "Hamm",
+      "context": "dem Landgericht Dortmund für den Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[3].text@16:municipality",
+      "path": "body[7].children[3].text",
+      "start": 16,
+      "end": 20,
+      "term": "Köln",
+      "context": "dem Landgericht Köln für den Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[3].text@54:municipality",
+      "path": "body[7].children[3].text",
+      "start": 54,
+      "end": 58,
+      "term": "Köln",
+      "context": "dem Landgericht Köln für den Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@22:municipality",
+      "path": "body[8].children[2].text",
+      "start": 22,
+      "end": 32,
+      "term": "Düsseldorf",
+      "context": "dem Oberlandesgericht Düsseldorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@67:municipality",
+      "path": "body[8].children[2].text",
+      "start": 67,
+      "end": 77,
+      "term": "Düsseldorf",
+      "context": "…rlandesgericht Düsseldorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@79:municipality",
+      "path": "body[8].children[2].text",
+      "start": 79,
+      "end": 83,
+      "term": "Hamm",
+      "context": "…ht Düsseldorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@88:municipality",
+      "path": "body[8].children[2].text",
+      "start": 88,
+      "end": 92,
+      "term": "Köln",
+      "context": "…dorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@84:protected:gazette-nrw",
+      "path": "body[9].children[0].text",
+      "start": 84,
+      "end": 99,
+      "term": "GV. NRW. S. 820",
+      "context": "…Bildung gemeinsamer Kartellgerichte vom 27. September 2005 (GV. NRW. S. 820) und die Verordnung über die gerichtliche Zuständigkeit in …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].text@246:protected:gazette-nrw",
+      "path": "body[9].children[0].text",
+      "start": 246,
+      "end": 261,
+      "term": "GV. NRW. S. 388",
+      "context": "…keiten nach dem Energiewirtschaftsgesetz vom 24. Juli 2006 (GV. NRW. S. 388) werden aufgehoben.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].text@65:ministry-compound",
+      "path": "body[10].children[0].text",
+      "start": 65,
+      "end": 82,
+      "term": "Justizministerium",
+      "context": "… Verordnung tritt am Tage nach der Verkündung in Kraft. Das Justizministerium berichtet der Landesregierung bis zum 31. Dezember 2016 und…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@4:ministry-compound",
+      "path": "body[10].children[1].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[1].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "municipality": {
+      "manual-review": 10
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[7].children[1].text",
+      "term": "Düsseldorf",
+      "context": "dem Landgericht Düsseldorf für den Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Düsseldorf",
+      "context": "dem Landgericht Düsseldorf für den Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Dortmund",
+      "context": "dem Landgericht Dortmund für den Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Hamm",
+      "context": "dem Landgericht Dortmund für den Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[3].text",
+      "term": "Köln",
+      "context": "dem Landgericht Köln für den Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[3].text",
+      "term": "Köln",
+      "context": "dem Landgericht Köln für den Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Düsseldorf",
+      "context": "dem Oberlandesgericht Düsseldorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Düsseldorf",
+      "context": "…rlandesgericht Düsseldorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Hamm",
+      "context": "…ht Düsseldorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Köln",
+      "context": "…dorf für die Oberlandesgerichtsbezirke Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Justizministerium",
+      "context": "… Verordnung tritt am Tage nach der Verkündung in Kraft. Das Justizministerium berichtet der Landesregierung bis zum 31. Dezember 2016 und…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 29,
+    "residuals": [
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…des Justizgesetzes Westdeutschland vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artikel 1 des Gesetzes vom 5. April…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 1 des Gesetzes vom 5. April 2011 (GV. NRW. S. 199), -",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].text",
+        "term": "NRW",
+        "context": "…ung gemeinsamer Kartellgerichte vom 27. September 2005 (GV. NRW. S. 820) und die Verordnung über die gerichtliche Zuständig…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].text",
+        "term": "NRW",
+        "context": "…en nach dem Energiewirtschaftsgesetz vom 24. Juli 2006 (GV. NRW. S. 388) werden aufgehoben.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Bildung gemeinsamer Kartellgerichte und über die gerichtliche Zuständigkeit in bürgerlichen Rechtsstreitigkeiten nach dem Energiewirtschaftsgesetz vom 30. August 2011",
+    "sourceVersion": "Verordnung über die Bildung gemeinsamer Kartellgerichte und über die gerichtliche Zuständigkeit in bürgerlichen Rechtsstreitigkeiten nach dem Energiewirtschaftsgesetz vom 30. August 2011",
+    "simulation": "Verordnung über die Bildung gemeinsamer Kartellgerichte und über die gerichtliche Zuständigkeit in bürgerlichen Rechtsstreitigkeiten nach dem Energiewirtschaftsgesetz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2122,
+          "actual": 2271,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 21,
+          "actual": 21,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2271,
+          "actual": 2263,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:06:30.271Z"
+}

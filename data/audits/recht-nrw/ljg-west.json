@@ -1,0 +1,1463 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27012",
+  "slug": "ljg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@53:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 53,
+      "end": 72,
+      "term": "Nordrhein-Westfalen",
+      "context": "Bekanntmachung der Neufassung des Landesjagdgesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@4:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "LJG-NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@74:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rtikel III des Gesetzes zur Änderung des Landesjagdgesetzes Nordrhein-Westfalen (LJG-NRW) vom 17. Mai 1994 (GV. NW. S. 314) wird nachstehen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@99:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 99,
+      "end": 102,
+      "term": "NRW",
+      "context": "…ur Änderung des Landesjagdgesetzes Nordrhein-Westfalen (LJG-NRW) vom 17. Mai 1994 (GV. NW. S. 314) wird nachstehend der Wor…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@122:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 122,
+      "end": 136,
+      "term": "GV. NW. S. 314",
+      "context": "…agdgesetzes Nordrhein-Westfalen (LJG-NRW) vom 17. Mai 1994 (GV. NW. S. 314) wird nachstehend der Wortlaut des Landesjagdgesetzes Nordr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@191:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 191,
+      "end": 210,
+      "term": "Nordrhein-Westfalen",
+      "context": "…. 314) wird nachstehend der Wortlaut des Landesjagdgesetzes Nordrhein-Westfalen (LJG-NRW) in der seit dem 7. Juli 1994 geltenden Fassung be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@216:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 216,
+      "end": 219,
+      "term": "NRW",
+      "context": "…er Wortlaut des Landesjagdgesetzes Nordrhein-Westfalen (LJG-NRW) in der seit dem 7. Juli 1994 geltenden Fassung bekanntgema…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@54:rule:jurisdiction-name-bare",
+      "path": "body[3].text",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Fassung der Bekanntmachung des Landesjagdgesetzes Nordrhein-Westfalen (LJG-NRW) vom 11. Juli 1978 (GV. NW. S. 318),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].text@79:rule:jurisdiction-abbreviation",
+      "path": "body[3].text",
+      "start": 79,
+      "end": 82,
+      "term": "NRW",
+      "context": "…anntmachung des Landesjagdgesetzes Nordrhein-Westfalen (LJG-NRW) vom 11. Juli 1978 (GV. NW. S. 318),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@103:protected:gazette-nw",
+      "path": "body[3].text",
+      "start": 103,
+      "end": 117,
+      "term": "GV. NW. S. 318",
+      "context": "…gdgesetzes Nordrhein-Westfalen (LJG-NRW) vom 11. Juli 1978 (GV. NW. S. 318),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@128:protected:gazette-nw",
+      "path": "body[4].text",
+      "start": 128,
+      "end": 142,
+      "term": "GV. NW. S. 552",
+      "context": "…etzes zur Funktionalreform (2. FRG) vom 18. September 1979 (GV. NW. S. 552),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@138:rule:jurisdiction-name",
+      "path": "body[5].text",
+      "start": 138,
+      "end": 162,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…des Landesrechts an das Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen (Verwaltungsverfahrensrecht-Anpassungsgesetz) vom 18. Mai 1…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].text@227:protected:gazette-nw",
+      "path": "body[5].text",
+      "start": 227,
+      "end": 241,
+      "term": "GV. NW. S. 248",
+      "context": "…waltungsverfahrensrecht-Anpassungsgesetz) vom 18. Mai 1982 (GV. NW. S. 248),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@123:protected:gazette-nw",
+      "path": "body[6].text",
+      "start": 123,
+      "end": 137,
+      "term": "GV. NW. S. 370",
+      "context": "…n Gesetzes zur Funktionalreform (3. FRG) vom 26. Juni 1984 (GV. NW. S. 370),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@145:protected:gazette-nw",
+      "path": "body[7].text",
+      "start": 145,
+      "end": 159,
+      "term": "GV. NW. S. 663",
+      "context": "…landesrechtlicher Bußgeldvorschriften vom 6. November 1984 (GV. NW. S. 663),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[8].text@97:rule:jurisdiction-name",
+      "path": "body[8].text",
+      "start": 97,
+      "end": 121,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…enen Artikel 13 des Rechtsbereinigungsgesetzes 1984 für das Land Nordrhein-Westfalen (RBG 84 NW) vom 18. Dezember 1984 (GV. NW. S. 806),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[8].text@157:protected:gazette-nw",
+      "path": "body[8].text",
+      "start": 157,
+      "end": 171,
+      "term": "GV. NW. S. 806",
+      "context": "…Land Nordrhein-Westfalen (RBG 84 NW) vom 18. Dezember 1984 (GV. NW. S. 806),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[9].text@121:protected:gazette-nw",
+      "path": "body[9].text",
+      "start": 121,
+      "end": 135,
+      "term": "GV. NW. S. 261",
+      "context": "…zes zur Änderung des Landschaftsgesetzes vom 19. März 1985 (GV. NW. S. 261),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[12].text@4:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 55,
+      "term": "Minister für Umwelt, Raumordnung und Landwirtschaft",
+      "context": "Der Minister für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].text@60:rule:jurisdiction-name-genitive",
+      "path": "body[12].text",
+      "start": 60,
+      "end": 86,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].title@17:rule:jurisdiction-name-bare",
+      "path": "body[13].title",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "Landesjagdgesetz Nordrhein-Westfalen (LJG-NRW) in der Fassung der Bekanntmachung vom 7. Dezember…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].title@42:rule:jurisdiction-abbreviation",
+      "path": "body[13].title",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Landesjagdgesetz Nordrhein-Westfalen (LJG-NRW) in der Fassung der Bekanntmachung vom 7. Dezember 1994",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[78].children[1].text@31:rule:jurisdiction-name-dative",
+      "path": "body[78].children[1].text",
+      "start": 31,
+      "end": 58,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Folgende Tierarten unterliegen im Land Nordrhein-Westfalen, abweichend von § 2 Absatz 2 des Bundesjagdgesetzes in der …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[78].children[5].text@199:rule:jurisdiction-name-bare",
+      "path": "body[78].children[5].text",
+      "start": 199,
+      "end": 218,
+      "term": "Nordrhein-Westfalen",
+      "context": "…he (Corvus corone) und d) Elster (Pica pica), sofern sie in Nordrhein-Westfalen nach der Roten Liste der Brutvogelarten Nordrhein-Westfalen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[78].children[5].text@259:jurisdiction-name-residual",
+      "path": "body[78].children[5].text",
+      "start": 259,
+      "end": 279,
+      "term": "Nordrhein-Westfalens",
+      "context": "…Nordrhein-Westfalen nach der Roten Liste der Brutvogelarten Nordrhein-Westfalens *1) regelmäßig brüten.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[78].children[6].text@11:rule:jurisdiction-name-adjective-capital",
+      "path": "body[78].children[6].text",
+      "start": 11,
+      "end": 33,
+      "term": "Nordrhein-Westfälische",
+      "context": "*1) Hrsg.: Nordrhein-Westfälische Ornithologengesellschaft und Landesamt für Natur, Umwelt un…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective-capital",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective-capital übergeleitet („Nordrhein-Westfälische“ → „Westdeutsche“).",
+      "transformRule": "jurisdiction-name-adjective-capital",
+      "replacement": "Westdeutsche"
+    },
+    {
+      "id": "body[78].children[6].text@63:authority-state-office",
+      "path": "body[78].children[6].text",
+      "start": 63,
+      "end": 82,
+      "term": "Landesamt für Natur",
+      "context": "… Hrsg.: Nordrhein-Westfälische Ornithologengesellschaft und Landesamt für Natur, Umwelt und Verbraucherschutz 2017; 6. Fassung. Stand: Juni…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[83].children[8].text@155:rule:jurisdiction-name",
+      "path": "body[83].children[8].text",
+      "start": 155,
+      "end": 179,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…; § 41 Absatz 3 und 63 Absatz 1 der Gemeindeordnung für das Land Nordrhein-Westfalen gelten entsprechend. Gehören zu einem gemeinschaftlichen Ja…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[93].children[4].text@158:ministry-portfolio",
+      "path": "body[93].children[4].text",
+      "start": 158,
+      "end": 225,
+      "term": "Ministerium des Bundes bestimmten Muster für den Jagdschein erteilt",
+      "context": "…echend. Der Falknerjagdschein wird nach dem vom zuständigen Ministerium des Bundes bestimmten Muster für den Jagdschein erteilt. Er ist als Falknerjagdschein zu kennzeichnen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[97].children[2].text@173:authority-district-government",
+      "path": "body[97].children[2].text",
+      "start": 173,
+      "end": 189,
+      "term": "Bezirksregierung",
+      "context": "…rdliche Verordnung regeln, die im Amtsblatt der zuständigen Bezirksregierung zu veröffentlichen ist.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[99].children[12].text@217:rule:jurisdiction-name",
+      "path": "body[99].children[12].text",
+      "start": 217,
+      "end": 241,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Vorschriften des Verwaltungsvollstreckungsgesetzes für das Land Nordrhein-Westfalen durchsetzen. Wild, das unter Anwendung von Verwaltungszwang…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[101].children[1].text@57:legislature-state",
+      "path": "body[101].children[1].text",
+      "start": 57,
+      "end": 95,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "Das Ministerium wird ermächtigt, im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfalen durch Rechtsverordnung a) nach den in § 1 Absatz 2 des Bund…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[101].children[1].text@69:rule:jurisdiction-name-genitive",
+      "path": "body[101].children[1].text",
+      "start": 69,
+      "end": 95,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…terium wird ermächtigt, im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfalen durch Rechtsverordnung a) nach den in § 1 Absatz 2 des Bund…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[110].children[1].text@57:legislature-state",
+      "path": "body[110].children[1].text",
+      "start": 57,
+      "end": 95,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "Das Ministerium wird ermächtigt, im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfalen durch Rechtsverordnung die Wildschadensersatzpflicht auf Wi…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[110].children[1].text@69:rule:jurisdiction-name-genitive",
+      "path": "body[110].children[1].text",
+      "start": 69,
+      "end": 95,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…terium wird ermächtigt, im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfalen durch Rechtsverordnung die Wildschadensersatzpflicht auf Wi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[129].children[1].children[13].text@56:rule:jurisdiction-name-bare",
+      "path": "body[129].children[1].children[13].text",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "In den Landesjagdbeirat entsenden der Landesjagdverband Nordrhein-Westfalen e. V. vier Jägerinnen oder Jäger, der Ökologische Jagdverei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[129].children[1].children[13].text@149:geography-region",
+      "path": "body[129].children[1].children[13].text",
+      "start": 149,
+      "end": 158,
+      "term": "Westfalen",
+      "context": "…gerinnen oder Jäger, der Ökologische Jagdverein Nordrhein - Westfalen e.V. eine Jägerin oder einen Jäger, der Rheinische Landwirt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[129].children[1].children[13].text@457:rule:jurisdiction-name-bare",
+      "path": "body[129].children[1].children[13].text",
+      "start": 457,
+      "end": 476,
+      "term": "Nordrhein-Westfalen",
+      "context": "…meindeverbände und öffentlich-rechtlichen Körperschaften in Nordrhein-Westfalen e. V. eine Vertreterin oder einen Vertreter des Körperschaf…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[129].children[1].children[13].text@836:rule:jurisdiction-name-bare",
+      "path": "body[129].children[1].children[13].text",
+      "start": 836,
+      "end": 855,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ter der Jagdwissenschaft, der Landesverband der Berufsjäger Nordrhein-Westfalen e.V. eine Vertreterin oder einen Vertreter der Berufsjäger,…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[129].children[1].children[13].text@1051:geography-region",
+      "path": "body[129].children[1].children[13].text",
+      "start": 1051,
+      "end": 1066,
+      "term": "Westfalen-Lippe",
+      "context": "…und der Verband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam eine Vertreterin oder einen Vertreter der Ja…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[129].children[1].children[13].text@1061:geography-river",
+      "path": "body[129].children[1].children[13].text",
+      "start": 1061,
+      "end": 1066,
+      "term": "Lippe",
+      "context": "…rband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam eine Vertreterin oder einen Vertreter der Ja…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[129].children[1].children[13].text@1168:rule:jurisdiction-name-bare",
+      "path": "body[129].children[1].children[13].text",
+      "start": 1168,
+      "end": 1187,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n Vertreter der Jagdgenossenschaften, der Waldbauernverband Nordrhein-Westfalen e. V. eine Vertreterin oder einen Vertreter des Privatwalde…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[129].children[1].children[13].text@1254:rule:jurisdiction-name-dative",
+      "path": "body[129].children[1].children[13].text",
+      "start": 1254,
+      "end": 1281,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…eine Vertreterin oder einen Vertreter des Privatwaldes, die im Land Nordrhein-Westfalen wirkenden Vereinigungen der Falkner eine Vertreterin oder e…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[129].children[1].children[13].text@1776:rule:jurisdiction-name-bare",
+      "path": "body[129].children[1].children[13].text",
+      "start": 1776,
+      "end": 1795,
+      "term": "Nordrhein-Westfalen",
+      "context": "… oder Stellvertreter entsandt werden, die ihren Wohnsitz in Nordrhein-Westfalen haben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[129].children[3].children[9].text@50:rule:jurisdiction-name-bare",
+      "path": "body[129].children[3].children[9].text",
+      "start": 50,
+      "end": 69,
+      "term": "Nordrhein-Westfalen",
+      "context": "In den Jagdbeirat entsenden der Landesjagdverband Nordrhein-Westfalen e. V. drei Jäger, der zuständige Landwirtschaftsverband zwe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[129].children[3].children[9].text@366:geography-region",
+      "path": "body[129].children[3].children[9].text",
+      "start": 366,
+      "end": 381,
+      "term": "Westfalen-Lippe",
+      "context": "…und der Verband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam den Vertreter der Jagdgenossenschaften, die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[129].children[3].children[9].text@376:geography-river",
+      "path": "body[129].children[3].children[9].text",
+      "start": 376,
+      "end": 381,
+      "term": "Lippe",
+      "context": "…rband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam den Vertreter der Jagdgenossenschaften, die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[129].children[3].children[9].text@441:rule:jurisdiction-name-dative",
+      "path": "body[129].children[3].children[9].text",
+      "start": 441,
+      "end": 468,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "… e.V. gemeinsam den Vertreter der Jagdgenossenschaften, die im Land Nordrhein-Westfalen anerkannten Naturschutzvereinigungen gemeinsam einen Vertre…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[129].children[3].children[9].text@721:protected:gazette-nrw",
+      "path": "body[129].children[3].children[9].text",
+      "start": 721,
+      "end": 736,
+      "term": "GV. NRW. S. 416",
+      "context": "… Mitwirkungsrechte für Tierschutzvereine vom 25. Juni 2013 (GV. NRW. S. 416) anerkannten Vereine gemeinsam eine Vertreterin oder einen …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[129].children[7].text@116:rule:jurisdiction-name",
+      "path": "body[129].children[7].text",
+      "start": 116,
+      "end": 140,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ich; § 48 Absatz 2 Satz 2 bis 5 der Gemeindeordnung für das Land Nordrhein-Westfalen sowie § 33 Absatz 2 Satz 2 bis 5 der Kreisordnung für das L…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[129].children[7].text@199:rule:jurisdiction-name",
+      "path": "body[129].children[7].text",
+      "start": 199,
+      "end": 223,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n sowie § 33 Absatz 2 Satz 2 bis 5 der Kreisordnung für das Land Nordrhein-Westfalen finden entsprechende Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[130].children[1].children[0].text@65:rule:jurisdiction-name-dative",
+      "path": "body[130].children[1].children[0].text",
+      "start": 65,
+      "end": 92,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…gerinnen und Jägern, der fünf Prozent der Jagdscheininhaber im Land Nordrhein-Westfalen angehören, oder",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[130].children[1].children[4].text@17:rule:jurisdiction-name-bare",
+      "path": "body[130].children[1].children[4].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "3. ihren Sitz in Nordrhein-Westfalen hat und sich der satzungsgemäße sowie praktische Tätigkeits…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[131].children[1].text@142:authority-state-office",
+      "path": "body[131].children[1].text",
+      "start": 142,
+      "end": 161,
+      "term": "Landesamt für Natur",
+      "context": "…ildschadenverhütung (Forschungsstelle) als Fachbereich beim Landesamt für Natur, Umwelt und Verbraucherschutz NRW geführt.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[131].children[1].text@192:rule:jurisdiction-abbreviation",
+      "path": "body[131].children[1].text",
+      "start": 192,
+      "end": 195,
+      "term": "NRW",
+      "context": "…eich beim Landesamt für Natur, Umwelt und Verbraucherschutz NRW geführt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[132].children[3].text@46:rule:jurisdiction-name-bare",
+      "path": "body[132].children[3].text",
+      "start": 46,
+      "end": 65,
+      "term": "Nordrhein-Westfalen",
+      "context": "In den Beirat entsendet der Landesjagdverband Nordrhein-Westfalen e. V. fünf Jägerinnen oder Jäger, wovon eine Person hauptbe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[132].children[3].text@192:rule:jurisdiction-name-bare",
+      "path": "body[132].children[3].text",
+      "start": 192,
+      "end": 211,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Land- oder Forstwirt sein muss. Der Ökologische Jagdverein Nordrhein-Westfalen e.V. entsendet eine Jägerin oder einen Jäger und der Landes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[132].children[3].text@295:rule:jurisdiction-name-bare",
+      "path": "body[132].children[3].text",
+      "start": 295,
+      "end": 314,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erin oder einen Jäger und der Landesverband der Berufsjäger Nordrhein-Westfalen e.V. entsendet eine Vertreterin oder einen Vertreter der Be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[132].children[3].text@536:rule:jurisdiction-name-bare",
+      "path": "body[132].children[3].text",
+      "start": 536,
+      "end": 555,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rtreter entsandt oder berufen werden, die ihren Wohnsitz in Nordrhein-Westfalen haben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[135].children[1].text@85:rule:jurisdiction-name-genitive",
+      "path": "body[135].children[1].text",
+      "start": 85,
+      "end": 111,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… richtet sich nach den gebührenrechtlichen Vorschriften des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[137].children[2].text@232:protected:gazette-nrw",
+      "path": "body[137].children[2].text",
+      "start": 232,
+      "end": 247,
+      "term": "GV. NRW. S. 448",
+      "context": "…uf Anerkennung. Gemäß § 52 in der Fassung vom 12. Mai 2015 (GV. NRW. S. 448) in Verbindung mit § 2 Absatz 4 der Landesjagdgesetzdurchfü…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[137].children[2].text@342:protected:gazette-nrw",
+      "path": "body[137].children[2].text",
+      "start": 342,
+      "end": 357,
+      "term": "GV. NRW. S. 448",
+      "context": "…r Landesjagdgesetzdurchführungsverordnung vom 12. Mai 2015 (GV. NRW. S. 448) bestellte Jägerprüfungsausschussmitglieder bleiben bis zum…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 38,
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 11
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 3
+    },
+    "legislature": {
+      "safe-auto-transform": 2
+    },
+    "geography": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[8].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[78].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[78].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[78].children[6].text",
+      "rule": "jurisdiction-name-adjective-capital",
+      "from": "Nordrhein-Westfälische",
+      "to": "Westdeutsche"
+    },
+    {
+      "path": "body[83].children[8].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[99].children[12].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[101].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[110].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[129].children[3].children[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[129].children[3].children[9].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[129].children[7].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[129].children[7].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[130].children[1].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[130].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[131].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[132].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[132].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[132].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[132].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[135].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[12].text",
+      "term": "Minister für Umwelt, Raumordnung und Landwirtschaft",
+      "context": "Der Minister für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[78].children[5].text",
+      "term": "Nordrhein-Westfalens",
+      "context": "…Nordrhein-Westfalen nach der Roten Liste der Brutvogelarten Nordrhein-Westfalens *1) regelmäßig brüten.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[78].children[6].text",
+      "term": "Landesamt für Natur",
+      "context": "… Hrsg.: Nordrhein-Westfälische Ornithologengesellschaft und Landesamt für Natur, Umwelt und Verbraucherschutz 2017; 6. Fassung. Stand: Juni…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[93].children[4].text",
+      "term": "Ministerium des Bundes bestimmten Muster für den Jagdschein erteilt",
+      "context": "…echend. Der Falknerjagdschein wird nach dem vom zuständigen Ministerium des Bundes bestimmten Muster für den Jagdschein erteilt. Er ist als Falknerjagdschein zu kennzeichnen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[97].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…rdliche Verordnung regeln, die im Amtsblatt der zuständigen Bezirksregierung zu veröffentlichen ist.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "term": "Westfalen",
+      "context": "…gerinnen oder Jäger, der Ökologische Jagdverein Nordrhein - Westfalen e.V. eine Jägerin oder einen Jäger, der Rheinische Landwirt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "term": "Westfalen-Lippe",
+      "context": "…und der Verband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam eine Vertreterin oder einen Vertreter der Ja…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[129].children[1].children[13].text",
+      "term": "Lippe",
+      "context": "…rband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam eine Vertreterin oder einen Vertreter der Ja…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[129].children[3].children[9].text",
+      "term": "Westfalen-Lippe",
+      "context": "…und der Verband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam den Vertreter der Jagdgenossenschaften, die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[129].children[3].children[9].text",
+      "term": "Lippe",
+      "context": "…rband der Jagdgenossenschaften und Eigenjagden in Westfalen-Lippe e.V. gemeinsam den Vertreter der Jagdgenossenschaften, die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[131].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "…ildschadenverhütung (Forschungsstelle) als Fachbereich beim Landesamt für Natur, Umwelt und Verbraucherschutz NRW geführt.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 777,
+    "residuals": [
+      {
+        "path": "body[78].children[5].text",
+        "term": "Nordrhein-Westfalens",
+        "context": "… in Westdeutschland nach der Roten Liste der Brutvogelarten Nordrhein-Westfalens *1) regelmäßig brüten.",
+        "status": "documented",
+        "detectionId": "body[78].children[5].text@259:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[129].children[3].children[9].text",
+        "term": "NRW",
+        "context": "…wirkungsrechte für Tierschutzvereine vom 25. Juni 2013 (GV. NRW. S. 416) anerkannten Vereine gemeinsam eine Vertreterin ode…",
+        "status": "protected"
+      },
+      {
+        "path": "body[137].children[2].text",
+        "term": "NRW",
+        "context": "…nerkennung. Gemäß § 52 in der Fassung vom 12. Mai 2015 (GV. NRW. S. 448) in Verbindung mit § 2 Absatz 4 der Landesjagdgeset…",
+        "status": "protected"
+      },
+      {
+        "path": "body[137].children[2].text",
+        "term": "NRW",
+        "context": "…ndesjagdgesetzdurchführungsverordnung vom 12. Mai 2015 (GV. NRW. S. 448) bestellte Jägerprüfungsausschussmitglieder bleiben…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Bekanntmachung der Neufassung des Landesjagdgesetzes Nordrhein-Westfalen vom 7. Dezember 1994 (GV. NW. 1995 S. 2)",
+    "sourceVersion": "Bekanntmachung der Neufassung des Landesjagdgesetzes Nordrhein-Westfalen vom 7. Dezember 1994 (GV. NW. 1995 S. 2)",
+    "simulation": "Bekanntmachung der Neufassung des Landesjagdgesetzes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 62,
+          "actual": 62,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 83680,
+          "actual": 83233,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 62,
+          "actual": 62,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 495,
+          "actual": 495,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 62,
+          "actual": 62,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 83233,
+          "actual": 83108,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "62 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "62 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25434-42342-sgv_792_19941207_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:09:57.824Z"
+}

@@ -1,0 +1,768 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31777",
+  "slug": "vo-zkps-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@87:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 87,
+      "end": 106,
+      "term": "Nordrhein-Westfalen",
+      "context": "…e Kaufpreissammlung der amtlichen Grundstückswertermittlung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@8:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 8,
+      "end": 11,
+      "term": "NRW",
+      "context": "VO ZKPS NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@81:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 81,
+      "end": 96,
+      "term": "GV. NRW. S. 751",
+      "context": "…t geändert durch Artikel 2 der Verordnung vom 9. Juni 2021 (GV. NRW. S. 751), in Kraft getreten am 22. Juni 2021.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].children[1].text@235:rule:jurisdiction-name-dative",
+      "path": "body[7].children[0].children[1].text",
+      "start": 235,
+      "end": 262,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…ssen und dem Oberen Gutachterausschuss für Grundstückswerte im Land Nordrhein-Westfalen gemäß der Grundstückswertermittlungsverordnung Nordrhein-We…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].children[1].text@310:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].children[1].text",
+      "start": 310,
+      "end": 329,
+      "term": "Nordrhein-Westfalen",
+      "context": "…in-Westfalen gemäß der Grundstückswertermittlungsverordnung Nordrhein-Westfalen vom 8. Dezember 2020 (GV. NRW. S. 1186) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].children[1].text@352:protected:gazette-nrw",
+      "path": "body[7].children[0].children[1].text",
+      "start": 352,
+      "end": 368,
+      "term": "GV. NRW. S. 1186",
+      "context": "…ttlungsverordnung Nordrhein-Westfalen vom 8. Dezember 2020 (GV. NRW. S. 1186) in der jeweils geltenden Fassung wahrgenommen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].children[2].text@74:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].children[2].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ammlung gemäß § 33 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen enthält grundstücksmarktrelevante Daten und ist die Datenba…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].children[2].text@620:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].children[2].text",
+      "start": 620,
+      "end": 639,
+      "term": "Nordrhein-Westfalen",
+      "context": "…und Analysen gemäß der Grundstückswertermittlungsverordnung Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[1].children[1].text@175:rule:jurisdiction-name",
+      "path": "body[7].children[1].children[1].text",
+      "start": 175,
+      "end": 199,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…üllung der amtlichen Grundstückswertermittlung wird für das Land Nordrhein-Westfalen eine Zentrale Kaufpreissammlung eingerichtet und betrieben.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[1].children[1].text@364:rule:jurisdiction-name-bare",
+      "path": "body[7].children[1].children[1].text",
+      "start": 364,
+      "end": 383,
+      "term": "Nordrhein-Westfalen",
+      "context": "…atisiertes Abrufverfahren gemäß § 9 des Datenschutzgesetzes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[1].children[1].text@436:protected:gazette-nrw",
+      "path": "body[7].children[1].children[1].text",
+      "start": 436,
+      "end": 451,
+      "term": "GV. NRW. S. 542",
+      "context": "…stfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[2].children[1].text@166:rule:jurisdiction-name-bare",
+      "path": "body[7].children[2].children[1].text",
+      "start": 166,
+      "end": 185,
+      "term": "Nordrhein-Westfalen",
+      "context": "… und § 48 Absatz 3 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen untereinander Daten der Kaufpreissammlungen aus. Sie bedien…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].children[2].text@245:rule:jurisdiction-name-bare",
+      "path": "body[7].children[2].children[2].text",
+      "start": 245,
+      "end": 264,
+      "term": "Nordrhein-Westfalen",
+      "context": "…bermittlung wird gemäß § 9 Absatz 2 des Datenschutzgesetzes Nordrhein-Westfalen nach Maßgabe dieser Verordnung zugelassen. Sie erfolgt durc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].children[4].text@155:rule:jurisdiction-name-bare",
+      "path": "body[7].children[2].children[4].text",
+      "start": 155,
+      "end": 174,
+      "term": "Nordrhein-Westfalen",
+      "context": "…herheitskonzept gemäß § 10 Absatz 3 des Datenschutzgesetzes Nordrhein-Westfalen für die Zentrale Kaufpreissammlung den Schutzbedarf sowie g…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].children[4].text@400:rule:jurisdiction-name-bare",
+      "path": "body[7].children[2].children[4].text",
+      "start": 400,
+      "end": 419,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hrensverzeichnis gemäß § 8 Absatz 1 des Datenschutzgesetzes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[1].children[0].text@413:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[1].children[0].text",
+      "start": 413,
+      "end": 439,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ng erfolgt über den zentralen Informationsdienstleister des Landes Nordrhein-Westfalen (Informationsdienstleister) nach Maßgabe des für die amtlic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].children[1].text@145:rule:jurisdiction-name-bare",
+      "path": "body[8].children[2].children[1].text",
+      "start": 145,
+      "end": 164,
+      "term": "Nordrhein-Westfalen",
+      "context": "…schüsse gemäß § 33 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].children[2].text@178:rule:jurisdiction-name-bare",
+      "path": "body[8].children[2].children[2].text",
+      "start": 178,
+      "end": 197,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erium nach Maßgabe der Grundstückswertermittlungsverordnung Nordrhein-Westfalen in einem Datenkatalog festgelegt. Der Datenkatalog gibt vor…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].children[4].text@296:authority-district-government",
+      "path": "body[8].children[2].children[4].text",
+      "start": 296,
+      "end": 312,
+      "term": "Bezirksregierung",
+      "context": "…aftskatasterinformationssystems bei der hierfür zuständigen Bezirksregierung angebunden. Auf Antrag und bei vollständiger Erfüllung der …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[4].children[2].text@82:rule:jurisdiction-name-bare",
+      "path": "body[8].children[4].children[2].text",
+      "start": 82,
+      "end": 101,
+      "term": "Nordrhein-Westfalen",
+      "context": "…e haben gemäß § 33 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen in Verbindung mit § 2 Absatz 1 Satz 2 ein uneingeschränktes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[4].children[2].text@427:rule:jurisdiction-name-bare",
+      "path": "body[8].children[4].children[2].text",
+      "start": 427,
+      "end": 446,
+      "term": "Nordrhein-Westfalen",
+      "context": "… und § 37 Absatz 3 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen in Verbindung mit § 3 Absatz 1 ein befristetes und zweckgeb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[4].children[3].text@85:rule:jurisdiction-name-bare",
+      "path": "body[8].children[4].children[3].text",
+      "start": 85,
+      "end": 104,
+      "term": "Nordrhein-Westfalen",
+      "context": "…uss hat gemäß § 25 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen in Verbindung mit § 1 Absatz 2 Satz 1 und 3 und § 3 Absatz …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[4].children[4].text@178:rule:jurisdiction-name-bare",
+      "path": "body[8].children[4].children[4].text",
+      "start": 178,
+      "end": 197,
+      "term": "Nordrhein-Westfalen",
+      "context": "…emäß § 13 und § 23 der Grundstückswertermittlungsverordnung Nordrhein-Westfalen in Verbindung mit § 6 Absatz 4 anlassbezogen ein uneingesch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[0].children[1].text@160:rule:jurisdiction-name-bare",
+      "path": "body[9].children[0].children[1].text",
+      "start": 160,
+      "end": 179,
+      "term": "Nordrhein-Westfalen",
+      "context": "…atz 1 nach Maßgabe der Grundstückswertermittlungsverordnung Nordrhein-Westfalen bedarfsweise fortgeschrieben. Die Zentrale Kaufpreissammlun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[1].text@266:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[1].text",
+      "start": 266,
+      "end": 285,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erium nach Maßgabe der Grundstückswertermittlungsverordnung Nordrhein-Westfalen für den Einzelfall zeitlich befristete Ausnahmen von den Vo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[4].children[4].text@101:rule:jurisdiction-name-bare",
+      "path": "body[10].children[2].children[4].children[4].text",
+      "start": 101,
+      "end": 120,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s auf Grund des § 9 Absatz 2 Satz 1 des Datenschutzgesetzes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].children[4].children[4].text@173:protected:gazette-nrw",
+      "path": "body[10].children[2].children[4].children[4].text",
+      "start": 173,
+      "end": 188,
+      "term": "GV. NRW. S. 542",
+      "context": "…stfalen in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542), der durch Artikel 2 des Gesetzes vom 29. April 2003 (GV. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[2].children[4].children[4].text@244:protected:gazette-nrw",
+      "path": "body[10].children[2].children[4].children[4].text",
+      "start": 244,
+      "end": 259,
+      "term": "GV. NRW. S. 252",
+      "context": "… 542), der durch Artikel 2 des Gesetzes vom 29. April 2003 (GV. NRW. S. 252) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].text@0:rule:jurisdiction-name-bare",
+      "path": "body[12].text",
+      "start": 0,
+      "end": 19,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 23
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[8].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[4].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[4].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].children[4].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[8].children[2].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…aftskatasterinformationssystems bei der hierfür zuständigen Bezirksregierung angebunden. Auf Antrag und bei vollständiger Erfüllung der …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 216,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel 2 der Verordnung vom 9. Juni 2021 (GV. NRW. S. 751), in Kraft getreten am 22. Juni 2021.",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ttlungsverordnung Westdeutschland vom 8. Dezember 2020 (GV. NRW. S. 1186) in der jeweils geltenden Fassung wahrgenommen.",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…and in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[2].children[4].children[4].text",
+        "term": "NRW",
+        "context": "…and in der Fassung der Bekanntmachung vom 9. Juni 2000 (GV. NRW. S. 542), der durch Artikel 2 des Gesetzes vom 29. April 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[2].children[4].children[4].text",
+        "term": "NRW",
+        "context": "…), der durch Artikel 2 des Gesetzes vom 29. April 2003 (GV. NRW. S. 252) geändert worden ist.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Zentrale Kaufpreissammlung der amtlichen Grundstückswertermittlung Nordrhein-Westfalen vom 14. Februar 2017",
+    "sourceVersion": "Verordnung über die Zentrale Kaufpreissammlung der amtlichen Grundstückswertermittlung Nordrhein-Westfalen vom 14. Februar 2017",
+    "simulation": "Verordnung über die Zentrale Kaufpreissammlung der amtlichen Grundstückswertermittlung Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 22536,
+          "actual": 23066,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 134,
+          "actual": 134,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 16,
+          "actual": 16,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 23066,
+          "actual": 22982,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "16 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "16 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:28:51.063Z"
+}

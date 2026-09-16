@@ -1,0 +1,386 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30334",
+  "slug": "verordnung-ueber-die-zuweisung-von-gemeinschaftsmarken-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[9].text@58:rule:jurisdiction-name-bare",
+      "path": "body[9].text",
+      "start": 58,
+      "end": 77,
+      "term": "Nordrhein-Westfalen",
+      "context": "jeweils in Verbindung mit § 1 Absatz 2 des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artike…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].text@99:protected:gazette-nrw",
+      "path": "body[9].text",
+      "start": 99,
+      "end": 113,
+      "term": "GV. NRW. S. 30",
+      "context": "…des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artikel 1 des Gesetzes vom 5. April 2011 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].text@173:protected:gazette-nrw",
+      "path": "body[9].text",
+      "start": 173,
+      "end": 188,
+      "term": "GV. NRW. S. 199",
+      "context": "…), geändert durch Artikel 1 des Gesetzes vom 5. April 2011 (GV. NRW. S. 199), -",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].text@180:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[0].text",
+      "start": 180,
+      "end": 206,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…eschutzsachen werden für die Bezirke aller Landgerichte des Landes Nordrhein-Westfalen dem Landgericht Düsseldorf zugewiesen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].text@223:municipality",
+      "path": "body[11].children[0].text",
+      "start": 223,
+      "end": 233,
+      "term": "Düsseldorf",
+      "context": "…Landgerichte des Landes Nordrhein-Westfalen dem Landgericht Düsseldorf zugewiesen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[1].text@65:ministry-compound",
+      "path": "body[12].children[1].text",
+      "start": 65,
+      "end": 82,
+      "term": "Justizministerium",
+      "context": "… Verordnung tritt am Tage nach der Verkündung in Kraft. Das Justizministerium berichtet der Landesregierung bis zum 31. Dezember 2016 und…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[12].children[2].text@4:ministry-compound",
+      "path": "body[12].children[2].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[12].children[2].text@40:geography-region",
+      "path": "body[12].children[2].text",
+      "start": 40,
+      "end": 49,
+      "term": "Westfalen",
+      "context": "Der Justizminister des Landes Nordrhein Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "geography": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[11].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…Landgerichte des Landes Nordrhein-Westfalen dem Landgericht Düsseldorf zugewiesen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].text",
+      "term": "Justizministerium",
+      "context": "… Verordnung tritt am Tage nach der Verkündung in Kraft. Das Justizministerium berichtet der Landesregierung bis zum 31. Dezember 2016 und…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[2].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[2].text",
+      "term": "Westfalen",
+      "context": "Der Justizminister des Landes Nordrhein Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 20,
+    "residuals": [
+      {
+        "path": "body[9].text",
+        "term": "NRW",
+        "context": "…des Justizgesetzes Westdeutschland vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artikel 1 des Gesetzes vom 5. April…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 1 des Gesetzes vom 5. April 2011 (GV. NRW. S. 199), -",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Zuweisung von Gemeinschaftsmarken-, Gemeinschaftsgeschmacksmuster-, Patent-, Sortenschutz-, Gebrauchsmusterstreitsachen und Topographieschutzsachen vom 30. August 2011",
+    "sourceVersion": "Verordnung über die Zuweisung von Gemeinschaftsmarken-, Gemeinschaftsgeschmacksmuster-, Patent-, Sortenschutz-, Gebrauchsmusterstreitsachen und Topographieschutzsachen vom 30. August 2011",
+    "simulation": "Verordnung über die Zuweisung von Gemeinschaftsmarken-, Gemeinschaftsgeschmacksmuster-, Patent-, Sortenschutz-, Gebrauchsmusterstreitsachen und Topographieschutzsachen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1962,
+          "actual": 2040,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2040,
+          "actual": 2032,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "2 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "2 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:31:49.741Z"
+}

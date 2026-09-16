@@ -1,0 +1,360 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29059",
+  "slug": "verordnung-ueber-die-tilgung-uneinbringlicher-geldstrafen-durch-freie-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@6:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 6,
+      "end": 15,
+      "term": "SGV. NRW.",
+      "context": "Fn 1: SGV. NRW. 301.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@236:ministry-compound",
+      "path": "body[2].text",
+      "start": 236,
+      "end": 254,
+      "term": "Justizministeriums",
+      "context": "…Verbindung mit § 1 der Verordnung über die Ermächtigung des Justizministeriums zum Erlass von Rechtsverordnungen nach Artikel 293 des Einf…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[2].text@367:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 367,
+      "end": 382,
+      "term": "GV. NRW. S. 301",
+      "context": "…es Einführungsgesetzes zum Strafgesetzbuch vom 8. Mai 1984 (GV. NRW. S. 301), zuletzt geändert durch Verordnung vom 18. Oktober 2005 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@441:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 441,
+      "end": 456,
+      "term": "GV. NRW. S. 835",
+      "context": "…1), zuletzt geändert durch Verordnung vom 18. Oktober 2005 (GV. NRW. S. 835), wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].text@174:protected:gazette-nrw",
+      "path": "body[11].children[0].text",
+      "start": 174,
+      "end": 189,
+      "term": "GV. NRW. S. 469",
+      "context": "…ringlicher Geldstrafen durch freie Arbeit vom 6. Juli 1984 (GV. NRW. S. 469), geändert durch Artikel 132 des Zweiten Befristungsgesetze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].text@270:protected:gazette-nrw",
+      "path": "body[11].children[0].text",
+      "start": 270,
+      "end": 285,
+      "term": "GV. NRW. S. 274",
+      "context": "…ikel 132 des Zweiten Befristungsgesetzes vom 5. April 2005 (GV. NRW. S. 274), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[2].text@4:ministry-compound",
+      "path": "body[11].children[2].text",
+      "start": 4,
+      "end": 20,
+      "term": "Justizministerin",
+      "context": "Die Justizministerin des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[11].children[2].text@25:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[2].text",
+      "start": 25,
+      "end": 51,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Justizministerin des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[11].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Justizministeriums",
+      "context": "…Verbindung mit § 1 der Verordnung über die Ermächtigung des Justizministeriums zum Erlass von Rechtsverordnungen nach Artikel 293 des Einf…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].text",
+      "term": "Justizministerin",
+      "context": "Die Justizministerin des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 68,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "Fn 1: SGV. NRW. 301.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…inführungsgesetzes zum Strafgesetzbuch vom 8. Mai 1984 (GV. NRW. S. 301), zuletzt geändert durch Verordnung vom 18. Oktober…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…zuletzt geändert durch Verordnung vom 18. Oktober 2005 (GV. NRW. S. 835), wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[0].text",
+        "term": "NRW",
+        "context": "…licher Geldstrafen durch freie Arbeit vom 6. Juli 1984 (GV. NRW. S. 469), geändert durch Artikel 132 des Zweiten Befristung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[0].text",
+        "term": "NRW",
+        "context": "… 132 des Zweiten Befristungsgesetzes vom 5. April 2005 (GV. NRW. S. 274), außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Tilgung uneinbringlicher Geldstrafen durch freie Arbeit vom 23. November 2005",
+    "sourceVersion": "Verordnung über die Tilgung uneinbringlicher Geldstrafen durch freie Arbeit vom 23. November 2005",
+    "simulation": "Verordnung über die Tilgung uneinbringlicher Geldstrafen durch freie Arbeit in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5246,
+          "actual": 5537,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 38,
+          "actual": 38,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5537,
+          "actual": 5533,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "9 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "9 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T06:03:55.833Z"
+}

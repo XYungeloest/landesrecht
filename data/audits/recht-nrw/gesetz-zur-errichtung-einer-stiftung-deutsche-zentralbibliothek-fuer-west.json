@@ -1,0 +1,1239 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30972",
+  "slug": "gesetz-zur-errichtung-einer-stiftung-deutsche-zentralbibliothek-fuer-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[0].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen errichtet auf Dauer eine rechtsfähige Stiftung des öffentli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[0].children[0].text@330:municipality",
+      "path": "body[0].children[0].text",
+      "start": 330,
+      "end": 334,
+      "term": "Köln",
+      "context": "…ht mit Inkrafttreten dieses Gesetzes. Sie hat ihren Sitz in Köln und einen weiteren Standort in Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[0].children[0].text@366:municipality",
+      "path": "body[0].children[0].text",
+      "start": 366,
+      "end": 370,
+      "term": "Bonn",
+      "context": "…. Sie hat ihren Sitz in Köln und einen weiteren Standort in Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@80:municipality",
+      "path": "body[1].children[1].text",
+      "start": 80,
+      "end": 84,
+      "term": "Köln",
+      "context": "…Stiftungszwecks kooperiert die Stiftung mit der Universität Köln sowie der Universität Bonn. Sie arbeitet auch mit anderen I…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@107:municipality",
+      "path": "body[1].children[1].text",
+      "start": 107,
+      "end": 111,
+      "term": "Bonn",
+      "context": "…die Stiftung mit der Universität Köln sowie der Universität Bonn. Sie arbeitet auch mit anderen Institutionen der wissenscha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@470:rule:jurisdiction-name",
+      "path": "body[2].children[0].text",
+      "start": 470,
+      "end": 494,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…tiftungsrates. Die Satzung wird im Ministerialblatt für das Land Nordrhein-Westfalen veröffentlicht und tritt am Tag nach der Veröffentlichung i…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@101:ministry-portfolio",
+      "path": "body[2].children[1].text",
+      "start": 101,
+      "end": 143,
+      "term": "Ministerium des Landes Nordrhein-Westfalen",
+      "context": "…bedürfen der Genehmigung durch das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen im Einvernehmen mit dem Finanzministerium des Landes Nordrh…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[1].text@117:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[1].text",
+      "start": 117,
+      "end": 143,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ehmigung durch das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen im Einvernehmen mit dem Finanzministerium des Landes Nordrh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@168:ministry-compound",
+      "path": "body[2].children[1].text",
+      "start": 168,
+      "end": 185,
+      "term": "Finanzministerium",
+      "context": "…rium des Landes Nordrhein-Westfalen im Einvernehmen mit dem Finanzministerium des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[2].children[1].text@190:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[1].text",
+      "start": 190,
+      "end": 216,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ein-Westfalen im Einvernehmen mit dem Finanzministerium des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[4].text@35:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[4].text",
+      "start": 35,
+      "end": 61,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Zuwendungen des Bundes und des Landes Nordrhein-Westfalen sowie der übrigen Länder, die die Stiftung zur Erfüllung ih…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[5].text@88:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[5].text",
+      "start": 88,
+      "end": 114,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…den der Stiftung nach Maßgabe des Haushalts des Bundes, des Landes Nordrhein-Westfalen und der Ländergemeinschaft im Rahmen des festgestellten Wir…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[6].text@162:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[6].text",
+      "start": 162,
+      "end": 188,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n unter Beachtung der haushaltsrechtlichen Bestimmungen des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[7].text@520:ministry-portfolio",
+      "path": "body[3].children[7].text",
+      "start": 520,
+      "end": 571,
+      "term": "Ministerium des Landes Nordrhein-Westfalen zusammen",
+      "context": "…tors. Der Jahresabschluss ist dem für Forschung zuständigen Ministerium des Landes Nordrhein-Westfalen zusammen mit dem Sachbericht vorzulegen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@536:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[7].text",
+      "start": 536,
+      "end": 562,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…abschluss ist dem für Forschung zuständigen Ministerium des Landes Nordrhein-Westfalen zusammen mit dem Sachbericht vorzulegen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[9].text@318:rule:jurisdiction-name",
+      "path": "body[3].children[9].text",
+      "start": 318,
+      "end": 342,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…gkeit angeben. Die §§ 3 bis 28 des Gebührengesetzes für das Land Nordrhein-Westfalen gelten entsprechend, soweit in der Gebührenordnung nichts a…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[0].text@82:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].children[0].text",
+      "start": 82,
+      "end": 108,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…em Vertreter des für Forschung zuständigen Ministeriums des Landes Nordrhein-Westfalen als Vorsitzende oder Vorsitzender. Der Stiftungsrat kann ei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[2].text@51:municipality",
+      "path": "body[5].children[0].children[2].text",
+      "start": 51,
+      "end": 55,
+      "term": "Köln",
+      "context": "der Vertreterin oder dem Vertreter der Universität Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[3].text@51:municipality",
+      "path": "body[5].children[0].children[3].text",
+      "start": 51,
+      "end": 55,
+      "term": "Bonn",
+      "context": "der Vertreterin oder dem Vertreter der Universität Bonn und",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@114:ministry-portfolio",
+      "path": "body[5].children[2].text",
+      "start": 114,
+      "end": 156,
+      "term": "Ministerium des Landes Nordrhein-Westfalen",
+      "context": "…bsatz 1 Nummer 5 erfolgt durch das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen im Einvernehmen mit dem zuständigen Ministerium des Bundes.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@130:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[2].text",
+      "start": 130,
+      "end": 156,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… erfolgt durch das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen im Einvernehmen mit dem zuständigen Ministerium des Bundes.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].text@193:ministry-portfolio",
+      "path": "body[5].children[2].text",
+      "start": 193,
+      "end": 215,
+      "term": "Ministerium des Bundes",
+      "context": "…des Nordrhein-Westfalen im Einvernehmen mit dem zuständigen Ministerium des Bundes.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@90:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[0].text",
+      "start": 90,
+      "end": 116,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…chtsaufsicht des für Forschung zuständigen Ministeriums des Landes Nordrhein-Westfalen. § 76 Absatz 2 bis 4 des Hochschulgesetzes vom 31. Oktober …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[0].text@182:protected:gazette-nrw",
+      "path": "body[9].children[0].text",
+      "start": 182,
+      "end": 197,
+      "term": "GV. NRW. S. 474",
+      "context": "… Absatz 2 bis 4 des Hochschulgesetzes vom 31. Oktober 2006 (GV. NRW. S. 474), zuletzt geändert durch Artikel 6 des Gesetzes vom 28. Mai…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].text@264:protected:gazette-nrw",
+      "path": "body[9].children[0].text",
+      "start": 264,
+      "end": 279,
+      "term": "GV. NRW. S. 272",
+      "context": "…tzt geändert durch Artikel 6 des Gesetzes vom 28. Mai 2013 (GV. NRW. S. 272), gelten entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].text@127:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[1].text",
+      "start": 127,
+      "end": 153,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…r Medizin vorhandene beamtete Personal bleibt im Dienst des Landes Nordrhein-Westfalen und wird auf der Grundlage des § 20 Absatz 2 des Beamtensta…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].text@324:ministry-portfolio",
+      "path": "body[10].children[1].text",
+      "start": 324,
+      "end": 426,
+      "term": "Ministerium des Landes Nordrhein-Westfalen führt die Zuweisung der Direktorin oder des Direktors durch",
+      "context": "…gkeit der Stiftung zugewiesen. Das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen führt die Zuweisung der Direktorin oder des Direktors durch. Die Zuweisung lässt die Befugnisse des Stiftungsrates gemä…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@340:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[1].text",
+      "start": 340,
+      "end": 366,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ng zugewiesen. Das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen führt die Zuweisung der Direktorin oder des Direktors durch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[4].text@222:rule:jurisdiction-name-dative",
+      "path": "body[10].children[4].text",
+      "start": 222,
+      "end": 251,
+      "term": "beim Land Nordrhein-Westfalen",
+      "context": "…nkt werden. Für die übergeleiteten Beschäftigten werden die beim Land Nordrhein-Westfalen in einem Arbeits- und Ausbildungsverhältnis zurückgelegten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („beim Land Nordrhein-Westfalen“ → „beim Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "beim Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[5].text@79:rule:jurisdiction-name-dative",
+      "path": "body[10].children[5].text",
+      "start": 79,
+      "end": 107,
+      "term": "vom Land Nordrhein-Westfalen",
+      "context": "…g verbrachten Beschäftigungszeiten und die davor liegenden, vom Land Nordrhein-Westfalen entsprechend den tariflichen Vorschriften angerechneten Bes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („vom Land Nordrhein-Westfalen“ → „vom Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "vom Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[5].text@285:rule:jurisdiction-name",
+      "path": "body[10].children[5].text",
+      "start": 285,
+      "end": 309,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ftigten werden bei einem späteren unmittelbaren Wechsel zum Land Nordrhein-Westfalen von diesem als Beschäftigungszeit nach § 34 Absatz 3 Satz 1…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[5].text@455:rule:jurisdiction-name",
+      "path": "body[10].children[5].text",
+      "start": 455,
+      "end": 479,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ür den öffentlichen Dienst der Länder (TV-L) in der für das Land Nordrhein-Westfalen jeweils geltenden Fassung angerechnet, sofern das Arbeitsve…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[5].text@907:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[5].text",
+      "start": 907,
+      "end": 933,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…schreibungen des für Forschung zuständigen Ministeriums des Landes Nordrhein-Westfalen sind diese als interne Bewerberinnen oder interne Bewerber …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[5].text@997:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[5].text",
+      "start": 997,
+      "end": 1023,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…d diese als interne Bewerberinnen oder interne Bewerber des Landes Nordrhein-Westfalen zu behandeln.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[7].text@122:municipality",
+      "path": "body[10].children[7].text",
+      "start": 122,
+      "end": 126,
+      "term": "Köln",
+      "context": "… Beamte dürfen Einrichtungen und Angebote der Universitäten Köln und Bonn im gleichen Umfang und zu den gleichen Bedingungen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[10].children[7].text@131:municipality",
+      "path": "body[10].children[7].text",
+      "start": 131,
+      "end": 135,
+      "term": "Bonn",
+      "context": "…ürfen Einrichtungen und Angebote der Universitäten Köln und Bonn im gleichen Umfang und zu den gleichen Bedingungen in Anspr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].text@221:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[0].text",
+      "start": 221,
+      "end": 247,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…rinnen und Arbeitnehmer auf Antrag wieder in den Dienst des Landes Nordrhein-Westfalen übernommen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@62:rule:jurisdiction-name",
+      "path": "body[12].children[1].text",
+      "start": 62,
+      "end": 86,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…i Auflösung der Stiftung fällt das Stiftungsvermögen an das Land Nordrhein-Westfalen, das es unmittelbar und ausschließlich für wissenschaftlich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[14].text@4:constitutional-organ-state",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[14].text@20:rule:jurisdiction-name-bare",
+      "path": "body[14].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].text@32:ministry-portfolio",
+      "path": "body[15].text",
+      "start": 32,
+      "end": 71,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Für die Ministerpräsidentin Die Ministerin für Schule und Weiterbildung in eigener Ressortzuständigkeit sowie zugleich für den Mini…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].text@214:ministry-portfolio",
+      "path": "body[15].text",
+      "start": 214,
+      "end": 271,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "…mwelt, Landwirtschaft, Natur- und Verbraucherschutz und die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-compound",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].text@4:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 23
+    },
+    "municipality": {
+      "manual-review": 8
+    },
+    "ministry": {
+      "manual-review": 12
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[0].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[7].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[9].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[4].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "beim Land Nordrhein-Westfalen",
+      "to": "beim Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "vom Land Nordrhein-Westfalen",
+      "to": "vom Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[14].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[0].children[0].text",
+      "term": "Köln",
+      "context": "…ht mit Inkrafttreten dieses Gesetzes. Sie hat ihren Sitz in Köln und einen weiteren Standort in Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[0].children[0].text",
+      "term": "Bonn",
+      "context": "…. Sie hat ihren Sitz in Köln und einen weiteren Standort in Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Köln",
+      "context": "…Stiftungszwecks kooperiert die Stiftung mit der Universität Köln sowie der Universität Bonn. Sie arbeitet auch mit anderen I…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Bonn",
+      "context": "…die Stiftung mit der Universität Köln sowie der Universität Bonn. Sie arbeitet auch mit anderen Institutionen der wissenscha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].text",
+      "term": "Ministerium des Landes Nordrhein-Westfalen",
+      "context": "…bedürfen der Genehmigung durch das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen im Einvernehmen mit dem Finanzministerium des Landes Nordrh…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].text",
+      "term": "Finanzministerium",
+      "context": "…rium des Landes Nordrhein-Westfalen im Einvernehmen mit dem Finanzministerium des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Ministerium des Landes Nordrhein-Westfalen zusammen",
+      "context": "…tors. Der Jahresabschluss ist dem für Forschung zuständigen Ministerium des Landes Nordrhein-Westfalen zusammen mit dem Sachbericht vorzulegen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "term": "Köln",
+      "context": "der Vertreterin oder dem Vertreter der Universität Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[3].text",
+      "term": "Bonn",
+      "context": "der Vertreterin oder dem Vertreter der Universität Bonn und",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Ministerium des Landes Nordrhein-Westfalen",
+      "context": "…bsatz 1 Nummer 5 erfolgt durch das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen im Einvernehmen mit dem zuständigen Ministerium des Bundes.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Ministerium des Bundes",
+      "context": "…des Nordrhein-Westfalen im Einvernehmen mit dem zuständigen Ministerium des Bundes.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].text",
+      "term": "Ministerium des Landes Nordrhein-Westfalen führt die Zuweisung der Direktorin oder des Direktors durch",
+      "context": "…gkeit der Stiftung zugewiesen. Das für Forschung zuständige Ministerium des Landes Nordrhein-Westfalen führt die Zuweisung der Direktorin oder des Direktors durch. Die Zuweisung lässt die Befugnisse des Stiftungsrates gemä…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[7].text",
+      "term": "Köln",
+      "context": "… Beamte dürfen Einrichtungen und Angebote der Universitäten Köln und Bonn im gleichen Umfang und zu den gleichen Bedingungen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[7].text",
+      "term": "Bonn",
+      "context": "…ürfen Einrichtungen und Angebote der Universitäten Köln und Bonn im gleichen Umfang und zu den gleichen Bedingungen in Anspr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Für die Ministerpräsidentin Die Ministerin für Schule und Weiterbildung in eigener Ressortzuständigkeit sowie zugleich für den Mini…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "…mwelt, Landwirtschaft, Natur- und Verbraucherschutz und die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 177,
+    "residuals": [
+      {
+        "path": "body[9].children[0].text",
+        "term": "NRW",
+        "context": "…atz 2 bis 4 des Hochschulgesetzes vom 31. Oktober 2006 (GV. NRW. S. 474), zuletzt geändert durch Artikel 6 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].text",
+        "term": "NRW",
+        "context": "…geändert durch Artikel 6 des Gesetzes vom 28. Mai 2013 (GV. NRW. S. 272), gelten entsprechend.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Errichtung einer Stiftung „Deutsche Zentralbibliothek für Medizin“ vom 19. Dezember 2013 (GV. NRW. 2013 S. 881)",
+    "sourceVersion": "Gesetz zur Errichtung einer Stiftung „Deutsche Zentralbibliothek für Medizin“ vom 19. Dezember 2013 (GV. NRW. 2013 S. 881)",
+    "simulation": "Gesetz zur Errichtung einer Stiftung „Deutsche Zentralbibliothek für Medizin“ in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16439,
+          "actual": 16838,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 93,
+          "actual": 93,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16838,
+          "actual": 16746,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Fundstelle GV. NRW. 2013 S. 881"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "Fundstelle GV. NRW. 2013 S. 881",
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:25:18.120Z"
+}

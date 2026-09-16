@@ -1,0 +1,731 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33661",
+  "slug": "zvo-ifsg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@139:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 139,
+      "end": 154,
+      "term": "GV. NRW. S.1136",
+      "context": "…Infektionsschutz- und Befugnisgesetz vom 21. Dezember 2022 (GV. NRW. S.1136))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@85:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 85,
+      "end": 100,
+      "term": "GV. NRW. S. 421",
+      "context": "…3 Satz 1 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), der durch Artikel 10 Nummer 3 des Gesetzes vom 9. Mai 200…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@163:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 163,
+      "end": 178,
+      "term": "GV. NRW. S. 462",
+      "context": "…der durch Artikel 10 Nummer 3 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, in Verbindung mit § 15 Absatz 3 Satz …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].text@123:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[1].text",
+      "start": 123,
+      "end": 149,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 2 des Gesetzes über den öffentlichen Gesundheitsdienst des Landes Nordrhein-Westfalen vom 25. November 1997 (GV. NRW. S. 430) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@173:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 173,
+      "end": 188,
+      "term": "GV. NRW. S. 430",
+      "context": "…ienst des Landes Nordrhein-Westfalen vom 25. November 1997 (GV. NRW. S. 430) in der jeweils geltenden Fassung, im Folgenden ÖDGD, genan…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].text@4:regional-body-association",
+      "path": "body[11].children[0].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände sind zuständige Behörden im Sinne der §§ 56 bis 58 IfSG. Da…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@143:regional-body-association",
+      "path": "body[11].children[1].text",
+      "start": 143,
+      "end": 161,
+      "term": "Landschaftsverband",
+      "context": "… 1 IfSG ist – soweit Absatz 3 nichts anderes bestimmt – der Landschaftsverband, in dessen Bezirk die Antragstellerinnen und Antragsteller …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@329:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[1].text",
+      "start": 329,
+      "end": 355,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ichem Aufenthalt zur Zeit der Antragsstellung außerhalb des Landes Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die V…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[1].text@364:regional-body-association",
+      "path": "body[11].children[1].text",
+      "start": 364,
+      "end": 382,
+      "term": "Landschaftsverband",
+      "context": "…gsstellung außerhalb des Landes Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die Vorschriften des § 3 Absatz …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@383:geography-region",
+      "path": "body[11].children[1].text",
+      "start": 383,
+      "end": 398,
+      "term": "Westfalen-Lippe",
+      "context": "…b des Landes Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die Vorschriften des § 3 Absatz 2 bis 4 Satz 1 u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@393:geography-river",
+      "path": "body[11].children[1].text",
+      "start": 393,
+      "end": 398,
+      "term": "Lippe",
+      "context": "…es Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die Vorschriften des § 3 Absatz 2 bis 4 Satz 1 u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[2].text@552:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[2].text",
+      "start": 552,
+      "end": 578,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…thalt haben. Liegt der gewöhnliche Aufenthalt außerhalb des Landes Nordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. S…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].text@591:regional-body-association",
+      "path": "body[11].children[2].text",
+      "start": 591,
+      "end": 609,
+      "term": "Landschaftsverband",
+      "context": "…nthalt außerhalb des Landes Nordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. Steht nicht fest, wo der gewöhnl…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[11].children[2].text@610:geography-region",
+      "path": "body[11].children[2].text",
+      "start": 610,
+      "end": 625,
+      "term": "Westfalen-Lippe",
+      "context": "…s Landes Nordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. Steht nicht fest, wo der gewöhnliche Aufenthalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[2].text@620:geography-river",
+      "path": "body[11].children[2].text",
+      "start": 620,
+      "end": 625,
+      "term": "Lippe",
+      "context": "…ordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. Steht nicht fest, wo der gewöhnliche Aufenthalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].text@4:constitutional-organ-state",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[15].text@20:rule:jurisdiction-name-bare",
+      "path": "body[15].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 65,
+      "term": "Ministerin für Wirtschaft, Industrie, Klimaschutz und Energie",
+      "context": "Die Ministerin für Wirtschaft, Industrie, Klimaschutz und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 25,
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[19].text@4:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[20].text@4:ministry-portfolio",
+      "path": "body[20].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[21].text@4:ministry-portfolio",
+      "path": "body[21].text",
+      "start": 4,
+      "end": 62,
+      "term": "Ministerin für Heimat, Kommunales, Bau und Digitalisierung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Digitalisierung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 4
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "regional-body": {
+      "manual-review": 4
+    },
+    "geography": {
+      "manual-review": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[15].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[11].children[0].text",
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände sind zuständige Behörden im Sinne der §§ 56 bis 58 IfSG. Da…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "… 1 IfSG ist – soweit Absatz 3 nichts anderes bestimmt – der Landschaftsverband, in dessen Bezirk die Antragstellerinnen und Antragsteller …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…gsstellung außerhalb des Landes Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die Vorschriften des § 3 Absatz …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "…b des Landes Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die Vorschriften des § 3 Absatz 2 bis 4 Satz 1 u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…es Nordrhein-Westfalen ist der Landschaftsverband Westfalen-Lippe zuständig. Die Vorschriften des § 3 Absatz 2 bis 4 Satz 1 u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].text",
+      "term": "Landschaftsverband",
+      "context": "…nthalt außerhalb des Landes Nordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. Steht nicht fest, wo der gewöhnl…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].text",
+      "term": "Westfalen-Lippe",
+      "context": "…s Landes Nordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. Steht nicht fest, wo der gewöhnliche Aufenthalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].text",
+      "term": "Lippe",
+      "context": "…ordrhein-Westfalen, so ist der Landschaftsverband Westfalen-Lippe zuständig. Steht nicht fest, wo der gewöhnliche Aufenthalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Ministerin für Wirtschaft, Industrie, Klimaschutz und Energie",
+      "context": "Die Ministerin für Wirtschaft, Industrie, Klimaschutz und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].text",
+      "term": "Ministerin für Heimat, Kommunales, Bau und Digitalisierung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Digitalisierung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 86,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ktionsschutz- und Befugnisgesetz vom 21. Dezember 2022 (GV. NRW. S.1136))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…tz 1 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), der durch Artikel 10 Nummer 3 des Gesetzes vom 9.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…durch Artikel 10 Nummer 3 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, in Verbindung mit § 15 Absatz…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…ienst des Landes Westdeutschland vom 25. November 1997 (GV. NRW. S. 430) in der jeweils geltenden Fassung, im Folgenden ÖDG…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Landesregierung",
+        "formula": "ordinance-formula",
+        "text": "verordnet die Landesregierung",
+        "path": "body[3].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "safe-auto-transform",
+    "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird übergeleitet.",
+    "source": {
+      "name": "Landesregierung",
+      "formula": "ordinance-formula",
+      "text": "verordnet die Landesregierung",
+      "path": "body[3].text"
+    },
+    "enactingBody": "Landesregierung"
+  },
+  "citations": {
+    "source": "Verordnung zur Regelung von Zuständigkeiten nach dem Infektionsschutzgesetz vom 21. Dezember 2022 (In Kraft getreten am 1. Januar 2023 (GV. NRW. S. 1136).)",
+    "sourceVersion": "Verordnung zur Regelung von Zuständigkeiten nach dem Infektionsschutzgesetz vom 21. Dezember 2022 (In Kraft getreten am 1. Januar 2023 (GV. NRW. S. 1136).)",
+    "simulation": "Verordnung zur Regelung von Zuständigkeiten nach dem Infektionsschutzgesetz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8174,
+          "actual": 8167,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 51,
+          "actual": 51,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8167,
+          "actual": 8151,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "11 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "11 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:47:05.846Z"
+}

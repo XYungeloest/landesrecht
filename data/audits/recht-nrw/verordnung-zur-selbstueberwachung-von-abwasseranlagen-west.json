@@ -1,0 +1,615 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30912",
+  "slug": "verordnung-zur-selbstueberwachung-von-abwasseranlagen-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@128:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 128,
+      "end": 143,
+      "term": "GV. NRW. S. 926",
+      "context": "…setzes in der Fassung der Bekanntmachung vom 25. Juni 1995 (GV. NRW. S. 926), von denen § 61 Absatz 2 zuletzt durch Artikel 1 des Geset…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@225:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 225,
+      "end": 240,
+      "term": "GV. NRW. S. 133",
+      "context": "…tz 2 zuletzt durch Artikel 1 des Gesetzes vom 5. März 2013 (GV. NRW. S. 133) geändert worden ist, verordnet das Ministerium für Klimasc…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@277:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 277,
+      "end": 358,
+      "term": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…z 2013 (GV. NRW. S. 133) geändert worden ist, verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz mit Zustimmung des Landtags:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@237:protected:gazette-nrw",
+      "path": "body[3].children[0].children[2].text",
+      "start": 237,
+      "end": 252,
+      "term": "GV. NRW. S. 133",
+      "context": "…h § 46 Absatz 1 des Landeswassergesetzes vom 25. Juni 1995 (GV. NRW. S. 133) in der jeweils geltenden Fassung bestehenden Abwasserbesei…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].children[0].children[0].text@125:rule:jurisdiction-name-adjective",
+      "path": "body[4].children[1].children[0].children[0].text",
+      "start": 125,
+      "end": 147,
+      "term": "nordrhein-westfälische",
+      "context": "…tglieder und deren Angestellte durch die jeweils zuständige nordrhein-westfälische Handwerkskammer, Industrie- und Handelskammer oder Ingenieu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective übergeleitet („nordrhein-westfälische“ → „westdeutsche“).",
+      "transformRule": "jurisdiction-name-adjective",
+      "replacement": "westdeutsche"
+    },
+    {
+      "id": "body[4].children[1].children[0].children[0].text@446:protected:gazette-nrw",
+      "path": "body[4].children[1].children[0].children[0].text",
+      "start": 446,
+      "end": 461,
+      "term": "GV. NRW. S. 602",
+      "context": "… 4 des Verwaltungsverfahrensgesetzes vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung gelten entsprechend. In a…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].children[0].children[0].text@588:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[0].children[0].text",
+      "start": 588,
+      "end": 607,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Bundesländern erfolgte An- und Aberkennungen gelten auch in Nordrhein-Westfalen. Entsprechendes gilt für gleichwertige Anerkennungen, die i…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[0].text@139:protected:gazette-nrw",
+      "path": "body[5].children[0].children[0].text",
+      "start": 139,
+      "end": 153,
+      "term": "GV. NRW. S. 64",
+      "context": "…die Selbstüberwachungsverordnung Kanal vom 16. Januar 1995 (GV. NRW. S. 64) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].children[1].text@4:ministry-portfolio",
+      "path": "body[5].children[0].children[1].text",
+      "start": 4,
+      "end": 82,
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[5].children[0].children[1].text@87:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].children[1].text",
+      "start": 87,
+      "end": 113,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…z, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[2].text@166:municipality",
+      "path": "body[6].children[2].text",
+      "start": 166,
+      "end": 181,
+      "term": "Mönchengladbach",
+      "context": "…rgewinnungsanlagen Gatzweiler und Rickelrath der Stadtwerke Mönchengladbach GmbH (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[3].text@163:municipality",
+      "path": "body[6].children[3].text",
+      "start": 163,
+      "end": 178,
+      "term": "Mönchengladbach",
+      "context": "…ssergewinnungsanlagen Helenabrunn/Theeshütte der Stadtwerke Mönchengladbach (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung Hele…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[4].text@149:municipality",
+      "path": "body[6].children[4].text",
+      "start": 149,
+      "end": 164,
+      "term": "Mönchengladbach",
+      "context": "…sgebiet der Wassergewinnungsanlage Hoppbruch der Stadtwerke Mönchengladbach GmbH (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[8].text@149:municipality",
+      "path": "body[6].children[8].text",
+      "start": 149,
+      "end": 154,
+      "term": "Neuss",
+      "context": "…sgebiet der Wassergewinnungsanlage Broichhof der Stadtwerke Neuss (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung Broi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "municipality": {
+      "manual-review": 4
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-name-adjective",
+      "from": "nordrhein-westfälische",
+      "to": "westdeutsche"
+    },
+    {
+      "path": "body[4].children[1].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…z 2013 (GV. NRW. S. 133) geändert worden ist, verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz mit Zustimmung des Landtags:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Mönchengladbach",
+      "context": "…rgewinnungsanlagen Gatzweiler und Rickelrath der Stadtwerke Mönchengladbach GmbH (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[3].text",
+      "term": "Mönchengladbach",
+      "context": "…ssergewinnungsanlagen Helenabrunn/Theeshütte der Stadtwerke Mönchengladbach (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung Hele…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].text",
+      "term": "Mönchengladbach",
+      "context": "…sgebiet der Wassergewinnungsanlage Hoppbruch der Stadtwerke Mönchengladbach GmbH (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[8].text",
+      "term": "Neuss",
+      "context": "…sgebiet der Wassergewinnungsanlage Broichhof der Stadtwerke Neuss (Wasserwerksbetreiber) - Wasserschutzgebietsverordnung Broi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 211,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…es in der Fassung der Bekanntmachung vom 25. Juni 1995 (GV. NRW. S. 926), von denen § 61 Absatz 2 zuletzt durch Artikel 1 d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 5. März 2013 (GV. NRW. S. 133) geändert worden ist, verordnet das Ministerium für…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…46 Absatz 1 des Landeswassergesetzes vom 25. Juni 1995 (GV. NRW. S. 133) in der jeweils geltenden Fassung bestehenden Abwas…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…es Verwaltungsverfahrensgesetzes vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung gelten entspreche…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…Selbstüberwachungsverordnung Kanal vom 16. Januar 1995 (GV. NRW. S. 64) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zur Selbstüberwachung von Abwasseranlagen - Selbstüberwachungsverordnung Abwasser – SüwVO Abw vom 17. Oktober 2013",
+    "sourceVersion": "Verordnung zur Selbstüberwachung von Abwasseranlagen - Selbstüberwachungsverordnung Abwasser – SüwVO Abw vom 17. Oktober 2013",
+    "simulation": "Verordnung zur Selbstüberwachung von Abwasseranlagen - Selbstüberwachungsverordnung Abwasser – SüwVO Abw in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17279,
+          "actual": 17779,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 121,
+          "actual": 121,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 20723,
+          "actual": 20705,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "15 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "15 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/24944-22022-sgv_77_20131017_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/24944-22023-sgv_77_20131017_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/24944-22024-sgv_77_20131017_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/24944-22025-sgv_77_20131017_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/24944-40942-sgv_77_20131017_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 3,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:47:48.009Z"
+}

@@ -1,0 +1,511 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31741",
+  "slug": "igv-dg-zvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@47:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 47,
+      "end": 62,
+      "term": "GV. NRW. S. 219",
+      "context": "(Artikel 1 der Verordnung vom 21. Januar 2017 (GV. NRW. S. 219))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@78:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 78,
+      "end": 93,
+      "term": "GV. NRW. S. 421",
+      "context": "…Absatz 3 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), der zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@155:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 155,
+      "end": 170,
+      "term": "GV. NRW. S. 462",
+      "context": "… der zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, insoweit nach Anhörung des fachlich z…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@280:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 280,
+      "end": 299,
+      "term": "Nordrhein-Westfalen",
+      "context": "… übertragbaren Krankheiten ist das Landeszentrum Gesundheit Nordrhein-Westfalen (LZG. NRW).",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@306:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 306,
+      "end": 309,
+      "term": "NRW",
+      "context": "… ist das Landeszentrum Gesundheit Nordrhein-Westfalen (LZG. NRW).",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].title@10:municipality",
+      "path": "body[5].title",
+      "start": 10,
+      "end": 20,
+      "term": "Düsseldorf",
+      "context": "Flughafen Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@10:municipality",
+      "path": "body[5].children[0].text",
+      "start": 10,
+      "end": 20,
+      "term": "Düsseldorf",
+      "context": "Die Stadt Düsseldorf als untere Gesundheitsbehörde ist die zuständige Behörde na…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@175:municipality",
+      "path": "body[5].children[0].text",
+      "start": 175,
+      "end": 185,
+      "term": "Düsseldorf",
+      "context": "…d Absatz 10 des IGV-Durchführungsgesetzes für den Flughafen Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@188:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[0].text",
+      "start": 188,
+      "end": 214,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 1 des Gesetzes über den öffentlichen Gesundheitsdienst des Landes Nordrhein-Westfalen vom 25. November 1997 (GV. NRW. S. 430), das zuletzt durch …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@238:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 238,
+      "end": 253,
+      "term": "GV. NRW. S. 430",
+      "context": "…ienst des Landes Nordrhein-Westfalen vom 25. November 1997 (GV. NRW. S. 430), das zuletzt durch Artikel 2 des Gesetzes vom 30. April 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@317:protected:gazette-nrw",
+      "path": "body[6].children[0].text",
+      "start": 317,
+      "end": 332,
+      "term": "GV. NRW. S. 202",
+      "context": "…as zuletzt durch Artikel 2 des Gesetzes vom 30. April 2013 (GV. NRW. S. 202) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].text@273:rule:jurisdiction-name-genitive",
+      "path": "body[7].children[0].text",
+      "start": 273,
+      "end": 299,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… 5 des Gesetzes über den öffentlichen Gesundheitsdienst des Landes Nordrhein-Westfalen gilt entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].text@292:authority-district-government",
+      "path": "body[8].children[0].text",
+      "start": 292,
+      "end": 308,
+      "term": "Bezirksregierung",
+      "context": "…8. Juli 2016 (BGBl. I S. 1666) geändert worden ist, ist die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].text@0:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 0,
+      "end": 19,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 5
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[5].title",
+      "term": "Düsseldorf",
+      "context": "Flughafen Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Düsseldorf",
+      "context": "Die Stadt Düsseldorf als untere Gesundheitsbehörde ist die zuständige Behörde na…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…d Absatz 10 des IGV-Durchführungsgesetzes für den Flughafen Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…8. Juli 2016 (BGBl. I S. 1666) geändert worden ist, ist die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 37,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "(Artikel 1 der Verordnung vom 21. Januar 2017 (GV. NRW. S. 219))",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…tz 3 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), der zuletzt durch Artikel 10 des Gesetzes vom 9. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, insoweit nach Anhörung des fa…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…ienst des Landes Westdeutschland vom 25. November 1997 (GV. NRW. S. 430), das zuletzt durch Artikel 2 des Gesetzes vom 30. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…uletzt durch Artikel 2 des Gesetzes vom 30. April 2013 (GV. NRW. S. 202) geändert worden ist.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Landesregierung",
+        "formula": "ordinance-formula",
+        "text": "verordnet die Landesregierung",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "safe-auto-transform",
+    "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird übergeleitet.",
+    "source": {
+      "name": "Landesregierung",
+      "formula": "ordinance-formula",
+      "text": "verordnet die Landesregierung",
+      "path": "body[2].text"
+    },
+    "enactingBody": "Landesregierung"
+  },
+  "citations": {
+    "source": "Verordnung zur Regelung von Zuständigkeiten nach dem IGV-Durchführungsgesetz vom 21. Januar 2017",
+    "sourceVersion": "Verordnung zur Regelung von Zuständigkeiten nach dem IGV-Durchführungsgesetz vom 21. Januar 2017",
+    "simulation": "Verordnung zur Regelung von Zuständigkeiten nach dem IGV-Durchführungsgesetz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2936,
+          "actual": 3146,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3146,
+          "actual": 3131,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:47:16.393Z"
+}

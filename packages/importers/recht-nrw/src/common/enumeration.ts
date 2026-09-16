@@ -111,6 +111,8 @@ export interface EnumerationCrosscheck {
   termConflicts: number;
   ok: boolean;
   problems: string[];
+  /** Fachlich erklärbare Quellbefunde (z. B. Fassungslisten mit Adressen mehrerer Stammnormen); kein Fehler. */
+  notes: string[];
 }
 
 export interface EnumerationFile {
@@ -326,6 +328,7 @@ export interface BuildEnumerationInput {
 export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile {
   const { area } = input;
   const problems: string[] = [];
+  const notes: string[] = [];
 
   // 1. Sitemap-Adressen des Bereichs nach Slug-Stamm gruppieren.
   const stems = new Map<string, { portalType: string; slug: string; urls: Set<string>; sitemap: boolean }>();
@@ -406,8 +409,10 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
       let key = `stem:${stemKey}`;
       let sourceIdentity: string | undefined;
       if (terms && terms.size > 1) {
+        // Quelleigenheit: Fassungslisten des Portals führen auch Adressen benachbarter Stammnormen
+        // (Vorgänger, Nachfolger, Verordnungsserien). Das ist ein Befund, kein Enumerationsfehler.
         termConflicts += 1;
-        problems.push(`${url} ist mehreren Stammnormen zugeordnet (${[...terms].join(', ')})`);
+        notes.push(`${url} ist mehreren Stammnormen zugeordnet (${[...terms].join(', ')})`);
       } else if (terms && terms.size === 1) {
         sourceIdentity = [...terms][0]!;
         key = sourceIdentity;
@@ -460,11 +465,54 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     if (item.status === 'processing') item.status = 'pending';
     items.push(item);
   }
+
+  // Verarbeitete Stammnormen dürfen nie aus der Enumeration fallen: Terme des Manifests, deren Fassungsadressen
+  // sämtlich mehreren Stammnormen zugeordnet sind, erhalten einen eigenen Eintrag aus den Manifestdaten.
+  const covered = new Set(items.flatMap((item) => [item.sourceIdentity, item.mergedInto].filter((value): value is string => Boolean(value))));
+  const manifestOnlyKeys = new Set<string>();
+  for (const entry of input.manifest?.entries ?? []) {
+    if (entry.sourceArea !== area || !/^term:\d+$/u.test(entry.sourceIdentity) || covered.has(entry.sourceIdentity)) continue;
+    const urls = [...new Set([entry.sourceUrl, entry.selectedVersionUrl, entry.sourceVersion?.url, ...entry.versionsConsidered.map((version) => version.url)]
+      .map((url) => (url ? parseVersionUrl(url) : undefined))
+      .filter((address) => address?.section === area)
+      .map((address) => address!.url))].sort();
+    if (urls.length === 0) continue;
+    const address = parseVersionUrl(urls.at(-1)!)!;
+    const previous = previousByKey.get(entry.sourceIdentity) ?? previousByIdentity.get(entry.sourceIdentity);
+    const pre = preclassify(area, address.documentType, entry.sourceTitle);
+    const item: EnumerationItem = {
+      key: entry.sourceIdentity,
+      sourceIdentity: entry.sourceIdentity,
+      entryUrl: urls.at(-1)!,
+      portalType: address.documentType,
+      title: entry.sourceTitle,
+      titleSource: 'manifest',
+      status: previous?.status ?? (entry.importStatus === 'needs-review' ? 'review' : entry.importStatus === 'excluded' ? 'excluded' : entry.importStatus === 'failed' ? 'failed' : 'done'),
+      urls,
+      signals: { sitemap: urls.some((url) => sitemapUrls.has(url)), search: false },
+      preclassification: { decision: pre.decision, reasons: pre.reasons },
+      role: pre.role,
+      attempts: previous?.attempts ?? 0,
+    };
+    if (pre.evidence) item.evidence = pre.evidence;
+    if (previous?.outcome) item.outcome = previous.outcome;
+    if (previous?.lastError) item.lastError = previous.lastError;
+    if (previous?.updatedAt) item.updatedAt = previous.updatedAt;
+    if (previous?.lastRunId) item.lastRunId = previous.lastRunId;
+    notes.push(`${entry.sourceIdentity} wird aus dem Manifest geführt (alle Fassungsadressen mehreren Stammnormen zugeordnet)`);
+    manifestOnlyKeys.add(item.key);
+    items.push(item);
+  }
   items.sort((left, right) => compareKeys(left.key, right.key));
 
   // 6. Abgleich.
   const assigned = new Map<string, number>();
-  for (const item of items) for (const url of item.urls) assigned.set(url, (assigned.get(url) ?? 0) + 1);
+  // Aus dem Manifest ergänzte Terme teilen sich die Adressen mit ihrem Slug-Stamm; das ist gewollt und zählt
+  // nicht als Mehrfachzuordnung (echte Dubletten regulärer Einträge bleiben ein Abgleichsproblem).
+  for (const item of items) {
+    if (manifestOnlyKeys.has(item.key)) continue;
+    for (const url of item.urls) assigned.set(url, (assigned.get(url) ?? 0) + 1);
+  }
   const unassignedUrls = [...sitemapUrls].filter((url) => !assigned.has(url)).length;
   const duplicateUrlAssignments = [...assigned.values()].filter((count) => count > 1).length;
   const unmappedHits = [...hitsByUrl.keys()].filter((url) => !assigned.has(url)).length;
@@ -496,6 +544,7 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     termConflicts,
     ok: problems.length === 0,
     problems,
+    notes,
   };
   const file: EnumerationFile = {
     schemaVersion: ENUMERATION_SCHEMA,

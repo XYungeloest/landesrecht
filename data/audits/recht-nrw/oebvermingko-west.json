@@ -1,0 +1,494 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28172",
+  "slug": "oebvermingko-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@97:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 97,
+      "end": 116,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ellten Vermessungsingenieure / Vermessungsingenieurinnen in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@12:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 12,
+      "end": 15,
+      "term": "NRW",
+      "context": "ÖbVermIngKO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@151:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 151,
+      "end": 170,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nieure / Öffentlich bestellten Vermessungsingenieurinnen in Nordrhein-Westfalen (ÖbVermIng BO NW) vom 15. Dezember 1992 (GV. NRW. S. 524), …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@212:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 212,
+      "end": 227,
+      "term": "GV. NRW. S. 524",
+      "context": "…ordrhein-Westfalen (ÖbVermIng BO NW) vom 15. Dezember 1992 (GV. NRW. S. 524), geändert durch Gesetz vom 22. November 1994 (GV. NRW. S. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@275:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 275,
+      "end": 291,
+      "term": "GV. NRW. S. 1058",
+      "context": "… NRW. S. 524), geändert durch Gesetz vom 22. November 1994 (GV. NRW. S. 1058) wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@201:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 201,
+      "end": 220,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ebührenordnung für die Vermessungs- und Katasterbehörden in Nordrhein-Westfalen (Vermessungsgebührenordnung - VermGebO NRW) vom 21. Januar …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@260:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 260,
+      "end": 263,
+      "term": "NRW",
+      "context": "… Nordrhein-Westfalen (Vermessungsgebührenordnung - VermGebO NRW) vom 21. Januar 2002 (GV. NRW. S. 30) geregelten Gebührenta…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].text@286:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 286,
+      "end": 300,
+      "term": "GV. NRW. S. 30",
+      "context": "…essungsgebührenordnung - VermGebO NRW) vom 21. Januar 2002 (GV. NRW. S. 30) geregelten Gebührentatbeständen übereinstimmen, sind nach …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].text@65:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[1].text",
+      "start": 65,
+      "end": 68,
+      "term": "NRW",
+      "context": "…gen im Sinne von § 10 Abs. 1 Satz 2 Nrn. 1, 4, 5 und 7 GebG NRW sowie Fahrtkosten und Kosten für übliche Sachmittel sind, w…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[2].text@203:rule:jurisdiction-name-bare",
+      "path": "body[11].children[2].text",
+      "start": 203,
+      "end": 222,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nieure / Öffentlich bestellten Vermessungsingenieurinnen in Nordrhein-Westfalen (ÖbVermIngKO NW) vom 26. Mai 1993 (GV. NRW. S. 289), geände…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].text@258:protected:gazette-nrw",
+      "path": "body[11].children[2].text",
+      "start": 258,
+      "end": 273,
+      "term": "GV. NRW. S. 289",
+      "context": "…n in Nordrhein-Westfalen (ÖbVermIngKO NW) vom 26. Mai 1993 (GV. NRW. S. 289), geändert durch Verordnung vom 7. September 1996 (GV. NRW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[2].text@325:protected:gazette-nrw",
+      "path": "body[11].children[2].text",
+      "start": 325,
+      "end": 340,
+      "term": "GV. NRW. S. 378",
+      "context": "…. S. 289), geändert durch Verordnung vom 7. September 1996 (GV. NRW. S. 378), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[4].children[0].text@4:ministry-compound",
+      "path": "body[11].children[4].children[0].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[11].children[4].children[0].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[4].children[0].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[2].text@99:protected:gazette-nrw",
+      "path": "body[11].children[4].children[2].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 351",
+      "context": "… (Artikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 8
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[11].children[4].children[0].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 91,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…estdeutschland (ÖbVermIng BO NW) vom 15. Dezember 1992 (GV. NRW. S. 524), geändert durch Gesetz vom 22. November 1994 (GV. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…. S. 524), geändert durch Gesetz vom 22. November 1994 (GV. NRW. S. 1058) wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…gsgebührenordnung - VermGebO West) vom 21. Januar 2002 (GV. NRW. S. 30) geregelten Gebührentatbeständen übereinstimmen, sin…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[2].text",
+        "term": "NRW",
+        "context": "…n in Westdeutschland (ÖbVermIngKO NW) vom 26. Mai 1993 (GV. NRW. S. 289), geändert durch Verordnung vom 7. September 1996 (…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[2].text",
+        "term": "NRW",
+        "context": "… 289), geändert durch Verordnung vom 7. September 1996 (GV. NRW. S. 378), außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…tikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Kostenordnung für die Öffentlich bestellten Vermessungsingenieure / Vermessungsingenieurinnen in Nordrhein-Westfalen vom 21. Januar 2002",
+    "sourceVersion": "Kostenordnung für die Öffentlich bestellten Vermessungsingenieure / Vermessungsingenieurinnen in Nordrhein-Westfalen vom 21. Januar 2002",
+    "simulation": "Kostenordnung für die Öffentlich bestellten Vermessungsingenieure / Vermessungsingenieurinnen in Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7490,
+          "actual": 7844,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 81,
+          "actual": 81,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7844,
+          "actual": 7830,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:49:11.336Z"
+}

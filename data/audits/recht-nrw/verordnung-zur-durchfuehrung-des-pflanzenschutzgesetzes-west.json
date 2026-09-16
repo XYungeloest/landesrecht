@@ -1,0 +1,453 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26957",
+  "slug": "verordnung-zur-durchfuehrung-des-pflanzenschutzgesetzes-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[3].children[3].text@4:authority-state-enterprise",
+      "path": "body[1].children[3].children[3].text",
+      "start": 4,
+      "end": 22,
+      "term": "Landesbetrieb Wald",
+      "context": "den Landesbetrieb Wald und Holz Nordrhein-Westfalen, soweit das Gesetz und die Rec…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[1].children[3].children[3].text@32:rule:jurisdiction-name-bare",
+      "path": "body[1].children[3].children[3].text",
+      "start": 32,
+      "end": 51,
+      "term": "Nordrhein-Westfalen",
+      "context": "den Landesbetrieb Wald und Holz Nordrhein-Westfalen, soweit das Gesetz und die Rechtsverordnungen gemäß § 60 Ab…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].children[4].text@213:authority-state-enterprise",
+      "path": "body[2].children[0].children[4].text",
+      "start": 213,
+      "end": 231,
+      "term": "Landesbetrieb Wald",
+      "context": "…nd mit der Maßgabe, dass die Anzeigen und Mitteilungen beim Landesbetrieb Wald und Holz Nordrhein-Westfalen einzureichen sind.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[4].text@241:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].children[4].text",
+      "start": 241,
+      "end": 260,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Anzeigen und Mitteilungen beim Landesbetrieb Wald und Holz Nordrhein-Westfalen einzureichen sind.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[2].children[0].text@119:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[2].children[0].text",
+      "start": 119,
+      "end": 138,
+      "term": "Nordrhein-Westfalen",
+      "context": "… beziehungsweise Fachberaterinnen der Landwirtschaftskammer Nordrhein-Westfalen oder Mitarbeiter beziehungsweise Mitarbeiterinnen des Lande…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[3].text@133:protected:gazette-nrw",
+      "path": "body[3].children[1].children[3].text",
+      "start": 133,
+      "end": 148,
+      "term": "GV. NRW. S. 262",
+      "context": "…er Allgemeinen Verwaltungsgebührenordnung vom 3. Juli 2001 (GV. NRW. S. 262) in der jeweils geltenden Fassung. Der Prüfling hat die Geb…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[8].text@118:protected:gazette-nw",
+      "path": "body[4].children[0].children[8].text",
+      "start": 118,
+      "end": 132,
+      "term": "GV. NW. S. 421",
+      "context": "…s Landesorganisationsgesetzes (LOG. NW.) vom 10. Juli 1962 (GV. NW. S. 421), zuletzt geändert durch Gesetz vom 20. Oktober 1987 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[8].text@187:protected:gazette-nw",
+      "path": "body[4].children[0].children[8].text",
+      "start": 187,
+      "end": 201,
+      "term": "GV. NW. S. 366",
+      "context": "…. 421), zuletzt geändert durch Gesetz vom 20. Oktober 1987 (GV. NW. S. 366), insoweit nach Anhörung des Ausschusses für Landwirtschaft…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[9].text@311:protected:gazette-nw",
+      "path": "body[4].children[0].children[9].text",
+      "start": 311,
+      "end": 325,
+      "term": "GV. NW. S. 180",
+      "context": "…fugnissen nach dem Pflanzenschutzgesetz vom 19. April 1988 (GV. NW. S. 180) sowie auf Grund des § 60 Abs. 2 Satz 2 Landesforstgesetz i…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[9].text@438:protected:gazette-nrw",
+      "path": "body[4].children[0].children[9].text",
+      "start": 438,
+      "end": 453,
+      "term": "GV. NRW. S. 546",
+      "context": "…esetz in der Fassung der Bekanntmachung vom 24. April 1980 (GV. NRW. S. 546), zuletzt geändert durch Artikel II des Gesetzes vom 19. Ju…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[9].text@522:protected:gazette-nrw",
+      "path": "body[4].children[0].children[9].text",
+      "start": 522,
+      "end": 537,
+      "term": "GV. NRW. S. 226",
+      "context": "…t geändert durch Artikel II des Gesetzes vom 19. Juni 2007 (GV. NRW. S. 226).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@4:constitutional-organ-state",
+      "path": "body[5].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[5].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[5].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].text@99:protected:gazette-nrw",
+      "path": "body[7].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 306",
+      "context": "… (Artikel 196 des Dritten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 306))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "authority": {
+      "manual-review": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[3].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[3].children[3].text",
+      "term": "Landesbetrieb Wald",
+      "context": "den Landesbetrieb Wald und Holz Nordrhein-Westfalen, soweit das Gesetz und die Rec…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[4].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…nd mit der Maßgabe, dass die Anzeigen und Mitteilungen beim Landesbetrieb Wald und Holz Nordrhein-Westfalen einzureichen sind.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 101,
+    "residuals": [
+      {
+        "path": "body[3].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…llgemeinen Verwaltungsgebührenordnung vom 3. Juli 2001 (GV. NRW. S. 262) in der jeweils geltenden Fassung. Der Prüfling hat…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].children[9].text",
+        "term": "NRW",
+        "context": "…z in der Fassung der Bekanntmachung vom 24. April 1980 (GV. NRW. S. 546), zuletzt geändert durch Artikel II des Gesetzes vo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].children[9].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel II des Gesetzes vom 19. Juni 2007 (GV. NRW. S. 226).",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].text",
+        "term": "NRW",
+        "context": "…tikel 196 des Dritten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 306))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Durchführung des Pflanzenschutzgesetzes vom 4. Oktober 1988",
+    "sourceVersion": "Verordnung zur Durchführung des Pflanzenschutzgesetzes vom 4. Oktober 1988",
+    "simulation": "Verordnung zur Durchführung des Pflanzenschutzgesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 9745,
+          "actual": 10130,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 76,
+          "actual": 76,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 20,
+          "actual": 20,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 10130,
+          "actual": 10114,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "11 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "11 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:42:52.120Z"
+}

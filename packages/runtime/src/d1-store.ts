@@ -22,6 +22,7 @@ import {
   buildFtsConjuncts,
   buildFtsMatch,
   buildSearchQueryPlan,
+  buildSearchVariants,
   compareHits,
   evaluateDocument,
   MATCH_LABELS,
@@ -83,6 +84,8 @@ interface UnitRow {
 
 const SUMMARY_COLUMNS = 'jurisdiction, slug, title, short_title, abbr, type, status, current_version_id, current_valid_from, version_count, last_change_date, subjects_json';
 const MAX_UNITS_PER_HIT = 8;
+/** Obergrenze der Nachsuche nach Identitätstreffern (exakte Bezeichnung) außerhalb der Kandidatenseite. */
+const IDENTITY_SCAN_LIMIT = 500;
 
 function toSummary(row: NormRow): NormSummary {
   const summary: NormSummary = {
@@ -368,6 +371,33 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
         if (!document) continue;
         const hit = evaluateDocument(document, plan) ?? fallbackHit(document);
         hits.push(hit);
+      }
+
+      // Identitätstreffer (exakter Titel, Kurzbezeichnung, Abkürzung) dürfen nicht an der Kandidatengrenze
+      // scheitern: Der SQL-Vergleich kennt die Normalisierung der Suche nicht (Umlaute, ß), deshalb wird bei
+      // Bedarf einmalig über Bezeichnungen nachgesucht und im Speicher verglichen.
+      if (match && plan.identityVariants.length > 0 && !hits.some((hit) => hit.matchKind === 'identity')) {
+        const rows = await db.prepare(
+          `SELECT DISTINCT s.norm_id, s.version_id, n.title, n.short_title, n.abbr
+           FROM law_search s
+           JOIN law_versions v ON v.norm_id = s.norm_id AND v.version_id = s.version_id
+           JOIN law_norms n ON n.id = s.norm_id
+           WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql} LIMIT ?`,
+        ).bind(match, jurisdiction, ...filters.params, IDENTITY_SCAN_LIMIT).all<{ norm_id: string; version_id: string; title: string; short_title: string | null; abbr: string | null }>();
+        const known = new Set(candidates.map((candidate) => `${candidate.norm_id}#${candidate.version_id}`));
+        const identityHits: SearchHit[] = [];
+        for (const row of rows.results) {
+          if (known.has(`${row.norm_id}#${row.version_id}`)) continue;
+          const names = [row.title, row.short_title, row.abbr].filter((value): value is string => Boolean(value));
+          if (!names.some((name) => buildSearchVariants(name).some((variant) => plan.identityVariants.includes(variant)))) continue;
+          const document = await loadDocument(row.norm_id, row.version_id, match, plan.references);
+          const hit = document ? evaluateDocument(document, plan) : null;
+          if (hit?.matchKind === 'identity') identityHits.push(hit);
+        }
+        if (identityHits.length > 0) {
+          const merged = [...identityHits, ...hits].sort((left, right) => compareHits(left, right, state.sort));
+          return { total: total + identityHits.length, offset: state.offset, limit: state.limit, hits: merged.slice(0, state.limit) };
+        }
       }
       return { total, offset: state.offset, limit: state.limit, hits };
     },

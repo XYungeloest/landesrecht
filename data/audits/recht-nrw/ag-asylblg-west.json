@@ -1,0 +1,485 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27765",
+  "slug": "ag-asylblg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[0].text@377:authority-district-government",
+      "path": "body[1].children[0].text",
+      "start": 377,
+      "end": 393,
+      "term": "Bezirksregierung",
+      "context": "…chtigten nach § 1 des Asylbewerberleistungsgesetzes ist die Bezirksregierung zuständig, in deren Bezirk die Aufnahmeeinrichtung liegt. B…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@541:authority-district-government",
+      "path": "body[1].children[0].text",
+      "start": 541,
+      "end": 557,
+      "term": "Bezirksregierung",
+      "context": "…gseinrichtungen des Landes untergebrachten Personen ist die Bezirksregierung zuständig, zu der die Einrichtung organisatorisch gehört od…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@4:regional-body-association",
+      "path": "body[1].children[1].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände nehmen in den Fällen des § 2 des Asylbewerberleistungsgeset…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@700:rule:jurisdiction-name",
+      "path": "body[1].children[1].text",
+      "start": 700,
+      "end": 724,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Ausführungsgesetz zum Neunten Buch Sozialgesetzbuch für das Land Nordrhein-Westfalen vom 21. Juli 2018 (GV. NRW. S. 414, ber. S. 460) und dem La…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[1].text@744:protected:gazette-nrw",
+      "path": "body[1].children[1].text",
+      "start": 744,
+      "end": 759,
+      "term": "GV. NRW. S. 414",
+      "context": "…etzbuch für das Land Nordrhein-Westfalen vom 21. Juli 2018 (GV. NRW. S. 414, ber. S. 460) und dem Landesausführungsgesetz zum Sozialges…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].children[1].text@875:rule:jurisdiction-name",
+      "path": "body[1].children[1].text",
+      "start": 875,
+      "end": 899,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…lgesetzbuch Zwölftes Buch (SGB XII) - Sozialhilfe - für das Land Nordrhein-Westfalen vom 16. Dezember 2004 (GV. NRW. S. 816), das zuletzt durch …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[1].text@923:protected:gazette-nrw",
+      "path": "body[1].children[1].text",
+      "start": 923,
+      "end": 938,
+      "term": "GV. NRW. S. 816",
+      "context": "…e - für das Land Nordrhein-Westfalen vom 16. Dezember 2004 (GV. NRW. S. 816), das zuletzt durch Artikel 3 des Gesetzes vom 21. Juli 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].children[1].text@1001:protected:gazette-nrw",
+      "path": "body[1].children[1].text",
+      "start": 1001,
+      "end": 1016,
+      "term": "GV. NRW. S. 414",
+      "context": "…das zuletzt durch Artikel 3 des Gesetzes vom 21. Juli 2018 (GV. NRW. S. 414, ber. S. 460) geändert worden ist, zuständig sind. Sie könn…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].children[1].text@1148:regional-body-association",
+      "path": "body[1].children[1].text",
+      "start": 1148,
+      "end": 1168,
+      "term": "Landschaftsverbänden",
+      "context": "…zung bestimmen, daß Gemeinden Aufgaben, die nach Satz 1 den Landschaftsverbänden obliegen, ganz oder teilweise durchführen und dabei im eige…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@1299:regional-body-association",
+      "path": "body[1].children[1].text",
+      "start": 1299,
+      "end": 1318,
+      "term": "Landschaftsverbände",
+      "context": "…ntscheiden. Für die Durchführung dieser Aufgaben können die Landschaftsverbände Weisungen erteilen.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@178:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 178,
+      "end": 192,
+      "term": "GV. NRW. S. 93",
+      "context": "…ßgabe des Flüchtlingsaufnahmegesetzes vom 28. Februar 2003 (GV. NRW. S. 93) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@4:constitutional-organ-state",
+      "path": "body[5].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[5].text@20:rule:jurisdiction-name-bare",
+      "path": "body[5].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "authority": {
+      "manual-review": 2
+    },
+    "regional-body": {
+      "manual-review": 3
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…chtigten nach § 1 des Asylbewerberleistungsgesetzes ist die Bezirksregierung zuständig, in deren Bezirk die Aufnahmeeinrichtung liegt. B…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…gseinrichtungen des Landes untergebrachten Personen ist die Bezirksregierung zuständig, zu der die Einrichtung organisatorisch gehört od…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände nehmen in den Fällen des § 2 des Asylbewerberleistungsgeset…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Landschaftsverbänden",
+      "context": "…zung bestimmen, daß Gemeinden Aufgaben, die nach Satz 1 den Landschaftsverbänden obliegen, ganz oder teilweise durchführen und dabei im eige…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "…ntscheiden. Für die Durchführung dieser Aufgaben können die Landschaftsverbände Weisungen erteilen.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 19,
+    "residuals": [
+      {
+        "path": "body[1].children[1].text",
+        "term": "NRW",
+        "context": "…etzbuch für das Land Westdeutschland vom 21. Juli 2018 (GV. NRW. S. 414, ber. S. 460) und dem Landesausführungsgesetz zum S…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].children[1].text",
+        "term": "NRW",
+        "context": "…e - für das Land Westdeutschland vom 16. Dezember 2004 (GV. NRW. S. 816), das zuletzt durch Artikel 3 des Gesetzes vom 21. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].children[1].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 3 des Gesetzes vom 21. Juli 2018 (GV. NRW. S. 414, ber. S. 460) geändert worden ist, zuständig sind. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…e des Flüchtlingsaufnahmegesetzes vom 28. Februar 2003 (GV. NRW. S. 93) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Ausführung des Asylbewerberleistungsgesetzes vom 29. November 1994 (GV. NW. S. 1087)",
+    "sourceVersion": "Gesetz zur Ausführung des Asylbewerberleistungsgesetzes vom 29. November 1994 (GV. NW. S. 1087)",
+    "simulation": "Gesetz zur Ausführung des Asylbewerberleistungsgesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3054,
+          "actual": 2978,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2978,
+          "actual": 2966,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:22:52.397Z"
+}

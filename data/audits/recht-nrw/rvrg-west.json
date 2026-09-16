@@ -1,0 +1,2028 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28385",
+  "slug": "rvrg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@16:regional-body-association",
+      "path": "meta.title",
+      "start": 16,
+      "end": 36,
+      "term": "Regionalverband Ruhr",
+      "context": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "meta.title@32:geography-region",
+      "path": "meta.title",
+      "start": 32,
+      "end": 36,
+      "term": "Ruhr",
+      "context": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@32:geography-river",
+      "path": "meta.title",
+      "start": 32,
+      "end": 36,
+      "term": "Ruhr",
+      "context": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[0].text@143:rule:jurisdiction-name-bare",
+      "path": "body[0].text",
+      "start": 143,
+      "end": 162,
+      "term": "Nordrhein-Westfalen",
+      "context": "…mmunalen Zusammenarbeit der Städte, Gemeinden und Kreise in Nordrhein-Westfalen v. 3.2.2004 (GV. NRW. S. 96))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].text@176:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 176,
+      "end": 190,
+      "term": "GV. NRW. S. 96",
+      "context": "…e, Gemeinden und Kreise in Nordrhein-Westfalen v. 3.2.2004 (GV. NRW. S. 96))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].children[1].text@23:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 23,
+      "end": 29,
+      "term": "Bochum",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@31:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 31,
+      "end": 38,
+      "term": "Bottrop",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Her…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@40:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 40,
+      "end": 48,
+      "term": "Dortmund",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülhei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@50:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 50,
+      "end": 58,
+      "term": "Duisburg",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der R…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@60:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 60,
+      "end": 65,
+      "term": "Essen",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@67:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 67,
+      "end": 80,
+      "term": "Gelsenkirchen",
+      "context": "…isfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sow…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@82:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 82,
+      "end": 87,
+      "term": "Hagen",
+      "context": "… Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@89:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 89,
+      "end": 93,
+      "term": "Hamm",
+      "context": "…, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@95:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 95,
+      "end": 100,
+      "term": "Herne",
+      "context": "…rop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@102:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 102,
+      "end": 121,
+      "term": "Mülheim an der Ruhr",
+      "context": "…rtmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Reckling…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@117:geography-region",
+      "path": "body[2].children[0].children[1].text",
+      "start": 117,
+      "end": 121,
+      "term": "Ruhr",
+      "context": "…g, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Reckling…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@117:geography-river",
+      "path": "body[2].children[0].children[1].text",
+      "start": 117,
+      "end": 121,
+      "term": "Ruhr",
+      "context": "…g, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Reckling…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@126:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 126,
+      "end": 136,
+      "term": "Oberhausen",
+      "context": "… Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Recklinghausen, Unna un…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@161:geography-region",
+      "path": "body[2].children[0].children[1].text",
+      "start": 161,
+      "end": 165,
+      "term": "Ruhr",
+      "context": "… Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Recklinghausen, Unna und Wesel bilden den Regionalve…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@173:municipality",
+      "path": "body[2].children[0].children[1].text",
+      "start": 173,
+      "end": 187,
+      "term": "Recklinghausen",
+      "context": "…der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@215:regional-body-association",
+      "path": "body[2].children[0].children[1].text",
+      "start": 215,
+      "end": 235,
+      "term": "Regionalverband Ruhr",
+      "context": "…nnepe-Ruhr-Kreis, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@231:geography-region",
+      "path": "body[2].children[0].children[1].text",
+      "start": 231,
+      "end": 235,
+      "term": "Ruhr",
+      "context": "…, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@231:geography-river",
+      "path": "body[2].children[0].children[1].text",
+      "start": 231,
+      "end": 235,
+      "term": "Ruhr",
+      "context": "…, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[1].text@179:geography-region",
+      "path": "body[2].children[1].children[1].text",
+      "start": 179,
+      "end": 183,
+      "term": "Ruhr",
+      "context": "… ein Gemeindeverband und dient dem Gemeinwohl der Metropole Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[1].text@179:geography-river",
+      "path": "body[2].children[1].children[1].text",
+      "start": 179,
+      "end": 183,
+      "term": "Ruhr",
+      "context": "… ein Gemeindeverband und dient dem Gemeinwohl der Metropole Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[2].text@27:municipality",
+      "path": "body[2].children[1].children[2].text",
+      "start": 27,
+      "end": 32,
+      "term": "Essen",
+      "context": "Der Sitz des Verbandes ist Essen. Mit der Mehrheit von zwei Dritteln der gesetzlichen Zahl d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[1].text@178:geography-river",
+      "path": "body[3].children[0].children[1].text",
+      "start": 178,
+      "end": 185,
+      "term": "Emscher",
+      "context": "…6, 2. Trägerschaften, Fortführung und Weiterentwicklung des Emscher Landschaftsparks und der Route der Industriekultur, 3. Sich…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[3].text@1279:rule:jurisdiction-name",
+      "path": "body[3].children[0].children[3].text",
+      "start": 1279,
+      "end": 1303,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…desbehörde gibt die Genehmigung im Ministerialblatt für das Land Nordrhein-Westfalen bekannt. Die Landesregierung wird ermächtigt, durch Rechtsv…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[3].text@1515:authority-district-government",
+      "path": "body[3].children[0].children[3].text",
+      "start": 1515,
+      "end": 1531,
+      "term": "Bezirksregierung",
+      "context": "…nd von den spezialgesetzlichen Aufsichtsregelungen auf eine Bezirksregierung zu übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[4].text@435:protected:gazette-nrw",
+      "path": "body[3].children[0].children[4].text",
+      "start": 435,
+      "end": 450,
+      "term": "GV. NRW. S. 568",
+      "context": "…eiten (§ 7 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November 2016 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[4].text@509:protected:gazette-nrw",
+      "path": "body[3].children[0].children[4].text",
+      "start": 509,
+      "end": 524,
+      "term": "GV. NRW. S. 934",
+      "context": "…8), das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist), 3. Maßnahmen zur Entwicklung, Pfl…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[2].children[1].text@618:municipality",
+      "path": "body[3].children[2].children[1].text",
+      "start": 618,
+      "end": 626,
+      "term": "Arnsberg",
+      "context": "… in der Abwägung zu berücksichtigen sind. Den Regionalräten Arnsberg, Düsseldorf und Münster ist vor der Beschlussfassung Gelege…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[1].text@628:municipality",
+      "path": "body[3].children[2].children[1].text",
+      "start": 628,
+      "end": 638,
+      "term": "Düsseldorf",
+      "context": "…wägung zu berücksichtigen sind. Den Regionalräten Arnsberg, Düsseldorf und Münster ist vor der Beschlussfassung Gelegenheit zur St…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[1].text@643:municipality",
+      "path": "body[3].children[2].children[1].text",
+      "start": 643,
+      "end": 650,
+      "term": "Münster",
+      "context": "…ksichtigen sind. Den Regionalräten Arnsberg, Düsseldorf und Münster ist vor der Beschlussfassung Gelegenheit zur Stellungnahme …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[4].text@165:rule:jurisdiction-name",
+      "path": "body[4].children[1].children[4].text",
+      "start": 165,
+      "end": 189,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ntsprechend § 50 Absatz 2 und 3 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[4].text@243:protected:gazette-nrw",
+      "path": "body[4].children[1].children[4].text",
+      "start": 243,
+      "end": 258,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), die zuletzt durch Artikel 1 des Gesetzes vom 19. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].children[4].text@325:protected:gazette-nrw",
+      "path": "body[4].children[1].children[4].text",
+      "start": 325,
+      "end": 340,
+      "term": "GV. NRW. S. 878",
+      "context": "…zuletzt durch Artikel 1 des Gesetzes vom 19. Dezember 2013 (GV. NRW. S. 878) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].children[2].text@378:protected:gazette-nrw",
+      "path": "body[4].children[2].children[2].text",
+      "start": 378,
+      "end": 393,
+      "term": "GV. NRW. S. 454",
+      "context": "…gesetz in der Fassung der Bekanntmachung vom 30. Juni 1988 (GV. NRW. S. 454, ber. S. 509 und 1999 S. 70) in der jeweils geltenden Fassu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[3].children[1].text@158:rule:jurisdiction-name",
+      "path": "body[4].children[3].children[1].text",
+      "start": 158,
+      "end": 182,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Sitzung zusammen. § 48 Absatz 4 der Gemeindeordnung für das Land Nordrhein-Westfalen gilt für die Sitzungen der Verbandsversammlung entsprechend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[3].children[5].text@335:rule:jurisdiction-name",
+      "path": "body[4].children[3].children[5].text",
+      "start": 335,
+      "end": 359,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…stellen. Im Übrigen findet § 58 der Gemeindeordnung für das Land Nordrhein-Westfalen entsprechende Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[3].children[6].text@491:rule:jurisdiction-name",
+      "path": "body[4].children[3].children[6].text",
+      "start": 491,
+      "end": 515,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…brigen gilt § 56 Absatz 2 bis 5 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[3].children[6].text@569:protected:gazette-nrw",
+      "path": "body[4].children[3].children[6].text",
+      "start": 569,
+      "end": 584,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[4].children[1].text@166:rule:jurisdiction-name",
+      "path": "body[4].children[4].children[1].text",
+      "start": 166,
+      "end": 190,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…deren Ausnahmefällen gilt § 47a der Gemeindeordnung für das Land Nordrhein-Westfalen. Für die Durchführung von Sitzungen der sonstigen Ausschüss…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[4].children[1].text@308:rule:jurisdiction-name",
+      "path": "body[4].children[4].children[1].text",
+      "start": 308,
+      "end": 332,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…sse in hybrider Form gilt § 58a der Gemeindeordnung für das Land Nordrhein-Westfalen entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[5].children[3].text@159:rule:jurisdiction-name",
+      "path": "body[4].children[5].children[3].text",
+      "start": 159,
+      "end": 183,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… die §§ 44, 45 und 133 Absatz 5 der Gemeindeordnung für das Land Nordrhein-Westfalen entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[5].children[6].text@621:protected:gazette-nrw",
+      "path": "body[4].children[5].children[6].text",
+      "start": 621,
+      "end": 639,
+      "term": "GV. NRW. 2005 S. 8",
+      "context": "…7 des Korruptionsbekämpfungsgesetzes vom 16. Dezember 2004 (GV. NRW. 2005 S. 8) in der jeweils geltenden Fassung bleibt unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[10].children[2].text@133:rule:jurisdiction-name-dative",
+      "path": "body[4].children[10].children[2].text",
+      "start": 133,
+      "end": 160,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…eramt oder zur Laufbahn des allgemeinen Verwaltungsdienstes im Land Nordrhein-Westfalen in der Laufbahngruppe 2, zweites Einstiegsamt, besitzen. Di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[10].children[2].text@482:rule:jurisdiction-name",
+      "path": "body[4].children[10].children[2].text",
+      "start": 482,
+      "end": 506,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…hl der Beigeordneten sowie § 72 der Gemeindeordnung für das Land Nordrhein-Westfalen finden entsprechend Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[13].children[1].text@387:geography-region",
+      "path": "body[4].children[13].children[1].text",
+      "start": 387,
+      "end": 391,
+      "term": "Ruhr",
+      "context": "…gesetz sein. Ist die Haushaltssatzung des Regionalverbandes Ruhr bei Beginn des Haushaltsjahres noch nicht bekannt gemacht, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[13].children[1].text@387:geography-river",
+      "path": "body[4].children[13].children[1].text",
+      "start": 387,
+      "end": 391,
+      "term": "Ruhr",
+      "context": "…gesetz sein. Ist die Haushaltssatzung des Regionalverbandes Ruhr bei Beginn des Haushaltsjahres noch nicht bekannt gemacht, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[13].children[3].text@315:rule:jurisdiction-name",
+      "path": "body[4].children[13].children[3].text",
+      "start": 315,
+      "end": 339,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ksichtnahmegebotes nach § 9 Satz 2 der Kreisordnung für das Land Nordrhein-Westfalen vom 14. Juli 1994 (GV. NRW. S. 646) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[13].children[3].text@359:protected:gazette-nrw",
+      "path": "body[4].children[13].children[3].text",
+      "start": 359,
+      "end": 374,
+      "term": "GV. NRW. S. 646",
+      "context": "…ordnung für das Land Nordrhein-Westfalen vom 14. Juli 1994 (GV. NRW. S. 646) in der jeweils geltenden Fassung alle anderen Möglichkeite…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[14].children[1].text@80:rule:jurisdiction-name",
+      "path": "body[4].children[14].children[1].text",
+      "start": 80,
+      "end": 104,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…tschaft finden die Vorschriften der Gemeindeordnung für das Land Nordrhein-Westfalen und die hierzu erlassenen Rechtsvorschriften in ihrer jewei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[14].children[1].text@217:rule:jurisdiction-name",
+      "path": "body[4].children[14].children[1].text",
+      "start": 217,
+      "end": 241,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…r jeweils geltenden Fassung sowie § 55 Kreisordnung für das Land Nordrhein-Westfalen entsprechende Anwendung, soweit nicht in diesem Gesetz oder…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[17].children[1].text@149:rule:jurisdiction-name",
+      "path": "body[4].children[17].children[1].text",
+      "start": 149,
+      "end": 173,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…en ist, finden die Vorschriften der Gemeindeordnung für das Land Nordrhein-Westfalen über die wirtschaftliche Betätigung und die nichtwirtschaft…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[17].children[1].text@615:rule:jurisdiction-name",
+      "path": "body[4].children[17].children[1].text",
+      "start": 615,
+      "end": 639,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…sprechenden Anwendung des § 113 der Gemeindeordnung für das Land Nordrhein-Westfalen findet § 50 Absatz 4 der Gemeindeordnung für das Land Nordr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[17].children[1].text@689:rule:jurisdiction-name",
+      "path": "body[4].children[17].children[1].text",
+      "start": 689,
+      "end": 713,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…-Westfalen findet § 50 Absatz 4 der Gemeindeordnung für das Land Nordrhein-Westfalen ebenfalls entsprechende Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[2].text@138:authority-district-government",
+      "path": "body[5].children[1].children[2].text",
+      "start": 138,
+      "end": 154,
+      "term": "Bezirksregierung",
+      "context": "…erordnung die allgemeine Aufsicht über den Verband auf eine Bezirksregierung zu übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@81:authority-district-government",
+      "path": "body[5].children[2].children[1].text",
+      "start": 81,
+      "end": 99,
+      "term": "Bezirksregierungen",
+      "context": "…nntmachungen des Verbandes erfolgen in den Amtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@100:municipality",
+      "path": "body[5].children[2].children[1].text",
+      "start": 100,
+      "end": 108,
+      "term": "Arnsberg",
+      "context": "…rbandes erfolgen in den Amtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung im Intern…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@110:municipality",
+      "path": "body[5].children[2].children[1].text",
+      "start": 110,
+      "end": 120,
+      "term": "Düsseldorf",
+      "context": "…folgen in den Amtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung im Internet entsprech…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@125:municipality",
+      "path": "body[5].children[2].children[1].text",
+      "start": 125,
+      "end": 132,
+      "term": "Münster",
+      "context": "…mtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung im Internet entsprechend der Vero…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@281:protected:gazette-nrw",
+      "path": "body[5].children[2].children[1].text",
+      "start": 281,
+      "end": 296,
+      "term": "GV. NRW. S. 516",
+      "context": "…ekanntmachung von kommunalem Ortsrecht vom 26. August 1999 (GV. NRW. S. 516) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[2].children[2].text@103:geography-region",
+      "path": "body[6].children[2].children[2].text",
+      "start": 103,
+      "end": 107,
+      "term": "Ruhr",
+      "context": "…s Artikels 2 des Gesetzes zur Stärkung des Regionalverbands Ruhr vom 12. Mai 2015 (GV. NRW. S. 436) bestehende Verbandsversa…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[2].text@103:geography-river",
+      "path": "body[6].children[2].children[2].text",
+      "start": 103,
+      "end": 107,
+      "term": "Ruhr",
+      "context": "…s Artikels 2 des Gesetzes zur Stärkung des Regionalverbands Ruhr vom 12. Mai 2015 (GV. NRW. S. 436) bestehende Verbandsversa…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[2].text@126:protected:gazette-nrw",
+      "path": "body[6].children[2].children[2].text",
+      "start": 126,
+      "end": 141,
+      "term": "GV. NRW. S. 436",
+      "context": "…es zur Stärkung des Regionalverbands Ruhr vom 12. Mai 2015 (GV. NRW. S. 436) bestehende Verbandsversammlung ist § 10 in der bis zu dies…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[2].children[4].children[2].text@142:rule:jurisdiction-name-bare",
+      "path": "body[6].children[2].children[4].children[2].text",
+      "start": 142,
+      "end": 161,
+      "term": "Nordrhein-Westfalen",
+      "context": "…mmunalen Zusammenarbeit der Städte, Gemeinden und Kreise in Nordrhein-Westfalen v. 3.2.2004 (GV. NRW. S. 96))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[2].children[4].children[2].text@175:protected:gazette-nrw",
+      "path": "body[6].children[2].children[4].children[2].text",
+      "start": 175,
+      "end": 189,
+      "term": "GV. NRW. S. 96",
+      "context": "…e, Gemeinden und Kreise in Nordrhein-Westfalen v. 3.2.2004 (GV. NRW. S. 96))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[2].children[7].text@195:geography-region",
+      "path": "body[6].children[2].children[7].text",
+      "start": 195,
+      "end": 205,
+      "term": "Ruhrgebiet",
+      "context": "…lächennutzungsplans auf die Gemeinden des Kommunalverbandes Ruhrgebiet und an diese angrenzenden Nachbargemeinden bezieht.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].text@4:constitutional-organ-state",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[7].text@20:rule:jurisdiction-name-bare",
+      "path": "body[7].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].text@4:ministry-compound",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[10].text@4:ministry-compound",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[11].text@4:ministry-portfolio",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 55,
+      "term": "Minister für Städtebau und Wohnen, Kultur und Sport",
+      "context": "Der Minister für Städtebau und Wohnen, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].text@4:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 79,
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].text@4:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 51,
+      "term": "Minister für Verkehr, Energie und Landesplanung",
+      "context": "Der Minister für Verkehr, Energie und Landesplanung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].text@134:rule:jurisdiction-name-dative",
+      "path": "body[15].text",
+      "start": 134,
+      "end": 161,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…unalen Finanzmanagements für Gemeinden und Gemeindeverbände im Land Nordrhein-Westfalen (1. NKF-Weiterentwicklungsgesetz - NKFWG) vom 18. September…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[15].text@228:protected:gazette-nrw",
+      "path": "body[15].text",
+      "start": 228,
+      "end": 243,
+      "term": "GV. NRW. S. 432",
+      "context": "…F-Weiterentwicklungsgesetz - NKFWG) vom 18. September 2012 (GV. NRW. S. 432))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[38].text@73:protected:gazette-nrw",
+      "path": "body[38].text",
+      "start": 73,
+      "end": 88,
+      "term": "GV. NRW. S. 738",
+      "context": "…ikel 11 Absatz 4 Satz 1 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 738))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "regional-body": {
+      "manual-review": 2
+    },
+    "geography": {
+      "manual-review": 15
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 20
+    },
+    "source-citation": {
+      "protected": 14
+    },
+    "municipality": {
+      "manual-review": 19
+    },
+    "authority": {
+      "manual-review": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "body[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[3].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[3].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[3].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[5].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[10].children[2].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[10].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[13].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[14].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[14].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[17].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[17].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[17].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[2].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Regionalverband Ruhr",
+      "context": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Ruhr",
+      "context": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Ruhr",
+      "context": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Bochum",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Bottrop",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Her…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Dortmund",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülhei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Duisburg",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der R…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Essen",
+      "context": "Die kreisfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Gelsenkirchen",
+      "context": "…isfreien Städte Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sow…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Hagen",
+      "context": "… Bochum, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Hamm",
+      "context": "…, Bottrop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Herne",
+      "context": "…rop, Dortmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Mülheim an der Ruhr",
+      "context": "…rtmund, Duisburg, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Reckling…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Ruhr",
+      "context": "…g, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Reckling…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Ruhr",
+      "context": "…g, Essen, Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Reckling…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Oberhausen",
+      "context": "… Gelsenkirchen, Hagen, Hamm, Herne, Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Recklinghausen, Unna un…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Ruhr",
+      "context": "… Mülheim an der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Recklinghausen, Unna und Wesel bilden den Regionalve…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Recklinghausen",
+      "context": "…der Ruhr und Oberhausen sowie die Kreise Ennepe-Ruhr-Kreis, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…nnepe-Ruhr-Kreis, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Ruhr",
+      "context": "…, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Ruhr",
+      "context": "…, Recklinghausen, Unna und Wesel bilden den Regionalverband Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[1].text",
+      "term": "Ruhr",
+      "context": "… ein Gemeindeverband und dient dem Gemeinwohl der Metropole Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[1].text",
+      "term": "Ruhr",
+      "context": "… ein Gemeindeverband und dient dem Gemeinwohl der Metropole Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[2].text",
+      "term": "Essen",
+      "context": "Der Sitz des Verbandes ist Essen. Mit der Mehrheit von zwei Dritteln der gesetzlichen Zahl d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[1].text",
+      "term": "Emscher",
+      "context": "…6, 2. Trägerschaften, Fortführung und Weiterentwicklung des Emscher Landschaftsparks und der Route der Industriekultur, 3. Sich…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…nd von den spezialgesetzlichen Aufsichtsregelungen auf eine Bezirksregierung zu übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[1].text",
+      "term": "Arnsberg",
+      "context": "… in der Abwägung zu berücksichtigen sind. Den Regionalräten Arnsberg, Düsseldorf und Münster ist vor der Beschlussfassung Gelege…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…wägung zu berücksichtigen sind. Den Regionalräten Arnsberg, Düsseldorf und Münster ist vor der Beschlussfassung Gelegenheit zur St…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[1].text",
+      "term": "Münster",
+      "context": "…ksichtigen sind. Den Regionalräten Arnsberg, Düsseldorf und Münster ist vor der Beschlussfassung Gelegenheit zur Stellungnahme …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[13].children[1].text",
+      "term": "Ruhr",
+      "context": "…gesetz sein. Ist die Haushaltssatzung des Regionalverbandes Ruhr bei Beginn des Haushaltsjahres noch nicht bekannt gemacht, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[13].children[1].text",
+      "term": "Ruhr",
+      "context": "…gesetz sein. Ist die Haushaltssatzung des Regionalverbandes Ruhr bei Beginn des Haushaltsjahres noch nicht bekannt gemacht, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…erordnung die allgemeine Aufsicht über den Verband auf eine Bezirksregierung zu übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "…nntmachungen des Verbandes erfolgen in den Amtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Arnsberg",
+      "context": "…rbandes erfolgen in den Amtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung im Intern…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…folgen in den Amtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung im Internet entsprech…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Münster",
+      "context": "…mtsblättern der Bezirksregierungen Arnsberg, Düsseldorf und Münster oder durch Bereitstellung im Internet entsprechend der Vero…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[2].text",
+      "term": "Ruhr",
+      "context": "…s Artikels 2 des Gesetzes zur Stärkung des Regionalverbands Ruhr vom 12. Mai 2015 (GV. NRW. S. 436) bestehende Verbandsversa…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[2].text",
+      "term": "Ruhr",
+      "context": "…s Artikels 2 des Gesetzes zur Stärkung des Regionalverbands Ruhr vom 12. Mai 2015 (GV. NRW. S. 436) bestehende Verbandsversa…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[7].text",
+      "term": "Ruhrgebiet",
+      "context": "…lächennutzungsplans auf die Gemeinden des Kommunalverbandes Ruhrgebiet und an diese angrenzenden Nachbargemeinden bezieht.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Minister für Städtebau und Wohnen, Kultur und Sport",
+      "context": "Der Minister für Städtebau und Wohnen, Kultur und Sport",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Minister für Verkehr, Energie und Landesplanung",
+      "context": "Der Minister für Verkehr, Energie und Landesplanung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 397,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…e, Gemeinden und Kreise in Westdeutschland v. 3.2.2004 (GV. NRW. S. 96))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…n (§ 7 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist), 3. Maßnahmen zur Entwickl…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), die zuletzt durch Artikel 1 des Gesetzes vom 19. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 1 des Gesetzes vom 19. Dezember 2013 (GV. NRW. S. 878) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…tz in der Fassung der Bekanntmachung vom 30. Juni 1988 (GV. NRW. S. 454, ber. S. 509 und 1999 S. 70) in der jeweils geltend…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[3].children[6].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung entsprechend.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[5].children[6].text",
+        "term": "NRW",
+        "context": "…s Korruptionsbekämpfungsgesetzes vom 16. Dezember 2004 (GV. NRW. 2005 S. 8) in der jeweils geltenden Fassung bleibt unberüh…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[13].children[3].text",
+        "term": "NRW",
+        "context": "…ordnung für das Land Westdeutschland vom 14. Juli 1994 (GV. NRW. S. 646) in der jeweils geltenden Fassung alle anderen Mögl…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…ntmachung von kommunalem Ortsrecht vom 26. August 1999 (GV. NRW. S. 516) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…ur Stärkung des Regionalverbands Ruhr vom 12. Mai 2015 (GV. NRW. S. 436) bestehende Verbandsversammlung ist § 10 in der bis…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[2].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…e, Gemeinden und Kreise in Westdeutschland v. 3.2.2004 (GV. NRW. S. 96))",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].text",
+        "term": "NRW",
+        "context": "…iterentwicklungsgesetz - NKFWG) vom 18. September 2012 (GV. NRW. S. 432))",
+        "status": "protected"
+      },
+      {
+        "path": "body[38].text",
+        "term": "NRW",
+        "context": "… 11 Absatz 4 Satz 1 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 738))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung vom 3. Februar 2004 (GV. NRW. S. 96)",
+    "sourceVersion": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung vom 3. Februar 2004 (GV. NRW. S. 96)",
+    "simulation": "Gesetz über den Regionalverband Ruhr; Bekanntmachung der Neufassung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 44839,
+          "actual": 44497,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 338,
+          "actual": 338,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 37,
+          "actual": 37,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 44497,
+          "actual": 44417,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "31 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "31 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:13:11.246Z"
+}

@@ -1,0 +1,676 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32860",
+  "slug": "finasvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@143:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 143,
+      "end": 162,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nsinhaberin oder des Konzessionsinhabers in den Spielbanken Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@42:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Finanzaufsichts- und Sicherungsverordnung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.abbr@8:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 8,
+      "end": 11,
+      "term": "NRW",
+      "context": "FinASVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].title@143:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 143,
+      "end": 162,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nsinhaberin oder des Konzessionsinhabers in den Spielbanken Nordrhein-Westfalen (Finanzaufsichts- und Sicherungsverordnung NRW - FinASVO NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@206:rule:jurisdiction-abbreviation",
+      "path": "body[0].title",
+      "start": 206,
+      "end": 209,
+      "term": "NRW",
+      "context": "…drhein-Westfalen (Finanzaufsichts- und Sicherungsverordnung NRW - FinASVO NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].title@220:rule:jurisdiction-abbreviation",
+      "path": "body[0].title",
+      "start": 220,
+      "end": 223,
+      "term": "NRW",
+      "context": "…en (Finanzaufsichts- und Sicherungsverordnung NRW - FinASVO NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@49:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 49,
+      "end": 66,
+      "term": "GV. NRW. S. 1056a",
+      "context": "(Artikel 4 der Verordnung vom 18. November 2020 (GV. NRW. S. 1056a))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@65:rule:jurisdiction-abbreviation",
+      "path": "body[3].text",
+      "start": 65,
+      "end": 68,
+      "term": "NRW",
+      "context": "…rund des § 14 Absatz 1 Nummer 4 und 5 des Spielbankgesetzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) verordnet das Ministeriu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@87:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 87,
+      "end": 102,
+      "term": "GV. NRW. S. 363",
+      "context": "… Nummer 4 und 5 des Spielbankgesetzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) verordnet das Ministerium des Innern im Einvernehmen mit d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@118:ministry-portfolio",
+      "path": "body[3].text",
+      "start": 118,
+      "end": 140,
+      "term": "Ministerium des Innern",
+      "context": "…setzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) verordnet das Ministerium des Innern im Einvernehmen mit dem Ministerium der Finanzen und dem Mi…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[3].text@165:ministry-portfolio",
+      "path": "body[3].text",
+      "start": 165,
+      "end": 245,
+      "term": "Ministerium der Finanzen und dem Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "…erordnet das Ministerium des Innern im Einvernehmen mit dem Ministerium der Finanzen und dem Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[11].children[0].children[0].text@82:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[0].text",
+      "start": 82,
+      "end": 85,
+      "term": "NRW",
+      "context": "… den gesamten Spielbetrieb unter Beachtung der Spielordnung NRW [einsetzen: Ausfertigungsdatum und Fundstelle dieser Verord…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[0].children[2].text@552:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[2].text",
+      "start": 552,
+      "end": 555,
+      "term": "NRW",
+      "context": "…eitstandes gemäß § 13 Absatz 9 Satz 4 des Spielbankgesetzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) angemessene Räume zur al…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[0].children[2].text@574:protected:gazette-nrw",
+      "path": "body[11].children[0].children[2].text",
+      "start": 574,
+      "end": 589,
+      "term": "GV. NRW. S. 363",
+      "context": "…Absatz 9 Satz 4 des Spielbankgesetzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) angemessene Räume zur alleinigen Nutzung zur Verfügung zu …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].children[3].text@155:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[3].text",
+      "start": 155,
+      "end": 158,
+      "term": "NRW",
+      "context": "…ent System gemäß § 13 Absatz 9 Satz 2 des Spielbankgesetzes NRW einzusetzen. Die Beauftragten der Konzessionsinhaberin oder…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[6].children[1].text@185:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[6].children[1].text",
+      "start": 185,
+      "end": 188,
+      "term": "NRW",
+      "context": "…e Fundstücke, sind nach § 19 Absatz 4 des Spielbankgesetzes NRW dem Bruttospielertrag hinzuzurechnen, wenn die Besitzerin o…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[11].children[5].text@679:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[11].children[5].text",
+      "start": 679,
+      "end": 682,
+      "term": "NRW",
+      "context": "…r Richtlinien gemäß § 1 Absatz 1 Satz 8 Spielbankverordnung NRW [einsetzen: Ausfertigungsdatum und Fundstelle dieser Verord…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[1].children[10].text@61:rule:jurisdiction-abbreviation",
+      "path": "body[14].children[1].children[10].text",
+      "start": 61,
+      "end": 64,
+      "term": "NRW",
+      "context": "…älschungen zählen gemäß § 19 Absatz 5 des Spielbankgesetzes NRW mit dem Wert zum Bruttospielertrag, mit dem sie am Spiel te…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[17].children[1].text@4:ministry-portfolio",
+      "path": "body[14].children[17].children[1].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[14].children[17].children[2].text@4:ministry-portfolio",
+      "path": "body[14].children[17].children[2].text",
+      "start": 4,
+      "end": 25,
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[14].children[17].children[3].text@4:ministry-portfolio",
+      "path": "body[14].children[17].children[3].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].children[17].children[4].children[0].children[1].text@40:protected:gazette-nrw",
+      "path": "body[14].children[17].children[4].children[0].children[1].text",
+      "start": 40,
+      "end": 57,
+      "term": "GV. NRW. S. 1056a",
+      "context": "In Kraft getreten am 20. November 2020 (GV. NRW. S. 1056a).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 13
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[0].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[6].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[11].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[14].children[1].children[10].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].text",
+      "term": "Ministerium des Innern",
+      "context": "…setzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) verordnet das Ministerium des Innern im Einvernehmen mit dem Ministerium der Finanzen und dem Mi…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].text",
+      "term": "Ministerium der Finanzen und dem Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "…erordnet das Ministerium des Innern im Einvernehmen mit dem Ministerium der Finanzen und dem Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[17].children[1].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[17].children[2].text",
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[17].children[3].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 516,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "(Artikel 4 der Verordnung vom 18. November 2020 (GV. NRW. S. 1056a))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…er 4 und 5 des Spielbankgesetzes West vom 29. Mai 2020 (GV. NRW. S. 363) verordnet das Ministerium des Innern im Einvernehm…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…z 9 Satz 4 des Spielbankgesetzes West vom 29. Mai 2020 (GV. NRW. S. 363) angemessene Räume zur alleinigen Nutzung zur Verfü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[17].children[4].children[0].children[1].text",
+        "term": "NRW",
+        "context": "In Kraft getreten am 20. November 2020 (GV. NRW. S. 1056a).",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium des Innern",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium des Innern",
+        "path": "body[3].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium des Innern",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium des Innern",
+      "path": "body[3].text"
+    },
+    "mappingEntry": "innenministerium"
+  },
+  "citations": {
+    "source": "Verordnung zu den Aufgaben der Finanzaufsicht und Sicherungsmaßnahmen der Konzessionsinhaberin oder des Konzessionsinhabers in den Spielbanken Nordrhein-Westfalen vom 18. November 2020",
+    "sourceVersion": "Verordnung zu den Aufgaben der Finanzaufsicht und Sicherungsmaßnahmen der Konzessionsinhaberin oder des Konzessionsinhabers in den Spielbanken Nordrhein-Westfalen vom 18. November 2020",
+    "simulation": "Verordnung zu den Aufgaben der Finanzaufsicht und Sicherungsmaßnahmen der Konzessionsinhaberin oder des Konzessionsinhabers in den Spielbanken Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 72450,
+          "actual": 72444,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 292,
+          "actual": 292,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 72444,
+          "actual": 72449,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "41 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "41 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:35:53.108Z"
+}

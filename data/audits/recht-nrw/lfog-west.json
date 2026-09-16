@@ -1,0 +1,948 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26994",
+  "slug": "lfog-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@26:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 26,
+      "end": 50,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Landesforstgesetz für das Land Nordrhein-Westfalen, Bekanntmachung der Neufassung",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].text@94:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 94,
+      "end": 108,
+      "term": "GV. NW. S. 214",
+      "context": "…zes zur Änderung des Landesforstgesetzes vom 11. März 1980 (GV. NW. S. 214) wird nachstehend der Wortlaut des Landesforstgesetzes vom …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@183:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 183,
+      "end": 197,
+      "term": "GV. NW. S. 588",
+      "context": "…end der Wortlaut des Landesforstgesetzes vom 29. Juli 1969 (GV. NW. S. 588) in der vom 29. März 1980 an geltenden Fassung unter Berück…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@130:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 130,
+      "end": 148,
+      "term": "GV. NW. 1970 S. 22",
+      "context": "…ßgeldvorschriften an das Bundesrecht vom 16. Dezember 1969 (GV. NW. 1970 S. 22)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@102:protected:gazette-nw",
+      "path": "body[3].text",
+      "start": 102,
+      "end": 116,
+      "term": "GV. NW. S. 251",
+      "context": "…htung eines Landesamtes für Agrarordnung vom 7. April 1970 (GV. NW. S. 251)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@108:protected:gazette-nw",
+      "path": "body[4].text",
+      "start": 108,
+      "end": 122,
+      "term": "GV. NW. S. 190",
+      "context": "…ts und zur Entwicklung der Landschaft vom 18. Februar 1975 (GV. NW. S. 190)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@45:rule:jurisdiction-name-dative",
+      "path": "body[5].text",
+      "start": 45,
+      "end": 72,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "§ 52 des Gesetzes über den Gemeinschaftswald im Land Nordrhein-Westfalen vom 8. April 1975 (GV. NW. S. 304)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[5].text@92:protected:gazette-nw",
+      "path": "body[5].text",
+      "start": 92,
+      "end": 106,
+      "term": "GV. NW. S. 304",
+      "context": "…nschaftswald im Land Nordrhein-Westfalen vom 8. April 1975 (GV. NW. S. 304)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@79:protected:gazette-nw",
+      "path": "body[6].text",
+      "start": 79,
+      "end": 93,
+      "term": "GV. NW. S. 214",
+      "context": "…zes zur Änderung des Landesforstgesetzes vom 11. März 1980 (GV. NW. S. 214)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[8].text@4:ministry-portfolio",
+      "path": "body[8].text",
+      "start": 4,
+      "end": 54,
+      "term": "Minister für Ernährung, Landwirtschaft und Forsten",
+      "context": "Der Minister für Ernährung, Landwirtschaft und Forsten des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].text@59:rule:jurisdiction-name-genitive",
+      "path": "body[8].text",
+      "start": 59,
+      "end": 85,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Ernährung, Landwirtschaft und Forsten des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].text@26:rule:jurisdiction-name",
+      "path": "body[9].text",
+      "start": 26,
+      "end": 50,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Landesforstgesetz für das Land Nordrhein-Westfalen (Landesforstgesetz - LFoG -) in der Fassung der Bekanntmach…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[14].children[3].children[3].text@237:protected:gazette-nrw",
+      "path": "body[14].children[3].children[3].text",
+      "start": 237,
+      "end": 252,
+      "term": "GV. NRW. S. 546",
+      "context": "…etzes in der Fassung der Bekanntmachung vom 24. April 1980 (GV. NRW. S. 546), das zuletzt durch Artikel 2 des Gesetzes vom 16. März 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[3].children[3].text@315:protected:gazette-nrw",
+      "path": "body[14].children[3].children[3].text",
+      "start": 315,
+      "end": 330,
+      "term": "GV. NRW. S. 185",
+      "context": "…das zuletzt durch Artikel 2 des Gesetzes vom 16. März 2010 (GV. NRW. S. 185) geändert worden ist, bis zum 31. Dezember 2028 anzuwenden.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[3].children[4].text@492:protected:gazette-nrw",
+      "path": "body[14].children[3].children[4].text",
+      "start": 492,
+      "end": 507,
+      "term": "GV. NRW. S. 546",
+      "context": "… 1 Absatz 2 in der Fassung des Gesetzes vom 24. April 1980 (GV. NRW. S. 546), das zuletzt durch Artikel 2 des Gesetzes vom 16. März 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[3].children[4].text@570:protected:gazette-nrw",
+      "path": "body[14].children[3].children[4].text",
+      "start": 570,
+      "end": 585,
+      "term": "GV. NRW. S. 185",
+      "context": "…das zuletzt durch Artikel 2 des Gesetzes vom 16. März 2010 (GV. NRW. S. 185) geändert worden ist, für die Dauer der Vertragslaufzeit an…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[5].text@182:protected:gazette-nrw",
+      "path": "body[18].children[1].children[5].text",
+      "start": 182,
+      "end": 197,
+      "term": "GV. NRW. S. 568",
+      "context": "…stimmungen des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November 2016 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[5].text@256:protected:gazette-nrw",
+      "path": "body[18].children[1].children[5].text",
+      "start": 256,
+      "end": 271,
+      "term": "GV. NRW. S. 934",
+      "context": "…8), das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist, gestattet ist oder hierfür nicht e…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[4].text@211:rule:jurisdiction-name",
+      "path": "body[19].children[4].text",
+      "start": 211,
+      "end": 235,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…chutz (Ministerium) im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekanntgegeben wird.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[28].children[3].text@117:authority-state-enterprise",
+      "path": "body[28].children[3].text",
+      "start": 117,
+      "end": 135,
+      "term": "Landesbetrieb Wald",
+      "context": "… Betreuung durch tätige Mithilfe erfolgt gegen Entgelt. Der Landesbetrieb Wald und Holz legt mit Zustimmung der Aufsichtsbehörde die Höhe …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[48].children[1].text@15:rule:jurisdiction-name-genitive",
+      "path": "body[48].children[1].text",
+      "start": 15,
+      "end": 41,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Staatswald des Landes Nordrhein-Westfalen ist der Wald, der im Alleineigentum oder Miteigentum des La…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[48].children[1].text@99:rule:jurisdiction-name-genitive",
+      "path": "body[48].children[1].text",
+      "start": 99,
+      "end": 125,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…en ist der Wald, der im Alleineigentum oder Miteigentum des Landes Nordrhein-Westfalen steht (Verwaltungsgrundvermögen Sonderliegenschaft Forst)…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[53].children[1].text@127:ministry-compound",
+      "path": "body[53].children[1].text",
+      "start": 127,
+      "end": 143,
+      "term": "Innenministerium",
+      "context": "…des Landtags durch Rechtsverordnung im Einvernehmen mit dem Innenministerium die Form und den Mindestinhalt der Betriebspläne, Betriebsg…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[54].children[0].children[1].text@31:rule:jurisdiction-name-genitive",
+      "path": "body[54].children[0].children[1].text",
+      "start": 31,
+      "end": 57,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "die sonstigen der Aufsicht des Landes Nordrhein-Westfalen unterstehenden Körperschaften des öffentlichen Rechts, ausg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[56].children[1].text@684:protected:gazette-nrw",
+      "path": "body[56].children[1].text",
+      "start": 684,
+      "end": 699,
+      "term": "GV. NRW. S. 175",
+      "context": "…sumweltverträglichkeitsprüfungsgesetzes vom 29. April 1992 (GV. NRW. S. 175), das zuletzt durch Artikel 1 des Gesetzes vom 26. März 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[56].children[1].text@762:protected:gazette-nrw",
+      "path": "body[56].children[1].text",
+      "start": 762,
+      "end": 777,
+      "term": "GV. NRW. S. 193",
+      "context": "…das zuletzt durch Artikel 1 des Gesetzes vom 26. März 2019 (GV. NRW. S. 193) geändert worden ist, entsprechen. Sofern die Genehmigung e…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[72].children[1].text@52:authority-state-enterprise",
+      "path": "body[72].children[1].text",
+      "start": 52,
+      "end": 70,
+      "term": "Landesbetrieb Wald",
+      "context": "Forstbehörden sind die oberste Forstbehörde und der Landesbetrieb Wald und Holz, dem die Aufgaben der Höheren Forstbehörde und der…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[72].children[2].text@155:authority-state-enterprise",
+      "path": "body[72].children[2].text",
+      "start": 155,
+      "end": 173,
+      "term": "Landesbetrieb Wald",
+      "context": "…cherschutz(Ministerium). Dieses führt die Aufsicht über den Landesbetrieb Wald und Holz.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[72].children[3].text@4:authority-state-enterprise",
+      "path": "body[72].children[3].text",
+      "start": 4,
+      "end": 22,
+      "term": "Landesbetrieb Wald",
+      "context": "Der Landesbetrieb Wald und Holz ist als Landesbetrieb nach § 14a LOG organisiert. …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[73].children[1].text@32:authority-state-enterprise",
+      "path": "body[73].children[1].text",
+      "start": 32,
+      "end": 50,
+      "term": "Landesbetrieb Wald",
+      "context": "Das Ministerium erlässt für den Landesbetrieb Wald und Holz eine Betriebssatzung im Einvernehmen mit dem Finan…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[73].children[1].text@105:ministry-compound",
+      "path": "body[73].children[1].text",
+      "start": 105,
+      "end": 122,
+      "term": "Finanzministerium",
+      "context": "… Wald und Holz eine Betriebssatzung im Einvernehmen mit dem Finanzministerium.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[73].children[2].text@4:authority-state-enterprise",
+      "path": "body[73].children[2].text",
+      "start": 4,
+      "end": 22,
+      "term": "Landesbetrieb Wald",
+      "context": "Der Landesbetrieb Wald und Holz gibt sich mit Zustimmung des Ministeriums eine Ges…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[73].children[3].text@5:authority-state-enterprise",
+      "path": "body[73].children[3].text",
+      "start": 5,
+      "end": 51,
+      "term": "Landesbetrieb wird ein Verwaltungsrat gebildet",
+      "context": "Beim Landesbetrieb wird ein Verwaltungsrat gebildet. Das Nähere regelt das Ministerium.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[78].children[1].text@102:authority-state-enterprise",
+      "path": "body[78].children[1].text",
+      "start": 102,
+      "end": 120,
+      "term": "Landesbetrieb Wald",
+      "context": "…ungen zu diesem Gesetz nichts anderes bestimmt ist, ist der Landesbetrieb Wald und Holz zuständig. Der Landesbetrieb Wald und Holz nimmt d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[78].children[1].text@145:authority-state-enterprise",
+      "path": "body[78].children[1].text",
+      "start": 145,
+      "end": 163,
+      "term": "Landesbetrieb Wald",
+      "context": "…mmt ist, ist der Landesbetrieb Wald und Holz zuständig. Der Landesbetrieb Wald und Holz nimmt die nach diesem Gesetz und nach anderen Gese…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[79].children[1].text@56:authority-state-enterprise",
+      "path": "body[79].children[1].text",
+      "start": 56,
+      "end": 97,
+      "term": "Landesbetrieb ein Beratungsorgan gebildet",
+      "context": "Bei dem Ministerium wird ein Forstausschuss und bei dem Landesbetrieb ein Beratungsorgan gebildet. Bei den Außenstellen des Landesbetriebes kann jeweils ein …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[82].children[2].text@104:rule:jurisdiction-name-genitive",
+      "path": "body[82].children[2].text",
+      "start": 104,
+      "end": 130,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Dienstkleidung die Dienstkleidung der Forstbediensteten des Landes Nordrhein-Westfalen mit vergleichbarer Berufsausbildung und Tätigkeit tragen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "source-citation": {
+      "protected": 15
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "authority": {
+      "manual-review": 10
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[8].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[19].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[48].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[48].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[54].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[82].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[8].text",
+      "term": "Minister für Ernährung, Landwirtschaft und Forsten",
+      "context": "Der Minister für Ernährung, Landwirtschaft und Forsten des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[28].children[3].text",
+      "term": "Landesbetrieb Wald",
+      "context": "… Betreuung durch tätige Mithilfe erfolgt gegen Entgelt. Der Landesbetrieb Wald und Holz legt mit Zustimmung der Aufsichtsbehörde die Höhe …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[53].children[1].text",
+      "term": "Innenministerium",
+      "context": "…des Landtags durch Rechtsverordnung im Einvernehmen mit dem Innenministerium die Form und den Mindestinhalt der Betriebspläne, Betriebsg…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[72].children[1].text",
+      "term": "Landesbetrieb Wald",
+      "context": "Forstbehörden sind die oberste Forstbehörde und der Landesbetrieb Wald und Holz, dem die Aufgaben der Höheren Forstbehörde und der…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[72].children[2].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…cherschutz(Ministerium). Dieses führt die Aufsicht über den Landesbetrieb Wald und Holz.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[72].children[3].text",
+      "term": "Landesbetrieb Wald",
+      "context": "Der Landesbetrieb Wald und Holz ist als Landesbetrieb nach § 14a LOG organisiert. …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[73].children[1].text",
+      "term": "Landesbetrieb Wald",
+      "context": "Das Ministerium erlässt für den Landesbetrieb Wald und Holz eine Betriebssatzung im Einvernehmen mit dem Finan…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[73].children[1].text",
+      "term": "Finanzministerium",
+      "context": "… Wald und Holz eine Betriebssatzung im Einvernehmen mit dem Finanzministerium.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[73].children[2].text",
+      "term": "Landesbetrieb Wald",
+      "context": "Der Landesbetrieb Wald und Holz gibt sich mit Zustimmung des Ministeriums eine Ges…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[73].children[3].text",
+      "term": "Landesbetrieb wird ein Verwaltungsrat gebildet",
+      "context": "Beim Landesbetrieb wird ein Verwaltungsrat gebildet. Das Nähere regelt das Ministerium.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[78].children[1].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…ungen zu diesem Gesetz nichts anderes bestimmt ist, ist der Landesbetrieb Wald und Holz zuständig. Der Landesbetrieb Wald und Holz nimmt d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[78].children[1].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…mmt ist, ist der Landesbetrieb Wald und Holz zuständig. Der Landesbetrieb Wald und Holz nimmt die nach diesem Gesetz und nach anderen Gese…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[79].children[1].text",
+      "term": "Landesbetrieb ein Beratungsorgan gebildet",
+      "context": "Bei dem Ministerium wird ein Forstausschuss und bei dem Landesbetrieb ein Beratungsorgan gebildet. Bei den Außenstellen des Landesbetriebes kann jeweils ein …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 941,
+    "residuals": [
+      {
+        "path": "body[14].children[3].children[3].text",
+        "term": "NRW",
+        "context": "…s in der Fassung der Bekanntmachung vom 24. April 1980 (GV. NRW. S. 546), das zuletzt durch Artikel 2 des Gesetzes vom 16. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[3].children[3].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 2 des Gesetzes vom 16. März 2010 (GV. NRW. S. 185) geändert worden ist, bis zum 31. Dezember 2028 anz…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[3].children[4].text",
+        "term": "NRW",
+        "context": "…bsatz 2 in der Fassung des Gesetzes vom 24. April 1980 (GV. NRW. S. 546), das zuletzt durch Artikel 2 des Gesetzes vom 16. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[3].children[4].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 2 des Gesetzes vom 16. März 2010 (GV. NRW. S. 185) geändert worden ist, für die Dauer der Vertragslau…",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[5].text",
+        "term": "NRW",
+        "context": "…mungen des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November…",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[5].text",
+        "term": "NRW",
+        "context": "…das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist, gestattet ist oder hierfür…",
+        "status": "protected"
+      },
+      {
+        "path": "body[56].children[1].text",
+        "term": "NRW",
+        "context": "…eltverträglichkeitsprüfungsgesetzes vom 29. April 1992 (GV. NRW. S. 175), das zuletzt durch Artikel 1 des Gesetzes vom 26. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[56].children[1].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 1 des Gesetzes vom 26. März 2019 (GV. NRW. S. 193) geändert worden ist, entsprechen. Sofern die Geneh…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Landesforstgesetz für das Land Nordrhein-Westfalen, Bekanntmachung der Neufassung vom 24. April 1980 (GV. NW. 1980 S. 546)",
+    "sourceVersion": "Landesforstgesetz für das Land Nordrhein-Westfalen, Bekanntmachung der Neufassung vom 24. April 1980 (GV. NW. 1980 S. 546)",
+    "simulation": "Landesforstgesetz für das Land Westdeutschland, Bekanntmachung der Neufassung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 78,
+          "actual": 78,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 73142,
+          "actual": 72624,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 78,
+          "actual": 78,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 762,
+          "actual": 762,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 57,
+          "actual": 57,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 78,
+          "actual": 78,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 72624,
+          "actual": 72592,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "78 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "78 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:31:38.873Z"
+}

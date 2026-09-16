@@ -1,0 +1,496 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33855",
+  "slug": "gbernachwvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@164:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 164,
+      "end": 183,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tnisse bei der Berufszulassung der Gesundheitsfachberufe in Nordrhein-Westfalen [1]",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@57:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 57,
+      "end": 60,
+      "term": "NRW",
+      "context": "Nachweis- und Sprachprüfverordnung Gesundheitsfachberufe NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.abbr@12:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 12,
+      "end": 15,
+      "term": "NRW",
+      "context": "GBerNachwVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@74:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 74,
+      "end": 77,
+      "term": "NRW",
+      "context": "…§ 1a Absatz 1 und des § 3 des Gesundheitsfachberufegesetzes NRW vom 18. Dezember 2014 (GV. NRW. S. 930), von denen § 1a Abs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@101:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 101,
+      "end": 116,
+      "term": "GV. NRW. S. 930",
+      "context": "…es Gesundheitsfachberufegesetzes NRW vom 18. Dezember 2014 (GV. NRW. S. 930), von denen § 1a Absatz 1 durch Artikel 3 Nummer 1 Buchstab…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@215:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 215,
+      "end": 230,
+      "term": "GV. NRW. S. 975",
+      "context": "…l 3 Nummer 1 Buchstabe a des Gesetzes vom 8. November 2022 (GV. NRW. S. 975) und § 3 Satz 2 bis 5 durch Artikel 3 Nummer 2 des Gesetzes…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@311:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 311,
+      "end": 326,
+      "term": "GV. NRW. S. 230",
+      "context": "…5 durch Artikel 3 Nummer 2 des Gesetzes vom 26. April 2016 (GV. NRW. S. 230) eingefügt worden ist, verordnet das Ministerium für Arbeit…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@364:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 364,
+      "end": 411,
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "… 2016 (GV. NRW. S. 230) eingefügt worden ist, verordnet das Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@173:protected:gazette-nrw",
+      "path": "body[2].children[0].text",
+      "start": 173,
+      "end": 188,
+      "term": "GV. NRW. S. 458",
+      "context": "…6 der Zuständigkeitsverordnung Heilberufe vom 20. Mai 2008 (GV. NRW. S. 458) in der jeweils geltenden Fassung legt die antragstellende …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].text@190:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 190,
+      "end": 193,
+      "term": "NRW",
+      "context": "…e nach § 8 Absatz 1 und 3 des Gesundheitsfachberufegesetzes NRW verpflichtet, die zuständigen Stellen der übrigen Mitglieds…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[1].text@259:protected:gazette-nrw",
+      "path": "body[8].children[1].text",
+      "start": 259,
+      "end": 274,
+      "term": "GV. NRW. S. 572",
+      "context": "…ich der nichtakademischen Heilberufe vom 20. November 2007 (GV. NRW. S. 572) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].children[0].text@4:ministry-portfolio",
+      "path": "body[8].children[1].children[0].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[0].text@53:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[1].children[0].text",
+      "start": 53,
+      "end": 79,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "… 2016 (GV. NRW. S. 230) eingefügt worden ist, verordnet das Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[0].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 73,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…sundheitsfachberufegesetzes West vom 18. Dezember 2014 (GV. NRW. S. 930), von denen § 1a Absatz 1 durch Artikel 3 Nummer 1 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…Nummer 1 Buchstabe a des Gesetzes vom 8. November 2022 (GV. NRW. S. 975) und § 3 Satz 2 bis 5 durch Artikel 3 Nummer 2 des …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…rch Artikel 3 Nummer 2 des Gesetzes vom 26. April 2016 (GV. NRW. S. 230) eingefügt worden ist, verordnet das Ministerium fü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].text",
+        "term": "NRW",
+        "context": "…r Zuständigkeitsverordnung Heilberufe vom 20. Mai 2008 (GV. NRW. S. 458) in der jeweils geltenden Fassung legt die antragst…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].text",
+        "term": "NRW",
+        "context": "…der nichtakademischen Heilberufe vom 20. November 2007 (GV. NRW. S. 572) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zum Nachweis der Zuverlässigkeit, der gesundheitlichen Eignung und zur Prüfung der Sprachkenntnisse bei der Berufszulassung der Gesundheitsfachberufe in Nordrhein-Westfalen [1] vom 7. August 2023",
+    "sourceVersion": "Verordnung zum Nachweis der Zuverlässigkeit, der gesundheitlichen Eignung und zur Prüfung der Sprachkenntnisse bei der Berufszulassung der Gesundheitsfachberufe in Nordrhein-Westfalen [1] vom 7. August 2023",
+    "simulation": "Verordnung zum Nachweis der Zuverlässigkeit, der gesundheitlichen Eignung und zur Prüfung der Sprachkenntnisse bei der Berufszulassung der Gesundheitsfachberufe in Westdeutschland [1] in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11069,
+          "actual": 11345,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 39,
+          "actual": 39,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11345,
+          "actual": 11343,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/52070-49655-sgv_2120_20230807_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:36:44.187Z"
+}

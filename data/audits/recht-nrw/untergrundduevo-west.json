@@ -1,0 +1,1002 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32267",
+  "slug": "untergrundduevo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.shortTitle@40:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 40,
+      "end": 43,
+      "term": "NRW",
+      "context": "Untergrund-Datenübermittlungsverordnung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.abbr@15:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 15,
+      "end": 18,
+      "term": "NRW",
+      "context": "UntergrundDÜVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].title@150:rule:jurisdiction-abbreviation",
+      "path": "body[0].title",
+      "start": 150,
+      "end": 153,
+      "term": "NRW",
+      "context": "…ffentliche Stellen (Untergrund-Datenübermittlungsverordnung NRW - UntergrundDÜVO NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].title@171:rule:jurisdiction-abbreviation",
+      "path": "body[0].title",
+      "start": 171,
+      "end": 174,
+      "term": "NRW",
+      "context": "…ntergrund-Datenübermittlungsverordnung NRW - UntergrundDÜVO NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@51:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 51,
+      "end": 70,
+      "term": "Nordrhein-Westfalen",
+      "context": "Auf Grund des § 6 Absatz 2 des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404),…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@89:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 89,
+      "end": 104,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404), verordnen das Ministerium für Wir…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@145:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 145,
+      "end": 212,
+      "term": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "…18 (GV. NRW. S. 244, ber. S. 278 und S. 404), verordnen das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie, das Ministerium des Innern, das Ministerium für Heimat, Ko…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].text@218:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 218,
+      "end": 240,
+      "term": "Ministerium des Innern",
+      "context": "…ür Wirtschaft, Innovation, Digitalisierung und Energie, das Ministerium des Innern, das Ministerium für Heimat, Kommunales, Bau und Gleichstel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[2].text@246:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 246,
+      "end": 304,
+      "term": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "…igitalisierung und Energie, das Ministerium des Innern, das Ministerium für Heimat, Kommunales, Bau und Gleichstellung, das Ministerium für Verkehr und das Ministerium für Umwelt…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].text@310:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 310,
+      "end": 410,
+      "term": "Ministerium für Verkehr und das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…sterium für Heimat, Kommunales, Bau und Gleichstellung, das Ministerium für Verkehr und das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@73:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 73,
+      "end": 92,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung von Daten zu Gefährdungspotenzialen des Untergrundes in Nordrhein-Westfalen durch die Bezirksregierung Arnsberg als Bergbehörde und den…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@103:authority-district-government",
+      "path": "body[3].children[0].text",
+      "start": 103,
+      "end": 119,
+      "term": "Bezirksregierung",
+      "context": "…tenzialen des Untergrundes in Nordrhein-Westfalen durch die Bezirksregierung Arnsberg als Bergbehörde und den Geologischen Dienst Nordrh…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@120:municipality",
+      "path": "body[3].children[0].text",
+      "start": 120,
+      "end": 128,
+      "term": "Arnsberg",
+      "context": "…ergrundes in Nordrhein-Westfalen durch die Bezirksregierung Arnsberg als Bergbehörde und den Geologischen Dienst Nordrhein-Westf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@173:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 173,
+      "end": 192,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ierung Arnsberg als Bergbehörde und den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - an die in § 4 genannten öffentlichen Stel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@195:authority-state-enterprise",
+      "path": "body[3].children[0].text",
+      "start": 195,
+      "end": 217,
+      "term": "Landesbetrieb - an die",
+      "context": "…rgbehörde und den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - an die in § 4 genannten öffentlichen Stellen zu den dort genannten…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@435:protected:gazette-nrw",
+      "path": "body[4].children[0].text",
+      "start": 435,
+      "end": 450,
+      "term": "GV. NRW. S. 439",
+      "context": "…tem nach § 6 des Landesbodenschutzgesetzes vom 9. Mai 2000 (GV. NRW. S. 439) in der jeweils geltenden Fassung, in den Katastern nach § …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[1].text@119:authority-state-enterprise",
+      "path": "body[5].children[1].text",
+      "start": 119,
+      "end": 144,
+      "term": "Landesbetrieb Information",
+      "context": "…sierten Abrufs notwendige technische Verfahren betreibt der Landesbetrieb Information und Technik Nordrhein-Westfalen (IT. NRW) im Auftrag der Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[5].children[1].text@157:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 157,
+      "end": 176,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erfahren betreibt der Landesbetrieb Information und Technik Nordrhein-Westfalen (IT. NRW) im Auftrag der Bergbehörde und des Geologischen D…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@182:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].text",
+      "start": 182,
+      "end": 185,
+      "term": "NRW",
+      "context": "…desbetrieb Information und Technik Nordrhein-Westfalen (IT. NRW) im Auftrag der Bergbehörde und des Geologischen Dienstes N…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[1].text@244:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 244,
+      "end": 263,
+      "term": "Nordrhein-Westfalen",
+      "context": "…W) im Auftrag der Bergbehörde und des Geologischen Dienstes Nordrhein-Westfalen - Landesbetrieb -. Die Bergbehörde und der Geologische Dien…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@326:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 326,
+      "end": 345,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Landesbetrieb -. Die Bergbehörde und der Geologische Dienst Nordrhein-Westfalen -Landesbetrieb - stellen IT. NRW die in § 2 Absatz 2 genann…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@347:authority-state-enterprise",
+      "path": "body[5].children[1].text",
+      "start": 347,
+      "end": 373,
+      "term": "Landesbetrieb - stellen IT",
+      "context": "…Bergbehörde und der Geologische Dienst Nordrhein-Westfalen -Landesbetrieb - stellen IT. NRW die in § 2 Absatz 2 genannten Daten regelmäßig mit akt…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[5].children[1].text@375:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].text",
+      "start": 375,
+      "end": 378,
+      "term": "NRW",
+      "context": "…che Dienst Nordrhein-Westfalen -Landesbetrieb - stellen IT. NRW die in § 2 Absatz 2 genannten Daten regelmäßig mit aktualis…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].text@229:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].text",
+      "start": 229,
+      "end": 248,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gemeinsam durch die Bergbehörde und den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - erteilt. Anträge sind an die Bergbehörde …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].text@251:authority-state-enterprise",
+      "path": "body[5].children[2].text",
+      "start": 251,
+      "end": 274,
+      "term": "Landesbetrieb - erteilt",
+      "context": "…rgbehörde und den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - erteilt. Anträge sind an die Bergbehörde oder den Geologischen Dien…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@337:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].text",
+      "start": 337,
+      "end": 356,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nträge sind an die Bergbehörde oder den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - zu richten. Die datenschutzrechtliche Ver…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].text@359:authority-state-enterprise",
+      "path": "body[5].children[2].text",
+      "start": 359,
+      "end": 385,
+      "term": "Landesbetrieb - zu richten",
+      "context": "…gbehörde oder den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - zu richten. Die datenschutzrechtliche Verantwortung für die abgerufene…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@265:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[3].text",
+      "start": 265,
+      "end": 268,
+      "term": "NRW",
+      "context": "… (Kennwort) ermöglicht. Die Abrufe der Daten sind durch IT. NRW zu protokollieren. Dabei wird der Benutzername, die Netzwer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].children[7].text@202:protected:gazette-nrw",
+      "path": "body[6].children[0].children[7].text",
+      "start": 202,
+      "end": 217,
+      "term": "GV. NRW. S. 174",
+      "context": "… nach dem Vermessungs- und Katastergesetz vom 1. März 2005 (GV. NRW. S. 174) in der jeweils geltenden Fassung und",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].children[8].text@372:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[0].children[8].text",
+      "start": 372,
+      "end": 375,
+      "term": "NRW",
+      "context": "…2017 (BGBl. I S. 3634) und der Gutachterausschussverordnung NRW vom 23. März 2004 (GV. NRW. S. 146) dürfen die zuständigen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].children[8].text@395:protected:gazette-nrw",
+      "path": "body[6].children[0].children[8].text",
+      "start": 395,
+      "end": 410,
+      "term": "GV. NRW. S. 146",
+      "context": "…und der Gutachterausschussverordnung NRW vom 23. März 2004 (GV. NRW. S. 146) dürfen die zuständigen Behörden die in § 2 Absatz 2 genann…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[3].text@4:ministry-portfolio",
+      "path": "body[7].children[3].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[7].children[4].text@4:ministry-portfolio",
+      "path": "body[7].children[4].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Heimat, Kommunales Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[5].text@4:ministry-portfolio",
+      "path": "body[7].children[5].text",
+      "start": 4,
+      "end": 24,
+      "term": "Minister für Verkehr",
+      "context": "Der Minister für Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[6].text@4:ministry-portfolio",
+      "path": "body[7].children[6].text",
+      "start": 4,
+      "end": 71,
+      "term": "Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 16
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 8
+    },
+    "authority": {
+      "manual-review": 6
+    },
+    "municipality": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[0].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "…18 (GV. NRW. S. 244, ber. S. 278 und S. 404), verordnen das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie, das Ministerium des Innern, das Ministerium für Heimat, Ko…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium des Innern",
+      "context": "…ür Wirtschaft, Innovation, Digitalisierung und Energie, das Ministerium des Innern, das Ministerium für Heimat, Kommunales, Bau und Gleichstel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "…igitalisierung und Energie, das Ministerium des Innern, das Ministerium für Heimat, Kommunales, Bau und Gleichstellung, das Ministerium für Verkehr und das Ministerium für Umwelt…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Verkehr und das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…sterium für Heimat, Kommunales, Bau und Gleichstellung, das Ministerium für Verkehr und das Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…tenzialen des Untergrundes in Nordrhein-Westfalen durch die Bezirksregierung Arnsberg als Bergbehörde und den Geologischen Dienst Nordrh…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Arnsberg",
+      "context": "…ergrundes in Nordrhein-Westfalen durch die Bezirksregierung Arnsberg als Bergbehörde und den Geologischen Dienst Nordrhein-Westf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Landesbetrieb - an die",
+      "context": "…rgbehörde und den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - an die in § 4 genannten öffentlichen Stellen zu den dort genannten…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "…sierten Abrufs notwendige technische Verfahren betreibt der Landesbetrieb Information und Technik Nordrhein-Westfalen (IT. NRW) im Auftrag der Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].text",
+      "term": "Landesbetrieb - stellen IT",
+      "context": "…Bergbehörde und der Geologische Dienst Nordrhein-Westfalen -Landesbetrieb - stellen IT. NRW die in § 2 Absatz 2 genannten Daten regelmäßig mit akt…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Landesbetrieb - erteilt",
+      "context": "…rgbehörde und den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - erteilt. Anträge sind an die Bergbehörde oder den Geologischen Dien…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Landesbetrieb - zu richten",
+      "context": "…gbehörde oder den Geologischen Dienst Nordrhein-Westfalen - Landesbetrieb - zu richten. Die datenschutzrechtliche Verantwortung für die abgerufene…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[3].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].text",
+      "term": "Ministerin für Heimat, Kommunales Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[5].text",
+      "term": "Minister für Verkehr",
+      "context": "Der Minister für Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[6].text",
+      "term": "Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 89,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404), verordnen das Ministerium…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].text",
+        "term": "NRW",
+        "context": "…nach § 6 des Landesbodenschutzgesetzes vom 9. Mai 2000 (GV. NRW. S. 439) in der jeweils geltenden Fassung, in den Katastern…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].children[7].text",
+        "term": "NRW",
+        "context": "…h dem Vermessungs- und Katastergesetz vom 1. März 2005 (GV. NRW. S. 174) in der jeweils geltenden Fassung und",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].children[8].text",
+        "term": "NRW",
+        "context": "…er Gutachterausschussverordnung West vom 23. März 2004 (GV. NRW. S. 146) dürfen die zuständigen Behörden die in § 2 Absatz …",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+        "formula": "ordinance-formula",
+        "text": "verordnen das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "formula": "ordinance-formula",
+      "text": "verordnen das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über die Übermittlung von Daten zu Gefährdungspotenzialen des Untergrundes an öffentliche Stellen vom 29. September 2018",
+    "sourceVersion": "Verordnung über die Übermittlung von Daten zu Gefährdungspotenzialen des Untergrundes an öffentliche Stellen vom 29. September 2018",
+    "simulation": "Verordnung über die Übermittlung von Daten zu Gefährdungspotenzialen des Untergrundes an öffentliche Stellen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8109,
+          "actual": 8296,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 49,
+          "actual": 49,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8296,
+          "actual": 8270,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnen“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnen“"
+      ],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:27:34.460Z"
+}

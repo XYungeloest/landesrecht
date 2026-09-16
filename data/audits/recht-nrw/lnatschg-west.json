@@ -1,0 +1,2421 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28058",
+  "slug": "lnatschg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@31:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 31,
+      "end": 50,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz zum Schutz der Natur in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@9:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 9,
+      "end": 12,
+      "term": "NRW",
+      "context": "LNatSchG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@92:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 92,
+      "end": 106,
+      "term": "GV.NRW. S. 487",
+      "context": "…etzes zur Änderung des Landschaftsgesetzes vom 9. Mai 2000 (GV.NRW. S. 487) wird nachstehend der Wortlaut des Landschaftsgesetzes in d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@55:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 55,
+      "end": 69,
+      "term": "GV.NRW. S. 710",
+      "context": "1. die Fassung der Bekanntmachung vom 15. August 1994 (GV.NRW. S. 710),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@179:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 179,
+      "end": 194,
+      "term": "GV. NRW. S. 382",
+      "context": "…tswaldgesetzes und des Landschaftsgesetzes vom 2. Mai 1995 (GV. NRW. S. 382),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@129:rule:jurisdiction-name-bare",
+      "path": "body[4].text",
+      "start": 129,
+      "end": 148,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Ausführung und Ergänzung des Bundes-Bodenschutzgesetzes in Nordrhein-Westfalen vom 9. Mai 2000 (GV. NRW. S. 439) und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].text@166:protected:gazette-nrw",
+      "path": "body[4].text",
+      "start": 166,
+      "end": 181,
+      "term": "GV. NRW. S. 439",
+      "context": "…Bodenschutzgesetzes in Nordrhein-Westfalen vom 9. Mai 2000 (GV. NRW. S. 439) und",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@4:ministry-portfolio",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 79,
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].text@84:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 84,
+      "end": 110,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].title@31:rule:jurisdiction-name-bare",
+      "path": "body[7].title",
+      "start": 31,
+      "end": 50,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz zum Schutz der Natur in Nordrhein-Westfalen (Landesnaturschutzgesetz – LNatSchG NRW) in der Fassung der…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].title@87:rule:jurisdiction-abbreviation",
+      "path": "body[7].title",
+      "start": 87,
+      "end": 90,
+      "term": "NRW",
+      "context": "… in Nordrhein-Westfalen (Landesnaturschutzgesetz – LNatSchG NRW) in der Fassung der Bekanntmachung",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[2].text@4:authority-state-office",
+      "path": "body[10].children[2].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "§ 3 Landesamt für Natur, Umwelt und Verbraucherschutz",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[20].children[1].children[1].children[1].text@4:authority-district-government",
+      "path": "body[20].children[1].children[1].children[1].text",
+      "start": 4,
+      "end": 22,
+      "term": "Bezirksregierungen",
+      "context": "die Bezirksregierungen als höhere Naturschutzbehörden,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[20].children[2].title@0:authority-state-office",
+      "path": "body[20].children[2].title",
+      "start": 0,
+      "end": 19,
+      "term": "Landesamt für Natur",
+      "context": "Landesamt für Natur, Umwelt und Verbraucherschutz (zu § 3 Absatz 1 des Bundesna…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[20].children[2].children[0].text@4:authority-state-office",
+      "path": "body[20].children[2].children[0].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz hat auf dem Gebiet des Naturs…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[20].children[2].children[1].text@40:authority-state-office",
+      "path": "body[20].children[2].children[1].text",
+      "start": 40,
+      "end": 59,
+      "term": "Landesamt für Natur",
+      "context": "Die oberste Naturschutzbehörde kann dem Landesamt für Natur, Umwelt und Verbraucherschutz weitere Aufgaben übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[20].children[2].children[2].text@51:authority-state-office",
+      "path": "body[20].children[2].children[2].text",
+      "start": 51,
+      "end": 70,
+      "term": "Landesamt für Natur",
+      "context": "Zur Erfüllung der Aufgaben nach Absatz 1 führt das Landesamt für Natur, Umwelt und Verbraucherschutz zentrale Datenbanken, insbeso…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[20].children[2].children[2].children[3].text@17:rule:jurisdiction-name-genitive",
+      "path": "body[20].children[2].children[2].children[3].text",
+      "start": 17,
+      "end": 43,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Behörden des Landes Nordrhein-Westfalen sind verpflichtet, zu diesen Zwecken die vorhandenen Daten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[21].children[0].children[2].children[0].text@104:authority-state-office",
+      "path": "body[21].children[0].children[2].children[0].text",
+      "start": 104,
+      "end": 123,
+      "term": "Landesamt für Natur",
+      "context": "…chaftsrahmenplan und für den Landschaftsplan erarbeitet das Landesamt für Natur, Umwelt und Verbraucherschutz einen Fachbeitrag des Natursc…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[21].children[0].children[2].children[0].children[3].text@25:authority-state-office",
+      "path": "body[21].children[0].children[2].children[0].children[3].text",
+      "start": 25,
+      "end": 44,
+      "term": "Landesamt für Natur",
+      "context": "Der Fachbeitrag wird vom Landesamt für Natur, Umwelt und Verbraucherschutz in digitaler Form für jede Pe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[21].children[0].children[3].children[2].text@143:rule:jurisdiction-abbreviation",
+      "path": "body[21].children[0].children[3].children[2].text",
+      "start": 143,
+      "end": 146,
+      "term": "NRW",
+      "context": "…ften des Gesetzes zur Neufassung des Landesplanungsgesetzes NRW vom 3. Mai 2005 (GV. NRW. S. 430), das zuletzt durch Artike…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[21].children[0].children[3].children[2].text@164:protected:gazette-nrw",
+      "path": "body[21].children[0].children[3].children[2].text",
+      "start": 164,
+      "end": 179,
+      "term": "GV. NRW. S. 430",
+      "context": "… Neufassung des Landesplanungsgesetzes NRW vom 3. Mai 2005 (GV. NRW. S. 430), das zuletzt durch Artikel 2 des Gesetzes vom 29. Januar 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[0].children[3].children[2].text@244:protected:gazette-nrw",
+      "path": "body[21].children[0].children[3].children[2].text",
+      "start": 244,
+      "end": 258,
+      "term": "GV. NRW. S. 33",
+      "context": "…s zuletzt durch Artikel 2 des Gesetzes vom 29. Januar 2013 (GV. NRW. S. 33) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[0].children[6].children[0].text@193:authority-state-enterprise",
+      "path": "body[21].children[0].children[6].children[0].text",
+      "start": 193,
+      "end": 211,
+      "term": "Landesbetrieb Wald",
+      "context": "… § 29 des Bundesnaturschutzgesetzes im Einvernehmen mit dem Landesbetrieb Wald und Holz für Erstaufforstungen und für Wiederaufforstungen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[21].children[2].children[2].children[1].text@4:authority-state-enterprise",
+      "path": "body[21].children[2].children[2].children[1].text",
+      "start": 4,
+      "end": 22,
+      "term": "Landesbetrieb Wald",
+      "context": "Der Landesbetrieb Wald und Holz überwacht die Einhaltung der Gebote und Verbote na…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[21].children[2].children[3].children[0].text@377:authority-state-enterprise",
+      "path": "body[21].children[2].children[3].children[0].text",
+      "start": 377,
+      "end": 395,
+      "term": "Landesbetrieb Wald",
+      "context": "…n vertraglichen Vereinbarungen nach Absatz 2 Satz 1 auf den Landesbetrieb Wald und Holz übertragen werden. Die Vorschriften des § 11 des L…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[21].children[2].children[3].children[0].text@528:protected:gazette-nrw",
+      "path": "body[21].children[2].children[3].children[0].text",
+      "start": 528,
+      "end": 543,
+      "term": "GV. NRW. S. 546",
+      "context": "…etzes in der Fassung der Bekanntmachung vom 24. April 1980 (GV. NRW. S. 546), das zuletzt durch Artikel 4 des Gesetzes vom 12. Mai 2015…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[2].children[3].children[0].text@605:protected:gazette-nrw",
+      "path": "body[21].children[2].children[3].children[0].text",
+      "start": 605,
+      "end": 620,
+      "term": "GV. NRW. S. 448",
+      "context": "… das zuletzt durch Artikel 4 des Gesetzes vom 12. Mai 2015 (GV. NRW. S. 448) geändert worden ist, über die tätige Mithilfe finden sinng…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].children[0].children[0].children[3].text@265:protected:gazette-nrw",
+      "path": "body[22].children[0].children[0].children[3].text",
+      "start": 265,
+      "end": 280,
+      "term": "GV. NRW. S. 256",
+      "context": "…ordnung in der Fassung der Bekanntmachung vom 1. März 2000 (GV. NRW. S. 256), die zuletzt durch Artikel 2 des Gesetzes vom 20. Mai 2014…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].children[0].children[0].children[3].text@342:protected:gazette-nrw",
+      "path": "body[22].children[0].children[0].children[3].text",
+      "start": 342,
+      "end": 357,
+      "term": "GV. NRW. S. 294",
+      "context": "… die zuletzt durch Artikel 2 des Gesetzes vom 20. Mai 2014 (GV. NRW. S. 294) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].children[1].children[4].text@930:authority-state-enterprise",
+      "path": "body[22].children[1].children[4].text",
+      "start": 930,
+      "end": 948,
+      "term": "Landesbetrieb Wald",
+      "context": "…r zur Aufforstung von Flächen zu verwenden ist, wird es dem Landesbetrieb Wald und Holz im Sinne des § 15 Absatz 6 Satz 7 des Bundesnaturs…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[22].children[3].children[2].text@480:protected:gazette-nrw",
+      "path": "body[22].children[3].children[2].text",
+      "start": 480,
+      "end": 495,
+      "term": "GV. NRW. S. 175",
+      "context": "…sumweltverträglichkeitsprüfungsgesetzes vom 29. April 1992 (GV. NRW. S. 175), das zuletzt durch Artikel 1 des Gesetzes vom 26. März 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].children[3].children[2].text@558:protected:gazette-nrw",
+      "path": "body[22].children[3].children[2].text",
+      "start": 558,
+      "end": 573,
+      "term": "GV. NRW. S. 193",
+      "context": "…das zuletzt durch Artikel 1 des Gesetzes vom 26. März 2019 (GV. NRW. S. 193) geändert worden ist, eine Vorprüfung des Einzelfalls und e…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].children[3].children[2].text@872:geography-region",
+      "path": "body[22].children[3].children[2].text",
+      "start": 872,
+      "end": 881,
+      "term": "Westfalen",
+      "context": "… über die Umweltverträglichkeitsprüfung im Lande Nordrhein- Westfalen entsprechen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[22].children[3].children[3].text@289:authority-state-enterprise",
+      "path": "body[22].children[3].children[3].text",
+      "start": 289,
+      "end": 307,
+      "term": "Landesbetrieb Wald",
+      "context": "…atz 1 Nummer 8 wird die Genehmigung im Einvernehmen mit dem Landesbetrieb Wald und Holz erteilt. Soweit es sich um eine Anlage nach dem En…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[22].children[4].children[4].text@53:authority-state-office",
+      "path": "body[22].children[4].children[4].text",
+      "start": 53,
+      "end": 72,
+      "term": "Landesamt für Natur",
+      "context": "Die Verzeichnisse nach Absatz 1 bis 3 sind durch das Landesamt für Natur, Umwelt und Verbraucherschutz im Internet unter Berücksicht…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[22].children[4].children[4].text@232:authority-state-office",
+      "path": "body[22].children[4].children[4].text",
+      "start": 232,
+      "end": 251,
+      "term": "Landesamt für Natur",
+      "context": "…n landesweit zentral zu veröffentlichen. Hierfür stellt das Landesamt für Natur, Umwelt und Verbraucherschutz den nach Absatz 1 bis 3 zur F…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[23].children[0].children[0].children[0].text@3:rule:jurisdiction-name",
+      "path": "body[23].children[0].children[0].children[0].text",
+      "start": 3,
+      "end": 27,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Im Land Nordrhein-Westfalen ist ein Netz räumlich oder funktional verbundener Biotope (…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[0].children[5].children[0].text@711:rule:jurisdiction-name",
+      "path": "body[23].children[0].children[5].children[0].text",
+      "start": 711,
+      "end": 735,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Absatzes 3 werden diese Gebiete im Ministerialblatt für das Land Nordrhein-Westfalen und in der Karte der Wildniswälder in Nordrhein-Westfalen e…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[0].children[5].children[0].text@774:rule:jurisdiction-name-bare",
+      "path": "body[23].children[0].children[5].children[0].text",
+      "start": 774,
+      "end": 793,
+      "term": "Nordrhein-Westfalen",
+      "context": "…d Nordrhein-Westfalen und in der Karte der Wildniswälder in Nordrhein-Westfalen erfasst und veröffentlicht. Mit der Veröffentlichung sind d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[23].children[0].children[5].children[2].text@4:authority-state-office",
+      "path": "body[23].children[0].children[5].children[2].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz stellt im Einvernehmen mit de…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[23].children[0].children[5].children[2].text@85:authority-state-enterprise",
+      "path": "body[23].children[0].children[5].children[2].text",
+      "start": 85,
+      "end": 103,
+      "term": "Landesbetrieb Wald",
+      "context": "…Umwelt und Verbraucherschutz stellt im Einvernehmen mit dem Landesbetrieb Wald und Holz die Wildniseignung einer Waldfläche fest. Die Wild…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[23].children[0].children[5].children[2].text@265:rule:jurisdiction-name",
+      "path": "body[23].children[0].children[5].children[2].text",
+      "start": 265,
+      "end": 289,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…rschutz zuständigen Ministerium im Ministerialblatt für das Land Nordrhein-Westfalen bekanntgegeben und zusätzlich in einer Karte unter http://w…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[0].children[6].children[3].text@4:authority-state-office",
+      "path": "body[23].children[0].children[6].children[3].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz führt ein landesweites Katast…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[23].children[0].children[7].children[1].text@4:authority-state-office",
+      "path": "body[23].children[0].children[7].children[1].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz erfasst die gesetzlich geschü…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[23].children[0].children[7].children[3].text@362:rule:jurisdiction-name-dative",
+      "path": "body[23].children[0].children[7].children[3].text",
+      "start": 362,
+      "end": 389,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "… in Kraft, sobald die Gesamtfläche dieser Streuobstbestände im Land Nordrhein-Westfalen um mindestens 5 Prozent abgenommen hat. Durch Rechtsverordn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[23].children[0].children[8].children[3].text@178:protected:gazette-nrw",
+      "path": "body[23].children[0].children[8].children[3].text",
+      "start": 178,
+      "end": 193,
+      "term": "GV. NRW. S. 528",
+      "context": "…esetzes in der Fassung der Bekanntmachung vom 13. Mai 1980 (GV. NRW. S. 528), das zuletzt durch Artikel 8 des Gesetzes vom 2. Oktober 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[23].children[0].children[8].children[3].text@258:protected:gazette-nrw",
+      "path": "body[23].children[0].children[8].children[3].text",
+      "start": 258,
+      "end": 273,
+      "term": "GV. NRW. S. 622",
+      "context": "…s zuletzt durch Artikel 8 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622) geändert worden ist, kann gegen ordnungsbehördliche Verord…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[23].children[0].children[15].children[0].text@448:authority-state-office",
+      "path": "body[23].children[0].children[15].children[0].text",
+      "start": 448,
+      "end": 467,
+      "term": "Landesamt für Natur",
+      "context": "…se sind für jede Person zur Einsicht bereitzuhalten und dem Landesamt für Natur, Umwelt und Verbraucherschutz zu dessen Aufgabenerfüllung n…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[23].children[1].children[0].children[0].text@481:authority-state-office",
+      "path": "body[23].children[1].children[0].children[0].text",
+      "start": 481,
+      "end": 500,
+      "term": "Landesamt für Natur",
+      "context": "…rschrift genannten naturschutzfachlichen Maßgaben durch das Landesamt für Natur, Umwelt und Verbraucherschutz ermittelt.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[23].children[1].children[0].children[1].text@635:ministry-portfolio",
+      "path": "body[23].children[1].children[0].children[1].text",
+      "start": 635,
+      "end": 700,
+      "term": "Ministerium des Bundes einen Beschluss der Landesregierung herbei",
+      "context": "…t vor Weiterleitung der Gebietsvorschläge an das zuständige Ministerium des Bundes einen Beschluss der Landesregierung herbei.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[23].children[1].children[1].children[1].text@65:rule:jurisdiction-name-bare",
+      "path": "body[23].children[1].children[1].children[1].text",
+      "start": 65,
+      "end": 84,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n der Bekanntmachung der Europäischen Vogelschutzgebiete in Nordrhein-Westfalen vom 13. April 2016 (MBl. NRW. S. 244) bekannt gemachten Eur…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[23].children[1].children[1].children[1].text@105:protected:gazette-nrw",
+      "path": "body[23].children[1].children[1].children[1].text",
+      "start": 105,
+      "end": 121,
+      "term": "MBl. NRW. S. 244",
+      "context": "…gelschutzgebiete in Nordrhein-Westfalen vom 13. April 2016 (MBl. NRW. S. 244) bekannt gemachten Europäischen Vogelschutzgebiete sind nac…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[23].children[1].children[1].children[3].text@99:authority-state-office",
+      "path": "body[23].children[1].children[1].children[3].text",
+      "start": 99,
+      "end": 118,
+      "term": "Landesamt für Natur",
+      "context": "… Naturschutzbehörde kann die oberste Naturschutzbehörde das Landesamt für Natur, Umwelt und Verbraucherschutz mit der Erarbeitung von Pfleg…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[25].children[3].children[2].text@189:rule:jurisdiction-name",
+      "path": "body[25].children[3].children[2].text",
+      "start": 189,
+      "end": 213,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…tsverordnung Muster im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt zu machen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[0].children[0].children[3].text@158:protected:gazette-nrw",
+      "path": "body[26].children[0].children[0].children[3].text",
+      "start": 158,
+      "end": 173,
+      "term": "GV. NRW. S. 922",
+      "context": "…es in der Fassung der Bekanntmachung vom 23. November 1979 (GV. NRW. S. 922), zuletzt geändert durch Artikel 5 des Gesetzes vom 19. Jun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[0].children[0].children[3].text@241:protected:gazette-nrw",
+      "path": "body[26].children[0].children[0].children[3].text",
+      "start": 241,
+      "end": 256,
+      "term": "GV. NRW. S. 226",
+      "context": "…zt geändert durch Artikel 5 des Gesetzes vom 19. Juni 2007 (GV. NRW. S. 226), nach § 55 des Bundesberggesetzes vom 13. August 1980 (BGB…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[0].children[0].children[4].text@240:protected:gazette-nrw",
+      "path": "body[26].children[0].children[0].children[4].text",
+      "start": 240,
+      "end": 255,
+      "term": "GV. NRW. S. 926",
+      "context": "…setzes in der Fassung der Bekanntmachung vom 25. Juni 1995 (GV. NRW. S. 926), das zuletzt durch Artikel 1 des Gesetzes vom 5. März 2013…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[0].children[0].children[4].text@317:protected:gazette-nrw",
+      "path": "body[26].children[0].children[0].children[4].text",
+      "start": 317,
+      "end": 332,
+      "term": "GV. NRW. S. 133",
+      "context": "… das zuletzt durch Artikel 1 des Gesetzes vom 5. März 2013 (GV. NRW. S. 133) geändert worden ist, sofern das Vorhaben mit Eingriffen in…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@98:rule:jurisdiction-name",
+      "path": "body[26].children[4].children[2].text",
+      "start": 98,
+      "end": 122,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ich; § 48 Absatz 2 Satz 2 bis 5 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@176:protected:gazette-nrw",
+      "path": "body[26].children[4].children[2].text",
+      "start": 176,
+      "end": 191,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), die zuletzt durch Artikel 2 des Gesetzes vom 25. Juni 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@254:protected:gazette-nrw",
+      "path": "body[26].children[4].children[2].text",
+      "start": 254,
+      "end": 269,
+      "term": "GV. NRW. S. 496",
+      "context": "…die zuletzt durch Artikel 2 des Gesetzes vom 25. Juni 2015 (GV. NRW. S. 496) geändert worden ist, sowie § 33 Absatz 2 Satz 2 bis 5 der …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@350:rule:jurisdiction-name",
+      "path": "body[26].children[4].children[2].text",
+      "start": 350,
+      "end": 374,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…, sowie § 33 Absatz 2 Satz 2 bis 5 der Kreisordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@428:protected:gazette-nrw",
+      "path": "body[26].children[4].children[2].text",
+      "start": 428,
+      "end": 443,
+      "term": "GV. NRW. S. 646",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 646), die zuletzt durch Artikel 2 des Gesetzes vom 19. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@510:protected:gazette-nrw",
+      "path": "body[26].children[4].children[2].text",
+      "start": 510,
+      "end": 525,
+      "term": "GV. NRW. S. 878",
+      "context": "…zuletzt durch Artikel 2 des Gesetzes vom 19. Dezember 2013 (GV. NRW. S. 878) geändert worden ist, finden entsprechende Anwendung. Für d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@659:rule:jurisdiction-name",
+      "path": "body[26].children[4].children[2].text",
+      "start": 659,
+      "end": 683,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…higkeit der Beiräte gelten § 49 der Gemeindeordnung für das Land Nordrhein-Westfalen sowie § 34 der Kreisordnung für das Land Nordrhein-Westfale…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[2].text@720:rule:jurisdiction-name",
+      "path": "body[26].children[4].children[2].text",
+      "start": 720,
+      "end": 744,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…and Nordrhein-Westfalen sowie § 34 der Kreisordnung für das Land Nordrhein-Westfalen entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[0].text@82:rule:jurisdiction-name-bare",
+      "path": "body[26].children[4].children[3].children[0].text",
+      "start": 82,
+      "end": 101,
+      "term": "Nordrhein-Westfalen",
+      "context": "…er Vertretern der Landesgemeinschaft Naturschutz und Umwelt Nordrhein-Westfalen e. V. (LNU),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[2].text@91:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[4].children[3].children[2].text",
+      "start": 91,
+      "end": 94,
+      "term": "NRW",
+      "context": "…rtreter der Schutzgemeinschaft Deutscher Wald Landesverband NRW e. V. (SDW),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[4].text@63:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[4].children[3].children[4].text",
+      "start": 63,
+      "end": 66,
+      "term": "NRW",
+      "context": "…er Vertreterin oder einem Vertreter des Waldbauernverbandes NRW e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[5].text@93:geography-region",
+      "path": "body[26].children[4].children[3].children[5].text",
+      "start": 93,
+      "end": 102,
+      "term": "Rheinland",
+      "context": "…r einem gemeinsamen Vertreter des Landesverbandes Gartenbau Rheinland e.V., des Landesverbandes Gartenbau Westfalen-Lippe e.V. un…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[26].children[4].children[3].children[5].text@139:geography-region",
+      "path": "body[26].children[4].children[3].children[5].text",
+      "start": 139,
+      "end": 154,
+      "term": "Westfalen-Lippe",
+      "context": "…des Gartenbau Rheinland e.V., des Landesverbandes Gartenbau Westfalen-Lippe e.V. und des Provinzialverbandes Rheinischer Obst- und Gemü…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[26].children[4].children[3].children[5].text@149:geography-river",
+      "path": "body[26].children[4].children[3].children[5].text",
+      "start": 149,
+      "end": 154,
+      "term": "Lippe",
+      "context": "…bau Rheinland e.V., des Landesverbandes Gartenbau Westfalen-Lippe e.V. und des Provinzialverbandes Rheinischer Obst- und Gemü…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[26].children[4].children[3].children[6].text@100:rule:jurisdiction-name-bare",
+      "path": "body[26].children[4].children[3].children[6].text",
+      "start": 100,
+      "end": 119,
+      "term": "Nordrhein-Westfalen",
+      "context": "… gemeinsamen Vertreter der nach § 52 des Landesjagdgesetzes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[6].text@176:protected:gazette-nrw",
+      "path": "body[26].children[4].children[3].children[6].text",
+      "start": 176,
+      "end": 189,
+      "term": "GV. NRW. S. 2",
+      "context": "…len in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. S. 2), das zuletzt durch Artikel 1 des Gesetzes vom 12. Mai 2015…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[6].text@251:protected:gazette-nrw",
+      "path": "body[26].children[4].children[3].children[6].text",
+      "start": 251,
+      "end": 266,
+      "term": "GV. NRW. S. 448",
+      "context": "… das zuletzt durch Artikel 1 des Gesetzes vom 12. Mai 2015 (GV. NRW. S. 448; ber. S. 629) geändert worden ist, anerkannten Vereinigunge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[7].text@62:rule:jurisdiction-name-bare",
+      "path": "body[26].children[4].children[3].children[7].text",
+      "start": 62,
+      "end": 81,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ner Vertreterin oder einem Vertreter des Fischereiverbandes Nordrhein-Westfalen e.V.,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[8].text@61:rule:jurisdiction-name-bare",
+      "path": "body[26].children[4].children[3].children[8].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…iner Vertreterin oder einem Vertreter des Landessportbundes Nordrhein-Westfalen e.V. und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[26].children[4].children[3].children[9].text@82:geography-region",
+      "path": "body[26].children[4].children[3].children[9].text",
+      "start": 82,
+      "end": 91,
+      "term": "Rheinland",
+      "context": "…reterin oder einem gemeinsamen Vertreter des Imkerverbandes Rheinland e.V. und des Landesverbandes Westfälischer und Lippischer I…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[26].children[4].children[5].text@283:protected:gazette-nrw",
+      "path": "body[26].children[4].children[5].text",
+      "start": 283,
+      "end": 298,
+      "term": "GV. NRW. S. 454",
+      "context": "…setzes in der Fassung der Bekanntmachung vom 30. Juni 1998 (GV. NRW. S. 454, 509, 1999 S. 70), die zuletzt durch Artikel 2 Absatz 3 des…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[5].text@391:protected:gazette-nrw",
+      "path": "body[26].children[4].children[5].text",
+      "start": 391,
+      "end": 406,
+      "term": "GV. NRW. S. 666",
+      "context": "…urch Artikel 2 Absatz 3 des Gesetzes vom 8. September 2015 (GV. NRW. S. 666) geändert wurde, gilt entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[4].children[7].text@101:ministry-portfolio",
+      "path": "body[26].children[4].children[7].text",
+      "start": 101,
+      "end": 139,
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "…m regelt im Einvernehmen mit dem für Kommunales zuständigen Ministerium für Inneres und Kommunales nach Anhörung des zuständigen Ausschusses des Landtags durc…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[26].children[5].children[1].text@4:rule:jurisdiction-name",
+      "path": "body[26].children[5].children[1].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen unterstützt die Biologischen Stationen dauerhaft finanziell…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[26].children[5].children[1].text@206:rule:jurisdiction-abbreviation",
+      "path": "body[26].children[5].children[1].text",
+      "start": 206,
+      "end": 209,
+      "term": "NRW",
+      "context": "…en nach Maßgabe der Förderrichtlinien Biologische Stationen NRW vom 1. Januar 2005 (MBl. NRW. S. 564), die zuletzt durch Ru…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[26].children[5].children[1].text@230:protected:gazette-nrw",
+      "path": "body[26].children[5].children[1].text",
+      "start": 230,
+      "end": 246,
+      "term": "MBl. NRW. S. 564",
+      "context": "…errichtlinien Biologische Stationen NRW vom 1. Januar 2005 (MBl. NRW. S. 564), die zuletzt durch Runderlass vom 30. September 2015 (MBl.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[5].children[1].text@302:protected:gazette-nrw",
+      "path": "body[26].children[5].children[1].text",
+      "start": 302,
+      "end": 318,
+      "term": "MBl. NRW. S. 709",
+      "context": "… 564), die zuletzt durch Runderlass vom 30. September 2015 (MBl. NRW. S. 709) geändert worden sind.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[6].children[0].text@143:rule:jurisdiction-name-bare",
+      "path": "body[26].children[6].children[0].text",
+      "start": 143,
+      "end": 162,
+      "term": "Nordrhein-Westfalen",
+      "context": "…schaftspflege auf der Grundlage der Biodiversitätsstrategie Nordrhein-Westfalen nach Maßgabe des Haushalts. Die Förderung ist erforderlich …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[26].children[6].children[0].text@264:rule:jurisdiction-name-bare",
+      "path": "body[26].children[6].children[0].text",
+      "start": 264,
+      "end": 283,
+      "term": "Nordrhein-Westfalen",
+      "context": "… ist erforderlich zur Umsetzung der Biodiversitätsstrategie Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[27].children[1].children[5].text@4:authority-state-office",
+      "path": "body[27].children[1].children[5].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz führt und veröffentlicht ein …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[27].children[2].children[2].text@88:authority-state-enterprise",
+      "path": "body[27].children[2].children[2].text",
+      "start": 88,
+      "end": 106,
+      "term": "Landesbetrieb Wald",
+      "context": "…boten und Verboten des § 24 ist abweichend von Absatz 1 der Landesbetrieb Wald und Holz zuständig. Er entscheidet im Einvernehmen mit der …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[27].children[2].children[3].text@177:protected:gazette-nrw",
+      "path": "body[27].children[2].children[3].text",
+      "start": 177,
+      "end": 193,
+      "term": "GV. NRW. S. 1504",
+      "context": "…NW. S. 156), das zuletzt durch Gesetz vom 3. Dezember 1974 (GV. NRW. S. 1504) geändert worden ist, erlassen worden sind und die nach § 7…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[27].children[3].children[0].text@304:protected:gazette-nrw",
+      "path": "body[27].children[3].children[0].text",
+      "start": 304,
+      "end": 319,
+      "term": "GV. NRW. S. 366",
+      "context": "…esenteignungs- und -entschädigungsgesetz vom 20. Juni 1989 (GV. NRW. S. 366), das zuletzt durch Artikel 10 des Gesetzes vom 2. Oktober …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[27].children[3].children[0].text@385:protected:gazette-nrw",
+      "path": "body[27].children[3].children[0].text",
+      "start": 385,
+      "end": 400,
+      "term": "GV. NRW. S. 622",
+      "context": "… zuletzt durch Artikel 10 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622) geändert worden ist, ist anzuwenden.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[1].children[0].text@191:protected:gazette-nrw",
+      "path": "body[29].children[1].children[0].text",
+      "start": 191,
+      "end": 206,
+      "term": "GV. NRW. S. 568",
+      "context": "…setzes in der Fassung der Bekanntmachung vom 21. Juli 2000 (GV. NRW. S. 568), das zuletzt durch Artikel 1 des Gesetzes vom 16. März 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[1].children[0].text@269:protected:gazette-nrw",
+      "path": "body[29].children[1].children[0].text",
+      "start": 269,
+      "end": 284,
+      "term": "GV. NRW. S. 185",
+      "context": "…das zuletzt durch Artikel 1 des Gesetzes vom 16. März 2010 (GV. NRW. S. 185) geändert worden ist, weiter.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[0].text@54:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[0].text",
+      "start": 54,
+      "end": 69,
+      "term": "GV. NRW. S. 522",
+      "context": "Neubekanntmachung (Art. VII des Gesetzes v. 3.5.2005 (GV. NRW. S. 522))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[1].text@4:ministry-portfolio",
+      "path": "body[29].children[5].children[2].children[1].text",
+      "start": 4,
+      "end": 96,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz wird ermächtigt",
+      "context": "Das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz wird ermächtigt, das Landschaftsgesetz für das Land Nordrhein-Westfalen mit…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[29].children[5].children[2].children[1].text@128:rule:jurisdiction-name",
+      "path": "body[29].children[5].children[2].children[1].text",
+      "start": 128,
+      "end": 152,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…aucherschutz wird ermächtigt, das Landschaftsgesetz für das Land Nordrhein-Westfalen mit neuer Paragrafenfolge im Gesetz- und Verordnungsblatt f…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[1].text@219:rule:jurisdiction-name",
+      "path": "body[29].children[5].children[2].children[1].text",
+      "start": 219,
+      "end": 243,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…uer Paragrafenfolge im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen neu bekannt zu machen und Unstimmigkeiten des Wortlauts und…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[2].text@53:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[2].text",
+      "start": 53,
+      "end": 68,
+      "term": "GV. NRW. S. 139",
+      "context": "Hinweis: Artikel 2 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 139) Inkrafttreten, Übergangsvorschriften",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[4].text@262:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[4].text",
+      "start": 262,
+      "end": 277,
+      "term": "GV. NRW. S. 568",
+      "context": "…er bisherigen Fassung der Bekanntmachung vom 21. Juli 2000 (GV. NRW. S. 568), neu gefasst durch Artikel 1 des Gesetzes vom 15. November…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[4].text@344:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[4].text",
+      "start": 344,
+      "end": 359,
+      "term": "GV. NRW. S. 934",
+      "context": "…gefasst durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934), zuletzt geändert durch Artikel 2 des Gesetzes vom 26. Mär…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[4].text@427:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[4].text",
+      "start": 427,
+      "end": 442,
+      "term": "GV. NRW. S. 193",
+      "context": "…zt geändert durch Artikel 2 des Gesetzes vom 26. März 2019 (GV. NRW. S. 193, ber. S. 214).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[5].text@206:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[5].text",
+      "start": 206,
+      "end": 221,
+      "term": "GV. NRW. S. 568",
+      "context": "…utzgesetzes - Fassung der Bekanntmachung vom 21. Juli 2000 (GV. NRW. S. 568), neu gefasst durch Artikel 1 des Gesetzes vom 15. November…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[29].children[5].children[2].children[5].text@288:protected:gazette-nrw",
+      "path": "body[29].children[5].children[2].children[5].text",
+      "start": 288,
+      "end": 303,
+      "term": "GV. NRW. S. 934",
+      "context": "…gefasst durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) - zu Ende zu führen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 31
+    },
+    "source-citation": {
+      "protected": 41
+    },
+    "ministry": {
+      "manual-review": 4
+    },
+    "authority": {
+      "manual-review": 24
+    },
+    "geography": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[20].children[2].children[2].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[21].children[0].children[3].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[23].children[0].children[0].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[0].children[5].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[0].children[5].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[23].children[0].children[5].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[0].children[7].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[23].children[1].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[25].children[3].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[3].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[4].children[3].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[4].children[3].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[3].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[26].children[4].children[3].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[26].children[5].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[26].children[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[26].children[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[26].children[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[29].children[5].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[29].children[5].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[6].text",
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[2].text",
+      "term": "Landesamt für Natur",
+      "context": "§ 3 Landesamt für Natur, Umwelt und Verbraucherschutz",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[1].children[1].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "die Bezirksregierungen als höhere Naturschutzbehörden,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[2].title",
+      "term": "Landesamt für Natur",
+      "context": "Landesamt für Natur, Umwelt und Verbraucherschutz (zu § 3 Absatz 1 des Bundesna…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[2].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz hat auf dem Gebiet des Naturs…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[2].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "Die oberste Naturschutzbehörde kann dem Landesamt für Natur, Umwelt und Verbraucherschutz weitere Aufgaben übertragen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[2].children[2].text",
+      "term": "Landesamt für Natur",
+      "context": "Zur Erfüllung der Aufgaben nach Absatz 1 führt das Landesamt für Natur, Umwelt und Verbraucherschutz zentrale Datenbanken, insbeso…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[0].children[2].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "…chaftsrahmenplan und für den Landschaftsplan erarbeitet das Landesamt für Natur, Umwelt und Verbraucherschutz einen Fachbeitrag des Natursc…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[0].children[2].children[0].children[3].text",
+      "term": "Landesamt für Natur",
+      "context": "Der Fachbeitrag wird vom Landesamt für Natur, Umwelt und Verbraucherschutz in digitaler Form für jede Pe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[0].children[6].children[0].text",
+      "term": "Landesbetrieb Wald",
+      "context": "… § 29 des Bundesnaturschutzgesetzes im Einvernehmen mit dem Landesbetrieb Wald und Holz für Erstaufforstungen und für Wiederaufforstungen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[2].children[2].children[1].text",
+      "term": "Landesbetrieb Wald",
+      "context": "Der Landesbetrieb Wald und Holz überwacht die Einhaltung der Gebote und Verbote na…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[2].children[3].children[0].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…n vertraglichen Vereinbarungen nach Absatz 2 Satz 1 auf den Landesbetrieb Wald und Holz übertragen werden. Die Vorschriften des § 11 des L…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].children[1].children[4].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…r zur Aufforstung von Flächen zu verwenden ist, wird es dem Landesbetrieb Wald und Holz im Sinne des § 15 Absatz 6 Satz 7 des Bundesnaturs…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].children[3].children[2].text",
+      "term": "Westfalen",
+      "context": "… über die Umweltverträglichkeitsprüfung im Lande Nordrhein- Westfalen entsprechen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].children[3].children[3].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…atz 1 Nummer 8 wird die Genehmigung im Einvernehmen mit dem Landesbetrieb Wald und Holz erteilt. Soweit es sich um eine Anlage nach dem En…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].children[4].children[4].text",
+      "term": "Landesamt für Natur",
+      "context": "Die Verzeichnisse nach Absatz 1 bis 3 sind durch das Landesamt für Natur, Umwelt und Verbraucherschutz im Internet unter Berücksicht…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].children[4].children[4].text",
+      "term": "Landesamt für Natur",
+      "context": "…n landesweit zentral zu veröffentlichen. Hierfür stellt das Landesamt für Natur, Umwelt und Verbraucherschutz den nach Absatz 1 bis 3 zur F…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[0].children[5].children[2].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz stellt im Einvernehmen mit de…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[0].children[5].children[2].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…Umwelt und Verbraucherschutz stellt im Einvernehmen mit dem Landesbetrieb Wald und Holz die Wildniseignung einer Waldfläche fest. Die Wild…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[0].children[6].children[3].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz führt ein landesweites Katast…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[0].children[7].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz erfasst die gesetzlich geschü…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[0].children[15].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "…se sind für jede Person zur Einsicht bereitzuhalten und dem Landesamt für Natur, Umwelt und Verbraucherschutz zu dessen Aufgabenerfüllung n…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[1].children[0].children[0].text",
+      "term": "Landesamt für Natur",
+      "context": "…rschrift genannten naturschutzfachlichen Maßgaben durch das Landesamt für Natur, Umwelt und Verbraucherschutz ermittelt.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[1].children[0].children[1].text",
+      "term": "Ministerium des Bundes einen Beschluss der Landesregierung herbei",
+      "context": "…t vor Weiterleitung der Gebietsvorschläge an das zuständige Ministerium des Bundes einen Beschluss der Landesregierung herbei.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[1].children[1].children[3].text",
+      "term": "Landesamt für Natur",
+      "context": "… Naturschutzbehörde kann die oberste Naturschutzbehörde das Landesamt für Natur, Umwelt und Verbraucherschutz mit der Erarbeitung von Pfleg…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].children[4].children[3].children[5].text",
+      "term": "Rheinland",
+      "context": "…r einem gemeinsamen Vertreter des Landesverbandes Gartenbau Rheinland e.V., des Landesverbandes Gartenbau Westfalen-Lippe e.V. un…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].children[4].children[3].children[5].text",
+      "term": "Westfalen-Lippe",
+      "context": "…des Gartenbau Rheinland e.V., des Landesverbandes Gartenbau Westfalen-Lippe e.V. und des Provinzialverbandes Rheinischer Obst- und Gemü…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].children[4].children[3].children[5].text",
+      "term": "Lippe",
+      "context": "…bau Rheinland e.V., des Landesverbandes Gartenbau Westfalen-Lippe e.V. und des Provinzialverbandes Rheinischer Obst- und Gemü…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].children[4].children[3].children[9].text",
+      "term": "Rheinland",
+      "context": "…reterin oder einem gemeinsamen Vertreter des Imkerverbandes Rheinland e.V. und des Landesverbandes Westfälischer und Lippischer I…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].children[4].children[7].text",
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "…m regelt im Einvernehmen mit dem für Kommunales zuständigen Ministerium für Inneres und Kommunales nach Anhörung des zuständigen Ausschusses des Landtags durc…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[27].children[1].children[5].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz führt und veröffentlicht ein …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[27].children[2].children[2].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…boten und Verboten des § 24 ist abweichend von Absatz 1 der Landesbetrieb Wald und Holz zuständig. Er entscheidet im Einvernehmen mit der …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[29].children[5].children[2].children[1].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz wird ermächtigt",
+      "context": "Das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz wird ermächtigt, das Landschaftsgesetz für das Land Nordrhein-Westfalen mit…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1063,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…es zur Änderung des Landschaftsgesetzes vom 9. Mai 2000 (GV.NRW. S. 487) wird nachstehend der Wortlaut des Landschaftsgeset…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "1. die Fassung der Bekanntmachung vom 15. August 1994 (GV.NRW. S. 710),",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…ldgesetzes und des Landschaftsgesetzes vom 2. Mai 1995 (GV. NRW. S. 382),",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].text",
+        "term": "NRW",
+        "context": "…Bodenschutzgesetzes in Westdeutschland vom 9. Mai 2000 (GV. NRW. S. 439) und",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[0].children[3].children[2].text",
+        "term": "NRW",
+        "context": "…assung des Landesplanungsgesetzes West vom 3. Mai 2005 (GV. NRW. S. 430), das zuletzt durch Artikel 2 des Gesetzes vom 29. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[0].children[3].children[2].text",
+        "term": "NRW",
+        "context": "…letzt durch Artikel 2 des Gesetzes vom 29. Januar 2013 (GV. NRW. S. 33) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[2].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…s in der Fassung der Bekanntmachung vom 24. April 1980 (GV. NRW. S. 546), das zuletzt durch Artikel 4 des Gesetzes vom 12. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[2].children[3].children[0].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 4 des Gesetzes vom 12. Mai 2015 (GV. NRW. S. 448) geändert worden ist, über die tätige Mithilfe find…",
+        "status": "protected"
+      },
+      {
+        "path": "body[22].children[0].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…ung in der Fassung der Bekanntmachung vom 1. März 2000 (GV. NRW. S. 256), die zuletzt durch Artikel 2 des Gesetzes vom 20. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[22].children[0].children[0].children[3].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 2 des Gesetzes vom 20. Mai 2014 (GV. NRW. S. 294) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[22].children[3].children[2].text",
+        "term": "NRW",
+        "context": "…eltverträglichkeitsprüfungsgesetzes vom 29. April 1992 (GV. NRW. S. 175), das zuletzt durch Artikel 1 des Gesetzes vom 26. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[22].children[3].children[2].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 1 des Gesetzes vom 26. März 2019 (GV. NRW. S. 193) geändert worden ist, eine Vorprüfung des Einzelfal…",
+        "status": "protected"
+      },
+      {
+        "path": "body[23].children[0].children[8].children[3].text",
+        "term": "NRW",
+        "context": "…zes in der Fassung der Bekanntmachung vom 13. Mai 1980 (GV. NRW. S. 528), das zuletzt durch Artikel 8 des Gesetzes vom 2. O…",
+        "status": "protected"
+      },
+      {
+        "path": "body[23].children[0].children[8].children[3].text",
+        "term": "NRW",
+        "context": "…letzt durch Artikel 8 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622) geändert worden ist, kann gegen ordnungsbehördlich…",
+        "status": "protected"
+      },
+      {
+        "path": "body[23].children[1].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…elschutzgebiete in Westdeutschland vom 13. April 2016 (MBl. NRW. S. 244) bekannt gemachten Europäischen Vogelschutzgebiete …",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[0].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 23. November 1979 (GV. NRW. S. 922), zuletzt geändert durch Artikel 5 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[0].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 5 des Gesetzes vom 19. Juni 2007 (GV. NRW. S. 226), nach § 55 des Bundesberggesetzes vom 13. August 1…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[0].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…es in der Fassung der Bekanntmachung vom 25. Juni 1995 (GV. NRW. S. 926), das zuletzt durch Artikel 1 des Gesetzes vom 5. M…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[0].children[0].children[4].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 5. März 2013 (GV. NRW. S. 133) geändert worden ist, sofern das Vorhaben mit Eingr…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), die zuletzt durch Artikel 2 des Gesetzes vom 25. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 2 des Gesetzes vom 25. Juni 2015 (GV. NRW. S. 496) geändert worden ist, sowie § 33 Absatz 2 Satz 2 bi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 646), die zuletzt durch Artikel 2 des Gesetzes vom 19. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 2 des Gesetzes vom 19. Dezember 2013 (GV. NRW. S. 878) geändert worden ist, finden entsprechende Anwendun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[3].children[6].text",
+        "term": "NRW",
+        "context": "…in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. S. 2), das zuletzt durch Artikel 1 des Gesetzes vom 12. Ma…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[3].children[6].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 12. Mai 2015 (GV. NRW. S. 448; ber. S. 629) geändert worden ist, anerkannten Vere…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[5].text",
+        "term": "NRW",
+        "context": "…es in der Fassung der Bekanntmachung vom 30. Juni 1998 (GV. NRW. S. 454, 509, 1999 S. 70), die zuletzt durch Artikel 2 Absa…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[4].children[5].text",
+        "term": "NRW",
+        "context": "… Artikel 2 Absatz 3 des Gesetzes vom 8. September 2015 (GV. NRW. S. 666) geändert wurde, gilt entsprechend.",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…tlinien Biologische Stationen West vom 1. Januar 2005 (MBl. NRW. S. 564), die zuletzt durch Runderlass vom 30. September 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…, die zuletzt durch Runderlass vom 30. September 2015 (MBl. NRW. S. 709) geändert worden sind.",
+        "status": "protected"
+      },
+      {
+        "path": "body[27].children[2].children[3].text",
+        "term": "NRW",
+        "context": "…S. 156), das zuletzt durch Gesetz vom 3. Dezember 1974 (GV. NRW. S. 1504) geändert worden ist, erlassen worden sind und die…",
+        "status": "protected"
+      },
+      {
+        "path": "body[27].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…teignungs- und -entschädigungsgesetz vom 20. Juni 1989 (GV. NRW. S. 366), das zuletzt durch Artikel 10 des Gesetzes vom 2. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[27].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 10 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622) geändert worden ist, ist anzuwenden.",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…es in der Fassung der Bekanntmachung vom 21. Juli 2000 (GV. NRW. S. 568), das zuletzt durch Artikel 1 des Gesetzes vom 16. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 1 des Gesetzes vom 16. März 2010 (GV. NRW. S. 185) geändert worden ist, weiter.",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[0].text",
+        "term": "NRW",
+        "context": "Neubekanntmachung (Art. VII des Gesetzes v. 3.5.2005 (GV. NRW. S. 522))",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[2].text",
+        "term": "NRW",
+        "context": "Hinweis: Artikel 2 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 139) Inkrafttreten, Übergangsvorschriften",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…isherigen Fassung der Bekanntmachung vom 21. Juli 2000 (GV. NRW. S. 568), neu gefasst durch Artikel 1 des Gesetzes vom 15. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…sst durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934), zuletzt geändert durch Artikel 2 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 2 des Gesetzes vom 26. März 2019 (GV. NRW. S. 193, ber. S. 214).",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[5].text",
+        "term": "NRW",
+        "context": "…esetzes - Fassung der Bekanntmachung vom 21. Juli 2000 (GV. NRW. S. 568), neu gefasst durch Artikel 1 des Gesetzes vom 15. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[29].children[5].children[2].children[5].text",
+        "term": "NRW",
+        "context": "…sst durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) - zu Ende zu führen.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zum Schutz der Natur in Nordrhein-Westfalen vom 21. Juli 2000 (GV. NRW. 2000 S. 568)",
+    "sourceVersion": "Gesetz zum Schutz der Natur in Nordrhein-Westfalen vom 21. Juli 2000 (GV. NRW. 2000 S. 568)",
+    "simulation": "Gesetz zum Schutz der Natur in Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 127577,
+          "actual": 127429,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 611,
+          "actual": 611,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 127429,
+          "actual": 127338,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "84 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "84 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:21:30.014Z"
+}

@@ -1,0 +1,985 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28310",
+  "slug": "jag-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.shortTitle@26:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 26,
+      "end": 45,
+      "term": "Nordrhein-Westfalen",
+      "context": "Juristenausbildungsgesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@4:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "JAG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[0].children[1].text@140:municipality",
+      "path": "body[4].children[1].children[0].children[1].text",
+      "start": 140,
+      "end": 150,
+      "term": "Düsseldorf",
+      "context": "…t. Justizprüfungsämter bestehen bei den Oberlandesgerichten Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[0].children[1].text@152:municipality",
+      "path": "body[4].children[1].children[0].children[1].text",
+      "start": 152,
+      "end": 156,
+      "term": "Hamm",
+      "context": "…fungsämter bestehen bei den Oberlandesgerichten Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[0].children[1].text@161:municipality",
+      "path": "body[4].children[1].children[0].children[1].text",
+      "start": 161,
+      "end": 165,
+      "term": "Köln",
+      "context": "…r bestehen bei den Oberlandesgerichten Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[3].children[0].children[1].text@99:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[3].children[0].children[1].text",
+      "start": 99,
+      "end": 118,
+      "term": "Nordrhein-Westfalen",
+      "context": "…bereich dieses Gesetzes, soweit sie an einer Universität in Nordrhein-Westfalen mindestens zwei Halbjahre Rechtswissenschaft studiert haben…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[8].children[1].children[47].text@79:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[1].children[8].children[1].children[47].text",
+      "start": 79,
+      "end": 105,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nungsrecht ohne die in den §§ 14a bis 33c Polizeigesetz des Landes Nordrhein-Westfalen enthaltenen Regelungen sowie im Überblick das Versammlungsr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[6].text@105:rule:jurisdiction-name-dative",
+      "path": "body[5].children[0].children[6].text",
+      "start": 105,
+      "end": 132,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…nicht deswegen versagt werden, weil die erste Prüfung nicht im Land Nordrhein-Westfalen abgelegt worden ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[2].text@78:protected:gazette-nrw",
+      "path": "body[5].children[2].children[2].text",
+      "start": 78,
+      "end": 93,
+      "term": "GV. NRW. S. 310",
+      "context": "… (§ 2 Absatz 5 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310 ber. S. 642), das zuletzt durch Artikel 7 des Gesetzes vom …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[2].children[2].text@167:protected:gazette-nrw",
+      "path": "body[5].children[2].children[2].text",
+      "start": 167,
+      "end": 182,
+      "term": "GV. NRW. S. 244",
+      "context": "… das zuletzt durch Artikel 7 des Gesetzes vom 17. Mai 2018 (GV. NRW. S. 244) geändert worden ist) sind die Leiterinnen und Leiter der A…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[4].children[1].text@410:authority-district-government",
+      "path": "body[5].children[4].children[1].text",
+      "start": 410,
+      "end": 428,
+      "term": "Bezirksregierungen",
+      "context": "…eneralstaatsanwältinnen und Generalstaatsanwälten sowie den Bezirksregierungen unterstützt, insbesondere in den Ausbildungsabschnitten, in…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[2].text@200:authority-district-government",
+      "path": "body[5].children[4].children[2].text",
+      "start": 200,
+      "end": 218,
+      "term": "Bezirksregierungen",
+      "context": "…m Präsidenten eine Richterin oder ein Richter sowie bei den Bezirksregierungen von der Regierungspräsidentin oder dem Regierungspräsidente…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[3].text@72:authority-district-government",
+      "path": "body[5].children[4].children[3].text",
+      "start": 72,
+      "end": 90,
+      "term": "Bezirksregierungen",
+      "context": "…ngsleiterinnen oder Ausbildungsleiter bei den Gerichten und Bezirksregierungen sind von sonstigen Aufgaben angemessen zu entlasten.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[5].children[0].text@357:authority-district-government",
+      "path": "body[5].children[5].children[0].text",
+      "start": 357,
+      "end": 373,
+      "term": "Bezirksregierung",
+      "context": "…r Verwaltungsbehörde geschieht dies im Einvernehmen mit der Bezirksregierung. Die Bestimmung kann auf nachgeordnete Dienststellen und fü…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[5].children[0].text@487:authority-district-government",
+      "path": "body[5].children[5].children[0].text",
+      "start": 487,
+      "end": 503,
+      "term": "Bezirksregierung",
+      "context": "…und für die Ausbildung bei einer Verwaltungsbehörde auf die Bezirksregierung übertragen werden. Die Bestimmung der Ausbilderin oder des …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[5].children[1].text@56:regional-body-district",
+      "path": "body[5].children[5].children[1].text",
+      "start": 56,
+      "end": 73,
+      "term": "Regierungsbezirke",
+      "context": "Ausbildungsbezirke sind die Landgerichtsbezirke und die Regierungsbezirke. Mehrere Landgerichtsbezirke können zu einem Ausbildungsbez…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[5].children[4].text@257:authority-district-government",
+      "path": "body[5].children[5].children[4].text",
+      "start": 257,
+      "end": 273,
+      "term": "Bezirksregierung",
+      "context": "…des zuständigen Präsidenten des Oberlandesgerichts oder der Bezirksregierung für einzelne Ausbildungsabschnitte in einem anderen Oberlan…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[6].children[6].text@439:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[6].children[6].text",
+      "start": 439,
+      "end": 465,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…des Oberlandesgerichts eine Ausbildungsstelle innerhalb des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[15].children[1].children[2].text@132:authority-district-government",
+      "path": "body[5].children[15].children[1].children[2].text",
+      "start": 132,
+      "end": 148,
+      "term": "Bezirksregierung",
+      "context": "…und für die Ausbildung bei einer Verwaltungsbehörde auf die Bezirksregierung übertragen werden.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[16].children[2].children[2].text@87:authority-district-government",
+      "path": "body[5].children[16].children[2].children[2].text",
+      "start": 87,
+      "end": 103,
+      "term": "Bezirksregierung",
+      "context": "…ts einer öffentlich-rechtlichen Arbeitsgemeinschaft bei der Bezirksregierung;",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[18].children[2].children[1].text@63:authority-district-government",
+      "path": "body[5].children[18].children[2].children[1].text",
+      "start": 63,
+      "end": 79,
+      "term": "Bezirksregierung",
+      "context": "… Leiterinnen und Leiter von Arbeitsgemeinschaften bei einer Bezirksregierung von der Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[18].children[2].children[1].text@88:authority-district-government",
+      "path": "body[5].children[18].children[2].children[1].text",
+      "start": 88,
+      "end": 104,
+      "term": "Bezirksregierung",
+      "context": "…on Arbeitsgemeinschaften bei einer Bezirksregierung von der Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[3].children[3].text@206:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[3].children[3].text",
+      "start": 206,
+      "end": 232,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…fungsamt nur zugelassen, wer in den Vorbereitungsdienst des Landes Nordrhein-Westfalen aufgenommen ist oder war.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[10].children[1].text@241:rule:jurisdiction-name-bare",
+      "path": "body[6].children[10].children[1].text",
+      "start": 241,
+      "end": 260,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rüfling, der die Prüfung vor dem Landesjustizprüfungsamt in Nordrhein-Westfalen abgelegt hat, auf dessen Antrag einmalig eine erneute Prüfu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[13].children[1].text@144:rule:jurisdiction-name-bare",
+      "path": "body[6].children[13].children[1].text",
+      "start": 144,
+      "end": 163,
+      "term": "Nordrhein-Westfalen",
+      "context": "…üfungsamtes einem Prüfling, der die Wiederholungsprüfung in Nordrhein-Westfalen nicht bestanden hat, auf schriftlichen oder elektronischen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].children[2].children[2].text@675:rule:jurisdiction-name",
+      "path": "body[8].children[0].children[2].children[2].text",
+      "start": 675,
+      "end": 699,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…rifft, gelten die Vorschriften des Gebührengesetzes für das Land Nordrhein-Westfalen vom 23. August 1999 in seiner jeweils gültigen Fassung ents…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[9].text@4:constitutional-organ-state",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[9].text@20:rule:jurisdiction-name-bare",
+      "path": "body[9].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].text@4:ministry-compound",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[12].text@4:ministry-compound",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[13].text@4:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 45,
+      "term": "Ministerin für Wissenschaft und Forschung",
+      "context": "Die Ministerin für Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].text@54:protected:gazette-nrw",
+      "path": "body[14].text",
+      "start": 54,
+      "end": 70,
+      "term": "GV. NRW. S. 1190",
+      "context": "Hinweis: Artikel 2 des Gesetzes vom 9. November 2021 (GV. NRW. S. 1190), in Kraft getreten am 17. Februar 2022",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[16].text@392:rule:jurisdiction-name-bare",
+      "path": "body[16].text",
+      "start": 392,
+      "end": 411,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s 27 und 27a die Regelungen des Juristenausbildungsgesetzes Nordrhein-Westfalen in der bis Inkrafttreten dieses Gesetzes geltenden Fassung …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[16].text@735:rule:jurisdiction-name-bare",
+      "path": "body[16].text",
+      "start": 735,
+      "end": 754,
+      "term": "Nordrhein-Westfalen",
+      "context": "… nach § 7 Absatz 1 Nummer 2 des Juristenausbildungsgesetzes Nordrhein-Westfalen anerkannt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 13
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "authority": {
+      "manual-review": 10
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].children[3].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[8].children[1].children[47].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[6].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[6].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[3].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[10].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[13].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[0].children[2].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[16].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[16].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].children[1].children[0].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…t. Justizprüfungsämter bestehen bei den Oberlandesgerichten Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[0].children[1].text",
+      "term": "Hamm",
+      "context": "…fungsämter bestehen bei den Oberlandesgerichten Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[0].children[1].text",
+      "term": "Köln",
+      "context": "…r bestehen bei den Oberlandesgerichten Düsseldorf, Hamm und Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "…eneralstaatsanwältinnen und Generalstaatsanwälten sowie den Bezirksregierungen unterstützt, insbesondere in den Ausbildungsabschnitten, in…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[2].text",
+      "term": "Bezirksregierungen",
+      "context": "…m Präsidenten eine Richterin oder ein Richter sowie bei den Bezirksregierungen von der Regierungspräsidentin oder dem Regierungspräsidente…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[3].text",
+      "term": "Bezirksregierungen",
+      "context": "…ngsleiterinnen oder Ausbildungsleiter bei den Gerichten und Bezirksregierungen sind von sonstigen Aufgaben angemessen zu entlasten.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…r Verwaltungsbehörde geschieht dies im Einvernehmen mit der Bezirksregierung. Die Bestimmung kann auf nachgeordnete Dienststellen und fü…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…und für die Ausbildung bei einer Verwaltungsbehörde auf die Bezirksregierung übertragen werden. Die Bestimmung der Ausbilderin oder des …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].children[1].text",
+      "term": "Regierungsbezirke",
+      "context": "Ausbildungsbezirke sind die Landgerichtsbezirke und die Regierungsbezirke. Mehrere Landgerichtsbezirke können zu einem Ausbildungsbez…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…des zuständigen Präsidenten des Oberlandesgerichts oder der Bezirksregierung für einzelne Ausbildungsabschnitte in einem anderen Oberlan…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[15].children[1].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…und für die Ausbildung bei einer Verwaltungsbehörde auf die Bezirksregierung übertragen werden.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[16].children[2].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…ts einer öffentlich-rechtlichen Arbeitsgemeinschaft bei der Bezirksregierung;",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[18].children[2].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "… Leiterinnen und Leiter von Arbeitsgemeinschaften bei einer Bezirksregierung von der Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[18].children[2].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…on Arbeitsgemeinschaften bei einer Bezirksregierung von der Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Ministerin für Wissenschaft und Forschung",
+      "context": "Die Ministerin für Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 1032,
+    "residuals": [
+      {
+        "path": "body[5].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…2 Absatz 5 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310 ber. S. 642), das zuletzt durch Artikel 7 des Geset…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[2].children[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 7 des Gesetzes vom 17. Mai 2018 (GV. NRW. S. 244) geändert worden ist) sind die Leiterinnen und Leit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].text",
+        "term": "NRW",
+        "context": "Hinweis: Artikel 2 des Gesetzes vom 9. November 2021 (GV. NRW. S. 1190), in Kraft getreten am 17. Februar 2022",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die juristischen Prüfungen und den juristischen Vorbereitungsdienst vom 11. März 2003 (GV. NRW. S. 135)",
+    "sourceVersion": "Gesetz über die juristischen Prüfungen und den juristischen Vorbereitungsdienst vom 11. März 2003 (GV. NRW. S. 135)",
+    "simulation": "Gesetz über die juristischen Prüfungen und den juristischen Vorbereitungsdienst in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 73,
+          "actual": 73,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 105278,
+          "actual": 104657,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 73,
+          "actual": 73,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 820,
+          "actual": 820,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 60,
+          "actual": 60,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 73,
+          "actual": 73,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 104657,
+          "actual": 104613,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "73 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "73 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:16:47.487Z"
+}

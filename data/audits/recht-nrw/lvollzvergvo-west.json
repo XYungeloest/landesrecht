@@ -1,0 +1,1212 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31987",
+  "slug": "lvollzvergvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@88:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 88,
+      "end": 114,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…g und die Ausbildungsbeihilfe nach den Vollzugsgesetzen des Landes Nordrhein-Westfalen für Gefangene und in der Sicherungsverwahrung Untergebracht…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@35:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 35,
+      "end": 54,
+      "term": "Nordrhein-Westfalen",
+      "context": "Landesvollzugsvergütungsverordnung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@13:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 13,
+      "end": 16,
+      "term": "NRW",
+      "context": "LVollzVergVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@67:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 67,
+      "end": 86,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nd des § 30 Absatz 4 Satz 2 des Jugendstrafvollzugsgesetzes Nordrhein-Westfalen vom 7. April 2017 (GV. NRW. S. 511), des § 13 Absatz 3 Satz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@106:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 106,
+      "end": 121,
+      "term": "GV. NRW. S. 511",
+      "context": "…trafvollzugsgesetzes Nordrhein-Westfalen vom 7. April 2017 (GV. NRW. S. 511), des § 13 Absatz 3 Satz 4 des Untersuchungshaftvollzugsges…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@187:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 187,
+      "end": 206,
+      "term": "Nordrhein-Westfalen",
+      "context": "… § 13 Absatz 3 Satz 4 des Untersuchungshaftvollzugsgesetzes Nordrhein-Westfalen vom 27. Oktober 2009 (GV. NRW. S. 540), der durch Artikel 2…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@229:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 229,
+      "end": 244,
+      "term": "GV. NRW. S. 540",
+      "context": "…tvollzugsgesetzes Nordrhein-Westfalen vom 27. Oktober 2009 (GV. NRW. S. 540), der durch Artikel 2 des Gesetzes vom 7. April 2017 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@299:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 299,
+      "end": 314,
+      "term": "GV. NRW. S. 511",
+      "context": "…. 540), der durch Artikel 2 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) neu gefasst worden ist, des § 32 Absatz 4 Satz 3 des Straf…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@391:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 391,
+      "end": 410,
+      "term": "Nordrhein-Westfalen",
+      "context": "…den ist, des § 32 Absatz 4 Satz 3 des Strafvollzugsgesetzes Nordrhein-Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), der durch Artikel 3 d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@432:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 432,
+      "end": 446,
+      "term": "GV. NRW. S. 76",
+      "context": "…afvollzugsgesetzes Nordrhein-Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), der durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@501:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 501,
+      "end": 516,
+      "term": "GV. NRW. S. 511",
+      "context": "…S. 76), der durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) neu gefasst worden ist und des § 32 Absatz 3 Satz 3 des Si…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@612:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 612,
+      "end": 631,
+      "term": "Nordrhein-Westfalen",
+      "context": "…2 Absatz 3 Satz 3 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen vom 30. April 2013 (GV. NRW. S. 212), der durch Artikel 4 d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@652:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 652,
+      "end": 667,
+      "term": "GV. NRW. S. 212",
+      "context": "…ngsvollzugsgesetzes Nordrhein-Westfalen vom 30. April 2013 (GV. NRW. S. 212), der durch Artikel 4 des Gesetzes vom 7. April 2017 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@722:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 722,
+      "end": 737,
+      "term": "GV. NRW. S. 511",
+      "context": "…. 212), der durch Artikel 4 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) neu gefasst worden ist, verordnet das Ministerium der Just…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@777:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 777,
+      "end": 799,
+      "term": "Ministerium der Justiz",
+      "context": "…017 (GV. NRW. S. 511) neu gefasst worden ist, verordnet das Ministerium der Justiz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@287:protected:gazette-nrw",
+      "path": "body[2].children[0].text",
+      "start": 287,
+      "end": 302,
+      "term": "GV. NRW. S. 355",
+      "context": "…Absatz 1 Satz 1 der Arbeitszeitverordnung vom 4. Juli 2006 (GV. NRW. S. 355), die zuletzt durch Verordnung vom 25. Oktober 2016 (GV. NR…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@356:protected:gazette-nrw",
+      "path": "body[2].children[0].text",
+      "start": 356,
+      "end": 371,
+      "term": "GV. NRW. S. 861",
+      "context": "…S. 355), die zuletzt durch Verordnung vom 25. Oktober 2016 (GV. NRW. S. 861) geändert worden ist. Eine Festsetzung der Sollarbeitszeit …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@846:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[0].text",
+      "start": 846,
+      "end": 872,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…der andere Maßnahmen, für die nach den Vollzugsgesetzen des Landes Nordrhein-Westfalen eine Vergütung gezahlt werden kann, zur Verfügung steht. Im…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].children[2].text@113:rule:jurisdiction-name-bare",
+      "path": "body[2].children[2].children[2].text",
+      "start": 113,
+      "end": 132,
+      "term": "Nordrhein-Westfalen",
+      "context": "…egelungen des § 34 des Sicherungsverwahrungsvollzuggesetzes Nordrhein-Westfalen vom 30. April 2013 (GV. NRW. S. 212), das zuletzt durch Art…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].children[2].text@153:protected:gazette-nrw",
+      "path": "body[2].children[2].children[2].text",
+      "start": 153,
+      "end": 168,
+      "term": "GV. NRW. S. 212",
+      "context": "…ungsvollzuggesetzes Nordrhein-Westfalen vom 30. April 2013 (GV. NRW. S. 212), das zuletzt durch Artikel 4 des Gesetzes vom 7. April 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[2].children[2].text@231:protected:gazette-nrw",
+      "path": "body[2].children[2].children[2].text",
+      "start": 231,
+      "end": 246,
+      "term": "GV. NRW. S. 511",
+      "context": "…das zuletzt durch Artikel 4 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@79:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 79,
+      "end": 98,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ergütung nach § 30 Absatz 1 des Jugendstrafvollzugsgesetzes Nordrhein-Westfalen vom 7. April 2017 (GV. NRW. S. 511), § 13 Absatz 1 des Unte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@118:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 118,
+      "end": 133,
+      "term": "GV. NRW. S. 511",
+      "context": "…trafvollzugsgesetzes Nordrhein-Westfalen vom 7. April 2017 (GV. NRW. S. 511), § 13 Absatz 1 des Untersuchungshaftvollzugsgesetzes Nordr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@188:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 188,
+      "end": 207,
+      "term": "Nordrhein-Westfalen",
+      "context": "…. 511), § 13 Absatz 1 des Untersuchungshaftvollzugsgesetzes Nordrhein-Westfalen vom 27. Oktober 2009 (GV. NRW. S. 540), das zuletzt durch A…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@230:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 230,
+      "end": 245,
+      "term": "GV. NRW. S. 540",
+      "context": "…tvollzugsgesetzes Nordrhein-Westfalen vom 27. Oktober 2009 (GV. NRW. S. 540), das zuletzt durch Artikel 2 des Gesetzes vom 7. April 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@308:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 308,
+      "end": 323,
+      "term": "GV. NRW. S. 511",
+      "context": "…das zuletzt durch Artikel 2 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) geändert worden ist, § 32 Absatz 1 des Strafvollzugsgesetz…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@397:geography-region",
+      "path": "body[3].children[0].text",
+      "start": 397,
+      "end": 406,
+      "term": "Westfalen",
+      "context": "…den ist, § 32 Absatz 1 des Strafvollzugsgesetzes Nordrhein -Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Art…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@428:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 428,
+      "end": 442,
+      "term": "GV. NRW. S. 76",
+      "context": "…fvollzugsgesetzes Nordrhein -Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Artikel 3 des Gesetzes vom 7. April 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@505:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 505,
+      "end": 520,
+      "term": "GV. NRW. S. 511",
+      "context": "…das zuletzt durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) geändert worden ist und nach § 32 Absatz 1 des Sicherungsv…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@607:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 607,
+      "end": 626,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ach § 32 Absatz 1 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen wird nach folgenden Vergütungsstufen festgesetzt:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[5].text@68:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[5].text",
+      "start": 68,
+      "end": 87,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ergütung nach § 30 Absatz 1 des Jugendstrafvollzugsgesetzes Nordrhein-Westfalen, § 13 Absatz 3 des Untersuchungshaftvollzugsgesetzes Nordrh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[5].text@141:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[5].text",
+      "start": 141,
+      "end": 160,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tfalen, § 13 Absatz 3 des Untersuchungshaftvollzugsgesetzes Nordrhein-Westfalen, § 32 Absatz 1 des Strafvollzugsgesetzes Nordrhein-Westfale…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[5].text@202:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[5].text",
+      "start": 202,
+      "end": 221,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ordrhein-Westfalen, § 32 Absatz 1 des Strafvollzugsgesetzes Nordrhein-Westfalen oder § 32 Absatz 1 des Sicherungsverwahrungsvollzugsgesetze…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[5].text@283:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[5].text",
+      "start": 283,
+      "end": 302,
+      "term": "Nordrhein-Westfalen",
+      "context": "…der § 32 Absatz 1 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@312:rule:jurisdiction-name-bare",
+      "path": "body[3].children[2].text",
+      "start": 312,
+      "end": 331,
+      "term": "Nordrhein-Westfalen",
+      "context": "…m Geltungsbereich des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen dürfen 75 Prozent der Eckvergütung nicht unterschritten wer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@106:rule:jurisdiction-name-bare",
+      "path": "body[5].children[0].text",
+      "start": 106,
+      "end": 125,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Maßnahme nach § 30 Absatz 3 des Jugendstrafvollzugsgesetzes Nordrhein-Westfalen oder § 32 Absatz 3 des Strafvollzugsgesetzes Nordrhein-West…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@171:rule:jurisdiction-name-bare",
+      "path": "body[5].children[0].text",
+      "start": 171,
+      "end": 190,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hein-Westfalen oder § 32 Absatz 3 des Strafvollzugsgesetzes Nordrhein-Westfalen wird im Zeitlohn nach § 1 Absatz 2 Satz 2 und 3 vergütet. D…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@61:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…m Geltungsbereich des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen dürfen 75 Prozent der Eckvergütung nicht unterschritten wer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@214:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 214,
+      "end": 233,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tung nach § 32 Absatz 1 Sicherungsverwahrungsvollzugsgesetz Nordrhein-Westfalen wird hier in allen Phasen nach Vergütungsstufe I gewährt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@106:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].text",
+      "start": 106,
+      "end": 125,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chen Bildung (§ 30 Absatz 2 des Jugendstrafvollzugsgesetzes Nordrhein-Westfalen, § 13 Absatz 4 des Untersuchungshaftvollzugsgesetzes Nordrh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@179:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].text",
+      "start": 179,
+      "end": 198,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tfalen, § 13 Absatz 4 des Untersuchungshaftvollzugsgesetzes Nordrhein-Westfalen, § 32 Absatz 2 des Strafvollzugsgesetzes Nordrhein-Westfale…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@240:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].text",
+      "start": 240,
+      "end": 259,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ordrhein-Westfalen, § 32 Absatz 2 des Strafvollzugsgesetzes Nordrhein-Westfalen, § 32 Absatz 2 des Sicherungsverwahrungsvollzugsgesetzes No…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@317:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].text",
+      "start": 317,
+      "end": 336,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en, § 32 Absatz 2 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen) wird nach folgenden Stufen festgesetzt:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].children[1].text@214:municipality",
+      "path": "body[6].children[0].children[1].text",
+      "start": 214,
+      "end": 220,
+      "term": "Bochum",
+      "context": "…nabhängig von ihrer Dauer, die in der Justizvollzugsanstalt Bochum-Langendreer - Berufsförderungsstätte - oder im Berufsbildun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[0].text@106:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].text",
+      "start": 106,
+      "end": 125,
+      "term": "Nordrhein-Westfalen",
+      "context": "…chen Bildung (§ 30 Absatz 2 des Jugendstrafvollzugsgesetzes Nordrhein-Westfalen, § 13 Absatz 4 des Untersuchungshaftvollzugsgesetzes Nordrh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].text@179:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].text",
+      "start": 179,
+      "end": 198,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tfalen, § 13 Absatz 4 des Untersuchungshaftvollzugsgesetzes Nordrhein-Westfalen, § 32 Absatz 2 des Strafvollzugsgesetzes Nordrhein-Westfale…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].text@240:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].text",
+      "start": 240,
+      "end": 259,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ordrhein-Westfalen, § 32 Absatz 2 des Strafvollzugsgesetzes Nordrhein-Westfalen, § 32 Absatz 2 des Sicherungsverwahrungsvollzugsgesetzes No…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].text@317:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].text",
+      "start": 317,
+      "end": 336,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en, § 32 Absatz 2 des Sicherungsverwahrungsvollzugsgesetzes Nordrhein-Westfalen) wird nach folgenden Stufen festgesetzt:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].text@4:ministry-portfolio",
+      "path": "body[8].children[2].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[8].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[8].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 30
+    },
+    "source-citation": {
+      "protected": 16
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium der Justiz",
+      "context": "…017 (GV. NRW. S. 511) neu gefasst worden ist, verordnet das Ministerium der Justiz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Westfalen",
+      "context": "…den ist, § 32 Absatz 1 des Strafvollzugsgesetzes Nordrhein -Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Art…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].children[1].text",
+      "term": "Bochum",
+      "context": "…nabhängig von ihrer Dauer, die in der Justizvollzugsanstalt Bochum-Langendreer - Berufsförderungsstätte - oder im Berufsbildun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 148,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…trafvollzugsgesetzes Westdeutschland vom 7. April 2017 (GV. NRW. S. 511), des § 13 Absatz 3 Satz 4 des Untersuchungshaftvol…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…tvollzugsgesetzes Westdeutschland vom 27. Oktober 2009 (GV. NRW. S. 540), der durch Artikel 2 des Gesetzes vom 7. April 201…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…0), der durch Artikel 2 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) neu gefasst worden ist, des § 32 Absatz 4 Satz 3 d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…afvollzugsgesetzes Westdeutschland vom 13. Januar 2015 (GV. NRW. S. 76), der durch Artikel 3 des Gesetzes vom 7. April 2017…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…6), der durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) neu gefasst worden ist und des § 32 Absatz 3 Satz …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…ngsvollzugsgesetzes Westdeutschland vom 30. April 2013 (GV. NRW. S. 212), der durch Artikel 4 des Gesetzes vom 7. April 201…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…2), der durch Artikel 4 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) neu gefasst worden ist, verordnet das Ministerium …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].text",
+        "term": "NRW",
+        "context": "…tz 1 Satz 1 der Arbeitszeitverordnung vom 4. Juli 2006 (GV. NRW. S. 355), die zuletzt durch Verordnung vom 25. Oktober 2016…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].text",
+        "term": "NRW",
+        "context": "…55), die zuletzt durch Verordnung vom 25. Oktober 2016 (GV. NRW. S. 861) geändert worden ist. Eine Festsetzung der Sollarbe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…ungsvollzuggesetzes Westdeutschland vom 30. April 2013 (GV. NRW. S. 212), das zuletzt durch Artikel 4 des Gesetzes vom 7. A…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 4 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…trafvollzugsgesetzes Westdeutschland vom 7. April 2017 (GV. NRW. S. 511), § 13 Absatz 1 des Untersuchungshaftvollzugsgesetz…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…tvollzugsgesetzes Westdeutschland vom 27. Oktober 2009 (GV. NRW. S. 540), das zuletzt durch Artikel 2 des Gesetzes vom 7. A…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 2 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) geändert worden ist, § 32 Absatz 1 des Strafvollzu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…lzugsgesetzes Nordrhein -Westfalen vom 13. Januar 2015 (GV. NRW. S. 76), das zuletzt durch Artikel 3 des Gesetzes vom 7. Ap…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 3 des Gesetzes vom 7. April 2017 (GV. NRW. S. 511) geändert worden ist und nach § 32 Absatz 1 des Sic…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium der Justiz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium der Justiz",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium der Justiz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium der Justiz",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "justizministerium"
+  },
+  "citations": {
+    "source": "Verordnung über die Vergütung und die Ausbildungsbeihilfe nach den Vollzugsgesetzen des Landes Nordrhein-Westfalen für Gefangene und in der Sicherungsverwahrung Untergebrachte vom 31. August 2017",
+    "sourceVersion": "Verordnung über die Vergütung und die Ausbildungsbeihilfe nach den Vollzugsgesetzen des Landes Nordrhein-Westfalen für Gefangene und in der Sicherungsverwahrung Untergebrachte vom 31. August 2017",
+    "simulation": "Verordnung über die Vergütung und die Ausbildungsbeihilfe nach den Vollzugsgesetzen des Landes Westdeutschland für Gefangene und in der Sicherungsverwahrung Untergebrachte in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14162,
+          "actual": 14386,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 139,
+          "actual": 139,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14386,
+          "actual": 14278,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:28:15.058Z"
+}

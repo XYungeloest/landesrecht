@@ -1,0 +1,790 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31258",
+  "slug": "avarwahlvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@82:rule:jurisdiction-name",
+      "path": "body[1].text",
+      "start": 82,
+      "end": 106,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…bsatz 6 und des § 108b Absatz 6 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].text@160:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 160,
+      "end": 175,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), von denen § 108a Absatz 6 durch Artikel 1 des Gesetzes vo…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@254:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 254,
+      "end": 269,
+      "term": "GV. NRW. S. 208",
+      "context": "… Absatz 6 durch Artikel 1 des Gesetzes vom 3. Februar 2015 (GV. NRW. S. 208) geändert und § 108b durch Artikel 1 des Gesetzes vom 3. Fe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@341:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 341,
+      "end": 356,
+      "term": "GV. NRW. S. 208",
+      "context": "…nd § 108b durch Artikel 1 des Gesetzes vom 3. Februar 2015 (GV. NRW. S. 208) eingefügt worden ist, verordnet das Ministerium für Innere…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@394:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 394,
+      "end": 432,
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "… 2015 (GV. NRW. S. 208) eingefügt worden ist, verordnet das Ministerium für Inneres und Kommunales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[2].children[1].text@141:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 141,
+      "end": 165,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…as oder die von § 108a Absatz 1 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@219:protected:gazette-nrw",
+      "path": "body[2].children[1].text",
+      "start": 219,
+      "end": 234,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), die zuletzt durch Artikel 3 des Gesetzes vom 29. Septembe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@302:protected:gazette-nrw",
+      "path": "body[2].children[1].text",
+      "start": 302,
+      "end": 317,
+      "term": "GV. NRW. S. 916",
+      "context": "…uletzt durch Artikel 3 des Gesetzes vom 29. September 2020 (GV. NRW. S. 916) geändert worden ist, erfasst ist, dem fakultativen Aufsich…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@719:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 719,
+      "end": 743,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Beginn der Amtszeit der nach § 108a Gemeindeordnung für das Land Nordrhein-Westfalen zu bestimmenden Aufsichtsratsmitglieder der Beschäftigten m…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@76:rule:jurisdiction-name",
+      "path": "body[5].children[3].text",
+      "start": 76,
+      "end": 100,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e in die Wählerliste, in § 108a der Gemeindeordnung für das Land Nordrhein-Westfalen und in diese Verordnung ist unverzüglich bis zum Abschluss …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[1].text@90:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[1].text",
+      "start": 90,
+      "end": 114,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n in die Wählerliste, in § 108a der Gemeindeordnung für das Land Nordrhein-Westfalen und in diese Verordnung Einsicht nehmen können;",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[5].text@136:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[5].text",
+      "start": 136,
+      "end": 160,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ewerber (§ 108a Absatz 3 Satz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen); soweit diese nach § 108a Absatz 2 der Gemeindeordnung für…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[5].text@225:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[5].text",
+      "start": 225,
+      "end": 249,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…weit diese nach § 108a Absatz 2 der Gemeindeordnung für das Land Nordrhein-Westfalen Beschäftigte des Unternehmens oder der Einrichtung sein müs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[7].text@166:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[7].text",
+      "start": 166,
+      "end": 190,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…in muss (§ 108a Absatz 6 Satz 2 der Gemeindeordnung für das Land Nordrhein-Westfalen);",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[8].text@69:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[8].text",
+      "start": 69,
+      "end": 93,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…alle des § 108a Absatz 6 Satz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen in jedem Wahlvorschlag für jede Bewerberin und jeden Bewerb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[9].text@69:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[9].text",
+      "start": 69,
+      "end": 93,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…alle des § 108a Absatz 6 Satz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen bei Bestellung eines Aufsichtsratsmitglieds auch das zusamm…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[1].text@133:rule:jurisdiction-name",
+      "path": "body[8].children[1].text",
+      "start": 133,
+      "end": 157,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…rber aufweisen, wie nach § 108a der Gemeindeordnung für das Land Nordrhein-Westfalen als ordentliche und gegebenenfalls stellvertretende Aufsich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[9].children[0].text@64:rule:jurisdiction-name",
+      "path": "body[9].children[0].text",
+      "start": 64,
+      "end": 88,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…alle des § 108a Absatz 6 Satz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen ist jedes vorgeschlagene stellvertretende Mitglied in dem W…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[1].text@124:rule:jurisdiction-name",
+      "path": "body[11].children[0].children[1].text",
+      "start": 124,
+      "end": 148,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…hriften (§ 108a Absatz 6 Satz 2 der Gemeindeordnung für das Land Nordrhein-Westfalen) aufweisen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[2].text@293:rule:jurisdiction-name",
+      "path": "body[12].children[2].text",
+      "start": 293,
+      "end": 317,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…nd Bewerber (§ 108a Absatz 3 Satz 3 der Gemeindeordnung für Land Nordrhein-Westfalen) nicht erreicht wird.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[19].children[0].text@257:rule:jurisdiction-name",
+      "path": "body[19].children[0].text",
+      "start": 257,
+      "end": 281,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…schäftigt sein (§ 108a Absatz 2 der Gemeindeordnung für das Land Nordrhein-Westfalen), so sind die Bewerberinnen und Bewerber für die Vorschlags…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[20].children[6].text@64:rule:jurisdiction-name",
+      "path": "body[20].children[6].text",
+      "start": 64,
+      "end": 88,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…alle des § 108a Absatz 6 Satz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen die Namen der für die einzelnen Bewerberinnen und Bewerber …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[21].children[2].text@182:rule:jurisdiction-name",
+      "path": "body[21].children[2].text",
+      "start": 182,
+      "end": 206,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Wahl den Vorschlag nach § 108a der Gemeindeordnung für das Land Nordrhein-Westfalen schriftlich mit. In dem Vorschlag sind die vorgeschlagenen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[25].children[0].text@153:rule:jurisdiction-name",
+      "path": "body[25].children[0].text",
+      "start": 153,
+      "end": 177,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…d 5 sowie Absatz 8 Satz 3 und 4 der Gemeindeordnung für das Land Nordrhein-Westfalen) informiert das zur gesetzlichen Vertretung berufene Organ …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[25].children[1].text@230:rule:jurisdiction-name",
+      "path": "body[25].children[1].text",
+      "start": 230,
+      "end": 254,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…beteiligt sind (§ 108a Absatz 9 der Gemeindeordnung für das Land Nordrhein-Westfalen), gelten die vorstehenden Regelungen entsprechend. § 1 gilt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[27].title@63:rule:jurisdiction-name",
+      "path": "body[27].title",
+      "start": 63,
+      "end": 87,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…endung in den Fällen des § 108b der Gemeindeordnung für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[27].children[1].text@87:rule:jurisdiction-name",
+      "path": "body[27].children[1].text",
+      "start": 87,
+      "end": 111,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…en auf der Grundlage des § 108b der Gemeindeordnung für das Land Nordrhein-Westfalen zugelassenen Fällen einer Ausnahme von der Drittelparität m…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[27].children[1].text@366:rule:jurisdiction-name",
+      "path": "body[27].children[1].text",
+      "start": 366,
+      "end": 390,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…en auch die Regelung des § 108b der Gemeindeordnung für das Land Nordrhein-Westfalen gehört.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[28].children[4].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[28].children[4].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 23
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[7].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[8].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[9].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[19].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[20].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[21].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[25].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[25].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[27].title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[27].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[27].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[28].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "… 2015 (GV. NRW. S. 208) eingefügt worden ist, verordnet das Ministerium für Inneres und Kommunales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 267,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), von denen § 108a Absatz 6 durch Artikel 1 des Ges…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…atz 6 durch Artikel 1 des Gesetzes vom 3. Februar 2015 (GV. NRW. S. 208) geändert und § 108b durch Artikel 1 des Gesetzes v…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… 108b durch Artikel 1 des Gesetzes vom 3. Februar 2015 (GV. NRW. S. 208) eingefügt worden ist, verordnet das Ministerium fü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[1].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666), die zuletzt durch Artikel 3 des Gesetzes vom 29. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[1].text",
+        "term": "NRW",
+        "context": "…zt durch Artikel 3 des Gesetzes vom 29. September 2020 (GV. NRW. S. 916) geändert worden ist, erfasst ist, dem fakultativen…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Inneres und Kommunales",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Inneres und Kommunales",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Inneres und Kommunales",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Inneres und Kommunales",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "innenministerium"
+  },
+  "citations": {
+    "source": "Verordnung über das Verfahren für die Wahl einer Vorschlagsliste der Beschäftigten für die Bestellung von Arbeitnehmervertreterinnen und Arbeitnehmervertretern in fakultativen Aufsichtsräten vom 17. Februar 2015",
+    "sourceVersion": "Verordnung über das Verfahren für die Wahl einer Vorschlagsliste der Beschäftigten für die Bestellung von Arbeitnehmervertreterinnen und Arbeitnehmervertretern in fakultativen Aufsichtsräten vom 17. Februar 2015",
+    "simulation": "Verordnung über das Verfahren für die Wahl einer Vorschlagsliste der Beschäftigten für die Bestellung von Arbeitnehmervertreterinnen und Arbeitnehmervertretern in fakultativen Aufsichtsräten in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 27,
+          "actual": 27,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 26033,
+          "actual": 27164,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 27,
+          "actual": 27,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 146,
+          "actual": 146,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 27,
+          "actual": 27,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 27164,
+          "actual": 27072,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "27 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "27 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:55:55.816Z"
+}

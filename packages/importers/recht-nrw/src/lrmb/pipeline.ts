@@ -28,7 +28,7 @@ import { checkDocumentIdentityAndBody, type DocumentSanityResult } from '../comm
 import { loadImportEnvironment, slugReservationFor, type ImportEnvironment } from '../common/environment.ts';
 import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
 import { bodyMetrics, checkTransformIntegrity, type IntegrityCheck, type IntegrityReport } from '../common/integrity.ts';
-import { AUDIT_DIR, isImportedStatus, readManifest, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type ReconstructionPlan } from '../common/manifest.ts';
+import { AUDIT_DIR, isImportedStatus, readManifest, readManifestEntry, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type ReconstructionPlan } from '../common/manifest.ts';
 import { overridesFor, overrideValue, type ImportOverride } from '../common/overrides.ts';
 import { assessTextCompleteness, type AttachmentInput, type TextCompletenessAssessment } from '../common/pdf.ts';
 import { FileWriter, persistReview, writeInitialNorm } from '../common/persist.ts';
@@ -112,7 +112,11 @@ export async function importRechtNrwLrmbDocument(options: LrmbImportOptions): Pr
   const reviewQueue = options.reviewQueue ?? (await readReviewQueue(options.root));
   const environment = options.environment ?? (await loadImportEnvironment(options.root, { mode: 'sample', manifest }));
   const result = await runLrmbImport({ ...options, manifest, now, environment });
-  const previous = result.manifestEntry ? manifest.entries.find((entry) => entry.sourceIdentity === result.manifestEntry!.sourceIdentity) : undefined;
+  // Wie im LRGV-Pfad: Der gespeicherte Stand muss auch dann gefunden werden, wenn der Bulk-Runner die Identität
+  // vor dem Abruf nicht kannte (Slug-Stamm ohne Term-Kennung).
+  const previous = result.manifestEntry
+    ? manifest.entries.find((entry) => entry.sourceIdentity === result.manifestEntry!.sourceIdentity) ?? (await readManifestEntry(options.root, 'lrmb', result.manifestEntry.sourceIdentity))
+    : undefined;
   const regression = Boolean(previous && isImportedStatus(previous.importStatus) && result.manifestEntry && !isImportedStatus(result.status) && result.status !== 'dry-run');
   if (regression) result.findings.push({ severity: 'error', code: 'import-regression', message: `Bereits übernommene Vorschrift ${previous!.targetSlug} ergibt jetzt ${result.status}; Manifest und Inhalt bleiben beim zuletzt übernommenen Stand (manuelle Prüfung)` });
   result.reviewItems = deriveReviewItems(result.findings, result.report);

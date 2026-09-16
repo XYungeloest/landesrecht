@@ -1,0 +1,580 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31316",
+  "slug": "ljzeitvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@51:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 51,
+      "end": 70,
+      "term": "Nordrhein-Westfalen",
+      "context": "Auf Grund des § 24 Absatz 1 des Landesjagdgesetzes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@127:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 127,
+      "end": 145,
+      "term": "GV. NRW. 1995 S. 2",
+      "context": "…len in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. 1995 S. 2, ber. 1997 S. 56), der zuletzt durch Artikel 1 des Gesetzes…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@224:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 224,
+      "end": 239,
+      "term": "GV. NRW. S. 448",
+      "context": "… der zuletzt durch Artikel 1 des Gesetzes vom 12. Mai 2015 (GV. NRW. S. 448) geändert worden ist, verordnet das Ministerium für Klimasc…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@276:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 276,
+      "end": 357,
+      "term": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…i 2015 (GV. NRW. S. 448) geändert worden ist, verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@382:legislature-state",
+      "path": "body[1].text",
+      "start": 382,
+      "end": 420,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "…chaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfalen:",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[1].text@394:rule:jurisdiction-name-genitive",
+      "path": "body[1].text",
+      "start": 394,
+      "end": 420,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…- und Verbraucherschutz im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfalen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@196:rule:jurisdiction-name-bare",
+      "path": "body[2].children[1].text",
+      "start": 196,
+      "end": 215,
+      "term": "Nordrhein-Westfalen",
+      "context": "…aufgehoben worden ist (§ 24 Absatz 2 des Landesjagdgesetzes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@272:protected:gazette-nrw",
+      "path": "body[2].children[1].text",
+      "start": 272,
+      "end": 290,
+      "term": "GV. NRW. 1995 S. 2",
+      "context": "…len in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. 1995 S. 2, ber. 1997 S. 56)), das zuletzt durch Artikel 1 des Gesetze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@374:protected:gazette-nrw",
+      "path": "body[2].children[1].text",
+      "start": 374,
+      "end": 389,
+      "term": "GV. NRW. S. 153",
+      "context": "… zuletzt durch Artikel 1 des Gesetzes vom 26. Februar 2019 (GV. NRW. S. 153) geändert worden ist, ist die Jagd auch in den Setz- und Br…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@159:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 159,
+      "end": 178,
+      "term": "Nordrhein-Westfalen",
+      "context": "…zelne Jagdbezirke nach § 24 Absatz 2 des Landesjagdgesetzes Nordrhein-Westfalen aufzuheben, sind folgende Tierarten von der Jagd zu verscho…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[3].text@11:geography-region",
+      "path": "body[3].children[3].text",
+      "start": 11,
+      "end": 22,
+      "term": "Niederrhein",
+      "context": "a) Unterer Niederrhein Schnittpunkt Bahnlinie (außer Betrieb) / Staatsgrenze Bunde…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@479:municipality",
+      "path": "body[3].children[3].text",
+      "start": 479,
+      "end": 484,
+      "term": "Kleve",
+      "context": "…linie, Bahnlinie bis Xanten, Bahnlinie (außer Betrieb) über Kleve, Kranenburg bis Staatsgrenze;",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[4].text@45:rule:jurisdiction-name-bare",
+      "path": "body[3].children[4].text",
+      "start": 45,
+      "end": 64,
+      "term": "Nordrhein-Westfalen",
+      "context": "b) Weseraue Schnittpunkt B 61 / Landesgrenze Nordrhein-Westfalen / Niedersachsen, Landesgrenze bis Bahnlinie, Bahnlinie bis …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@115:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 115,
+      "end": 130,
+      "term": "GV. NRW. S. 237",
+      "context": "…g über die Jagdzeiten und die Jagdabgabe vom 31. März 2010 (GV. NRW. S. 237), die durch Artikel 3 des Gesetzes vom 1. April 2014 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].text@185:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 185,
+      "end": 200,
+      "term": "GV. NRW. S. 254",
+      "context": "…. 237), die durch Artikel 3 des Gesetzes vom 1. April 2014 (GV. NRW. S. 254) geändert worden ist, außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].children[2].text@4:ministry-portfolio",
+      "path": "body[4].children[1].children[2].text",
+      "start": 4,
+      "end": 82,
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[2].text@87:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[1].children[2].text",
+      "start": 87,
+      "end": 113,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…z, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "legislature": {
+      "safe-auto-transform": 1
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "…i 2015 (GV. NRW. S. 448) geändert worden ist, verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz im Einvernehmen mit dem Landtag des Landes Nordrhein-Westfa…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Niederrhein",
+      "context": "a) Unterer Niederrhein Schnittpunkt Bahnlinie (außer Betrieb) / Staatsgrenze Bunde…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Kleve",
+      "context": "…linie, Bahnlinie bis Xanten, Bahnlinie (außer Betrieb) über Kleve, Kranenburg bis Staatsgrenze;",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[2].text",
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 125,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. 1995 S. 2, ber. 1997 S. 56), der zuletzt durch Artikel 1 d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 12. Mai 2015 (GV. NRW. S. 448) geändert worden ist, verordnet das Ministerium für…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[1].text",
+        "term": "NRW",
+        "context": "…in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. 1995 S. 2, ber. 1997 S. 56)), das zuletzt durch Artikel 1 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[1].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 1 des Gesetzes vom 26. Februar 2019 (GV. NRW. S. 153) geändert worden ist, ist die Jagd auch in den Setz…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…er die Jagdzeiten und die Jagdabgabe vom 31. März 2010 (GV. NRW. S. 237), die durch Artikel 3 des Gesetzes vom 1. April 201…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…7), die durch Artikel 3 des Gesetzes vom 1. April 2014 (GV. NRW. S. 254) geändert worden ist, außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über die Jagdzeiten 1 vom 28. Mai 2015 (In Kraft getreten am 29. Mai 2015 (GV. NRW. S. 468))",
+    "sourceVersion": "Verordnung über die Jagdzeiten 1 vom 28. Mai 2015 (In Kraft getreten am 29. Mai 2015 (GV. NRW. S. 468))",
+    "simulation": "Verordnung über die Jagdzeiten 1 in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5039,
+          "actual": 4967,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 164,
+          "actual": 164,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4967,
+          "actual": 4943,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:24:44.723Z"
+}

@@ -1,0 +1,566 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26946",
+  "slug": "verordnung-zur-feststellung-des-erbbrauchs-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].children[1].text@180:rule:jurisdiction-name-bare",
+      "path": "body[2].children[1].text",
+      "start": 180,
+      "end": 199,
+      "term": "Nordrhein-Westfalen",
+      "context": "…g der Bekanntmachung vom 26. Juli 1976 (BGBl. I S. 1933) in Nordrhein-Westfalen nur gilt",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].text@28:municipality",
+      "path": "body[2].children[2].text",
+      "start": 28,
+      "end": 37,
+      "term": "Bielefeld",
+      "context": "in den Amtsgerichtsbezirken Bielefeld, Bünde, Halle (Westf.), Herford, Lübbecke, Bad Oeynhausen u…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[5].text@22:municipality",
+      "path": "body[2].children[5].text",
+      "start": 22,
+      "end": 31,
+      "term": "Gütersloh",
+      "context": "im Amtsgerichtsbezirk Gütersloh mit Ausnahme des Gebietes der früheren Gemeinde Greffen in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[11].text@196:municipality",
+      "path": "body[2].children[11].text",
+      "start": 196,
+      "end": 203,
+      "term": "Münster",
+      "context": "…rkung Langenberg gehört haben (§ 45 Abs. 2 Nrn. 4 und 8 des Münster/Hamm-Gesetzes vom 9. Juli 1974 - GV. NW. S. 416 - Nr. 4 nur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[11].text@204:municipality",
+      "path": "body[2].children[11].text",
+      "start": 204,
+      "end": 208,
+      "term": "Hamm",
+      "context": "…ngenberg gehört haben (§ 45 Abs. 2 Nrn. 4 und 8 des Münster/Hamm-Gesetzes vom 9. Juli 1974 - GV. NW. S. 416 - Nr. 4 nur sowe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[11].text@237:protected:gazette-nw",
+      "path": "body[2].children[11].text",
+      "start": 237,
+      "end": 251,
+      "term": "GV. NW. S. 416",
+      "context": "…2 Nrn. 4 und 8 des Münster/Hamm-Gesetzes vom 9. Juli 1974 - GV. NW. S. 416 - Nr. 4 nur soweit es sich um Fluren der Gemarkung Langenbe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[12].text@22:municipality",
+      "path": "body[2].children[12].text",
+      "start": 22,
+      "end": 28,
+      "term": "Minden",
+      "context": "im Amtsgerichtsbezirk Minden",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[14].text@20:municipality",
+      "path": "body[2].children[14].text",
+      "start": 20,
+      "end": 26,
+      "term": "Minden",
+      "context": "innerhalb der Stadt Minden in den Gebieten der früheren Gemeinden Bölhorst, Dützen, Ha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[16].text@22:municipality",
+      "path": "body[2].children[16].text",
+      "start": 22,
+      "end": 31,
+      "term": "Paderborn",
+      "context": "im Amtsgerichtsbezirk Paderborn in den in § 21 Abs. 2 Nrn. 2 und 3 des Sauerland/Paderborn-…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[16].text@71:geography-region",
+      "path": "body[2].children[16].text",
+      "start": 71,
+      "end": 80,
+      "term": "Sauerland",
+      "context": "…chtsbezirk Paderborn in den in § 21 Abs. 2 Nrn. 2 und 3 des Sauerland/Paderborn-Gesetzes vom 5. November 1974 (GV. NW. S. 1224) b…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[16].text@81:municipality",
+      "path": "body[2].children[16].text",
+      "start": 81,
+      "end": 90,
+      "term": "Paderborn",
+      "context": "… Paderborn in den in § 21 Abs. 2 Nrn. 2 und 3 des Sauerland/Paderborn-Gesetzes vom 5. November 1974 (GV. NW. S. 1224) bezeichnete…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[16].text@122:protected:gazette-nw",
+      "path": "body[2].children[16].text",
+      "start": 122,
+      "end": 137,
+      "term": "GV. NW. S. 1224",
+      "context": "…nd 3 des Sauerland/Paderborn-Gesetzes vom 5. November 1974 (GV. NW. S. 1224) bezeichneten Teilen der Stadt Paderborn;",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[16].text@169:municipality",
+      "path": "body[2].children[16].text",
+      "start": 169,
+      "end": 178,
+      "term": "Paderborn",
+      "context": "…vember 1974 (GV. NW. S. 1224) bezeichneten Teilen der Stadt Paderborn;",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].text@4:constitutional-organ-state",
+      "path": "body[4].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[4].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[4].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].text@99:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 274",
+      "context": "… (Artikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "municipality": {
+      "manual-review": 9
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[2].text",
+      "term": "Bielefeld",
+      "context": "in den Amtsgerichtsbezirken Bielefeld, Bünde, Halle (Westf.), Herford, Lübbecke, Bad Oeynhausen u…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[5].text",
+      "term": "Gütersloh",
+      "context": "im Amtsgerichtsbezirk Gütersloh mit Ausnahme des Gebietes der früheren Gemeinde Greffen in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[11].text",
+      "term": "Münster",
+      "context": "…rkung Langenberg gehört haben (§ 45 Abs. 2 Nrn. 4 und 8 des Münster/Hamm-Gesetzes vom 9. Juli 1974 - GV. NW. S. 416 - Nr. 4 nur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[11].text",
+      "term": "Hamm",
+      "context": "…ngenberg gehört haben (§ 45 Abs. 2 Nrn. 4 und 8 des Münster/Hamm-Gesetzes vom 9. Juli 1974 - GV. NW. S. 416 - Nr. 4 nur sowe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[12].text",
+      "term": "Minden",
+      "context": "im Amtsgerichtsbezirk Minden",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[14].text",
+      "term": "Minden",
+      "context": "innerhalb der Stadt Minden in den Gebieten der früheren Gemeinden Bölhorst, Dützen, Ha…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[16].text",
+      "term": "Paderborn",
+      "context": "im Amtsgerichtsbezirk Paderborn in den in § 21 Abs. 2 Nrn. 2 und 3 des Sauerland/Paderborn-…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[16].text",
+      "term": "Sauerland",
+      "context": "…chtsbezirk Paderborn in den in § 21 Abs. 2 Nrn. 2 und 3 des Sauerland/Paderborn-Gesetzes vom 5. November 1974 (GV. NW. S. 1224) b…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[16].text",
+      "term": "Paderborn",
+      "context": "… Paderborn in den in § 21 Abs. 2 Nrn. 2 und 3 des Sauerland/Paderborn-Gesetzes vom 5. November 1974 (GV. NW. S. 1224) bezeichnete…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[16].text",
+      "term": "Paderborn",
+      "context": "…vember 1974 (GV. NW. S. 1224) bezeichneten Teilen der Stadt Paderborn;",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 49,
+    "residuals": [
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "…tikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Feststellung des Erbbrauchs vom 7. Dezember 1976",
+    "sourceVersion": "Verordnung zur Feststellung des Erbbrauchs vom 7. Dezember 1976",
+    "simulation": "Verordnung zur Feststellung des Erbbrauchs in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3039,
+          "actual": 3050,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 31,
+          "actual": 31,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3050,
+          "actual": 3042,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "2 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "2 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:44:26.684Z"
+}

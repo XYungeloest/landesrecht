@@ -1,0 +1,777 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28041",
+  "slug": "wbg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@21:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "Weiterbildungsgesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].text@324:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 324,
+      "end": 339,
+      "term": "GV. NRW. S. 894",
+      "context": "…ts eingefügt durch Artikel 1 des Gesetzes vom 8. Juli 2021 (GV. NRW. S. 894), in Kraft getreten am 1. Januar 2022.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@95:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 95,
+      "end": 107,
+      "term": "GV.NRW.S.574",
+      "context": "…s zur Modernisierung der Weiterbildung vom 19.Oktober 1999 (GV.NRW.S.574) wird nachstehend der Wortlaut des Weiterbildungsgesetzes (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@78:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 78,
+      "end": 90,
+      "term": "GV.NRW.S.276",
+      "context": "… der Neufassung des Weiterbildungsgesetzes vom 7. Mai 1982 (GV.NRW.S.276)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@69:rule:jurisdiction-name-bare",
+      "path": "body[4].text",
+      "start": 69,
+      "end": 88,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n Gesetz zur Modernisierung von Regierung und Verwaltung in Nordrhein-Westfalen (Erstes Modernisierungsgesetz - 1. ModernG NRW) vom 15. Jun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].text@132:rule:jurisdiction-abbreviation",
+      "path": "body[4].text",
+      "start": 132,
+      "end": 135,
+      "term": "NRW",
+      "context": "…drhein-Westfalen (Erstes Modernisierungsgesetz - 1. ModernG NRW) vom 15. Juni 1999 (GV.NRW.S.386)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].text@156:protected:gazette-nrw",
+      "path": "body[4].text",
+      "start": 156,
+      "end": 168,
+      "term": "GV.NRW.S.386",
+      "context": "… Modernisierungsgesetz - 1. ModernG NRW) vom 15. Juni 1999 (GV.NRW.S.386)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@70:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 70,
+      "end": 84,
+      "term": "GV.NRW. S. 574",
+      "context": "… zur Modernisierung der Weiterbildung vom 19. Oktober 1999 (GV.NRW. S. 574)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@4:ministry-portfolio",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 71,
+      "term": "Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].title@21:rule:jurisdiction-name-bare",
+      "path": "body[8].title",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "Weiterbildungsgesetz Nordrhein-Westfalen (Weiterbildungsgesetz – WbG)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[16].children[3].text@33:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[3].text",
+      "start": 33,
+      "end": 36,
+      "term": "NRW",
+      "context": "§ 26 Berichtswesen Weiterbildung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[1].children[5].text@151:rule:jurisdiction-name-bare",
+      "path": "body[18].children[1].children[5].text",
+      "start": 151,
+      "end": 170,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ugänglich. Sie richten sich vornehmlich an Personen, die in Nordrhein-Westfalen wohnen oder arbeiten. Bei abschlussbezogenen Lehrveranstalt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[1].children[6].text@347:rule:jurisdiction-name-bare",
+      "path": "body[18].children[1].children[6].text",
+      "start": 347,
+      "end": 366,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gen im Sinne des § 4 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003, das zuletzt durch Gesetz vom 11. Apr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[1].children[6].text@435:protected:gazette-nrw",
+      "path": "body[18].children[1].children[6].text",
+      "start": 435,
+      "end": 450,
+      "term": "GV. NRW. S. 207",
+      "context": "…Dezember 2003, das zuletzt durch Gesetz vom 11. April 2019 (GV. NRW. S. 207) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[1].children[1].text@114:authority-district-government",
+      "path": "body[20].children[1].children[1].text",
+      "start": 114,
+      "end": 130,
+      "term": "Bezirksregierung",
+      "context": "…Mitteln des Landes ist die Anerkennung durch die zuständige Bezirksregierung oder für Einrichtungen der Weiterbildung, die nach ihrer Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[20].children[1].children[2].children[1].text@137:rule:jurisdiction-name-genitive",
+      "path": "body[20].children[1].children[2].children[1].text",
+      "start": 137,
+      "end": 163,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ichtsstunden jährlich in ihrem Einzugsbereich innerhalb des Landes Nordrhein-Westfalen durchführen. Als Einrichtungen der Weiterbildung mit Intern…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[20].children[1].children[2].children[5].text@51:authority-district-government",
+      "path": "body[20].children[1].children[2].children[5].text",
+      "start": 51,
+      "end": 67,
+      "term": "Bezirksregierung",
+      "context": "Der Träger muss sich verpflichten, der zuständigen Bezirksregierung oder dem zuständigen Landesjugendamt auf Anfrage Auskunft ü…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[20].children[1].children[2].children[7].text@105:authority-district-government",
+      "path": "body[20].children[1].children[2].children[7].text",
+      "start": 105,
+      "end": 121,
+      "term": "Bezirksregierung",
+      "context": "…barens in Bezug auf die Bildungsstätte durch die zuständige Bezirksregierung oder das zuständige Landesjugendamt bereit sein.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[22].children[2].children[3].text@316:authority-district-government",
+      "path": "body[22].children[2].children[3].text",
+      "start": 316,
+      "end": 332,
+      "term": "Bezirksregierung",
+      "context": "… anderen Träger beantragen den Zuschuss bei der zuständigen Bezirksregierung. Der Zuschuss wird für die Dauer eines Haushaltsjahres fest…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[23].children[1].children[2].text@4:authority-district-government",
+      "path": "body[23].children[1].children[2].text",
+      "start": 4,
+      "end": 22,
+      "term": "Bezirksregierungen",
+      "context": "Die Bezirksregierungen laden hierzu die in ihrem Bezirk tätigen Träger und Einrich…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[23].children[3].title@28:rule:jurisdiction-abbreviation",
+      "path": "body[23].children[3].title",
+      "start": 28,
+      "end": 31,
+      "term": "NRW",
+      "context": "Berichtswesen Weiterbildung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[23].children[3].children[1].text@99:rule:jurisdiction-abbreviation",
+      "path": "body[23].children[3].children[1].text",
+      "start": 99,
+      "end": 102,
+      "term": "NRW",
+      "context": "…Sinne dieses Gesetzes nehmen am Berichtswesen Weiterbildung NRW teil. Sie übermitteln der Supportstelle Weiterbildung der Q…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[23].children[3].children[5].text@123:rule:jurisdiction-name-bare",
+      "path": "body[23].children[3].children[5].text",
+      "start": 123,
+      "end": 142,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lisiert und nach Maßgabe von § 16 des E-Government-Gesetzes Nordrhein-Westfalen öffentlich in einem jährlichen Datenreport bereitgestellt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[23].children[3].children[6].text@224:rule:jurisdiction-name-bare",
+      "path": "body[23].children[3].children[6].text",
+      "start": 224,
+      "end": 243,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ausgewertet und nach Maßgabe des § 16 E-Government-Gesetzes Nordrhein-Westfalen öffentlich bereitgestellt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[23].children[3].children[7].children[1].text@94:rule:jurisdiction-abbreviation",
+      "path": "body[23].children[3].children[7].children[1].text",
+      "start": 94,
+      "end": 97,
+      "term": "NRW",
+      "context": "…, wenn dies nach dem Zweck des Berichtswesens Weiterbildung NRW erforderlich ist und durch gleichzeitige Aussetzung anderer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[23].children[3].children[7].children[1].text@348:rule:jurisdiction-abbreviation",
+      "path": "body[23].children[3].children[7].children[1].text",
+      "start": 348,
+      "end": 351,
+      "term": "NRW",
+      "context": "…enbezogener Daten nach § 4 Absatz 3 des Datenschutzgesetzes NRW betreffen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[23].children[4].children[2].text@131:rule:jurisdiction-name-bare",
+      "path": "body[23].children[4].children[2].text",
+      "start": 131,
+      "end": 150,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Ministerium auf Grundlage des Berichtswesens Weiterbildung Nordrhein-Westfalen einen Landesweiterbildungsbericht vor und leitet diesen dem…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[0].children[4].children[1].text@64:protected:gazette-nrw",
+      "path": "body[24].children[0].children[4].children[1].text",
+      "start": 64,
+      "end": 78,
+      "term": "GV. NRW. S. 30",
+      "context": "…assung der Gesetze (Artikel 10 des Gesetzes v. 27. 1. 2004 (GV. NRW. S. 30))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 15
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "authority": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[16].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[18].children[1].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[20].children[1].children[2].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[23].children[3].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[23].children[3].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[23].children[3].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[23].children[3].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[23].children[3].children[7].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[23].children[3].children[7].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[23].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[7].text",
+      "term": "Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[1].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…Mitteln des Landes ist die Anerkennung durch die zuständige Bezirksregierung oder für Einrichtungen der Weiterbildung, die nach ihrer Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[1].children[2].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "Der Träger muss sich verpflichten, der zuständigen Bezirksregierung oder dem zuständigen Landesjugendamt auf Anfrage Auskunft ü…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].children[1].children[2].children[7].text",
+      "term": "Bezirksregierung",
+      "context": "…barens in Bezug auf die Bildungsstätte durch die zuständige Bezirksregierung oder das zuständige Landesjugendamt bereit sein.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[22].children[2].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "… anderen Träger beantragen den Zuschuss bei der zuständigen Bezirksregierung. Der Zuschuss wird für die Dauer eines Haushaltsjahres fest…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[23].children[1].children[2].text",
+      "term": "Bezirksregierungen",
+      "context": "Die Bezirksregierungen laden hierzu die in ihrem Bezirk tätigen Träger und Einrich…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 385,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…ingefügt durch Artikel 1 des Gesetzes vom 8. Juli 2021 (GV. NRW. S. 894), in Kraft getreten am 1. Januar 2022.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ur Modernisierung der Weiterbildung vom 19.Oktober 1999 (GV.NRW.S.574) wird nachstehend der Wortlaut des Weiterbildungsgese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…r Neufassung des Weiterbildungsgesetzes vom 7. Mai 1982 (GV.NRW.S.276)",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].text",
+        "term": "NRW",
+        "context": "…ernisierungsgesetz - 1. ModernG West) vom 15. Juni 1999 (GV.NRW.S.386)",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…r Modernisierung der Weiterbildung vom 19. Oktober 1999 (GV.NRW. S. 574)",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[6].text",
+        "term": "NRW",
+        "context": "…mber 2003, das zuletzt durch Gesetz vom 11. April 2019 (GV. NRW. S. 207) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[24].children[0].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…ng der Gesetze (Artikel 10 des Gesetzes v. 27. 1. 2004 (GV. NRW. S. 30))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Weiterbildungsgesetz Nordrhein-Westfalen vom 14. April 2000",
+    "sourceVersion": "Weiterbildungsgesetz Nordrhein-Westfalen vom 14. April 2000",
+    "simulation": "Weiterbildungsgesetz Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 30,
+          "actual": 30,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 30837,
+          "actual": 32209,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 30,
+          "actual": 30,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 248,
+          "actual": 248,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 33,
+          "actual": 33,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 30,
+          "actual": 30,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 32209,
+          "actual": 32183,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "30 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "30 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:37:51.129Z"
+}

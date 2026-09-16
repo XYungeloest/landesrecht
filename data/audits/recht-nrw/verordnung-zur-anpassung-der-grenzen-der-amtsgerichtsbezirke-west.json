@@ -1,0 +1,462 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27960",
+  "slug": "verordnung-zur-anpassung-der-grenzen-der-amtsgerichtsbezirke-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@61:municipality",
+      "path": "meta.title",
+      "start": 61,
+      "end": 74,
+      "term": "Gelsenkirchen",
+      "context": "…erordnung zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an geänderte Gemeindegrenzen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[0].text@6:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 6,
+      "end": 15,
+      "term": "SGV. NRW.",
+      "context": "Fn 1: SGV. NRW. 301.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@121:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 121,
+      "end": 136,
+      "term": "GV. NRW. S. 331",
+      "context": "…die Bezirke der ordentlichen Gerichte vom 7. November 1961 (GV. NRW. S. 331), zuletzt geändert durch Gesetz vom 14. Juli 1995 (GV. NRW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@188:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 188,
+      "end": 203,
+      "term": "GV. NRW. S. 924",
+      "context": "…. S. 331), zuletzt geändert durch Gesetz vom 14. Juli 1995 (GV. NRW. S. 924), wird zur Anpassung der Grenzen der Amtsgerichtsbezirke Ge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@261:municipality",
+      "path": "body[2].text",
+      "start": 261,
+      "end": 274,
+      "term": "Gelsenkirchen",
+      "context": "…24), wird zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an die durch Gebietsänderungsverfügung de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].text@336:authority-district-government",
+      "path": "body[2].text",
+      "start": 336,
+      "end": 352,
+      "term": "Bezirksregierung",
+      "context": "…uer und Gladbeck an die durch Gebietsänderungsverfügung der Bezirksregierung Münster vom 19. Februar 1999 (31.1.3) geänderte Grenze zwis…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].text@353:municipality",
+      "path": "body[2].text",
+      "start": 353,
+      "end": 360,
+      "term": "Münster",
+      "context": "…an die durch Gebietsänderungsverfügung der Bezirksregierung Münster vom 19. Februar 1999 (31.1.3) geänderte Grenze zwischen der…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].text@439:municipality",
+      "path": "body[2].text",
+      "start": 439,
+      "end": 452,
+      "term": "Gelsenkirchen",
+      "context": "…99 (31.1.3) geänderte Grenze zwischen der kreisfreien Stadt Gelsenkirchen und der Stadt Gladbeck verordnet:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@49:municipality",
+      "path": "body[3].children[0].text",
+      "start": 49,
+      "end": 62,
+      "term": "Gelsenkirchen",
+      "context": "Unter Abtrennung von dem Bezirk des Amtsgerichts Gelsenkirchen-Buer werden die Flurstücke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@4:ministry-portfolio",
+      "path": "body[4].children[1].text",
+      "start": 4,
+      "end": 35,
+      "term": "Minister für Inneres und Justiz",
+      "context": "Der Minister für Inneres und Justiz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@40:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[1].text",
+      "start": 40,
+      "end": 66,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Inneres und Justiz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 5
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Gelsenkirchen",
+      "context": "…erordnung zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an geänderte Gemeindegrenzen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Gelsenkirchen",
+      "context": "…24), wird zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an die durch Gebietsänderungsverfügung de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Bezirksregierung",
+      "context": "…uer und Gladbeck an die durch Gebietsänderungsverfügung der Bezirksregierung Münster vom 19. Februar 1999 (31.1.3) geänderte Grenze zwis…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Münster",
+      "context": "…an die durch Gebietsänderungsverfügung der Bezirksregierung Münster vom 19. Februar 1999 (31.1.3) geänderte Grenze zwischen der…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Gelsenkirchen",
+      "context": "…99 (31.1.3) geänderte Grenze zwischen der kreisfreien Stadt Gelsenkirchen und der Stadt Gladbeck verordnet:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Gelsenkirchen",
+      "context": "Unter Abtrennung von dem Bezirk des Amtsgerichts Gelsenkirchen-Buer werden die Flurstücke",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Minister für Inneres und Justiz",
+      "context": "Der Minister für Inneres und Justiz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 12,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "Fn 1: SGV. NRW. 301.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…Bezirke der ordentlichen Gerichte vom 7. November 1961 (GV. NRW. S. 331), zuletzt geändert durch Gesetz vom 14. Juli 1995 (…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… 331), zuletzt geändert durch Gesetz vom 14. Juli 1995 (GV. NRW. S. 924), wird zur Anpassung der Grenzen der Amtsgerichtsbe…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an geänderte Gemeindegrenzen vom 25. Februar 1999",
+    "sourceVersion": "Verordnung zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an geänderte Gemeindegrenzen vom 25. Februar 1999",
+    "simulation": "Verordnung zur Anpassung der Grenzen der Amtsgerichtsbezirke Gelsenkirchen-Buer und Gladbeck an geänderte Gemeindegrenzen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 823,
+          "actual": 855,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 855,
+          "actual": 851,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "2 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "2 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:37:15.650Z"
+}

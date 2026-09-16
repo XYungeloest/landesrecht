@@ -1,0 +1,737 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29220",
+  "slug": "apoaa-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@88:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 88,
+      "end": 114,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ng und Prüfung für die Laufbahn des Amtsanwaltsdienstes des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@95:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 95,
+      "end": 110,
+      "term": "GV. NRW. S. 234",
+      "context": "…gesetzes in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NRW. S. 234) , zuletzt geändert durch Artikel 3 des 2. Schulrechtsänder…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@202:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 202,
+      "end": 217,
+      "term": "GV. NRW. S. 278",
+      "context": "…el 3 des 2. Schulrechtsänderungsgesetzes vom 27. Juni 2006 (GV. NRW. S. 278), wird im Einvernehmen mit dem Innenministerium und dem Fin…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@249:ministry-compound",
+      "path": "body[1].text",
+      "start": 249,
+      "end": 265,
+      "term": "Innenministerium",
+      "context": "…. Juni 2006 (GV. NRW. S. 278), wird im Einvernehmen mit dem Innenministerium und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[1].text@274:ministry-compound",
+      "path": "body[1].text",
+      "start": 274,
+      "end": 291,
+      "term": "Finanzministerium",
+      "context": "…278), wird im Einvernehmen mit dem Innenministerium und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[1].text@55:rule:jurisdiction-name-bare",
+      "path": "body[3].children[3].children[1].text",
+      "start": 55,
+      "end": 74,
+      "term": "Nordrhein-Westfalen",
+      "context": "Durch Zuweisung an die Fachhochschule für Rechtspflege Nordrhein-Westfalen werden die Beamtinnen und Beamten deren Studierende.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[2].children[2].text@59:rule:jurisdiction-name-bare",
+      "path": "body[4].children[2].children[2].text",
+      "start": 59,
+      "end": 78,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Studium wird durch die Fachhochschule für Rechtspflege Nordrhein-Westfalen durchgeführt. Die Leitung obliegt der Direktorin oder dem D…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[2].children[3].text@264:ministry-compound",
+      "path": "body[4].children[2].children[3].text",
+      "start": 264,
+      "end": 281,
+      "term": "Justizministerium",
+      "context": "… Direktor der Fachhochschule für Rechtspflege berichtet dem Justizministerium rechtzeitig vor dem Beginn des Studiums I, welche Lehrkräft…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[3].text@398:ministry-compound",
+      "path": "body[4].children[2].children[3].text",
+      "start": 398,
+      "end": 415,
+      "term": "Justizministerium",
+      "context": "…äfte auf welchen Lehrgebieten Verwendung finden sollen. Das Justizministerium benachrichtigt die Landesjustizverwaltungen der an dem Stud…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[4].children[6].children[1].text@160:rule:jurisdiction-name-bare",
+      "path": "body[4].children[6].children[1].text",
+      "start": 160,
+      "end": 179,
+      "term": "Nordrhein-Westfalen",
+      "context": "…torin oder den Direktor der Fachhochschule für Rechtspflege Nordrhein-Westfalen oder eine von ihr oder ihm beauftragte Lehrkraft, am Ende d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[0].text@60:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[0].text",
+      "start": 60,
+      "end": 79,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Amtsanwaltsprüfung wird vor dem Landesjustizprüfungsamt Nordrhein-Westfalen abgelegt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@4:ministry-compound",
+      "path": "body[5].children[1].children[1].text",
+      "start": 4,
+      "end": 21,
+      "term": "Justizministerium",
+      "context": "Das Justizministerium bestellt die Prüferinnen und Prüfer widerruflich für die Da…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].children[2].text@89:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[2].children[2].text",
+      "start": 89,
+      "end": 108,
+      "term": "Nordrhein-Westfalen",
+      "context": "…er Dozentin oder Dozent der Fachhochschule für Rechtspflege Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[2].children[3].text@14:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[1].children[2].children[3].text",
+      "start": 14,
+      "end": 40,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "im Dienst des Landes Nordrhein-Westfalen stehen. Prüferinnen und Prüfer nach Satz 2 Nr. 3 sollen pra…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].children[1].text@241:rule:jurisdiction-name-bare",
+      "path": "body[5].children[3].children[1].text",
+      "start": 241,
+      "end": 260,
+      "term": "Nordrhein-Westfalen",
+      "context": "…torin oder dem Direktor der Fachhochschule für Rechtspflege Nordrhein-Westfalen - der schriftlichen Prüfung fest, bestimmt die Prüferinnen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].children[1].text@68:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[1].text",
+      "start": 68,
+      "end": 87,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ichtsarbeiten werden in der Fachhochschule für Rechtspflege Nordrhein-Westfalen angefertigt. Die Organisation des Ablaufs der Termine einsc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].children[1].text@280:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[1].text",
+      "start": 280,
+      "end": 299,
+      "term": "Nordrhein-Westfalen",
+      "context": "…torin oder dem Direktor der Fachhochschule für Rechtspflege Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].children[0].text@4:ministry-compound",
+      "path": "body[7].children[0].children[0].text",
+      "start": 4,
+      "end": 21,
+      "term": "Justizministerium",
+      "context": "Das Justizministerium kann von den Zulassungsvoraussetzungen des § 2 Nr. 3 Ausnah…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[1].text@162:rule:jurisdiction-name-genitive",
+      "path": "body[7].children[1].children[1].text",
+      "start": 162,
+      "end": 188,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ng und Prüfung für die Laufbahn des Amtsanwaltsdienstes des Landes Nordrhein-Westfalen vom 6. August 1985 (GV. NRW. S. 555), zuletzt geändert durc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].children[1].children[1].text@209:protected:gazette-nrw",
+      "path": "body[7].children[1].children[1].text",
+      "start": 209,
+      "end": 224,
+      "term": "GV. NRW. S. 555",
+      "context": "…dienstes des Landes Nordrhein-Westfalen vom 6. August 1985 (GV. NRW. S. 555), zuletzt geändert durch Artikel 32 des Zweiten Befristungs…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].children[1].text@312:protected:gazette-nrw",
+      "path": "body[7].children[1].children[1].text",
+      "start": 312,
+      "end": 327,
+      "term": "GV. NRW. S. 274",
+      "context": "…tikel 32 des Zweiten Befristungsgesetzes vom 5. April 2005 (GV. NRW. S. 274), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].children[2].text@211:protected:gazette-nrw",
+      "path": "body[7].children[1].children[2].text",
+      "start": 211,
+      "end": 226,
+      "term": "GV. NRW. S. 555",
+      "context": "…befinden, die Regelungen der Verordnung vom 6. August 1985 (GV. NRW. S. 555), zuletzt geändert durch Artikel 32 des Zweiten Befristungs…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].children[2].text@314:protected:gazette-nrw",
+      "path": "body[7].children[1].children[2].text",
+      "start": 314,
+      "end": 329,
+      "term": "GV. NRW. S. 274",
+      "context": "…tikel 32 des Zweiten Befristungsgesetzes vom 5. April 2005 (GV. NRW. S. 274), fort. Satz 1 gilt nicht, wenn die Ausbildung unterbrochen…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].children[5].children[0].text@4:ministry-compound",
+      "path": "body[7].children[1].children[5].children[0].text",
+      "start": 4,
+      "end": 20,
+      "term": "Justizministerin",
+      "context": "Die Justizministerin des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[5].children[0].text@25:rule:jurisdiction-name-genitive",
+      "path": "body[7].children[1].children[5].children[0].text",
+      "start": 25,
+      "end": 51,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Justizministerin des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 12
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "ministry": {
+      "manual-review": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[6].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[2].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[5].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Innenministerium",
+      "context": "…. Juni 2006 (GV. NRW. S. 278), wird im Einvernehmen mit dem Innenministerium und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Finanzministerium",
+      "context": "…278), wird im Einvernehmen mit dem Innenministerium und dem Finanzministerium verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[3].text",
+      "term": "Justizministerium",
+      "context": "… Direktor der Fachhochschule für Rechtspflege berichtet dem Justizministerium rechtzeitig vor dem Beginn des Studiums I, welche Lehrkräft…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[3].text",
+      "term": "Justizministerium",
+      "context": "…äfte auf welchen Lehrgebieten Verwendung finden sollen. Das Justizministerium benachrichtigt die Landesjustizverwaltungen der an dem Stud…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "term": "Justizministerium",
+      "context": "Das Justizministerium bestellt die Prüferinnen und Prüfer widerruflich für die Da…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[0].children[0].text",
+      "term": "Justizministerium",
+      "context": "Das Justizministerium kann von den Zulassungsvoraussetzungen des § 2 Nr. 3 Ausnah…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[5].children[0].text",
+      "term": "Justizministerin",
+      "context": "Die Justizministerin des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 459,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…tzes in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NRW. S. 234) , zuletzt geändert durch Artikel 3 des 2. Schulrec…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… des 2. Schulrechtsänderungsgesetzes vom 27. Juni 2006 (GV. NRW. S. 278), wird im Einvernehmen mit dem Innenministerium und…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…dienstes des Landes Westdeutschland vom 6. August 1985 (GV. NRW. S. 555), zuletzt geändert durch Artikel 32 des Zweiten Bef…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…l 32 des Zweiten Befristungsgesetzes vom 5. April 2005 (GV. NRW. S. 274), außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…nden, die Regelungen der Verordnung vom 6. August 1985 (GV. NRW. S. 555), zuletzt geändert durch Artikel 32 des Zweiten Bef…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…l 32 des Zweiten Befristungsgesetzes vom 5. April 2005 (GV. NRW. S. 274), fort. Satz 1 gilt nicht, wenn die Ausbildung unte…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für die Laufbahn des Amtsanwaltsdienstes des Landes Nordrhein-Westfalen vom 6. November 2006 (GV. NRW. S. 520)",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für die Laufbahn des Amtsanwaltsdienstes des Landes Nordrhein-Westfalen vom 6. November 2006 (GV. NRW. S. 520)",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für die Laufbahn des Amtsanwaltsdienstes des Landes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 38415,
+          "actual": 38216,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 348,
+          "actual": 348,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 38216,
+          "actual": 38172,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "32 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "32 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T06:10:47.604Z"
+}

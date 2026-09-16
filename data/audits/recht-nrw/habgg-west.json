@@ -1,0 +1,624 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29126",
+  "slug": "habgg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.abbr@6:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 6,
+      "end": 9,
+      "term": "NRW",
+      "context": "HAbgG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@122:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 122,
+      "end": 137,
+      "term": "GV. NRW. S. 165",
+      "context": "…ten geändert durch Artikel 1 des Gesetzes vom 1. März 2011 (GV. NRW. S. 165), in Kraft getreten am 1. Oktober 2011.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@113:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 113,
+      "end": 128,
+      "term": "GV. NRW. S. 119",
+      "context": "…ng der Finanzierungsgerechtigkeit im Hochschulwesen (HFGG) (GV. NRW. S. 119))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].children[2].text@120:rule:jurisdiction-name",
+      "path": "body[7].children[0].children[2].text",
+      "start": 120,
+      "end": 144,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…§ 3 bis 6, 9 bis 22, 25 Abs. 1 des Gebührengesetzes für das Land Nordrhein-Westfalen entsprechende Anwendung, soweit in diesem Gesetz oder durch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[1].children[2].text@204:protected:gazette-nrw",
+      "path": "body[7].children[1].children[2].text",
+      "start": 204,
+      "end": 218,
+      "term": "GV. NRW. S.195",
+      "context": "…abgabengesetz in der Fassung des Gesetzes vom 13. März 2008(GV. NRW. S.195) zur Verfügung gestellt hat, sind weiterhin verpflichtet, d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[2].children[1].text@232:municipality",
+      "path": "body[7].children[2].children[1].text",
+      "start": 232,
+      "end": 237,
+      "term": "Hagen",
+      "context": "…emester erhoben. Dies gilt nicht für die Fernuniversität in Hagen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[5].children[1].text@190:rule:jurisdiction-name",
+      "path": "body[7].children[5].children[1].text",
+      "start": 190,
+      "end": 214,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… erhoben; § 25 Absatz 2 Satz 4 des Gebührengesetzes für das Land Nordrhein-Westfalen gilt entsprechend. Bezug im Sinne des Satzes 1 sind sämtlic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[8].children[1].text@101:protected:external-nrw-dot-names",
+      "path": "body[7].children[8].children[1].text",
+      "start": 101,
+      "end": 109,
+      "term": "NRW.Bank",
+      "context": "…atlichen Prüfungsämter, haben an die Hochschule oder an die NRW.Bank auf Anforderung des Empfängers diejenigen personenbezogenen…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[8].children[1].text@237:protected:external-nrw-dot-names",
+      "path": "body[7].children[8].children[1].text",
+      "start": 237,
+      "end": 245,
+      "term": "NRW.Bank",
+      "context": "…er Studierenden zu übermitteln, die die Hochschule oder die NRW.Bank zur rechtmäßigen Erfüllung ihrer ihnen nach diesem Gesetz o…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[0].children[2].text@153:protected:gazette-nrw",
+      "path": "body[8].children[0].children[2].text",
+      "start": 153,
+      "end": 168,
+      "term": "GV. NRW. S. 195",
+      "context": "…bgabengesetz in der Fassung des Gesetzes vom 13. März 2008 (GV. NRW. S. 195) gewährten Studienbeitragsdarlehen und Studienentgeltdarleh…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].children[1].text@236:protected:external-nrw-dot-names",
+      "path": "body[8].children[1].children[1].text",
+      "start": 236,
+      "end": 244,
+      "term": "NRW.Bank",
+      "context": "…hen von 50 Euro zurückzuzahlen. Nach Aufforderung durch die NRW.Bank sind die Raten für jeweils drei aufeinander folgende Monate…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[4].children[2].text@24:protected:external-nrw-dot-names",
+      "path": "body[8].children[4].children[2].text",
+      "start": 24,
+      "end": 32,
+      "term": "NRW.Bank",
+      "context": "Die Hochschulen und die NRW.Bank sind verpflichtet, einander personenbezogene Daten zu überm…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[1].text@781:protected:external-nrw-dot-names",
+      "path": "body[9].children[0].children[1].text",
+      "start": 781,
+      "end": 789,
+      "term": "NRW.Bank",
+      "context": "…ere haftet das Land unmittelbar für sämtliche Ansprüche der NRW.Bank gegen den Ausfallfonds gemäß § 18.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[2].text@248:protected:external-nrw-dot-names",
+      "path": "body[9].children[0].children[2].text",
+      "start": 248,
+      "end": 256,
+      "term": "NRW.Bank",
+      "context": "…des Fonds ganz oder teilweise jederzeit widerruflich an die NRW.Bank oder dritte Stellen zu treuen Händen übertragen.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[4].text@58:ministry-compound",
+      "path": "body[9].children[0].children[4].text",
+      "start": 58,
+      "end": 75,
+      "term": "Finanzministerium",
+      "context": "Das Nähere regelt das Ministerium im Einvernehmen mit dem Finanzministerium durch Rechtsverordnung. In der Rechtsverordnung sind insbes…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[9].children[1].children[2].text@48:protected:external-nrw-dot-names",
+      "path": "body[9].children[1].children[2].text",
+      "start": 48,
+      "end": 56,
+      "term": "NRW.Bank",
+      "context": "Der Ausfallfonds ist verpflichtet, Angebote der NRW.Bank auf Abtretung notleidender Darlehensforderungen anzunehmen.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[3].text@18:protected:external-nrw-dot-names",
+      "path": "body[9].children[1].children[3].text",
+      "start": 18,
+      "end": 26,
+      "term": "NRW.Bank",
+      "context": "Auf Verlangen der NRW.Bank zahlt ihr der Ausfallfonds im Falle der Abtretung nach Absa…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[4].text@27:protected:external-nrw-dot-names",
+      "path": "body[9].children[1].children[4].text",
+      "start": 27,
+      "end": 35,
+      "term": "NRW.Bank",
+      "context": "Der Ausfallfonds zahlt der NRW.Bank die Darlehens- und Zinsschuld einer Darlehensnehmerin oder …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[6].text@4:protected:external-nrw-dot-names",
+      "path": "body[9].children[1].children[6].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.Bank",
+      "context": "Die NRW.Bank ist verpflichtet, an den Ausfallfonds personenbezogene Date…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[1].children[7].text@145:protected:gazette-nrw",
+      "path": "body[9].children[1].children[7].text",
+      "start": 145,
+      "end": 159,
+      "term": "GV. NRW. S.195",
+      "context": "…bgabengesetz in der Fassung des Gesetzes vom 13. März 2008 (GV. NRW. S.195), die notleidend geworden sind, bei denen die Darlehensnehm…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[3].text@197:protected:external-nrw-dot-names",
+      "path": "body[10].children[0].children[3].text",
+      "start": 197,
+      "end": 205,
+      "term": "NRW.Bank",
+      "context": "…zflusses zwischen den Hochschulen, dem Ausfallfonds und der NRW.Bank und das Nähere zur Verwaltung des Vermögens des Ausfallfond…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[4].text@344:ministry-compound",
+      "path": "body[10].children[0].children[4].text",
+      "start": 344,
+      "end": 361,
+      "term": "Finanzministerium",
+      "context": "…ndlage der Absätze 2 und 3 bedarf des Einvernehmens mit dem Finanzministerium; Halbsatz 1 gilt auch hinsichtlich der Regelung der Fälle, …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "external-name": {
+      "protected": 11
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[5].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[7].children[2].children[1].text",
+      "term": "Hagen",
+      "context": "…emester erhoben. Dies gilt nicht für die Fernuniversität in Hagen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[4].text",
+      "term": "Finanzministerium",
+      "context": "Das Nähere regelt das Ministerium im Einvernehmen mit dem Finanzministerium durch Rechtsverordnung. In der Rechtsverordnung sind insbes…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].children[4].text",
+      "term": "Finanzministerium",
+      "context": "…ndlage der Absätze 2 und 3 bedarf des Einvernehmens mit dem Finanzministerium; Halbsatz 1 gilt auch hinsichtlich der Regelung der Fälle, …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 194,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…geändert durch Artikel 1 des Gesetzes vom 1. März 2011 (GV. NRW. S. 165), in Kraft getreten am 1. Oktober 2011.",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…er Finanzierungsgerechtigkeit im Hochschulwesen (HFGG) (GV. NRW. S. 119))",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…bengesetz in der Fassung des Gesetzes vom 13. März 2008(GV. NRW. S.195) zur Verfügung gestellt hat, sind weiterhin verpflic…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[8].children[1].text",
+        "term": "NRW",
+        "context": "…atlichen Prüfungsämter, haben an die Hochschule oder an die NRW.Bank auf Anforderung des Empfängers diejenigen personenbezo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[8].children[1].text",
+        "term": "NRW",
+        "context": "…er Studierenden zu übermitteln, die die Hochschule oder die NRW.Bank zur rechtmäßigen Erfüllung ihrer ihnen nach diesem Ges…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…engesetz in der Fassung des Gesetzes vom 13. März 2008 (GV. NRW. S. 195) gewährten Studienbeitragsdarlehen und Studienentge…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…hen von 50 Euro zurückzuzahlen. Nach Aufforderung durch die NRW.Bank sind die Raten für jeweils drei aufeinander folgende M…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[4].children[2].text",
+        "term": "NRW",
+        "context": "Die Hochschulen und die NRW.Bank sind verpflichtet, einander personenbezogene Daten zu …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ere haftet das Land unmittelbar für sämtliche Ansprüche der NRW.Bank gegen den Ausfallfonds gemäß § 18.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…des Fonds ganz oder teilweise jederzeit widerruflich an die NRW.Bank oder dritte Stellen zu treuen Händen übertragen.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[2].text",
+        "term": "NRW",
+        "context": "Der Ausfallfonds ist verpflichtet, Angebote der NRW.Bank auf Abtretung notleidender Darlehensforderungen anzune…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[3].text",
+        "term": "NRW",
+        "context": "Auf Verlangen der NRW.Bank zahlt ihr der Ausfallfonds im Falle der Abtretung nach…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[4].text",
+        "term": "NRW",
+        "context": "Der Ausfallfonds zahlt der NRW.Bank die Darlehens- und Zinsschuld einer Darlehensnehmerin …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[6].text",
+        "term": "NRW",
+        "context": "Die NRW.Bank ist verpflichtet, an den Ausfallfonds personenbezogene…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[1].children[7].text",
+        "term": "NRW",
+        "context": "…engesetz in der Fassung des Gesetzes vom 13. März 2008 (GV. NRW. S.195), die notleidend geworden sind, bei denen die Darleh…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…zflusses zwischen den Hochschulen, dem Ausfallfonds und der NRW.Bank und das Nähere zur Verwaltung des Vermögens des Ausfal…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Erhebung von Hochschulabgaben vom 21. März 2006",
+    "sourceVersion": "Gesetz zur Erhebung von Hochschulabgaben vom 21. März 2006",
+    "simulation": "Gesetz zur Erhebung von Hochschulabgaben in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17367,
+          "actual": 18361,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 136,
+          "actual": 136,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 18361,
+          "actual": 18353,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "22 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "22 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:24:49.575Z"
+}

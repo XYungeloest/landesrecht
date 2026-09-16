@@ -1,0 +1,352 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27890",
+  "slug": "ordnungsbehoerdliche-verordnung-ueber-die-selbstueberwachung-von-west-27890",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@69:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 69,
+      "end": 83,
+      "term": "GV. NW. S. 250",
+      "context": "…des § 25 Abs. 2 des Landesabfallgesetzes vom 21. Juni 1988 (GV. NW. S. 250), zuletzt geändert durch Gesetz vom 7. Februar 1995 (GV. NW…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@137:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 137,
+      "end": 151,
+      "term": "GV. NW. S. 134",
+      "context": "…S. 250), zuletzt geändert durch Gesetz vom 7. Februar 1995 (GV. NW. S. 134), sowie des § 31 in Verbindung mit § 25 des Ordnungsbehörde…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@239:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 239,
+      "end": 253,
+      "term": "GV. NW. S. 528",
+      "context": "…ung mit § 25 des Ordnungsbehördengesetzes vom 13. Mai 1980 (GV. NW. S. 528), zuletzt geändert durch Gesetz vom 20. Dezember 1994 (GV. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@309:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 309,
+      "end": 324,
+      "term": "GV. NW. S. 1115",
+      "context": "… 528), zuletzt geändert durch Gesetz vom 20. Dezember 1994 (GV. NW. S. 1115), wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@274:rule:jurisdiction-name",
+      "path": "body[6].children[0].text",
+      "start": 274,
+      "end": 298,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ch die zuständige Landesbehörde im Ministerialblatt für das Land Nordrhein-Westfalen bekanntgegeben wurden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[3].text@381:rule:jurisdiction-name-bare",
+      "path": "body[8].children[3].text",
+      "start": 381,
+      "end": 400,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nie des Landesamtes für Natur, Umwelt und Verbraucherschutz Nordrhein-Westfalen \"Schnittstellenspezifikation für die Vorlage von Betriebske…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[3].text@4:ministry-portfolio",
+      "path": "body[12].children[3].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Umwelt, Raumordnung und Landwirtschaft",
+      "context": "Die Ministerin für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].children[3].text@62:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[3].text",
+      "start": 62,
+      "end": 88,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…e Ministerin für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].children[5].text@99:protected:gazette-nrw",
+      "path": "body[12].children[5].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 332",
+      "context": "… (Artikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 5
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[12].children[3].text",
+      "term": "Ministerin für Umwelt, Raumordnung und Landwirtschaft",
+      "context": "Die Ministerin für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 60,
+    "residuals": [
+      {
+        "path": "body[12].children[5].text",
+        "term": "NRW",
+        "context": "…tikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Ordnungsbehördliche Verordnung über die Selbstüberwachung von oberirdischen Deponien (Deponieselbstüberwachungsverordnung - DepSüVO -) vom 2. April 1998",
+    "sourceVersion": "Ordnungsbehördliche Verordnung über die Selbstüberwachung von oberirdischen Deponien (Deponieselbstüberwachungsverordnung - DepSüVO -) vom 2. April 1998",
+    "simulation": "Ordnungsbehördliche Verordnung über die Selbstüberwachung von oberirdischen Deponien (Deponieselbstüberwachungsverordnung - DepSüVO -) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5981,
+          "actual": 6295,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6295,
+          "actual": 6283,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:17:54.753Z"
+}

@@ -1,0 +1,380 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26646",
+  "slug": "gergebbefrg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@70:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 70,
+      "end": 78,
+      "term": "GV. NRW.",
+      "context": "…überschrift geändert durch Art IX des Gesetzes v. 5.4.2005 (GV. NRW. S 408); in Kraft getreten am 5. Mai 2005.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[4].children[0].text@175:jurisdiction-name-residual",
+      "path": "body[2].children[4].children[0].text",
+      "start": 175,
+      "end": 178,
+      "term": "NRW",
+      "context": "… Oktober 1865 und vom 7. April 1869 vom 24. Mai 1901 (PrGS. NRW. S. 161);",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[2].children[4].children[1].text@328:protected:gazette-nrw",
+      "path": "body[2].children[4].children[1].text",
+      "start": 328,
+      "end": 343,
+      "term": "GV. NRW. S. 423",
+      "context": "…7) (Änderungs- und Anpassungsgesetz) vom 15. Dezember 1952 (GV. NRW. S. 423), zuletzt geändert durch das Beamtengesetz für das Land Nor…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[4].children[1].text@395:rule:jurisdiction-name",
+      "path": "body[2].children[4].children[1].text",
+      "start": 395,
+      "end": 419,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…. S. 423), zuletzt geändert durch das Beamtengesetz für das Land Nordrhein-Westfalen vom 15. Juni 1954 (GV. NRW. S. 237);",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[4].children[1].text@439:protected:gazette-nrw",
+      "path": "body[2].children[4].children[1].text",
+      "start": 439,
+      "end": 454,
+      "term": "GV. NRW. S. 237",
+      "context": "…ngesetz für das Land Nordrhein-Westfalen vom 15. Juni 1954 (GV. NRW. S. 237);",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[4].children[2].text@87:protected:gazette-nrw",
+      "path": "body[2].children[4].children[2].text",
+      "start": 87,
+      "end": 102,
+      "term": "GV. NRW. S. 319",
+      "context": "…nheitsteilung und Reallastenablösung vom 28. November 1961 (GV. NRW. S. 319).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[3].text@39:ministry-compound",
+      "path": "body[3].children[3].text",
+      "start": 39,
+      "end": 56,
+      "term": "Justizministerium",
+      "context": "Zuständig für die Entscheidung ist das Justizministerium. Es kann seine Befugnis ganz oder teilweise oder für bestim…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[6].text@4:constitutional-organ-state",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[6].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 4
+    },
+    "jurisdiction-name": {
+      "manual-review": 1,
+      "safe-auto-transform": 2
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[4].children[0].text",
+      "term": "NRW",
+      "context": "… Oktober 1865 und vom 7. April 1869 vom 24. Mai 1901 (PrGS. NRW. S. 161);",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Justizministerium",
+      "context": "Zuständig für die Entscheidung ist das Justizministerium. Es kann seine Befugnis ganz oder teilweise oder für bestim…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 63,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…schrift geändert durch Art IX des Gesetzes v. 5.4.2005 (GV. NRW. S 408); in Kraft getreten am 5. Mai 2005.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[4].children[0].text",
+        "term": "NRW",
+        "context": "… Oktober 1865 und vom 7. April 1869 vom 24. Mai 1901 (PrGS. NRW. S. 161);",
+        "status": "documented",
+        "detectionId": "body[2].children[4].children[0].text@175:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[2].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…Änderungs- und Anpassungsgesetz) vom 15. Dezember 1952 (GV. NRW. S. 423), zuletzt geändert durch das Beamtengesetz für das …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…ngesetz für das Land Westdeutschland vom 15. Juni 1954 (GV. NRW. S. 237);",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…tsteilung und Reallastenablösung vom 28. November 1961 (GV. NRW. S. 319).",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über Gebührenbefreiung, Stundung und Erlaß von Kosten im Bereich der Rechtspflege (Fn 5) vom 21. Oktober 1969",
+    "sourceVersion": "Gesetz über Gebührenbefreiung, Stundung und Erlaß von Kosten im Bereich der Rechtspflege (Fn 5) vom 21. Oktober 1969",
+    "simulation": "Gesetz über Gebührenbefreiung, Stundung und Erlaß von Kosten im Bereich der Rechtspflege (Fn 5) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5199,
+          "actual": 5422,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 39,
+          "actual": 39,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5422,
+          "actual": 5414,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:20:04.273Z"
+}

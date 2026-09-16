@@ -1,0 +1,3928 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29261",
+  "slug": "autobahnpolzustvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@103:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 103,
+      "end": 122,
+      "term": "Nordrhein-Westfalen",
+      "context": "…die Organisation und die Zuständigkeit der Polizei im Lande Nordrhein-Westfalen – Polizeiorganisationsgesetz (POG NRW) in der Fassung der B…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@157:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 157,
+      "end": 160,
+      "term": "NRW",
+      "context": "…Lande Nordrhein-Westfalen – Polizeiorganisationsgesetz (POG NRW) in der Fassung der Bekanntmachung vom 5. Juli 2002 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@214:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 214,
+      "end": 229,
+      "term": "GV. NRW. S. 308",
+      "context": "…OG NRW) in der Fassung der Bekanntmachung vom 5. Juli 2002 (GV. NRW. S. 308, ber. S. 629), zuletzt geändert durch Artikel 1 des Gesetze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@309:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 309,
+      "end": 324,
+      "term": "GV. NRW. S. 266",
+      "context": "…tzt geändert durch Artikel 1 des Gesetzes vom 23. Mai 2006 (GV. NRW. S. 266), wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].text@391:regional-body-district",
+      "path": "body[2].children[0].text",
+      "start": 391,
+      "end": 407,
+      "term": "Regierungsbezirk",
+      "context": "…er Polizeibezirk umfasst die Bundesautobahnen im jeweiligen Regierungsbezirk, soweit die nachfolgenden Bestimmungen keine abweichenden R…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@21:municipality",
+      "path": "body[3].children[1].text",
+      "start": 21,
+      "end": 30,
+      "term": "Bielefeld",
+      "context": "Das Polizeipräsidium Bielefeld ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@7:regional-body-district",
+      "path": "body[3].children[1].children[0].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@24:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 24,
+      "end": 31,
+      "term": "Münster",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@32:municipality",
+      "path": "body[3].children[1].children[1].text",
+      "start": 32,
+      "end": 39,
+      "term": "Detmold",
+      "context": "von der Regierungsbezirksgrenze Detmold/Münster auf dem Gebiet der Stadt Oelde bei km 369,085 bis z…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@40:municipality",
+      "path": "body[3].children[1].children[1].text",
+      "start": 40,
+      "end": 47,
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Detmold/Münster auf dem Gebiet der Stadt Oelde bei km 369,085 bis zur Ansch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[2].text@8:regional-body-district",
+      "path": "body[3].children[1].children[2].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 44 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[2].text@25:municipality",
+      "path": "body[3].children[1].children[2].text",
+      "start": 25,
+      "end": 33,
+      "term": "Arnsberg",
+      "context": "A 44 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[4].text@32:municipality",
+      "path": "body[3].children[1].children[4].text",
+      "start": 32,
+      "end": 39,
+      "term": "Detmold",
+      "context": "von der Regierungsbezirksgrenze Detmold/Arnsberg auf dem Gebiet der Stadt Geseke bis zur Anschlusss…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[4].text@40:municipality",
+      "path": "body[3].children[1].children[4].text",
+      "start": 40,
+      "end": 48,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Detmold/Arnsberg auf dem Gebiet der Stadt Geseke bis zur Anschlussstelle Ges…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@21:municipality",
+      "path": "body[3].children[2].text",
+      "start": 21,
+      "end": 30,
+      "term": "Bielefeld",
+      "context": "Das Polizeipräsidium Bielefeld ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[6].text@31:municipality",
+      "path": "body[3].children[2].children[6].text",
+      "start": 31,
+      "end": 40,
+      "term": "Paderborn",
+      "context": "L 755 auf dem Gebiet der Stadt Paderborn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[7].text@24:municipality",
+      "path": "body[3].children[2].children[7].text",
+      "start": 24,
+      "end": 33,
+      "term": "Paderborn",
+      "context": "von der Anschlussstelle Paderborn-Mönkeloh (A 33) bis zur Einmündung in den Kreisverkehr Borc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[8].text@30:municipality",
+      "path": "body[3].children[2].children[8].text",
+      "start": 30,
+      "end": 39,
+      "term": "Bielefeld",
+      "context": "B 61 auf dem Gebiet der Stadt Bielefeld von der Anschlussstelle Bielefeld-Zentrum (neu, A 33) bis z…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[8].text@64:municipality",
+      "path": "body[3].children[2].children[8].text",
+      "start": 64,
+      "end": 73,
+      "term": "Bielefeld",
+      "context": "… auf dem Gebiet der Stadt Bielefeld von der Anschlussstelle Bielefeld-Zentrum (neu, A 33) bis zur Einmündung Südring (B 61/B 68).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@21:municipality",
+      "path": "body[4].children[0].text",
+      "start": 21,
+      "end": 28,
+      "term": "Münster",
+      "context": "Das Polizeipräsidium Münster ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[0].text@7:regional-body-district",
+      "path": "body[4].children[0].children[0].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[0].text@24:municipality",
+      "path": "body[4].children[0].children[0].text",
+      "start": 24,
+      "end": 32,
+      "term": "Arnsberg",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[1].text@32:municipality",
+      "path": "body[4].children[0].children[1].text",
+      "start": 32,
+      "end": 39,
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Werne bei km 302,8 bis zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[1].text@40:municipality",
+      "path": "body[4].children[0].children[1].text",
+      "start": 40,
+      "end": 48,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Werne bei km 302,8 bis zur Anschlu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[1].text@117:municipality",
+      "path": "body[4].children[0].children[1].text",
+      "start": 117,
+      "end": 121,
+      "term": "Hamm",
+      "context": "…Gebiet der Stadt Werne bei km 302,8 bis zur Anschlussstelle Hamm-Bockum/Werne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[2].text@8:regional-body-district",
+      "path": "body[4].children[0].children[2].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 31 im Regierungsbezirk Düsseldorf",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[2].text@25:municipality",
+      "path": "body[4].children[0].children[2].text",
+      "start": 25,
+      "end": 35,
+      "term": "Düsseldorf",
+      "context": "A 31 im Regierungsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[4].text@8:regional-body-district",
+      "path": "body[4].children[0].children[4].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 42 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[4].text@25:municipality",
+      "path": "body[4].children[0].children[4].text",
+      "start": 25,
+      "end": 33,
+      "term": "Arnsberg",
+      "context": "A 42 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[5].text@41:municipality",
+      "path": "body[4].children[0].children[5].text",
+      "start": 41,
+      "end": 46,
+      "term": "Herne",
+      "context": "soweit die A 42 auf dem Gebiet der Stadt Herne verläuft (km 41,5 bis 51,8),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[6].text@8:regional-body-district",
+      "path": "body[4].children[0].children[6].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 43 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[6].text@25:municipality",
+      "path": "body[4].children[0].children[6].text",
+      "start": 25,
+      "end": 33,
+      "term": "Arnsberg",
+      "context": "A 43 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[7].text@32:municipality",
+      "path": "body[4].children[0].children[7].text",
+      "start": 32,
+      "end": 39,
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Herne bei km 34,5 bis zur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[7].text@40:municipality",
+      "path": "body[4].children[0].children[7].text",
+      "start": 40,
+      "end": 48,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Herne bei km 34,5 bis zur Anschlus…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[7].text@74:municipality",
+      "path": "body[4].children[0].children[7].text",
+      "start": 74,
+      "end": 79,
+      "term": "Herne",
+      "context": "…ungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Herne bei km 34,5 bis zur Anschlussstelle Herne-Eickel.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[7].text@116:municipality",
+      "path": "body[4].children[0].children[7].text",
+      "start": 116,
+      "end": 121,
+      "term": "Herne",
+      "context": "… Gebiet der Stadt Herne bei km 34,5 bis zur Anschlussstelle Herne-Eickel.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@21:municipality",
+      "path": "body[4].children[1].text",
+      "start": 21,
+      "end": 28,
+      "term": "Münster",
+      "context": "Das Polizeipräsidium Münster ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[0].text@30:municipality",
+      "path": "body[4].children[1].children[0].text",
+      "start": 30,
+      "end": 37,
+      "term": "Münster",
+      "context": "B 51 auf dem Gebiet der Stadt Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[1].text@18:municipality",
+      "path": "body[4].children[1].children[1].text",
+      "start": 18,
+      "end": 25,
+      "term": "Münster",
+      "context": "vom Autobahnkreuz Münster-Süd (A 1/A 43) bis zur Kreuzung Hammer Straße (B 54) einsch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[6].text@43:municipality",
+      "path": "body[4].children[1].children[6].text",
+      "start": 43,
+      "end": 57,
+      "term": "Recklinghausen",
+      "context": "L 511 auf dem Gebiet der Städte Herten und Recklinghausen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[7].text@80:municipality",
+      "path": "body[4].children[1].children[7].text",
+      "start": 80,
+      "end": 94,
+      "term": "Recklinghausen",
+      "context": "…esterholter Straße (K 46) in Herten bis zur Anschlussstelle Recklinghausen-Nord (Halterner Straße/L 511) in Recklinghausen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[7].text@128:municipality",
+      "path": "body[4].children[1].children[7].text",
+      "start": 128,
+      "end": 142,
+      "term": "Recklinghausen",
+      "context": "…hlussstelle Recklinghausen-Nord (Halterner Straße/L 511) in Recklinghausen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].text@21:municipality",
+      "path": "body[5].children[1].text",
+      "start": 21,
+      "end": 29,
+      "term": "Dortmund",
+      "context": "Das Polizeipräsidium Dortmund ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@7:regional-body-district",
+      "path": "body[5].children[1].children[0].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@24:municipality",
+      "path": "body[5].children[1].children[0].text",
+      "start": 24,
+      "end": 31,
+      "term": "Münster",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[1].text@32:municipality",
+      "path": "body[5].children[1].children[1].text",
+      "start": 32,
+      "end": 40,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Beckum bei km 384,6 bis zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[1].text@41:municipality",
+      "path": "body[5].children[1].children[1].text",
+      "start": 41,
+      "end": 48,
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Beckum bei km 384,6 bis zur Anschl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].text@7:regional-body-district",
+      "path": "body[5].children[1].children[2].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 4 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].text@24:municipality",
+      "path": "body[5].children[1].children[2].text",
+      "start": 24,
+      "end": 28,
+      "term": "Köln",
+      "context": "A 4 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[3].text@32:municipality",
+      "path": "body[5].children[1].children[3].text",
+      "start": 32,
+      "end": 40,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Gemeinde Reichshof bei km 141,3 bis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[3].text@41:municipality",
+      "path": "body[5].children[1].children[3].text",
+      "start": 41,
+      "end": 45,
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Gemeinde Reichshof bei km 141,3 bis zur …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[4].text@8:regional-body-district",
+      "path": "body[5].children[1].children[4].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[4].text@25:municipality",
+      "path": "body[5].children[1].children[4].text",
+      "start": 25,
+      "end": 32,
+      "term": "Münster",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[5].text@32:municipality",
+      "path": "body[5].children[1].children[5].text",
+      "start": 32,
+      "end": 40,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 57,1…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[5].text@41:municipality",
+      "path": "body[5].children[1].children[5].text",
+      "start": 41,
+      "end": 48,
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 57,1 bis zur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[6].text@8:regional-body-district",
+      "path": "body[5].children[1].children[6].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 45 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[6].text@25:municipality",
+      "path": "body[5].children[1].children[6].text",
+      "start": 25,
+      "end": 32,
+      "term": "Münster",
+      "context": "A 45 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[7].text@32:municipality",
+      "path": "body[5].children[1].children[7].text",
+      "start": 32,
+      "end": 40,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 0,2 …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[7].text@41:municipality",
+      "path": "body[5].children[1].children[7].text",
+      "start": 41,
+      "end": 48,
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 0,2 bis zum …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[7].text@122:municipality",
+      "path": "body[5].children[1].children[7].text",
+      "start": 122,
+      "end": 130,
+      "term": "Dortmund",
+      "context": "…t der Stadt Castrop-Rauxel bei km 0,2 bis zum Autobahnkreuz Dortmund-Nordwest.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[8].text@8:regional-body-district",
+      "path": "body[5].children[1].children[8].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 45 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[8].text@25:municipality",
+      "path": "body[5].children[1].children[8].text",
+      "start": 25,
+      "end": 29,
+      "term": "Köln",
+      "context": "A 45 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[9].text@32:municipality",
+      "path": "body[5].children[1].children[9].text",
+      "start": 32,
+      "end": 40,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Stadt Gummersbach bei km 71,760 bis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[9].text@41:municipality",
+      "path": "body[5].children[1].children[9].text",
+      "start": 41,
+      "end": 45,
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Stadt Gummersbach bei km 71,760 bis zur …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[9].text@129:municipality",
+      "path": "body[5].children[1].children[9].text",
+      "start": 129,
+      "end": 133,
+      "term": "Köln",
+      "context": "…t Gummersbach bei km 71,760 bis zur Regierungsbezirksgrenze Köln/Arnsberg bei km 74,360.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[9].text@134:municipality",
+      "path": "body[5].children[1].children[9].text",
+      "start": 134,
+      "end": 142,
+      "term": "Arnsberg",
+      "context": "…mersbach bei km 71,760 bis zur Regierungsbezirksgrenze Köln/Arnsberg bei km 74,360.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].text@21:municipality",
+      "path": "body[5].children[2].text",
+      "start": 21,
+      "end": 29,
+      "term": "Dortmund",
+      "context": "Das Polizeipräsidium Dortmund ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[0].text@39:municipality",
+      "path": "body[5].children[2].children[0].text",
+      "start": 39,
+      "end": 47,
+      "term": "Dortmund",
+      "context": "B 1 auf dem Gebiet der Städte Unna und Dortmund",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@18:municipality",
+      "path": "body[5].children[2].children[1].text",
+      "start": 18,
+      "end": 26,
+      "term": "Dortmund",
+      "context": "vom Autobahnkreuz Dortmund/Unna (A 1/A 44) in Unna bis zur Anschlussstelle Dortmund-Ap…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@75:municipality",
+      "path": "body[5].children[2].children[1].text",
+      "start": 75,
+      "end": 83,
+      "term": "Dortmund",
+      "context": "…uz Dortmund/Unna (A 1/A 44) in Unna bis zur Anschlussstelle Dortmund-Aplerbeck (B 1) in Dortmund,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[1].text@103:municipality",
+      "path": "body[5].children[2].children[1].text",
+      "start": 103,
+      "end": 111,
+      "term": "Dortmund",
+      "context": "…in Unna bis zur Anschlussstelle Dortmund-Aplerbeck (B 1) in Dortmund,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[2].text@105:municipality",
+      "path": "body[5].children[2].children[2].text",
+      "start": 105,
+      "end": 111,
+      "term": "Siegen",
+      "context": "…emeinde Wenden (Kreis Olpe) sowie der Stadt Kreuztal (Kreis Siegen-Wittgenstein)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[4].text@86:municipality",
+      "path": "body[5].children[2].children[4].text",
+      "start": 86,
+      "end": 92,
+      "term": "Siegen",
+      "context": "…emeinde Wenden (Kreis Olpe) sowie der Stadt Kreuztal (Kreis Siegen-Wittgenstein)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[8].text@30:municipality",
+      "path": "body[5].children[2].children[8].text",
+      "start": 30,
+      "end": 36,
+      "term": "Siegen",
+      "context": "B 62 auf dem Gebiet der Stadt Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[9].text@24:municipality",
+      "path": "body[5].children[2].children[9].text",
+      "start": 24,
+      "end": 30,
+      "term": "Siegen",
+      "context": "von der Anschlussstelle Siegen (A 45) bis zur Einmündung Wallhausenstraße (Stations-km 0,4…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[12].text@32:municipality",
+      "path": "body[5].children[2].children[12].text",
+      "start": 32,
+      "end": 40,
+      "term": "Dortmund",
+      "context": "B 236 auf dem Gebiet der Städte Dortmund und Lünen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[13].text@32:municipality",
+      "path": "body[5].children[2].children[13].text",
+      "start": 32,
+      "end": 40,
+      "term": "Dortmund",
+      "context": "von der Stadtgrenze Schwerte in Dortmund-Berghofen bis zur Einmündung Dortmunder Straße (B 54) in Lü…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[15].text@18:municipality",
+      "path": "body[5].children[2].children[15].text",
+      "start": 18,
+      "end": 27,
+      "term": "Wuppertal",
+      "context": "vom Autobahnkreuz Wuppertal-Nord (A 1/A 46) bis zur Einmündung Schwelmer Straße,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[16].text@31:municipality",
+      "path": "body[5].children[2].children[16].text",
+      "start": 31,
+      "end": 37,
+      "term": "Siegen",
+      "context": "L 562 auf dem Gebiet der Stadt Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[17].text@24:municipality",
+      "path": "body[5].children[2].children[17].text",
+      "start": 24,
+      "end": 30,
+      "term": "Siegen",
+      "context": "von der Anschlussstelle Siegen-Eisern (A 45) bis zur Kreuzung Leinbachstraße/Wolfsbach/Fau…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[18].text@32:municipality",
+      "path": "body[5].children[2].children[18].text",
+      "start": 32,
+      "end": 40,
+      "term": "Dortmund",
+      "context": "L 663n auf dem Gebiet der Stadt Dortmund",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[22].text@49:municipality",
+      "path": "body[5].children[2].children[22].text",
+      "start": 49,
+      "end": 57,
+      "term": "Dortmund",
+      "context": "Ost/West-Tangente III a auf dem Gebiet der Stadt Dortmund",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[24].text@31:municipality",
+      "path": "body[5].children[2].children[24].text",
+      "start": 31,
+      "end": 37,
+      "term": "Bochum",
+      "context": "L 705 auf dem Gebiet der Stadt Bochum",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[25].text@16:municipality",
+      "path": "body[5].children[2].children[25].text",
+      "start": 16,
+      "end": 22,
+      "term": "Bochum",
+      "context": "zwischen dem AD Bochum-West und der AS Bochum-Süd (Königsallee).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[25].text@39:municipality",
+      "path": "body[5].children[2].children[25].text",
+      "start": 39,
+      "end": 45,
+      "term": "Bochum",
+      "context": "zwischen dem AD Bochum-West und der AS Bochum-Süd (Königsallee).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@21:municipality",
+      "path": "body[6].children[1].text",
+      "start": 21,
+      "end": 31,
+      "term": "Düsseldorf",
+      "context": "Das Polizeipräsidium Düsseldorf ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[0].text@7:regional-body-district",
+      "path": "body[6].children[1].children[0].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[0].text@24:municipality",
+      "path": "body[6].children[1].children[0].text",
+      "start": 24,
+      "end": 32,
+      "term": "Arnsberg",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[1].text@32:municipality",
+      "path": "body[6].children[1].children[1].text",
+      "start": 32,
+      "end": 42,
+      "term": "Düsseldorf",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Arnsberg bei km 365,7 auf dem Gebiet der Stadt Schwelm bis …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[1].text@43:municipality",
+      "path": "body[6].children[1].children[1].text",
+      "start": 43,
+      "end": 51,
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Arnsberg bei km 365,7 auf dem Gebiet der Stadt Schwelm bis km 363,3,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[2].text@7:regional-body-district",
+      "path": "body[6].children[1].children[2].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 3 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[2].text@24:municipality",
+      "path": "body[6].children[1].children[2].text",
+      "start": 24,
+      "end": 31,
+      "term": "Münster",
+      "context": "A 3 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[4].text@8:regional-body-district",
+      "path": "body[6].children[1].children[4].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[4].text@25:municipality",
+      "path": "body[6].children[1].children[4].text",
+      "start": 25,
+      "end": 32,
+      "term": "Münster",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[5].text@41:municipality",
+      "path": "body[6].children[1].children[5].text",
+      "start": 41,
+      "end": 48,
+      "term": "Bottrop",
+      "context": "soweit die A 42 auf dem Gebiet der Stadt Bottrop verläuft (km 26,0 bis 29,6),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[6].text@8:regional-body-district",
+      "path": "body[6].children[1].children[6].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 46 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[6].text@25:municipality",
+      "path": "body[6].children[1].children[6].text",
+      "start": 25,
+      "end": 29,
+      "term": "Köln",
+      "context": "A 46 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[7].text@32:municipality",
+      "path": "body[6].children[1].children[7].text",
+      "start": 32,
+      "end": 42,
+      "term": "Düsseldorf",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln bei km 39,5 westwärts auf den Gebieten der Städte Erke…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[7].text@43:municipality",
+      "path": "body[6].children[1].children[7].text",
+      "start": 43,
+      "end": 47,
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln bei km 39,5 westwärts auf den Gebieten der Städte Erkelenz,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[8].text@8:regional-body-district",
+      "path": "body[6].children[1].children[8].text",
+      "start": 8,
+      "end": 24,
+      "term": "Regierungsbezirk",
+      "context": "A 61 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[8].text@25:municipality",
+      "path": "body[6].children[1].children[8].text",
+      "start": 25,
+      "end": 29,
+      "term": "Köln",
+      "context": "A 61 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[9].text@32:municipality",
+      "path": "body[6].children[1].children[9].text",
+      "start": 32,
+      "end": 42,
+      "term": "Düsseldorf",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln auf dem Gebiet der Stadt Erkelenz bei km 37,2 bis zur …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[9].text@43:municipality",
+      "path": "body[6].children[1].children[9].text",
+      "start": 43,
+      "end": 47,
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln auf dem Gebiet der Stadt Erkelenz bei km 37,2 bis zur Ansch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].text@21:municipality",
+      "path": "body[6].children[2].text",
+      "start": 21,
+      "end": 31,
+      "term": "Düsseldorf",
+      "context": "Das Polizeipräsidium Düsseldorf ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[2].text@31:municipality",
+      "path": "body[6].children[2].children[2].text",
+      "start": 31,
+      "end": 39,
+      "term": "Duisburg",
+      "context": "B 288 auf dem Gebiet der Stadt Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[3].text@24:municipality",
+      "path": "body[6].children[2].children[3].text",
+      "start": 24,
+      "end": 32,
+      "term": "Duisburg",
+      "context": "von der Anschlussstelle Duisburg-Rahm (A 524) auf den Abschnitten 8.1 und 7 (bis zur verkehr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[6].text@30:municipality",
+      "path": "body[6].children[2].children[6].text",
+      "start": 30,
+      "end": 38,
+      "term": "Duisburg",
+      "context": "B 8n auf dem Gebiet der Stadt Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[7].text@16:municipality",
+      "path": "body[6].children[2].children[7].text",
+      "start": 16,
+      "end": 26,
+      "term": "Düsseldorf",
+      "context": "von Stadtgrenze Düsseldorf/Duisburg bis zum Beginn der A 59 im AK Duisburg-Süd (Abschn…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[7].text@27:municipality",
+      "path": "body[6].children[2].children[7].text",
+      "start": 27,
+      "end": 35,
+      "term": "Duisburg",
+      "context": "von Stadtgrenze Düsseldorf/Duisburg bis zum Beginn der A 59 im AK Duisburg-Süd (Abschnitt 183, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[7].text@66:municipality",
+      "path": "body[6].children[2].children[7].text",
+      "start": 66,
+      "end": 74,
+      "term": "Duisburg",
+      "context": "…adtgrenze Düsseldorf/Duisburg bis zum Beginn der A 59 im AK Duisburg-Süd (Abschnitt 183, Station (km) 1,33 bis 1,78),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[8].text@30:municipality",
+      "path": "body[6].children[2].children[8].text",
+      "start": 30,
+      "end": 39,
+      "term": "Wuppertal",
+      "context": "L 74 auf dem Gebiet der Stadt Wuppertal",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[10].text@32:municipality",
+      "path": "body[6].children[2].children[10].text",
+      "start": 32,
+      "end": 37,
+      "term": "Moers",
+      "context": "L 237 auf dem Gebiet der Städte Moers und Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[10].text@42:municipality",
+      "path": "body[6].children[2].children[10].text",
+      "start": 42,
+      "end": 50,
+      "term": "Duisburg",
+      "context": "L 237 auf dem Gebiet der Städte Moers und Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[11].text@24:municipality",
+      "path": "body[6].children[2].children[11].text",
+      "start": 24,
+      "end": 32,
+      "term": "Duisburg",
+      "context": "von der Anschlussstelle Duisburg-Homberg/Kerpen (Römerstraße) in Moers bis zur Einmündung Mo…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[11].text@65:municipality",
+      "path": "body[6].children[2].children[11].text",
+      "start": 65,
+      "end": 70,
+      "term": "Moers",
+      "context": "…er Anschlussstelle Duisburg-Homberg/Kerpen (Römerstraße) in Moers bis zur Einmündung Moerser Straße in Duisburg (K 30),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[11].text@108:municipality",
+      "path": "body[6].children[2].children[11].text",
+      "start": 108,
+      "end": 116,
+      "term": "Duisburg",
+      "context": "…(Römerstraße) in Moers bis zur Einmündung Moerser Straße in Duisburg (K 30),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[12].text@31:municipality",
+      "path": "body[6].children[2].children[12].text",
+      "start": 31,
+      "end": 40,
+      "term": "Wuppertal",
+      "context": "L 418 auf dem Gebiet der Stadt Wuppertal",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[13].text@12:municipality",
+      "path": "body[6].children[2].children[13].text",
+      "start": 12,
+      "end": 21,
+      "term": "Wuppertal",
+      "context": "vom Abzweig Wuppertal-Cronenberg (A 46) bis zur Höhe der Fußgängerbrücke am Kapel…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@21:municipality",
+      "path": "body[7].children[1].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "Das Polizeipräsidium Köln ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[0].text@7:regional-body-district",
+      "path": "body[7].children[1].children[0].text",
+      "start": 7,
+      "end": 23,
+      "term": "Regierungsbezirk",
+      "context": "A 1 im Regierungsbezirk Düsseldorf",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[0].text@24:municipality",
+      "path": "body[7].children[1].children[0].text",
+      "start": 24,
+      "end": 34,
+      "term": "Düsseldorf",
+      "context": "A 1 im Regierungsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[1].text@41:municipality",
+      "path": "body[7].children[1].children[1].text",
+      "start": 41,
+      "end": 50,
+      "term": "Remscheid",
+      "context": "für den Bereich der Rast- und Tankanlage Remscheid, soweit diese auf dem Gebiet der Stadt Remscheid liegt (km …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[1].text@90:municipality",
+      "path": "body[7].children[1].children[1].text",
+      "start": 90,
+      "end": 99,
+      "term": "Remscheid",
+      "context": "…Tankanlage Remscheid, soweit diese auf dem Gebiet der Stadt Remscheid liegt (km 381,2 bis 381,7).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@21:municipality",
+      "path": "body[7].children[2].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "Das Polizeipräsidium Köln ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[0].text@29:municipality",
+      "path": "body[7].children[2].children[0].text",
+      "start": 29,
+      "end": 33,
+      "term": "Köln",
+      "context": "B 8 auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[1].text@24:municipality",
+      "path": "body[7].children[2].children[1].text",
+      "start": 24,
+      "end": 28,
+      "term": "Köln",
+      "context": "von der Anschlussstelle Köln-Mülheim (A 3) bis zur Einmündung Clevischer Ring (Mülheimer…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[2].text@31:municipality",
+      "path": "body[7].children[2].children[2].text",
+      "start": 31,
+      "end": 35,
+      "term": "Bonn",
+      "context": "B 42 auf dem Gebiet der Städte Bonn, Königswinter und Bad Honnef",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[3].text@18:municipality",
+      "path": "body[7].children[2].children[3].text",
+      "start": 18,
+      "end": 22,
+      "term": "Bonn",
+      "context": "vom Autobahnkreuz Bonn-Ost (A 59/A 562) bis zur Landesgrenze Nordrhein-Westfalen/R…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[3].text@61:rule:jurisdiction-name-bare",
+      "path": "body[7].children[2].children[3].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…om Autobahnkreuz Bonn-Ost (A 59/A 562) bis zur Landesgrenze Nordrhein-Westfalen/Rheinland-Pfalz,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].children[3].text@81:geography-region",
+      "path": "body[7].children[2].children[3].text",
+      "start": 81,
+      "end": 90,
+      "term": "Rheinland",
+      "context": "…n-Ost (A 59/A 562) bis zur Landesgrenze Nordrhein-Westfalen/Rheinland-Pfalz,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[10].text@30:municipality",
+      "path": "body[7].children[2].children[10].text",
+      "start": 30,
+      "end": 34,
+      "term": "Köln",
+      "context": "L 84 auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[12].text@31:municipality",
+      "path": "body[7].children[2].children[12].text",
+      "start": 31,
+      "end": 35,
+      "term": "Köln",
+      "context": "L 124 auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[14].text@32:municipality",
+      "path": "body[7].children[2].children[14].text",
+      "start": 32,
+      "end": 36,
+      "term": "Köln",
+      "context": "L 286n auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[15].text@102:municipality",
+      "path": "body[7].children[2].children[15].text",
+      "start": 102,
+      "end": 106,
+      "term": "Köln",
+      "context": "…s zur Einmündung in den Kreisverkehr an der Anschlussstelle Köln-Merheim (A 4),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@56:rule:jurisdiction-name-bare",
+      "path": "body[8].children[1].text",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Vereinbarung zwischen den Ländern Niedersachsen und Nordrhein-Westfalen über die Wahrnehmung vollzugspolizeilicher Aufgaben auf Bun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[1].text@204:protected:gazette-nrw",
+      "path": "body[8].children[1].text",
+      "start": 204,
+      "end": 218,
+      "term": "GV. NRW. S. 74",
+      "context": "…hnen und Bundesstraßen [Bekanntmachung vom 17. Januar 1996 (GV. NRW. S. 74)], zuletzt geändert durch Bekanntmachung vom 22. Juni 2004 …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].text@279:protected:gazette-nrw",
+      "path": "body[8].children[1].text",
+      "start": 279,
+      "end": 294,
+      "term": "GV. NRW. S. 373",
+      "context": "…], zuletzt geändert durch Bekanntmachung vom 22. Juni 2004 (GV. NRW. S. 373),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].text@56:rule:jurisdiction-name-bare",
+      "path": "body[8].children[2].text",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "das Verwaltungsabkommen zwischen den Ländern Hessen und Nordrhein-Westfalen über die Wahrnehmung polizeilicher Aufgaben auf Bundesautob…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[2].text@179:protected:gazette-nrw",
+      "path": "body[8].children[2].text",
+      "start": 179,
+      "end": 193,
+      "term": "GV. NRW. S. 89",
+      "context": "… auf Bundesautobahnen [Bekanntmachung vom 14. Februar 2002 (GV. NRW. S. 89)],",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[3].text@45:geography-region",
+      "path": "body[8].children[3].text",
+      "start": 45,
+      "end": 54,
+      "term": "Rheinland",
+      "context": "das Verwaltungsabkommen zwischen den Ländern Rheinland-Pfalz und Nordrhein-Westfalen über die Wahrnehmung polizeil…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[3].text@65:rule:jurisdiction-name-bare",
+      "path": "body[8].children[3].text",
+      "start": 65,
+      "end": 84,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erwaltungsabkommen zwischen den Ländern Rheinland-Pfalz und Nordrhein-Westfalen über die Wahrnehmung polizeilicher Aufgaben auf Bundesautob…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[3].text@188:protected:gazette-nrw",
+      "path": "body[8].children[3].text",
+      "start": 188,
+      "end": 202,
+      "term": "GV. NRW. S. 90",
+      "context": "… auf Bundesautobahnen [Bekanntmachung vom 14. Februar 2002 (GV. NRW. S. 90)].",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].text@95:authority-district-government",
+      "path": "body[9].children[2].text",
+      "start": 95,
+      "end": 113,
+      "term": "Bezirksregierungen",
+      "context": "…ng tritt die Verordnung über die örtliche Zuständigkeit der Bezirksregierungen zur Überwachung des Straßenverkehrs auf Bundesautobahnen un…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[2].text@264:protected:gazette-nrw",
+      "path": "body[9].children[2].text",
+      "start": 264,
+      "end": 279,
+      "term": "GV. NRW. S. 174",
+      "context": "… mit Anschluss an das Bundesautobahnnetz vom 19. März 2003 (GV. NRW. S. 174), zuletzt geändert durch Verordnung vom 4. Dezember 2005 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].text@338:protected:gazette-nrw",
+      "path": "body[9].children[2].text",
+      "start": 338,
+      "end": 356,
+      "term": "GV. NRW. 2006 S. 4",
+      "context": "…4), zuletzt geändert durch Verordnung vom 4. Dezember 2005 (GV. NRW. 2006 S. 4), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[0].text@4:ministry-compound",
+      "path": "body[9].children[2].children[0].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[0].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[2].children[0].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 7
+    },
+    "source-citation": {
+      "protected": 8
+    },
+    "regional-body": {
+      "manual-review": 18
+    },
+    "municipality": {
+      "manual-review": 110
+    },
+    "geography": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "…er Polizeibezirk umfasst die Bundesautobahnen im jeweiligen Regierungsbezirk, soweit die nachfolgenden Bestimmungen keine abweichenden R…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Bielefeld",
+      "context": "Das Polizeipräsidium Bielefeld ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Münster",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Detmold",
+      "context": "von der Regierungsbezirksgrenze Detmold/Münster auf dem Gebiet der Stadt Oelde bei km 369,085 bis z…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Detmold/Münster auf dem Gebiet der Stadt Oelde bei km 369,085 bis zur Ansch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "A 44 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[2].text",
+      "term": "Arnsberg",
+      "context": "A 44 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[4].text",
+      "term": "Detmold",
+      "context": "von der Regierungsbezirksgrenze Detmold/Arnsberg auf dem Gebiet der Stadt Geseke bis zur Anschlusss…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[4].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Detmold/Arnsberg auf dem Gebiet der Stadt Geseke bis zur Anschlussstelle Ges…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Bielefeld",
+      "context": "Das Polizeipräsidium Bielefeld ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[6].text",
+      "term": "Paderborn",
+      "context": "L 755 auf dem Gebiet der Stadt Paderborn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[7].text",
+      "term": "Paderborn",
+      "context": "von der Anschlussstelle Paderborn-Mönkeloh (A 33) bis zur Einmündung in den Kreisverkehr Borc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[8].text",
+      "term": "Bielefeld",
+      "context": "B 61 auf dem Gebiet der Stadt Bielefeld von der Anschlussstelle Bielefeld-Zentrum (neu, A 33) bis z…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[8].text",
+      "term": "Bielefeld",
+      "context": "… auf dem Gebiet der Stadt Bielefeld von der Anschlussstelle Bielefeld-Zentrum (neu, A 33) bis zur Einmündung Südring (B 61/B 68).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Münster",
+      "context": "Das Polizeipräsidium Münster ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "term": "Arnsberg",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Werne bei km 302,8 bis zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Werne bei km 302,8 bis zur Anschlu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "term": "Hamm",
+      "context": "…Gebiet der Stadt Werne bei km 302,8 bis zur Anschlussstelle Hamm-Bockum/Werne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "A 31 im Regierungsbezirk Düsseldorf",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[2].text",
+      "term": "Düsseldorf",
+      "context": "A 31 im Regierungsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[4].text",
+      "term": "Regierungsbezirk",
+      "context": "A 42 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[4].text",
+      "term": "Arnsberg",
+      "context": "A 42 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[5].text",
+      "term": "Herne",
+      "context": "soweit die A 42 auf dem Gebiet der Stadt Herne verläuft (km 41,5 bis 51,8),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[6].text",
+      "term": "Regierungsbezirk",
+      "context": "A 43 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[6].text",
+      "term": "Arnsberg",
+      "context": "A 43 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[7].text",
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Herne bei km 34,5 bis zur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[7].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Herne bei km 34,5 bis zur Anschlus…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[7].text",
+      "term": "Herne",
+      "context": "…ungsbezirksgrenze Münster/Arnsberg auf dem Gebiet der Stadt Herne bei km 34,5 bis zur Anschlussstelle Herne-Eickel.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[7].text",
+      "term": "Herne",
+      "context": "… Gebiet der Stadt Herne bei km 34,5 bis zur Anschlussstelle Herne-Eickel.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Münster",
+      "context": "Das Polizeipräsidium Münster ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[0].text",
+      "term": "Münster",
+      "context": "B 51 auf dem Gebiet der Stadt Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[1].text",
+      "term": "Münster",
+      "context": "vom Autobahnkreuz Münster-Süd (A 1/A 43) bis zur Kreuzung Hammer Straße (B 54) einsch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[6].text",
+      "term": "Recklinghausen",
+      "context": "L 511 auf dem Gebiet der Städte Herten und Recklinghausen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[7].text",
+      "term": "Recklinghausen",
+      "context": "…esterholter Straße (K 46) in Herten bis zur Anschlussstelle Recklinghausen-Nord (Halterner Straße/L 511) in Recklinghausen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].children[7].text",
+      "term": "Recklinghausen",
+      "context": "…hlussstelle Recklinghausen-Nord (Halterner Straße/L 511) in Recklinghausen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].text",
+      "term": "Dortmund",
+      "context": "Das Polizeipräsidium Dortmund ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "term": "Münster",
+      "context": "A 2 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Beckum bei km 384,6 bis zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Beckum bei km 384,6 bis zur Anschl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "A 4 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "term": "Köln",
+      "context": "A 4 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Gemeinde Reichshof bei km 141,3 bis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Gemeinde Reichshof bei km 141,3 bis zur …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[4].text",
+      "term": "Regierungsbezirk",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[4].text",
+      "term": "Münster",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[5].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 57,1…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[5].text",
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 57,1 bis zur…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[6].text",
+      "term": "Regierungsbezirk",
+      "context": "A 45 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[6].text",
+      "term": "Münster",
+      "context": "A 45 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[7].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 0,2 …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[7].text",
+      "term": "Münster",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Münster auf dem Gebiet der Stadt Castrop-Rauxel bei km 0,2 bis zum …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[7].text",
+      "term": "Dortmund",
+      "context": "…t der Stadt Castrop-Rauxel bei km 0,2 bis zum Autobahnkreuz Dortmund-Nordwest.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[8].text",
+      "term": "Regierungsbezirk",
+      "context": "A 45 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[8].text",
+      "term": "Köln",
+      "context": "A 45 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[9].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Stadt Gummersbach bei km 71,760 bis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[9].text",
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Arnsberg/Köln auf dem Gebiet der Stadt Gummersbach bei km 71,760 bis zur …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[9].text",
+      "term": "Köln",
+      "context": "…t Gummersbach bei km 71,760 bis zur Regierungsbezirksgrenze Köln/Arnsberg bei km 74,360.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[9].text",
+      "term": "Arnsberg",
+      "context": "…mersbach bei km 71,760 bis zur Regierungsbezirksgrenze Köln/Arnsberg bei km 74,360.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].text",
+      "term": "Dortmund",
+      "context": "Das Polizeipräsidium Dortmund ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "term": "Dortmund",
+      "context": "B 1 auf dem Gebiet der Städte Unna und Dortmund",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Dortmund",
+      "context": "vom Autobahnkreuz Dortmund/Unna (A 1/A 44) in Unna bis zur Anschlussstelle Dortmund-Ap…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Dortmund",
+      "context": "…uz Dortmund/Unna (A 1/A 44) in Unna bis zur Anschlussstelle Dortmund-Aplerbeck (B 1) in Dortmund,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "term": "Dortmund",
+      "context": "…in Unna bis zur Anschlussstelle Dortmund-Aplerbeck (B 1) in Dortmund,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[2].text",
+      "term": "Siegen",
+      "context": "…emeinde Wenden (Kreis Olpe) sowie der Stadt Kreuztal (Kreis Siegen-Wittgenstein)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[4].text",
+      "term": "Siegen",
+      "context": "…emeinde Wenden (Kreis Olpe) sowie der Stadt Kreuztal (Kreis Siegen-Wittgenstein)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[8].text",
+      "term": "Siegen",
+      "context": "B 62 auf dem Gebiet der Stadt Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[9].text",
+      "term": "Siegen",
+      "context": "von der Anschlussstelle Siegen (A 45) bis zur Einmündung Wallhausenstraße (Stations-km 0,4…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[12].text",
+      "term": "Dortmund",
+      "context": "B 236 auf dem Gebiet der Städte Dortmund und Lünen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[13].text",
+      "term": "Dortmund",
+      "context": "von der Stadtgrenze Schwerte in Dortmund-Berghofen bis zur Einmündung Dortmunder Straße (B 54) in Lü…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[15].text",
+      "term": "Wuppertal",
+      "context": "vom Autobahnkreuz Wuppertal-Nord (A 1/A 46) bis zur Einmündung Schwelmer Straße,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[16].text",
+      "term": "Siegen",
+      "context": "L 562 auf dem Gebiet der Stadt Siegen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[17].text",
+      "term": "Siegen",
+      "context": "von der Anschlussstelle Siegen-Eisern (A 45) bis zur Kreuzung Leinbachstraße/Wolfsbach/Fau…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[18].text",
+      "term": "Dortmund",
+      "context": "L 663n auf dem Gebiet der Stadt Dortmund",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[22].text",
+      "term": "Dortmund",
+      "context": "Ost/West-Tangente III a auf dem Gebiet der Stadt Dortmund",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[24].text",
+      "term": "Bochum",
+      "context": "L 705 auf dem Gebiet der Stadt Bochum",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[25].text",
+      "term": "Bochum",
+      "context": "zwischen dem AD Bochum-West und der AS Bochum-Süd (Königsallee).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[25].text",
+      "term": "Bochum",
+      "context": "zwischen dem AD Bochum-West und der AS Bochum-Süd (Königsallee).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].text",
+      "term": "Düsseldorf",
+      "context": "Das Polizeipräsidium Düsseldorf ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[0].text",
+      "term": "Arnsberg",
+      "context": "A 1 im Regierungsbezirk Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[1].text",
+      "term": "Düsseldorf",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Arnsberg bei km 365,7 auf dem Gebiet der Stadt Schwelm bis …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[1].text",
+      "term": "Arnsberg",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Arnsberg bei km 365,7 auf dem Gebiet der Stadt Schwelm bis km 363,3,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "A 3 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[2].text",
+      "term": "Münster",
+      "context": "A 3 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[4].text",
+      "term": "Regierungsbezirk",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[4].text",
+      "term": "Münster",
+      "context": "A 42 im Regierungsbezirk Münster",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[5].text",
+      "term": "Bottrop",
+      "context": "soweit die A 42 auf dem Gebiet der Stadt Bottrop verläuft (km 26,0 bis 29,6),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[6].text",
+      "term": "Regierungsbezirk",
+      "context": "A 46 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[6].text",
+      "term": "Köln",
+      "context": "A 46 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[7].text",
+      "term": "Düsseldorf",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln bei km 39,5 westwärts auf den Gebieten der Städte Erke…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[7].text",
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln bei km 39,5 westwärts auf den Gebieten der Städte Erkelenz,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[8].text",
+      "term": "Regierungsbezirk",
+      "context": "A 61 im Regierungsbezirk Köln",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[8].text",
+      "term": "Köln",
+      "context": "A 61 im Regierungsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[9].text",
+      "term": "Düsseldorf",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln auf dem Gebiet der Stadt Erkelenz bei km 37,2 bis zur …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[9].text",
+      "term": "Köln",
+      "context": "von der Regierungsbezirksgrenze Düsseldorf/Köln auf dem Gebiet der Stadt Erkelenz bei km 37,2 bis zur Ansch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Düsseldorf",
+      "context": "Das Polizeipräsidium Düsseldorf ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[2].text",
+      "term": "Duisburg",
+      "context": "B 288 auf dem Gebiet der Stadt Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[3].text",
+      "term": "Duisburg",
+      "context": "von der Anschlussstelle Duisburg-Rahm (A 524) auf den Abschnitten 8.1 und 7 (bis zur verkehr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[6].text",
+      "term": "Duisburg",
+      "context": "B 8n auf dem Gebiet der Stadt Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[7].text",
+      "term": "Düsseldorf",
+      "context": "von Stadtgrenze Düsseldorf/Duisburg bis zum Beginn der A 59 im AK Duisburg-Süd (Abschn…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[7].text",
+      "term": "Duisburg",
+      "context": "von Stadtgrenze Düsseldorf/Duisburg bis zum Beginn der A 59 im AK Duisburg-Süd (Abschnitt 183, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[7].text",
+      "term": "Duisburg",
+      "context": "…adtgrenze Düsseldorf/Duisburg bis zum Beginn der A 59 im AK Duisburg-Süd (Abschnitt 183, Station (km) 1,33 bis 1,78),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[8].text",
+      "term": "Wuppertal",
+      "context": "L 74 auf dem Gebiet der Stadt Wuppertal",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[10].text",
+      "term": "Moers",
+      "context": "L 237 auf dem Gebiet der Städte Moers und Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[10].text",
+      "term": "Duisburg",
+      "context": "L 237 auf dem Gebiet der Städte Moers und Duisburg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[11].text",
+      "term": "Duisburg",
+      "context": "von der Anschlussstelle Duisburg-Homberg/Kerpen (Römerstraße) in Moers bis zur Einmündung Mo…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[11].text",
+      "term": "Moers",
+      "context": "…er Anschlussstelle Duisburg-Homberg/Kerpen (Römerstraße) in Moers bis zur Einmündung Moerser Straße in Duisburg (K 30),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[11].text",
+      "term": "Duisburg",
+      "context": "…(Römerstraße) in Moers bis zur Einmündung Moerser Straße in Duisburg (K 30),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[12].text",
+      "term": "Wuppertal",
+      "context": "L 418 auf dem Gebiet der Stadt Wuppertal",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[13].text",
+      "term": "Wuppertal",
+      "context": "vom Abzweig Wuppertal-Cronenberg (A 46) bis zur Höhe der Fußgängerbrücke am Kapel…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Köln",
+      "context": "Das Polizeipräsidium Köln ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "A 1 im Regierungsbezirk Düsseldorf",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[0].text",
+      "term": "Düsseldorf",
+      "context": "A 1 im Regierungsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[1].text",
+      "term": "Remscheid",
+      "context": "für den Bereich der Rast- und Tankanlage Remscheid, soweit diese auf dem Gebiet der Stadt Remscheid liegt (km …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[1].text",
+      "term": "Remscheid",
+      "context": "…Tankanlage Remscheid, soweit diese auf dem Gebiet der Stadt Remscheid liegt (km 381,2 bis 381,7).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Köln",
+      "context": "Das Polizeipräsidium Köln ist auch für die Überwachung des Straßenverkehrs auf folgen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[0].text",
+      "term": "Köln",
+      "context": "B 8 auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[1].text",
+      "term": "Köln",
+      "context": "von der Anschlussstelle Köln-Mülheim (A 3) bis zur Einmündung Clevischer Ring (Mülheimer…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[2].text",
+      "term": "Bonn",
+      "context": "B 42 auf dem Gebiet der Städte Bonn, Königswinter und Bad Honnef",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[3].text",
+      "term": "Bonn",
+      "context": "vom Autobahnkreuz Bonn-Ost (A 59/A 562) bis zur Landesgrenze Nordrhein-Westfalen/R…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[3].text",
+      "term": "Rheinland",
+      "context": "…n-Ost (A 59/A 562) bis zur Landesgrenze Nordrhein-Westfalen/Rheinland-Pfalz,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[10].text",
+      "term": "Köln",
+      "context": "L 84 auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[12].text",
+      "term": "Köln",
+      "context": "L 124 auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[14].text",
+      "term": "Köln",
+      "context": "L 286n auf dem Gebiet der Stadt Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[15].text",
+      "term": "Köln",
+      "context": "…s zur Einmündung in den Kreisverkehr an der Anschlussstelle Köln-Merheim (A 4),",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[3].text",
+      "term": "Rheinland",
+      "context": "das Verwaltungsabkommen zwischen den Ländern Rheinland-Pfalz und Nordrhein-Westfalen über die Wahrnehmung polizeil…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].text",
+      "term": "Bezirksregierungen",
+      "context": "…ng tritt die Verordnung über die örtliche Zuständigkeit der Bezirksregierungen zur Überwachung des Straßenverkehrs auf Bundesautobahnen un…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].children[0].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 221,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…st) in der Fassung der Bekanntmachung vom 5. Juli 2002 (GV. NRW. S. 308, ber. S. 629), zuletzt geändert durch Artikel 1 des…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…geändert durch Artikel 1 des Gesetzes vom 23. Mai 2006 (GV. NRW. S. 266), wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].text",
+        "term": "NRW",
+        "context": "… und Bundesstraßen [Bekanntmachung vom 17. Januar 1996 (GV. NRW. S. 74)], zuletzt geändert durch Bekanntmachung vom 22. Jun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].text",
+        "term": "NRW",
+        "context": "…uletzt geändert durch Bekanntmachung vom 22. Juni 2004 (GV. NRW. S. 373),",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[2].text",
+        "term": "NRW",
+        "context": "… Bundesautobahnen [Bekanntmachung vom 14. Februar 2002 (GV. NRW. S. 89)],",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[3].text",
+        "term": "NRW",
+        "context": "… Bundesautobahnen [Bekanntmachung vom 14. Februar 2002 (GV. NRW. S. 90)].",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].text",
+        "term": "NRW",
+        "context": "… Anschluss an das Bundesautobahnnetz vom 19. März 2003 (GV. NRW. S. 174), zuletzt geändert durch Verordnung vom 4. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].text",
+        "term": "NRW",
+        "context": "…zuletzt geändert durch Verordnung vom 4. Dezember 2005 (GV. NRW. 2006 S. 4), außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die örtliche Zuständigkeit der Autobahnpolizei zur Überwachung des Straßenverkehrs auf Bundesautobahnen und auf autobahnähnlichen Straßen mit Anschluss an das Bundesautobahnnetz vom 2. Januar 2007",
+    "sourceVersion": "Verordnung über die örtliche Zuständigkeit der Autobahnpolizei zur Überwachung des Straßenverkehrs auf Bundesautobahnen und auf autobahnähnlichen Straßen mit Anschluss an das Bundesautobahnnetz vom 2. Januar 2007",
+    "simulation": "Verordnung über die örtliche Zuständigkeit der Autobahnpolizei zur Überwachung des Straßenverkehrs auf Bundesautobahnen und auf autobahnähnlichen Straßen mit Anschluss an das Bundesautobahnnetz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13755,
+          "actual": 13796,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 149,
+          "actual": 149,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13796,
+          "actual": 13773,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "8 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "8 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:25:55.359Z"
+}

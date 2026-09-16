@@ -1,0 +1,793 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28200",
+  "slug": "gpag-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[1].text@46:municipality",
+      "path": "body[1].children[1].text",
+      "start": 46,
+      "end": 51,
+      "term": "Herne",
+      "context": "Die Gemeindeprüfungsanstalt hat ihren Sitz in Herne. Sie kann Zweigstellen durch Satzung errichten und deren Zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].text@140:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 140,
+      "end": 164,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Kreisen nach Maßgabe des § 105 der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@218:protected:gazette-nrw",
+      "path": "body[2].children[1].text",
+      "start": 218,
+      "end": 233,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung durch. Sie kann mit der P…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@397:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 397,
+      "end": 421,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…nd des Lageberichtes nach § 102 der Gemeindeordnung für das Land Nordrhein-Westfalen, mit der Prüfung des Jahresabschlusses und des Lageberichte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@541:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 541,
+      "end": 565,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…s von Eigenbetrieben nach § 103 der Gemeindeordnung für das Land Nordrhein-Westfalen sowie mit der Prüfung des Gesamtabschlusses nach § 116 der …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@649:rule:jurisdiction-name",
+      "path": "body[2].children[1].text",
+      "start": 649,
+      "end": 673,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…es Gesamtabschlusses nach § 116 der Gemeindeordnung für das Land Nordrhein-Westfalen beauftragt werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[6].text@71:rule:jurisdiction-name",
+      "path": "body[2].children[6].text",
+      "start": 71,
+      "end": 95,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ungsaufgaben nach § 92 Absatz 4 der Gemeindeordnung für das Land Nordrhein-Westfalen oder nach § 102 Absatz 2, § 103 Absatz 1 der Gemeindeordnun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[6].text@165:rule:jurisdiction-name",
+      "path": "body[2].children[6].text",
+      "start": 165,
+      "end": 189,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… § 102 Absatz 2, § 103 Absatz 1 der Gemeindeordnung für das Land Nordrhein-Westfalen durch die Gemeindeprüfungsanstalt durchgeführt, dürfen die …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[6].text@398:rule:jurisdiction-name",
+      "path": "body[2].children[6].text",
+      "start": 398,
+      "end": 422,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…che Prüfung nach § 105 Absatz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen oder Beratungstätigkeiten nach § 105 Absatz 8 der Gemeindeo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[6].text@497:rule:jurisdiction-name",
+      "path": "body[2].children[6].text",
+      "start": 497,
+      "end": 521,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…tätigkeiten nach § 105 Absatz 8 der Gemeindeordnung für das Land Nordrhein-Westfalen wahrnehmen. Die Gemeindeprüfungsanstalt hat insofern ein ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@172:rule:jurisdiction-name",
+      "path": "body[3].children[2].text",
+      "start": 172,
+      "end": 196,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Absatz 1 genannten Gebiet sind im Ministerialblatt für das Land Nordrhein-Westfalen zu veröffentlichen. Diese Standards und Empfehlungen können…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@352:protected:gazette-nrw",
+      "path": "body[3].children[2].text",
+      "start": 352,
+      "end": 367,
+      "term": "GV. NRW. S. 516",
+      "context": "…et gemäß der Bekanntmachungsverordnung vom 26. August 1999 (GV. NRW. S. 516) in der jeweils geltenden Fassung mit der Maßgabe bekannt g…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[2].text@545:rule:jurisdiction-name",
+      "path": "body[3].children[2].text",
+      "start": 545,
+      "end": 569,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e Internetadresse nachrichtlich im Ministerialblatt für das Land Nordrhein-Westfalen hinzuweisen ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[4].text@134:rule:jurisdiction-name",
+      "path": "body[3].children[4].text",
+      "start": 134,
+      "end": 158,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…achprogramme nach § 94 Absatz 2 der Gemeindeordnung für das Land Nordrhein-Westfalen und für weitere Fachprogramme und Anwendungen durch, soweit…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[0].text@15:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[0].text",
+      "start": 15,
+      "end": 34,
+      "term": "Nordrhein-Westfalen",
+      "context": "des Städtetags Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@4:rule:jurisdiction-name-adjective-capital",
+      "path": "body[5].children[1].children[1].text",
+      "start": 4,
+      "end": 27,
+      "term": "Nordrhein-Westfälischen",
+      "context": "des Nordrhein-Westfälischen Städte- und Gemeindebundes und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective-capital",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective-capital übergeleitet („Nordrhein-Westfälischen“ → „Westdeutschen“).",
+      "transformRule": "jurisdiction-name-adjective-capital",
+      "replacement": "Westdeutschen"
+    },
+    {
+      "id": "body[5].children[1].children[2].text@18:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[2].text",
+      "start": 18,
+      "end": 37,
+      "term": "Nordrhein-Westfalen",
+      "context": "des Landkreistags Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[1].text@193:protected:gazette-nrw",
+      "path": "body[11].children[1].text",
+      "start": 193,
+      "end": 208,
+      "term": "GV. NRW. S. 712",
+      "context": "…Anwendung des Kommunalabgabengesetzes vom 21. Oktober 1969 (GV. NRW. S. 712) in der jeweils geltenden Fassung. § 5 Absatz 2 Satz 1 und …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[1].text@329:rule:jurisdiction-name",
+      "path": "body[11].children[1].text",
+      "start": 329,
+      "end": 353,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…bsatz 6 Satz 1 Nummer 1 des Kommunalabgabengesetzes für das Land Nordrhein-Westfalen findet insoweit keine Anwendung. Der Zeitraum für den Ausgl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@4:rule:jurisdiction-name",
+      "path": "body[12].children[1].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen gewährt der Gemeindeprüfungsanstalt eine jährliche Zuweisun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[2].text@103:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[2].text",
+      "start": 103,
+      "end": 129,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…en Ministerium anzuzeigen. Sie sind im Ministerialblatt des Landes Nordrhein-Westfalen zu veröffentlichen. Satzungen können auch durch Bereitstell…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[2].text@269:protected:gazette-nrw",
+      "path": "body[13].children[2].text",
+      "start": 269,
+      "end": 284,
+      "term": "GV. NRW. S. 516",
+      "context": "…prechend der Bekanntmachungsverordnung vom 26. August 1999 (GV. NRW. S. 516) in der jeweils geltenden Fassung mit der Maßgabe bekannt g…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].text@462:rule:jurisdiction-name",
+      "path": "body[13].children[2].text",
+      "start": 462,
+      "end": 486,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…e Internetadresse nachrichtlich im Ministerialblatt für das Land Nordrhein-Westfalen hinzuweisen ist. Sie treten, wenn kein anderer Zeitpunkt in…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].text@82:rule:jurisdiction-name-dative",
+      "path": "body[15].children[4].text",
+      "start": 82,
+      "end": 109,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…es über ein Neues Kommunales Finanzmanagement für Gemeinden im Land Nordrhein-Westfalen (Kommunales Finanzmanagementgesetz NRW - NKFG NRW) vom 16.1…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].text@145:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[4].text",
+      "start": 145,
+      "end": 148,
+      "term": "NRW",
+      "context": "…Land Nordrhein-Westfalen (Kommunales Finanzmanagementgesetz NRW - NKFG NRW) vom 16.11.2004 (GV. NRW. S. 644))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[4].text@156:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[4].text",
+      "start": 156,
+      "end": 159,
+      "term": "NRW",
+      "context": "…ein-Westfalen (Kommunales Finanzmanagementgesetz NRW - NKFG NRW) vom 16.11.2004 (GV. NRW. S. 644))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[4].text@177:protected:gazette-nrw",
+      "path": "body[15].children[4].text",
+      "start": 177,
+      "end": 192,
+      "term": "GV. NRW. S. 644",
+      "context": "…ales Finanzmanagementgesetz NRW - NKFG NRW) vom 16.11.2004 (GV. NRW. S. 644))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[5].text@217:rule:jurisdiction-name-dative",
+      "path": "body[15].children[5].text",
+      "start": 217,
+      "end": 244,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…ührung des Neuen Kommunalen Finanzmanagements für Gemeinden im Land Nordrhein-Westfalen entsprechende Anwendung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[8].children[1].text@134:rule:jurisdiction-name-dative",
+      "path": "body[15].children[8].children[1].text",
+      "start": 134,
+      "end": 161,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…unalen Finanzmanagements für Gemeinden und Gemeindeverbände im Land Nordrhein-Westfalen (1. NKF-Weiterentwicklungsgesetz - NKFWG) vom 18. September…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[8].children[1].text@228:protected:gazette-nrw",
+      "path": "body[15].children[8].children[1].text",
+      "start": 228,
+      "end": 243,
+      "term": "GV. NRW. S. 432",
+      "context": "…F-Weiterentwicklungsgesetz - NKFWG) vom 18. September 2012 (GV. NRW. S. 432))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 23
+    },
+    "source-citation": {
+      "protected": 6
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "rule": "jurisdiction-name-adjective-capital",
+      "from": "Nordrhein-Westfälischen",
+      "to": "Westdeutschen"
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[8].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[1].text",
+      "term": "Herne",
+      "context": "Die Gemeindeprüfungsanstalt hat ihren Sitz in Herne. Sie kann Zweigstellen durch Satzung errichten und deren Zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 179,
+    "residuals": [
+      {
+        "path": "body[2].children[1].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung durch. Sie kann m…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].text",
+        "term": "NRW",
+        "context": "…emäß der Bekanntmachungsverordnung vom 26. August 1999 (GV. NRW. S. 516) in der jeweils geltenden Fassung mit der Maßgabe b…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[1].text",
+        "term": "NRW",
+        "context": "…ndung des Kommunalabgabengesetzes vom 21. Oktober 1969 (GV. NRW. S. 712) in der jeweils geltenden Fassung. § 5 Absatz 2 Sat…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].text",
+        "term": "NRW",
+        "context": "…hend der Bekanntmachungsverordnung vom 26. August 1999 (GV. NRW. S. 516) in der jeweils geltenden Fassung mit der Maßgabe b…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[4].text",
+        "term": "NRW",
+        "context": "…inanzmanagementgesetz West - NKFG West) vom 16.11.2004 (GV. NRW. S. 644))",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[8].children[1].text",
+        "term": "NRW",
+        "context": "…iterentwicklungsgesetz - NKFWG) vom 18. September 2012 (GV. NRW. S. 432))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Gemeindeprüfungsanstalt vom 30. April 2002 (GV. NRW S.160)",
+    "sourceVersion": "Gesetz über die Gemeindeprüfungsanstalt vom 30. April 2002 (GV. NRW S.160)",
+    "simulation": "Gesetz über die Gemeindeprüfungsanstalt in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 21131,
+          "actual": 20967,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 117,
+          "actual": 117,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 20967,
+          "actual": 20879,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "15 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "15 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:16:14.315Z"
+}

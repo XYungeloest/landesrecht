@@ -1,0 +1,576 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27501",
+  "slug": "gesetz-zu-der-vereinbarung-zwischen-dem-land-westdeutschland-und-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@36:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 36,
+      "end": 64,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Gesetz zu der Vereinbarung zwischen dem Land Nordrhein-Westfalen und der Lippischen Landeskirche vom 26. November 1959",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@7:municipality",
+      "path": "body[1].children[0].text",
+      "start": 7,
+      "end": 14,
+      "term": "Detmold",
+      "context": "Die in Detmold am 26. November 1959 unterzeichnete Vereinbarung zwischen d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@73:rule:jurisdiction-name-dative",
+      "path": "body[1].children[0].text",
+      "start": 73,
+      "end": 101,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…d am 26. November 1959 unterzeichnete Vereinbarung zwischen dem Land Nordrhein-Westfalen und der Lippischen Landeskirche wird bestätigt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].text@109:rule:jurisdiction-name",
+      "path": "body[2].children[2].text",
+      "start": 109,
+      "end": 133,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…in Kraft tritt, ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekanntzumachen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[3].title@22:rule:jurisdiction-name-dative",
+      "path": "body[2].children[3].title",
+      "start": 22,
+      "end": 50,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Vereinbarung zwischen dem Land Nordrhein-Westfalen, vertreten durch den Kultusminister Werner Schütz und der L…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[3].title@72:ministry-compound",
+      "path": "body[2].children[3].title",
+      "start": 72,
+      "end": 86,
+      "term": "Kultusminister",
+      "context": "… zwischen dem Land Nordrhein-Westfalen, vertreten durch den Kultusminister Werner Schütz und der Lippischen Landeskirche, vertreten du…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[2].children[4].text@41:rule:jurisdiction-name",
+      "path": "body[2].children[4].text",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Die Lippische Landeskirche hat gegen das Land Nordrhein-Westfalen als Rechtsnachfolger des früheren Landes Lippe aus Rechtser…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[4].text@107:geography-region",
+      "path": "body[2].children[4].text",
+      "start": 107,
+      "end": 112,
+      "term": "Lippe",
+      "context": "…ordrhein-Westfalen als Rechtsnachfolger des früheren Landes Lippe aus Rechtserwerb kraft unvordenklicher Verjährung einen Ans…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[4].text@107:geography-river",
+      "path": "body[2].children[4].text",
+      "start": 107,
+      "end": 112,
+      "term": "Lippe",
+      "context": "…ordrhein-Westfalen als Rechtsnachfolger des früheren Landes Lippe aus Rechtserwerb kraft unvordenklicher Verjährung einen Ans…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[4].text@363:rule:jurisdiction-name",
+      "path": "body[2].children[4].text",
+      "start": 363,
+      "end": 387,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…nsträume gegen teilweise Erstattung der Heizungskosten. Das Land Nordrhein-Westfalen und die Lippische Landeskirche sind übereingekommen, daß di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[3].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen zahlt der Lippischen Landeskirche zur Ablösung ihrer Rechte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[4].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen wird die Verpflichtungen aus den abgelösten Rechten im bish…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@61:municipality",
+      "path": "body[4].children[1].text",
+      "start": 61,
+      "end": 68,
+      "term": "Detmold",
+      "context": "…ie Lippische Landeskirche wird dem Regierungspräsidenten in Detmold die Freigabe der bisher benutzten Diensträume der landeskir…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@86:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[1].text",
+      "start": 86,
+      "end": 112,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Kraft, an dem der Lippischen Landeskirche die Erklärung des Landes Nordrhein-Westfalen zugegangen ist, daß die Vereinbarung durch Landesgesetz bes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[2].text@0:municipality",
+      "path": "body[6].children[2].text",
+      "start": 0,
+      "end": 7,
+      "term": "Detmold",
+      "context": "Detmold, den 26. November 1959",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[4].text@0:ministry-compound",
+      "path": "body[6].children[4].text",
+      "start": 0,
+      "end": 14,
+      "term": "Kultusminister",
+      "context": "Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[6].children[4].text@19:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[4].text",
+      "start": 19,
+      "end": 45,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 10
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "geography": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[3].title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[0].text",
+      "term": "Detmold",
+      "context": "Die in Detmold am 26. November 1959 unterzeichnete Vereinbarung zwischen d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].title",
+      "term": "Kultusminister",
+      "context": "… zwischen dem Land Nordrhein-Westfalen, vertreten durch den Kultusminister Werner Schütz und der Lippischen Landeskirche, vertreten du…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[4].text",
+      "term": "Lippe",
+      "context": "…ordrhein-Westfalen als Rechtsnachfolger des früheren Landes Lippe aus Rechtserwerb kraft unvordenklicher Verjährung einen Ans…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[4].text",
+      "term": "Lippe",
+      "context": "…ordrhein-Westfalen als Rechtsnachfolger des früheren Landes Lippe aus Rechtserwerb kraft unvordenklicher Verjährung einen Ans…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Detmold",
+      "context": "…ie Lippische Landeskirche wird dem Regierungspräsidenten in Detmold die Freigabe der bisher benutzten Diensträume der landeskir…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Detmold",
+      "context": "Detmold, den 26. November 1959",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].text",
+      "term": "Kultusminister",
+      "context": "Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 38,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zu der Vereinbarung zwischen dem Land Nordrhein-Westfalen und der Lippischen Landeskirche vom 26. November 1959 vom 26. März 1960",
+    "sourceVersion": "Gesetz zu der Vereinbarung zwischen dem Land Nordrhein-Westfalen und der Lippischen Landeskirche vom 26. November 1959 vom 26. März 1960",
+    "simulation": "Gesetz zu der Vereinbarung zwischen dem Land Westdeutschland und der Lippischen Landeskirche vom 26. November 1959 in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2820,
+          "actual": 2863,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 2863,
+          "actual": 2827,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "6 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "6 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:21:08.857Z"
+}

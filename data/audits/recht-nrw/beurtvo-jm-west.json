@@ -1,0 +1,492 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33657",
+  "slug": "beurtvo-jm-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@107:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 107,
+      "end": 122,
+      "term": "GV. NRW. S. 812",
+      "context": "…desrichter- und Staatsanwältegesetzes vom 8. Dezember 2015 (GV. NRW. S. 812), von denen Absatz 5 durch Artikel 1 Nummer 2 Buchstabe b d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@214:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 214,
+      "end": 229,
+      "term": "GV. NRW. S. 504",
+      "context": "…kel 1 Nummer 2 Buchstabe b des Gesetzes vom 13. April 2022 (GV. NRW. S. 504) neu gefasst und Absatz 6 Satz 2 durch Artikel 1 Nummer 2 B…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@333:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 333,
+      "end": 348,
+      "term": "GV. NRW. S. 504",
+      "context": "…kel 1 Nummer 2 Buchstabe b des Gesetzes vom 13. April 2022 (GV. NRW. S. 504) eingefügt worden ist, verordnet das Ministerium der Justiz…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@386:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 386,
+      "end": 408,
+      "term": "Ministerium der Justiz",
+      "context": "… 2022 (GV. NRW. S. 504) eingefügt worden ist, verordnet das Ministerium der Justiz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@278:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[0].text",
+      "start": 278,
+      "end": 304,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…sbarkeit sowie von Staatsanwältinnen und Staatsanwälten des Landes Nordrhein-Westfalen. Einzelheiten zu dieser Verordnung werden in einer Verwaltu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@368:protected:gazette-nrw",
+      "path": "body[3].children[2].text",
+      "start": 368,
+      "end": 383,
+      "term": "GV. NRW. S. 652",
+      "context": "…isziplinarzuständigkeitsverordnung JM vom 4. Dezember 2007 (GV. NRW. S. 652) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].children[2].text@195:protected:gazette-nrw",
+      "path": "body[4].children[2].children[2].text",
+      "start": 195,
+      "end": 210,
+      "term": "GV. NRW. S. 812",
+      "context": "…desrichter- und Staatsanwältegesetzes vom 8. Dezember 2015 (GV. NRW. S. 812) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[3].text@302:protected:gazette-nrw",
+      "path": "body[4].children[3].text",
+      "start": 302,
+      "end": 317,
+      "term": "GV. NRW. S. 461",
+      "context": "… entsprechend § 9 der Laufbahnverordnung vom 21. Juni 2016 (GV. NRW. S. 461) in der jeweils geltenden Fassung zu beachten.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[1].text@318:rule:jurisdiction-name-bare",
+      "path": "body[11].children[1].text",
+      "start": 318,
+      "end": 337,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rgehenden Verhinderung von der gemäß § 8 des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30) in der jeweils geltend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[1].text@359:protected:gazette-nrw",
+      "path": "body[11].children[1].text",
+      "start": 359,
+      "end": 373,
+      "term": "GV. NRW. S. 30",
+      "context": "…des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30) in der jeweils geltenden Fassung nächsthöheren dienstvorge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[0].text@331:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[0].text",
+      "start": 331,
+      "end": 334,
+      "term": "NRW",
+      "context": "…Staatsanwältinnen und Staatsanwälte“ vom 2. Mai 2005 (JMBl. NRW S. 121), die zuletzt durch Allgemeine Verfügung vom 4. Juli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[15].children[0].text@407:rule:jurisdiction-abbreviation",
+      "path": "body[15].children[0].text",
+      "start": 407,
+      "end": 410,
+      "term": "NRW",
+      "context": "… zuletzt durch Allgemeine Verfügung vom 4. Juli 2016 (JMBl. NRW S. 191) geändert worden ist, zu erstellen. Dasselbe gilt fü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[1].text@4:ministry-portfolio",
+      "path": "body[16].children[1].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[16].children[1].text@28:rule:jurisdiction-name-genitive",
+      "path": "body[16].children[1].text",
+      "start": 28,
+      "end": 54,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister der Justiz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium der Justiz",
+      "context": "… 2022 (GV. NRW. S. 504) eingefügt worden ist, verordnet das Ministerium der Justiz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].text",
+      "term": "Minister der Justiz",
+      "context": "Der Minister der Justiz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 159,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ichter- und Staatsanwältegesetzes vom 8. Dezember 2015 (GV. NRW. S. 812), von denen Absatz 5 durch Artikel 1 Nummer 2 Buchs…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…1 Nummer 2 Buchstabe b des Gesetzes vom 13. April 2022 (GV. NRW. S. 504) neu gefasst und Absatz 6 Satz 2 durch Artikel 1 Nu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…1 Nummer 2 Buchstabe b des Gesetzes vom 13. April 2022 (GV. NRW. S. 504) eingefügt worden ist, verordnet das Ministerium de…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].text",
+        "term": "NRW",
+        "context": "…plinarzuständigkeitsverordnung JM vom 4. Dezember 2007 (GV. NRW. S. 652) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…ichter- und Staatsanwältegesetzes vom 8. Dezember 2015 (GV. NRW. S. 812) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[3].text",
+        "term": "NRW",
+        "context": "…sprechend § 9 der Laufbahnverordnung vom 21. Juni 2016 (GV. NRW. S. 461) in der jeweils geltenden Fassung zu beachten.",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[1].text",
+        "term": "NRW",
+        "context": "…des Justizgesetzes Westdeutschland vom 26. Januar 2010 (GV. NRW. S. 30) in der jeweils geltenden Fassung nächsthöheren dien…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium der Justiz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium der Justiz",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium der Justiz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium der Justiz",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "justizministerium"
+  },
+  "citations": {
+    "source": "Verordnung über die Erstellung dienstlicher Beurteilungen der Richterinnen und Richter sowie der Staatsanwältinnen und Staatsanwälte im Geschäftsbereich des Ministeriums der Justiz vom 14. Dezember 2022",
+    "sourceVersion": "Verordnung über die Erstellung dienstlicher Beurteilungen der Richterinnen und Richter sowie der Staatsanwältinnen und Staatsanwälte im Geschäftsbereich des Ministeriums der Justiz vom 14. Dezember 2022",
+    "simulation": "Verordnung über die Erstellung dienstlicher Beurteilungen der Richterinnen und Richter sowie der Staatsanwältinnen und Staatsanwälte im Geschäftsbereich des Ministeriums der Justiz in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16000,
+          "actual": 16430,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 89,
+          "actual": 89,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 16430,
+          "actual": 16420,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:21:35.640Z"
+}

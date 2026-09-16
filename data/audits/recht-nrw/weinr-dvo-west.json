@@ -1,0 +1,561 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30976",
+  "slug": "weinr-dvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.abbr@10:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 10,
+      "end": 13,
+      "term": "NRW",
+      "context": "WeinR-DVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].text@141:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 141,
+      "end": 156,
+      "term": "GV. NRW. S. 259",
+      "context": "…ttermittel- und Bedarfsgegenständerechts vom 19. März 1985 (GV. NRW. S. 259), der durch Artikel 6 des Gesetzes vom 11. Dezember 2007 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@215:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 215,
+      "end": 230,
+      "term": "GV. NRW. S. 662",
+      "context": "…9), der durch Artikel 6 des Gesetzes vom 11. Dezember 2007 (GV. NRW. S. 662) neu gefasst worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@14:ministry-portfolio",
+      "path": "body[6].text",
+      "start": 14,
+      "end": 95,
+      "term": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[34].children[1].text@8:rule:jurisdiction-name-dative",
+      "path": "body[34].children[1].text",
+      "start": 8,
+      "end": 35,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Für den im Land Nordrhein-Westfalen gelegenen Teil des bestimmten Anbaugebietes Mittelrhein wir…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[36].children[1].text@7:rule:jurisdiction-name-bare",
+      "path": "body[36].children[1].text",
+      "start": 7,
+      "end": 26,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die in Nordrhein-Westfalen eingerichtete Weinbergrolle wird von der Direktorin/dem Dir…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[38].children[3].children[0].text@113:rule:jurisdiction-name",
+      "path": "body[38].children[3].children[0].text",
+      "start": 113,
+      "end": 137,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…1 Nummer 3 oder 4 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[38].children[3].children[0].text@161:protected:gazette-nrw",
+      "path": "body[38].children[3].children[0].text",
+      "start": 161,
+      "end": 176,
+      "term": "GV. NRW. S. 602",
+      "context": "…zes für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung erfüllt sind oder",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[45].children[3].text@201:authority-state-office",
+      "path": "body[45].children[3].text",
+      "start": 201,
+      "end": 220,
+      "term": "Landesamt für Natur",
+      "context": "…. Diese/dieser übersendet Kopien dieser Mitteilungen an das Landesamt für Natur, Umwelt und Verbraucherschutz (Landesamt).",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[48].children[4].text@80:authority-state-enterprise",
+      "path": "body[48].children[4].text",
+      "start": 80,
+      "end": 105,
+      "term": "Landesbetrieb Information",
+      "context": "…ragte übersendet jeweils eine Kopie dem Landesamt sowie dem Landesbetrieb Information und Technik Nordrhein-Westfalen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[48].children[4].text@118:rule:jurisdiction-name-bare",
+      "path": "body[48].children[4].text",
+      "start": 118,
+      "end": 137,
+      "term": "Nordrhein-Westfalen",
+      "context": "…m Landesamt sowie dem Landesbetrieb Information und Technik Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[55].children[0].text@148:protected:gazette-nrw",
+      "path": "body[55].children[0].text",
+      "start": 148,
+      "end": 162,
+      "term": "GV. NRW S. 264",
+      "context": "…dnung zur Durchführung des Weingesetzes vom 8. August 1997 (GV. NRW S. 264) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[55].children[1].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[55].children[1].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "authority": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[34].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[36].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[38].children[3].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[48].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[55].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[6].text",
+      "term": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[45].children[3].text",
+      "term": "Landesamt für Natur",
+      "context": "…. Diese/dieser übersendet Kopien dieser Mitteilungen an das Landesamt für Natur, Umwelt und Verbraucherschutz (Landesamt).",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[48].children[4].text",
+      "term": "Landesbetrieb Information",
+      "context": "…ragte übersendet jeweils eine Kopie dem Landesamt sowie dem Landesbetrieb Information und Technik Nordrhein-Westfalen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 285,
+    "residuals": [
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…mittel- und Bedarfsgegenständerechts vom 19. März 1985 (GV. NRW. S. 259), der durch Artikel 6 des Gesetzes vom 11. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…der durch Artikel 6 des Gesetzes vom 11. Dezember 2007 (GV. NRW. S. 662) neu gefasst worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[38].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…zes für das Land Westdeutschland vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung erfüllt sind oder",
+        "status": "protected"
+      },
+      {
+        "path": "body[55].children[0].text",
+        "term": "NRW",
+        "context": "…g zur Durchführung des Weingesetzes vom 8. August 1997 (GV. NRW S. 264) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+        "path": "body[6].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "path": "body[6].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zur Durchführung des Weinrechts vom 12. Dezember 2013",
+    "sourceVersion": "Verordnung zur Durchführung des Weinrechts vom 12. Dezember 2013",
+    "simulation": "Verordnung zur Durchführung des Weinrechts in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 21724,
+          "actual": 22487,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 174,
+          "actual": 174,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 22,
+          "actual": 22,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 22487,
+          "actual": 22467,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "22 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "22 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/25784-22801-sgv_2125_20131212_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/25784-22802-sgv_2125_20131212_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/25784-22803-sgv_2125_20131212_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/25784-22804-sgv_2125_20131212_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:43:19.186Z"
+}

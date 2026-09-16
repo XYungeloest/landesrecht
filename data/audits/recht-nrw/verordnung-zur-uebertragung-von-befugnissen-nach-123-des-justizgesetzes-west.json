@@ -1,0 +1,620 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30660",
+  "slug": "verordnung-zur-uebertragung-von-befugnissen-nach-123-des-justizgesetzes-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@73:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 73,
+      "end": 92,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Übertragung von Befugnissen nach § 123 des Justizgesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@73:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 73,
+      "end": 92,
+      "term": "Nordrhein-Westfalen",
+      "context": "…r Übertragung von Befugnissen nach § 123 des Justizgesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@55:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 55,
+      "end": 74,
+      "term": "Nordrhein-Westfalen",
+      "context": "Auf Grund des § 123 Absatz 4 Satz 2 des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artike…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@96:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 96,
+      "end": 110,
+      "term": "GV. NRW. S. 30",
+      "context": "…des Justizgesetzes Nordrhein-Westfalen vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artikel 1 des Gesetzes vom 5. April 2011 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@170:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 170,
+      "end": 185,
+      "term": "GV. NRW. S. 199",
+      "context": "…), geändert durch Artikel 1 des Gesetzes vom 5. April 2011 (GV. NRW. S. 199), wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@194:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 194,
+      "end": 213,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nstigen Ansprüchen der in § 123 Absatz 1 des Justizgesetzes Nordrhein-Westfalen genannten Art, die bei Gerichten oder Staatsanwaltschaften …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[5].text@206:municipality",
+      "path": "body[3].children[5].text",
+      "start": 206,
+      "end": 216,
+      "term": "Düsseldorf",
+      "context": "…nbeiträge) ist die Leiterin oder der Leiter der Landeskasse Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[1].text@90:rule:jurisdiction-name",
+      "path": "body[4].children[2].children[1].text",
+      "start": 90,
+      "end": 114,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ntin oder der Präsident des Oberverwaltungsgerichts für das Land Nordrhein-Westfalen oder die Präsidentin oder der Präsident des Landessozialger…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[2].children[1].text@180:rule:jurisdiction-name-bare",
+      "path": "body[4].children[2].children[1].text",
+      "start": 180,
+      "end": 199,
+      "term": "Nordrhein-Westfalen",
+      "context": "…die Präsidentin oder der Präsident des Landessozialgerichts Nordrhein-Westfalen und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@267:rule:jurisdiction-name",
+      "path": "body[5].children[1].text",
+      "start": 267,
+      "end": 291,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ntin oder der Präsident des Oberverwaltungsgerichts für das Land Nordrhein-Westfalen oder die Präsidentin oder der Präsident des Landessozialger…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@357:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 357,
+      "end": 376,
+      "term": "Nordrhein-Westfalen",
+      "context": "…die Präsidentin oder der Präsident des Landessozialgerichts Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].children[4].text@179:geography-region",
+      "path": "body[6].children[4].children[4].text",
+      "start": 179,
+      "end": 188,
+      "term": "Rheinland",
+      "context": "…ie Direktorinnen oder Direktoren der Landwirtschaftskammern Rheinland und Westfalen-Lippe als Landesbeauftragte und",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[4].text@193:geography-region",
+      "path": "body[6].children[4].children[4].text",
+      "start": 193,
+      "end": 208,
+      "term": "Westfalen-Lippe",
+      "context": "…en oder Direktoren der Landwirtschaftskammern Rheinland und Westfalen-Lippe als Landesbeauftragte und",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[4].text@203:geography-river",
+      "path": "body[6].children[4].children[4].text",
+      "start": 203,
+      "end": 208,
+      "term": "Lippe",
+      "context": "…rektoren der Landwirtschaftskammern Rheinland und Westfalen-Lippe als Landesbeauftragte und",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[5].text@45:authority-district-government",
+      "path": "body[6].children[4].children[5].text",
+      "start": 45,
+      "end": 61,
+      "term": "Bezirksregierung",
+      "context": "beim freiwilligen Landtausch: die zuständige Bezirksregierung (ehemals: Amt für Agrarordnung).",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[9].text@365:protected:external-nrw-dot-names",
+      "path": "body[6].children[9].text",
+      "start": 365,
+      "end": 373,
+      "term": "NRW.BANK",
+      "context": "…e wird durch Vorlage einer entsprechenden Bescheinigung der NRW.BANK geführt.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].text@218:protected:gazette-nrw",
+      "path": "body[7].children[1].text",
+      "start": 218,
+      "end": 236,
+      "term": "GV. NRW. 1983 S. 2",
+      "context": "…des Gerichtsgebührenbefreiungsgesetzes vom 6. Dezember 1982(GV. NRW. 1983 S. 2) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[2].children[0].text@4:ministry-compound",
+      "path": "body[7].children[2].children[0].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[0].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[7].children[2].children[0].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "geography": {
+      "manual-review": 3
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "external-name": {
+      "protected": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[5].text",
+      "term": "Düsseldorf",
+      "context": "…nbeiträge) ist die Leiterin oder der Leiter der Landeskasse Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[4].text",
+      "term": "Rheinland",
+      "context": "…ie Direktorinnen oder Direktoren der Landwirtschaftskammern Rheinland und Westfalen-Lippe als Landesbeauftragte und",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[4].text",
+      "term": "Westfalen-Lippe",
+      "context": "…en oder Direktoren der Landwirtschaftskammern Rheinland und Westfalen-Lippe als Landesbeauftragte und",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[4].text",
+      "term": "Lippe",
+      "context": "…rektoren der Landwirtschaftskammern Rheinland und Westfalen-Lippe als Landesbeauftragte und",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "beim freiwilligen Landtausch: die zuständige Bezirksregierung (ehemals: Amt für Agrarordnung).",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[0].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 96,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…des Justizgesetzes Westdeutschland vom 26. Januar 2010 (GV. NRW. S. 30), geändert durch Artikel 1 des Gesetzes vom 5. April…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 1 des Gesetzes vom 5. April 2011 (GV. NRW. S. 199), wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[9].text",
+        "term": "NRW",
+        "context": "…e wird durch Vorlage einer entsprechenden Bescheinigung der NRW.BANK geführt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[1].text",
+        "term": "NRW",
+        "context": "…Gerichtsgebührenbefreiungsgesetzes vom 6. Dezember 1982(GV. NRW. 1983 S. 2) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Übertragung von Befugnissen nach § 123 des Justizgesetzes Nordrhein-Westfalen vom 24. August 2012",
+    "sourceVersion": "Verordnung zur Übertragung von Befugnissen nach § 123 des Justizgesetzes Nordrhein-Westfalen vom 24. August 2012",
+    "simulation": "Verordnung zur Übertragung von Befugnissen nach § 123 des Justizgesetzes Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11464,
+          "actual": 11633,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 57,
+          "actual": 57,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11633,
+          "actual": 11601,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:50:01.634Z"
+}

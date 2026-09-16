@@ -1,0 +1,460 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27668",
+  "slug": "5-rundfunkaenderungsgesetz-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@74:municipality",
+      "path": "meta.title",
+      "start": 74,
+      "end": 78,
+      "term": "Köln",
+      "context": "… zur Änderung des Gesetzes über den,,Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "meta.title@113:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 113,
+      "end": 137,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…stdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@93:protected:gazette-nrw",
+      "path": "body[5].children[0].text",
+      "start": 93,
+      "end": 108,
+      "term": "GV. NRW. S. 408",
+      "context": "…z 1 Satz 1 des Rundfunkstaatsvertrages vom 31. August 1991 (GV. NRW. S. 408), der zuletzt durch Artikel 1 des Neunzehnten Rundfunkänder…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@207:protected:gazette-nrw",
+      "path": "body[5].children[0].text",
+      "start": 207,
+      "end": 222,
+      "term": "GV. NRW. S. 452",
+      "context": "…zehnten Rundfunkänderungsstaatsvertrages vom 14. Juni 2016 (GV. NRW. S. 452) geändert worden ist, ist die Ministerpräsidentin oder der …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[3].text@44:authority-state-office",
+      "path": "body[7].children[3].text",
+      "start": 44,
+      "end": 79,
+      "term": "Landesanstalt für Medien zugeordnet",
+      "context": "Folgende Übertragungskapazitäten werden der Landesanstalt für Medien zugeordnet:",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[7].children[4].children[5].children[0].text@0:municipality",
+      "path": "body[7].children[4].children[5].children[0].text",
+      "start": 0,
+      "end": 4,
+      "term": "Köln",
+      "context": "Köln Colonius",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[4].children[7].children[0].text@0:municipality",
+      "path": "body[7].children[4].children[7].children[0].text",
+      "start": 0,
+      "end": 5,
+      "term": "Soest",
+      "context": "Soest",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[6].text@106:municipality",
+      "path": "body[7].children[6].text",
+      "start": 106,
+      "end": 110,
+      "term": "Köln",
+      "context": "…ogrammlichen Nutzung für Hörfunk dem Westdeutschen Rundfunk Köln zugeordnet:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[7].children[2].children[0].text@0:municipality",
+      "path": "body[7].children[7].children[2].children[0].text",
+      "start": 0,
+      "end": 6,
+      "term": "Aachen",
+      "context": "Aachen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@6:protected:gazette-nw",
+      "path": "body[8].children[1].text",
+      "start": 6,
+      "end": 13,
+      "term": "GV. NW.",
+      "context": "Fn 7: GV. NW. ausgegeben am 9. Oktober 1992.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[9].text@4:constitutional-organ-state",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[9].text@20:rule:jurisdiction-name-bare",
+      "path": "body[9].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 5
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Köln",
+      "context": "… zur Änderung des Gesetzes über den,,Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[3].text",
+      "term": "Landesanstalt für Medien zugeordnet",
+      "context": "Folgende Übertragungskapazitäten werden der Landesanstalt für Medien zugeordnet:",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].children[5].children[0].text",
+      "term": "Köln",
+      "context": "Köln Colonius",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].children[7].children[0].text",
+      "term": "Soest",
+      "context": "Soest",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[6].text",
+      "term": "Köln",
+      "context": "…ogrammlichen Nutzung für Hörfunk dem Westdeutschen Rundfunk Köln zugeordnet:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[7].children[2].children[0].text",
+      "term": "Aachen",
+      "context": "Aachen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 83,
+    "residuals": [
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "…Satz 1 des Rundfunkstaatsvertrages vom 31. August 1991 (GV. NRW. S. 408), der zuletzt durch Artikel 1 des Neunzehnten Rundf…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "…ten Rundfunkänderungsstaatsvertrages vom 14. Juni 2016 (GV. NRW. S. 452) geändert worden ist, ist die Ministerpräsidentin o…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Fünftes Gesetz zur Änderung des Gesetzes über den,,Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen vom 22. September 1992",
+    "sourceVersion": "Fünftes Gesetz zur Änderung des Gesetzes über den,,Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Nordrhein-Westfalen vom 22. September 1992",
+    "simulation": "Fünftes Gesetz zur Änderung des Gesetzes über den,,Westdeutschen Rundfunk Köln\" und des Rundfunkgesetzes für das Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1676,
+          "actual": 1803,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 101,
+          "actual": 101,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1803,
+          "actual": 1799,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "8 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "8 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:11:27.626Z"
+}

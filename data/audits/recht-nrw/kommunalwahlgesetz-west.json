@@ -1,0 +1,2981 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27904",
+  "slug": "kommunalwahlgesetz-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@109:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 109,
+      "end": 123,
+      "term": "GV. NW. S. 384",
+      "context": "…zes zur Änderung des Kommunalwahlgesetzes vom 12. Mai 1998 (GV. NW. S. 384) wird nachstehend der Wortlaut des Gesetzes über die Kommun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@201:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 201,
+      "end": 220,
+      "term": "Nordrhein-Westfalen",
+      "context": "… der Wortlaut des Gesetzes über die Kommunalwahlen im Lande Nordrhein-Westfalen (Kommunalwahlgesetz) in der seit dem 5. Juni 1998 geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].text@77:protected:gazette-nw",
+      "path": "body[3].text",
+      "start": 77,
+      "end": 91,
+      "term": "GV. NW. S. 521",
+      "context": "…ekanntmachung des Kommunalwahlgesetzes vom 15. August 1993 (GV. NW. S. 521),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@112:protected:gazette-nw",
+      "path": "body[4].text",
+      "start": 112,
+      "end": 126,
+      "term": "GV. NW. S. 992",
+      "context": "…ur Änderung des Kommunalwahlgesetzes vom 14. Dezember 1993 (GV. NW. S. 992),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@117:protected:gazette-nw",
+      "path": "body[5].text",
+      "start": 117,
+      "end": 131,
+      "term": "GV. NW. S. 270",
+      "context": "…etzes zur Änderung der Kommunalverfassung vom 17. Mai 1994 (GV. NW. S. 270),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@149:protected:gazette-nw",
+      "path": "body[6].text",
+      "start": 149,
+      "end": 164,
+      "term": "GV. NW. S. 1198",
+      "context": "…alwahlrechts für Unionsbürger/-innen vom 12. Dezember 1995 (GV. NW. S. 1198),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[9].text@4:ministry-portfolio",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 35,
+      "term": "Minister für Inneres und Justiz",
+      "context": "Der Minister für Inneres und Justiz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].text@40:rule:jurisdiction-name-genitive",
+      "path": "body[9].text",
+      "start": 40,
+      "end": 66,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Inneres und Justiz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].title@40:rule:jurisdiction-name-bare",
+      "path": "body[10].title",
+      "start": 40,
+      "end": 59,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz über die Kommunalwahlen im Lande Nordrhein-Westfalen (Kommunalwahlgesetz) in der Fassung der Bekanntmachung vom …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[1].children[5].text@46:geography-region",
+      "path": "body[13].children[1].children[5].text",
+      "start": 46,
+      "end": 50,
+      "term": "Ruhr",
+      "context": "der Verbandsversammlung des Regionalverbandes Ruhr nach Maßgabe der §§ 46 f bis 46 k.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[1].children[5].text@46:geography-river",
+      "path": "body[13].children[1].children[5].text",
+      "start": 46,
+      "end": 50,
+      "term": "Ruhr",
+      "context": "der Verbandsversammlung des Regionalverbandes Ruhr nach Maßgabe der §§ 46 f bis 46 k.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[2].text@119:geography-region",
+      "path": "body[13].children[2].text",
+      "start": 119,
+      "end": 123,
+      "term": "Ruhr",
+      "context": "… bildet das Wahlgebiet. Das Wahlgebiet des Regionalverbands Ruhr erstreckt sich auf das Gebiet der dem Verband gemäß § 1 des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[2].text@119:geography-river",
+      "path": "body[13].children[2].text",
+      "start": 119,
+      "end": 123,
+      "term": "Ruhr",
+      "context": "… bildet das Wahlgebiet. Das Wahlgebiet des Regionalverbands Ruhr erstreckt sich auf das Gebiet der dem Verband gemäß § 1 des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[2].text@202:regional-body-association",
+      "path": "body[13].children[2].text",
+      "start": 202,
+      "end": 222,
+      "term": "Regionalverband Ruhr",
+      "context": "… das Gebiet der dem Verband gemäß § 1 des Gesetzes über den Regionalverband Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[13].children[2].text@218:geography-region",
+      "path": "body[13].children[2].text",
+      "start": 218,
+      "end": 222,
+      "term": "Ruhr",
+      "context": "…dem Verband gemäß § 1 des Gesetzes über den Regionalverband Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[2].text@218:geography-river",
+      "path": "body[13].children[2].text",
+      "start": 218,
+      "end": 222,
+      "term": "Ruhr",
+      "context": "…dem Verband gemäß § 1 des Gesetzes über den Regionalverband Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[2].text@278:protected:gazette-nrw",
+      "path": "body[13].children[2].text",
+      "start": 278,
+      "end": 292,
+      "term": "GV. NRW. S. 96",
+      "context": "…Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. NRW. S. 96) in der jeweils geltenden Fassung angehörenden Mitgliedskör…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[64].children[2].children[0].text@55:geography-region",
+      "path": "body[64].children[2].children[0].text",
+      "start": 55,
+      "end": 59,
+      "term": "Ruhr",
+      "context": "VI.c Wahl der Verbandsversammlung des Regionalverbands Ruhr",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@91:geography-region",
+      "path": "body[65].children[1].text",
+      "start": 91,
+      "end": 95,
+      "term": "Ruhr",
+      "context": "…ten Mitglieder der Verbandsversammlung des Regionalverbands Ruhr gemäß § 10 Absatz 1 und 2 des Gesetzes über den Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@91:geography-river",
+      "path": "body[65].children[1].text",
+      "start": 91,
+      "end": 95,
+      "term": "Ruhr",
+      "context": "…ten Mitglieder der Verbandsversammlung des Regionalverbands Ruhr gemäß § 10 Absatz 1 und 2 des Gesetzes über den Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@144:regional-body-association",
+      "path": "body[65].children[1].text",
+      "start": 144,
+      "end": 164,
+      "term": "Regionalverband Ruhr",
+      "context": "…rbands Ruhr gemäß § 10 Absatz 1 und 2 des Gesetzes über den Regionalverband Ruhr finden die Vorschriften dieses Gesetzes entsprechende Anwen…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@160:geography-region",
+      "path": "body[65].children[1].text",
+      "start": 160,
+      "end": 164,
+      "term": "Ruhr",
+      "context": "…ß § 10 Absatz 1 und 2 des Gesetzes über den Regionalverband Ruhr finden die Vorschriften dieses Gesetzes entsprechende Anwen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@160:geography-river",
+      "path": "body[65].children[1].text",
+      "start": 160,
+      "end": 164,
+      "term": "Ruhr",
+      "context": "…ß § 10 Absatz 1 und 2 des Gesetzes über den Regionalverband Ruhr finden die Vorschriften dieses Gesetzes entsprechende Anwen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@300:regional-body-association",
+      "path": "body[65].children[1].text",
+      "start": 300,
+      "end": 320,
+      "term": "Regionalverband Ruhr",
+      "context": "…h nicht aus den §§ 46g bis 46k oder aus dem Gesetz über den Regionalverband Ruhr etwas anderes ergibt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@316:geography-region",
+      "path": "body[65].children[1].text",
+      "start": 316,
+      "end": 320,
+      "term": "Ruhr",
+      "context": "…§§ 46g bis 46k oder aus dem Gesetz über den Regionalverband Ruhr etwas anderes ergibt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[65].children[1].text@316:geography-river",
+      "path": "body[65].children[1].text",
+      "start": 316,
+      "end": 320,
+      "term": "Ruhr",
+      "context": "…§§ 46g bis 46k oder aus dem Gesetz über den Regionalverband Ruhr etwas anderes ergibt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[1].text@83:geography-region",
+      "path": "body[66].children[1].text",
+      "start": 83,
+      "end": 87,
+      "term": "Ruhr",
+      "context": "… der Verbandsversammlung im Wahlgebiet des Regionalverbands Ruhr ist der Regionaldirektor, stellvertretender Wahlleiter ist …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[1].text@83:geography-river",
+      "path": "body[66].children[1].text",
+      "start": 83,
+      "end": 87,
+      "term": "Ruhr",
+      "context": "… der Verbandsversammlung im Wahlgebiet des Regionalverbands Ruhr ist der Regionaldirektor, stellvertretender Wahlleiter ist …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[1].text@318:geography-region",
+      "path": "body[66].children[1].text",
+      "start": 318,
+      "end": 322,
+      "term": "Ruhr",
+      "context": "…ters oder eines Landrats im Wahlgebiet des Regionalverbands Ruhr, kann er ab seiner Aufstellung nicht Wahlleiter oder stellv…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[1].text@318:geography-river",
+      "path": "body[66].children[1].text",
+      "start": 318,
+      "end": 322,
+      "term": "Ruhr",
+      "context": "…ters oder eines Landrats im Wahlgebiet des Regionalverbands Ruhr, kann er ab seiner Aufstellung nicht Wahlleiter oder stellv…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[1].text@463:geography-region",
+      "path": "body[66].children[1].text",
+      "start": 463,
+      "end": 467,
+      "term": "Ruhr",
+      "context": "…r für die Wahl der Verbandsversammlung des Regionalverbands Ruhr sein. An seine Stelle tritt der jeweilige Vertreter im Amt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[1].text@463:geography-river",
+      "path": "body[66].children[1].text",
+      "start": 463,
+      "end": 467,
+      "term": "Ruhr",
+      "context": "…r für die Wahl der Verbandsversammlung des Regionalverbands Ruhr sein. An seine Stelle tritt der jeweilige Vertreter im Amt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[2].text@76:geography-region",
+      "path": "body[66].children[2].text",
+      "start": 76,
+      "end": 80,
+      "term": "Ruhr",
+      "context": "…s für die Wahl der Verbandsversammlung des Regionalverbands Ruhr besteht aus dem Wahlleiter nach Absatz 1 als Vorsitzendem u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[2].text@76:geography-river",
+      "path": "body[66].children[2].text",
+      "start": 76,
+      "end": 80,
+      "term": "Ruhr",
+      "context": "…s für die Wahl der Verbandsversammlung des Regionalverbands Ruhr besteht aus dem Wahlleiter nach Absatz 1 als Vorsitzendem u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[2].text@209:geography-region",
+      "path": "body[66].children[2].text",
+      "start": 209,
+      "end": 213,
+      "term": "Ruhr",
+      "context": "…eisitzern, die die Verbandsversammlung des Regionalverbands Ruhr wählt. Eine Benennung oder Bestellung weiterer Mitglieder i…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[2].text@209:geography-river",
+      "path": "body[66].children[2].text",
+      "start": 209,
+      "end": 213,
+      "term": "Ruhr",
+      "context": "…eisitzern, die die Verbandsversammlung des Regionalverbands Ruhr wählt. Eine Benennung oder Bestellung weiterer Mitglieder i…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[3].text@118:geography-region",
+      "path": "body[66].children[3].text",
+      "start": 118,
+      "end": 122,
+      "term": "Ruhr",
+      "context": "…riefwahlvorstände führen im Wahlgebiet des Regionalverbands Ruhr auch die Wahl der Verbandsversammlung des Regionalverbands …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[3].text@118:geography-river",
+      "path": "body[66].children[3].text",
+      "start": 118,
+      "end": 122,
+      "term": "Ruhr",
+      "context": "…riefwahlvorstände führen im Wahlgebiet des Regionalverbands Ruhr auch die Wahl der Verbandsversammlung des Regionalverbands …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[3].text@182:geography-region",
+      "path": "body[66].children[3].text",
+      "start": 182,
+      "end": 186,
+      "term": "Ruhr",
+      "context": "… auch die Wahl der Verbandsversammlung des Regionalverbands Ruhr durch.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[66].children[3].text@182:geography-river",
+      "path": "body[66].children[3].text",
+      "start": 182,
+      "end": 186,
+      "term": "Ruhr",
+      "context": "… auch die Wahl der Verbandsversammlung des Regionalverbands Ruhr durch.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[1].text@73:regional-body-association",
+      "path": "body[67].children[1].text",
+      "start": 73,
+      "end": 93,
+      "term": "Regionalverband Ruhr",
+      "context": "…ichtigung der in § 10 Absatz 1 Satz 1 des Gesetzes über den Regionalverband Ruhr festgeschriebenen Mitgliederzahl findet § 3 auf die Wahl de…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[67].children[1].text@89:geography-region",
+      "path": "body[67].children[1].text",
+      "start": 89,
+      "end": 93,
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 1 Satz 1 des Gesetzes über den Regionalverband Ruhr festgeschriebenen Mitgliederzahl findet § 3 auf die Wahl de…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[1].text@89:geography-river",
+      "path": "body[67].children[1].text",
+      "start": 89,
+      "end": 93,
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 1 Satz 1 des Gesetzes über den Regionalverband Ruhr festgeschriebenen Mitgliederzahl findet § 3 auf die Wahl de…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[1].text@196:geography-region",
+      "path": "body[67].children[1].text",
+      "start": 196,
+      "end": 200,
+      "term": "Ruhr",
+      "context": "…3 auf die Wahl der Verbandsversammlung des Regionalverbands Ruhr keine Anwendung.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[1].text@196:geography-river",
+      "path": "body[67].children[1].text",
+      "start": 196,
+      "end": 200,
+      "term": "Ruhr",
+      "context": "…3 auf die Wahl der Verbandsversammlung des Regionalverbands Ruhr keine Anwendung.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[2].text@89:regional-body-association",
+      "path": "body[67].children[2].text",
+      "start": 89,
+      "end": 109,
+      "term": "Regionalverband Ruhr",
+      "context": "… Mitglieder nach § 10 Absatz 2 Satz 1 des Gesetzes über den Regionalverband Ruhr findet für die Wahl der Verbandsversammlung des Regionalver…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[67].children[2].text@105:geography-region",
+      "path": "body[67].children[2].text",
+      "start": 105,
+      "end": 109,
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 2 Satz 1 des Gesetzes über den Regionalverband Ruhr findet für die Wahl der Verbandsversammlung des Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[2].text@105:geography-river",
+      "path": "body[67].children[2].text",
+      "start": 105,
+      "end": 109,
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 2 Satz 1 des Gesetzes über den Regionalverband Ruhr findet für die Wahl der Verbandsversammlung des Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[2].text@175:geography-region",
+      "path": "body[67].children[2].text",
+      "start": 175,
+      "end": 179,
+      "term": "Ruhr",
+      "context": "…t für die Wahl der Verbandsversammlung des Regionalverbands Ruhr eine Einteilung des Wahlgebietes in Wahlbezirke nach § 4 ni…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[2].text@175:geography-river",
+      "path": "body[67].children[2].text",
+      "start": 175,
+      "end": 179,
+      "term": "Ruhr",
+      "context": "…t für die Wahl der Verbandsversammlung des Regionalverbands Ruhr eine Einteilung des Wahlgebietes in Wahlbezirke nach § 4 ni…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@223:geography-region",
+      "path": "body[67].children[3].text",
+      "start": 223,
+      "end": 227,
+      "term": "Ruhr",
+      "context": "…h nicht beeinflussen können) im Dienst des Regionalverbands Ruhr können nicht gleichzeitig seiner Verbandsversammlung angehö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@223:geography-river",
+      "path": "body[67].children[3].text",
+      "start": 223,
+      "end": 227,
+      "term": "Ruhr",
+      "context": "…h nicht beeinflussen können) im Dienst des Regionalverbands Ruhr können nicht gleichzeitig seiner Verbandsversammlung angehö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@549:geography-region",
+      "path": "body[67].children[3].text",
+      "start": 549,
+      "end": 553,
+      "term": "Ruhr",
+      "context": "…den und Gemeindeverbände im Wahlgebiet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@549:geography-river",
+      "path": "body[67].children[3].text",
+      "start": 549,
+      "end": 553,
+      "term": "Ruhr",
+      "context": "…den und Gemeindeverbände im Wahlgebiet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@568:regional-body-association",
+      "path": "body[67].children[3].text",
+      "start": 568,
+      "end": 588,
+      "term": "Regionalverband Ruhr",
+      "context": "…bände im Wahlgebiet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im Übrigen gilt § 13 entsprechend.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@584:geography-region",
+      "path": "body[67].children[3].text",
+      "start": 584,
+      "end": 588,
+      "term": "Ruhr",
+      "context": "…iet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im Übrigen gilt § 13 entsprechend.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[3].text@584:geography-river",
+      "path": "body[67].children[3].text",
+      "start": 584,
+      "end": 588,
+      "term": "Ruhr",
+      "context": "…iet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im Übrigen gilt § 13 entsprechend.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[4].text@513:geography-region",
+      "path": "body[67].children[4].text",
+      "start": 513,
+      "end": 517,
+      "term": "Ruhr",
+      "context": "…nterbrochen in der Verbandsversammlung des Regionalverbands Ruhr, im Landtag oder auf Grund eines Wahlvorschlags aus dem Lan…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[4].text@513:geography-river",
+      "path": "body[67].children[4].text",
+      "start": 513,
+      "end": 517,
+      "term": "Ruhr",
+      "context": "…nterbrochen in der Verbandsversammlung des Regionalverbands Ruhr, im Landtag oder auf Grund eines Wahlvorschlags aus dem Lan…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[5].text@165:geography-region",
+      "path": "body[67].children[5].text",
+      "start": 165,
+      "end": 169,
+      "term": "Ruhr",
+      "context": "…50 Wahlberechtigten aus dem Wahlgebiet des Regionalverbands Ruhr persönlich und handschriftlich unterzeichnet sein.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[5].text@165:geography-river",
+      "path": "body[67].children[5].text",
+      "start": 165,
+      "end": 169,
+      "term": "Ruhr",
+      "context": "…50 Wahlberechtigten aus dem Wahlgebiet des Regionalverbands Ruhr persönlich und handschriftlich unterzeichnet sein.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[6].text@71:geography-region",
+      "path": "body[67].children[6].text",
+      "start": 71,
+      "end": 75,
+      "term": "Ruhr",
+      "context": "…r für die Wahl zur Verbandsversammlung des Regionalverbands Ruhr darf nur in einem Listenwahlvorschlag benannt werden.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[67].children[6].text@71:geography-river",
+      "path": "body[67].children[6].text",
+      "start": 71,
+      "end": 75,
+      "term": "Ruhr",
+      "context": "…r für die Wahl zur Verbandsversammlung des Regionalverbands Ruhr darf nur in einem Listenwahlvorschlag benannt werden.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[1].text@80:geography-region",
+      "path": "body[68].children[1].text",
+      "start": 80,
+      "end": 84,
+      "term": "Ruhr",
+      "context": "… eine Entscheidung des Wahlausschusses des Regionalverbands Ruhr ist an den Landeswahlausschuss nach § 9 Absatz 2 des Landes…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[1].text@80:geography-river",
+      "path": "body[68].children[1].text",
+      "start": 80,
+      "end": 84,
+      "term": "Ruhr",
+      "context": "… eine Entscheidung des Wahlausschusses des Regionalverbands Ruhr ist an den Landeswahlausschuss nach § 9 Absatz 2 des Landes…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[2].text@74:geography-region",
+      "path": "body[68].children[2].text",
+      "start": 74,
+      "end": 78,
+      "term": "Ruhr",
+      "context": "…l für die Wahl der Verbandsversammlung des Regionalverbands Ruhr enthalten die für das Wahlgebiet zugelassenen Wahlvorschläg…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[2].text@74:geography-river",
+      "path": "body[68].children[2].text",
+      "start": 74,
+      "end": 78,
+      "term": "Ruhr",
+      "context": "…l für die Wahl der Verbandsversammlung des Regionalverbands Ruhr enthalten die für das Wahlgebiet zugelassenen Wahlvorschläg…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[3].text@145:geography-region",
+      "path": "body[68].children[3].text",
+      "start": 145,
+      "end": 149,
+      "term": "Ruhr",
+      "context": "…ten Direktwahl der Verbandsversammlung des Regionalverbands Ruhr nach der Stimmenzahl, die die Parteien oder Wählergruppen b…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[3].text@145:geography-river",
+      "path": "body[68].children[3].text",
+      "start": 145,
+      "end": 149,
+      "term": "Ruhr",
+      "context": "…ten Direktwahl der Verbandsversammlung des Regionalverbands Ruhr nach der Stimmenzahl, die die Parteien oder Wählergruppen b…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[3].text@287:geography-region",
+      "path": "body[68].children[3].text",
+      "start": 287,
+      "end": 291,
+      "term": "Ruhr",
+      "context": "…rtretungen der Mitgliedskörperschaften des Regionalverbands Ruhr im Jahr 2014 erreicht haben. Andere Listenwahlvorschläge sc…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[68].children[3].text@287:geography-river",
+      "path": "body[68].children[3].text",
+      "start": 287,
+      "end": 291,
+      "term": "Ruhr",
+      "context": "…rtretungen der Mitgliedskörperschaften des Regionalverbands Ruhr im Jahr 2014 erreicht haben. Andere Listenwahlvorschläge sc…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@35:geography-region",
+      "path": "body[69].children[1].text",
+      "start": 35,
+      "end": 39,
+      "term": "Ruhr",
+      "context": "Im Wahlgebiet des Regionalverbands Ruhr stellen die Wahlausschüsse der Gemeinden auch fest, wie vie…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@35:geography-river",
+      "path": "body[69].children[1].text",
+      "start": 35,
+      "end": 39,
+      "term": "Ruhr",
+      "context": "Im Wahlgebiet des Regionalverbands Ruhr stellen die Wahlausschüsse der Gemeinden auch fest, wie vie…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@232:geography-region",
+      "path": "body[69].children[1].text",
+      "start": 232,
+      "end": 236,
+      "term": "Ruhr",
+      "context": "…n für die Wahl der Verbandsversammlung des Regionalverbands Ruhr in ihrer Gemeinde erhalten haben. Auf dieser Grundlage zähl…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@232:geography-river",
+      "path": "body[69].children[1].text",
+      "start": 232,
+      "end": 236,
+      "term": "Ruhr",
+      "context": "…n für die Wahl der Verbandsversammlung des Regionalverbands Ruhr in ihrer Gemeinde erhalten haben. Auf dieser Grundlage zähl…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@337:geography-region",
+      "path": "body[69].children[1].text",
+      "start": 337,
+      "end": 341,
+      "term": "Ruhr",
+      "context": "…eser Grundlage zählt der Wahlausschuss des Regionalverbands Ruhr die für alle Listenwahlvorschläge in seinem Wahlgebiet abge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@337:geography-river",
+      "path": "body[69].children[1].text",
+      "start": 337,
+      "end": 341,
+      "term": "Ruhr",
+      "context": "…eser Grundlage zählt der Wahlausschuss des Regionalverbands Ruhr die für alle Listenwahlvorschläge in seinem Wahlgebiet abge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@538:geography-region",
+      "path": "body[69].children[1].text",
+      "start": 538,
+      "end": 542,
+      "term": "Ruhr",
+      "context": "…(Gesamtstimmenzahl). Der Wahlausschuss des Regionalverbands Ruhr stellt zugleich fest, welche Parteien und Wählergruppen wen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[1].text@538:geography-river",
+      "path": "body[69].children[1].text",
+      "start": 538,
+      "end": 542,
+      "term": "Ruhr",
+      "context": "…(Gesamtstimmenzahl). Der Wahlausschuss des Regionalverbands Ruhr stellt zugleich fest, welche Parteien und Wählergruppen wen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[4].text@39:geography-region",
+      "path": "body[69].children[4].text",
+      "start": 39,
+      "end": 43,
+      "term": "Ruhr",
+      "context": "Der Wahlausschuss des Regionalverbands Ruhr stellt fest, wie viele Sitze den Parteien und Wählergruppen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[4].text@39:geography-river",
+      "path": "body[69].children[4].text",
+      "start": 39,
+      "end": 43,
+      "term": "Ruhr",
+      "context": "Der Wahlausschuss des Regionalverbands Ruhr stellt fest, wie viele Sitze den Parteien und Wählergruppen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[5].text@128:geography-region",
+      "path": "body[69].children[5].text",
+      "start": 128,
+      "end": 132,
+      "term": "Ruhr",
+      "context": "… Annahme der Wahl zum Regionaldirektor des Regionalverbands Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[69].children[5].text@128:geography-river",
+      "path": "body[69].children[5].text",
+      "start": 128,
+      "end": 132,
+      "term": "Ruhr",
+      "context": "… Annahme der Wahl zum Regionaldirektor des Regionalverbands Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[70].children[1].text@125:geography-region",
+      "path": "body[70].children[1].text",
+      "start": 125,
+      "end": 129,
+      "term": "Ruhr",
+      "context": "… einer kreisfreien Stadt im Wahlgebiet des Regionalverbands Ruhr Unregelmäßigkeiten bei der Wahl der Verbandsversammlung des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[70].children[1].text@125:geography-river",
+      "path": "body[70].children[1].text",
+      "start": 125,
+      "end": 129,
+      "term": "Ruhr",
+      "context": "… einer kreisfreien Stadt im Wahlgebiet des Regionalverbands Ruhr Unregelmäßigkeiten bei der Wahl der Verbandsversammlung des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[70].children[1].text@207:geography-region",
+      "path": "body[70].children[1].text",
+      "start": 207,
+      "end": 211,
+      "term": "Ruhr",
+      "context": "…n bei der Wahl der Verbandsversammlung des Regionalverbands Ruhr im Sinne von § 40 Absatz 1 Buchstabe b vorgekommen, ist die…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[70].children[1].text@207:geography-river",
+      "path": "body[70].children[1].text",
+      "start": 207,
+      "end": 211,
+      "term": "Ruhr",
+      "context": "…n bei der Wahl der Verbandsversammlung des Regionalverbands Ruhr im Sinne von § 40 Absatz 1 Buchstabe b vorgekommen, ist die…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[74].children[1].text@43:authority-state-enterprise",
+      "path": "body[74].children[1].text",
+      "start": 43,
+      "end": 68,
+      "term": "Landesbetrieb Information",
+      "context": "Die Ergebnisse der Kommunalwahlen sind vom Landesbetrieb Information und Technik NRW (IT.NRW) statistisch auszuwerten; die Auswe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[74].children[1].text@81:rule:jurisdiction-abbreviation",
+      "path": "body[74].children[1].text",
+      "start": 81,
+      "end": 84,
+      "term": "NRW",
+      "context": "…mmunalwahlen sind vom Landesbetrieb Information und Technik NRW (IT.NRW) statistisch auszuwerten; die Auswertung ist zu ver…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[74].children[1].text@86:protected:external-proper-names",
+      "path": "body[74].children[1].text",
+      "start": 86,
+      "end": 92,
+      "term": "IT.NRW",
+      "context": "…lwahlen sind vom Landesbetrieb Information und Technik NRW (IT.NRW) statistisch auszuwerten; die Auswertung ist zu veröffentli…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[74].children[2].text@93:authority-state-enterprise",
+      "path": "body[74].children[2].text",
+      "start": 93,
+      "end": 118,
+      "term": "Landesbetrieb Information",
+      "context": "… den Vertretungen der Kreise und kreisfreien Städte ist vom Landesbetrieb Information und Technik NRW (IT.NRW) eine Landesstatistik auf repräsent…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[74].children[2].text@131:rule:jurisdiction-abbreviation",
+      "path": "body[74].children[2].text",
+      "start": 131,
+      "end": 134,
+      "term": "NRW",
+      "context": "…freien Städte ist vom Landesbetrieb Information und Technik NRW (IT.NRW) eine Landesstatistik auf repräsentativer Grundlage…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[74].children[2].text@136:protected:external-proper-names",
+      "path": "body[74].children[2].text",
+      "start": 136,
+      "end": 142,
+      "term": "IT.NRW",
+      "context": "…n Städte ist vom Landesbetrieb Information und Technik NRW (IT.NRW) eine Landesstatistik auf repräsentativer Grundlage über",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[74].children[2].children[2].text@402:authority-state-enterprise",
+      "path": "body[74].children[2].children[2].text",
+      "start": 402,
+      "end": 427,
+      "term": "Landesbetrieb Information",
+      "context": "…ten Stimmbezirken durchgeführt. Die Stimmbezirke werden vom Landesbetrieb Information und Technik NRW (IT.NRW) im Einvernehmen mit dem für Innere…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[74].children[2].children[2].text@440:rule:jurisdiction-abbreviation",
+      "path": "body[74].children[2].children[2].text",
+      "start": 440,
+      "end": 443,
+      "term": "NRW",
+      "context": "…immbezirke werden vom Landesbetrieb Information und Technik NRW (IT.NRW) im Einvernehmen mit dem für Inneres zuständigen Mi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[74].children[2].children[2].text@445:protected:external-proper-names",
+      "path": "body[74].children[2].children[2].text",
+      "start": 445,
+      "end": 451,
+      "term": "IT.NRW",
+      "context": "…zirke werden vom Landesbetrieb Information und Technik NRW (IT.NRW) im Einvernehmen mit dem für Inneres zuständigen Ministeriu…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[74].children[4].text@110:rule:jurisdiction-name-bare",
+      "path": "body[74].children[4].text",
+      "start": 110,
+      "end": 129,
+      "term": "Nordrhein-Westfalen",
+      "context": "…die Voraussetzungen des § 32 Abs. 2 des Datenschutzgesetzes Nordrhein-Westfalen erfüllt, kann der Bürgermeister anordnen, dass in weiteren …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[75].children[1].children[18].text@76:geography-region",
+      "path": "body[75].children[1].children[18].text",
+      "start": 76,
+      "end": 80,
+      "term": "Ruhr",
+      "context": "… über die Wahl der Verbandsversammlung des Regionalverbands Ruhr,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[75].children[1].children[18].text@76:geography-river",
+      "path": "body[75].children[1].children[18].text",
+      "start": 76,
+      "end": 80,
+      "term": "Ruhr",
+      "context": "… über die Wahl der Verbandsversammlung des Regionalverbands Ruhr,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[75].children[3].children[0].text@90:protected:gazette-nrw",
+      "path": "body[75].children[3].children[0].text",
+      "start": 90,
+      "end": 105,
+      "term": "GV. NRW. S. 194",
+      "context": "…s zur Stärkung der kommunalen Demokratie vom 9. April 2013 (GV. NRW. S. 194))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[75].children[7].children[7].text@488:rule:jurisdiction-abbreviation",
+      "path": "body[75].children[7].children[7].text",
+      "start": 488,
+      "end": 491,
+      "term": "NRW",
+      "context": "…ofern sie die Voraussetzungen des § 119 Absatz 4 Satz 3 LBG NRW erfüllen und die Entlassung bis zum 30. November 2013 beant…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[75].children[7].children[7].text@665:rule:jurisdiction-abbreviation",
+      "path": "body[75].children[7].children[7].text",
+      "start": 665,
+      "end": 668,
+      "term": "NRW",
+      "context": "…wird dabei auf die Wartezeit nach § 119 Absatz 4 Satz 3 LBG NRW angerechnet und erhöht die ruhegehaltsfähige Dienstzeit.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[75].children[7].children[8].text@152:protected:gazette-nrw",
+      "path": "body[75].children[7].children[8].text",
+      "start": 152,
+      "end": 167,
+      "term": "GV. NRW. S. 564",
+      "context": "…nalverfassungsrechtlicher Vorschriften vom 1. Oktober 2013 (GV. NRW. S. 564))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[75].children[7].children[14].text@132:protected:gazette-nrw",
+      "path": "body[75].children[7].children[14].text",
+      "start": 132,
+      "end": 147,
+      "term": "GV. NRW. S. 202",
+      "context": "…d weiterer wahlrechtlicher Vorschriften vom 11. April 2019 (GV. NRW. S. 202))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[75].children[7].children[18].title@128:geography-region",
+      "path": "body[75].children[7].children[18].title",
+      "start": 128,
+      "end": 132,
+      "term": "Ruhr",
+      "context": "… für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[75].children[7].children[18].title@128:geography-river",
+      "path": "body[75].children[7].children[18].title",
+      "start": 128,
+      "end": 132,
+      "term": "Ruhr",
+      "context": "… für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[75].children[7].children[19].text@59:geography-region",
+      "path": "body[75].children[7].children[19].text",
+      "start": 59,
+      "end": 63,
+      "term": "Ruhr",
+      "context": "Für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020 sind die Vertreter für die Vertreterversammlun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[75].children[7].children[19].text@59:geography-river",
+      "path": "body[75].children[7].children[19].text",
+      "start": 59,
+      "end": 63,
+      "term": "Ruhr",
+      "context": "Für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020 sind die Vertreter für die Vertreterversammlun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[75].children[8].text@234:protected:gazette-nrw",
+      "path": "body[75].children[8].text",
+      "start": 234,
+      "end": 249,
+      "term": "GV. NRW. S. 454",
+      "context": "…setzes in der Fassung der Bekanntmachung vom 30. Juni 1998 (GV. NRW. S. 454, ber. S. 509 und 1999 S. 70) in der jeweils geltenden Fassu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[75].children[8].text@321:rule:jurisdiction-name-bare",
+      "path": "body[75].children[8].text",
+      "start": 321,
+      "end": 340,
+      "term": "Nordrhein-Westfalen",
+      "context": "…9 und 1999 S. 70) in der jeweils geltenden Fassung im Lande Nordrhein-Westfalen nach der vom Landesbetrieb Information und Technik NRW (IT.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[75].children[8].text@354:authority-state-enterprise",
+      "path": "body[75].children[8].text",
+      "start": 354,
+      "end": 379,
+      "term": "Landesbetrieb Information",
+      "context": "…geltenden Fassung im Lande Nordrhein-Westfalen nach der vom Landesbetrieb Information und Technik NRW (IT. NRW) halbjährlich fortgeschriebenen Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[75].children[8].text@392:rule:jurisdiction-abbreviation",
+      "path": "body[75].children[8].text",
+      "start": 392,
+      "end": 395,
+      "term": "NRW",
+      "context": "…estfalen nach der vom Landesbetrieb Information und Technik NRW (IT. NRW) halbjährlich fortgeschriebenen Bevölkerungszahl, …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[75].children[8].text@401:rule:jurisdiction-abbreviation",
+      "path": "body[75].children[8].text",
+      "start": 401,
+      "end": 404,
+      "term": "NRW",
+      "context": "…nach der vom Landesbetrieb Information und Technik NRW (IT. NRW) halbjährlich fortgeschriebenen Bevölkerungszahl, welche 59…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[75].children[9].text@84:rule:jurisdiction-name-bare",
+      "path": "body[75].children[9].text",
+      "start": 84,
+      "end": 103,
+      "term": "Nordrhein-Westfalen",
+      "context": "…igten gemäß § 16 Absatz 1 des Kommunalwahlgesetzes im Lande Nordrhein-Westfalen ist für die allgemeinen Kommunalwahlen im Jahr 2020 zum let…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[75].children[9].children[1].text@215:protected:gazette-nrw",
+      "path": "body[75].children[9].children[1].text",
+      "start": 215,
+      "end": 230,
+      "term": "GV. NRW. S. 379",
+      "context": "… zur Durchführung der Kommunalwahlen 2020 vom 29. Mai 2020 (GV. NRW. S. 379) beschlossen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 11
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 13
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "geography": {
+      "manual-review": 77
+    },
+    "regional-body": {
+      "manual-review": 6
+    },
+    "authority": {
+      "manual-review": 4
+    },
+    "external-name": {
+      "protected": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[74].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[74].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[74].children[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[74].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[75].children[7].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[75].children[7].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[75].children[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[75].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[75].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[75].children[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[9].text",
+      "term": "Minister für Inneres und Justiz",
+      "context": "Der Minister für Inneres und Justiz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[1].children[5].text",
+      "term": "Ruhr",
+      "context": "der Verbandsversammlung des Regionalverbandes Ruhr nach Maßgabe der §§ 46 f bis 46 k.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[1].children[5].text",
+      "term": "Ruhr",
+      "context": "der Verbandsversammlung des Regionalverbandes Ruhr nach Maßgabe der §§ 46 f bis 46 k.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[2].text",
+      "term": "Ruhr",
+      "context": "… bildet das Wahlgebiet. Das Wahlgebiet des Regionalverbands Ruhr erstreckt sich auf das Gebiet der dem Verband gemäß § 1 des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[2].text",
+      "term": "Ruhr",
+      "context": "… bildet das Wahlgebiet. Das Wahlgebiet des Regionalverbands Ruhr erstreckt sich auf das Gebiet der dem Verband gemäß § 1 des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[2].text",
+      "term": "Regionalverband Ruhr",
+      "context": "… das Gebiet der dem Verband gemäß § 1 des Gesetzes über den Regionalverband Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[2].text",
+      "term": "Ruhr",
+      "context": "…dem Verband gemäß § 1 des Gesetzes über den Regionalverband Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[2].text",
+      "term": "Ruhr",
+      "context": "…dem Verband gemäß § 1 des Gesetzes über den Regionalverband Ruhr in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[64].children[2].children[0].text",
+      "term": "Ruhr",
+      "context": "VI.c Wahl der Verbandsversammlung des Regionalverbands Ruhr",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Ruhr",
+      "context": "…ten Mitglieder der Verbandsversammlung des Regionalverbands Ruhr gemäß § 10 Absatz 1 und 2 des Gesetzes über den Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Ruhr",
+      "context": "…ten Mitglieder der Verbandsversammlung des Regionalverbands Ruhr gemäß § 10 Absatz 1 und 2 des Gesetzes über den Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…rbands Ruhr gemäß § 10 Absatz 1 und 2 des Gesetzes über den Regionalverband Ruhr finden die Vorschriften dieses Gesetzes entsprechende Anwen…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Ruhr",
+      "context": "…ß § 10 Absatz 1 und 2 des Gesetzes über den Regionalverband Ruhr finden die Vorschriften dieses Gesetzes entsprechende Anwen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Ruhr",
+      "context": "…ß § 10 Absatz 1 und 2 des Gesetzes über den Regionalverband Ruhr finden die Vorschriften dieses Gesetzes entsprechende Anwen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…h nicht aus den §§ 46g bis 46k oder aus dem Gesetz über den Regionalverband Ruhr etwas anderes ergibt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Ruhr",
+      "context": "…§§ 46g bis 46k oder aus dem Gesetz über den Regionalverband Ruhr etwas anderes ergibt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[65].children[1].text",
+      "term": "Ruhr",
+      "context": "…§§ 46g bis 46k oder aus dem Gesetz über den Regionalverband Ruhr etwas anderes ergibt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[1].text",
+      "term": "Ruhr",
+      "context": "… der Verbandsversammlung im Wahlgebiet des Regionalverbands Ruhr ist der Regionaldirektor, stellvertretender Wahlleiter ist …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[1].text",
+      "term": "Ruhr",
+      "context": "… der Verbandsversammlung im Wahlgebiet des Regionalverbands Ruhr ist der Regionaldirektor, stellvertretender Wahlleiter ist …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[1].text",
+      "term": "Ruhr",
+      "context": "…ters oder eines Landrats im Wahlgebiet des Regionalverbands Ruhr, kann er ab seiner Aufstellung nicht Wahlleiter oder stellv…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[1].text",
+      "term": "Ruhr",
+      "context": "…ters oder eines Landrats im Wahlgebiet des Regionalverbands Ruhr, kann er ab seiner Aufstellung nicht Wahlleiter oder stellv…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[1].text",
+      "term": "Ruhr",
+      "context": "…r für die Wahl der Verbandsversammlung des Regionalverbands Ruhr sein. An seine Stelle tritt der jeweilige Vertreter im Amt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[1].text",
+      "term": "Ruhr",
+      "context": "…r für die Wahl der Verbandsversammlung des Regionalverbands Ruhr sein. An seine Stelle tritt der jeweilige Vertreter im Amt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[2].text",
+      "term": "Ruhr",
+      "context": "…s für die Wahl der Verbandsversammlung des Regionalverbands Ruhr besteht aus dem Wahlleiter nach Absatz 1 als Vorsitzendem u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[2].text",
+      "term": "Ruhr",
+      "context": "…s für die Wahl der Verbandsversammlung des Regionalverbands Ruhr besteht aus dem Wahlleiter nach Absatz 1 als Vorsitzendem u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[2].text",
+      "term": "Ruhr",
+      "context": "…eisitzern, die die Verbandsversammlung des Regionalverbands Ruhr wählt. Eine Benennung oder Bestellung weiterer Mitglieder i…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[2].text",
+      "term": "Ruhr",
+      "context": "…eisitzern, die die Verbandsversammlung des Regionalverbands Ruhr wählt. Eine Benennung oder Bestellung weiterer Mitglieder i…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[3].text",
+      "term": "Ruhr",
+      "context": "…riefwahlvorstände führen im Wahlgebiet des Regionalverbands Ruhr auch die Wahl der Verbandsversammlung des Regionalverbands …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[3].text",
+      "term": "Ruhr",
+      "context": "…riefwahlvorstände führen im Wahlgebiet des Regionalverbands Ruhr auch die Wahl der Verbandsversammlung des Regionalverbands …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[3].text",
+      "term": "Ruhr",
+      "context": "… auch die Wahl der Verbandsversammlung des Regionalverbands Ruhr durch.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[66].children[3].text",
+      "term": "Ruhr",
+      "context": "… auch die Wahl der Verbandsversammlung des Regionalverbands Ruhr durch.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[1].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…ichtigung der in § 10 Absatz 1 Satz 1 des Gesetzes über den Regionalverband Ruhr festgeschriebenen Mitgliederzahl findet § 3 auf die Wahl de…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[1].text",
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 1 Satz 1 des Gesetzes über den Regionalverband Ruhr festgeschriebenen Mitgliederzahl findet § 3 auf die Wahl de…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[1].text",
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 1 Satz 1 des Gesetzes über den Regionalverband Ruhr festgeschriebenen Mitgliederzahl findet § 3 auf die Wahl de…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[1].text",
+      "term": "Ruhr",
+      "context": "…3 auf die Wahl der Verbandsversammlung des Regionalverbands Ruhr keine Anwendung.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[1].text",
+      "term": "Ruhr",
+      "context": "…3 auf die Wahl der Verbandsversammlung des Regionalverbands Ruhr keine Anwendung.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[2].text",
+      "term": "Regionalverband Ruhr",
+      "context": "… Mitglieder nach § 10 Absatz 2 Satz 1 des Gesetzes über den Regionalverband Ruhr findet für die Wahl der Verbandsversammlung des Regionalver…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[2].text",
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 2 Satz 1 des Gesetzes über den Regionalverband Ruhr findet für die Wahl der Verbandsversammlung des Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[2].text",
+      "term": "Ruhr",
+      "context": "… § 10 Absatz 2 Satz 1 des Gesetzes über den Regionalverband Ruhr findet für die Wahl der Verbandsversammlung des Regionalver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[2].text",
+      "term": "Ruhr",
+      "context": "…t für die Wahl der Verbandsversammlung des Regionalverbands Ruhr eine Einteilung des Wahlgebietes in Wahlbezirke nach § 4 ni…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[2].text",
+      "term": "Ruhr",
+      "context": "…t für die Wahl der Verbandsversammlung des Regionalverbands Ruhr eine Einteilung des Wahlgebietes in Wahlbezirke nach § 4 ni…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Ruhr",
+      "context": "…h nicht beeinflussen können) im Dienst des Regionalverbands Ruhr können nicht gleichzeitig seiner Verbandsversammlung angehö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Ruhr",
+      "context": "…h nicht beeinflussen können) im Dienst des Regionalverbands Ruhr können nicht gleichzeitig seiner Verbandsversammlung angehö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Ruhr",
+      "context": "…den und Gemeindeverbände im Wahlgebiet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Ruhr",
+      "context": "…den und Gemeindeverbände im Wahlgebiet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…bände im Wahlgebiet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im Übrigen gilt § 13 entsprechend.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Ruhr",
+      "context": "…iet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im Übrigen gilt § 13 entsprechend.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[3].text",
+      "term": "Ruhr",
+      "context": "…iet des Regionalverbands Ruhr oder über den Regionalverband Ruhr selbst befasst sind. Im Übrigen gilt § 13 entsprechend.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[4].text",
+      "term": "Ruhr",
+      "context": "…nterbrochen in der Verbandsversammlung des Regionalverbands Ruhr, im Landtag oder auf Grund eines Wahlvorschlags aus dem Lan…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[4].text",
+      "term": "Ruhr",
+      "context": "…nterbrochen in der Verbandsversammlung des Regionalverbands Ruhr, im Landtag oder auf Grund eines Wahlvorschlags aus dem Lan…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[5].text",
+      "term": "Ruhr",
+      "context": "…50 Wahlberechtigten aus dem Wahlgebiet des Regionalverbands Ruhr persönlich und handschriftlich unterzeichnet sein.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[5].text",
+      "term": "Ruhr",
+      "context": "…50 Wahlberechtigten aus dem Wahlgebiet des Regionalverbands Ruhr persönlich und handschriftlich unterzeichnet sein.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[6].text",
+      "term": "Ruhr",
+      "context": "…r für die Wahl zur Verbandsversammlung des Regionalverbands Ruhr darf nur in einem Listenwahlvorschlag benannt werden.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[67].children[6].text",
+      "term": "Ruhr",
+      "context": "…r für die Wahl zur Verbandsversammlung des Regionalverbands Ruhr darf nur in einem Listenwahlvorschlag benannt werden.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[1].text",
+      "term": "Ruhr",
+      "context": "… eine Entscheidung des Wahlausschusses des Regionalverbands Ruhr ist an den Landeswahlausschuss nach § 9 Absatz 2 des Landes…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[1].text",
+      "term": "Ruhr",
+      "context": "… eine Entscheidung des Wahlausschusses des Regionalverbands Ruhr ist an den Landeswahlausschuss nach § 9 Absatz 2 des Landes…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[2].text",
+      "term": "Ruhr",
+      "context": "…l für die Wahl der Verbandsversammlung des Regionalverbands Ruhr enthalten die für das Wahlgebiet zugelassenen Wahlvorschläg…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[2].text",
+      "term": "Ruhr",
+      "context": "…l für die Wahl der Verbandsversammlung des Regionalverbands Ruhr enthalten die für das Wahlgebiet zugelassenen Wahlvorschläg…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[3].text",
+      "term": "Ruhr",
+      "context": "…ten Direktwahl der Verbandsversammlung des Regionalverbands Ruhr nach der Stimmenzahl, die die Parteien oder Wählergruppen b…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[3].text",
+      "term": "Ruhr",
+      "context": "…ten Direktwahl der Verbandsversammlung des Regionalverbands Ruhr nach der Stimmenzahl, die die Parteien oder Wählergruppen b…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[3].text",
+      "term": "Ruhr",
+      "context": "…rtretungen der Mitgliedskörperschaften des Regionalverbands Ruhr im Jahr 2014 erreicht haben. Andere Listenwahlvorschläge sc…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[68].children[3].text",
+      "term": "Ruhr",
+      "context": "…rtretungen der Mitgliedskörperschaften des Regionalverbands Ruhr im Jahr 2014 erreicht haben. Andere Listenwahlvorschläge sc…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "Im Wahlgebiet des Regionalverbands Ruhr stellen die Wahlausschüsse der Gemeinden auch fest, wie vie…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "Im Wahlgebiet des Regionalverbands Ruhr stellen die Wahlausschüsse der Gemeinden auch fest, wie vie…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "…n für die Wahl der Verbandsversammlung des Regionalverbands Ruhr in ihrer Gemeinde erhalten haben. Auf dieser Grundlage zähl…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "…n für die Wahl der Verbandsversammlung des Regionalverbands Ruhr in ihrer Gemeinde erhalten haben. Auf dieser Grundlage zähl…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "…eser Grundlage zählt der Wahlausschuss des Regionalverbands Ruhr die für alle Listenwahlvorschläge in seinem Wahlgebiet abge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "…eser Grundlage zählt der Wahlausschuss des Regionalverbands Ruhr die für alle Listenwahlvorschläge in seinem Wahlgebiet abge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "…(Gesamtstimmenzahl). Der Wahlausschuss des Regionalverbands Ruhr stellt zugleich fest, welche Parteien und Wählergruppen wen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[1].text",
+      "term": "Ruhr",
+      "context": "…(Gesamtstimmenzahl). Der Wahlausschuss des Regionalverbands Ruhr stellt zugleich fest, welche Parteien und Wählergruppen wen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[4].text",
+      "term": "Ruhr",
+      "context": "Der Wahlausschuss des Regionalverbands Ruhr stellt fest, wie viele Sitze den Parteien und Wählergruppen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[4].text",
+      "term": "Ruhr",
+      "context": "Der Wahlausschuss des Regionalverbands Ruhr stellt fest, wie viele Sitze den Parteien und Wählergruppen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[5].text",
+      "term": "Ruhr",
+      "context": "… Annahme der Wahl zum Regionaldirektor des Regionalverbands Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[69].children[5].text",
+      "term": "Ruhr",
+      "context": "… Annahme der Wahl zum Regionaldirektor des Regionalverbands Ruhr.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[70].children[1].text",
+      "term": "Ruhr",
+      "context": "… einer kreisfreien Stadt im Wahlgebiet des Regionalverbands Ruhr Unregelmäßigkeiten bei der Wahl der Verbandsversammlung des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[70].children[1].text",
+      "term": "Ruhr",
+      "context": "… einer kreisfreien Stadt im Wahlgebiet des Regionalverbands Ruhr Unregelmäßigkeiten bei der Wahl der Verbandsversammlung des…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[70].children[1].text",
+      "term": "Ruhr",
+      "context": "…n bei der Wahl der Verbandsversammlung des Regionalverbands Ruhr im Sinne von § 40 Absatz 1 Buchstabe b vorgekommen, ist die…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[70].children[1].text",
+      "term": "Ruhr",
+      "context": "…n bei der Wahl der Verbandsversammlung des Regionalverbands Ruhr im Sinne von § 40 Absatz 1 Buchstabe b vorgekommen, ist die…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[74].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "Die Ergebnisse der Kommunalwahlen sind vom Landesbetrieb Information und Technik NRW (IT.NRW) statistisch auszuwerten; die Auswe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[74].children[2].text",
+      "term": "Landesbetrieb Information",
+      "context": "… den Vertretungen der Kreise und kreisfreien Städte ist vom Landesbetrieb Information und Technik NRW (IT.NRW) eine Landesstatistik auf repräsent…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[74].children[2].children[2].text",
+      "term": "Landesbetrieb Information",
+      "context": "…ten Stimmbezirken durchgeführt. Die Stimmbezirke werden vom Landesbetrieb Information und Technik NRW (IT.NRW) im Einvernehmen mit dem für Innere…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[1].children[18].text",
+      "term": "Ruhr",
+      "context": "… über die Wahl der Verbandsversammlung des Regionalverbands Ruhr,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[1].children[18].text",
+      "term": "Ruhr",
+      "context": "… über die Wahl der Verbandsversammlung des Regionalverbands Ruhr,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[7].children[18].title",
+      "term": "Ruhr",
+      "context": "… für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[7].children[18].title",
+      "term": "Ruhr",
+      "context": "… für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[7].children[19].text",
+      "term": "Ruhr",
+      "context": "Für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020 sind die Vertreter für die Vertreterversammlun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[7].children[19].text",
+      "term": "Ruhr",
+      "context": "Für die Wahl der Verbandsversammlung des Regionalverbandes Ruhr im Jahr 2020 sind die Vertreter für die Vertreterversammlun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[75].children[8].text",
+      "term": "Landesbetrieb Information",
+      "context": "…geltenden Fassung im Lande Nordrhein-Westfalen nach der vom Landesbetrieb Information und Technik NRW (IT. NRW) halbjährlich fortgeschriebenen Be…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 690,
+    "residuals": [
+      {
+        "path": "body[13].children[2].text",
+        "term": "NRW",
+        "context": "… in der Fassung der Bekanntmachung vom 3. Februar 2004 (GV. NRW. S. 96) in der jeweils geltenden Fassung angehörenden Mitgl…",
+        "status": "protected"
+      },
+      {
+        "path": "body[74].children[1].text",
+        "term": "NRW",
+        "context": "…len sind vom Landesbetrieb Information und Technik West (IT.NRW) statistisch auszuwerten; die Auswertung ist zu veröffentli…",
+        "status": "protected"
+      },
+      {
+        "path": "body[74].children[2].text",
+        "term": "NRW",
+        "context": "…ädte ist vom Landesbetrieb Information und Technik West (IT.NRW) eine Landesstatistik auf repräsentativer Grundlage über",
+        "status": "protected"
+      },
+      {
+        "path": "body[74].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…e werden vom Landesbetrieb Information und Technik West (IT.NRW) im Einvernehmen mit dem für Inneres zuständigen Ministeriu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[75].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…r Stärkung der kommunalen Demokratie vom 9. April 2013 (GV. NRW. S. 194))",
+        "status": "protected"
+      },
+      {
+        "path": "body[75].children[7].children[8].text",
+        "term": "NRW",
+        "context": "…erfassungsrechtlicher Vorschriften vom 1. Oktober 2013 (GV. NRW. S. 564))",
+        "status": "protected"
+      },
+      {
+        "path": "body[75].children[7].children[14].text",
+        "term": "NRW",
+        "context": "…iterer wahlrechtlicher Vorschriften vom 11. April 2019 (GV. NRW. S. 202))",
+        "status": "protected"
+      },
+      {
+        "path": "body[75].children[8].text",
+        "term": "NRW",
+        "context": "…es in der Fassung der Bekanntmachung vom 30. Juni 1998 (GV. NRW. S. 454, ber. S. 509 und 1999 S. 70) in der jeweils geltend…",
+        "status": "protected"
+      },
+      {
+        "path": "body[75].children[9].children[1].text",
+        "term": "NRW",
+        "context": "… Durchführung der Kommunalwahlen 2020 vom 29. Mai 2020 (GV. NRW. S. 379) beschlossen.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Bekanntmachung der Neufassung des Kommunalwahlgesetzes vom 30. Juni 1998 (GV. NW. 1998 S. 454)",
+    "sourceVersion": "Bekanntmachung der Neufassung des Kommunalwahlgesetzes vom 30. Juni 1998 (GV. NW. 1998 S. 454)",
+    "simulation": "Bekanntmachung der Neufassung des Kommunalwahlgesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 63,
+          "actual": 63,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 93029,
+          "actual": 92558,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 63,
+          "actual": 63,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 502,
+          "actual": 502,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 50,
+          "actual": 50,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 63,
+          "actual": 63,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 92558,
+          "actual": 92541,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "63 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "63 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:09:47.059Z"
+}

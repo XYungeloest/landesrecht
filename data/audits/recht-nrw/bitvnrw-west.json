@@ -1,0 +1,904 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32440",
+  "slug": "bitvnrw-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@102:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 102,
+      "end": 121,
+      "term": "Nordrhein-Westfalen",
+      "context": "…formationstechnik nach dem Behindertengleichstellungsgesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@45:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 45,
+      "end": 64,
+      "term": "Nordrhein-Westfalen",
+      "context": "Barrierefreie-Informationstechnik-Verordnung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@59:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 59,
+      "end": 78,
+      "term": "Nordrhein-Westfalen",
+      "context": "Auf Grund des § 10e des Behindertengleichstellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766), der durch Gesetz v…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@102:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 102,
+      "end": 117,
+      "term": "GV. NRW. S. 766",
+      "context": "…tellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766), der durch Gesetz vom 11. April 2019 (GV. NRW. S. 2017) ei…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@157:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 157,
+      "end": 173,
+      "term": "GV. NRW. S. 2017",
+      "context": "…003 (GV. NRW. S. 766), der durch Gesetz vom 11. April 2019 (GV. NRW. S. 2017) eingefügt worden ist, verordnet das Ministerium für Arbeit…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@211:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 211,
+      "end": 258,
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "…2019 (GV. NRW. S. 2017) eingefügt worden ist, verordnet das Ministerium für Arbeit, Gesundheit und Soziales im Einvernehmen mit der Staatskanzlei und allen Ministerien…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@427:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].children[0].text",
+      "start": 427,
+      "end": 446,
+      "term": "Nordrhein-Westfalen",
+      "context": "…es Landes nach § 10a des Behindertengleichstellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].children[0].text@470:protected:gazette-nrw",
+      "path": "body[2].children[0].children[0].text",
+      "start": 470,
+      "end": 485,
+      "term": "GV. NRW. S. 766",
+      "context": "…tellungsgesetzes Nordrhein-Westfalen vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils geltenden Fassung für Websites und mobile A…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].children[0].text@898:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].children[0].text",
+      "start": 898,
+      "end": 917,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Ausnahmen nach § 10 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen ergeben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@104:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[0].text",
+      "start": 104,
+      "end": 123,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gemäß § 10b Absatz 1 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen eine Erklärung über die Vereinbarkeit ihrer Website und mob…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[0].text@125:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[0].text",
+      "start": 125,
+      "end": 144,
+      "term": "Nordrhein-Westfalen",
+      "context": "…0b Absatz 2 Nummer 2 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen ist in der Erklärung zur Barrierefreiheit nach § 4 zu besch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[1].text@598:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[1].text",
+      "start": 598,
+      "end": 617,
+      "term": "Nordrhein-Westfalen",
+      "context": "…verfahren nach § 10d des Behindertengleichstellungsgesetzes Nordrhein-Westfalen durchzuführen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[0].text@73:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[0].text",
+      "start": 73,
+      "end": 92,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ngsstelle nach § 10c des Behindertengleichstellungsgesetzes Nordrhein-Westfalen führt die Überwachung der Einhaltung der Anforderungen an d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[0].text@61:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[0].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ie Stelle nach § 10c des Behindertengleichstellungsgesetzes Nordrhein-Westfalen führt die Überwachung der Einhaltung der Anforderungen an d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[2].children[0].text@73:rule:jurisdiction-name-bare",
+      "path": "body[4].children[2].children[0].text",
+      "start": 73,
+      "end": 92,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gemäß § 10c Absatz 2 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen sind gemäß Artikel 8 bis 11 und Anhang II des Durchführungs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[0].text@76:rule:jurisdiction-name-bare",
+      "path": "body[5].children[0].children[0].text",
+      "start": 76,
+      "end": 95,
+      "term": "Nordrhein-Westfalen",
+      "context": "… nach § 10d Absatz 1 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen wird der oder dem Beauftragten für die Belange der Menschen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[0].text@221:rule:jurisdiction-name-bare",
+      "path": "body[5].children[0].children[0].text",
+      "start": 221,
+      "end": 240,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ehinderung nach § 11 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen zugeordnet und von ihr oder ihm geleitet. Die Unabhängigkei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@112:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[1].text",
+      "start": 112,
+      "end": 131,
+      "term": "Nordrhein-Westfalen",
+      "context": "…mmunikation im Sinne des Behindertengleichstellungsgesetzes Nordrhein-Westfalen mit den Beteiligten. Die Kommunikationsunterstützungsverord…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@196:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[1].text",
+      "start": 196,
+      "end": 215,
+      "term": "Nordrhein-Westfalen",
+      "context": "…den Beteiligten. Die Kommunikationsunterstützungsverordnung Nordrhein-Westfalen vom 15. Juni 2004 (GV. NRW. S. 336) und die Verordnung über…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@235:protected:gazette-nrw",
+      "path": "body[5].children[1].children[1].text",
+      "start": 235,
+      "end": 250,
+      "term": "GV. NRW. S. 336",
+      "context": "…rstützungsverordnung Nordrhein-Westfalen vom 15. Juni 2004 (GV. NRW. S. 336) und die Verordnung über barrierefreie Dokumente vom 19. Ju…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@319:protected:gazette-nrw",
+      "path": "body[5].children[1].children[1].text",
+      "start": 319,
+      "end": 334,
+      "term": "GV. NRW. S. 338",
+      "context": "… Verordnung über barrierefreie Dokumente vom 19. Juni 2004 (GV. NRW. S. 338), jeweils in der jeweils geltenden Fassung, finden auf das …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@378:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].children[0].text",
+      "start": 378,
+      "end": 397,
+      "term": "Nordrhein-Westfalen",
+      "context": "…es Landes nach § 10a des Behindertengleichstellungsgesetzes Nordrhein-Westfalen enthalten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].children[1].text@90:rule:jurisdiction-name-bare",
+      "path": "body[5].children[3].children[1].text",
+      "start": 90,
+      "end": 109,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Monitoringstelle nach § 11 des Inklusionsgrundsätzegesetzes Nordrhein-Westfalen vom 14. Juni 2016 (GV. NRW. S. 442) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].children[1].text@129:protected:gazette-nrw",
+      "path": "body[5].children[3].children[1].text",
+      "start": 129,
+      "end": 144,
+      "term": "GV. NRW. S. 442",
+      "context": "…nsgrundsätzegesetzes Nordrhein-Westfalen vom 14. Juni 2016 (GV. NRW. S. 442) in der jeweils geltenden Fassung nach freiem Ermessen an d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[4].children[2].text@195:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[2].text",
+      "start": 195,
+      "end": 214,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ehinderung nach § 11 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen oder anderer sachkundiger Stellen über die Überwachungsstel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].children[3].text@207:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[3].text",
+      "start": 207,
+      "end": 226,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ch aus §§ 10 bis 10d des Behindertengleichstellungsgesetzes Nordrhein-Westfalen oder dieser Verordnung ergebenden Anforderungen an die Barr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].children[4].text@277:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[4].text",
+      "start": 277,
+      "end": 296,
+      "term": "Nordrhein-Westfalen",
+      "context": "…§ 10 Absatz 4 oder 5 des Behindertengleichstellungsgesetzes Nordrhein-Westfalen vorliegt. Sie weist darauf hin, dass das Ergebnis ihrer Fes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[5].children[0].text@160:rule:jurisdiction-name-bare",
+      "path": "body[5].children[5].children[0].text",
+      "start": 160,
+      "end": 179,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s im Sinne von § 10a des Behindertengleichstellungsgesetzes Nordrhein-Westfalen beteiligt ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[6].children[0].text@281:rule:jurisdiction-name-bare",
+      "path": "body[5].children[6].children[0].text",
+      "start": 281,
+      "end": 300,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erstattung nach §10c des Behindertengleichstellungsgesetzes Nordrhein-Westfalen zur Verfügung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[7].children[0].text@115:rule:jurisdiction-name-bare",
+      "path": "body[5].children[7].children[0].text",
+      "start": 115,
+      "end": 134,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tens diese Verordnung, das Behindertengleichstellungsgesetz Nordrhein-Westfalen in der jeweils geltenden Fassung, ein Antragsformular nach …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[0].text@129:rule:jurisdiction-name-bare",
+      "path": "body[6].children[1].children[0].text",
+      "start": 129,
+      "end": 148,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tigt tritt die Barrierefreie Informationstechnik Verordnung Nordrhein-Westfalen vom 24. Juni 2004 (GV. NRW. S. 339) außer Kraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[0].text@168:protected:gazette-nrw",
+      "path": "body[6].children[1].children[0].text",
+      "start": 168,
+      "end": 183,
+      "term": "GV. NRW. S. 339",
+      "context": "…nstechnik Verordnung Nordrhein-Westfalen vom 24. Juni 2004 (GV. NRW. S. 339) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[3].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[1].children[3].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[5].text@74:rule:jurisdiction-name-bare",
+      "path": "body[6].children[1].children[5].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rrer Verweis: „Barrierefreie-Informationstechnik-Verordnung Nordrhein-Westfalen vom 18. Juni 2019 (GV. NRW. S. 262)“",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[5].text@113:protected:gazette-nrw",
+      "path": "body[6].children[1].children[5].text",
+      "start": 113,
+      "end": 128,
+      "term": "GV. NRW. S. 262",
+      "context": "…nstechnik-Verordnung Nordrhein-Westfalen vom 18. Juni 2019 (GV. NRW. S. 262)“",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 26
+    },
+    "source-citation": {
+      "protected": 8
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[5].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[6].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[7].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "…2019 (GV. NRW. S. 2017) eingefügt worden ist, verordnet das Ministerium für Arbeit, Gesundheit und Soziales im Einvernehmen mit der Staatskanzlei und allen Ministerien…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 172,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…tellungsgesetzes Westdeutschland vom 16. Dezember 2003 (GV. NRW. S. 766), der durch Gesetz vom 11. April 2019 (GV. NRW. S. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…(GV. NRW. S. 766), der durch Gesetz vom 11. April 2019 (GV. NRW. S. 2017) eingefügt worden ist, verordnet das Ministerium f…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…tellungsgesetzes Westdeutschland vom 16. Dezember 2003 (GV. NRW. S. 766) in der jeweils geltenden Fassung für Websites und …",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…rstützungsverordnung Westdeutschland vom 15. Juni 2004 (GV. NRW. S. 336) und die Verordnung über barrierefreie Dokumente vo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ordnung über barrierefreie Dokumente vom 19. Juni 2004 (GV. NRW. S. 338), jeweils in der jeweils geltenden Fassung, finden …",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…nsgrundsätzegesetzes Westdeutschland vom 14. Juni 2016 (GV. NRW. S. 442) in der jeweils geltenden Fassung nach freiem Ermes…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…nstechnik Verordnung Westdeutschland vom 24. Juni 2004 (GV. NRW. S. 339) außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[5].text",
+        "term": "NRW",
+        "context": "…nstechnik-Verordnung Westdeutschland vom 18. Juni 2019 (GV. NRW. S. 262)“",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zur Schaffung barrierefreier Informationstechnik nach dem Behindertengleichstellungsgesetz Nordrhein-Westfalen vom 18. Juni 2019",
+    "sourceVersion": "Verordnung zur Schaffung barrierefreier Informationstechnik nach dem Behindertengleichstellungsgesetz Nordrhein-Westfalen vom 18. Juni 2019",
+    "simulation": "Verordnung zur Schaffung barrierefreier Informationstechnik nach dem Behindertengleichstellungsgesetz Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 18646,
+          "actual": 19215,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 92,
+          "actual": 92,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 19215,
+          "actual": 19119,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "18 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "18 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:47:37.466Z"
+}

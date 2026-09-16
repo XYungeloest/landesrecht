@@ -414,8 +414,12 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
       const foreign = item.urls.filter((url) => !versionUrls.has(url) && parseVersionUrl(url)?.section === options.area);
       if (foreign.length > 0 && foreign.length < item.urls.length) {
         const dates = foreign.map((url) => parseVersionUrl(url)?.pathDate ?? '').sort();
-        const key = `${item.key.startsWith('term:') ? `stem:${item.portalType}/${parseVersionUrl(foreign[0]!)?.slug ?? 'split'}` : item.key}@${dates[0] || 'undatiert'}`;
-        if (!enumeration.items.some((candidate) => candidate.key === key)) {
+        // Stabiler Schlüssel: Basis ohne früher angehängtes Datum. Sonst trägt jede Wiederholung ein weiteres
+        // „@datum“ an, die Dublettenprüfung greift nie und die Enumeration wächst unbegrenzt.
+        const base = item.key.split('@')[0]!;
+        const key = `${item.key.startsWith('term:') ? `stem:${item.portalType}/${parseVersionUrl(foreign[0]!)?.slug ?? 'split'}` : base}@${dates[0] || 'undatiert'}`;
+        const alreadyKnown = enumeration.items.some((candidate) => candidate.key === key || (candidate !== item && candidate.urls.some((url) => foreign.includes(url))));
+        if (!alreadyKnown) {
           enumeration.items.push({ ...item, key, urls: foreign.sort(), entryUrl: foreign.sort().at(-1)!, status: 'pending', attempts: 0, signals: { ...item.signals, search: false }, titleSource: 'slug', ...(item.lastRunId ? { lastRunId: item.lastRunId } : {}) });
           const added = enumeration.items.at(-1)!;
           delete added.sourceIdentity;
@@ -439,10 +443,13 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
     if (outcome.reconstructed) outcomes.reconstructed += 1;
     log(`    → ${outcome.importStatus}${outcome.targetSlug ? ` ${outcome.targetSlug}` : ''}${outcome.reviewCategories?.length ? ` (Review: ${outcome.reviewCategories.join(', ')})` : ''}${outcome.status === 'failed' ? ` FEHLER ${outcome.message ?? ''}` : ''}`);
 
-    // Systemische Fehlerbilder: viele Fehler in Folge oder gehäuft derselbe Fehlercode.
+    // Systemische Fehlerbilder: viele Fehler in Folge oder gehäuft derselbe Fehlercode. Wiederholungen bereits
+    // fehlgeschlagener Stammnormen (--retry-failed) zählen nicht mit: dort besteht die Auswahl per Definition aus
+    // Fehlerfällen, ein erneuter Fehlschlag ist erwartbar und kein Hinweis auf Portal-, Parser- oder Netzprobleme.
     const failed = outcome.status === 'failed';
-    consecutiveFailures = failed ? consecutiveFailures + 1 : 0;
-    recent.push({ failed, codes: failed ? outcome.errorCodes ?? [] : [] });
+    const systemicSignal = failed && previousStatus !== 'failed';
+    consecutiveFailures = systemicSignal ? consecutiveFailures + 1 : failed ? consecutiveFailures : 0;
+    recent.push({ failed: systemicSignal, codes: systemicSignal ? outcome.errorCodes ?? [] : [] });
     if (recent.length > limits.window) recent.shift();
     const codeCounts = new Map<string, number>();
     for (const entry of recent) for (const code of new Set(entry.codes)) codeCounts.set(code, (codeCounts.get(code) ?? 0) + 1);

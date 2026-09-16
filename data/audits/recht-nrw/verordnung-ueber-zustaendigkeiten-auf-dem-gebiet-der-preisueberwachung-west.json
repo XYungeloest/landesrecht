@@ -1,0 +1,583 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28133",
+  "slug": "verordnung-ueber-zustaendigkeiten-auf-dem-gebiet-der-preisueberwachung-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[1].text@99:authority-district-government",
+      "path": "body[1].children[1].text",
+      "start": 99,
+      "end": 117,
+      "term": "Bezirksregierungen",
+      "context": "…Preisüberwachung nach § 8 Abs. 1 des Preisgesetzes wird den Bezirksregierungen, auf dem Gebiet der Kampfmittelräumung durch Unternehmen de…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@179:authority-district-government",
+      "path": "body[1].children[1].text",
+      "start": 179,
+      "end": 195,
+      "term": "Bezirksregierung",
+      "context": "…auf dem Gebiet der Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-West…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@196:municipality",
+      "path": "body[1].children[1].text",
+      "start": 196,
+      "end": 206,
+      "term": "Düsseldorf",
+      "context": "…r Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen übert…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[1].children[1].text@234:rule:jurisdiction-name-genitive",
+      "path": "body[1].children[1].text",
+      "start": 234,
+      "end": 260,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen übertragen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@377:authority-district-government",
+      "path": "body[3].children[2].text",
+      "start": 377,
+      "end": 395,
+      "term": "Bezirksregierungen",
+      "context": "…. I S. 4197) in der jeweils geltenden Fassung handelt - den Bezirksregierungen, auf dem Gebiet der Kampfmittelräumung durch Unternehmen de…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@457:authority-district-government",
+      "path": "body[3].children[2].text",
+      "start": 457,
+      "end": 473,
+      "term": "Bezirksregierung",
+      "context": "…auf dem Gebiet der Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-West…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@474:municipality",
+      "path": "body[3].children[2].text",
+      "start": 474,
+      "end": 484,
+      "term": "Düsseldorf",
+      "context": "…r Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@512:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[2].text",
+      "start": 512,
+      "end": 538,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[4].text@382:authority-district-government",
+      "path": "body[3].children[4].text",
+      "start": 382,
+      "end": 398,
+      "term": "Bezirksregierung",
+      "context": "…den Fassung definierten Telemedien begangen werden, auf die Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-West…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[4].text@399:municipality",
+      "path": "body[3].children[4].text",
+      "start": 399,
+      "end": 409,
+      "term": "Düsseldorf",
+      "context": "…ierten Telemedien begangen werden, auf die Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[4].text@437:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[4].text",
+      "start": 437,
+      "end": 463,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… die Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[4].text@434:protected:gazette-nw",
+      "path": "body[4].children[4].text",
+      "start": 434,
+      "end": 448,
+      "term": "GV. NW. S. 285",
+      "context": "…ngen zum Erlaß von Rechtsverordnungen vom 17. Oktober 1961 (GV. NW. S. 285) , sowie",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[5].text@327:protected:gazette-nw",
+      "path": "body[4].children[5].text",
+      "start": 327,
+      "end": 341,
+      "term": "GV. NW. S. 421",
+      "context": "…s Landesorganisationsgesetzes (LOG. NW.) vom 10. Juli 1962 (GV. NW. S. 421) , zuletzt geändert durch Gesetz vom 9. Mai 2000 (GV. NW. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[5].text@392:protected:gazette-nw",
+      "path": "body[4].children[5].text",
+      "start": 392,
+      "end": 405,
+      "term": "GV. NW. S.562",
+      "context": "…W. S. 421) , zuletzt geändert durch Gesetz vom 9. Mai 2000 (GV. NW. S.562), und durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 562), und d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[5].text@442:protected:gazette-nrw",
+      "path": "body[4].children[5].text",
+      "start": 442,
+      "end": 457,
+      "term": "GV. NRW. S. 562",
+      "context": "…Mai 2000 (GV. NW. S.562), und durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 562), und des § 5 Abs. 3 Satz 1 LOG. NW., insoweit nach Anhörun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@4:constitutional-organ-state",
+      "path": "body[5].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[5].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[5].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].text@99:protected:gazette-nrw",
+      "path": "body[7].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 274",
+      "context": "… (Artikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "authority": {
+      "manual-review": 5
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "…Preisüberwachung nach § 8 Abs. 1 des Preisgesetzes wird den Bezirksregierungen, auf dem Gebiet der Kampfmittelräumung durch Unternehmen de…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…auf dem Gebiet der Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-West…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…r Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen übert…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Bezirksregierungen",
+      "context": "…. I S. 4197) in der jeweils geltenden Fassung handelt - den Bezirksregierungen, auf dem Gebiet der Kampfmittelräumung durch Unternehmen de…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…auf dem Gebiet der Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-West…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Düsseldorf",
+      "context": "…r Kampfmittelräumung durch Unternehmen der Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…den Fassung definierten Telemedien begangen werden, auf die Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-West…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[4].text",
+      "term": "Düsseldorf",
+      "context": "…ierten Telemedien begangen werden, auf die Bezirksregierung Düsseldorf für das gesamte Gebiet des Landes Nordrhein-Westfalen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 25,
+    "residuals": [
+      {
+        "path": "body[4].children[5].text",
+        "term": "NRW",
+        "context": "…2000 (GV. NW. S.562), und durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 562), und des § 5 Abs. 3 Satz 1 LOG. NW., insoweit nach…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].text",
+        "term": "NRW",
+        "context": "…tikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über Zuständigkeiten auf dem Gebiet der Preisüberwachung vom 30. April 1985 (GV. NW. 1985 S. 380)",
+    "sourceVersion": "Verordnung über Zuständigkeiten auf dem Gebiet der Preisüberwachung vom 30. April 1985 (GV. NW. 1985 S. 380)",
+    "simulation": "Verordnung über Zuständigkeiten auf dem Gebiet der Preisüberwachung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3393,
+          "actual": 3268,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3268,
+          "actual": 3252,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:33:22.827Z"
+}

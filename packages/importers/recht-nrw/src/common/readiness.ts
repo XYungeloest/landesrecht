@@ -163,7 +163,9 @@ export async function evaluateReadiness(root: string, options: { env?: Record<st
     const stored = await readJsonFile<CoverageReport>(join(root, COVERAGE_PATH));
     const current = stored?.schemaVersion === computed.schemaVersion && coverageComparable(stored) === coverageComparable(computed);
     add('coverage', 'Coverage-Report aktuell', current, current ? `LRGV-Basis ${computed.lrgv.base.count}, LRMB-Basis ${computed.lrmb.base.count}` : 'coverage.json fehlt oder ist veraltet (npm run import:recht-nrw:coverage -- --write)');
-    add('consistency', 'Manifest ↔ Inhalte ↔ Slug-Registry konsistent', computed.consistency.ok, computed.consistency.ok ? 'keine Abweichung' : `ohne Inhalt ${computed.consistency.importedWithoutContent.length}, ohne Manifest ${computed.consistency.contentWithoutManifest.join(', ') || 0}, Slug-Abweichungen ${computed.consistency.slugRegistryMismatches.length}`);
+    const ohneManifest = (computed.lrgv.crosscheck?.enumerationWithoutManifest ?? 0) + (computed.lrmb.crosscheck?.enumerationWithoutManifest ?? 0);
+    const verarbeitetOhneManifest = ohneManifest > 0 ? `; ${ohneManifest} verarbeitete Einträge ohne Manifest (Abbruch vor der Stammnorm-Kennung, normlokal)` : '';
+    add('consistency', 'Manifest ↔ Inhalte ↔ Slug-Registry konsistent', computed.consistency.ok, computed.consistency.ok ? `keine Abweichung${verarbeitetOhneManifest}` : `ohne Inhalt ${computed.consistency.importedWithoutContent.length}, ohne Manifest ${computed.consistency.contentWithoutManifest.join(', ') || 0}, Slug-Abweichungen ${computed.consistency.slugRegistryMismatches.length}${verarbeitetOhneManifest}`);
     const stale = computed.lrgv.stale.count + computed.lrmb.stale.count;
     add('stale', 'Keine veralteten Importe', stale === 0, stale === 0 ? 'alle Einträge mit aktuellem Parser/Transformer' : `${stale} Einträge mit älterem Parser/Transformer (Regeneration im Bulk-Lauf: --regenerate-stale)`, true);
   } catch (error) {

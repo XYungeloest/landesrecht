@@ -1,0 +1,792 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31717",
+  "slug": "schuldendiensthilfegesetz-westdeutschland",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@144:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 144,
+      "end": 163,
+      "term": "Nordrhein-Westfalen",
+      "context": "…sierung und zum Ausbau der kommunalen Schulinfrastruktur in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@26:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 26,
+      "end": 45,
+      "term": "Nordrhein-Westfalen",
+      "context": "Schuldendiensthilfegesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@144:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 144,
+      "end": 163,
+      "term": "Nordrhein-Westfalen",
+      "context": "…sierung und zum Ausbau der kommunalen Schulinfrastruktur in Nordrhein-Westfalen (Schuldendiensthilfegesetz Nordrhein-Westfalen)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].title@191:rule:jurisdiction-name-bare",
+      "path": "body[0].title",
+      "start": 191,
+      "end": 210,
+      "term": "Nordrhein-Westfalen",
+      "context": "…astruktur in Nordrhein-Westfalen (Schuldendiensthilfegesetz Nordrhein-Westfalen)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@63:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 63,
+      "end": 82,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tikel 1 des Gesetzes zur Stärkung der Schulinfrastruktur in Nordrhein-Westfalen (Gute Schule 2020) vom 15. Dezember 2016 (GV. NRW. S. 1154)…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@125:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 125,
+      "end": 141,
+      "term": "GV. NRW. S. 1154",
+      "context": "…rdrhein-Westfalen (Gute Schule 2020) vom 15. Dezember 2016 (GV. NRW. S. 1154))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@26:regional-body-association",
+      "path": "body[3].children[0].text",
+      "start": 26,
+      "end": 45,
+      "term": "Landschaftsverbände",
+      "context": "Die Gemeinden, Kreise und Landschaftsverbände (Kommunen) in Nordrhein-Westfalen erhalten vom Land Schulde…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@60:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 60,
+      "end": 79,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Gemeinden, Kreise und Landschaftsverbände (Kommunen) in Nordrhein-Westfalen erhalten vom Land Schuldendiensthilfen für Kredite, die der…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@260:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 260,
+      "end": 279,
+      "term": "Nordrhein-Westfalen",
+      "context": "…er baulichen und digitalen kommunalen Schulinfrastruktur in Nordrhein-Westfalen dienen. Die Schuldendiensthilfen werden den Kommunen durch …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@491:protected:external-nrw-dot-names",
+      "path": "body[3].children[0].text",
+      "start": 491,
+      "end": 499,
+      "term": "NRW.BANK",
+      "context": "…n bis zu zwei Milliarden Euro, die im Rahmen des Programms „NRW.BANK.Gute Schule 2020“ aufgenommen werden, gewährt.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@187:protected:external-nrw-dot-names",
+      "path": "body[3].children[1].text",
+      "start": 187,
+      "end": 195,
+      "term": "NRW.BANK",
+      "context": "…eßendes Konzept, wie sie die im Rahmen des Förderprogramms „NRW.BANK.Gute Schule 2020“ eingeräumten Kreditkontingente in Anspruc…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[2].text@4:protected:external-nrw-dot-names",
+      "path": "body[3].children[2].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "Die NRW.BANK entscheidet über die Gewährung der Kredite im Rahmen der ba…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].text@295:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 295,
+      "end": 310,
+      "term": "GV. NRW. S. 947",
+      "context": "…dem Gemeindefinanzierungsgesetz 2016 vom 17. Dezember 2015 (GV. NRW. S. 947), das durch Gesetz vom 26. April 2016 (GV. NRW. S. 237) geä…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[1].text@350:protected:gazette-nrw",
+      "path": "body[4].children[1].text",
+      "start": 350,
+      "end": 365,
+      "term": "GV. NRW. S. 237",
+      "context": "…015 (GV. NRW. S. 947), das durch Gesetz vom 26. April 2016 (GV. NRW. S. 237) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@147:protected:external-nrw-dot-names",
+      "path": "body[5].children[0].text",
+      "start": 147,
+      "end": 155,
+      "term": "NRW.BANK",
+      "context": "…s mit einer Laufzeit von 20 Jahren im Rahmen des Programms „NRW.BANK.Gute Schule 2020“.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[1].text@61:protected:external-nrw-dot-names",
+      "path": "body[5].children[1].text",
+      "start": 61,
+      "end": 69,
+      "term": "NRW.BANK",
+      "context": "…as Land leistet die Schuldendiensthilfen unmittelbar an die NRW.BANK. Ihre erstmalige anteilige Auszahlung erfolgt jeweils nach …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[0].text@304:protected:external-nrw-dot-names",
+      "path": "body[6].children[0].text",
+      "start": 304,
+      "end": 312,
+      "term": "NRW.BANK",
+      "context": "…Kredite, die für dieses Grundstück im Rahmen des Programms „NRW.BANK.Gute Schule 2020“ in Anspruch genommen wurden. Die Kommune …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].text@15:authority-district-government",
+      "path": "body[7].children[1].text",
+      "start": 15,
+      "end": 31,
+      "term": "Bezirksregierung",
+      "context": "Die zuständige Bezirksregierung kann die nach diesem Gesetz gezahlten Schuldendiensthilfen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@81:protected:external-nrw-dot-names",
+      "path": "body[7].children[2].text",
+      "start": 81,
+      "end": 89,
+      "term": "NRW.BANK",
+      "context": "… nicht oder nicht vollständig für die Zwecke des Programms „NRW.BANK.Gute Schule 2020“ verwendet wurden,",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[3].text@4:protected:external-nrw-dot-names",
+      "path": "body[7].children[3].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "der NRW.BANK innerhalb von 48 Monaten nach Auszahlung keine Bestätigung …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[4].text@4:protected:external-nrw-dot-names",
+      "path": "body[7].children[4].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "der NRW.BANK innerhalb von 48 Monaten nach Auszahlung keine Bestätigung …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[4].text@183:protected:external-nrw-dot-names",
+      "path": "body[7].children[4].text",
+      "start": 183,
+      "end": 191,
+      "term": "NRW.BANK",
+      "context": "… ein Konzept vorliegt, wie sie die im Rahmen des Programms „NRW.BANK.Gute Schule 2020“ eingeräumten Kreditkontingente in Anspruc…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[9].text@4:constitutional-organ-state",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[9].text@20:rule:jurisdiction-name-bare",
+      "path": "body[9].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].text@4:ministry-portfolio",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].text@4:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].text@8:ministry-compound",
+      "path": "body[13].text",
+      "start": 8,
+      "end": 22,
+      "term": "Finanzminister",
+      "context": "Für den Finanzminister der Minister für Bauen, Wohnen, Stadtentwicklung und Verkeh…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[13].text@27:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 27,
+      "end": 83,
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Für den Finanzminister der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 8
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "external-name": {
+      "protected": 10
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 4
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[0].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[0].text",
+      "term": "Landschaftsverbände",
+      "context": "Die Gemeinden, Kreise und Landschaftsverbände (Kommunen) in Nordrhein-Westfalen erhalten vom Land Schulde…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "Die zuständige Bezirksregierung kann die nach diesem Gesetz gezahlten Schuldendiensthilfen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Finanzminister",
+      "context": "Für den Finanzminister der Minister für Bauen, Wohnen, Stadtentwicklung und Verkeh…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Für den Finanzminister der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 47,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…stdeutschland (Gute Schule 2020) vom 15. Dezember 2016 (GV. NRW. S. 1154))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…n bis zu zwei Milliarden Euro, die im Rahmen des Programms „NRW.BANK.Gute Schule 2020“ aufgenommen werden, gewährt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "…eßendes Konzept, wie sie die im Rahmen des Förderprogramms „NRW.BANK.Gute Schule 2020“ eingeräumten Kreditkontingente in An…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].text",
+        "term": "NRW",
+        "context": "Die NRW.BANK entscheidet über die Gewährung der Kredite im Rahmen d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…Gemeindefinanzierungsgesetz 2016 vom 17. Dezember 2015 (GV. NRW. S. 947), das durch Gesetz vom 26. April 2016 (GV. NRW. S. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].text",
+        "term": "NRW",
+        "context": "…(GV. NRW. S. 947), das durch Gesetz vom 26. April 2016 (GV. NRW. S. 237) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "…s mit einer Laufzeit von 20 Jahren im Rahmen des Programms „NRW.BANK.Gute Schule 2020“.",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[1].text",
+        "term": "NRW",
+        "context": "…as Land leistet die Schuldendiensthilfen unmittelbar an die NRW.BANK. Ihre erstmalige anteilige Auszahlung erfolgt jeweils …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[0].text",
+        "term": "NRW",
+        "context": "…Kredite, die für dieses Grundstück im Rahmen des Programms „NRW.BANK.Gute Schule 2020“ in Anspruch genommen wurden. Die Kom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[2].text",
+        "term": "NRW",
+        "context": "… nicht oder nicht vollständig für die Zwecke des Programms „NRW.BANK.Gute Schule 2020“ verwendet wurden,",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[3].text",
+        "term": "NRW",
+        "context": "der NRW.BANK innerhalb von 48 Monaten nach Auszahlung keine Bestäti…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[4].text",
+        "term": "NRW",
+        "context": "der NRW.BANK innerhalb von 48 Monaten nach Auszahlung keine Bestäti…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[4].text",
+        "term": "NRW",
+        "context": "… ein Konzept vorliegt, wie sie die im Rahmen des Programms „NRW.BANK.Gute Schule 2020“ eingeräumten Kreditkontingente in An…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Leistung von Schuldendiensthilfen für Kredite zur Sanierung, Modernisierung und zum Ausbau der kommunalen Schulinfrastruktur in Nordrhein-Westfalen vom 15. Dezember 2016",
+    "sourceVersion": "Gesetz über die Leistung von Schuldendiensthilfen für Kredite zur Sanierung, Modernisierung und zum Ausbau der kommunalen Schulinfrastruktur in Nordrhein-Westfalen vom 15. Dezember 2016",
+    "simulation": "Gesetz über die Leistung von Schuldendiensthilfen für Kredite zur Sanierung, Modernisierung und zum Ausbau der kommunalen Schulinfrastruktur in Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4839,
+          "actual": 5114,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 29,
+          "actual": 29,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 6,
+          "actual": 6,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5114,
+          "actual": 5090,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "6 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "6 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/35746-33121-sgv_223_20161215_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 7,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:17:17.620Z"
+}

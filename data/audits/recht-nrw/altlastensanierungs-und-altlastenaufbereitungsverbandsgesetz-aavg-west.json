@@ -1,0 +1,1225 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28251",
+  "slug": "altlastensanierungs-und-altlastenaufbereitungsverbandsgesetz-aavg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@84:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 84,
+      "end": 103,
+      "term": "Nordrhein-Westfalen",
+      "context": "… des Verbandes zur Sanierung und Aufbereitung von Altlasten Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].text@120:geography-region",
+      "path": "body[0].text",
+      "start": 120,
+      "end": 129,
+      "term": "Westfalen",
+      "context": "…band zur Sanierung und Aufbereitung von Altlasten Nordrhein Westfalen und zur Änderung des Landesabfallgesetzes)",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[1].text@127:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[0].children[1].text",
+      "start": 127,
+      "end": 153,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ine Körperschaft des öffentlichen Rechts für das Gebiet des Landes Nordrhein-Westfalen. Der Verband ist keine Gebietskörperschaft. Er dient dem Wo…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[1].text@173:rule:jurisdiction-name",
+      "path": "body[4].children[0].children[2].children[1].text",
+      "start": 173,
+      "end": 197,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Anforderungen des § 55 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[1].text@221:protected:gazette-nrw",
+      "path": "body[4].children[0].children[2].children[1].text",
+      "start": 221,
+      "end": 236,
+      "term": "GV. NRW. S. 602",
+      "context": "…etz für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung entspricht und wirtschaft…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[4].text@419:rule:jurisdiction-name",
+      "path": "body[4].children[0].children[2].children[4].text",
+      "start": 419,
+      "end": 443,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…mmunalen Anstalten nach § 114 a der Gemeindeordnung für das Land Nordrhein-Westfalen (GO NRW) vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[4].text@448:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[2].children[4].text",
+      "start": 448,
+      "end": 451,
+      "term": "NRW",
+      "context": "… a der Gemeindeordnung für das Land Nordrhein-Westfalen (GO NRW) vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[4].text@472:protected:gazette-nrw",
+      "path": "body[4].children[0].children[2].children[4].text",
+      "start": 472,
+      "end": 487,
+      "term": "GV. NRW. S. 666",
+      "context": "…ür das Land Nordrhein-Westfalen (GO NRW) vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung und von gemeinsamen Kommu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[2].children[4].text@655:protected:gazette-nrw",
+      "path": "body[4].children[0].children[2].children[4].text",
+      "start": 655,
+      "end": 670,
+      "term": "GV. NRW. S. 621",
+      "context": "…er kommunale Gemeinschaftsarbeit (GKG) vom 1. Oktober 1979 (GV. NRW. S. 621) in der jeweils geltenden Fassung besteht.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[4].children[1].text@77:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[4].children[1].text",
+      "start": 77,
+      "end": 96,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Tätigkeit der im Rahmen des „Dialogs Wirtschaft und Umwelt Nordrhein-Westfalen“ eingerichteten Clearingstelle mit sachlichen und personell…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[4].children[2].text@42:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].children[4].children[2].text",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Unterstützung der „Allianz für die Fläche NRW“ in allen Fragen der Flächenaufbereitung und Wiedernutzbarm…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].children[2].text@90:protected:external-nrw-dot-names",
+      "path": "body[4].children[1].children[2].text",
+      "start": 90,
+      "end": 99,
+      "term": "NRW.URBAN",
+      "context": "…ch Absatz 1 ist, dass die Sanierung vom Verband selbst, von NRW.URBAN oder der Bahnflächenentwicklungsgesellschaft durchgeführt o…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].children[6].text@30:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[2].children[6].text",
+      "start": 30,
+      "end": 56,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Behörden und Gerichte des Landes Nordrhein-Westfalen übermitteln dem Verband auf Anfrage die zur Wahrnehmung sei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[4].children[1].text@58:rule:jurisdiction-name-dative",
+      "path": "body[4].children[4].children[1].text",
+      "start": 58,
+      "end": 85,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Der Verband kann auf Beschluss der Delegiertenversammlung im Land Nordrhein-Westfalen zusätzlich zu den Aufgaben nach § 2 im Auftrag Dritter Arbe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[1].children[1].text@4:rule:jurisdiction-name",
+      "path": "body[5].children[0].children[1].children[1].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "das Land Nordrhein-Westfalen, vertreten durch das für Umwelt, das für Bergbau und das fü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[3].children[5].text@240:protected:gazette-nrw",
+      "path": "body[6].children[1].children[3].children[5].text",
+      "start": 240,
+      "end": 255,
+      "term": "GV. NRW. S. 193",
+      "context": "…ehrenamtlichen Mitglieder von Ausschüssen vom 13. Mai 1958 (GV. NRW. S. 193), in der jeweils geltenden Fassung, nicht überschreiten dür…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[4].text@100:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[4].text",
+      "start": 100,
+      "end": 124,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…osten des Verbandes im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen bekannt zu machen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[2].children[3].text@154:rule:jurisdiction-name-bare",
+      "path": "body[6].children[2].children[3].text",
+      "start": 154,
+      "end": 173,
+      "term": "Nordrhein-Westfalen",
+      "context": "…etskörperschaft oder bei den kommunalen Spitzenverbänden in Nordrhein-Westfalen beamtet oder angestellt ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[2].children[7].text@26:ministry-portfolio",
+      "path": "body[6].children[2].children[7].text",
+      "start": 26,
+      "end": 85,
+      "term": "Ministerium des Landes Nordrhein-Westfalen bestimmt jeweils",
+      "context": "Das für Umwelt zuständige Ministerium des Landes Nordrhein-Westfalen bestimmt jeweils im Benehmen mit dem für Bergbau und dem für Städtebau zustä…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[7].text@42:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[2].children[7].text",
+      "start": 42,
+      "end": 68,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Das für Umwelt zuständige Ministerium des Landes Nordrhein-Westfalen bestimmt jeweils im Benehmen mit dem für Bergbau und dem fü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].children[5].text@36:authority-district-government",
+      "path": "body[6].children[4].children[5].text",
+      "start": 36,
+      "end": 52,
+      "term": "Bezirksregierung",
+      "context": "Die oberen Bodenschutzbehörden, die Bezirksregierung Arnsberg als obere Bergbehörde, die kommunalen Spitzenverbä…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[5].text@53:municipality",
+      "path": "body[6].children[4].children[5].text",
+      "start": 53,
+      "end": 61,
+      "term": "Arnsberg",
+      "context": "Die oberen Bodenschutzbehörden, die Bezirksregierung Arnsberg als obere Bergbehörde, die kommunalen Spitzenverbände, die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[5].text@164:rule:jurisdiction-name-bare",
+      "path": "body[6].children[4].children[5].text",
+      "start": 164,
+      "end": 183,
+      "term": "Nordrhein-Westfalen",
+      "context": "…zenverbände, die Landesvereinigung der Unternehmensverbände Nordrhein-Westfalen e. V. (unternehmer nrw), die Vereinigung der Industrie- und…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].children[5].text@263:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[4].children[5].text",
+      "start": 263,
+      "end": 289,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nrw), die Vereinigung der Industrie- und Handelskammern des Landes Nordrhein-Westfalen, der Westdeutsche Handwerkskammertag und die anerkannten Na…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].children[5].text@448:protected:gazette-nrw",
+      "path": "body[6].children[4].children[5].text",
+      "start": 448,
+      "end": 463,
+      "term": "GV. NRW. S. 568",
+      "context": "…6 Absatz 1 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November 2016 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[4].children[5].text@522:protected:gazette-nrw",
+      "path": "body[6].children[4].children[5].text",
+      "start": 522,
+      "end": 537,
+      "term": "GV. NRW. S. 934",
+      "context": "…8), das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist, können an den Sitzungen der Delegi…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].children[2].text@299:rule:jurisdiction-name",
+      "path": "body[7].children[0].children[2].text",
+      "start": 299,
+      "end": 323,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Abs. 1 und §§ 15 bis 18 der Eigenbetriebsverordnung für das Land Nordrhein-Westfalen vom 16. November 2004 (GV. NRW. S. 644, ber. 2005 S. 15) in…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].children[2].text@347:protected:gazette-nrw",
+      "path": "body[7].children[0].children[2].text",
+      "start": 347,
+      "end": 362,
+      "term": "GV. NRW. S. 644",
+      "context": "…ung für das Land Nordrhein-Westfalen vom 16. November 2004 (GV. NRW. S. 644, ber. 2005 S. 15) in der jeweils geltenden Fassung gelten e…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].children[2].text@241:rule:jurisdiction-name",
+      "path": "body[7].children[1].children[2].text",
+      "start": 241,
+      "end": 265,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… sowie die §§ 23 bis 25 der Eigenbetriebsverordnung für das Land Nordrhein-Westfalen entsprechend anzuwenden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[7].children[1].children[3].text@156:rule:jurisdiction-name-bare",
+      "path": "body[7].children[1].children[3].text",
+      "start": 156,
+      "end": 175,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Das Prüfungs- und Betretungsrecht des Landesrechnungshofes Nordrhein-Westfalen und seiner Beauftragten bleibt unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].children[2].text@380:rule:jurisdiction-name-genitive",
+      "path": "body[7].children[2].children[2].text",
+      "start": 380,
+      "end": 406,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…uro, die gemäß § 9 Absatz 3 Wasserentnahmeentgeltgesetz des Landes Nordrhein-Westfalen vom 27. Januar 2004 (GV. NRW. S. 30), zuletzt geändert durc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].children[2].text@428:protected:gazette-nrw",
+      "path": "body[7].children[2].children[2].text",
+      "start": 428,
+      "end": 442,
+      "term": "GV. NRW. S. 30",
+      "context": "…tgesetz des Landes Nordrhein-Westfalen vom 27. Januar 2004 (GV. NRW. S. 30), zuletzt geändert durch Gesetz vom 25. Juli 2011 (GV. NRW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[2].children[2].text@494:protected:gazette-nrw",
+      "path": "body[7].children[2].children[2].text",
+      "start": 494,
+      "end": 509,
+      "term": "GV. NRW. S. 390",
+      "context": "…W. S. 30), zuletzt geändert durch Gesetz vom 25. Juli 2011 (GV. NRW. S. 390), aus Mitteln des Wasserentnahmeentgeltaufkommens zur Verfü…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[1].text@97:ministry-portfolio",
+      "path": "body[9].children[0].children[1].text",
+      "start": 97,
+      "end": 139,
+      "term": "Ministerium des Landes Nordrhein-Westfalen",
+      "context": "…des Staates. Aufsichtsbehörde ist das für Umwelt zuständige Ministerium des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[1].text@113:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[0].children[1].text",
+      "start": 113,
+      "end": 139,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…sichtsbehörde ist das für Umwelt zuständige Ministerium des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[3].text@112:geography-region",
+      "path": "body[10].children[1].children[3].text",
+      "start": 112,
+      "end": 121,
+      "term": "Westfalen",
+      "context": "…band zur Sanierung und Aufbereitung von Altlasten Nordrhein Westfalen und zur Änderung des Landesabfallgesetzes (GV. NRW. S.571))",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[1].children[3].text@165:protected:gazette-nrw",
+      "path": "body[10].children[1].children[3].text",
+      "start": 165,
+      "end": 179,
+      "term": "GV. NRW. S.571",
+      "context": "…drhein Westfalen und zur Änderung des Landesabfallgesetzes (GV. NRW. S.571))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[4].text@124:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[4].text",
+      "start": 124,
+      "end": 143,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung des Abfallentsorgungs- und Altlastensanierungsverbandes Nordrhein-Westfalen (Abfallentsorgungs- und Altlastensanierungsverbandsgesetz- …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[4].text@228:protected:gazette-nrw",
+      "path": "body[10].children[1].children[4].text",
+      "start": 228,
+      "end": 243,
+      "term": "GV. NRW. S. 268",
+      "context": "…Altlastensanierungsverbandsgesetz- AAVG) vom 21. Juni 1988 (GV. NRW. S. 268, ber. S. 355), zuletzt geändert durch Gesetz vom 25. Septem…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[4].text@313:protected:gazette-nrw",
+      "path": "body[10].children[1].children[4].text",
+      "start": 313,
+      "end": 328,
+      "term": "GV. NRW. S. 708",
+      "context": "…355), zuletzt geändert durch Gesetz vom 25. September 2001 (GV. NRW. S. 708) gegründeten Verbandes ist der Altlastensanierungs- und Alt…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[4].text@545:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[4].text",
+      "start": 545,
+      "end": 564,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gen des Abfallentsorgungs- und Altlastensanierungsverbandes Nordrhein-Westfalen geht ohne Abwicklung auf den neu gegründeten Verband über. …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[4].text@678:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[4].text",
+      "start": 678,
+      "end": 697,
+      "term": "Nordrhein-Westfalen",
+      "context": "…über. Der Abfallentsorgungs- und Altlastensanierungsverband Nordrhein-Westfalen wird aufgelöst.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].text@4:constitutional-organ-state",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[11].text@20:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].text@4:ministry-compound",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[14].text@4:ministry-compound",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[15].text@4:ministry-compound",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 38,
+      "term": "Minister für Wirtschaft und Arbeit",
+      "context": "Der Minister für Wirtschaft und Arbeit",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 79,
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 24
+    },
+    "geography": {
+      "manual-review": 2
+    },
+    "source-citation": {
+      "protected": 12
+    },
+    "external-name": {
+      "protected": 1
+    },
+    "ministry": {
+      "manual-review": 7
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[2].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[2].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[4].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[4].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[2].children[7].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[4].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[4].children[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[0].text",
+      "term": "Westfalen",
+      "context": "…band zur Sanierung und Aufbereitung von Altlasten Nordrhein Westfalen und zur Änderung des Landesabfallgesetzes)",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[7].text",
+      "term": "Ministerium des Landes Nordrhein-Westfalen bestimmt jeweils",
+      "context": "Das für Umwelt zuständige Ministerium des Landes Nordrhein-Westfalen bestimmt jeweils im Benehmen mit dem für Bergbau und dem für Städtebau zustä…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "Die oberen Bodenschutzbehörden, die Bezirksregierung Arnsberg als obere Bergbehörde, die kommunalen Spitzenverbä…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[5].text",
+      "term": "Arnsberg",
+      "context": "Die oberen Bodenschutzbehörden, die Bezirksregierung Arnsberg als obere Bergbehörde, die kommunalen Spitzenverbände, die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[1].text",
+      "term": "Ministerium des Landes Nordrhein-Westfalen",
+      "context": "…des Staates. Aufsichtsbehörde ist das für Umwelt zuständige Ministerium des Landes Nordrhein-Westfalen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].children[3].text",
+      "term": "Westfalen",
+      "context": "…band zur Sanierung und Aufbereitung von Altlasten Nordrhein Westfalen und zur Änderung des Landesabfallgesetzes (GV. NRW. S.571))",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Minister für Wirtschaft und Arbeit",
+      "context": "Der Minister für Wirtschaft und Arbeit",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 515,
+    "residuals": [
+      {
+        "path": "body[4].children[0].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…etz für das Land Westdeutschland vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung entspricht und wi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…r das Land Westdeutschland (GO West) vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung und von gemeinsam…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…ommunale Gemeinschaftsarbeit (GKG) vom 1. Oktober 1979 (GV. NRW. S. 621) in der jeweils geltenden Fassung besteht.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…ch Absatz 1 ist, dass die Sanierung vom Verband selbst, von NRW.URBAN oder der Bahnflächenentwicklungsgesellschaft durchgef…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[3].children[5].text",
+        "term": "NRW",
+        "context": "…namtlichen Mitglieder von Ausschüssen vom 13. Mai 1958 (GV. NRW. S. 193), in der jeweils geltenden Fassung, nicht überschre…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[4].children[5].text",
+        "term": "NRW",
+        "context": "…satz 1 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[4].children[5].text",
+        "term": "NRW",
+        "context": "…das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist, können an den Sitzungen de…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[0].children[2].text",
+        "term": "NRW",
+        "context": "…ung für das Land Westdeutschland vom 16. November 2004 (GV. NRW. S. 644, ber. 2005 S. 15) in der jeweils geltenden Fassung …",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…tgesetz des Landes Westdeutschland vom 27. Januar 2004 (GV. NRW. S. 30), zuletzt geändert durch Gesetz vom 25. Juli 2011 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…. 30), zuletzt geändert durch Gesetz vom 25. Juli 2011 (GV. NRW. S. 390), aus Mitteln des Wasserentnahmeentgeltaufkommens z…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…in Westfalen und zur Änderung des Landesabfallgesetzes (GV. NRW. S.571))",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…astensanierungsverbandsgesetz- AAVG) vom 21. Juni 1988 (GV. NRW. S. 268, ber. S. 355), zuletzt geändert durch Gesetz vom 25…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…, zuletzt geändert durch Gesetz vom 25. September 2001 (GV. NRW. S. 708) gegründeten Verbandes ist der Altlastensanierungs-…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Gründung des Verbandes zur Sanierung und Aufbereitung von Altlasten Nordrhein-Westfalen vom 26. November 2002",
+    "sourceVersion": "Gesetz über die Gründung des Verbandes zur Sanierung und Aufbereitung von Altlasten Nordrhein-Westfalen vom 26. November 2002",
+    "simulation": "Gesetz über die Gründung des Verbandes zur Sanierung und Aufbereitung von Altlasten Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 29,
+          "actual": 29,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 39590,
+          "actual": 40663,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 29,
+          "actual": 29,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 359,
+          "actual": 359,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 29,
+          "actual": 29,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 40663,
+          "actual": 40581,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "29 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "29 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:16:33.934Z"
+}

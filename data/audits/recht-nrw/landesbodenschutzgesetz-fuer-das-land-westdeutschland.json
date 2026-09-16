@@ -1,0 +1,716 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28047",
+  "slug": "landesbodenschutzgesetz-fuer-das-land-westdeutschland",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@32:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 32,
+      "end": 56,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Landesbodenschutzgesetz für das Land Nordrhein-Westfalen (Landesbodenschutzgesetz - LBodSchG - (Fn 3))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[0].text@103:rule:jurisdiction-name-bare",
+      "path": "body[0].text",
+      "start": 103,
+      "end": 122,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Ausführung und Ergänzung des Bundes-Bodenschutzgesetzes in Nordrhein-Westfalen)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[32].children[4].text@68:authority-state-office",
+      "path": "body[32].children[4].text",
+      "start": 68,
+      "end": 87,
+      "term": "Landesamt für Natur",
+      "context": "…Absatz 1 genannten Stellen sind ferner verpflichtet, an das Landesamt für Natur, Umwelt und Verbraucherschutz Daten aus Bodenuntersuchungen…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[34].children[1].text@6:authority-state-office",
+      "path": "body[34].children[1].text",
+      "start": 6,
+      "end": 25,
+      "term": "Landesamt für Natur",
+      "context": "1Beim Landesamt für Natur, Umwelt und Verbraucherschutz wird ein Fachinformationssyst…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[34].children[3].text@149:authority-state-office",
+      "path": "body[34].children[3].text",
+      "start": 149,
+      "end": 168,
+      "term": "Landesamt für Natur",
+      "context": "…achen, wird ein Netz von Dauerbeobachtungsflächen durch das Landesamt für Natur, Umwelt und Verbraucherschutz eingerichtet und betreut. 2Di…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[34].children[4].text@4:authority-state-office",
+      "path": "body[34].children[4].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz wertet die im Bodeninformatio…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[35].children[2].text@130:rule:jurisdiction-name-genitive",
+      "path": "body[35].children[2].text",
+      "start": 130,
+      "end": 156,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ht regeln, gilt § 24 Nr. 1 des Ordnungsbehördengesetzes des Landes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[37].children[1].text@208:authority-state-office",
+      "path": "body[37].children[1].text",
+      "start": 208,
+      "end": 227,
+      "term": "Landesamt für Natur",
+      "context": "… und die Daten zu den in § 6 Abs. 1 genannten Kriterien dem Landesamt für Natur, Umwelt und Verbraucherschutz, soweit diese für die Führung…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[37].children[1].text@481:authority-state-office",
+      "path": "body[37].children[1].text",
+      "start": 481,
+      "end": 500,
+      "term": "Landesamt für Natur",
+      "context": "… benötigt werden. 2Die übermittelten Inhalte werden von dem Landesamt für Natur, Umwelt und Verbraucherschutz in Dateien geführt und in Kar…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[37].children[2].text@407:authority-state-office",
+      "path": "body[37].children[2].text",
+      "start": 407,
+      "end": 426,
+      "term": "Landesamt für Natur",
+      "context": "…zbehörde sowie die oberste Bodenschutzbehörde gegenüber dem Landesamt für Natur, Umwelt und Verbraucherschutz zulassen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[38].children[4].text@220:rule:jurisdiction-name-bare",
+      "path": "body[38].children[4].text",
+      "start": 220,
+      "end": 239,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n wird nach den Vorschriften des Umweltinformationsgesetzes Nordrhein-Westfalen gewährt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[40].children[2].text@203:rule:jurisdiction-name-bare",
+      "path": "body[40].children[2].text",
+      "start": 203,
+      "end": 222,
+      "term": "Nordrhein-Westfalen",
+      "context": "…er Belange von der Verordnung berührt werden können, den in Nordrhein-Westfalen anerkannten Naturschutzverbänden, den jeweiligen Stadt- und…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[41].children[1].text@77:authority-district-government",
+      "path": "body[41].children[1].text",
+      "start": 77,
+      "end": 93,
+      "term": "Bezirksregierung",
+      "context": "…tzbehörde ist das Ministerium, obere Bodenschutzbehörde die Bezirksregierung, untere Bodenschutzbehörde die Kreisordnungsbehörde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[41].children[2].text@91:authority-district-government",
+      "path": "body[41].children[2].text",
+      "start": 91,
+      "end": 107,
+      "term": "Bezirksregierung",
+      "context": "…ht unterliegen, ist obere und untere Bodenschutzbehörde die Bezirksregierung Arnsberg als Bergbehörde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[41].children[2].text@108:municipality",
+      "path": "body[41].children[2].text",
+      "start": 108,
+      "end": 116,
+      "term": "Arnsberg",
+      "context": "…st obere und untere Bodenschutzbehörde die Bezirksregierung Arnsberg als Bergbehörde.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[42].children[1].text@4:authority-state-office",
+      "path": "body[42].children[1].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz hat im Zusammenwirken mit dem…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[42].children[2].text@194:authority-state-office",
+      "path": "body[42].children[2].text",
+      "start": 194,
+      "end": 213,
+      "term": "Landesamt für Natur",
+      "context": "…und der auf diese Gesetze gestützten Rechtsverordnungen vom Landesamt für Natur, Umwelt und Verbraucherschutz und vom Geologischen Dienst -…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[42].children[2].text@274:authority-state-enterprise",
+      "path": "body[42].children[2].text",
+      "start": 274,
+      "end": 301,
+      "term": "Landesbetrieb - unterstützt",
+      "context": "… Umwelt und Verbraucherschutz und vom Geologischen Dienst - Landesbetrieb - unterstützt, soweit es sich um Maßnahmen von überregionaler oder grunds…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[45].children[4].text@126:rule:jurisdiction-name-bare",
+      "path": "body[45].children[4].text",
+      "start": 126,
+      "end": 145,
+      "term": "Nordrhein-Westfalen",
+      "context": "… von § 18 BBodSchG durch andere Bundesländer gelten auch in Nordrhein-Westfalen. Bei der Zulassung von Sachverständigen und Untersuchungsst…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[45].children[4].text@492:rule:jurisdiction-name-bare",
+      "path": "body[45].children[4].text",
+      "start": 492,
+      "end": 511,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rt zuständigen Stelle Rechnung zu tragen, soweit sie den in Nordrhein-Westfalen geltenden Anforderungen genügen. Einzelheiten der Berücksic…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[45].children[4].text@793:rule:jurisdiction-name-bare",
+      "path": "body[45].children[4].text",
+      "start": 793,
+      "end": 812,
+      "term": "Nordrhein-Westfalen",
+      "context": "…auch bestimmen, dass die Zulassung im Sinne des Satzes 1 in Nordrhein-Westfalen nicht gilt, soweit in einem Bundesland die in den Absätzen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[45].children[4].text@988:rule:jurisdiction-name-bare",
+      "path": "body[45].children[4].text",
+      "start": 988,
+      "end": 1007,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n den Nachweis dieser Anforderungen erheblich hinter den in Nordrhein-Westfalen geltenden Anforderungen zurück bleiben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "authority": {
+      "manual-review": 12
+    },
+    "municipality": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[35].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[38].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[40].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[45].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[45].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[45].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[45].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[32].children[4].text",
+      "term": "Landesamt für Natur",
+      "context": "…Absatz 1 genannten Stellen sind ferner verpflichtet, an das Landesamt für Natur, Umwelt und Verbraucherschutz Daten aus Bodenuntersuchungen…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[34].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "1Beim Landesamt für Natur, Umwelt und Verbraucherschutz wird ein Fachinformationssyst…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[34].children[3].text",
+      "term": "Landesamt für Natur",
+      "context": "…achen, wird ein Netz von Dauerbeobachtungsflächen durch das Landesamt für Natur, Umwelt und Verbraucherschutz eingerichtet und betreut. 2Di…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[34].children[4].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz wertet die im Bodeninformatio…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[37].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "… und die Daten zu den in § 6 Abs. 1 genannten Kriterien dem Landesamt für Natur, Umwelt und Verbraucherschutz, soweit diese für die Führung…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[37].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "… benötigt werden. 2Die übermittelten Inhalte werden von dem Landesamt für Natur, Umwelt und Verbraucherschutz in Dateien geführt und in Kar…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[37].children[2].text",
+      "term": "Landesamt für Natur",
+      "context": "…zbehörde sowie die oberste Bodenschutzbehörde gegenüber dem Landesamt für Natur, Umwelt und Verbraucherschutz zulassen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[41].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…tzbehörde ist das Ministerium, obere Bodenschutzbehörde die Bezirksregierung, untere Bodenschutzbehörde die Kreisordnungsbehörde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[41].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…ht unterliegen, ist obere und untere Bodenschutzbehörde die Bezirksregierung Arnsberg als Bergbehörde.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[41].children[2].text",
+      "term": "Arnsberg",
+      "context": "…st obere und untere Bodenschutzbehörde die Bezirksregierung Arnsberg als Bergbehörde.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[42].children[1].text",
+      "term": "Landesamt für Natur",
+      "context": "Das Landesamt für Natur, Umwelt und Verbraucherschutz hat im Zusammenwirken mit dem…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[42].children[2].text",
+      "term": "Landesamt für Natur",
+      "context": "…und der auf diese Gesetze gestützten Rechtsverordnungen vom Landesamt für Natur, Umwelt und Verbraucherschutz und vom Geologischen Dienst -…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[42].children[2].text",
+      "term": "Landesbetrieb - unterstützt",
+      "context": "… Umwelt und Verbraucherschutz und vom Geologischen Dienst - Landesbetrieb - unterstützt, soweit es sich um Maßnahmen von überregionaler oder grunds…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 304,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Landesbodenschutzgesetz für das Land Nordrhein-Westfalen (Landesbodenschutzgesetz - LBodSchG - (Fn 3)) vom 9. Mai 2000 (GV. NRW. S. 439)",
+    "sourceVersion": "Landesbodenschutzgesetz für das Land Nordrhein-Westfalen (Landesbodenschutzgesetz - LBodSchG - (Fn 3)) vom 9. Mai 2000 (GV. NRW. S. 439)",
+    "simulation": "Landesbodenschutzgesetz für das Land Westdeutschland (Landesbodenschutzgesetz - LBodSchG - (Fn 3)) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 21,
+          "actual": 21,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 33945,
+          "actual": 33742,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 21,
+          "actual": 21,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 187,
+          "actual": 187,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 21,
+          "actual": 21,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 33742,
+          "actual": 33710,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "21 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "21 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:31:32.833Z"
+}

@@ -513,6 +513,48 @@ const AVV_LBESG: NormInput = {
   ] }],
 };
 
+/**
+ * Regression aus dem echten Bulkbestand (1 354 Normen): Der SQL-Vergleich der Kandidatenabfrage prüft den rohen
+ * Titel, die Anfrage liefert aber normalisierte Varianten („für“ → „fur“/„fuer“). Bei Bezeichnungen mit Umlaut
+ * oder ß wurde der Identitätstreffer deshalb nicht erkannt; die Landesverfassung rutschte hinter 58 Volltext-
+ * treffer und fehlte auf der ersten Seite.
+ */
+describe('Suchintegrität: Identitätstreffer mit Umlaut (Regression)', () => {
+  let root: string;
+  let projected: ProjectedRoot;
+  const TITEL = 'Verfassung für das Land Westdeutschland';
+
+  beforeAll(async () => {
+    // Die gesuchte Norm trägt den Umlaut; viele Störnormen enthalten dieselben Wörter im Text und ranken im
+    // Volltext besser, weil sie sie häufiger nennen.
+    const stoerer = Array.from({ length: 40 }, (_, index): NormInput => ({
+      jurisdiction: 'west', slug: `stoerer-${index + 1}-west`, title: `Störnorm ${index + 1} über Land und Verfassung`, type: 'verordnung', subjects: [],
+      versions: [{ versionId: '2023-12-01', body: [numbered('section', String(index + 1), 'Verfassung', 'Verfassung für das Land Westdeutschland wird hier mehrfach genannt: Verfassung, Land, Westdeutschland.')] }],
+    }));
+    const verfassung: NormInput = {
+      jurisdiction: 'west', slug: 'verfassung-fuer-das-land-westdeutschland', title: TITEL, type: 'gesetz', subjects: ['Staatsrecht'],
+      versions: [{ versionId: '2023-12-01', body: [numbered('section', '1', 'Grundlagen', 'Das Land Westdeutschland ist ein Land der Simulation.')] }],
+    };
+    root = await createRoot('identitaet-umlaut', [...PRODUCTION, verfassung, ...stoerer]);
+    projected = await projectRoot(root);
+  });
+
+  it('findet die Norm über ihren vollständigen Titel auf der ersten Trefferseite', async () => {
+    const page = await projected.stores.west.search(createSearchState({ q: TITEL, jurisdictions: ['west'], limit: 20 }));
+    const treffer = page.hits.find((hit) => hit.slug === 'verfassung-fuer-das-land-westdeutschland');
+    expect(treffer).toBeDefined();
+    expect(treffer?.matchKind).toBe('identity');
+    expect(page.hits[0]?.slug).toBe('verfassung-fuer-das-land-westdeutschland');
+  });
+
+  it('findet sie auch länderübergreifend und mit Typfilter', async () => {
+    const alle = await projected.registry.search(createSearchState({ q: TITEL, limit: 20 }));
+    expect(alle.hits.map((hit) => hit.slug)).toContain('verfassung-fuer-das-land-westdeutschland');
+    const typ = await projected.stores.west.search(createSearchState({ q: TITEL, jurisdictions: ['west'], types: ['gesetz'], limit: 20 }));
+    expect(typ.hits.map((hit) => hit.slug)).toContain('verfassung-fuer-das-land-westdeutschland');
+  });
+});
+
 describe('Suchintegrität: Verwaltungsvorschrift mit §-Angabe im Titel (Regression)', () => {
   let root: string;
   let projected: ProjectedRoot;

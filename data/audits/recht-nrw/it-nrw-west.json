@@ -1,0 +1,1052 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28071",
+  "slug": "it-nrw-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@95:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 95,
+      "end": 114,
+      "term": "Nordrhein-Westfalen",
+      "context": "… von Leistungen des Landesbetriebes Information und Technik Nordrhein-Westfalen durch Dienststellen der Landesverwaltung (LeistungsabnahmeV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.title@176:protected:external-proper-names",
+      "path": "meta.title",
+      "start": 176,
+      "end": 182,
+      "term": "IT.NRW",
+      "context": "…urch Dienststellen der Landesverwaltung (LeistungsabnahmeVO IT.NRW) (Fn 4)",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "meta.abbr@0:protected:external-proper-names",
+      "path": "meta.abbr",
+      "start": 0,
+      "end": 6,
+      "term": "IT.NRW",
+      "context": "IT.NRW",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[0].text@83:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 83,
+      "end": 98,
+      "term": "GV. NRW. S. 561",
+      "context": "…uletzt geändert durch Artikel 1 der VO v. 3. November 2009 (GV. NRW. S. 561); in Kraft getreten am 21. November 2009.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@64:rule:jurisdiction-abbreviation",
+      "path": "body[2].text",
+      "start": 64,
+      "end": 67,
+      "term": "NRW",
+      "context": "…Grund des § 14a Abs. 3 des Landesorganisationsgesetzes (LOG NRW) vom 10. Juli 1962 (GV. NRW. S. 421), zuletzt geändert durc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@88:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 88,
+      "end": 103,
+      "term": "GV. NRW. S. 421",
+      "context": "…es Landesorganisationsgesetzes (LOG NRW) vom 10. Juli 1962 (GV. NRW. S. 421), zuletzt geändert durch Gesetz vom 9.Mai 2000 (GV. NRW. S.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@152:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 152,
+      "end": 167,
+      "term": "GV. NRW. S. 462",
+      "context": "…NRW. S. 421), zuletzt geändert durch Gesetz vom 9.Mai 2000 (GV. NRW. S. 462), wird mit Zustimmung der Landesregierung verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@4:authority-state-enterprise",
+      "path": "body[3].children[1].text",
+      "start": 4,
+      "end": 29,
+      "term": "Landesbetrieb Information",
+      "context": "Der Landesbetrieb Information und Technik Nordrhein-Westfalen (IT.NRW) stellt personelle …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@42:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 42,
+      "end": 61,
+      "term": "Nordrhein-Westfalen",
+      "context": "Der Landesbetrieb Information und Technik Nordrhein-Westfalen (IT.NRW) stellt personelle und technische Infrastruktur zur…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@63:protected:external-proper-names",
+      "path": "body[3].children[1].text",
+      "start": 63,
+      "end": 69,
+      "term": "IT.NRW",
+      "context": "… Landesbetrieb Information und Technik Nordrhein-Westfalen (IT.NRW) stellt personelle und technische Infrastruktur zur Ausführ…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@219:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 219,
+      "end": 238,
+      "term": "Nordrhein-Westfalen",
+      "context": "…onstechnik (IT) auf der Grundlage des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551), das zuletzt durch Artik…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@257:protected:gazette-nrw",
+      "path": "body[3].children[1].text",
+      "start": 257,
+      "end": 272,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551), das zuletzt durch Artikel 1 des Gesetzes vom 30. Juni 202…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@335:protected:gazette-nrw",
+      "path": "body[3].children[1].text",
+      "start": 335,
+      "end": 343,
+      "term": "GV. NRW.",
+      "context": "…das zuletzt durch Artikel 1 des Gesetzes vom 30. Juni 2020 (GV. NRW. 644, ber. S. 702) geändert worden ist, für die Dienststelle…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@484:constitutional-organ-state",
+      "path": "body[3].children[1].text",
+      "start": 484,
+      "end": 519,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "…g und die oder den Beauftragten für Informationstechnik der Landesregierung Nordrhein-Westfalen bereit.",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@500:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 500,
+      "end": 519,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en Beauftragten für Informationstechnik der Landesregierung Nordrhein-Westfalen bereit.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[6].text@172:constitutional-organ-state",
+      "path": "body[3].children[1].children[6].text",
+      "start": 172,
+      "end": 207,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "…ftrag der oder des Beauftragten für Informationstechnik der Landesregierung Nordrhein-Westfalen nach § 22 Absatz 3 Nummer 6 des E-Government-Gesetzes Nordr…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[6].text@188:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[6].text",
+      "start": 188,
+      "end": 207,
+      "term": "Nordrhein-Westfalen",
+      "context": "…es Beauftragten für Informationstechnik der Landesregierung Nordrhein-Westfalen nach § 22 Absatz 3 Nummer 6 des E-Government-Gesetzes Nordr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[6].text@262:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[6].text",
+      "start": 262,
+      "end": 281,
+      "term": "Nordrhein-Westfalen",
+      "context": "…falen nach § 22 Absatz 3 Nummer 6 des E-Government-Gesetzes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].text@27:protected:external-proper-names",
+      "path": "body[3].children[2].text",
+      "start": 27,
+      "end": 33,
+      "term": "IT.NRW",
+      "context": "Zu den Grundleistungen von IT.NRW für Dienststellen der Landesverwaltung gehören außerdem",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[2].children[0].text@100:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[2].children[0].text",
+      "start": 100,
+      "end": 126,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nd Ausführung des Gesetzes zur Regelung der Zuweisungen des Landes Nordrhein-Westfalen an die Gemeinden und Gemeindeverbände (Gemeindefinanzierung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[2].children[0].text@241:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[2].children[0].text",
+      "start": 241,
+      "end": 244,
+      "term": "NRW",
+      "context": "…erungsgesetz-GFG) und des Einheitslastenabrechnungsgesetzes NRW vom 9. Februar 2010 (GV. NRW. S. 127) in der jeweils gelten…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[2].children[0].text@266:protected:gazette-nrw",
+      "path": "body[3].children[2].children[0].text",
+      "start": 266,
+      "end": 281,
+      "term": "GV. NRW. S. 127",
+      "context": "… Einheitslastenabrechnungsgesetzes NRW vom 9. Februar 2010 (GV. NRW. S. 127) in der jeweils geltenden Fassung,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[3].text@113:protected:external-proper-names",
+      "path": "body[3].children[3].text",
+      "start": 113,
+      "end": 119,
+      "term": "IT.NRW",
+      "context": "…tet, das in Absatz 1 und 2 aufgeführte Leistungsangebot von IT.NRW zu nutzen, solange und soweit die Ausführung ihrer Aufgaben…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[3].text@299:constitutional-organ-state",
+      "path": "body[3].children[3].text",
+      "start": 299,
+      "end": 334,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "…g kann der oder die Beauftragte für Informationstechnik der Landesregierung Nordrhein-Westfalen den in Absatz 1 Satz 1 Genannten, insbesondere vor der Beau…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@315:rule:jurisdiction-name-bare",
+      "path": "body[3].children[3].text",
+      "start": 315,
+      "end": 334,
+      "term": "Nordrhein-Westfalen",
+      "context": "…die Beauftragte für Informationstechnik der Landesregierung Nordrhein-Westfalen den in Absatz 1 Satz 1 Genannten, insbesondere vor der Beau…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[3].text@480:rule:jurisdiction-name-bare",
+      "path": "body[3].children[3].text",
+      "start": 480,
+      "end": 499,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ch Abstimmung gemäß § 22 Absatz 2 des E-Government-Gesetzes Nordrhein-Westfalen eine Ausnahme erteilen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@11:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].text",
+      "start": 11,
+      "end": 14,
+      "term": "NRW",
+      "context": "Sofern IT. NRW nach Erfüllung der Aufgaben nach § 1 noch personelle und te…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].text@381:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].text",
+      "start": 381,
+      "end": 384,
+      "term": "NRW",
+      "context": "…ge Dienstleistungen mit Bezug zu Informationstechnik an IT. NRW vergeben. Diese sind nach § 22 Absatz 2 des E-Government-Ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].text@451:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].text",
+      "start": 451,
+      "end": 470,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en. Diese sind nach § 22 Absatz 2 des E-Government-Gesetzes Nordrhein-Westfalen mit der oder dem Beauftragten für Informationstechnik der L…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@529:constitutional-organ-state",
+      "path": "body[4].children[1].text",
+      "start": 529,
+      "end": 564,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "…n mit der oder dem Beauftragten für Informationstechnik der Landesregierung Nordrhein-Westfalen abzustimmen.",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@545:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].text",
+      "start": 545,
+      "end": 564,
+      "term": "Nordrhein-Westfalen",
+      "context": "…em Beauftragten für Informationstechnik der Landesregierung Nordrhein-Westfalen abzustimmen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[2].text@45:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].text",
+      "start": 45,
+      "end": 48,
+      "term": "NRW",
+      "context": "Soll ein Auftrag nach Absatz 1 Satz 1 an IT. NRW erteilt werden, sind Leistungsbeschreibungen über eine Stel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].text@200:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].text",
+      "start": 200,
+      "end": 203,
+      "term": "NRW",
+      "context": "…iner angemessenen Frist zur Rückäußerung unmittelbar an IT. NRW zu übermitteln. IT. NRW teilt der anfragenden Dienststelle …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].text@224:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].text",
+      "start": 224,
+      "end": 227,
+      "term": "NRW",
+      "context": "…zur Rückäußerung unmittelbar an IT. NRW zu übermitteln. IT. NRW teilt der anfragenden Dienststelle der Landesverwaltung inn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].text@395:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].text",
+      "start": 395,
+      "end": 398,
+      "term": "NRW",
+      "context": "…rnahme des Auftrages bekundet wird. In diesem Fall gibt IT. NRW außerdem verbindlich an, zu welchen Bedingungen die Leistun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].text@616:jurisdiction-name-residual",
+      "path": "body[4].children[2].text",
+      "start": 616,
+      "end": 636,
+      "term": "Nordrhein-Westfalens",
+      "context": "…nisses für Leistungen an Dienststellen der Landesverwaltung Nordrhein-Westfalens in der jeweils geltenden Fassung, ist eine Leistungsbeschre…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[3].text@90:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[3].text",
+      "start": 90,
+      "end": 116,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…3a der Gemeinsamen Geschäftsordnung für die Ministerien des Landes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 19. Dezember 2014 (MB…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[3].text@174:protected:gazette-nrw",
+      "path": "body[4].children[3].text",
+      "start": 174,
+      "end": 190,
+      "term": "MBl. NRW. S. 826",
+      "context": "…en in der Fassung der Bekanntmachung vom 19. Dezember 2014 (MBl. NRW. S. 826), die zuletzt durch Bekanntmachung vom 27. August 2020 (MBl…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[3].text@247:protected:gazette-nrw",
+      "path": "body[4].children[3].text",
+      "start": 247,
+      "end": 263,
+      "term": "MBl. NRW. S. 612",
+      "context": "…826), die zuletzt durch Bekanntmachung vom 27. August 2020 (MBl. NRW. S. 612) geändert worden ist, legt Kriterien zur Annahme und zur Pr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[1].text@4:protected:external-proper-names",
+      "path": "body[5].children[1].text",
+      "start": 4,
+      "end": 10,
+      "term": "IT.NRW",
+      "context": "Die IT.NRW nach anderen Rechtsvorschriften übertragenen Aufgaben bleib…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-proper-names",
+      "reason": "Eigenname eines externen Trägers bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[2].text@4:ministry-compound",
+      "path": "body[6].children[2].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[6].children[2].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[2].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[4].text@99:protected:gazette-nrw",
+      "path": "body[6].children[4].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 332",
+      "context": "… (Artikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 21,
+      "manual-review": 1
+    },
+    "external-name": {
+      "protected": 6
+    },
+    "source-citation": {
+      "protected": 9
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 4
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "Der Landesbetrieb Information und Technik Nordrhein-Westfalen (IT.NRW) stellt personelle …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].text",
+      "term": "Nordrhein-Westfalens",
+      "context": "…nisses für Leistungen an Dienststellen der Landesverwaltung Nordrhein-Westfalens in der jeweils geltenden Fassung, ist eine Leistungsbeschre…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 52,
+    "residuals": [
+      {
+        "path": "meta.title",
+        "term": "NRW",
+        "context": "…h Dienststellen der Landesverwaltung (LeistungsabnahmeVO IT.NRW) (Fn 4)",
+        "status": "protected"
+      },
+      {
+        "path": "meta.abbr",
+        "term": "NRW",
+        "context": "IT.NRW",
+        "status": "protected"
+      },
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…zt geändert durch Artikel 1 der VO v. 3. November 2009 (GV. NRW. S. 561); in Kraft getreten am 21. November 2009.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ndesorganisationsgesetzes (LOG West) vom 10. Juli 1962 (GV. NRW. S. 421), zuletzt geändert durch Gesetz vom 9.Mai 2000 (GV.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… S. 421), zuletzt geändert durch Gesetz vom 9.Mai 2000 (GV. NRW. S. 462), wird mit Zustimmung der Landesregierung verordnet…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "…r Landesbetrieb Information und Technik Westdeutschland (IT.NRW) stellt personelle und technische Infrastruktur zur Ausführ…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551), das zuletzt durch Artikel 1 des Gesetzes vom 30. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 1 des Gesetzes vom 30. Juni 2020 (GV. NRW. 644, ber. S. 702) geändert worden ist, für die Dienststell…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].text",
+        "term": "NRW",
+        "context": "Zu den Grundleistungen von IT.NRW für Dienststellen der Landesverwaltung gehören außerdem",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…eitslastenabrechnungsgesetzes West vom 9. Februar 2010 (GV. NRW. S. 127) in der jeweils geltenden Fassung,",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[3].text",
+        "term": "NRW",
+        "context": "…, das in Absatz 1 und 2 aufgeführte Leistungsangebot von IT.NRW zu nutzen, solange und soweit die Ausführung ihrer Aufgaben…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[2].text",
+        "term": "Nordrhein-Westfalens",
+        "context": "…nisses für Leistungen an Dienststellen der Landesverwaltung Nordrhein-Westfalens in der jeweils geltenden Fassung, ist eine Leistungsbeschre…",
+        "status": "documented",
+        "detectionId": "body[4].children[2].text@616:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[4].children[3].text",
+        "term": "NRW",
+        "context": "… der Fassung der Bekanntmachung vom 19. Dezember 2014 (MBl. NRW. S. 826), die zuletzt durch Bekanntmachung vom 27. August 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[3].text",
+        "term": "NRW",
+        "context": "… die zuletzt durch Bekanntmachung vom 27. August 2020 (MBl. NRW. S. 612) geändert worden ist, legt Kriterien zur Annahme un…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[1].text",
+        "term": "NRW",
+        "context": "Die IT.NRW nach anderen Rechtsvorschriften übertragenen Aufgaben bleib…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[4].text",
+        "term": "NRW",
+        "context": "…tikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Regelung der Abnahme von Leistungen des Landesbetriebes Information und Technik Nordrhein-Westfalen durch Dienststellen der Landesverwaltung (LeistungsabnahmeVO IT.NRW) (Fn 4) vom 14. November 2000",
+    "sourceVersion": "Verordnung zur Regelung der Abnahme von Leistungen des Landesbetriebes Information und Technik Nordrhein-Westfalen durch Dienststellen der Landesverwaltung (LeistungsabnahmeVO IT.NRW) (Fn 4) vom 14. November 2000",
+    "simulation": "Verordnung zur Regelung der Abnahme von Leistungen des Landesbetriebes Information und Technik Westdeutschland durch Dienststellen der Landesverwaltung (LeistungsabnahmeVO IT.NRW) (Fn 4) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5273,
+          "actual": 5592,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 34,
+          "actual": 34,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5592,
+          "actual": 5552,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "4 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "4 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:44:53.736Z"
+}

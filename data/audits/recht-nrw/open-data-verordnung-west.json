@@ -1,0 +1,1066 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33386",
+  "slug": "open-data-verordnung-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@154:geography-region",
+      "path": "meta.title",
+      "start": 154,
+      "end": 163,
+      "term": "Westfalen",
+      "context": "…ichen Netzen nach §§ 16, 16a E-Government-Gesetz Nordrhein- Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[1].text@63:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 63,
+      "end": 82,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Grund des § 23 Absatz 1 Nummer 3 des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551), der durch Artikel 1 des…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@101:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 101,
+      "end": 116,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551), der durch Artikel 1 des Gesetzes vom 30. Juni 2020 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@171:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 171,
+      "end": 186,
+      "term": "GV. NRW. S. 644",
+      "context": "…. 551), der durch Artikel 1 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 644, ber. S. 702) geändert worden ist, verordnet das Ministeriu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@236:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 236,
+      "end": 303,
+      "term": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "…RW. S. 644, ber. S. 702) geändert worden ist, verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie im Einvernehmen mit dem Ministerpräsidenten und allen Minis…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@274:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].children[0].text",
+      "start": 274,
+      "end": 293,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lichen Rechts gemäß §§ 16 und 16a des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].children[0].text@312:protected:gazette-nrw",
+      "path": "body[2].children[0].children[0].text",
+      "start": 312,
+      "end": 327,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].children[7].text@93:rule:jurisdiction-name-bare",
+      "path": "body[2].children[1].children[7].text",
+      "start": 93,
+      "end": 112,
+      "term": "Nordrhein-Westfalen",
+      "context": "…on Daten im Sinne des § 16 Satz 5 des E-Government-Gesetzes Nordrhein-Westfalen liegt vor, wenn die Datenstruktur oder Datenschnittstellen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].children[9].text@19:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[1].children[9].text",
+      "start": 19,
+      "end": 22,
+      "term": "NRW",
+      "context": "Nutzende des Open. NRW-Portals sind alle natürlichen und juristischen Personen, di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[2].children[0].text@106:rule:jurisdiction-name-bare",
+      "path": "body[2].children[2].children[0].text",
+      "start": 106,
+      "end": 125,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tlich zugängliche Netze nach § 16 des E-Government-Gesetzes Nordrhein-Westfalen bereitstellen oder nach § 16a des E-Government-Gesetzes Nor…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].children[0].text@182:rule:jurisdiction-name-bare",
+      "path": "body[2].children[2].children[0].text",
+      "start": 182,
+      "end": 201,
+      "term": "Nordrhein-Westfalen",
+      "context": "…len bereitstellen oder nach § 16a des E-Government-Gesetzes Nordrhein-Westfalen bereitstellen müssen, erfolgt dies in einem offenen Standar…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[3].text@112:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[3].text",
+      "start": 112,
+      "end": 131,
+      "term": "Nordrhein-Westfalen",
+      "context": "…T-Planungsrates im Sinne des § 20 des E-Government-Gesetzes Nordrhein-Westfalen zur einheitlichen Strukturierung von Datensätzen sind zu be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[0].text@387:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[0].text",
+      "start": 387,
+      "end": 406,
+      "term": "Nordrhein-Westfalen",
+      "context": "…reitstellung von Daten nach § 16a des E-Government-Gesetzes Nordrhein-Westfalen sind diese Lizenzen verpflichtend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].title@98:rule:jurisdiction-name-bare",
+      "path": "body[4].title",
+      "start": 98,
+      "end": 117,
+      "term": "Nordrhein-Westfalen",
+      "context": "…llen von offenen Daten nach § 16a des E-Government-Gesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[0].text@165:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[0].text",
+      "start": 165,
+      "end": 184,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ung und Aktualisierung nach § 16a des E-Government-Gesetzes Nordrhein-Westfalen sicherzustellen. Dabei sind die Vorgaben des § 16a Absatz 8…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[0].text@271:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[0].text",
+      "start": 271,
+      "end": 290,
+      "term": "Nordrhein-Westfalen",
+      "context": "…d die Vorgaben des § 16a Absatz 8 des E-Government-Gesetzes Nordrhein-Westfalen zu berücksichtigen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[1].text@88:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[1].text",
+      "start": 88,
+      "end": 107,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tifizieren Daten, die unter § 16a des E-Government-Gesetzes Nordrhein-Westfalen fallen, und prüfen vor ihrer Veröffentlichung das Vorliegen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[1].text@236:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[1].text",
+      "start": 236,
+      "end": 255,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erungsgründen nach § 16a Absatz 3 des E-Government-Gesetzes Nordrhein-Westfalen. Liegt ein solcher Hinderungsgrund vor, muss die Behörde de…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[2].text@205:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[2].text",
+      "start": 205,
+      "end": 224,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tungsabläufen nach § 16a Absatz 8 des E-Government-Gesetzes Nordrhein-Westfalen auch die Nachfrage von Bürgerinnen und Bürgern, Unternehmen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[0].text@34:constitutional-organ-state",
+      "path": "body[4].children[1].children[0].text",
+      "start": 34,
+      "end": 69,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Bei der oder dem Beauftragten der Landesregierung Nordrhein-Westfalen für Informationstechnik wird die zentrale Beratungsstelle O…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[4].children[1].children[0].text@50:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[0].text",
+      "start": 50,
+      "end": 69,
+      "term": "Nordrhein-Westfalen",
+      "context": "Bei der oder dem Beauftragten der Landesregierung Nordrhein-Westfalen für Informationstechnik wird die zentrale Beratungsstelle O…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[0].text@184:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[0].text",
+      "start": 184,
+      "end": 203,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lle Open Data nach § 16a Absatz 9 des E-Government-Gesetzes Nordrhein-Westfalen eingerichtet.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[1].text@390:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[1].text",
+      "start": 390,
+      "end": 409,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tivitäten zur Umsetzung des § 16a des E-Government-Gesetzes Nordrhein-Westfalen des jeweiligen Geschäftsbereichs.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[3].text@244:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].children[3].text",
+      "start": 244,
+      "end": 263,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erien bei der Umsetzung des § 16a des E-Government-Gesetzes Nordrhein-Westfalen, insbesondere bei Fragen der nutzerorientierten und effizie…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].title@6:rule:jurisdiction-abbreviation",
+      "path": "body[5].title",
+      "start": 6,
+      "end": 9,
+      "term": "NRW",
+      "context": "Open. NRW-Portal",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[0].text@176:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[0].text",
+      "start": 176,
+      "end": 179,
+      "term": "NRW",
+      "context": "…e Netze aufrufbares Metadatenportal für offene Daten (Open. NRW-Portal). Das Portal ist der zentrale Zugang zu den offenen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[0].text@475:rule:jurisdiction-name-bare",
+      "path": "body[5].children[0].children[0].text",
+      "start": 475,
+      "end": 494,
+      "term": "Nordrhein-Westfalen",
+      "context": "…u den offenen Daten von Unternehmen der Daseinsvorsorge aus Nordrhein-Westfalen im Sinne des § 2 Absatz 2 Nummer 2 des Datennutzungsgesetze…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[1].text@88:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[1].text",
+      "start": 88,
+      "end": 91,
+      "term": "NRW",
+      "context": "…en des Landes sind grundsätzlich unmittelbar über das Open. NRW-Portal zugänglich zu machen. Soweit offene Daten über ander…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[1].text@384:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[1].text",
+      "start": 384,
+      "end": 387,
+      "term": "NRW",
+      "context": "… 2 bereitstellt, verfügen, um die Verknüpfung mit dem Open. NRW-Portal zu ermöglichen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[2].text@239:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[2].text",
+      "start": 239,
+      "end": 242,
+      "term": "NRW",
+      "context": "…des Absatz 1 können offene Daten unmittelbar über das Open. NRW-Portal zugänglich machen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[3].text@31:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[3].text",
+      "start": 31,
+      "end": 34,
+      "term": "NRW",
+      "context": "Die Nutzung der über das Open. NRW-Portal zur Verfügung gestellten technischen Infrastruktur z…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].children[4].text@89:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].children[4].text",
+      "start": 89,
+      "end": 92,
+      "term": "NRW",
+      "context": "…ndige Ministerium ist nicht verpflichtet, die auf dem Open. NRW-Portal zu veröffentlichenden Daten und Metadaten der Datenb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[1].children[0].text@31:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].children[0].text",
+      "start": 31,
+      "end": 34,
+      "term": "NRW",
+      "context": "Die Datenverarbeitung im Open. NRW-Portal erfolgt zum Zwecke der öffentlichen Zugänglichmachun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[1].children[0].text@167:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[0].text",
+      "start": 167,
+      "end": 186,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Daten im Sinne der §§ 16 und 16a des E-Government-Gesetzes Nordrhein-Westfalen sowie des Datennutzungsgesetzes und von Daten der Datenbere…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@86:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].children[1].text",
+      "start": 86,
+      "end": 89,
+      "term": "NRW",
+      "context": "…ständige Ministerium ist für die Datenverarbeitung im Open. NRW-Portal im Sinne des Artikels 4 Nummer 7 der Verordnung (EU)…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].children[0].text@135:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].children[0].text",
+      "start": 135,
+      "end": 154,
+      "term": "Nordrhein-Westfalen",
+      "context": "…uierung der Erfahrungen mit § 16a des E-Government-Gesetzes Nordrhein-Westfalen gemäß § 26 Absatz 7 des E-Government-Gesetzes Nordrhein-Wes…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].children[0].text@201:rule:jurisdiction-name-bare",
+      "path": "body[6].children[0].children[0].text",
+      "start": 201,
+      "end": 220,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ein-Westfalen gemäß § 26 Absatz 7 des E-Government-Gesetzes Nordrhein-Westfalen bis zum 1. Januar 2025 auch die Erfahrungen mit dieser Rech…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[1].text@181:rule:jurisdiction-name-bare",
+      "path": "body[6].children[1].children[1].text",
+      "start": 181,
+      "end": 200,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n Netzen (§ 23 Abs. 1 Nr. 2 i.V.m. § 16 E-Government-Gesetz Nordrhein-Westfalen) vom 31. März 2017 (GV. NRW. S. 384) außer Kraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[1].text@221:protected:gazette-nrw",
+      "path": "body[6].children[1].children[1].text",
+      "start": 221,
+      "end": 236,
+      "term": "GV. NRW. S. 384",
+      "context": "…E-Government-Gesetz Nordrhein-Westfalen) vom 31. März 2017 (GV. NRW. S. 384) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[1].children[0].text@4:ministry-portfolio",
+      "path": "body[6].children[1].children[1].children[0].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "geography": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 32
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].children[9].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Westfalen",
+      "context": "…ichen Netzen nach §§ 16, 16a E-Government-Gesetz Nordrhein- Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "…RW. S. 644, ber. S. 702) geändert worden ist, verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie im Einvernehmen mit dem Ministerpräsidenten und allen Minis…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[1].children[0].text",
+      "term": "Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 122,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551), der durch Artikel 1 des Gesetzes vom 30. Juni 202…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…1), der durch Artikel 1 des Gesetzes vom 30. Juni 2020 (GV. NRW. S. 644, ber. S. 702) geändert worden ist, verordnet das Mi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetz Westdeutschland) vom 31. März 2017 (GV. NRW. S. 384) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zur Regelung der Anforderungen an das Bereitstellen von Daten in öffentlich zugänglichen Netzen nach §§ 16, 16a E-Government-Gesetz Nordrhein- Westfalen vom 20. Dezember 2021",
+    "sourceVersion": "Verordnung zur Regelung der Anforderungen an das Bereitstellen von Daten in öffentlich zugänglichen Netzen nach §§ 16, 16a E-Government-Gesetz Nordrhein- Westfalen vom 20. Dezember 2021",
+    "simulation": "Verordnung zur Regelung der Anforderungen an das Bereitstellen von Daten in öffentlich zugänglichen Netzen nach §§ 16, 16a E-Government-Gesetz Nordrhein- Westfalen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12746,
+          "actual": 13053,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 62,
+          "actual": 62,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13053,
+          "actual": 12975,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "11 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "11 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/47710-44681-sgv_2006_20211220_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/47710-44682-sgv_2006_20211220_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:44:59.817Z"
+}

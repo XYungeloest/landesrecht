@@ -1,0 +1,1373 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30689",
+  "slug": "ag-gluestv-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.shortTitle@18:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 18,
+      "end": 21,
+      "term": "NRW",
+      "context": "Ausführungsgesetz NRW Glücksspielstaatsvertrag",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.abbr@10:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 10,
+      "end": 13,
+      "term": "NRW",
+      "context": "AG GlüStV NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@115:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 115,
+      "end": 130,
+      "term": "GV. NRW. S. 772",
+      "context": "… 3 geändert durch Artikel 1 des Gesetzes vom 23. Juni 2021 (GV. NRW. S. 772, ber. S. 1102), in Kraft getreten am 1. Juli 2021.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@72:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 72,
+      "end": 75,
+      "term": "NRW",
+      "context": "…usführung des Glücksspielstaatsvertrages (Ausführungsgesetz NRW Glücksspielstaatsvertrag - AG GlüStV NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@113:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 113,
+      "end": 116,
+      "term": "NRW",
+      "context": "…(Ausführungsgesetz NRW Glücksspielstaatsvertrag - AG GlüStV NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@203:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 203,
+      "end": 218,
+      "term": "GV. NRW. S. 524",
+      "context": "…ngsstaatsvertrag - Erster GlüÄndStV) vom 13. November 2012 (GV. NRW. S. 524))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].children[1].text@57:rule:jurisdiction-name",
+      "path": "body[4].children[0].children[1].text",
+      "start": 57,
+      "end": 81,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Zur Erreichung der in Absatz 1 genannten Ziele nimmt das Land Nordrhein-Westfalen die Sicherstellung eines ausreichenden Glücksspielangebots,…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[1].text@4:rule:jurisdiction-name",
+      "path": "body[4].children[1].children[1].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen ist zur Sicherstellung eines ausreichenden Glücksspielangeb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].children[1].text@235:protected:gazette-nrw",
+      "path": "body[4].children[1].children[1].text",
+      "start": 235,
+      "end": 255,
+      "term": "GV. NRW. 2021 S. 459",
+      "context": "… 1 des Glücksspielstaatsvertrags 2021 vom 29. Oktober 2020 (GV. NRW. 2021 S. 459) zu veranstalten und durchzuführen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].children[2].text@318:protected:gazette-nrw",
+      "path": "body[4].children[2].children[2].text",
+      "start": 318,
+      "end": 338,
+      "term": "GV. NRW. 2012 S. 223",
+      "context": "…e der Länder vom 15. Dezember 2011 und vom 19. Januar 2012 (GV. NRW. 2012 S. 223) erfüllt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[5].children[1].text@131:rule:jurisdiction-name-bare",
+      "path": "body[4].children[5].children[1].text",
+      "start": 131,
+      "end": 150,
+      "term": "Nordrhein-Westfalen",
+      "context": "…altung der Lotterien und Anträge ihrer Lotterieeinnehmer in Nordrhein-Westfalen entscheidet die nach § 9a Absatz 1 Nummer 1 des Glücksspiel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[5].children[2].text@291:rule:jurisdiction-name-bare",
+      "path": "body[4].children[5].children[2].text",
+      "start": 291,
+      "end": 310,
+      "term": "Nordrhein-Westfalen",
+      "context": "…e der Länder auch von dem Veranstalter von Glücksspielen in Nordrhein-Westfalen (§ 3 Absatz 1) gestellt werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[6].children[1].text@9:rule:jurisdiction-name-dative",
+      "path": "body[4].children[6].children[1].text",
+      "start": 9,
+      "end": 36,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Wer sich im Land Nordrhein-Westfalen als gewerblicher Spielvermittler betätigen will, bedarf unb…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[2].text@63:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[2].text",
+      "start": 63,
+      "end": 82,
+      "term": "Nordrhein-Westfalen",
+      "context": "… in § 3 Absatz 1 genannte Veranstalter von Glücksspielen in Nordrhein-Westfalen, die GKL Gemeinsame Klassenlotterie der Länder nach § 3 Abs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[3].text@293:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].children[3].text",
+      "start": 293,
+      "end": 296,
+      "term": "NRW",
+      "context": "…r Wohlfahrtspflege nach § 29 Absatz 2 des Spielbankgesetzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].children[3].text@315:protected:gazette-nrw",
+      "path": "body[5].children[2].children[3].text",
+      "start": 315,
+      "end": 330,
+      "term": "GV. NRW. S. 363",
+      "context": "…h § 29 Absatz 2 des Spielbankgesetzes NRW vom 29. Mai 2020 (GV. NRW. S. 363) in der jeweils geltenden Fassung sowie für Hilfeeinrichtun…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[1].text@181:protected:gazette-nrw",
+      "path": "body[9].children[2].children[1].text",
+      "start": 181,
+      "end": 196,
+      "term": "GV. NRW. S. 222",
+      "context": "…die Regelungen des Feiertagsgesetzes NW vom 23. April 1989 (GV. NRW. S. 222) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[1].text@548:rule:jurisdiction-name-bare",
+      "path": "body[10].children[0].children[1].text",
+      "start": 548,
+      "end": 567,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n § 9 Absatz 5 Satz 2 des Glücksspielstaatsvertrags 2021 in Nordrhein-Westfalen. Es kann die Zuständigkeiten durch Rechtsverordnung auf and…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[2].text@227:authority-district-government",
+      "path": "body[10].children[0].children[2].text",
+      "start": 227,
+      "end": 243,
+      "term": "Bezirksregierung",
+      "context": "…r Veranstaltungen, die über den Zuständigkeitsbereich einer Bezirksregierung hinausgehen. Das für Inneres zuständige Ministerium kann di…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[2].text@399:rule:jurisdiction-name",
+      "path": "body[10].children[0].children[2].text",
+      "start": 399,
+      "end": 423,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…undeslandes ermächtigen, eine Erlaubnis mit Wirkung für das Land Nordrhein-Westfalen zu erteilen, wenn der Sitz der Veranstalterin oder des Vera…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[2].text@592:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[0].children[2].text",
+      "start": 592,
+      "end": 618,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Ausland liegt und die Veranstaltung sich auf das Gebiet des Landes Nordrhein-Westfalen erstrecken soll. Es kann die Befugnis zur Ermächtigung auch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[3].text@4:authority-district-government",
+      "path": "body[10].children[0].children[3].text",
+      "start": 4,
+      "end": 22,
+      "term": "Bezirksregierungen",
+      "context": "Die Bezirksregierungen sind zuständig für",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[4].text@4:authority-district-government",
+      "path": "body[10].children[0].children[4].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Düsseldorf ist zuständig für die Erteilung von Erlaubnissen",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[4].text@21:municipality",
+      "path": "body[10].children[0].children[4].text",
+      "start": 21,
+      "end": 31,
+      "term": "Düsseldorf",
+      "context": "Die Bezirksregierung Düsseldorf ist zuständig für die Erteilung von Erlaubnissen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[10].children[0].children[4].children[0].text@80:rule:jurisdiction-name-bare",
+      "path": "body[10].children[0].children[4].children[0].text",
+      "start": 80,
+      "end": 99,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lvermittlerinnen und Spielvermittler, die ausschließlich in Nordrhein-Westfalen tätig werden, und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].children[6].text@247:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[0].children[6].text",
+      "start": 247,
+      "end": 273,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…eht der Erlaubniserteilung durch die zuständige Behörde des Landes Nordrhein-Westfalen gleich.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[4].text@4:authority-district-government",
+      "path": "body[10].children[1].children[4].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Düsseldorf ist landesweit zuständige Aufsichtsbehörde für d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[1].children[4].text@21:municipality",
+      "path": "body[10].children[1].children[4].text",
+      "start": 21,
+      "end": 31,
+      "term": "Düsseldorf",
+      "context": "Die Bezirksregierung Düsseldorf ist landesweit zuständige Aufsichtsbehörde für die Überwach…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[10].children[1].children[4].text@193:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[1].children[4].text",
+      "start": 193,
+      "end": 219,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…spielen und der Werbung hierfür, soweit diese im Gebiet des Landes Nordrhein-Westfalen veranstaltet, vermittelt oder beworben werden und keine ein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[4].children[1].text@110:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[4].children[1].text",
+      "start": 110,
+      "end": 129,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s Glücksspiels weder einen Sitz noch eine Betriebsstätte in Nordrhein-Westfalen hat und sich die Maßnahme gegen den Veranstalter richtet od…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[4].children[3].text@86:protected:gazette-nrw",
+      "path": "body[10].children[1].children[4].children[3].text",
+      "start": 86,
+      "end": 101,
+      "term": "GV. NRW. S. 524",
+      "context": "…aus dem Medienstaatsvertrag vom 14. bis zum 28. April 2020 (GV. NRW. S. 524) in der jeweils geltenden Fassung, dem Landesmediengesetz N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[4].children[3].text@160:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].children[4].children[3].text",
+      "start": 160,
+      "end": 179,
+      "term": "Nordrhein-Westfalen",
+      "context": "…4) in der jeweils geltenden Fassung, dem Landesmediengesetz Nordrhein-Westfalen vom 2. Juli 2002 (GV. NRW. S. 334) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[1].children[4].children[3].text@198:protected:gazette-nrw",
+      "path": "body[10].children[1].children[4].children[3].text",
+      "start": 198,
+      "end": 213,
+      "term": "GV. NRW. S. 334",
+      "context": "…em Landesmediengesetz Nordrhein-Westfalen vom 2. Juli 2002 (GV. NRW. S. 334) in der jeweils geltenden Fassung oder dem WDR-Gesetz in de…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[4].children[3].text@322:protected:gazette-nrw",
+      "path": "body[10].children[1].children[4].children[3].text",
+      "start": 322,
+      "end": 337,
+      "term": "GV. NRW. S. 265",
+      "context": "…esetz in der Fassung der Bekanntmachung vom 25. April 1998 (GV. NRW. S. 265) in der jeweils geltenden Fassung ergeben, bleiben hiervon …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].children[8].text@138:rule:jurisdiction-name-genitive",
+      "path": "body[10].children[1].children[8].text",
+      "start": 138,
+      "end": 164,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ihrer Aufgaben mit anderen Glücksspielaufsichtsbehörden des Landes Nordrhein-Westfalen oder anderer Bundesländer zusammen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[1].text@22:rule:jurisdiction-name-dative",
+      "path": "body[11].children[0].children[1].text",
+      "start": 22,
+      "end": 49,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Dieses Gesetz ersetzt im Land Nordrhein-Westfalen § 33i der Gewerbeordnung. Im Übrigen finden die Gewerbeordn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[11].children[1].children[2].text@262:rule:jurisdiction-name-adjective",
+      "path": "body[11].children[1].children[2].text",
+      "start": 262,
+      "end": 285,
+      "term": "nordrhein-westfälischen",
+      "context": "…rmittlung ohne eine Veranstaltungserlaubnis der zuständigen nordrhein-westfälischen Behörde auch im Hinblick auf die Ziele des § 1 erlaubt werd…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective übergeleitet („nordrhein-westfälischen“ → „westdeutschen“).",
+      "transformRule": "jurisdiction-name-adjective",
+      "replacement": "westdeutschen"
+    },
+    {
+      "id": "body[11].children[2].children[5].children[0].text@59:authority-district-government",
+      "path": "body[11].children[2].children[5].children[0].text",
+      "start": 59,
+      "end": 75,
+      "term": "Bezirksregierung",
+      "context": "bei unerlaubtem Glücksspiel im Sinne des § 20 Absatz 4 die Bezirksregierung Düsseldorf,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[5].children[0].text@76:municipality",
+      "path": "body[11].children[2].children[5].children[0].text",
+      "start": 76,
+      "end": 86,
+      "term": "Düsseldorf",
+      "context": "…Glücksspiel im Sinne des § 20 Absatz 4 die Bezirksregierung Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[3].children[2].text@86:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[3].children[2].text",
+      "start": 86,
+      "end": 89,
+      "term": "NRW",
+      "context": "…esetzes wird das Glücksspielstaatsvertrag Ausführungsgesetz NRW vom 30. Oktober 2007 (GV. NRW. S. 445) aufgehoben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[3].children[2].text@112:protected:gazette-nrw",
+      "path": "body[11].children[3].children[2].text",
+      "start": 112,
+      "end": 127,
+      "term": "GV. NRW. S. 445",
+      "context": "…elstaatsvertrag Ausführungsgesetz NRW vom 30. Oktober 2007 (GV. NRW. S. 445) aufgehoben.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].text@4:constitutional-organ-state",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[12].text@20:rule:jurisdiction-name-bare",
+      "path": "body[12].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].text@8:ministry-compound",
+      "path": "body[14].text",
+      "start": 8,
+      "end": 22,
+      "term": "Finanzminister",
+      "context": "Für den Finanzminister und den Minister für Wirtschaft, Energie, Industrie, Mittel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[14].text@31:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 31,
+      "end": 100,
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Für den Finanzminister und den Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[15].text@4:ministry-portfolio",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 49,
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-compound",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister zugleich für den Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[16].text@36:ministry-portfolio",
+      "path": "body[16].text",
+      "start": 36,
+      "end": 71,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Justizminister zugleich für den Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 82,
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].text@4:ministry-portfolio",
+      "path": "body[18].text",
+      "start": 4,
+      "end": 60,
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].text@4:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 60,
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport zugleich für die Ministerin für Innovation, Wissenschaft un…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].text@78:ministry-portfolio",
+      "path": "body[19].text",
+      "start": 78,
+      "end": 131,
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "… Familie, Kinder, Jugend, Kultur und Sport zugleich für die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[20].text@4:ministry-portfolio",
+      "path": "body[20].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[21].text@4:ministry-portfolio",
+      "path": "body[21].text",
+      "start": 4,
+      "end": 59,
+      "term": "Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "context": "Die Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 24
+    },
+    "source-citation": {
+      "protected": 10
+    },
+    "authority": {
+      "manual-review": 5
+    },
+    "municipality": {
+      "manual-review": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 11
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[6].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[4].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[4].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[1].children[8].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[11].children[1].children[2].text",
+      "rule": "jurisdiction-name-adjective",
+      "from": "nordrhein-westfälischen",
+      "to": "westdeutschen"
+    },
+    {
+      "path": "body[11].children[3].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[10].children[0].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…r Veranstaltungen, die über den Zuständigkeitsbereich einer Bezirksregierung hinausgehen. Das für Inneres zuständige Ministerium kann di…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].children[3].text",
+      "term": "Bezirksregierungen",
+      "context": "Die Bezirksregierungen sind zuständig für",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Düsseldorf ist zuständig für die Erteilung von Erlaubnissen",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].children[4].text",
+      "term": "Düsseldorf",
+      "context": "Die Bezirksregierung Düsseldorf ist zuständig für die Erteilung von Erlaubnissen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Düsseldorf ist landesweit zuständige Aufsichtsbehörde für d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].children[4].text",
+      "term": "Düsseldorf",
+      "context": "Die Bezirksregierung Düsseldorf ist landesweit zuständige Aufsichtsbehörde für die Überwach…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[5].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "bei unerlaubtem Glücksspiel im Sinne des § 20 Absatz 4 die Bezirksregierung Düsseldorf,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[5].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…Glücksspiel im Sinne des § 20 Absatz 4 die Bezirksregierung Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Finanzminister",
+      "context": "Für den Finanzminister und den Minister für Wirtschaft, Energie, Industrie, Mittel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "context": "Für den Finanzminister und den Minister für Wirtschaft, Energie, Industrie, Mittelstand und Handwerk",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Minister für Arbeit, Integration und Soziales",
+      "context": "Der Minister für Arbeit, Integration und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister zugleich für den Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Justizminister zugleich für den Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "context": "Der Minister für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "context": "Der Minister für Bauen, Wohnen, Stadtentwicklung und Verkehr",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Ministerin für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "Die Ministerin für Familie, Kinder, Jugend, Kultur und Sport zugleich für die Ministerin für Innovation, Wissenschaft un…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Ministerin für Innovation, Wissenschaft und Forschung",
+      "context": "… Familie, Kinder, Jugend, Kultur und Sport zugleich für die Ministerin für Innovation, Wissenschaft und Forschung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[20].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].text",
+      "term": "Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "context": "Die Ministerin für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 578,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…eändert durch Artikel 1 des Gesetzes vom 23. Juni 2021 (GV. NRW. S. 772, ber. S. 1102), in Kraft getreten am 1. Juli 2021.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…taatsvertrag - Erster GlüÄndStV) vom 13. November 2012 (GV. NRW. S. 524))",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…es Glücksspielstaatsvertrags 2021 vom 29. Oktober 2020 (GV. NRW. 2021 S. 459) zu veranstalten und durchzuführen.",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[2].children[2].text",
+        "term": "NRW",
+        "context": "…r Länder vom 15. Dezember 2011 und vom 19. Januar 2012 (GV. NRW. 2012 S. 223) erfüllt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[2].children[3].text",
+        "term": "NRW",
+        "context": "…9 Absatz 2 des Spielbankgesetzes West vom 29. Mai 2020 (GV. NRW. S. 363) in der jeweils geltenden Fassung sowie für Hilfeei…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…Regelungen des Feiertagsgesetzes NW vom 23. April 1989 (GV. NRW. S. 222) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…dem Medienstaatsvertrag vom 14. bis zum 28. April 2020 (GV. NRW. S. 524) in der jeweils geltenden Fassung, dem Landesmedien…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…em Landesmediengesetz Westdeutschland vom 2. Juli 2002 (GV. NRW. S. 334) in der jeweils geltenden Fassung oder dem WDR-Gese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[1].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…z in der Fassung der Bekanntmachung vom 25. April 1998 (GV. NRW. S. 265) in der jeweils geltenden Fassung ergeben, bleiben …",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[3].children[2].text",
+        "term": "NRW",
+        "context": "…atsvertrag Ausführungsgesetz West vom 30. Oktober 2007 (GV. NRW. S. 445) aufgehoben.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Ausführung des Glücksspielstaatsvertrages vom 13. November 2012",
+    "sourceVersion": "Gesetz zur Ausführung des Glücksspielstaatsvertrages vom 13. November 2012",
+    "simulation": "Gesetz zur Ausführung des Glücksspielstaatsvertrages in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 65699,
+          "actual": 66918,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 332,
+          "actual": 332,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 28,
+          "actual": 28,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 66918,
+          "actual": 66844,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "28 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "28 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:07:54.501Z"
+}

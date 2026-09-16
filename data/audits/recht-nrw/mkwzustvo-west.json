@@ -1,0 +1,1239 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30158",
+  "slug": "mkwzustvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@84:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 84,
+      "end": 99,
+      "term": "GV. NRW. S. 224",
+      "context": "… § 105 Satz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) , geändert durch Artikel 3 des Gesetzes vom 10. November 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@164:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 164,
+      "end": 179,
+      "term": "GV. NRW. S. 570",
+      "context": "…eändert durch Artikel 3 des Gesetzes vom 10. November 2009 (GV. NRW. S. 570),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@128:rule:jurisdiction-name-genitive",
+      "path": "body[4].text",
+      "start": 128,
+      "end": 154,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…, Entlassung und Zurruhesetzung der Beamten und Richter des Landes Nordrhein-Westfalen vom 27. Juni 1978 (GV. NRW. S. 286), zuletzt geändert durch…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].text@174:protected:gazette-nrw",
+      "path": "body[4].text",
+      "start": 174,
+      "end": 189,
+      "term": "GV. NRW. S. 286",
+      "context": "…d Richter des Landes Nordrhein-Westfalen vom 27. Juni 1978 (GV. NRW. S. 286), zuletzt geändert durch Artikel 5 der Verordnung vom 18. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@263:protected:gazette-nrw",
+      "path": "body[4].text",
+      "start": 263,
+      "end": 278,
+      "term": "GV. NRW. S. 729",
+      "context": "…ndert durch Artikel 5 der Verordnung vom 18. November 2008 (GV. NRW. S. 729), im Einvernehmen mit dem Innenministerium und dem Finanzmi…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@305:ministry-compound",
+      "path": "body[4].text",
+      "start": 305,
+      "end": 321,
+      "term": "Innenministerium",
+      "context": "…8. November 2008 (GV. NRW. S. 729), im Einvernehmen mit dem Innenministerium und dem Finanzministerium,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[4].text@330:ministry-compound",
+      "path": "body[4].text",
+      "start": 330,
+      "end": 347,
+      "term": "Finanzministerium",
+      "context": "…. S. 729), im Einvernehmen mit dem Innenministerium und dem Finanzministerium,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[5].text@125:protected:gazette-nrw",
+      "path": "body[5].text",
+      "start": 125,
+      "end": 140,
+      "term": "GV. NRW. S. 710",
+      "context": "…ng „Stiftung für Hochschulzulassung“ vom 18. November 2008 (GV. NRW. S. 710),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@348:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 348,
+      "end": 363,
+      "term": "GV. NRW. S. 679",
+      "context": "…ndigkeiten nach dem Sozialgesetzbuch vom 13. Dezember 1989 (GV. NRW. S. 679), zuletzt geändert durch Artikel 3 des Gesetzes vom 20. Nov…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@435:protected:gazette-nrw",
+      "path": "body[6].text",
+      "start": 435,
+      "end": 450,
+      "term": "GV. NRW. S. 588",
+      "context": "…eändert durch Artikel 3 des Gesetzes vom 20. November 2007 (GV. NRW. S. 588),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@87:protected:gazette-nrw",
+      "path": "body[7].text",
+      "start": 87,
+      "end": 102,
+      "term": "GV. NRW. S. 624",
+      "context": "…Satz 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624), zuletzt geändert durch Gesetz vom 27. Oktober 2009 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@157:protected:gazette-nrw",
+      "path": "body[7].text",
+      "start": 157,
+      "end": 172,
+      "term": "GV. NRW. S. 530",
+      "context": "…. 624), zuletzt geändert durch Gesetz vom 27. Oktober 2009 (GV. NRW. S. 530)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[11].text@21:rule:jurisdiction-name-bare",
+      "path": "body[9].children[0].children[11].text",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "bei dem Landesarchiv Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[0].children[13].text@65:rule:jurisdiction-abbreviation",
+      "path": "body[9].children[0].children[13].text",
+      "start": 65,
+      "end": 68,
+      "term": "NRW",
+      "context": "…as Personal, das gemäß § 12 Personaleinsatzmanagementgesetz NRW in den vorgezogenen Ruhestand versetzt worden ist,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[9].children[0].children[14].text@42:authority-state-office",
+      "path": "body[9].children[0].children[14].text",
+      "start": 42,
+      "end": 101,
+      "term": "Landesamt für Personaleinsatzmanagement zuständigen Stellen",
+      "context": "die Leitung der vor der Versetzung an das Landesamt für Personaleinsatzmanagement zuständigen Stellen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[10].children[3].children[3].text@21:rule:jurisdiction-name-bare",
+      "path": "body[10].children[3].children[3].text",
+      "start": 21,
+      "end": 40,
+      "term": "Nordrhein-Westfalen",
+      "context": "bei dem Landesarchiv Nordrhein-Westfalen auf das Landesarchiv Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[3].children[3].text@62:rule:jurisdiction-name-bare",
+      "path": "body[10].children[3].children[3].text",
+      "start": 62,
+      "end": 81,
+      "term": "Nordrhein-Westfalen",
+      "context": "…i dem Landesarchiv Nordrhein-Westfalen auf das Landesarchiv Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[0].children[11].text@44:rule:jurisdiction-name-bare",
+      "path": "body[12].children[0].children[11].text",
+      "start": 44,
+      "end": 63,
+      "term": "Nordrhein-Westfalen",
+      "context": "für das beamtete Personal des Landesarchivs Nordrhein-Westfalen die Präsidentin oder der Präsident des Landesarchivs.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[1].children[5].text@17:rule:jurisdiction-name-bare",
+      "path": "body[13].children[1].children[5].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "dem Landesarchiv Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].children[4].text@18:rule:jurisdiction-name-bare",
+      "path": "body[14].children[0].children[4].text",
+      "start": 18,
+      "end": 37,
+      "term": "Nordrhein-Westfalen",
+      "context": "beim Landesarchiv Nordrhein-Westfalen die Präsidentin oder der Präsident des Landesarchivs Nordrh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].children[0].children[4].text@91:rule:jurisdiction-name-bare",
+      "path": "body[14].children[0].children[4].text",
+      "start": 91,
+      "end": 110,
+      "term": "Nordrhein-Westfalen",
+      "context": "…tfalen die Präsidentin oder der Präsident des Landesarchivs Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[0].children[4].text@4:authority-state-office",
+      "path": "body[15].children[0].children[4].text",
+      "start": 4,
+      "end": 27,
+      "term": "Landesamt für Besoldung",
+      "context": "das Landesamt für Besoldung und Versorgung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[15].children[0].children[6].text@17:rule:jurisdiction-name-bare",
+      "path": "body[15].children[0].children[6].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "das Landesarchiv Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[2].text@280:protected:gazette-nrw",
+      "path": "body[15].children[2].text",
+      "start": 280,
+      "end": 295,
+      "term": "GV. NRW. S. 312",
+      "context": "…isteriums für Wissenschaft und Forschung vom 16. Juni 2003 (GV. NRW. S. 312) getroffen worden sind, übertrage ich die Befugnis, das Lan…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[16].children[0].text@541:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[0].text",
+      "start": 541,
+      "end": 544,
+      "term": "NRW",
+      "context": "… §§ 27, 31 oder 34 der Freistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92), die zuletz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[0].text@566:protected:gazette-nrw",
+      "path": "body[16].children[0].text",
+      "start": 566,
+      "end": 579,
+      "term": "GV. NRW. S. 2",
+      "context": "…eistellungs- und Urlaubsverordnung NRW vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92), die zuletzt durch Artikel 4 des Gesetzes vom …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[16].children[0].text@657:protected:gazette-nrw",
+      "path": "body[16].children[0].text",
+      "start": 657,
+      "end": 672,
+      "term": "GV. NRW. S. 812",
+      "context": "… zuletzt durch Artikel 4 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 812) geändert worden ist, zuständig sind. § 1 Absatz 3 gilt ent…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[1].text@4:ministry-portfolio",
+      "path": "body[19].children[1].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[19].children[1].text@73:rule:jurisdiction-name-genitive",
+      "path": "body[19].children[1].text",
+      "start": 73,
+      "end": 99,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…für Innovation, Wissenschaft, Forschung und Technologie des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[19].children[2].children[0].children[1].text@0:protected:gazette-nrw",
+      "path": "body[19].children[2].children[0].children[1].text",
+      "start": 0,
+      "end": 15,
+      "term": "GV. NRW. S. 282",
+      "context": "GV. NRW. S. 282, in Kraft getreten mit Wirkung v. 16. Mai 2010; geändert du…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[0].children[1].text@103:protected:gazette-nrw",
+      "path": "body[19].children[2].children[0].children[1].text",
+      "start": 103,
+      "end": 118,
+      "term": "GV. NRW. S. 501",
+      "context": "…ung v. 16. Mai 2010; geändert durch VO vom 12. August 2013 (GV. NRW. S. 501), in Kraft getreten am 31. August 2013; Verordnung vom 2. J…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[0].children[1].text@188:protected:gazette-nrw",
+      "path": "body[19].children[2].children[0].children[1].text",
+      "start": 188,
+      "end": 203,
+      "term": "GV. NRW. S. 318",
+      "context": "…t getreten am 31. August 2013; Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014; Verordnung vom 29. Ju…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[0].children[1].text@272:protected:gazette-nrw",
+      "path": "body[19].children[2].children[0].children[1].text",
+      "start": 272,
+      "end": 287,
+      "term": "GV. NRW. S. 525",
+      "context": "…ft getreten am 14. Juni 2014; Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016; Verordnung vom 24. Sep…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[0].children[1].text@360:protected:gazette-nrw",
+      "path": "body[19].children[2].children[0].children[1].text",
+      "start": 360,
+      "end": 375,
+      "term": "GV. NRW. S. 538",
+      "context": "…etreten am 9. Juli 2016; Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Verordnung vom 20. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[0].children[1].text@445:protected:gazette-nrw",
+      "path": "body[19].children[2].children[0].children[1].text",
+      "start": 445,
+      "end": 460,
+      "term": "GV. NRW. S. 298",
+      "context": "…t getreten am 9. Oktober 2018; Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[1].children[1].text@0:protected:gazette-nrw",
+      "path": "body[19].children[2].children[1].children[1].text",
+      "start": 0,
+      "end": 9,
+      "term": "SGV. NRW.",
+      "context": "SGV. NRW. 2030.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[2].children[1].text@130:protected:gazette-nrw",
+      "path": "body[19].children[2].children[2].children[1].text",
+      "start": 130,
+      "end": 145,
+      "term": "GV. NRW. S. 538",
+      "context": "…11 und neu gefasst durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[3].children[1].text@72:protected:gazette-nrw",
+      "path": "body[19].children[2].children[3].children[1].text",
+      "start": 72,
+      "end": 87,
+      "term": "GV. NRW. S. 318",
+      "context": "…3 und 4 zuletzt geändert durch Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014, Absatz 1 erneut geänd…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[3].children[1].text@192:protected:gazette-nrw",
+      "path": "body[19].children[2].children[3].children[1].text",
+      "start": 192,
+      "end": 207,
+      "term": "GV. NRW. S. 538",
+      "context": "… 1 erneut geändert durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 1 zuletzt ge…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[3].children[1].text@309:protected:gazette-nrw",
+      "path": "body[19].children[2].children[3].children[1].text",
+      "start": 309,
+      "end": 324,
+      "term": "GV. NRW. S. 298",
+      "context": "…bsatz 1 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[4].children[1].text@65:protected:gazette-nrw",
+      "path": "body[19].children[2].children[4].children[1].text",
+      "start": 65,
+      "end": 80,
+      "term": "GV. NRW. S. 298",
+      "context": "…bsatz 1 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[5].children[1].text@71:protected:gazette-nrw",
+      "path": "body[19].children[2].children[5].children[1].text",
+      "start": 71,
+      "end": 86,
+      "term": "GV. NRW. S. 538",
+      "context": "… 4 erneut geändert durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 5 geändert d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[5].children[1].text@181:protected:gazette-nrw",
+      "path": "body[19].children[2].children[5].children[1].text",
+      "start": 181,
+      "end": 196,
+      "term": "GV. NRW. S. 525",
+      "context": "…2018; Absatz 5 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016, Absatz 6 zuletzt geänd…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[5].children[1].text@295:protected:gazette-nrw",
+      "path": "body[19].children[2].children[5].children[1].text",
+      "start": 295,
+      "end": 310,
+      "term": "GV. NRW. S. 318",
+      "context": "…bsatz 6 zuletzt geändert durch Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014; Absatz 4 zuletzt geän…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[5].children[1].text@410:protected:gazette-nrw",
+      "path": "body[19].children[2].children[5].children[1].text",
+      "start": 410,
+      "end": 425,
+      "term": "GV. NRW. S. 298",
+      "context": "…bsatz 4 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[6].children[1].text@66:protected:gazette-nrw",
+      "path": "body[19].children[2].children[6].children[1].text",
+      "start": 66,
+      "end": 81,
+      "term": "GV. NRW. S. 318",
+      "context": "…bsatz 2 zuletzt geändert durch Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014; Absatz 1 geändert dur…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[6].children[1].text@174:protected:gazette-nrw",
+      "path": "body[19].children[2].children[6].children[1].text",
+      "start": 174,
+      "end": 189,
+      "term": "GV. NRW. S. 525",
+      "context": "…2014; Absatz 1 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016; Absätze 2 a und 2 b ei…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[6].children[1].text@298:protected:gazette-nrw",
+      "path": "body[19].children[2].children[6].children[1].text",
+      "start": 298,
+      "end": 313,
+      "term": "GV. NRW. S. 538",
+      "context": "… und 2 b eingefügt durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 2b aufgehobe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[6].children[1].text@410:protected:gazette-nrw",
+      "path": "body[19].children[2].children[6].children[1].text",
+      "start": 410,
+      "end": 425,
+      "term": "GV. NRW. S. 298",
+      "context": "…18; Absatz 2b aufgehoben durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[7].children[1].text@71:protected:gazette-nrw",
+      "path": "body[19].children[2].children[7].children[1].text",
+      "start": 71,
+      "end": 86,
+      "term": "GV. NRW. S. 538",
+      "context": "… 1 erneut geändert durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 2 geändert d…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[7].children[1].text@181:protected:gazette-nrw",
+      "path": "body[19].children[2].children[7].children[1].text",
+      "start": 181,
+      "end": 196,
+      "term": "GV. NRW. S. 525",
+      "context": "…2018; Absatz 2 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016; Absatz 1 zuletzt geänd…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[7].children[1].text@295:protected:gazette-nrw",
+      "path": "body[19].children[2].children[7].children[1].text",
+      "start": 295,
+      "end": 310,
+      "term": "GV. NRW. S. 298",
+      "context": "…bsatz 1 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[8].children[1].text@49:protected:gazette-nrw",
+      "path": "body[19].children[2].children[8].children[1].text",
+      "start": 49,
+      "end": 64,
+      "term": "GV. NRW. S. 525",
+      "context": "§ 8 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[2].children[9].children[1].text@57:protected:gazette-nrw",
+      "path": "body[19].children[2].children[9].children[1].text",
+      "start": 57,
+      "end": 72,
+      "term": "GV. NRW. S. 298",
+      "context": "§ 1 Absatz 1 geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 37
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 12
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "authority": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[9].children[0].children[13].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[3].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[3].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[0].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[1].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[0].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[16].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[19].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].text",
+      "term": "Innenministerium",
+      "context": "…8. November 2008 (GV. NRW. S. 729), im Einvernehmen mit dem Innenministerium und dem Finanzministerium,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].text",
+      "term": "Finanzministerium",
+      "context": "…. S. 729), im Einvernehmen mit dem Innenministerium und dem Finanzministerium,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[14].text",
+      "term": "Landesamt für Personaleinsatzmanagement zuständigen Stellen",
+      "context": "die Leitung der vor der Versetzung an das Landesamt für Personaleinsatzmanagement zuständigen Stellen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].children[4].text",
+      "term": "Landesamt für Besoldung",
+      "context": "das Landesamt für Besoldung und Versorgung,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].children[1].text",
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 259,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…05 Satz 2 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) , geändert durch Artikel 3 des Gesetzes vom 10. No…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 3 des Gesetzes vom 10. November 2009 (GV. NRW. S. 570),",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].text",
+        "term": "NRW",
+        "context": "…d Richter des Landes Westdeutschland vom 27. Juni 1978 (GV. NRW. S. 286), zuletzt geändert durch Artikel 5 der Verordnung v…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].text",
+        "term": "NRW",
+        "context": "…t durch Artikel 5 der Verordnung vom 18. November 2008 (GV. NRW. S. 729), im Einvernehmen mit dem Innenministerium und dem …",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].text",
+        "term": "NRW",
+        "context": "…Stiftung für Hochschulzulassung“ vom 18. November 2008 (GV. NRW. S. 710),",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "…keiten nach dem Sozialgesetzbuch vom 13. Dezember 1989 (GV. NRW. S. 679), zuletzt geändert durch Artikel 3 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 3 des Gesetzes vom 20. November 2007 (GV. NRW. S. 588),",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].text",
+        "term": "NRW",
+        "context": "… 2 des Landesdisziplinargesetzes vom 16. November 2004 (GV. NRW. S. 624), zuletzt geändert durch Gesetz vom 27. Oktober 200…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].text",
+        "term": "NRW",
+        "context": "…4), zuletzt geändert durch Gesetz vom 27. Oktober 2009 (GV. NRW. S. 530)",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[2].text",
+        "term": "NRW",
+        "context": "…riums für Wissenschaft und Forschung vom 16. Juni 2003 (GV. NRW. S. 312) getroffen worden sind, übertrage ich die Befugnis,…",
+        "status": "protected"
+      },
+      {
+        "path": "body[16].children[0].text",
+        "term": "NRW",
+        "context": "…llungs- und Urlaubsverordnung West vom 10. Januar 2012 (GV. NRW. S. 2, ber. S. 92), die zuletzt durch Artikel 4 des Gesetze…",
+        "status": "protected"
+      },
+      {
+        "path": "body[16].children[0].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 4 des Gesetzes vom 8. Dezember 2015 (GV. NRW. S. 812) geändert worden ist, zuständig sind. § 1 Absatz 3 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[0].children[1].text",
+        "term": "NRW",
+        "context": "GV. NRW. S. 282, in Kraft getreten mit Wirkung v. 16. Mai 2010; geä…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…v. 16. Mai 2010; geändert durch VO vom 12. August 2013 (GV. NRW. S. 501), in Kraft getreten am 31. August 2013; Verordnung …",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…treten am 31. August 2013; Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014; Verordnung vo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…etreten am 14. Juni 2014; Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016; Verordnung vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ten am 9. Juli 2016; Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Verordnung …",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…treten am 9. Oktober 2018; Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[1].children[1].text",
+        "term": "NRW",
+        "context": "SGV. NRW. 2030.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…nd neu gefasst durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…d 4 zuletzt geändert durch Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014, Absatz 1 erne…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…rneut geändert durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 1 zu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…z 1 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…z 1 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…rneut geändert durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 5 ge…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…; Absatz 5 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016, Absatz 6 zulet…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…z 6 zuletzt geändert durch Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014; Absatz 4 zule…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…z 4 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[6].children[1].text",
+        "term": "NRW",
+        "context": "…z 2 zuletzt geändert durch Verordnung vom 2. Juni 2014 (GV. NRW. S. 318), in Kraft getreten am 14. Juni 2014; Absatz 1 geän…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[6].children[1].text",
+        "term": "NRW",
+        "context": "…; Absatz 1 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016; Absätze 2 a un…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[6].children[1].text",
+        "term": "NRW",
+        "context": "… 2 b eingefügt durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 2b a…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[6].children[1].text",
+        "term": "NRW",
+        "context": "…Absatz 2b aufgehoben durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…rneut geändert durch Verordnung vom 24. September 2018 (GV. NRW. S. 538), in Kraft getreten am 9. Oktober 2018; Absatz 2 ge…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…; Absatz 2 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016; Absatz 1 zulet…",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…z 1 zuletzt geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[8].children[1].text",
+        "term": "NRW",
+        "context": "§ 8 geändert durch Verordnung vom 29. Juni 2016 (GV. NRW. S. 525), in Kraft getreten am 9. Juli 2016.",
+        "status": "protected"
+      },
+      {
+        "path": "body[19].children[2].children[9].children[1].text",
+        "term": "NRW",
+        "context": "… 1 Absatz 1 geändert durch Verordnung vom 20. Mai 2023 (GV. NRW. S. 298), in Kraft getreten am 10. Juni 2023.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Übertragung beamten-, versicherungs- und disziplinarrechtlicher Zuständigkeiten und Befugnisse im Geschäftsbereich des Ministeriums für Kultur und Wissenschaft (Fn 3) vom 17. Mai 2010",
+    "sourceVersion": "Verordnung zur Übertragung beamten-, versicherungs- und disziplinarrechtlicher Zuständigkeiten und Befugnisse im Geschäftsbereich des Ministeriums für Kultur und Wissenschaft (Fn 3) vom 17. Mai 2010",
+    "simulation": "Verordnung zur Übertragung beamten-, versicherungs- und disziplinarrechtlicher Zuständigkeiten und Befugnisse im Geschäftsbereich des Ministeriums für Kultur und Wissenschaft (Fn 3) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 21563,
+          "actual": 21875,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 162,
+          "actual": 162,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 21875,
+          "actual": 21837,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "11 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "11 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:48:09.005Z"
+}

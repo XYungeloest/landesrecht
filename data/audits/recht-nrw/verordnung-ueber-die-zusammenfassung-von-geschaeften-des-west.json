@@ -1,0 +1,2835 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28333",
+  "slug": "verordnung-ueber-die-zusammenfassung-von-geschaeften-des-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@103:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 103,
+      "end": 129,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…chäften des Bereitschaftsdienstes bei den Amtsgerichten des Landes Nordrhein-Westfalen (Bereitschaftsdienst - VO - § 22c GVG)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@205:ministry-compound",
+      "path": "body[1].text",
+      "start": 205,
+      "end": 223,
+      "term": "Justizministeriums",
+      "context": "…Verbindung mit § 1 der Verordnung über die Ermächtigung des Justizministeriums zum Erlass von Rechtsverordnungen nach § 22c Abs. 1 des Ger…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[1].text@331:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 331,
+      "end": 350,
+      "term": "GV. NRW. 2003 S. 16",
+      "context": "…s. 1 des Gerichtsverfassungsgesetzes vom 17. Dezember 2002 (GV. NRW. 2003 S. 16) wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[2].text@31:municipality",
+      "path": "body[2].children[2].text",
+      "start": 31,
+      "end": 41,
+      "term": "Düsseldorf",
+      "context": "1. im Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[3].text@19:municipality",
+      "path": "body[2].children[3].text",
+      "start": 19,
+      "end": 29,
+      "term": "Düsseldorf",
+      "context": "Landgerichtsbezirk Düsseldorf für die Amtsgerichte Neuss, Langenfeld und Ratingen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[3].text@51:municipality",
+      "path": "body[2].children[3].text",
+      "start": 51,
+      "end": 56,
+      "term": "Neuss",
+      "context": "Landgerichtsbezirk Düsseldorf für die Amtsgerichte Neuss, Langenfeld und Ratingen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[4].text@31:municipality",
+      "path": "body[2].children[4].text",
+      "start": 31,
+      "end": 35,
+      "term": "Hamm",
+      "context": "2. im Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[5].text@22:municipality",
+      "path": "body[2].children[5].text",
+      "start": 22,
+      "end": 28,
+      "term": "Bochum",
+      "context": "a) Landgerichtsbezirk Bochum für die Amtsgerichte Bochum und Witten, für die Amtsgericht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[5].text@50:municipality",
+      "path": "body[2].children[5].text",
+      "start": 50,
+      "end": 56,
+      "term": "Bochum",
+      "context": "a) Landgerichtsbezirk Bochum für die Amtsgerichte Bochum und Witten, für die Amtsgerichte Herne und Herne-Wanne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[5].text@90:municipality",
+      "path": "body[2].children[5].text",
+      "start": 90,
+      "end": 95,
+      "term": "Herne",
+      "context": "…ür die Amtsgerichte Bochum und Witten, für die Amtsgerichte Herne und Herne-Wanne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[5].text@100:municipality",
+      "path": "body[2].children[5].text",
+      "start": 100,
+      "end": 105,
+      "term": "Herne",
+      "context": "…sgerichte Bochum und Witten, für die Amtsgerichte Herne und Herne-Wanne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[6].text@22:municipality",
+      "path": "body[2].children[6].text",
+      "start": 22,
+      "end": 30,
+      "term": "Dortmund",
+      "context": "b) Landgerichtsbezirk Dortmund für die Amtsgerichte Kamen und Unna,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[7].text@22:municipality",
+      "path": "body[2].children[7].text",
+      "start": 22,
+      "end": 28,
+      "term": "Siegen",
+      "context": "c) Landgerichtsbezirk Siegen für die Amtsgerichte Lennestadt und Olpe,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[8].text@31:municipality",
+      "path": "body[2].children[8].text",
+      "start": 31,
+      "end": 35,
+      "term": "Köln",
+      "context": "3. im Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[9].text@19:municipality",
+      "path": "body[2].children[9].text",
+      "start": 19,
+      "end": 25,
+      "term": "Aachen",
+      "context": "Landgerichtsbezirk Aachen für die Amtsgerichte Aachen und Eschweiler, soweit die Gesc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[9].text@47:municipality",
+      "path": "body[2].children[9].text",
+      "start": 47,
+      "end": 53,
+      "term": "Aachen",
+      "context": "Landgerichtsbezirk Aachen für die Amtsgerichte Aachen und Eschweiler, soweit die Geschäfte des Bereitschaftsdiens…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[9].text@149:municipality",
+      "path": "body[2].children[9].text",
+      "start": 149,
+      "end": 155,
+      "term": "Aachen",
+      "context": "…e des Bereitschaftsdienstes nicht gemäß § 2 dem Amtsgericht Aachen zugewiesen sind.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@31:municipality",
+      "path": "body[3].children[2].text",
+      "start": 31,
+      "end": 41,
+      "term": "Düsseldorf",
+      "context": "1. im Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@22:municipality",
+      "path": "body[3].children[3].text",
+      "start": 22,
+      "end": 30,
+      "term": "Duisburg",
+      "context": "a) Landgerichtsbezirk Duisburg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Dui…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@47:municipality",
+      "path": "body[3].children[3].text",
+      "start": 47,
+      "end": 55,
+      "term": "Duisburg",
+      "context": "a) Landgerichtsbezirk Duisburg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-R…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@77:municipality",
+      "path": "body[3].children[3].text",
+      "start": 77,
+      "end": 85,
+      "term": "Duisburg",
+      "context": "…zirk Duisburg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@87:municipality",
+      "path": "body[3].children[3].text",
+      "start": 87,
+      "end": 95,
+      "term": "Duisburg",
+      "context": "…urg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@105:municipality",
+      "path": "body[3].children[3].text",
+      "start": 105,
+      "end": 113,
+      "term": "Duisburg",
+      "context": "…t Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdie…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@126:municipality",
+      "path": "body[3].children[3].text",
+      "start": 126,
+      "end": 145,
+      "term": "Mülheim an der Ruhr",
+      "context": "…tsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdienst auch die Richter des Landger…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@141:geography-region",
+      "path": "body[3].children[3].text",
+      "start": 141,
+      "end": 145,
+      "term": "Ruhr",
+      "context": "…burg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdienst auch die Richter des Landger…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@141:geography-river",
+      "path": "body[3].children[3].text",
+      "start": 141,
+      "end": 145,
+      "term": "Ruhr",
+      "context": "…burg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdienst auch die Richter des Landger…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@211:municipality",
+      "path": "body[3].children[3].text",
+      "start": 211,
+      "end": 219,
+      "term": "Duisburg",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Duisburg heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@16:municipality",
+      "path": "body[3].children[5].text",
+      "start": 16,
+      "end": 26,
+      "term": "Oberhausen",
+      "context": "dem Amtsgericht Oberhausen für die Amtsgerichte Dinslaken, Oberhausen und Wesel, wobei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@59:municipality",
+      "path": "body[3].children[5].text",
+      "start": 59,
+      "end": 69,
+      "term": "Oberhausen",
+      "context": "dem Amtsgericht Oberhausen für die Amtsgerichte Dinslaken, Oberhausen und Wesel, wobei zum Bereitschaftsdienst auch die Richter d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].text@145:municipality",
+      "path": "body[3].children[5].text",
+      "start": 145,
+      "end": 153,
+      "term": "Duisburg",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Duisburg heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@22:municipality",
+      "path": "body[3].children[6].text",
+      "start": 22,
+      "end": 29,
+      "term": "Krefeld",
+      "context": "b) Landgerichtsbezirk Krefeld dem Amtsgericht Krefeld für die Amtsgerichte Krefeld, Kempe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@46:municipality",
+      "path": "body[3].children[6].text",
+      "start": 46,
+      "end": 53,
+      "term": "Krefeld",
+      "context": "b) Landgerichtsbezirk Krefeld dem Amtsgericht Krefeld für die Amtsgerichte Krefeld, Kempen und Nettetal,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].text@75:municipality",
+      "path": "body[3].children[6].text",
+      "start": 75,
+      "end": 82,
+      "term": "Krefeld",
+      "context": "…bezirk Krefeld dem Amtsgericht Krefeld für die Amtsgerichte Krefeld, Kempen und Nettetal,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@22:municipality",
+      "path": "body[3].children[7].text",
+      "start": 22,
+      "end": 37,
+      "term": "Mönchengladbach",
+      "context": "c) Landgerichtsbezirk Mönchengladbach dem Amtsgericht Mönchengladbach für die Amtsgerichte Erkele…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@54:municipality",
+      "path": "body[3].children[7].text",
+      "start": 54,
+      "end": 69,
+      "term": "Mönchengladbach",
+      "context": "c) Landgerichtsbezirk Mönchengladbach dem Amtsgericht Mönchengladbach für die Amtsgerichte Erkelenz, Grevenbroich, Mönchengladbac…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@115:municipality",
+      "path": "body[3].children[7].text",
+      "start": 115,
+      "end": 130,
+      "term": "Mönchengladbach",
+      "context": "…önchengladbach für die Amtsgerichte Erkelenz, Grevenbroich, Mönchengladbach, Mönchengladbach-Rheydt und Viersen, wobei zum Bereitschaft…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@132:municipality",
+      "path": "body[3].children[7].text",
+      "start": 132,
+      "end": 147,
+      "term": "Mönchengladbach",
+      "context": "…r die Amtsgerichte Erkelenz, Grevenbroich, Mönchengladbach, Mönchengladbach-Rheydt und Viersen, wobei zum Bereitschaftsdienst im Landge…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@220:municipality",
+      "path": "body[3].children[7].text",
+      "start": 220,
+      "end": 235,
+      "term": "Mönchengladbach",
+      "context": "…iersen, wobei zum Bereitschaftsdienst im Landgerichtsbezirk Mönchengladbach auch die Richterinnen und Richter des Landgerichts Möncheng…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].text@287:municipality",
+      "path": "body[3].children[7].text",
+      "start": 287,
+      "end": 302,
+      "term": "Mönchengladbach",
+      "context": "…gladbach auch die Richterinnen und Richter des Landgerichts Mönchengladbach heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@22:municipality",
+      "path": "body[3].children[8].text",
+      "start": 22,
+      "end": 31,
+      "term": "Wuppertal",
+      "context": "d) Landgerichtsbezirk Wuppertal dem Amtsgericht Wuppertal für die Amtsgerichte Wuppertal, M…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@48:municipality",
+      "path": "body[3].children[8].text",
+      "start": 48,
+      "end": 57,
+      "term": "Wuppertal",
+      "context": "d) Landgerichtsbezirk Wuppertal dem Amtsgericht Wuppertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Soling…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@79:municipality",
+      "path": "body[3].children[8].text",
+      "start": 79,
+      "end": 88,
+      "term": "Wuppertal",
+      "context": "…rk Wuppertal dem Amtsgericht Wuppertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Solingen und Velbert, wobei zum Berei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@100:municipality",
+      "path": "body[3].children[8].text",
+      "start": 100,
+      "end": 109,
+      "term": "Remscheid",
+      "context": "…gericht Wuppertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Solingen und Velbert, wobei zum Bereitschaftsdienst auch d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@111:municipality",
+      "path": "body[3].children[8].text",
+      "start": 111,
+      "end": 119,
+      "term": "Solingen",
+      "context": "…pertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Solingen und Velbert, wobei zum Bereitschaftsdienst auch die Richter…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].text@197:municipality",
+      "path": "body[3].children[8].text",
+      "start": 197,
+      "end": 206,
+      "term": "Wuppertal",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Wuppertal heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[9].text@31:municipality",
+      "path": "body[3].children[9].text",
+      "start": 31,
+      "end": 35,
+      "term": "Hamm",
+      "context": "2. im Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[10].text@22:municipality",
+      "path": "body[3].children[10].text",
+      "start": 22,
+      "end": 30,
+      "term": "Arnsberg",
+      "context": "a) Landgerichtsbezirk Arnsberg dem Amtsgericht Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[10].text@47:municipality",
+      "path": "body[3].children[10].text",
+      "start": 47,
+      "end": 55,
+      "term": "Arnsberg",
+      "context": "a) Landgerichtsbezirk Arnsberg dem Amtsgericht Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[11].text@21:municipality",
+      "path": "body[3].children[11].text",
+      "start": 21,
+      "end": 29,
+      "term": "Arnsberg",
+      "context": "für die Amtsgerichte Arnsberg, Brilon, Marsberg, Medebach, Menden (Sauerland), Meschede, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[11].text@67:geography-region",
+      "path": "body[3].children[11].text",
+      "start": 67,
+      "end": 76,
+      "term": "Sauerland",
+      "context": "… Amtsgerichte Arnsberg, Brilon, Marsberg, Medebach, Menden (Sauerland), Meschede, Schmallenberg, Soest, Warstein und Werl, wobei …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[11].text@104:municipality",
+      "path": "body[3].children[11].text",
+      "start": 104,
+      "end": 109,
+      "term": "Soest",
+      "context": "…erg, Medebach, Menden (Sauerland), Meschede, Schmallenberg, Soest, Warstein und Werl, wobei zum Bereitschaftsdienst auch die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[11].text@211:municipality",
+      "path": "body[3].children[11].text",
+      "start": 211,
+      "end": 219,
+      "term": "Arnsberg",
+      "context": "…tsdienst auch die Richterinnen und Richter des Landgerichts Arnsberg heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[12].text@22:municipality",
+      "path": "body[3].children[12].text",
+      "start": 22,
+      "end": 31,
+      "term": "Bielefeld",
+      "context": "b) Landgerichtsbezirk Bielefeld dem Amtsgericht Bielefeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[12].text@48:municipality",
+      "path": "body[3].children[12].text",
+      "start": 48,
+      "end": 57,
+      "term": "Bielefeld",
+      "context": "b) Landgerichtsbezirk Bielefeld dem Amtsgericht Bielefeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[13].text@37:municipality",
+      "path": "body[3].children[13].text",
+      "start": 37,
+      "end": 46,
+      "term": "Bielefeld",
+      "context": "für die Amtsgerichte Bad Oeynhausen, Bielefeld, Bünde, Gütersloh, Halle (Westf.), Herford, Lübbecke, Minde…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[13].text@55:municipality",
+      "path": "body[3].children[13].text",
+      "start": 55,
+      "end": 64,
+      "term": "Gütersloh",
+      "context": "für die Amtsgerichte Bad Oeynhausen, Bielefeld, Bünde, Gütersloh, Halle (Westf.), Herford, Lübbecke, Minden, Rahden und Rhed…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[13].text@101:municipality",
+      "path": "body[3].children[13].text",
+      "start": 101,
+      "end": 107,
+      "term": "Minden",
+      "context": "…efeld, Bünde, Gütersloh, Halle (Westf.), Herford, Lübbecke, Minden, Rahden und Rheda-Wiedenbrück die Haft-, Unterbringungs- un…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].text@16:municipality",
+      "path": "body[3].children[14].text",
+      "start": 16,
+      "end": 22,
+      "term": "Minden",
+      "context": "dem Amtsgericht Minden für die Amtsgerichte Bad Oeynhausen, Bünde, Herford, Lübbec…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].text@86:municipality",
+      "path": "body[3].children[14].text",
+      "start": 86,
+      "end": 92,
+      "term": "Minden",
+      "context": "… die Amtsgerichte Bad Oeynhausen, Bünde, Herford, Lübbecke, Minden und Rahden",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[16].text@16:municipality",
+      "path": "body[3].children[16].text",
+      "start": 16,
+      "end": 25,
+      "term": "Gütersloh",
+      "context": "dem Amtsgericht Gütersloh für die Amtsgerichte Gütersloh, Halle (Westf.) und Rheda-Wi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[16].text@47:municipality",
+      "path": "body[3].children[16].text",
+      "start": 47,
+      "end": 56,
+      "term": "Gütersloh",
+      "context": "dem Amtsgericht Gütersloh für die Amtsgerichte Gütersloh, Halle (Westf.) und Rheda-Wiedenbrück die übrigen Geschäfte…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[16].text@196:municipality",
+      "path": "body[3].children[16].text",
+      "start": 196,
+      "end": 205,
+      "term": "Bielefeld",
+      "context": "…enstes, wobei zum Bereitschaftsdienst im Landgerichtsbezirk Bielefeld auch die Richterinnen und Richter des Landgerichts Bielefel…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[16].text@257:municipality",
+      "path": "body[3].children[16].text",
+      "start": 257,
+      "end": 266,
+      "term": "Bielefeld",
+      "context": "…ielefeld auch die Richterinnen und Richter des Landgerichts Bielefeld heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@22:municipality",
+      "path": "body[3].children[17].text",
+      "start": 22,
+      "end": 29,
+      "term": "Detmold",
+      "context": "c) Landgerichtsbezirk Detmold dem Amtsgericht Detmold für die Amtsgerichte Detmold und Bl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@46:municipality",
+      "path": "body[3].children[17].text",
+      "start": 46,
+      "end": 53,
+      "term": "Detmold",
+      "context": "c) Landgerichtsbezirk Detmold dem Amtsgericht Detmold für die Amtsgerichte Detmold und Blomberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].text@75:municipality",
+      "path": "body[3].children[17].text",
+      "start": 75,
+      "end": 82,
+      "term": "Detmold",
+      "context": "…bezirk Detmold dem Amtsgericht Detmold für die Amtsgerichte Detmold und Blomberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[18].text@22:municipality",
+      "path": "body[3].children[18].text",
+      "start": 22,
+      "end": 27,
+      "term": "Essen",
+      "context": "d) Landgerichtsbezirk Essen dem Amtsgericht Gelsenkirchen für die Amtsgerichte Bottrop,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[18].text@44:municipality",
+      "path": "body[3].children[18].text",
+      "start": 44,
+      "end": 57,
+      "term": "Gelsenkirchen",
+      "context": "d) Landgerichtsbezirk Essen dem Amtsgericht Gelsenkirchen für die Amtsgerichte Bottrop, Dorsten, Gelsenkirchen, Gladb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[18].text@79:municipality",
+      "path": "body[3].children[18].text",
+      "start": 79,
+      "end": 86,
+      "term": "Bottrop",
+      "context": "…rk Essen dem Amtsgericht Gelsenkirchen für die Amtsgerichte Bottrop, Dorsten, Gelsenkirchen, Gladbeck und Marl, wobei zum Berei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[18].text@97:municipality",
+      "path": "body[3].children[18].text",
+      "start": 97,
+      "end": 110,
+      "term": "Gelsenkirchen",
+      "context": "…ericht Gelsenkirchen für die Amtsgerichte Bottrop, Dorsten, Gelsenkirchen, Gladbeck und Marl, wobei zum Bereitschaftsdienst auch die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[18].text@195:municipality",
+      "path": "body[3].children[18].text",
+      "start": 195,
+      "end": 200,
+      "term": "Essen",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Essen heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[20].text@47:municipality",
+      "path": "body[3].children[20].text",
+      "start": 47,
+      "end": 52,
+      "term": "Essen",
+      "context": "dem Amtsgericht Hattingen für die Amtsgerichte Essen-Borbeck, Essen-Steele und Hattingen, wobei zum Bereitschaft…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[20].text@62:municipality",
+      "path": "body[3].children[20].text",
+      "start": 62,
+      "end": 67,
+      "term": "Essen",
+      "context": "…m Amtsgericht Hattingen für die Amtsgerichte Essen-Borbeck, Essen-Steele und Hattingen, wobei zum Bereitschaftsdienst auch di…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[20].text@154:municipality",
+      "path": "body[3].children[20].text",
+      "start": 154,
+      "end": 159,
+      "term": "Essen",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Essen heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].text@22:municipality",
+      "path": "body[3].children[21].text",
+      "start": 22,
+      "end": 27,
+      "term": "Hagen",
+      "context": "e) Landgerichtsbezirk Hagen dem Amtsgericht Hagen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].text@44:municipality",
+      "path": "body[3].children[21].text",
+      "start": 44,
+      "end": 49,
+      "term": "Hagen",
+      "context": "e) Landgerichtsbezirk Hagen dem Amtsgericht Hagen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].text@29:municipality",
+      "path": "body[3].children[22].text",
+      "start": 29,
+      "end": 34,
+      "term": "Hagen",
+      "context": "für die Amtsgerichte Altena, Hagen, Iserlohn, Lüdenscheid, Meinerzhagen, Plettenberg, Schwelm,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[23].text@22:municipality",
+      "path": "body[3].children[23].text",
+      "start": 22,
+      "end": 29,
+      "term": "Münster",
+      "context": "f) Landgerichtsbezirk Münster dem Amtsgericht Coesfeld für die Amtsgerichte Ahaus, Bochol…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].text@16:municipality",
+      "path": "body[3].children[24].text",
+      "start": 16,
+      "end": 23,
+      "term": "Münster",
+      "context": "dem Amtsgericht Münster für die Amtsgerichte Münster und Lüdinghausen, wobei zum Be…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].text@45:municipality",
+      "path": "body[3].children[24].text",
+      "start": 45,
+      "end": 52,
+      "term": "Münster",
+      "context": "dem Amtsgericht Münster für die Amtsgerichte Münster und Lüdinghausen, wobei zum Bereitschaftsdienst für dieses …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].text@154:municipality",
+      "path": "body[3].children[24].text",
+      "start": 154,
+      "end": 161,
+      "term": "Münster",
+      "context": "…dienst für dieses Gericht auch die Richter des Landgerichts Münster heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@22:municipality",
+      "path": "body[3].children[27].text",
+      "start": 22,
+      "end": 31,
+      "term": "Paderborn",
+      "context": "g) Landgerichtsbezirk Paderborn dem Amtsgericht Paderborn für die Amtsgerichte Paderborn, B…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@48:municipality",
+      "path": "body[3].children[27].text",
+      "start": 48,
+      "end": 57,
+      "term": "Paderborn",
+      "context": "g) Landgerichtsbezirk Paderborn dem Amtsgericht Paderborn für die Amtsgerichte Paderborn, Brakel, Delbrück, Höxter, L…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@79:municipality",
+      "path": "body[3].children[27].text",
+      "start": 79,
+      "end": 88,
+      "term": "Paderborn",
+      "context": "…rk Paderborn dem Amtsgericht Paderborn für die Amtsgerichte Paderborn, Brakel, Delbrück, Höxter, Lippstadt und Warburg, wobei zum…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].text@203:municipality",
+      "path": "body[3].children[27].text",
+      "start": 203,
+      "end": 212,
+      "term": "Paderborn",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Paderborn heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[28].text@31:municipality",
+      "path": "body[3].children[28].text",
+      "start": 31,
+      "end": 35,
+      "term": "Köln",
+      "context": "3. im Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[29].text@22:municipality",
+      "path": "body[3].children[29].text",
+      "start": 22,
+      "end": 26,
+      "term": "Bonn",
+      "context": "a) Landgerichtsbezirk Bonn dem Amtsgericht Bonn für die Amtsgerichte Bonn, Euskirchen,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[29].text@43:municipality",
+      "path": "body[3].children[29].text",
+      "start": 43,
+      "end": 47,
+      "term": "Bonn",
+      "context": "a) Landgerichtsbezirk Bonn dem Amtsgericht Bonn für die Amtsgerichte Bonn, Euskirchen, Siegburg, Königswint…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[29].text@69:municipality",
+      "path": "body[3].children[29].text",
+      "start": 69,
+      "end": 73,
+      "term": "Bonn",
+      "context": "…richtsbezirk Bonn dem Amtsgericht Bonn für die Amtsgerichte Bonn, Euskirchen, Siegburg, Königswinter, Rheinbach und Waldbröl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[29].text@199:municipality",
+      "path": "body[3].children[29].text",
+      "start": 199,
+      "end": 203,
+      "term": "Bonn",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Bonn heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@22:municipality",
+      "path": "body[3].children[30].text",
+      "start": 22,
+      "end": 26,
+      "term": "Köln",
+      "context": "b) Landgerichtsbezirk Köln dem Amtsgericht Bergisch Gladbach für die Amtsgerichte Berg…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@43:municipality",
+      "path": "body[3].children[30].text",
+      "start": 43,
+      "end": 60,
+      "term": "Bergisch Gladbach",
+      "context": "b) Landgerichtsbezirk Köln dem Amtsgericht Bergisch Gladbach für die Amtsgerichte Bergisch Gladbach, Leverkusen, Gummers…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@82:municipality",
+      "path": "body[3].children[30].text",
+      "start": 82,
+      "end": 99,
+      "term": "Bergisch Gladbach",
+      "context": "…Köln dem Amtsgericht Bergisch Gladbach für die Amtsgerichte Bergisch Gladbach, Leverkusen, Gummersbach, Wipperfürth und Wermelskirchen, w…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@101:municipality",
+      "path": "body[3].children[30].text",
+      "start": 101,
+      "end": 111,
+      "term": "Leverkusen",
+      "context": "…t Bergisch Gladbach für die Amtsgerichte Bergisch Gladbach, Leverkusen, Gummersbach, Wipperfürth und Wermelskirchen, wobei zum Ber…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[30].text@239:municipality",
+      "path": "body[3].children[30].text",
+      "start": 239,
+      "end": 243,
+      "term": "Köln",
+      "context": "…tsdienst auch die Richterinnen und Richter des Landgerichts Köln heranzuziehen sind",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[32].text@155:municipality",
+      "path": "body[3].children[32].text",
+      "start": 155,
+      "end": 159,
+      "term": "Köln",
+      "context": "…tsdienst auch die Richterinnen und Richter des Landgerichts Köln heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[33].text@22:municipality",
+      "path": "body[3].children[33].text",
+      "start": 22,
+      "end": 28,
+      "term": "Aachen",
+      "context": "c) Landgerichtsbezirk Aachen dem Amtsgericht Aachen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[33].text@45:municipality",
+      "path": "body[3].children[33].text",
+      "start": 45,
+      "end": 51,
+      "term": "Aachen",
+      "context": "c) Landgerichtsbezirk Aachen dem Amtsgericht Aachen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[34].text@21:municipality",
+      "path": "body[3].children[34].text",
+      "start": 21,
+      "end": 27,
+      "term": "Aachen",
+      "context": "für die Amtsgerichte Aachen, Düren, Eschweiler, Heinsberg, Geilenkirchen, Jülich, Schle…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[2].text@4:ministry-compound",
+      "path": "body[4].children[2].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[4].children[2].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[2].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[4].text@99:protected:gazette-nrw",
+      "path": "body[4].children[4].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 351",
+      "context": "… (Artikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "municipality": {
+      "manual-review": 93
+    },
+    "geography": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Justizministeriums",
+      "context": "…Verbindung mit § 1 der Verordnung über die Ermächtigung des Justizministeriums zum Erlass von Rechtsverordnungen nach § 22c Abs. 1 des Ger…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].text",
+      "term": "Düsseldorf",
+      "context": "1. im Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].text",
+      "term": "Düsseldorf",
+      "context": "Landgerichtsbezirk Düsseldorf für die Amtsgerichte Neuss, Langenfeld und Ratingen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].text",
+      "term": "Neuss",
+      "context": "Landgerichtsbezirk Düsseldorf für die Amtsgerichte Neuss, Langenfeld und Ratingen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[4].text",
+      "term": "Hamm",
+      "context": "2. im Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[5].text",
+      "term": "Bochum",
+      "context": "a) Landgerichtsbezirk Bochum für die Amtsgerichte Bochum und Witten, für die Amtsgericht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[5].text",
+      "term": "Bochum",
+      "context": "a) Landgerichtsbezirk Bochum für die Amtsgerichte Bochum und Witten, für die Amtsgerichte Herne und Herne-Wanne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[5].text",
+      "term": "Herne",
+      "context": "…ür die Amtsgerichte Bochum und Witten, für die Amtsgerichte Herne und Herne-Wanne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[5].text",
+      "term": "Herne",
+      "context": "…sgerichte Bochum und Witten, für die Amtsgerichte Herne und Herne-Wanne,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[6].text",
+      "term": "Dortmund",
+      "context": "b) Landgerichtsbezirk Dortmund für die Amtsgerichte Kamen und Unna,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[7].text",
+      "term": "Siegen",
+      "context": "c) Landgerichtsbezirk Siegen für die Amtsgerichte Lennestadt und Olpe,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[8].text",
+      "term": "Köln",
+      "context": "3. im Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[9].text",
+      "term": "Aachen",
+      "context": "Landgerichtsbezirk Aachen für die Amtsgerichte Aachen und Eschweiler, soweit die Gesc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[9].text",
+      "term": "Aachen",
+      "context": "Landgerichtsbezirk Aachen für die Amtsgerichte Aachen und Eschweiler, soweit die Geschäfte des Bereitschaftsdiens…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[9].text",
+      "term": "Aachen",
+      "context": "…e des Bereitschaftsdienstes nicht gemäß § 2 dem Amtsgericht Aachen zugewiesen sind.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Düsseldorf",
+      "context": "1. im Oberlandesgerichtsbezirk Düsseldorf",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "a) Landgerichtsbezirk Duisburg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Dui…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "a) Landgerichtsbezirk Duisburg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-R…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "…zirk Duisburg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "…urg dem Amtsgericht Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "…t Duisburg für die Amtsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdie…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Mülheim an der Ruhr",
+      "context": "…tsgerichte Duisburg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdienst auch die Richter des Landger…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Ruhr",
+      "context": "…burg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdienst auch die Richter des Landger…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Ruhr",
+      "context": "…burg, Duisburg-Hamborn, Duisburg-Ruhrort und Mülheim an der Ruhr, wobei zum Bereitschaftsdienst auch die Richter des Landger…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Duisburg",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Duisburg heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Oberhausen",
+      "context": "dem Amtsgericht Oberhausen für die Amtsgerichte Dinslaken, Oberhausen und Wesel, wobei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Oberhausen",
+      "context": "dem Amtsgericht Oberhausen für die Amtsgerichte Dinslaken, Oberhausen und Wesel, wobei zum Bereitschaftsdienst auch die Richter d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].text",
+      "term": "Duisburg",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Duisburg heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Krefeld",
+      "context": "b) Landgerichtsbezirk Krefeld dem Amtsgericht Krefeld für die Amtsgerichte Krefeld, Kempe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Krefeld",
+      "context": "b) Landgerichtsbezirk Krefeld dem Amtsgericht Krefeld für die Amtsgerichte Krefeld, Kempen und Nettetal,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].text",
+      "term": "Krefeld",
+      "context": "…bezirk Krefeld dem Amtsgericht Krefeld für die Amtsgerichte Krefeld, Kempen und Nettetal,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Mönchengladbach",
+      "context": "c) Landgerichtsbezirk Mönchengladbach dem Amtsgericht Mönchengladbach für die Amtsgerichte Erkele…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Mönchengladbach",
+      "context": "c) Landgerichtsbezirk Mönchengladbach dem Amtsgericht Mönchengladbach für die Amtsgerichte Erkelenz, Grevenbroich, Mönchengladbac…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Mönchengladbach",
+      "context": "…önchengladbach für die Amtsgerichte Erkelenz, Grevenbroich, Mönchengladbach, Mönchengladbach-Rheydt und Viersen, wobei zum Bereitschaft…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Mönchengladbach",
+      "context": "…r die Amtsgerichte Erkelenz, Grevenbroich, Mönchengladbach, Mönchengladbach-Rheydt und Viersen, wobei zum Bereitschaftsdienst im Landge…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Mönchengladbach",
+      "context": "…iersen, wobei zum Bereitschaftsdienst im Landgerichtsbezirk Mönchengladbach auch die Richterinnen und Richter des Landgerichts Möncheng…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].text",
+      "term": "Mönchengladbach",
+      "context": "…gladbach auch die Richterinnen und Richter des Landgerichts Mönchengladbach heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Wuppertal",
+      "context": "d) Landgerichtsbezirk Wuppertal dem Amtsgericht Wuppertal für die Amtsgerichte Wuppertal, M…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Wuppertal",
+      "context": "d) Landgerichtsbezirk Wuppertal dem Amtsgericht Wuppertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Soling…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Wuppertal",
+      "context": "…rk Wuppertal dem Amtsgericht Wuppertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Solingen und Velbert, wobei zum Berei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Remscheid",
+      "context": "…gericht Wuppertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Solingen und Velbert, wobei zum Bereitschaftsdienst auch d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Solingen",
+      "context": "…pertal für die Amtsgerichte Wuppertal, Mettmann, Remscheid, Solingen und Velbert, wobei zum Bereitschaftsdienst auch die Richter…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].text",
+      "term": "Wuppertal",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Wuppertal heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[9].text",
+      "term": "Hamm",
+      "context": "2. im Oberlandesgerichtsbezirk Hamm",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[10].text",
+      "term": "Arnsberg",
+      "context": "a) Landgerichtsbezirk Arnsberg dem Amtsgericht Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[10].text",
+      "term": "Arnsberg",
+      "context": "a) Landgerichtsbezirk Arnsberg dem Amtsgericht Arnsberg",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[11].text",
+      "term": "Arnsberg",
+      "context": "für die Amtsgerichte Arnsberg, Brilon, Marsberg, Medebach, Menden (Sauerland), Meschede, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[11].text",
+      "term": "Sauerland",
+      "context": "… Amtsgerichte Arnsberg, Brilon, Marsberg, Medebach, Menden (Sauerland), Meschede, Schmallenberg, Soest, Warstein und Werl, wobei …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[11].text",
+      "term": "Soest",
+      "context": "…erg, Medebach, Menden (Sauerland), Meschede, Schmallenberg, Soest, Warstein und Werl, wobei zum Bereitschaftsdienst auch die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[11].text",
+      "term": "Arnsberg",
+      "context": "…tsdienst auch die Richterinnen und Richter des Landgerichts Arnsberg heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[12].text",
+      "term": "Bielefeld",
+      "context": "b) Landgerichtsbezirk Bielefeld dem Amtsgericht Bielefeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[12].text",
+      "term": "Bielefeld",
+      "context": "b) Landgerichtsbezirk Bielefeld dem Amtsgericht Bielefeld",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[13].text",
+      "term": "Bielefeld",
+      "context": "für die Amtsgerichte Bad Oeynhausen, Bielefeld, Bünde, Gütersloh, Halle (Westf.), Herford, Lübbecke, Minde…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[13].text",
+      "term": "Gütersloh",
+      "context": "für die Amtsgerichte Bad Oeynhausen, Bielefeld, Bünde, Gütersloh, Halle (Westf.), Herford, Lübbecke, Minden, Rahden und Rhed…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[13].text",
+      "term": "Minden",
+      "context": "…efeld, Bünde, Gütersloh, Halle (Westf.), Herford, Lübbecke, Minden, Rahden und Rheda-Wiedenbrück die Haft-, Unterbringungs- un…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].text",
+      "term": "Minden",
+      "context": "dem Amtsgericht Minden für die Amtsgerichte Bad Oeynhausen, Bünde, Herford, Lübbec…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].text",
+      "term": "Minden",
+      "context": "… die Amtsgerichte Bad Oeynhausen, Bünde, Herford, Lübbecke, Minden und Rahden",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[16].text",
+      "term": "Gütersloh",
+      "context": "dem Amtsgericht Gütersloh für die Amtsgerichte Gütersloh, Halle (Westf.) und Rheda-Wi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[16].text",
+      "term": "Gütersloh",
+      "context": "dem Amtsgericht Gütersloh für die Amtsgerichte Gütersloh, Halle (Westf.) und Rheda-Wiedenbrück die übrigen Geschäfte…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[16].text",
+      "term": "Bielefeld",
+      "context": "…enstes, wobei zum Bereitschaftsdienst im Landgerichtsbezirk Bielefeld auch die Richterinnen und Richter des Landgerichts Bielefel…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[16].text",
+      "term": "Bielefeld",
+      "context": "…ielefeld auch die Richterinnen und Richter des Landgerichts Bielefeld heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Detmold",
+      "context": "c) Landgerichtsbezirk Detmold dem Amtsgericht Detmold für die Amtsgerichte Detmold und Bl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Detmold",
+      "context": "c) Landgerichtsbezirk Detmold dem Amtsgericht Detmold für die Amtsgerichte Detmold und Blomberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].text",
+      "term": "Detmold",
+      "context": "…bezirk Detmold dem Amtsgericht Detmold für die Amtsgerichte Detmold und Blomberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[18].text",
+      "term": "Essen",
+      "context": "d) Landgerichtsbezirk Essen dem Amtsgericht Gelsenkirchen für die Amtsgerichte Bottrop,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[18].text",
+      "term": "Gelsenkirchen",
+      "context": "d) Landgerichtsbezirk Essen dem Amtsgericht Gelsenkirchen für die Amtsgerichte Bottrop, Dorsten, Gelsenkirchen, Gladb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[18].text",
+      "term": "Bottrop",
+      "context": "…rk Essen dem Amtsgericht Gelsenkirchen für die Amtsgerichte Bottrop, Dorsten, Gelsenkirchen, Gladbeck und Marl, wobei zum Berei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[18].text",
+      "term": "Gelsenkirchen",
+      "context": "…ericht Gelsenkirchen für die Amtsgerichte Bottrop, Dorsten, Gelsenkirchen, Gladbeck und Marl, wobei zum Bereitschaftsdienst auch die …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[18].text",
+      "term": "Essen",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Essen heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[20].text",
+      "term": "Essen",
+      "context": "dem Amtsgericht Hattingen für die Amtsgerichte Essen-Borbeck, Essen-Steele und Hattingen, wobei zum Bereitschaft…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[20].text",
+      "term": "Essen",
+      "context": "…m Amtsgericht Hattingen für die Amtsgerichte Essen-Borbeck, Essen-Steele und Hattingen, wobei zum Bereitschaftsdienst auch di…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[20].text",
+      "term": "Essen",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Essen heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].text",
+      "term": "Hagen",
+      "context": "e) Landgerichtsbezirk Hagen dem Amtsgericht Hagen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].text",
+      "term": "Hagen",
+      "context": "e) Landgerichtsbezirk Hagen dem Amtsgericht Hagen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].text",
+      "term": "Hagen",
+      "context": "für die Amtsgerichte Altena, Hagen, Iserlohn, Lüdenscheid, Meinerzhagen, Plettenberg, Schwelm,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[23].text",
+      "term": "Münster",
+      "context": "f) Landgerichtsbezirk Münster dem Amtsgericht Coesfeld für die Amtsgerichte Ahaus, Bochol…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].text",
+      "term": "Münster",
+      "context": "dem Amtsgericht Münster für die Amtsgerichte Münster und Lüdinghausen, wobei zum Be…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].text",
+      "term": "Münster",
+      "context": "dem Amtsgericht Münster für die Amtsgerichte Münster und Lüdinghausen, wobei zum Bereitschaftsdienst für dieses …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].text",
+      "term": "Münster",
+      "context": "…dienst für dieses Gericht auch die Richter des Landgerichts Münster heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Paderborn",
+      "context": "g) Landgerichtsbezirk Paderborn dem Amtsgericht Paderborn für die Amtsgerichte Paderborn, B…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Paderborn",
+      "context": "g) Landgerichtsbezirk Paderborn dem Amtsgericht Paderborn für die Amtsgerichte Paderborn, Brakel, Delbrück, Höxter, L…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Paderborn",
+      "context": "…rk Paderborn dem Amtsgericht Paderborn für die Amtsgerichte Paderborn, Brakel, Delbrück, Höxter, Lippstadt und Warburg, wobei zum…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].text",
+      "term": "Paderborn",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Paderborn heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[28].text",
+      "term": "Köln",
+      "context": "3. im Oberlandesgerichtsbezirk Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[29].text",
+      "term": "Bonn",
+      "context": "a) Landgerichtsbezirk Bonn dem Amtsgericht Bonn für die Amtsgerichte Bonn, Euskirchen,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[29].text",
+      "term": "Bonn",
+      "context": "a) Landgerichtsbezirk Bonn dem Amtsgericht Bonn für die Amtsgerichte Bonn, Euskirchen, Siegburg, Königswint…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[29].text",
+      "term": "Bonn",
+      "context": "…richtsbezirk Bonn dem Amtsgericht Bonn für die Amtsgerichte Bonn, Euskirchen, Siegburg, Königswinter, Rheinbach und Waldbröl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[29].text",
+      "term": "Bonn",
+      "context": "…i zum Bereitschaftsdienst auch die Richter des Landgerichts Bonn heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Köln",
+      "context": "b) Landgerichtsbezirk Köln dem Amtsgericht Bergisch Gladbach für die Amtsgerichte Berg…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Bergisch Gladbach",
+      "context": "b) Landgerichtsbezirk Köln dem Amtsgericht Bergisch Gladbach für die Amtsgerichte Bergisch Gladbach, Leverkusen, Gummers…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Bergisch Gladbach",
+      "context": "…Köln dem Amtsgericht Bergisch Gladbach für die Amtsgerichte Bergisch Gladbach, Leverkusen, Gummersbach, Wipperfürth und Wermelskirchen, w…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Leverkusen",
+      "context": "…t Bergisch Gladbach für die Amtsgerichte Bergisch Gladbach, Leverkusen, Gummersbach, Wipperfürth und Wermelskirchen, wobei zum Ber…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[30].text",
+      "term": "Köln",
+      "context": "…tsdienst auch die Richterinnen und Richter des Landgerichts Köln heranzuziehen sind",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[32].text",
+      "term": "Köln",
+      "context": "…tsdienst auch die Richterinnen und Richter des Landgerichts Köln heranzuziehen sind,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[33].text",
+      "term": "Aachen",
+      "context": "c) Landgerichtsbezirk Aachen dem Amtsgericht Aachen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[33].text",
+      "term": "Aachen",
+      "context": "c) Landgerichtsbezirk Aachen dem Amtsgericht Aachen",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[34].text",
+      "term": "Aachen",
+      "context": "für die Amtsgerichte Aachen, Düren, Eschweiler, Heinsberg, Geilenkirchen, Jülich, Schle…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 57,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… des Gerichtsverfassungsgesetzes vom 17. Dezember 2002 (GV. NRW. 2003 S. 16) wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[4].text",
+        "term": "NRW",
+        "context": "…tikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Zusammenfassung von Geschäften des Bereitschaftsdienstes bei den Amtsgerichten des Landes Nordrhein-Westfalen (Bereitschaftsdienst - VO - § 22c GVG) vom 23. September 2003 (GV. NRW. S. 603)",
+    "sourceVersion": "Verordnung über die Zusammenfassung von Geschäften des Bereitschaftsdienstes bei den Amtsgerichten des Landes Nordrhein-Westfalen (Bereitschaftsdienst - VO - § 22c GVG) vom 23. September 2003 (GV. NRW. S. 603)",
+    "simulation": "Verordnung über die Zusammenfassung von Geschäften des Bereitschaftsdienstes bei den Amtsgerichten des Landes Westdeutschland (Bereitschaftsdienst - VO - § 22c GVG) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7085,
+          "actual": 6881,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 58,
+          "actual": 58,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6881,
+          "actual": 6877,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:29:48.094Z"
+}

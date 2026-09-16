@@ -1,0 +1,1233 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28295",
+  "slug": "verordnung-zur-durchfuehrung-des-waffengesetzes-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@222:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 222,
+      "end": 225,
+      "term": "NRW",
+      "context": "… §§ 5 Abs. 2, 7 Abs. 4 des Landesorganisationsgesetzes (LOG NRW) vom 10. Juli 1962 (GV. NRW. S. 421) , zuletzt geändert dur…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@246:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 246,
+      "end": 261,
+      "term": "GV. NRW. S. 421",
+      "context": "…es Landesorganisationsgesetzes (LOG NRW) vom 10. Juli 1962 (GV. NRW. S. 421) , zuletzt geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@312:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 312,
+      "end": 327,
+      "term": "GV. NRW. S. 462",
+      "context": "…W. S. 421) , zuletzt geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 462), und des § 36 Abs. 2 Satz 1 des Gesetzes über Ordnungswidr…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@313:authority-named",
+      "path": "body[2].children[1].text",
+      "start": 313,
+      "end": 330,
+      "term": "Landeskriminalamt",
+      "context": "… Rahmen des Verfahrens nach § 2 Abs. 5 Waffengesetz ist das Landeskriminalamt Nordrhein-Westfalen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-named",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[2].children[1].text@331:rule:jurisdiction-name-bare",
+      "path": "body[2].children[1].text",
+      "start": 331,
+      "end": 350,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rens nach § 2 Abs. 5 Waffengesetz ist das Landeskriminalamt Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[0].text@21:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "das Polizeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@34:regional-body-district",
+      "path": "body[3].children[1].children[0].text",
+      "start": 34,
+      "end": 51,
+      "term": "Regierungsbezirke",
+      "context": "das Polizeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@52:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 52,
+      "end": 62,
+      "term": "Düsseldorf",
+      "context": "das Polizeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@67:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 67,
+      "end": 71,
+      "term": "Köln",
+      "context": "…izeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@21:municipality",
+      "path": "body[3].children[1].children[1].text",
+      "start": 21,
+      "end": 28,
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@37:regional-body-district",
+      "path": "body[3].children[1].children[1].text",
+      "start": 37,
+      "end": 54,
+      "term": "Regierungsbezirke",
+      "context": "das Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@55:municipality",
+      "path": "body[3].children[1].children[1].text",
+      "start": 55,
+      "end": 62,
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@64:municipality",
+      "path": "body[3].children[1].children[1].text",
+      "start": 64,
+      "end": 72,
+      "term": "Arnsberg",
+      "context": "…Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[1].text@77:municipality",
+      "path": "body[3].children[1].children[1].text",
+      "start": 77,
+      "end": 84,
+      "term": "Detmold",
+      "context": "…ium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@148:municipality",
+      "path": "body[3].children[2].text",
+      "start": 148,
+      "end": 158,
+      "term": "Düsseldorf",
+      "context": "…all des Absatzes 1 Nr. 1 der Industrie und Handelskammer zu Düsseldorf und im Falle des Absatzes 1 Nr. 2 der Industrie und Handels…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@228:municipality",
+      "path": "body[3].children[2].text",
+      "start": 228,
+      "end": 235,
+      "term": "Münster",
+      "context": "…lle des Absatzes 1 Nr. 2 der Industrie und Handelskammer zu Münster übertragen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[0].text@21:municipality",
+      "path": "body[3].children[3].children[0].text",
+      "start": 21,
+      "end": 29,
+      "term": "Dortmund",
+      "context": "das Polizeipräsidium Dortmund für den Regierungsbezirk Arnsberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[0].text@38:regional-body-district",
+      "path": "body[3].children[3].children[0].text",
+      "start": 38,
+      "end": 54,
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Dortmund für den Regierungsbezirk Arnsberg,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[0].text@55:municipality",
+      "path": "body[3].children[3].children[0].text",
+      "start": 55,
+      "end": 63,
+      "term": "Arnsberg",
+      "context": "das Polizeipräsidium Dortmund für den Regierungsbezirk Arnsberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[1].text@21:municipality",
+      "path": "body[3].children[3].children[1].text",
+      "start": 21,
+      "end": 30,
+      "term": "Bielefeld",
+      "context": "das Polizeipräsidium Bielefeld für den Regierungsbezirk Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[1].text@39:regional-body-district",
+      "path": "body[3].children[3].children[1].text",
+      "start": 39,
+      "end": 55,
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Bielefeld für den Regierungsbezirk Detmold,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[1].text@56:municipality",
+      "path": "body[3].children[3].children[1].text",
+      "start": 56,
+      "end": 63,
+      "term": "Detmold",
+      "context": "das Polizeipräsidium Bielefeld für den Regierungsbezirk Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[2].text@21:municipality",
+      "path": "body[3].children[3].children[2].text",
+      "start": 21,
+      "end": 31,
+      "term": "Düsseldorf",
+      "context": "das Polizeipräsidium Düsseldorf für den Regierungsbezirk Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[2].text@40:regional-body-district",
+      "path": "body[3].children[3].children[2].text",
+      "start": 40,
+      "end": 56,
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Düsseldorf für den Regierungsbezirk Düsseldorf,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[2].text@57:municipality",
+      "path": "body[3].children[3].children[2].text",
+      "start": 57,
+      "end": 67,
+      "term": "Düsseldorf",
+      "context": "das Polizeipräsidium Düsseldorf für den Regierungsbezirk Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[3].text@21:municipality",
+      "path": "body[3].children[3].children[3].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "das Polizeipräsidium Köln für den Regierungsbezirk Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[3].text@34:regional-body-district",
+      "path": "body[3].children[3].children[3].text",
+      "start": 34,
+      "end": 50,
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Köln für den Regierungsbezirk Köln,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[3].text@51:municipality",
+      "path": "body[3].children[3].children[3].text",
+      "start": 51,
+      "end": 55,
+      "term": "Köln",
+      "context": "das Polizeipräsidium Köln für den Regierungsbezirk Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[4].text@21:municipality",
+      "path": "body[3].children[3].children[4].text",
+      "start": 21,
+      "end": 28,
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für den Regierungsbezirk Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[4].text@37:regional-body-district",
+      "path": "body[3].children[3].children[4].text",
+      "start": 37,
+      "end": 53,
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Münster für den Regierungsbezirk Münster.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[4].text@54:municipality",
+      "path": "body[3].children[3].children[4].text",
+      "start": 54,
+      "end": 61,
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für den Regierungsbezirk Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[4].text@239:regional-body-district",
+      "path": "body[3].children[4].text",
+      "start": 239,
+      "end": 255,
+      "term": "Regierungsbezirk",
+      "context": "… die in Absatz 3 genannten Polizeipräsidien jeweils für den Regierungsbezirk aus, für den sie nach Absatz 3 zuständig sind. Die örtliche…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@376:ministry-compound",
+      "path": "body[4].children[0].text",
+      "start": 376,
+      "end": 392,
+      "term": "Innenministerium",
+      "context": "…des Landtages und der obersten Landesbehörden kann auch das Innenministerium die Bescheinigung erteilen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[5].children[6].text@4:authority-state-enterprise",
+      "path": "body[5].children[6].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landesbetrieb Mess-",
+      "context": "den Landesbetrieb Mess- und Eichwesen NRW",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[5].children[6].text@38:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[6].text",
+      "start": 38,
+      "end": 41,
+      "term": "NRW",
+      "context": "den Landesbetrieb Mess- und Eichwesen NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[7].text@248:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[7].text",
+      "start": 248,
+      "end": 251,
+      "term": "NRW",
+      "context": "…ittelbaren Zwanges nach dem Verwaltungsvollstreckungsgesetz NRW gilt für die Dienstkräfte der Ordnungsbehörden § 2 Abs. 3 W…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[0].text@70:protected:gazette-nrw",
+      "path": "body[7].children[0].text",
+      "start": 70,
+      "end": 85,
+      "term": "GV. NRW. S. 243",
+      "context": "…nung zur Durchführung des Waffengesetzes vom 29. Juni 1976 (GV. NRW. S. 243), zuletzt geändert durch Verordnung vom 18. Mai 1982 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].text@140:protected:gazette-nrw",
+      "path": "body[7].children[0].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 250",
+      "context": "…. 243), zuletzt geändert durch Verordnung vom 18. Mai 1982 (GV. NRW. S. 250), wird aufgehoben.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].text@4:constitutional-organ-state",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[9].text@20:rule:jurisdiction-name-bare",
+      "path": "body[9].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].text@4:ministry-compound",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[13].text@99:protected:gazette-nrw",
+      "path": "body[13].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 351",
+      "context": "… (Artikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "authority": {
+      "manual-review": 2
+    },
+    "municipality": {
+      "manual-review": 19
+    },
+    "regional-body": {
+      "manual-review": 8
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[1].text",
+      "term": "Landeskriminalamt",
+      "context": "… Rahmen des Verfahrens nach § 2 Abs. 5 Waffengesetz ist das Landeskriminalamt Nordrhein-Westfalen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Köln",
+      "context": "das Polizeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Regierungsbezirke",
+      "context": "das Polizeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Düsseldorf",
+      "context": "das Polizeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Köln",
+      "context": "…izeipräsidium Köln für die Regierungsbezirke Düsseldorf und Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Regierungsbezirke",
+      "context": "das Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Arnsberg",
+      "context": "…Polizeipräsidium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[1].text",
+      "term": "Detmold",
+      "context": "…ium Münster für die Regierungsbezirke Münster, Arnsberg und Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Düsseldorf",
+      "context": "…all des Absatzes 1 Nr. 1 der Industrie und Handelskammer zu Düsseldorf und im Falle des Absatzes 1 Nr. 2 der Industrie und Handels…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Münster",
+      "context": "…lle des Absatzes 1 Nr. 2 der Industrie und Handelskammer zu Münster übertragen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[0].text",
+      "term": "Dortmund",
+      "context": "das Polizeipräsidium Dortmund für den Regierungsbezirk Arnsberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Dortmund für den Regierungsbezirk Arnsberg,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[0].text",
+      "term": "Arnsberg",
+      "context": "das Polizeipräsidium Dortmund für den Regierungsbezirk Arnsberg,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "term": "Bielefeld",
+      "context": "das Polizeipräsidium Bielefeld für den Regierungsbezirk Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Bielefeld für den Regierungsbezirk Detmold,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[1].text",
+      "term": "Detmold",
+      "context": "das Polizeipräsidium Bielefeld für den Regierungsbezirk Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[2].text",
+      "term": "Düsseldorf",
+      "context": "das Polizeipräsidium Düsseldorf für den Regierungsbezirk Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Düsseldorf für den Regierungsbezirk Düsseldorf,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[2].text",
+      "term": "Düsseldorf",
+      "context": "das Polizeipräsidium Düsseldorf für den Regierungsbezirk Düsseldorf,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[3].text",
+      "term": "Köln",
+      "context": "das Polizeipräsidium Köln für den Regierungsbezirk Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[3].text",
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Köln für den Regierungsbezirk Köln,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[3].text",
+      "term": "Köln",
+      "context": "das Polizeipräsidium Köln für den Regierungsbezirk Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[4].text",
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für den Regierungsbezirk Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[4].text",
+      "term": "Regierungsbezirk",
+      "context": "das Polizeipräsidium Münster für den Regierungsbezirk Münster.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[4].text",
+      "term": "Münster",
+      "context": "das Polizeipräsidium Münster für den Regierungsbezirk Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[4].text",
+      "term": "Regierungsbezirk",
+      "context": "… die in Absatz 3 genannten Polizeipräsidien jeweils für den Regierungsbezirk aus, für den sie nach Absatz 3 zuständig sind. Die örtliche…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Innenministerium",
+      "context": "…des Landtages und der obersten Landesbehörden kann auch das Innenministerium die Bescheinigung erteilen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[6].text",
+      "term": "Landesbetrieb Mess-",
+      "context": "den Landesbetrieb Mess- und Eichwesen NRW",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 53,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…ndesorganisationsgesetzes (LOG West) vom 10. Juli 1962 (GV. NRW. S. 421) , zuletzt geändert durch Gesetz vom 9. Mai 2000 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…. 421) , zuletzt geändert durch Gesetz vom 9. Mai 2000 (GV. NRW. S. 462), und des § 36 Abs. 2 Satz 1 des Gesetzes über Ordn…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[0].text",
+        "term": "NRW",
+        "context": "… zur Durchführung des Waffengesetzes vom 29. Juni 1976 (GV. NRW. S. 243), zuletzt geändert durch Verordnung vom 18. Mai 198…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[0].text",
+        "term": "NRW",
+        "context": "…3), zuletzt geändert durch Verordnung vom 18. Mai 1982 (GV. NRW. S. 250), wird aufgehoben.",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].text",
+        "term": "NRW",
+        "context": "…tikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Durchführung des Waffengesetzes vom 8. April 2003 (GV. NRW. S. 217)",
+    "sourceVersion": "Verordnung zur Durchführung des Waffengesetzes vom 8. April 2003 (GV. NRW. S. 217)",
+    "simulation": "Verordnung zur Durchführung des Waffengesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4437,
+          "actual": 4343,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4343,
+          "actual": 4338,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:43:10.057Z"
+}

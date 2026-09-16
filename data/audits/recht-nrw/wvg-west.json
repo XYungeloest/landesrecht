@@ -1,0 +1,278 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26929",
+  "slug": "wvg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@113:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 113,
+      "end": 132,
+      "term": "Nordrhein-Westfalen",
+      "context": "…odenverbände vom 12. Februar 1991 (BGBl. I S. 405) im Lande Nordrhein-Westfalen (NRW AGWVG)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.title@134:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 134,
+      "end": 137,
+      "term": "NRW",
+      "context": "…Februar 1991 (BGBl. I S. 405) im Lande Nordrhein-Westfalen (NRW AGWVG)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].children[2].children[0].children[2].text@315:protected:gazette-nw",
+      "path": "body[1].children[2].children[0].children[2].text",
+      "start": 315,
+      "end": 334,
+      "term": "GV. NW. 1988 S. 324",
+      "context": "…. 1 und §§ 15 bis 18 der Eigenbetriebsverordnung - EigVO - (GV. NW. 1988 S. 324) gelten entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@319:rule:jurisdiction-name",
+      "path": "body[3].children[0].children[0].text",
+      "start": 319,
+      "end": 343,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…tshandlungen der in § 8 Abs. 4 des Gebührengesetzes für das Land Nordrhein-Westfalen genannten Behörden. § 69 Abs. 2 WVG ist anzuwenden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].children[1].text@275:protected:gazette-nrw",
+      "path": "body[5].children[0].children[1].text",
+      "start": 275,
+      "end": 290,
+      "term": "GV. NRW. S. 133",
+      "context": "…Absatz 5 Satz 2 des Landeswassergesetzes vom 25. Juni 1995 (GV. NRW. S. 133) in der jeweils geltenden Fassung ihrer Mitglieder zu organ…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 157,
+    "residuals": [
+      {
+        "path": "body[5].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…tz 5 Satz 2 des Landeswassergesetzes vom 25. Juni 1995 (GV. NRW. S. 133) in der jeweils geltenden Fassung ihrer Mitglieder …",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Ausführung des Gesetzes über Wasser- und Bodenverbände vom 12. Februar 1991 (BGBl. I S. 405) im Lande Nordrhein-Westfalen (NRW AGWVG) vom 7. März 1995",
+    "sourceVersion": "Gesetz zur Ausführung des Gesetzes über Wasser- und Bodenverbände vom 12. Februar 1991 (BGBl. I S. 405) im Lande Nordrhein-Westfalen (NRW AGWVG) vom 7. März 1995",
+    "simulation": "Gesetz zur Ausführung des Gesetzes über Wasser- und Bodenverbände vom 12. Februar 1991 (BGBl. I S. 405) im Lande Westdeutschland (West AGWVG) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12999,
+          "actual": 13439,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13439,
+          "actual": 13435,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "17 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "17 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:23:07.499Z"
+}

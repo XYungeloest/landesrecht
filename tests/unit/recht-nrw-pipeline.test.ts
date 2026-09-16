@@ -201,6 +201,14 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
       expect(failed.findings.map((finding) => finding.code)).toContain('import-regression');
       expect(failed.manifestEntry).toMatchObject({ sourceIdentity: 'term:515151', importStatus: 'imported-with-warnings', targetSlug: 'testvo-west' });
       expect(failed.reviewItems.map((item) => item.category)).toEqual(expect.arrayContaining(['version-selection', 'other']));
+
+      // Bulk-Fall (Regression): Der Runner übergibt für einen erst im Lauf aufgelösten Slug-Stamm ein leeres
+      // Manifest. Der gespeicherte Stand muss trotzdem gefunden werden, sonst überschreibt der Fehlschlag ihn.
+      const emptyManifest = { schemaVersion: 'recht-nrw-import-manifest/2' as const, sourceSystem: 'recht-nrw' as const, baselineDate: '2023-12-01', entries: [] };
+      const withoutKnownIdentity = await importRechtNrwNorm({ url: NATIVE_URL, root, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-broken.html' }), write: true, now, manifest: emptyManifest });
+      expect(withoutKnownIdentity.findings.map((finding) => finding.code)).toContain('import-regression');
+      expect(withoutKnownIdentity.manifestEntry).toMatchObject({ importStatus: 'imported-with-warnings', targetSlug: 'testvo-west' });
+      expect((await readManifest(root)).entries.find((entry) => entry.sourceIdentity === 'term:515151')).toMatchObject({ importStatus: 'imported-with-warnings', targetSlug: 'testvo-west' });
       const override = { id: 'test-valid-to', sourceIdentity: 'term:515151', field: 'sourceValidTo' as const, value: null, reason: 'Testentscheidung', evidence: { source: 'Test' }, reviewedAt: '2026-09-15' };
       const overridden = await importRechtNrwNorm({ url: NATIVE_URL, root, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-broken.html', [ANNEX_URL]: 'annex.htm', [ANNEX_PDF_URL]: 'annex.pdf' }), now, overrides: [override] });
       expect(overridden.status).toBe('dry-run');

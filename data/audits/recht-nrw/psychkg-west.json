@@ -1,0 +1,637 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28004",
+  "slug": "psychkg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[9].children[2].children[0].text@492:protected:gazette-nrw",
+      "path": "body[9].children[2].children[0].text",
+      "start": 492,
+      "end": 507,
+      "term": "GV. NRW. S. 430",
+      "context": "…ffentlichen Gesundheitsdienst (ÖGDG) vom 25. November 1997 (GV. NRW. S. 430) in der jeweils geltenden Fassung bleibt unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].children[3].text@112:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[0].children[3].text",
+      "start": 112,
+      "end": 138,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…§ 2 in Verbindung mit § 16 Krankenhausgestaltungsgesetz des Landes Nordrhein-Westfalen – KHGG NRW – vom 11. Dezember 2007 (GV. NRW. S. 702, ber. 2…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[0].children[3].text@146:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[3].text",
+      "start": 146,
+      "end": 149,
+      "term": "NRW",
+      "context": "…hausgestaltungsgesetz des Landes Nordrhein-Westfalen – KHGG NRW – vom 11. Dezember 2007 (GV. NRW. S. 702, ber. 2008 S. 157)…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[0].children[3].text@175:protected:gazette-nrw",
+      "path": "body[11].children[0].children[3].text",
+      "start": 175,
+      "end": 190,
+      "term": "GV. NRW. S. 702",
+      "context": "…des Nordrhein-Westfalen – KHGG NRW – vom 11. Dezember 2007 (GV. NRW. S. 702, ber. 2008 S. 157) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[1].children[1].text@838:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[1].children[1].text",
+      "start": 838,
+      "end": 864,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…id im Sinne des § 16 des Krankenhausgestaltungsgesetzes des Landes Nordrhein-Westfalen in den Krankenhausplan aufgenommen ist. Der ärztlichen Leit…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[1].children[2].text@74:authority-district-government",
+      "path": "body[11].children[1].children[2].text",
+      "start": 74,
+      "end": 90,
+      "term": "Bezirksregierung",
+      "context": "…sichtsbehörde nach diesem Gesetz ist die örtlich zuständige Bezirksregierung. Oberste Aufsichtsbehörde ist das für Gesundheit zuständige…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[3].text@133:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[1].children[3].text",
+      "start": 133,
+      "end": 159,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…benwahrnehmung. § 11 des Krankenhausgestaltungsgesetzes des Landes Nordrhein-Westfalen bleibt unberührt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[7].children[2].text@350:protected:gazette-nrw",
+      "path": "body[11].children[7].children[2].text",
+      "start": 350,
+      "end": 364,
+      "term": "GV. NRW. S. 84",
+      "context": "… 9 des Gesundheitsdatenschutzgesetzes vom 22. Februar 1994 (GV. NRW. S. 84), das zuletzt durch Artikel 2 des Gesetzes vom 2. Februar 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[7].children[2].text@429:protected:gazette-nrw",
+      "path": "body[11].children[7].children[2].text",
+      "start": 429,
+      "end": 443,
+      "term": "GV. NRW. S. 94",
+      "context": "…s zuletzt durch Artikel 2 des Gesetzes vom 2. Februar 2016 (GV. NRW. S. 94) geändert worden ist, bleibt unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[15].children[1].text@204:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[15].children[1].text",
+      "start": 204,
+      "end": 207,
+      "term": "NRW",
+      "context": "…lieder der Patientenbeschwerdestelle nach § 5 Absatz 1 KHGG NRW zu unterrichten. Sprechstunden sollen bei Bedarf im Bereich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[12].children[1].children[1].text@62:rule:jurisdiction-abbreviation",
+      "path": "body[12].children[1].children[1].text",
+      "start": 62,
+      "end": 65,
+      "term": "NRW",
+      "context": "…Soweit Krankenhäuser soziale Dienste nach § 5 Absatz 2 KHGG NRW oder Institutsambulanzen nach § 118 SGB V vorhalten, ist di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[0].children[1].text@26:authority-district-government",
+      "path": "body[13].children[0].children[1].text",
+      "start": 26,
+      "end": 42,
+      "term": "Bezirksregierung",
+      "context": "1Aufsichtsbehörde ist die Bezirksregierung. 2Oberste Aufsichtsbehörde ist das für Gesundheit zuständig…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[13].children[1].children[1].text@841:protected:gazette-nrw",
+      "path": "body[13].children[1].children[1].text",
+      "start": 841,
+      "end": 856,
+      "term": "GV. NRW. S. 590",
+      "context": "…z 1 des Landesgleichstellungsgesetzes vom 9. November 1999 (GV. NRW. S. 590), das zuletzt durch Artikel 3 des Gesetzes vom 16. Septembe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[1].children[1].text@924:protected:gazette-nrw",
+      "path": "body[13].children[1].children[1].text",
+      "start": 924,
+      "end": 939,
+      "term": "GV. NRW. S. 547",
+      "context": "…uletzt durch Artikel 3 des Gesetzes vom 16. September 2014 (GV. NRW. S. 547) geändert worden ist. Der Vorsitz und die Geschäftsführung …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[8].children[1].text@188:protected:gazette-nrw",
+      "path": "body[13].children[8].children[1].text",
+      "start": 188,
+      "end": 203,
+      "term": "GV. NRW. S. 872",
+      "context": "…bei psychischen Krankheiten (PsychKG) vom 2. Dezember 1969 (GV. NRW. S. 872), zuletzt geändert durch Gesetz vom 18. Dezember 1984 (GV. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[8].children[1].text@259:protected:gazette-nrw",
+      "path": "body[13].children[8].children[1].text",
+      "start": 259,
+      "end": 273,
+      "term": "GV. NRW. S. 14",
+      "context": "… 872), zuletzt geändert durch Gesetz vom 18. Dezember 1984 (GV. NRW. S. 14), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].text@4:constitutional-organ-state",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen Der Ministerpräsident",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[14].text@20:rule:jurisdiction-name-bare",
+      "path": "body[14].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen Der Ministerpräsident",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].text@4:ministry-compound",
+      "path": "body[15].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[16].text@4:ministry-compound",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 18,
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[17].text@4:ministry-portfolio",
+      "path": "body[17].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Frauen, Jugend, Familie und Gesundheit",
+      "context": "Die Ministerin für Frauen, Jugend, Familie und Gesundheit",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 8
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 7
+    },
+    "authority": {
+      "manual-review": 2
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "body[11].children[0].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[1].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[15].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].children[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[14].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[11].children[1].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…sichtsbehörde nach diesem Gesetz ist die örtlich zuständige Bezirksregierung. Oberste Aufsichtsbehörde ist das für Gesundheit zuständige…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "1Aufsichtsbehörde ist die Bezirksregierung. 2Oberste Aufsichtsbehörde ist das für Gesundheit zuständig…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].text",
+      "term": "Justizminister",
+      "context": "Der Justizminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].text",
+      "term": "Ministerin für Frauen, Jugend, Familie und Gesundheit",
+      "context": "Die Ministerin für Frauen, Jugend, Familie und Gesundheit",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 417,
+    "residuals": [
+      {
+        "path": "body[9].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…tlichen Gesundheitsdienst (ÖGDG) vom 25. November 1997 (GV. NRW. S. 430) in der jeweils geltenden Fassung bleibt unberührt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…es Westdeutschland – KHGG West – vom 11. Dezember 2007 (GV. NRW. S. 702, ber. 2008 S. 157) in der jeweils geltenden Fassung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[7].children[2].text",
+        "term": "NRW",
+        "context": "…es Gesundheitsdatenschutzgesetzes vom 22. Februar 1994 (GV. NRW. S. 84), das zuletzt durch Artikel 2 des Gesetzes vom 2. Fe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[7].children[2].text",
+        "term": "NRW",
+        "context": "…letzt durch Artikel 2 des Gesetzes vom 2. Februar 2016 (GV. NRW. S. 94) geändert worden ist, bleibt unberührt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…des Landesgleichstellungsgesetzes vom 9. November 1999 (GV. NRW. S. 590), das zuletzt durch Artikel 3 des Gesetzes vom 16. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…zt durch Artikel 3 des Gesetzes vom 16. September 2014 (GV. NRW. S. 547) geändert worden ist. Der Vorsitz und die Geschäfts…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[8].children[1].text",
+        "term": "NRW",
+        "context": "…psychischen Krankheiten (PsychKG) vom 2. Dezember 1969 (GV. NRW. S. 872), zuletzt geändert durch Gesetz vom 18. Dezember 19…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[8].children[1].text",
+        "term": "NRW",
+        "context": "…), zuletzt geändert durch Gesetz vom 18. Dezember 1984 (GV. NRW. S. 14), außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über Hilfen und Schutzmaßnahmen bei psychischen Krankheiten vom 17. Dezember 1999 (GV. NRW. S. 662)",
+    "sourceVersion": "Gesetz über Hilfen und Schutzmaßnahmen bei psychischen Krankheiten vom 17. Dezember 1999 (GV. NRW. S. 662)",
+    "simulation": "Gesetz über Hilfen und Schutzmaßnahmen bei psychischen Krankheiten in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 40,
+          "actual": 40,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 45093,
+          "actual": 44779,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 40,
+          "actual": 40,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 277,
+          "actual": 277,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 40,
+          "actual": 40,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 44779,
+          "actual": 44766,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "40 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "40 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:20:10.344Z"
+}

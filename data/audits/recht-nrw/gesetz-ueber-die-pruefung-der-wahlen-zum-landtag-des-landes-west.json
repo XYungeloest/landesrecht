@@ -1,0 +1,321 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26516",
+  "slug": "gesetz-ueber-die-pruefung-der-wahlen-zum-landtag-des-landes-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@39:legislature-state",
+      "path": "meta.title",
+      "start": 39,
+      "end": 77,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "Gesetz über die Prüfung der Wahlen zum Landtag des Landes Nordrhein-Westfalen - Wahlprüfungsgesetz NW -",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "meta.title@51:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 51,
+      "end": 77,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Gesetz über die Prüfung der Wahlen zum Landtag des Landes Nordrhein-Westfalen - Wahlprüfungsgesetz NW -",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[3].text@65:protected:gazette-nrw",
+      "path": "body[13].children[3].text",
+      "start": 65,
+      "end": 80,
+      "term": "GV. NRW. S. 248",
+      "context": "… § 13a eingefügt durch Art. 4 des Gesetzes v. 18. Mai 2004 (GV. NRW. S. 248), in Kraft getreten am 4. Juni 2004; aufgehoben durch Artik…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[3].text@176:protected:gazette-nrw",
+      "path": "body[13].children[3].text",
+      "start": 176,
+      "end": 191,
+      "term": "GV. NRW. S. 250",
+      "context": "…; aufgehoben durch Artikel 3 des Gesetzes vom 24. Mai 2016 (GV. NRW. S. 250), in Kraft getreten am 4. Juni 2016.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[3].text@55:protected:gazette-nrw",
+      "path": "body[14].children[3].text",
+      "start": 55,
+      "end": 70,
+      "term": "GV. NRW. S. 114",
+      "context": "Hinweis: (Artikel II des Gesetzes vom 1. Februar 2019 (GV. NRW. S. 114)):",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].text@100:legislature-state",
+      "path": "body[14].children[5].text",
+      "start": 100,
+      "end": 138,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "… Verkündung des Gesetzes folgenden Wahltag für die Wahl zum Landtag des Landes Nordrhein-Westfalen in Kraft.",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[14].children[5].text@112:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[5].text",
+      "start": 112,
+      "end": 138,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…des Gesetzes folgenden Wahltag für die Wahl zum Landtag des Landes Nordrhein-Westfalen in Kraft.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "legislature": {
+      "safe-auto-transform": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[14].children[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 84,
+    "residuals": [
+      {
+        "path": "body[13].children[3].text",
+        "term": "NRW",
+        "context": "…3a eingefügt durch Art. 4 des Gesetzes v. 18. Mai 2004 (GV. NRW. S. 248), in Kraft getreten am 4. Juni 2004; aufgehoben dur…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[3].text",
+        "term": "NRW",
+        "context": "…fgehoben durch Artikel 3 des Gesetzes vom 24. Mai 2016 (GV. NRW. S. 250), in Kraft getreten am 4. Juni 2016.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[3].text",
+        "term": "NRW",
+        "context": "Hinweis: (Artikel II des Gesetzes vom 1. Februar 2019 (GV. NRW. S. 114)):",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Prüfung der Wahlen zum Landtag des Landes Nordrhein-Westfalen - Wahlprüfungsgesetz NW - vom 20. November 1951",
+    "sourceVersion": "Gesetz über die Prüfung der Wahlen zum Landtag des Landes Nordrhein-Westfalen - Wahlprüfungsgesetz NW - vom 20. November 1951",
+    "simulation": "Gesetz über die Prüfung der Wahlen zum Landtag des Landes Westdeutschland - Wahlprüfungsgesetz NW - in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7088,
+          "actual": 7393,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 65,
+          "actual": 65,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7393,
+          "actual": 7389,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:17:42.889Z"
+}

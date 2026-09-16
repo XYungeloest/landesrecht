@@ -1,0 +1,934 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26519",
+  "slug": "bekanntmachung-der-neufassung-des-landeswahlgesetzes-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@69:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 69,
+      "end": 84,
+      "term": "GV. NRW. S. 250",
+      "context": "…age angefügt durch Artikel 1 des Gesetzes vom 24. Mai 2016 (GV. NRW. S. 250), in Kraft getreten am 4. Juni 2016.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@82:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 82,
+      "end": 96,
+      "term": "GV. NW. S. 300",
+      "context": "…IV Abs. 2 des Wahlrechtsänderungsgesetzes vom 8. Juni 1993 (GV. NW. S. 300) wird nachstehend der Wortlaut des Gesetzes über die Wahl z…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@159:legislature-state",
+      "path": "body[2].text",
+      "start": 159,
+      "end": 197,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "…ird nachstehend der Wortlaut des Gesetzes über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz) in der seit dem 18. Juni 1993 geltenden …",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[2].text@171:rule:jurisdiction-name-genitive",
+      "path": "body[2].text",
+      "start": 171,
+      "end": 197,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…end der Wortlaut des Gesetzes über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz) in der seit dem 18. Juni 1993 geltenden …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].text@72:protected:gazette-nw",
+      "path": "body[4].text",
+      "start": 72,
+      "end": 85,
+      "term": "GV. NW. S. 88",
+      "context": "…der Bekanntmachung des Landeswahlgesetzes vom 6. März 1979 (GV. NW. S. 88),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[5].text@66:protected:gazette-nw",
+      "path": "body[5].text",
+      "start": 66,
+      "end": 80,
+      "term": "GV. NW. S. 209",
+      "context": "… 31. März 1984 in Kraft getretene Gesetz vom 27. März 1984 (GV. NW. S. 209),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@4:ministry-compound",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[7].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[7].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[8].title@25:legislature-state",
+      "path": "body[8].title",
+      "start": 25,
+      "end": 63,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "Gesetz über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz) in der Fassung der Bekanntmachung vom 16…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[8].title@37:rule:jurisdiction-name-genitive",
+      "path": "body[8].title",
+      "start": 37,
+      "end": 63,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Gesetz über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz) in der Fassung der Bekanntmachung vom 16…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[10].children[4].text@44:rule:jurisdiction-name-bare",
+      "path": "body[10].children[4].text",
+      "start": 44,
+      "end": 63,
+      "term": "Nordrhein-Westfalen",
+      "context": "mindestens seit dem 16. Tag vor der Wahl in Nordrhein-Westfalen seine Wohnung, bei mehreren Wohnungen seine Hauptwohnung ha…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[1].text@82:rule:jurisdiction-name-bare",
+      "path": "body[13].children[1].text",
+      "start": 82,
+      "end": 101,
+      "term": "Nordrhein-Westfalen",
+      "context": "…berechtigte, der am Wahltag seit mindestens drei Monaten in Nordrhein-Westfalen seine Wohnung, bei mehreren Wohnungen seine Hauptwohnung ha…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[2].text@187:rule:jurisdiction-name",
+      "path": "body[18].children[2].text",
+      "start": 187,
+      "end": 211,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ruft, und zwei Richtern des Oberverwaltungsgerichts für das Land Nordrhein-Westfalen, die der Landeswahlleiter auf Vorschlag der Präsidentin ode…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[19].children[1].text@59:authority-district-government",
+      "path": "body[19].children[1].text",
+      "start": 59,
+      "end": 77,
+      "term": "Bezirksregierungen",
+      "context": "Die Kreiswahlleiter und ihre Stellvertreter werden von den Bezirksregierungen ernannt. Besteht eine kreisfreie Stadt oder ein Kreis aus m…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[26].children[6].text@240:protected:gazette-nrw",
+      "path": "body[26].children[6].text",
+      "start": 240,
+      "end": 255,
+      "term": "GV. NRW. S. 147",
+      "context": "…aus (§ 1 des Wahlprüfungsgesetzes NW vom 20. November 1951 (GV. NRW. S. 147), das zuletzt durch Artikel 3 des Gesetzes vom 24. Mai 2016…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[26].children[6].text@317:protected:gazette-nrw",
+      "path": "body[26].children[6].text",
+      "start": 317,
+      "end": 332,
+      "term": "GV. NRW. S. 250",
+      "context": "… das zuletzt durch Artikel 3 des Gesetzes vom 24. Mai 2016 (GV. NRW. S. 250) geändert worden ist).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[27].children[5].text@179:constitutional-organ-state",
+      "path": "body[27].children[5].text",
+      "start": 179,
+      "end": 234,
+      "term": "Verfassungsgerichtshof für das Land Nordrhein-Westfalen",
+      "context": "…reinigung binnen vier Tagen nach Bekanntgabe Beschwerde zum Verfassungsgerichtshof für das Land Nordrhein-Westfalen erheben. Die Beschwerde ist innerhalb der genannten Frist z…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[27].children[5].text@210:rule:jurisdiction-name",
+      "path": "body[27].children[5].text",
+      "start": 210,
+      "end": 234,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…h Bekanntgabe Beschwerde zum Verfassungsgerichtshof für das Land Nordrhein-Westfalen erheben. Die Beschwerde ist innerhalb der genannten Frist z…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[31].children[3].text@473:rule:jurisdiction-name",
+      "path": "body[31].children[3].text",
+      "start": 473,
+      "end": 497,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…undgesetzes oder Artikel 32 Absatz 2 der Verfassung für das Land Nordrhein-Westfalen vom 28. Juni 1950 (GV. NRW. S. 127), die zuletzt durch Gese…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[31].children[3].text@517:protected:gazette-nrw",
+      "path": "body[31].children[3].text",
+      "start": 517,
+      "end": 532,
+      "term": "GV. NRW. S. 127",
+      "context": "…fassung für das Land Nordrhein-Westfalen vom 28. Juni 1950 (GV. NRW. S. 127), die zuletzt durch Gesetz vom 30. Juni 2020 (GV. NRW. S. 6…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[31].children[3].text@579:protected:gazette-nrw",
+      "path": "body[31].children[3].text",
+      "start": 579,
+      "end": 594,
+      "term": "GV. NRW. S. 644",
+      "context": "…. NRW. S. 127), die zuletzt durch Gesetz vom 30. Juni 2020 (GV. NRW. S. 644) geändert worden ist, unzulässig sind.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[55].children[1].text@41:authority-state-enterprise",
+      "path": "body[55].children[1].text",
+      "start": 41,
+      "end": 66,
+      "term": "Landesbetrieb Information",
+      "context": "Die Ergebnisse der Landtagswahl sind vom Landesbetrieb Information und Technik (IT. NRW) statistisch auszuwerten; die Auswertu…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[55].children[1].text@84:rule:jurisdiction-abbreviation",
+      "path": "body[55].children[1].text",
+      "start": 84,
+      "end": 87,
+      "term": "NRW",
+      "context": "…agswahl sind vom Landesbetrieb Information und Technik (IT. NRW) statistisch auszuwerten; die Auswertung ist zu veröffentli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[55].children[2].text@38:authority-state-enterprise",
+      "path": "body[55].children[2].text",
+      "start": 38,
+      "end": 63,
+      "term": "Landesbetrieb Information",
+      "context": "Aus den Ergebnissen der Wahl sind vom Landesbetrieb Information und Technik (IT. NRW) Landesstatistiken auf repräsentativer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[55].children[2].text@81:rule:jurisdiction-abbreviation",
+      "path": "body[55].children[2].text",
+      "start": 81,
+      "end": 84,
+      "term": "NRW",
+      "context": "…er Wahl sind vom Landesbetrieb Information und Technik (IT. NRW) Landesstatistiken auf repräsentativer Grundlage über",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[55].children[2].children[1].text@403:authority-state-enterprise",
+      "path": "body[55].children[2].children[1].text",
+      "start": 403,
+      "end": 428,
+      "term": "Landesbetrieb Information",
+      "context": "…ten Stimmbezirken durchgeführt. Die Stimmbezirke werden vom Landesbetrieb Information und Technik (IT. NRW) im Einvernehmen mit dem Landeswahllei…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[55].children[2].children[1].text@446:rule:jurisdiction-abbreviation",
+      "path": "body[55].children[2].children[1].text",
+      "start": 446,
+      "end": 449,
+      "term": "NRW",
+      "context": "…zirke werden vom Landesbetrieb Information und Technik (IT. NRW) im Einvernehmen mit dem Landeswahlleiter ausgewählt. Ein a…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[55].children[4].text@110:rule:jurisdiction-name-bare",
+      "path": "body[55].children[4].text",
+      "start": 110,
+      "end": 129,
+      "term": "Nordrhein-Westfalen",
+      "context": "…die Voraussetzungen des § 32 Abs. 2 des Datenschutzgesetzes Nordrhein-Westfalen erfüllt, kann der Bürgermeister anordnen, dass in weiteren …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[58].children[2].title@51:legislature-state",
+      "path": "body[58].children[2].title",
+      "start": 51,
+      "end": 89,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "Gesetz zur Änderung des Gesetzes über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz)",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[58].children[2].title@63:rule:jurisdiction-name-genitive",
+      "path": "body[58].children[2].title",
+      "start": 63,
+      "end": 89,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…etz zur Änderung des Gesetzes über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[58].children[5].title@51:legislature-state",
+      "path": "body[58].children[5].title",
+      "start": 51,
+      "end": 89,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "Gesetz zur Änderung des Gesetzes über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz)",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[58].children[5].title@63:rule:jurisdiction-name-genitive",
+      "path": "body[58].children[5].title",
+      "start": 63,
+      "end": 89,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…etz zur Änderung des Gesetzes über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[58].children[10].text@4:ministry-compound",
+      "path": "body[58].children[10].text",
+      "start": 4,
+      "end": 20,
+      "term": "Innenministerium",
+      "context": "Das Innenministerium wird ermächtigt, das Gesetz über die Wahl zum Landtag des L…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[58].children[10].text@67:legislature-state",
+      "path": "body[58].children[10].text",
+      "start": 67,
+      "end": 105,
+      "term": "Landtag des Landes Nordrhein-Westfalen",
+      "context": "…enministerium wird ermächtigt, das Gesetz über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz) in der neuen Fassung mit neuem Datum bek…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[58].children[10].text@79:rule:jurisdiction-name-genitive",
+      "path": "body[58].children[10].text",
+      "start": 79,
+      "end": 105,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…m wird ermächtigt, das Gesetz über die Wahl zum Landtag des Landes Nordrhein-Westfalen (Landeswahlgesetz) in der neuen Fassung mit neuem Datum bek…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[58].children[11].title@97:protected:gazette-nrw",
+      "path": "body[58].children[11].title",
+      "start": 97,
+      "end": 112,
+      "term": "GV. NRW. S. 154",
+      "context": "…es zur Änderung des Landeswahlgesetzes vom 9. Februar 2021 (GV. NRW. S. 154)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 9
+    },
+    "legislature": {
+      "safe-auto-transform": 5
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 15
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[8].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[10].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[18].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[27].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[31].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[55].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[55].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[55].children[2].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[55].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[58].children[2].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[58].children[5].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[58].children[10].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[7].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "Die Kreiswahlleiter und ihre Stellvertreter werden von den Bezirksregierungen ernannt. Besteht eine kreisfreie Stadt oder ein Kreis aus m…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[55].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "Die Ergebnisse der Landtagswahl sind vom Landesbetrieb Information und Technik (IT. NRW) statistisch auszuwerten; die Auswertu…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[55].children[2].text",
+      "term": "Landesbetrieb Information",
+      "context": "Aus den Ergebnissen der Wahl sind vom Landesbetrieb Information und Technik (IT. NRW) Landesstatistiken auf repräsentativer…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[55].children[2].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "…ten Stimmbezirken durchgeführt. Die Stimmbezirke werden vom Landesbetrieb Information und Technik (IT. NRW) im Einvernehmen mit dem Landeswahllei…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[58].children[10].text",
+      "term": "Innenministerium",
+      "context": "Das Innenministerium wird ermächtigt, das Gesetz über die Wahl zum Landtag des L…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 452,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…angefügt durch Artikel 1 des Gesetzes vom 24. Mai 2016 (GV. NRW. S. 250), in Kraft getreten am 4. Juni 2016.",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[6].text",
+        "term": "NRW",
+        "context": "…(§ 1 des Wahlprüfungsgesetzes NW vom 20. November 1951 (GV. NRW. S. 147), das zuletzt durch Artikel 3 des Gesetzes vom 24. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[26].children[6].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 3 des Gesetzes vom 24. Mai 2016 (GV. NRW. S. 250) geändert worden ist).",
+        "status": "protected"
+      },
+      {
+        "path": "body[31].children[3].text",
+        "term": "NRW",
+        "context": "…fassung für das Land Westdeutschland vom 28. Juni 1950 (GV. NRW. S. 127), die zuletzt durch Gesetz vom 30. Juni 2020 (GV. N…",
+        "status": "protected"
+      },
+      {
+        "path": "body[31].children[3].text",
+        "term": "NRW",
+        "context": "…W. S. 127), die zuletzt durch Gesetz vom 30. Juni 2020 (GV. NRW. S. 644) geändert worden ist, unzulässig sind.",
+        "status": "protected"
+      },
+      {
+        "path": "body[58].children[11].title",
+        "term": "NRW",
+        "context": "…ur Änderung des Landeswahlgesetzes vom 9. Februar 2021 (GV. NRW. S. 154)",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Bekanntmachung der Neufassung des Landeswahlgesetzes vom 16. August 1993",
+    "sourceVersion": "Bekanntmachung der Neufassung des Landeswahlgesetzes vom 16. August 1993",
+    "simulation": "Bekanntmachung der Neufassung des Landeswahlgesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 49,
+          "actual": 49,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 54063,
+          "actual": 54486,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 49,
+          "actual": 49,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 325,
+          "actual": 325,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 49,
+          "actual": 49,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 54486,
+          "actual": 54441,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „hat das folgende Gesetz beschlossen“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "49 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „hat das folgende Gesetz beschlossen“"
+      ],
+      "supporting": [
+        "49 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage zu § 13 Absatz 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/3354-42202-sgv_1110_19930816_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 33,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage zu § 13 Absatz 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:10:00.807Z"
+}

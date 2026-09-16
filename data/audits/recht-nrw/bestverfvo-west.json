@@ -1,0 +1,448 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27821",
+  "slug": "bestverfvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@96:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 96,
+      "end": 111,
+      "term": "GV. NRW. S. 684",
+      "context": "…Inhaltsverzeichnis eingefügt durch VO vom 7. November 2008 (GV. NRW. S. 684), in Kraft getreten am 26. November 2008.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@86:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 86,
+      "end": 101,
+      "term": "GV. NRW. S. 758",
+      "context": "… Überschrift Teil 2 geändert durch VO vom 9. November 2015 (GV. NRW. S. 758), in Kraft getreten am 21. November 2015.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@88:rule:jurisdiction-name-bare",
+      "path": "body[4].text",
+      "start": 88,
+      "end": 107,
+      "term": "Nordrhein-Westfalen",
+      "context": "…48 des Ersten Gesetzes zur Ordnung des Schulwesens im Lande Nordrhein-Westfalen vom 8. April 1952 (GV. NW. S. 430), zuletzt geändert durch …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].text@127:protected:gazette-nw",
+      "path": "body[4].text",
+      "start": 127,
+      "end": 141,
+      "term": "GV. NW. S. 430",
+      "context": "…Schulwesens im Lande Nordrhein-Westfalen vom 8. April 1952 (GV. NW. S. 430), zuletzt geändert durch Gesetz vom 5. März 1968 (GV. NV. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[1].children[4].text@87:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[1].children[4].text",
+      "start": 87,
+      "end": 90,
+      "term": "NRW",
+      "context": "…men seiner Schulentwicklungsplanung (§ 80 des Schulgesetzes NRW) beschließen, ein Abstimmungsverfahren über eine bestehende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[3].children[5].text@316:protected:gazette-nrw",
+      "path": "body[7].children[3].children[5].text",
+      "start": 316,
+      "end": 331,
+      "term": "GV. NRW. S. 454",
+      "context": "…setzes in der Fassung der Bekanntmachung vom 30. Juni 1998 (GV. NRW. S. 454, ber. S. 509), das zuletzt durch Gesetz vom 24. Juni 2008 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[3].children[5].text@391:protected:gazette-nrw",
+      "path": "body[7].children[3].children[5].text",
+      "start": 391,
+      "end": 406,
+      "term": "GV. NRW. S. 514",
+      "context": "…, ber. S. 509), das zuletzt durch Gesetz vom 24. Juni 2008 (GV. NRW. S. 514) geändert worden ist, entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[5].children[5].text@92:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[5].children[5].text",
+      "start": 92,
+      "end": 95,
+      "term": "NRW",
+      "context": "…dneter Schulbetrieb gewährleistet ist, ist § 82 Schulgesetz NRW maßgebend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[3].children[2].text@92:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[3].children[2].text",
+      "start": 92,
+      "end": 95,
+      "term": "NRW",
+      "context": "…dneter Schulbetrieb gewährleistet ist, ist § 82 Schulgesetz NRW maßgebend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[9].children[2].children[2].text@4:ministry-compound",
+      "path": "body[9].children[2].children[2].text",
+      "start": 4,
+      "end": 18,
+      "term": "Kultusminister",
+      "context": "Der Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "schulministerium",
+        "group": "Schulministerium"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[2].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[2].children[2].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[2].children[4].text@99:protected:gazette-nrw",
+      "path": "body[9].children[2].children[4].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 274",
+      "context": "… (Artikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 6
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[1].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[5].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[3].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].children[2].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[9].children[2].children[2].text",
+      "term": "Kultusminister",
+      "context": "Der Kultusminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung schulministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 199,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…ltsverzeichnis eingefügt durch VO vom 7. November 2008 (GV. NRW. S. 684), in Kraft getreten am 26. November 2008.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…rschrift Teil 2 geändert durch VO vom 9. November 2015 (GV. NRW. S. 758), in Kraft getreten am 21. November 2015.",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[3].children[5].text",
+        "term": "NRW",
+        "context": "…es in der Fassung der Bekanntmachung vom 30. Juni 1998 (GV. NRW. S. 454, ber. S. 509), das zuletzt durch Gesetz vom 24. Jun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[7].children[3].children[5].text",
+        "term": "NRW",
+        "context": "…r. S. 509), das zuletzt durch Gesetz vom 24. Juni 2008 (GV. NRW. S. 514) geändert worden ist, entsprechend.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[4].text",
+        "term": "NRW",
+        "context": "…tikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über das Verfahren zur Bestimmung der Schulart von Grundschulen und Hauptschulen vom 8. März 1968",
+    "sourceVersion": "Verordnung über das Verfahren zur Bestimmung der Schulart von Grundschulen und Hauptschulen vom 8. März 1968",
+    "simulation": "Verordnung über das Verfahren zur Bestimmung der Schulart von Grundschulen und Hauptschulen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13880,
+          "actual": 14784,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 179,
+          "actual": 179,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14784,
+          "actual": 14779,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "17 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "17 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (Stimmzettel) Muster 1a,b,c,d 2a,b,c 3a,b,c,d 4, 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/4667-29721-sgv_223_19680308_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (Stimmzettel) Muster 1a,b,c,d 2a,b,c 3a,b,c,d 4, 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:56:00.327Z"
+}

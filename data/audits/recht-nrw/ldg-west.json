@@ -1,0 +1,953 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29963",
+  "slug": "ldg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@26:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 26,
+      "end": 50,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Disziplinargesetz für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@4:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "LDG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@117:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 117,
+      "end": 131,
+      "term": "GV.NRW. S. 624",
+      "context": "…ung des Landesdisziplinarrechtes (LDiszNOG) vom 16.11.2004 (GV.NRW. S. 624))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[0].children[1].text@113:protected:gazette-nrw",
+      "path": "body[9].children[0].children[1].text",
+      "start": 113,
+      "end": 128,
+      "term": "GV. NRW. S. 310",
+      "context": "… nach dem Landesbeamtenversorgungsgesetz vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung oder nach altem Recht bez…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[1].text@194:rule:jurisdiction-name",
+      "path": "body[9].children[2].children[1].text",
+      "start": 194,
+      "end": 218,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…erfolgt diese nach dem Verwaltungszustellungsgesetz für das Land Nordrhein-Westfalen in der jeweils geltenden Fassung. Die Beamtin oder der Beam…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[11].children[4].text@191:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[11].children[4].text",
+      "start": 191,
+      "end": 194,
+      "term": "NRW",
+      "context": "…z 1 Satz 1 Nummer 2, Satz 2 und 3 des Landesbeamtengesetzes NRW Anwendung; die Frist beginnt mit der Bekanntgabe der missbi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[1].children[1].children[1].text@281:protected:gazette-nrw",
+      "path": "body[11].children[1].children[1].children[1].text",
+      "start": 281,
+      "end": 296,
+      "term": "GV. NRW. S. 310",
+      "context": "…11 Absatz 1 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung über den Verlust der Beso…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[0].children[0].children[0].text@166:municipality",
+      "path": "body[12].children[0].children[0].children[0].text",
+      "start": 166,
+      "end": 176,
+      "term": "Düsseldorf",
+      "context": "…barkeit wahr. Hierzu werden bei den Verwaltungsgerichten in Düsseldorf und Münster Kammern und bei dem Oberverwaltungsgericht Sena…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].children[0].text@181:municipality",
+      "path": "body[12].children[0].children[0].children[0].text",
+      "start": 181,
+      "end": 188,
+      "term": "Münster",
+      "context": "…ierzu werden bei den Verwaltungsgerichten in Düsseldorf und Münster Kammern und bei dem Oberverwaltungsgericht Senate für Diszi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].children[1].text@23:municipality",
+      "path": "body[12].children[0].children[0].children[1].text",
+      "start": 23,
+      "end": 33,
+      "term": "Düsseldorf",
+      "context": "Das Verwaltungsgericht Düsseldorf ist zuständig, wenn die Beamtin oder der Beamte im Zeitpunk…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].children[1].text@216:regional-body-district",
+      "path": "body[12].children[0].children[0].children[1].text",
+      "start": 216,
+      "end": 233,
+      "term": "Regierungsbezirke",
+      "context": "…r Disziplinarklage den dienstlichen Wohnsitz im Bereich der Regierungsbezirke Düsseldorf oder Köln oder außerhalb des Landes hat. Im Übri…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].children[1].text@234:municipality",
+      "path": "body[12].children[0].children[0].children[1].text",
+      "start": 234,
+      "end": 244,
+      "term": "Düsseldorf",
+      "context": "… den dienstlichen Wohnsitz im Bereich der Regierungsbezirke Düsseldorf oder Köln oder außerhalb des Landes hat. Im Übrigen ist das…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].children[1].text@250:municipality",
+      "path": "body[12].children[0].children[0].children[1].text",
+      "start": 250,
+      "end": 254,
+      "term": "Köln",
+      "context": "…n Wohnsitz im Bereich der Regierungsbezirke Düsseldorf oder Köln oder außerhalb des Landes hat. Im Übrigen ist das Verwaltun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].children[1].text@324:municipality",
+      "path": "body[12].children[0].children[0].children[1].text",
+      "start": 324,
+      "end": 331,
+      "term": "Münster",
+      "context": "…rhalb des Landes hat. Im Übrigen ist das Verwaltungsgericht Münster zuständig. Bei Ruhestandsbeamtinnen und Ruhestandsbeamten i…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[1].children[1].text@111:protected:gazette-nrw",
+      "path": "body[15].children[1].children[1].text",
+      "start": 111,
+      "end": 125,
+      "term": "GV.NRW. S. 624",
+      "context": "…ung des Landesdisziplinarrechtes (LDiszNOG) vom 16.11.2004 (GV.NRW. S. 624))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[1].children[3].text@73:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[1].children[3].text",
+      "start": 73,
+      "end": 99,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…aft-Treten dieses Gesetzes tritt die Disziplinarordnung des Landes Nordrhein-Westfalen (DO NW) in der Fassung der Bekanntmachung vom 1. Mai 1981 (…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].children[3].text@159:protected:gazette-nrw",
+      "path": "body[15].children[1].children[3].text",
+      "start": 159,
+      "end": 174,
+      "term": "GV. NRW. S. 364",
+      "context": "… (DO NW) in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NRW. S. 364), zuletzt geändert durch Gesetz vom 20. April 1999 (GV. NRW…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[1].children[3].text@227:protected:gazette-nrw",
+      "path": "body[15].children[1].children[3].text",
+      "start": 227,
+      "end": 242,
+      "term": "GV. NRW. S. 148",
+      "context": "… S. 364), zuletzt geändert durch Gesetz vom 20. April 1999 (GV. NRW. S. 148), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[16].text@4:constitutional-organ-state",
+      "path": "body[16].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[16].text@20:rule:jurisdiction-name-bare",
+      "path": "body[16].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].text@8:ministry-compound",
+      "path": "body[18].text",
+      "start": 8,
+      "end": 21,
+      "term": "Innenminister",
+      "context": "Für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[19].text@4:ministry-compound",
+      "path": "body[19].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[20].children[0].children[1].text@37:protected:gazette-nrw",
+      "path": "body[20].children[0].children[1].text",
+      "start": 37,
+      "end": 57,
+      "term": "GV. NRW. 2004 S. 624",
+      "context": "In Kraft getreten am 1. Januar 2005 (GV. NRW. 2004 S. 624); geändert durch Artikel 9 des Gesetzes vom 21. April 2009 …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[0].children[1].text@118:protected:gazette-nrw",
+      "path": "body[20].children[0].children[1].text",
+      "start": 118,
+      "end": 133,
+      "term": "GV. NRW. S. 224",
+      "context": "…; geändert durch Artikel 9 des Gesetzes vom 21. April 2009 (GV. NRW. S. 224), in Kraft getreten mit Wirkung vom 1. April 2009; Artikel …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[0].children[1].text@230:protected:gazette-nrw",
+      "path": "body[20].children[0].children[1].text",
+      "start": 230,
+      "end": 245,
+      "term": "GV. NRW. S. 530",
+      "context": "…1. April 2009; Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010; Artikel…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[0].children[1].text@342:protected:gazette-nrw",
+      "path": "body[20].children[0].children[1].text",
+      "start": 342,
+      "end": 357,
+      "term": "GV. NRW. S. 622",
+      "context": "…1. Januar 2010; Artikel 6 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622), in Kraft getreten am 16. Oktober 2014; Artikel 37 des Ges…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[0].children[1].text@442:protected:gazette-nrw",
+      "path": "body[20].children[0].children[1].text",
+      "start": 442,
+      "end": 457,
+      "term": "GV. NRW. S. 310",
+      "context": "…6. Oktober 2014; Artikel 37 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310), in Kraft getreten am 1. Juli 2016; Artikel 3 des Gesetzes…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[0].children[1].text@541:protected:gazette-nrw",
+      "path": "body[20].children[0].children[1].text",
+      "start": 541,
+      "end": 556,
+      "term": "GV. NRW. S. 592",
+      "context": "…1. Juli 2016; Artikel 3 des Gesetzes vom 20. November 2018 (GV. NRW. S. 592), in Kraft getreten am 5. Dezember 2018.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[1].children[1].text@62:protected:gazette-nrw",
+      "path": "body[20].children[1].children[1].text",
+      "start": 62,
+      "end": 77,
+      "term": "GV. NRW. S. 224",
+      "context": "…5 geändert durch Artikel 9 des Gesetzes vom 21. April 2009 (GV. NRW. S. 224), in Kraft getreten mit Wirkung vom 1. April 2009.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[2].children[1].text@93:protected:gazette-nrw",
+      "path": "body[20].children[2].children[1].text",
+      "start": 93,
+      "end": 108,
+      "term": "GV. NRW. S. 530",
+      "context": "…geändert durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[3].children[1].text@128:protected:gazette-nrw",
+      "path": "body[20].children[3].children[1].text",
+      "start": 128,
+      "end": 143,
+      "term": "GV. NRW. S. 530",
+      "context": "…geändert durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[4].children[1].text@77:protected:gazette-nrw",
+      "path": "body[20].children[4].children[1].text",
+      "start": 77,
+      "end": 92,
+      "term": "GV. NRW. S. 530",
+      "context": "… gefasst durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[5].children[1].text@132:protected:gazette-nrw",
+      "path": "body[20].children[5].children[1].text",
+      "start": 132,
+      "end": 147,
+      "term": "GV. NRW. S. 530",
+      "context": "…fgehoben durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[6].children[1].text@106:protected:gazette-nrw",
+      "path": "body[20].children[6].children[1].text",
+      "start": 106,
+      "end": 121,
+      "term": "GV. NRW. S. 622",
+      "context": "…ufgehoben durch Artikel 5 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622), in Kraft getreten am 16. Oktober 2014.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[7].children[1].text@148:protected:gazette-nrw",
+      "path": "body[20].children[7].children[1].text",
+      "start": 148,
+      "end": 163,
+      "term": "GV. NRW. S. 310",
+      "context": "…t geändert durch Artikel 37 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310), in Kraft getreten am 1. Juli 2016.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[20].children[8].children[1].text@74:protected:gazette-nrw",
+      "path": "body[20].children[8].children[1].text",
+      "start": 74,
+      "end": 89,
+      "term": "GV. NRW. S. 592",
+      "context": "…eändert durch Artikel 3 des Gesetzes vom 20. November 2018 (GV. NRW. S. 592), in Kraft getreten am 5. Dezember 2018.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "source-citation": {
+      "protected": 20
+    },
+    "municipality": {
+      "manual-review": 6
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].children[2].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[11].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[15].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[16].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[12].children[0].children[0].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…barkeit wahr. Hierzu werden bei den Verwaltungsgerichten in Düsseldorf und Münster Kammern und bei dem Oberverwaltungsgericht Sena…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].children[0].children[0].text",
+      "term": "Münster",
+      "context": "…ierzu werden bei den Verwaltungsgerichten in Düsseldorf und Münster Kammern und bei dem Oberverwaltungsgericht Senate für Diszi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].children[0].children[1].text",
+      "term": "Düsseldorf",
+      "context": "Das Verwaltungsgericht Düsseldorf ist zuständig, wenn die Beamtin oder der Beamte im Zeitpunk…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].children[0].children[1].text",
+      "term": "Regierungsbezirke",
+      "context": "…r Disziplinarklage den dienstlichen Wohnsitz im Bereich der Regierungsbezirke Düsseldorf oder Köln oder außerhalb des Landes hat. Im Übri…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].children[0].children[1].text",
+      "term": "Düsseldorf",
+      "context": "… den dienstlichen Wohnsitz im Bereich der Regierungsbezirke Düsseldorf oder Köln oder außerhalb des Landes hat. Im Übrigen ist das…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].children[0].children[1].text",
+      "term": "Köln",
+      "context": "…n Wohnsitz im Bereich der Regierungsbezirke Düsseldorf oder Köln oder außerhalb des Landes hat. Im Übrigen ist das Verwaltun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].children[0].children[1].text",
+      "term": "Münster",
+      "context": "…rhalb des Landes hat. Im Übrigen ist das Verwaltungsgericht Münster zuständig. Bei Ruhestandsbeamtinnen und Ruhestandsbeamten i…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].text",
+      "term": "Innenminister",
+      "context": "Für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[19].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 932,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "… des Landesdisziplinarrechtes (LDiszNOG) vom 16.11.2004 (GV.NRW. S. 624))",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…h dem Landesbeamtenversorgungsgesetz vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung oder nach altem R…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[1].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…bsatz 1 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310) in der jeweils geltenden Fassung über den Verlust …",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[1].children[1].text",
+        "term": "NRW",
+        "context": "… des Landesdisziplinarrechtes (LDiszNOG) vom 16.11.2004 (GV.NRW. S. 624))",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[1].children[3].text",
+        "term": "NRW",
+        "context": "… NW) in der Fassung der Bekanntmachung vom 1. Mai 1981 (GV. NRW. S. 364), zuletzt geändert durch Gesetz vom 20. April 1999 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…364), zuletzt geändert durch Gesetz vom 20. April 1999 (GV. NRW. S. 148), außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[0].children[1].text",
+        "term": "NRW",
+        "context": "In Kraft getreten am 1. Januar 2005 (GV. NRW. 2004 S. 624); geändert durch Artikel 9 des Gesetzes vom 21…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel 9 des Gesetzes vom 21. April 2009 (GV. NRW. S. 224), in Kraft getreten mit Wirkung vom 1. April 2009; …",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…pril 2009; Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010;…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…anuar 2010; Artikel 6 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622), in Kraft getreten am 16. Oktober 2014; Artikel 37…",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…ktober 2014; Artikel 37 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310), in Kraft getreten am 1. Juli 2016; Artikel 3 des …",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…uli 2016; Artikel 3 des Gesetzes vom 20. November 2018 (GV. NRW. S. 592), in Kraft getreten am 5. Dezember 2018.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel 9 des Gesetzes vom 21. April 2009 (GV. NRW. S. 224), in Kraft getreten mit Wirkung vom 1. April 2009.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…asst durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…oben durch Artikel 1 des Gesetzes vom 27. Oktober 2009 (GV. NRW. S. 530), in Kraft getreten mit Wirkung vom 1. Januar 2010.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[6].children[1].text",
+        "term": "NRW",
+        "context": "…hoben durch Artikel 5 des Gesetzes vom 2. Oktober 2014 (GV. NRW. S. 622), in Kraft getreten am 16. Oktober 2014.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[7].children[1].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel 37 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310), in Kraft getreten am 1. Juli 2016.",
+        "status": "protected"
+      },
+      {
+        "path": "body[20].children[8].children[1].text",
+        "term": "NRW",
+        "context": "…ert durch Artikel 3 des Gesetzes vom 20. November 2018 (GV. NRW. S. 592), in Kraft getreten am 5. Dezember 2018.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Disziplinargesetz für das Land Nordrhein-Westfalen vom 16. November 2004",
+    "sourceVersion": "Disziplinargesetz für das Land Nordrhein-Westfalen vom 16. November 2004",
+    "simulation": "Disziplinargesetz für das Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 79,
+          "actual": 79,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 91277,
+          "actual": 94763,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 79,
+          "actual": 79,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 537,
+          "actual": 537,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 79,
+          "actual": 79,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 94763,
+          "actual": 94752,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "79 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "79 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (zu Paragraf 75) (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/13084-32121-sgv_20340_20041116_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 4,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (zu Paragraf 75) (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:10:56.107Z"
+}

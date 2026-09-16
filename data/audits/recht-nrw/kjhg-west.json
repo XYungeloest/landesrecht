@@ -1,0 +1,742 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27468",
+  "slug": "kjhg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[2].children[1].text@1062:protected:gazette-nrw",
+      "path": "body[1].children[2].children[1].text",
+      "start": 1062,
+      "end": 1077,
+      "term": "GV. NRW. S. 621",
+      "context": "…beit in der Fassung der Bekanntmachung vom 1. Oktober 1979 (GV. NRW. S. 621) in der jeweils geltenden Fassung findet entsprechende Anwe…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].children[3].children[1].text@181:rule:jurisdiction-name",
+      "path": "body[1].children[3].children[1].text",
+      "start": 181,
+      "end": 205,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…esetz nichts anderes bestimmen, die Gemeindeordnung für das Land Nordrhein-Westfalen (GO) in der Fassung der Bekanntmachung vom 14. Juli 1994 (G…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[3].children[1].text@264:protected:gazette-nw",
+      "path": "body[1].children[3].children[1].text",
+      "start": 264,
+      "end": 278,
+      "term": "GV. NW. S. 666",
+      "context": "…n (GO) in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NW. S. 666) in der jeweils geltenden Fassung oder die Kreisordnung für…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].children[3].children[1].text@343:rule:jurisdiction-name",
+      "path": "body[1].children[3].children[1].text",
+      "start": 343,
+      "end": 367,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…der jeweils geltenden Fassung oder die Kreisordnung für das Land Nordrhein-Westfalen (KrO) in der Fassung der Bekanntmachung vom 14. Juli 1994 (…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[3].children[1].text@427:protected:gazette-nw",
+      "path": "body[1].children[3].children[1].text",
+      "start": 427,
+      "end": 441,
+      "term": "GV. NW. S. 646",
+      "context": "… (KrO) in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NW. S. 646) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[0].children[1].text@58:regional-body-association",
+      "path": "body[2].children[0].children[1].text",
+      "start": 58,
+      "end": 77,
+      "term": "Landschaftsverbände",
+      "context": "Überörtliche Träger der öffentlichen Jugendhilfe sind die Landschaftsverbände.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[1].text@185:rule:jurisdiction-name",
+      "path": "body[2].children[1].children[1].text",
+      "start": 185,
+      "end": 209,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…s anderes bestimmen, die Landschaftsverbandsordnung für das Land Nordrhein-Westfalen (LVerbO) in der Fassung der Bekanntmachung vom 14. Juli 199…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].children[1].text@272:protected:gazette-nw",
+      "path": "body[2].children[1].children[1].text",
+      "start": 272,
+      "end": 286,
+      "term": "GV. NW. S. 657",
+      "context": "…VerbO) in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NW. S. 657) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[2].children[1].text@171:regional-body-association",
+      "path": "body[2].children[2].children[1].text",
+      "start": 171,
+      "end": 193,
+      "term": "Landschaftsversammlung",
+      "context": "…genden Aufgaben. Er hat Beschlußrecht im Rahmen der von der Landschaftsversammlung für das Landesjugendamt erlassenen Satzung, der von ihr ber…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[2].children[1].text@421:regional-body-association",
+      "path": "body[2].children[2].children[1].text",
+      "start": 421,
+      "end": 443,
+      "term": "Landschaftsversammlung",
+      "context": "…oll in Fragen der Jugendhilfe vor jeder Beschlußfassung der Landschaftsversammlung gehört werden und hat das Recht, Anträge an sie zu stellen.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[1].text@219:regional-body-association",
+      "path": "body[2].children[3].children[1].text",
+      "start": 219,
+      "end": 239,
+      "term": "Landschaftsverbandes",
+      "context": "…er Bedeutung ihrer Arbeit für die Jugendhilfe im Bezirk des Landschaftsverbandes angemessen zu berücksichtigen. Die Mitglieder werden von de…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[1].text@351:regional-body-association",
+      "path": "body[2].children[3].children[1].text",
+      "start": 351,
+      "end": 373,
+      "term": "Landschaftsversammlung",
+      "context": "…n von der obersten Landesjugendbehörde für die Wahlzeit der Landschaftsversammlung ernannt. Vor der Ernennung ist dem Landschaftsausschuß Gele…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[2].text@92:regional-body-association",
+      "path": "body[2].children[3].children[2].text",
+      "start": 92,
+      "end": 114,
+      "term": "Landschaftsversammlung",
+      "context": "…glieder sollen dem Landesjugendhilfeausschuß Mitglieder der Landschaftsversammlung, Mitglieder von Jugendhilfeausschüssen im Bezirk des Landsc…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[2].text@168:regional-body-association",
+      "path": "body[2].children[3].children[2].text",
+      "start": 168,
+      "end": 188,
+      "term": "Landschaftsverbandes",
+      "context": "…mmlung, Mitglieder von Jugendhilfeausschüssen im Bezirk des Landschaftsverbandes und andere Frauen und Männer, die in der Jugendhilfe erfahr…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[2].text@321:regional-body-association",
+      "path": "body[2].children[3].children[2].text",
+      "start": 321,
+      "end": 343,
+      "term": "Landschaftsversammlung",
+      "context": "… sind, angehören. Sie werden für die Dauer der Wahlzeit der Landschaftsversammlung von dieser gewählt. Bei der Wahl sind Frauen angemessen zu …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[3].text@197:protected:gazette-nw",
+      "path": "body[2].children[3].children[3].text",
+      "start": 197,
+      "end": 209,
+      "term": "GV. NW. S. 2",
+      "context": "…etzes in der Fassung der Bekanntmachung vom 8. Januar 1979 (GV. NW. S. 2) , zuletzt geändert durch Gesetz vom 27. März 1984 (GV. NW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[3].children[3].text@262:protected:gazette-nw",
+      "path": "body[2].children[3].children[3].text",
+      "start": 262,
+      "end": 276,
+      "term": "GV. NW. S. 210",
+      "context": "…W. S. 2) , zuletzt geändert durch Gesetz vom 27. März 1984 (GV. NW. S. 210), entsprechende Anwendung. Sie üben ihre Tätigkeit nach Abl…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[3].children[5].text@190:regional-body-association",
+      "path": "body[2].children[3].children[5].text",
+      "start": 190,
+      "end": 212,
+      "term": "Landschaftsversammlung",
+      "context": "…sschusses aus den dem Ausschuß angehörenden Mitgliedern der Landschaftsversammlung gewählt. Die/der Vorsitzende muß dem Landschaftsausschuß an…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[4].children[1].children[0].text@32:regional-body-association",
+      "path": "body[2].children[4].children[1].children[0].text",
+      "start": 32,
+      "end": 52,
+      "term": "Landschaftsverbandes",
+      "context": "die Direktorin/der Direktor des Landschaftsverbandes oder eine von ihr/ihm bestellte Vertretung;",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[5].children[0].text@177:regional-body-association",
+      "path": "body[2].children[5].children[0].text",
+      "start": 177,
+      "end": 197,
+      "term": "Landschaftsverbandes",
+      "context": "…eigeführt werden kann, kann die Direktorin/der Direktor des Landschaftsverbandes Anordnungen ohne einen solchen Beschluß im Einverständnis m…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].children[8].children[0].text@66:regional-body-association",
+      "path": "body[2].children[8].children[0].text",
+      "start": 66,
+      "end": 86,
+      "term": "Landschaftsverbänden",
+      "context": "…ch § 89 d SGB VIII dem Land obliegenden Aufgaben werden den Landschaftsverbänden übertragen. Das Land stellt ihnen die zur Erfüllung dieser …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[7].title@32:regional-body-association",
+      "path": "body[3].children[7].title",
+      "start": 32,
+      "end": 51,
+      "term": "Landschaftsverbände",
+      "context": "Aufsicht über Einrichtungen der Landschaftsverbände",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@36:regional-body-association",
+      "path": "body[3].children[7].children[0].text",
+      "start": 36,
+      "end": 55,
+      "term": "Landschaftsverbände",
+      "context": "Die Aufsicht über Einrichtungen der Landschaftsverbände im Sinne des § 45 Abs. 1 SGB VIII führen die Landesjugendäm…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[9].text@4:constitutional-organ-state",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[9].text@20:rule:jurisdiction-name-bare",
+      "path": "body[9].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 6
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "regional-body": {
+      "manual-review": 14
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].children[3].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[3].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "Überörtliche Träger der öffentlichen Jugendhilfe sind die Landschaftsverbände.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Landschaftsversammlung",
+      "context": "…genden Aufgaben. Er hat Beschlußrecht im Rahmen der von der Landschaftsversammlung für das Landesjugendamt erlassenen Satzung, der von ihr ber…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[2].children[1].text",
+      "term": "Landschaftsversammlung",
+      "context": "…oll in Fragen der Jugendhilfe vor jeder Beschlußfassung der Landschaftsversammlung gehört werden und hat das Recht, Anträge an sie zu stellen.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…er Bedeutung ihrer Arbeit für die Jugendhilfe im Bezirk des Landschaftsverbandes angemessen zu berücksichtigen. Die Mitglieder werden von de…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[1].text",
+      "term": "Landschaftsversammlung",
+      "context": "…n von der obersten Landesjugendbehörde für die Wahlzeit der Landschaftsversammlung ernannt. Vor der Ernennung ist dem Landschaftsausschuß Gele…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[2].text",
+      "term": "Landschaftsversammlung",
+      "context": "…glieder sollen dem Landesjugendhilfeausschuß Mitglieder der Landschaftsversammlung, Mitglieder von Jugendhilfeausschüssen im Bezirk des Landsc…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…mmlung, Mitglieder von Jugendhilfeausschüssen im Bezirk des Landschaftsverbandes und andere Frauen und Männer, die in der Jugendhilfe erfahr…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[2].text",
+      "term": "Landschaftsversammlung",
+      "context": "… sind, angehören. Sie werden für die Dauer der Wahlzeit der Landschaftsversammlung von dieser gewählt. Bei der Wahl sind Frauen angemessen zu …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[5].text",
+      "term": "Landschaftsversammlung",
+      "context": "…sschusses aus den dem Ausschuß angehörenden Mitgliedern der Landschaftsversammlung gewählt. Die/der Vorsitzende muß dem Landschaftsausschuß an…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[4].children[1].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "die Direktorin/der Direktor des Landschaftsverbandes oder eine von ihr/ihm bestellte Vertretung;",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[5].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…eigeführt werden kann, kann die Direktorin/der Direktor des Landschaftsverbandes Anordnungen ohne einen solchen Beschluß im Einverständnis m…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[8].children[0].text",
+      "term": "Landschaftsverbänden",
+      "context": "…ch § 89 d SGB VIII dem Land obliegenden Aufgaben werden den Landschaftsverbänden übertragen. Das Land stellt ihnen die zur Erfüllung dieser …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].title",
+      "term": "Landschaftsverbände",
+      "context": "Aufsicht über Einrichtungen der Landschaftsverbände",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Landschaftsverbände",
+      "context": "Die Aufsicht über Einrichtungen der Landschaftsverbände im Sinne des § 45 Abs. 1 SGB VIII führen die Landesjugendäm…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 252,
+    "residuals": [
+      {
+        "path": "body[1].children[2].children[1].text",
+        "term": "NRW",
+        "context": "… in der Fassung der Bekanntmachung vom 1. Oktober 1979 (GV. NRW. S. 621) in der jeweils geltenden Fassung findet entspreche…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Erstes Gesetz zur Ausführung des Kinder- und Jugendhilfegesetzes - AG vom 12. Dezember 1990 (GV. NW. 1990 S. 664)",
+    "sourceVersion": "Erstes Gesetz zur Ausführung des Kinder- und Jugendhilfegesetzes - AG vom 12. Dezember 1990 (GV. NW. 1990 S. 664)",
+    "simulation": "Erstes Gesetz zur Ausführung des Kinder- und Jugendhilfegesetzes - AG in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 24383,
+          "actual": 24125,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 158,
+          "actual": 158,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 32,
+          "actual": 32,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 24125,
+          "actual": 24109,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "32 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "32 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:11:12.513Z"
+}

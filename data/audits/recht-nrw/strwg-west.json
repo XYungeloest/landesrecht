@@ -1,0 +1,1628 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27058",
+  "slug": "strwg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@28:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 28,
+      "end": 54,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Straßen- und Wegegesetz des Landes Nordrhein-Westfalen, Bekanntmachung der Neufassung",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@6:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 6,
+      "end": 9,
+      "term": "NRW",
+      "context": "StrWG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@85:rule:jurisdiction-name-genitive",
+      "path": "body[1].text",
+      "start": 85,
+      "end": 111,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…des Gesetzes zur Änderung des Straßen- und Wegegesetzes des Landes Nordrhein-Westfalen (StrWG NW) vom 2. Mai 1995 (GV. NW. S. 384) wird nachstehen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@140:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 140,
+      "end": 154,
+      "term": "GV. NW. S. 384",
+      "context": "… des Landes Nordrhein-Westfalen (StrWG NW) vom 2. Mai 1995 (GV. NW. S. 384) wird nachstehend der Wortlaut des Straßen- und Wegegesetze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@220:rule:jurisdiction-name-genitive",
+      "path": "body[1].text",
+      "start": 220,
+      "end": 246,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… nachstehend der Wortlaut des Straßen- und Wegegesetzes des Landes Nordrhein-Westfalen in der seit 30. Mai 1995 geltenden Fassung in fortlaufender…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@478:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 478,
+      "end": 492,
+      "term": "GV. NW. S. 306",
+      "context": "…sichtigt die Fassung der Bekanntmachung vom 1. August 1983 (GV. NW. S. 306) sowie die Änderungsgesetze vom 20. Juni 1989 (GV. NW. S. 3…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@540:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 540,
+      "end": 554,
+      "term": "GV. NW. S. 366",
+      "context": "…. NW. S. 306) sowie die Änderungsgesetze vom 20. Juni 1989 (GV. NW. S. 366), vom 29. April 1992 (GV. NW. S. 175), vom 3. August 1993 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@577:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 577,
+      "end": 591,
+      "term": "GV. NW. S. 175",
+      "context": "…tze vom 20. Juni 1989 (GV. NW. S. 366), vom 29. April 1992 (GV. NW. S. 175), vom 3. August 1993 (GV. NW. S. 503) und vom 2. Mai 1995 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@614:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 614,
+      "end": 628,
+      "term": "GV. NW. S. 503",
+      "context": "…), vom 29. April 1992 (GV. NW. S. 175), vom 3. August 1993 (GV. NW. S. 503) und vom 2. Mai 1995 (GV. NW. S. 384).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@651:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 651,
+      "end": 665,
+      "term": "GV. NW. S. 384",
+      "context": "…), vom 3. August 1993 (GV. NW. S. 503) und vom 2. Mai 1995 (GV. NW. S. 384).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@4:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Wirtschaft und Mittelstand, Technologie und Verkehr",
+      "context": "Der Minister für Wirtschaft und Mittelstand, Technologie und Verkehr des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].text@73:rule:jurisdiction-name-genitive",
+      "path": "body[2].text",
+      "start": 73,
+      "end": 99,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…für Wirtschaft und Mittelstand, Technologie und Verkehr des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].title@28:rule:jurisdiction-name-genitive",
+      "path": "body[3].title",
+      "start": 28,
+      "end": 54,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Straßen- und Wegegesetz des Landes Nordrhein-Westfalen (StrWG NRW) in der Fassung der Bekanntmachung vom 23. Septe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].title@62:rule:jurisdiction-abbreviation",
+      "path": "body[3].title",
+      "start": 62,
+      "end": 65,
+      "term": "NRW",
+      "context": "…raßen- und Wegegesetz des Landes Nordrhein-Westfalen (StrWG NRW) in der Fassung der Bekanntmachung vom 23. September 1995",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[4].children[1].text@912:authority-state-enterprise",
+      "path": "body[6].children[4].children[1].text",
+      "start": 912,
+      "end": 965,
+      "term": "Landesbetrieb Straßenbau auf Anfrage über den Bestand",
+      "context": "…Nr. 1 (Hauptverkehrsstraßen) unterrichten die Gemeinden den Landesbetrieb Straßenbau auf Anfrage über den Bestand. Veränderungen haben die Straßenbaubehörden der verzeichnis…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[2].text@259:authority-state-enterprise",
+      "path": "body[6].children[4].children[2].text",
+      "start": 259,
+      "end": 292,
+      "term": "Landesbetrieb Straßenbau bestimmt",
+      "context": "…aßenwesen zuständigen Ministerium, die der Kreisstraßen vom Landesbetrieb Straßenbau bestimmt. Die Gemeinden können die öffentlichen Straßen mit einem Na…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[2].text@91:authority-state-enterprise",
+      "path": "body[6].children[5].children[2].text",
+      "start": 91,
+      "end": 115,
+      "term": "Landesbetrieb Straßenbau",
+      "context": "…straße oder einer Radschnellverbindung des Landes setzt der Landesbetrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung f…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[2].text@157:authority-district-government",
+      "path": "body[6].children[5].children[2].text",
+      "start": 157,
+      "end": 173,
+      "term": "Bezirksregierung",
+      "context": "…betrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung fest. Die Festsetzung ist mit Rechtsbehelfsbelehrung öffent…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[3].text@94:authority-district-government",
+      "path": "body[6].children[5].children[3].text",
+      "start": 94,
+      "end": 110,
+      "term": "Bezirksregierung",
+      "context": "…ße setzt der Kreis im Einvernehmen mit der Gemeinde und der Bezirksregierung fest. In kreisfreien Städten setzt die Stadt im Einvernehme…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[3].text@180:authority-district-government",
+      "path": "body[6].children[5].children[3].text",
+      "start": 180,
+      "end": 196,
+      "term": "Bezirksregierung",
+      "context": "…kreisfreien Städten setzt die Stadt im Einvernehmen mit der Bezirksregierung die Ortsdurchfahrt fest. Absatz 2 Satz 2 gilt für die Ortsd…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[5].text@97:authority-state-enterprise",
+      "path": "body[6].children[5].children[5].text",
+      "start": 97,
+      "end": 121,
+      "term": "Landesbetrieb Straßenbau",
+      "context": "…t einer Landesstraße für den Verkehr nicht aus, so soll der Landesbetrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung e…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[5].text@163:authority-district-government",
+      "path": "body[6].children[5].children[5].text",
+      "start": 163,
+      "end": 179,
+      "term": "Bezirksregierung",
+      "context": "…betrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung eine Straße, die nach ihrem Ausbauzustand für die Aufnahme …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[5].text@450:authority-district-government",
+      "path": "body[6].children[5].children[5].text",
+      "start": 450,
+      "end": 466,
+      "term": "Bezirksregierung",
+      "context": "…rtsdurchfahrt wird im Einvernehmen mit der Gemeinde und der Bezirksregierung vom Kreis, in kreisfreien Städten im Einvernehmen mit der B…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[5].children[5].text@525:authority-district-government",
+      "path": "body[6].children[5].children[5].text",
+      "start": 525,
+      "end": 541,
+      "term": "Bezirksregierung",
+      "context": "…g vom Kreis, in kreisfreien Städten im Einvernehmen mit der Bezirksregierung von der Stadt, festgesetzt.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[10].children[2].text@564:protected:gazette-nrw",
+      "path": "body[6].children[10].children[2].text",
+      "start": 564,
+      "end": 579,
+      "term": "GV. NRW. S. 256",
+      "context": "…ordnung in der Fassung der Bekanntmachung vom 1. März 2000 (GV. NRW. S. 256), die zuletzt durch Artikel 2 des Gesetzes vom 20. Mai 2014…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[10].children[2].text@641:protected:gazette-nrw",
+      "path": "body[6].children[10].children[2].text",
+      "start": 641,
+      "end": 656,
+      "term": "GV. NRW. S. 294",
+      "context": "… die zuletzt durch Artikel 2 des Gesetzes vom 20. Mai 2014 (GV. NRW. S. 294) geändert worden ist, sind. Die Straßenbaubehörde trägt die…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[23].children[2].text@679:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[23].children[2].text",
+      "start": 679,
+      "end": 705,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "… dass sich Verweise auf das Verwaltungsverfahrensgesetz des Landes Nordrhein-Westfalen beziehen. § 18 Absatz 1 Satz 4 und Absatz 2 bis 7, § 19a Ab…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[28].children[3].text@620:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[28].children[3].text",
+      "start": 620,
+      "end": 646,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ng hinzuweisen. Im Übrigen ist § 45 des Polizeigesetzes des Landes Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 25. Juli 2003 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[6].children[28].children[3].text@700:protected:gazette-nrw",
+      "path": "body[6].children[28].children[3].text",
+      "start": 700,
+      "end": 715,
+      "term": "GV. NRW. S. 441",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 25. Juli 2003 (GV. NRW. S. 441), das zuletzt durch Artikel 1 des Gesetzes vom 19. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[28].children[3].text@782:protected:gazette-nrw",
+      "path": "body[6].children[28].children[3].text",
+      "start": 782,
+      "end": 797,
+      "term": "GV. NRW. S. 995",
+      "context": "…zuletzt durch Artikel 1 des Gesetzes vom 19. Dezember 2019 (GV. NRW. S. 995) geändert worden ist, entsprechend anwendbar.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[31].children[2].text@282:rule:jurisdiction-name",
+      "path": "body[6].children[31].children[2].text",
+      "start": 282,
+      "end": 306,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…mäß § 73 Absatz 3 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[31].children[2].text@364:protected:gazette-nrw",
+      "path": "body[6].children[31].children[2].text",
+      "start": 364,
+      "end": 379,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 3 des Gesetzes vom 8. Juli 2021…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[31].children[2].text@441:protected:gazette-nrw",
+      "path": "body[6].children[31].children[2].text",
+      "start": 441,
+      "end": 456,
+      "term": "GV. NRW. S. 904",
+      "context": "… das zuletzt durch Artikel 3 des Gesetzes vom 8. Juli 2021 (GV. NRW. S. 904) geändert worden ist, den Betroffenen und Vereinigungen Gel…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[31].children[3].text@446:ministry-portfolio",
+      "path": "body[6].children[31].children[3].text",
+      "start": 446,
+      "end": 497,
+      "term": "Ministerium für bestimmte Fälle allgemein festlegen",
+      "context": "…um kann im Benehmen mit dem für die Bauaufsicht zuständigen Ministerium für bestimmte Fälle allgemein festlegen, daß die Genehmigung nicht erforderlich ist.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[45].children[2].text@919:protected:gazette-nrw",
+      "path": "body[6].children[45].children[2].text",
+      "start": 919,
+      "end": 934,
+      "term": "GV. NRW. S. 175",
+      "context": "…sumweltverträglichkeitsprüfungsgesetzes vom 29. April 1992 (GV. NRW. S. 175), das zuletzt durch Artikel 4 des Gesetzes vom 17. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[45].children[2].text@1001:protected:gazette-nrw",
+      "path": "body[6].children[45].children[2].text",
+      "start": 1001,
+      "end": 1017,
+      "term": "GV. NRW. S. 1469",
+      "context": "…zuletzt durch Artikel 4 des Gesetzes vom 17. Dezember 2021 (GV. NRW. S. 1469) geändert worden ist, entsprechen. Die Beteiligung der Träg…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[45].children[3].text@50:authority-state-enterprise",
+      "path": "body[6].children[45].children[3].text",
+      "start": 50,
+      "end": 74,
+      "term": "Landesbetrieb Straßenbau",
+      "context": "Die Linienabstimmung für Landesstraßen führen der Landesbetrieb Straßenbau und die Bezirksregierungen durch. Der Bezirksregierung obli…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[6].children[45].children[3].text@83:authority-district-government",
+      "path": "body[6].children[45].children[3].text",
+      "start": 83,
+      "end": 101,
+      "term": "Bezirksregierungen",
+      "context": "…r Landesstraßen führen der Landesbetrieb Straßenbau und die Bezirksregierungen durch. Der Bezirksregierung obliegt dabei die Beteiligung d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[45].children[3].text@113:authority-district-government",
+      "path": "body[6].children[45].children[3].text",
+      "start": 113,
+      "end": 129,
+      "term": "Bezirksregierung",
+      "context": "…desbetrieb Straßenbau und die Bezirksregierungen durch. Der Bezirksregierung obliegt dabei die Beteiligung der Träger öffentlicher Belan…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[45].children[5].text@240:protected:gazette-nrw",
+      "path": "body[6].children[45].children[5].text",
+      "start": 240,
+      "end": 255,
+      "term": "GV. NRW. S. 568",
+      "context": "…6 Absatz 1 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November 2016 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[45].children[5].text@314:protected:gazette-nrw",
+      "path": "body[6].children[45].children[5].text",
+      "start": 314,
+      "end": 329,
+      "term": "GV. NRW. S. 934",
+      "context": "…8), das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist, Gelegenheit zur Stellungnahme gege…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[45].children[5].text@1710:protected:gazette-nrw",
+      "path": "body[6].children[45].children[5].text",
+      "start": 1710,
+      "end": 1725,
+      "term": "GV. NRW. S. 430",
+      "context": "…gsgesetz in der Fassung der Bekanntmachung vom 3. Mai 2005 (GV. NRW. S. 430), das zuletzt durch Artikel 2 des Gesetzes vom 25. Oktober …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[45].children[5].text@1791:protected:gazette-nrw",
+      "path": "body[6].children[45].children[5].text",
+      "start": 1791,
+      "end": 1806,
+      "term": "GV. NRW. S. 868",
+      "context": "… zuletzt durch Artikel 2 des Gesetzes vom 25. Oktober 2016 (GV. NRW. S. 868) geändert worden ist) die Planung bereits enthält.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[48].children[1].text@827:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[1].text",
+      "start": 827,
+      "end": 851,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… die §§ 72 bis 78 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen, soweit nicht in diesem Gesetz etwas anderes bestimmt ist. …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[3].children[3].text@70:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[3].children[3].text",
+      "start": 70,
+      "end": 94,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ach § 74 Absatz 2 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen zu berücksichtigenden Interessen gewahrt werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[4].text@155:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[4].text",
+      "start": 155,
+      "end": 179,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…von § 74 Absatz 7 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen. Die Entscheidung hierüber trifft der Träger der Straßenbau…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[8].text@101:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[8].text",
+      "start": 101,
+      "end": 125,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…von § 73 Absatz 6 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen und von § 18 des Gesetzes über die Umweltverträglichkeitspr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[8].text@366:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[8].text",
+      "start": 366,
+      "end": 390,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…des § 73 Absatz 6 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen und des § 18 des Gesetzes über die Umweltverträglichkeitspr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[9].text@82:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[9].text",
+      "start": 82,
+      "end": 106,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ch § 27a Absatz 1 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen oder § 20 des Gesetzes über die Umweltverträglichkeitsprüfu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[10].text@128:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[10].text",
+      "start": 128,
+      "end": 152,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Absatz 1a Satz 2 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen und für die Planänderung vor Fertigstellung des Vorhabens g…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[10].text@263:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[10].text",
+      "start": 263,
+      "end": 287,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…rhabens gilt § 76 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen mit der Maßgabe, dass im Fall des § 76 Absatz 1 des Verwalt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[10].text@378:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[10].text",
+      "start": 378,
+      "end": 402,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…des § 76 Absatz 1 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen von einer Erörterung im Sinne des § 73 Absatz 6 des Verwalt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[10].text@493:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[10].text",
+      "start": 493,
+      "end": 517,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…des § 73 Absatz 6 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen und des § 18 des Gesetzes über die Umweltverträglichkeitspr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[11].text@71:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[11].text",
+      "start": 71,
+      "end": 95,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…von § 75 Absatz 4 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen tritt der festgestellte oder genehmigte Plan außer Kraft, w…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[48].children[12].text@124:rule:jurisdiction-name",
+      "path": "body[6].children[48].children[12].text",
+      "start": 124,
+      "end": 148,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Absatz 1a Satz 2 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen erforderlich und unverzüglich betrieben, bleibt die Durchfü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[49].children[2].text@143:protected:gazette-nrw",
+      "path": "body[6].children[49].children[2].text",
+      "start": 143,
+      "end": 158,
+      "term": "GV. NRW. S. 297",
+      "context": "…etzes in der Fassung der Bekanntmachung vom 20. April 1993 (GV. NRW. S. 297), das zuletzt durch Gesetz vom 12. Dezember 2006 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[49].children[2].text@209:protected:gazette-nrw",
+      "path": "body[6].children[49].children[2].text",
+      "start": 209,
+      "end": 228,
+      "term": "GV. NRW. 2007 S. 92",
+      "context": "…W. S. 297), das zuletzt durch Gesetz vom 12. Dezember 2006 (GV. NRW. 2007 S. 92) geändert worden ist, (Landesstraßenbedarfsplan) aufgeführt…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[49].children[3].text@128:protected:gazette-nrw",
+      "path": "body[6].children[49].children[3].text",
+      "start": 128,
+      "end": 144,
+      "term": "GV. NRW. S. 1201",
+      "context": "…s Fahrrad- und Nahmobilitätsgesetzes vom 17. November 2021 (GV. NRW. S. 1201) aufgestellten Bedarfsplan aufgeführt ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[50].children[9].text@123:rule:jurisdiction-name",
+      "path": "body[6].children[50].children[9].text",
+      "start": 123,
+      "end": 147,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…en. § 73 Absatz 9 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen bleibt unberührt. Die Entscheidung über den Planfeststellun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[51].children[0].text@59:rule:jurisdiction-name",
+      "path": "body[6].children[51].children[0].text",
+      "start": 59,
+      "end": 83,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Anhörungsbehörde (§ 73 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen) ist die Bezirksregierung.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[51].children[0].text@93:authority-district-government",
+      "path": "body[6].children[51].children[0].text",
+      "start": 93,
+      "end": 109,
+      "term": "Bezirksregierung",
+      "context": "…sverfahrensgesetz für das Land Nordrhein-Westfalen) ist die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[51].children[1].text@4:authority-district-government",
+      "path": "body[6].children[51].children[1].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung stellt den Plan fest und erteilt die Plangenehmigung. Sie t…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[52].children[0].text@210:rule:jurisdiction-name",
+      "path": "body[6].children[52].children[0].text",
+      "start": 210,
+      "end": 234,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…einzusehen (§ 73 Abs. 3 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen), dürfen auf den vom Plan betroffenen Flächen bis zu ihrer …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[55].children[2].text@223:rule:jurisdiction-name",
+      "path": "body[6].children[55].children[2].text",
+      "start": 223,
+      "end": 247,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…bzw. § 75 Abs. 2 Satz 4 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen) oder einer Plangenehmigung verpflichtet ist, eine Entschäd…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[56].children[2].text@68:authority-state-enterprise",
+      "path": "body[6].children[56].children[2].text",
+      "start": 68,
+      "end": 105,
+      "term": "Landesbetrieb Straßenbau wahrgenommen",
+      "context": "…aben des Trägers der Straßenbaulast für das Land werden vom Landesbetrieb Straßenbau wahrgenommen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[1].text@119:authority-district-government",
+      "path": "body[8].children[1].children[1].text",
+      "start": 119,
+      "end": 135,
+      "term": "Bezirksregierung",
+      "context": "…n zuständige Ministerium, obere Straßenaufsichtsbehörde die Bezirksregierung, untere Straßenaufsichtsbehörde die Landrätin oder der Land…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[2].children[0].text@286:authority-district-government",
+      "path": "body[8].children[1].children[2].children[0].text",
+      "start": 286,
+      "end": 302,
+      "term": "Bezirksregierung",
+      "context": "…nstigen öffentlichen Straßen in den kreisfreien Städten die Bezirksregierung;",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[3].children[2].children[0].text@60:authority-state-enterprise",
+      "path": "body[8].children[3].children[2].children[0].text",
+      "start": 60,
+      "end": 84,
+      "term": "Landesbetrieb Straßenbau",
+      "context": "für Landesstraßen und Radschnellverbindungen des Landes vom Landesbetrieb Straßenbau, soweit nicht die Gemeinden Träger der Straßenbaulast für O…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[9].children[13].children[2].text@150:protected:gazette-nrw",
+      "path": "body[9].children[13].children[2].text",
+      "start": 150,
+      "end": 165,
+      "term": "GV. NRW. S. 294",
+      "context": "…zur Anpassung weiterer Rechtsvorschriften vom 20. Mai 2014 (GV. NRW. S. 294))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 26
+    },
+    "source-citation": {
+      "protected": 22
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 19
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[23].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[28].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[31].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[3].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[8].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[8].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[9].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[10].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[10].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[10].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[10].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[11].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[48].children[12].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[50].children[9].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[51].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[52].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[55].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Minister für Wirtschaft und Mittelstand, Technologie und Verkehr",
+      "context": "Der Minister für Wirtschaft und Mittelstand, Technologie und Verkehr des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[1].text",
+      "term": "Landesbetrieb Straßenbau auf Anfrage über den Bestand",
+      "context": "…Nr. 1 (Hauptverkehrsstraßen) unterrichten die Gemeinden den Landesbetrieb Straßenbau auf Anfrage über den Bestand. Veränderungen haben die Straßenbaubehörden der verzeichnis…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[2].text",
+      "term": "Landesbetrieb Straßenbau bestimmt",
+      "context": "…aßenwesen zuständigen Ministerium, die der Kreisstraßen vom Landesbetrieb Straßenbau bestimmt. Die Gemeinden können die öffentlichen Straßen mit einem Na…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[2].text",
+      "term": "Landesbetrieb Straßenbau",
+      "context": "…straße oder einer Radschnellverbindung des Landes setzt der Landesbetrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung f…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…betrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung fest. Die Festsetzung ist mit Rechtsbehelfsbelehrung öffent…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…ße setzt der Kreis im Einvernehmen mit der Gemeinde und der Bezirksregierung fest. In kreisfreien Städten setzt die Stadt im Einvernehme…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…kreisfreien Städten setzt die Stadt im Einvernehmen mit der Bezirksregierung die Ortsdurchfahrt fest. Absatz 2 Satz 2 gilt für die Ortsd…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[5].text",
+      "term": "Landesbetrieb Straßenbau",
+      "context": "…t einer Landesstraße für den Verkehr nicht aus, so soll der Landesbetrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung e…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "…betrieb Straßenbau im Einvernehmen mit der Gemeinde und der Bezirksregierung eine Straße, die nach ihrem Ausbauzustand für die Aufnahme …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "…rtsdurchfahrt wird im Einvernehmen mit der Gemeinde und der Bezirksregierung vom Kreis, in kreisfreien Städten im Einvernehmen mit der B…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[5].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "…g vom Kreis, in kreisfreien Städten im Einvernehmen mit der Bezirksregierung von der Stadt, festgesetzt.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[31].children[3].text",
+      "term": "Ministerium für bestimmte Fälle allgemein festlegen",
+      "context": "…um kann im Benehmen mit dem für die Bauaufsicht zuständigen Ministerium für bestimmte Fälle allgemein festlegen, daß die Genehmigung nicht erforderlich ist.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[45].children[3].text",
+      "term": "Landesbetrieb Straßenbau",
+      "context": "Die Linienabstimmung für Landesstraßen führen der Landesbetrieb Straßenbau und die Bezirksregierungen durch. Der Bezirksregierung obli…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[45].children[3].text",
+      "term": "Bezirksregierungen",
+      "context": "…r Landesstraßen führen der Landesbetrieb Straßenbau und die Bezirksregierungen durch. Der Bezirksregierung obliegt dabei die Beteiligung d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[45].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…desbetrieb Straßenbau und die Bezirksregierungen durch. Der Bezirksregierung obliegt dabei die Beteiligung der Träger öffentlicher Belan…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[51].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…sverfahrensgesetz für das Land Nordrhein-Westfalen) ist die Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[51].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung stellt den Plan fest und erteilt die Plangenehmigung. Sie t…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[56].children[2].text",
+      "term": "Landesbetrieb Straßenbau wahrgenommen",
+      "context": "…aben des Trägers der Straßenbaulast für das Land werden vom Landesbetrieb Straßenbau wahrgenommen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…n zuständige Ministerium, obere Straßenaufsichtsbehörde die Bezirksregierung, untere Straßenaufsichtsbehörde die Landrätin oder der Land…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[2].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…nstigen öffentlichen Straßen in den kreisfreien Städten die Bezirksregierung;",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[3].children[2].children[0].text",
+      "term": "Landesbetrieb Straßenbau",
+      "context": "für Landesstraßen und Radschnellverbindungen des Landes vom Landesbetrieb Straßenbau, soweit nicht die Gemeinden Träger der Straßenbaulast für O…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 987,
+    "residuals": [
+      {
+        "path": "body[6].children[10].children[2].text",
+        "term": "NRW",
+        "context": "…ung in der Fassung der Bekanntmachung vom 1. März 2000 (GV. NRW. S. 256), die zuletzt durch Artikel 2 des Gesetzes vom 20. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[10].children[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 2 des Gesetzes vom 20. Mai 2014 (GV. NRW. S. 294) geändert worden ist, sind. Die Straßenbaubehörde t…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[28].children[3].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 25. Juli 2003 (GV. NRW. S. 441), das zuletzt durch Artikel 1 des Gesetzes vom 19. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[28].children[3].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 1 des Gesetzes vom 19. Dezember 2019 (GV. NRW. S. 995) geändert worden ist, entsprechend anwendbar.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[31].children[2].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 3 des Gesetzes vom 8. J…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[31].children[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 3 des Gesetzes vom 8. Juli 2021 (GV. NRW. S. 904) geändert worden ist, den Betroffenen und Vereinigu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[45].children[2].text",
+        "term": "NRW",
+        "context": "…eltverträglichkeitsprüfungsgesetzes vom 29. April 1992 (GV. NRW. S. 175), das zuletzt durch Artikel 4 des Gesetzes vom 17. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[45].children[2].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 4 des Gesetzes vom 17. Dezember 2021 (GV. NRW. S. 1469) geändert worden ist, entsprechen. Die Beteiligung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[45].children[5].text",
+        "term": "NRW",
+        "context": "…satz 1 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[45].children[5].text",
+        "term": "NRW",
+        "context": "…das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist, Gelegenheit zur Stellungna…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[45].children[5].text",
+        "term": "NRW",
+        "context": "…setz in der Fassung der Bekanntmachung vom 3. Mai 2005 (GV. NRW. S. 430), das zuletzt durch Artikel 2 des Gesetzes vom 25. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[45].children[5].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 2 des Gesetzes vom 25. Oktober 2016 (GV. NRW. S. 868) geändert worden ist) die Planung bereits enthält.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[49].children[2].text",
+        "term": "NRW",
+        "context": "…s in der Fassung der Bekanntmachung vom 20. April 1993 (GV. NRW. S. 297), das zuletzt durch Gesetz vom 12. Dezember 2006 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[49].children[2].text",
+        "term": "NRW",
+        "context": "…. 297), das zuletzt durch Gesetz vom 12. Dezember 2006 (GV. NRW. 2007 S. 92) geändert worden ist, (Landesstraßenbedarfsplan…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[49].children[3].text",
+        "term": "NRW",
+        "context": "…hrrad- und Nahmobilitätsgesetzes vom 17. November 2021 (GV. NRW. S. 1201) aufgestellten Bedarfsplan aufgeführt ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[13].children[2].text",
+        "term": "NRW",
+        "context": "…Anpassung weiterer Rechtsvorschriften vom 20. Mai 2014 (GV. NRW. S. 294))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Straßen- und Wegegesetz des Landes Nordrhein-Westfalen, Bekanntmachung der Neufassung vom 23. September 1995 (GV. NW. 1995 S. 1028)",
+    "sourceVersion": "Straßen- und Wegegesetz des Landes Nordrhein-Westfalen, Bekanntmachung der Neufassung vom 23. September 1995 (GV. NW. 1995 S. 1028)",
+    "simulation": "Straßen- und Wegegesetz des Landes Westdeutschland, Bekanntmachung der Neufassung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 105034,
+          "actual": 104614,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 756,
+          "actual": 756,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 84,
+          "actual": 84,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 104614,
+          "actual": 104523,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "84 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "84 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:33:56.976Z"
+}

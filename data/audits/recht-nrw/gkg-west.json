@@ -1,0 +1,1590 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27142",
+  "slug": "gkg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.abbr@4:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "GkG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@168:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 168,
+      "end": 182,
+      "term": "GV. NW. S. 408",
+      "context": "…mmunalverfassungsrechtlicher Vorschriften vom 15. Mai 1979 (GV. NW. S. 408) wird nachstehend der vom 1. Oktober 1979 an geltende Wortl…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@314:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 314,
+      "end": 328,
+      "term": "GV. NW. S. 190",
+      "context": "…tzes über kommunale Gemeinschaftsarbeit vom 26. April 1961 (GV. NW. S. 190) unter Berücksichtigung der Änderungen durch",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@91:rule:jurisdiction-name",
+      "path": "body[2].text",
+      "start": 91,
+      "end": 115,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…derung der Gemeindeordnung und der Landkreisordnung für das Land Nordrhein-Westfalen sowie des Gesetzes über kommunale Gemeinschaftsarbeit vom 2…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].text@192:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 192,
+      "end": 205,
+      "term": "GV. NW. S. 45",
+      "context": "…es über kommunale Gemeinschaftsarbeit vom 25. Februar 1964 (GV. NW. S. 45),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@134:rule:jurisdiction-name-genitive",
+      "path": "body[3].text",
+      "start": 134,
+      "end": 160,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…und anderer kommunalverfassungsrechtlicher Vorschriften des Landes Nordrhein-Westfalen vom 16. Juli 1969 (GV. NW. S. 514) und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].text@180:protected:gazette-nw",
+      "path": "body[3].text",
+      "start": 180,
+      "end": 194,
+      "term": "GV. NW. S. 514",
+      "context": "…schriften des Landes Nordrhein-Westfalen vom 16. Juli 1969 (GV. NW. S. 514) und",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[4].text@79:protected:gazette-nw",
+      "path": "body[4].text",
+      "start": 79,
+      "end": 93,
+      "term": "GV. NW. S. 290",
+      "context": "…n Gesetzes zur Funktionalreform (1. FRG) vom 11. Juli 1979 (GV. NW. S. 290)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].text@4:ministry-compound",
+      "path": "body[6].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[6].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[6].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].title@47:rule:jurisdiction-abbreviation",
+      "path": "body[7].title",
+      "start": 47,
+      "end": 50,
+      "term": "NRW",
+      "context": "Gesetz über kommunale Gemeinschaftsarbeit (GkG NRW) in der Fassung der Bekanntmachung vom 1. Oktober 1979",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[0].children[3].text@77:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[0].children[3].text",
+      "start": 77,
+      "end": 103,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t einer Gemeinde oder eines Gemeindeverbandes außerhalb des Landes Nordrhein-Westfalen oder einer sonstigen nicht der Aufsicht des Landes unterste…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].children[3].text@266:rule:jurisdiction-name-bare",
+      "path": "body[13].children[0].children[3].text",
+      "start": 266,
+      "end": 285,
+      "term": "Nordrhein-Westfalen",
+      "context": "…des öffentlichen Rechts in einem Zweckverband, der im Lande Nordrhein-Westfalen seinen Sitz hat, bedarf der Genehmigung der Bezirksregierun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].children[3].text@330:authority-district-government",
+      "path": "body[13].children[0].children[3].text",
+      "start": 330,
+      "end": 346,
+      "term": "Bezirksregierung",
+      "context": "…rhein-Westfalen seinen Sitz hat, bedarf der Genehmigung der Bezirksregierung. Das gleiche gilt für die Mitgliedschaft einer Gemeinde, ei…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[13].children[0].children[3].text@466:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[0].children[3].text",
+      "start": 466,
+      "end": 492,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nes Gemeindeverbandes oder einer sonstigen der Aufsicht des Landes Nordrhein-Westfalen unterstehenden Körperschaft, Anstalt oder Stiftung des öffe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].title@41:regional-body-association",
+      "path": "body[13].children[4].title",
+      "start": 41,
+      "end": 60,
+      "term": "Landschaftsverbände",
+      "context": "Anwendung der für Gemeinden, Kreise oder Landschaftsverbände geltenden Bestimmungen",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[4].children[1].text@154:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[1].text",
+      "start": 154,
+      "end": 178,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n Zweckverband die Vorschriften der Gemeindeordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].children[1].text@232:protected:gazette-nrw",
+      "path": "body[13].children[4].children[1].text",
+      "start": 232,
+      "end": 247,
+      "term": "GV. NRW. S. 666",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung sinngemäß Anwendung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[4].children[2].text@166:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[2].text",
+      "start": 166,
+      "end": 190,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…satzung bestimmen, daß anstelle der Gemeindeordnung für das Land Nordrhein-Westfalen die Kreisordnung für das Land Nordrhein-Westfalen in der Fa…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].children[2].text@216:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[2].text",
+      "start": 216,
+      "end": 240,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…g für das Land Nordrhein-Westfalen die Kreisordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].children[2].text@294:protected:gazette-nrw",
+      "path": "body[13].children[4].children[2].text",
+      "start": 294,
+      "end": 309,
+      "term": "GV. NRW. S. 646",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 646) in der jeweils geltenden Fassung Anwendung finden soll.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[4].children[3].text@87:regional-body-association",
+      "path": "body[13].children[4].children[3].text",
+      "start": 87,
+      "end": 106,
+      "term": "Landschaftsverbände",
+      "context": "…als kommunale Körperschaften nur Kreise oder nur Kreise und Landschaftsverbände an, so finden die Vorschriften der Kreisordnung für das Lan…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[4].children[3].text@163:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[3].text",
+      "start": 163,
+      "end": 187,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…nde an, so finden die Vorschriften der Kreisordnung für das Land Nordrhein-Westfalen, gehören ihm als kommunale Körperschaften nur Landschaftsve…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].children[3].text@234:regional-body-association",
+      "path": "body[13].children[4].children[3].text",
+      "start": 234,
+      "end": 253,
+      "term": "Landschaftsverbände",
+      "context": "…ein-Westfalen, gehören ihm als kommunale Körperschaften nur Landschaftsverbände an, so finden die Vorschriften der Landschaftsverbandsordnu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[4].children[3].text@324:rule:jurisdiction-name",
+      "path": "body[13].children[4].children[3].text",
+      "start": 324,
+      "end": 348,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…den die Vorschriften der Landschaftsverbandsordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[4].children[3].text@402:protected:gazette-nrw",
+      "path": "body[13].children[4].children[3].text",
+      "start": 402,
+      "end": 417,
+      "term": "GV. NRW. S. 657",
+      "context": "…tfalen in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 657) in der jeweils geltenden Fassung sinngemäß Anwendung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[1].text@690:rule:jurisdiction-name",
+      "path": "body[14].children[1].children[1].text",
+      "start": 690,
+      "end": 714,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… § 59 Absatz 1 Satz 3 und Absatz 2 der Kreisordnung für das Land Nordrhein-Westfalen gilt entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[14].children[4].children[3].text@8:authority-district-government",
+      "path": "body[14].children[4].children[3].text",
+      "start": 8,
+      "end": 24,
+      "term": "Bezirksregierung",
+      "context": "Ist die Bezirksregierung zuständig, so ist in den Fällen, in denen eine kreisangehör…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[15].children[3].children[1].text@90:protected:gazette-nrw",
+      "path": "body[15].children[3].children[1].text",
+      "start": 90,
+      "end": 106,
+      "term": "GV. NRW. S. 218b",
+      "context": "… Infektionsschutz- und Befugnisgesetzes vom 14. April 2020 (GV. NRW. S. 218b), das zuletzt durch Gesetz vom 4. Mai 2021 (GV. NRW. S. 566…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[3].children[1].text@151:protected:gazette-nrw",
+      "path": "body[15].children[3].children[1].text",
+      "start": 151,
+      "end": 166,
+      "term": "GV. NRW. S. 566",
+      "context": "…V. NRW. S. 218b), das zuletzt durch Gesetz vom 4. Mai 2021 (GV. NRW. S. 566) geändert worden ist, eine epidemische Lage von besonderer …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[15].children[4].children[4].text@599:rule:jurisdiction-name",
+      "path": "body[15].children[4].children[4].text",
+      "start": 599,
+      "end": 623,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…brigen gilt § 64 Absatz 2 bis 4 der Gemeindeordnung für das Land Nordrhein-Westfalen entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[5].children[1].text@233:rule:jurisdiction-name",
+      "path": "body[15].children[5].children[1].text",
+      "start": 233,
+      "end": 257,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…der Anwendung von § 45 Absatz 1 der Gemeindeordnung für das Land Nordrhein-Westfalen sowie auf Auslagenersatz. Die Verbandssatzung kann bestimme…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[6].children[3].text@598:rule:jurisdiction-name",
+      "path": "body[15].children[6].children[3].text",
+      "start": 598,
+      "end": 622,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…sschuss nicht nach § 114 Abs. 3 der Gemeindeordnung für das Land Nordrhein-Westfalen Beschäftigte des Eigenbetriebes angehören müssen, kann die …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[15].children[7].children[1].text@734:regional-body-association",
+      "path": "body[15].children[7].children[1].text",
+      "start": 734,
+      "end": 753,
+      "term": "Landschaftsverbände",
+      "context": "… bei Zweckverbänden, denen als kommunale Körperschaften nur Landschaftsverbände angehören, die Vorschriften über die Landschaftsverbandsuml…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[1].text@34:regional-body-association",
+      "path": "body[16].children[8].children[1].text",
+      "start": 34,
+      "end": 53,
+      "term": "Landschaftsverbände",
+      "context": "Mehrere Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabe…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[1].text@62:regional-body-association",
+      "path": "body[16].children[8].children[1].text",
+      "start": 62,
+      "end": 82,
+      "term": "Regionalverband Ruhr",
+      "context": "…hrere Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabenwahrnehmung Unternehmen und …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[1].text@78:geography-region",
+      "path": "body[16].children[8].children[1].text",
+      "start": 78,
+      "end": 82,
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabenwahrnehmung Unternehmen und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[1].text@78:geography-river",
+      "path": "body[16].children[8].children[1].text",
+      "start": 78,
+      "end": 82,
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabenwahrnehmung Unternehmen und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[1].children[0].text@154:rule:jurisdiction-name",
+      "path": "body[16].children[8].children[1].children[0].text",
+      "start": 154,
+      "end": 178,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…hmen die Regelungen des § 114 a der Gemeindeordnung für das Land Nordrhein-Westfalen sowie die Verordnung über kommunale Unternehmen und Einrich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[8].children[2].children[0].text@30:regional-body-association",
+      "path": "body[16].children[8].children[2].children[0].text",
+      "start": 30,
+      "end": 49,
+      "term": "Landschaftsverbände",
+      "context": "Die Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[2].children[0].text@58:regional-body-association",
+      "path": "body[16].children[8].children[2].children[0].text",
+      "start": 58,
+      "end": 78,
+      "term": "Regionalverband Ruhr",
+      "context": "Die Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden Kommunalunternehmen (Anstalt …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[2].children[0].text@74:geography-region",
+      "path": "body[16].children[8].children[2].children[0].text",
+      "start": 74,
+      "end": 78,
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden Kommunalunternehmen (Anstalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[2].children[0].text@74:geography-river",
+      "path": "body[16].children[8].children[2].children[0].text",
+      "start": 74,
+      "end": 78,
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden Kommunalunternehmen (Anstalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[2].children[0].text@204:rule:jurisdiction-name",
+      "path": "body[16].children[8].children[2].children[0].text",
+      "start": 204,
+      "end": 228,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…fentlichen Rechts gemäß § 114 a der Gemeindeordnung für das Land Nordrhein-Westfalen) oder einem bestehenden gemeinsamen Kommunalunternehmen bei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[8].children[4].text@155:regional-body-association",
+      "path": "body[16].children[8].children[4].text",
+      "start": 155,
+      "end": 175,
+      "term": "Landschaftsverbandes",
+      "context": "… der Vertretungen der Träger. Im Fall der Beteiligung eines Landschaftsverbandes bedarf es eines Beschlusses des Landschaftsausschusses. Die…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[4].text@687:rule:jurisdiction-name",
+      "path": "body[16].children[8].children[4].text",
+      "start": 687,
+      "end": 711,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…verlängern. § 115 Abs. 1 Satz 2 der Gemeindeordnung für das Land Nordrhein-Westfalen gilt entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[8].children[5].text@223:regional-body-association",
+      "path": "body[16].children[8].children[5].text",
+      "start": 223,
+      "end": 242,
+      "term": "Landschaftsverbände",
+      "context": "…n Gemeinden und Kreise, im Falle ihrer Beteiligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekannt…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[5].text@251:regional-body-association",
+      "path": "body[16].children[8].children[5].text",
+      "start": 251,
+      "end": 271,
+      "term": "Regionalverband Ruhr",
+      "context": "…alle ihrer Beteiligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekanntmachungen vorgeschriebenen Fo…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[5].text@267:geography-region",
+      "path": "body[16].children[8].children[5].text",
+      "start": 267,
+      "end": 271,
+      "term": "Ruhr",
+      "context": "…ligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekanntmachungen vorgeschriebenen Fo…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[8].children[5].text@267:geography-river",
+      "path": "body[16].children[8].children[5].text",
+      "start": 267,
+      "end": 271,
+      "term": "Ruhr",
+      "context": "…ligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekanntmachungen vorgeschriebenen Fo…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[9].children[1].children[3].text@148:rule:jurisdiction-name",
+      "path": "body[16].children[9].children[1].children[3].text",
+      "start": 148,
+      "end": 172,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ht, entsprechend § 114 a Abs. 3 der Gemeindeordnung für das Land Nordrhein-Westfalen Satzungen zu erlassen, übertragen werden,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[9].children[2].text@420:rule:jurisdiction-name",
+      "path": "body[16].children[9].children[2].text",
+      "start": 420,
+      "end": 444,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…tungsrat. § 114 a Abs. 8 Satz 3 der Gemeindeordnung für das Land Nordrhein-Westfalen gilt entsprechend. Von jedem Träger ist mindestens eine wei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[9].children[2].text@624:rule:jurisdiction-name",
+      "path": "body[16].children[9].children[2].text",
+      "start": 624,
+      "end": 648,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…en § 114 a Abs. 8 Sätze 5 bis 8 der Gemeindeordnung für das Land Nordrhein-Westfalen entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[10].children[1].children[0].text@4:authority-district-government",
+      "path": "body[16].children[10].children[1].children[0].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "die Bezirksregierung, in deren Bezirk der Zweckverband seinen Sitz hat, wenn ein…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[16].children[10].children[1].children[2].text@112:regional-body-association",
+      "path": "body[16].children[10].children[1].children[2].text",
+      "start": 112,
+      "end": 132,
+      "term": "Landschaftsverbandes",
+      "context": "…er Maßgabe entsprechend, dass im Fall der Beteiligung eines Landschaftsverbandes oder des Regionalverbandes Ruhr Aufsichtsbehörde das für Ko…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[10].children[1].children[2].text@160:geography-region",
+      "path": "body[16].children[10].children[1].children[2].text",
+      "start": 160,
+      "end": 164,
+      "term": "Ruhr",
+      "context": "…igung eines Landschaftsverbandes oder des Regionalverbandes Ruhr Aufsichtsbehörde das für Kommunales zuständige Ministerium …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[10].children[1].children[2].text@160:geography-river",
+      "path": "body[16].children[10].children[1].children[2].text",
+      "start": 160,
+      "end": 164,
+      "term": "Ruhr",
+      "context": "…igung eines Landschaftsverbandes oder des Regionalverbandes Ruhr Aufsichtsbehörde das für Kommunales zuständige Ministerium …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[10].children[2].text@31:authority-district-government",
+      "path": "body[16].children[10].children[2].text",
+      "start": 31,
+      "end": 47,
+      "term": "Bezirksregierung",
+      "context": "Obere Aufsichtsbehörde ist die Bezirksregierung, wenn die Landrätin oder der Landrat Aufsichtsbehörde ist, …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[16].children[10].children[3].text@158:rule:jurisdiction-name",
+      "path": "body[16].children[10].children[3].text",
+      "start": 158,
+      "end": 182,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…die Vorschriften des 13. Teiles der Gemeindeordnung für das Land Nordrhein-Westfalen mit Ausnahme des § 126 entsprechend.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[10].children[4].text@447:authority-district-government",
+      "path": "body[16].children[10].children[4].text",
+      "start": 447,
+      "end": 463,
+      "term": "Bezirksregierung",
+      "context": "…gung ihrer Kündigung ist zuständige Aufsichtsbehörde 1. die Bezirksregierung, zu deren Bezirk die Körperschaft gehört oder in deren Bezi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[16].children[12].children[3].text@146:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[12].children[3].text",
+      "start": 146,
+      "end": 149,
+      "term": "NRW",
+      "context": "…eht. Für Schulverbände bleibt § 78 Abs. 8 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils gelte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[12].children[3].text@172:protected:gazette-nrw",
+      "path": "body[16].children[12].children[3].text",
+      "start": 172,
+      "end": 187,
+      "term": "GV. NRW. S. 102",
+      "context": "…ibt § 78 Abs. 8 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils geltenden Fassung unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[16].children[15].children[3].text@134:rule:jurisdiction-name-dative",
+      "path": "body[16].children[15].children[3].text",
+      "start": 134,
+      "end": 161,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…unalen Finanzmanagements für Gemeinden und Gemeindeverbände im Land Nordrhein-Westfalen (1. NKF-Weiterentwicklungsgesetz - NKFWG) vom 18. September…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[15].children[3].text@228:protected:gazette-nrw",
+      "path": "body[16].children[15].children[3].text",
+      "start": 228,
+      "end": 243,
+      "term": "GV. NRW. S. 432",
+      "context": "…F-Weiterentwicklungsgesetz - NKFWG) vom 18. September 2012 (GV. NRW. S. 432))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 26
+    },
+    "source-citation": {
+      "protected": 12
+    },
+    "ministry": {
+      "manual-review": 1
+    },
+    "authority": {
+      "manual-review": 5
+    },
+    "regional-body": {
+      "manual-review": 12
+    },
+    "geography": {
+      "manual-review": 8
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[0].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[4].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[4].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[4].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[14].children[1].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[5].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[15].children[6].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[8].children[1].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[8].children[2].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[8].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[9].children[1].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[9].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[9].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[10].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[12].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[15].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[6].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "…rhein-Westfalen seinen Sitz hat, bedarf der Genehmigung der Bezirksregierung. Das gleiche gilt für die Mitgliedschaft einer Gemeinde, ei…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[4].title",
+      "term": "Landschaftsverbände",
+      "context": "Anwendung der für Gemeinden, Kreise oder Landschaftsverbände geltenden Bestimmungen",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[4].children[3].text",
+      "term": "Landschaftsverbände",
+      "context": "…als kommunale Körperschaften nur Kreise oder nur Kreise und Landschaftsverbände an, so finden die Vorschriften der Kreisordnung für das Lan…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[4].children[3].text",
+      "term": "Landschaftsverbände",
+      "context": "…ein-Westfalen, gehören ihm als kommunale Körperschaften nur Landschaftsverbände an, so finden die Vorschriften der Landschaftsverbandsordnu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[4].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Ist die Bezirksregierung zuständig, so ist in den Fällen, in denen eine kreisangehör…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[7].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "… bei Zweckverbänden, denen als kommunale Körperschaften nur Landschaftsverbände angehören, die Vorschriften über die Landschaftsverbandsuml…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "Mehrere Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabe…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[1].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…hrere Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabenwahrnehmung Unternehmen und …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[1].text",
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabenwahrnehmung Unternehmen und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[1].text",
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können zur gemeinsamen Aufgabenwahrnehmung Unternehmen und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[2].children[0].text",
+      "term": "Landschaftsverbände",
+      "context": "Die Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[2].children[0].text",
+      "term": "Regionalverband Ruhr",
+      "context": "Die Gemeinden und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden Kommunalunternehmen (Anstalt …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[2].children[0].text",
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden Kommunalunternehmen (Anstalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[2].children[0].text",
+      "term": "Ruhr",
+      "context": "…und Kreise, die Landschaftsverbände und der Regionalverband Ruhr können auch einem bestehenden Kommunalunternehmen (Anstalt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[4].text",
+      "term": "Landschaftsverbandes",
+      "context": "… der Vertretungen der Träger. Im Fall der Beteiligung eines Landschaftsverbandes bedarf es eines Beschlusses des Landschaftsausschusses. Die…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[5].text",
+      "term": "Landschaftsverbände",
+      "context": "…n Gemeinden und Kreise, im Falle ihrer Beteiligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekannt…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[5].text",
+      "term": "Regionalverband Ruhr",
+      "context": "…alle ihrer Beteiligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekanntmachungen vorgeschriebenen Fo…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[5].text",
+      "term": "Ruhr",
+      "context": "…ligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekanntmachungen vorgeschriebenen Fo…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].children[5].text",
+      "term": "Ruhr",
+      "context": "…ligung auch die Landschaftsverbände und der Regionalverband Ruhr, haben in der für ihre Bekanntmachungen vorgeschriebenen Fo…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[10].children[1].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "die Bezirksregierung, in deren Bezirk der Zweckverband seinen Sitz hat, wenn ein…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[10].children[1].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…er Maßgabe entsprechend, dass im Fall der Beteiligung eines Landschaftsverbandes oder des Regionalverbandes Ruhr Aufsichtsbehörde das für Ko…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[10].children[1].children[2].text",
+      "term": "Ruhr",
+      "context": "…igung eines Landschaftsverbandes oder des Regionalverbandes Ruhr Aufsichtsbehörde das für Kommunales zuständige Ministerium …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[10].children[1].children[2].text",
+      "term": "Ruhr",
+      "context": "…igung eines Landschaftsverbandes oder des Regionalverbandes Ruhr Aufsichtsbehörde das für Kommunales zuständige Ministerium …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[10].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "Obere Aufsichtsbehörde ist die Bezirksregierung, wenn die Landrätin oder der Landrat Aufsichtsbehörde ist, …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[10].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…gung ihrer Kündigung ist zuständige Aufsichtsbehörde 1. die Bezirksregierung, zu deren Bezirk die Körperschaft gehört oder in deren Bezi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 402,
+    "residuals": [
+      {
+        "path": "body[13].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 666) in der jeweils geltenden Fassung sinngemäß Anwendu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[4].children[2].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 646) in der jeweils geltenden Fassung Anwendung finden …",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[4].children[3].text",
+        "term": "NRW",
+        "context": "…nd in der Fassung der Bekanntmachung vom 14. Juli 1994 (GV. NRW. S. 657) in der jeweils geltenden Fassung sinngemäß Anwendu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…ektionsschutz- und Befugnisgesetzes vom 14. April 2020 (GV. NRW. S. 218b), das zuletzt durch Gesetz vom 4. Mai 2021 (GV. NR…",
+        "status": "protected"
+      },
+      {
+        "path": "body[15].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…RW. S. 218b), das zuletzt durch Gesetz vom 4. Mai 2021 (GV. NRW. S. 566) geändert worden ist, eine epidemische Lage von bes…",
+        "status": "protected"
+      },
+      {
+        "path": "body[16].children[12].children[3].text",
+        "term": "NRW",
+        "context": "… 78 Abs. 8 des Schulgesetzes West vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils geltenden Fassung unberührt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[16].children[15].children[3].text",
+        "term": "NRW",
+        "context": "…iterentwicklungsgesetz - NKFWG) vom 18. September 2012 (GV. NRW. S. 432))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über kommunale Gemeinschaftsarbeit, Bekanntmachung der Neufassung vom 1. Oktober 1979 (GV. NW. S. 621)",
+    "sourceVersion": "Gesetz über kommunale Gemeinschaftsarbeit, Bekanntmachung der Neufassung vom 1. Oktober 1979 (GV. NW. S. 621)",
+    "simulation": "Gesetz über kommunale Gemeinschaftsarbeit, Bekanntmachung der Neufassung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 38,
+          "actual": 38,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 57105,
+          "actual": 56765,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 38,
+          "actual": 38,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 268,
+          "actual": 268,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 36,
+          "actual": 36,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 38,
+          "actual": 38,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 56765,
+          "actual": 56675,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "38 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "38 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:20:17.831Z"
+}

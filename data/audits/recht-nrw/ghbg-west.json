@@ -1,0 +1,392 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27828",
+  "slug": "ghbg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@118:rule:jurisdiction-abbreviation",
+      "path": "body[0].text",
+      "start": 118,
+      "end": 121,
+      "term": "NRW",
+      "context": "… der Leistungsfähigkeit der Kreise, Städte und Gemeinden in NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].children[0].children[1].text@33:rule:jurisdiction-name-dative",
+      "path": "body[1].children[0].children[1].text",
+      "start": 33,
+      "end": 60,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "Blindengeld erhalten Blinde, die im Land Nordrhein-Westfalen ihren gewöhnlichen Aufenthalt haben, und Blinde, die sich i…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].children[1].text@309:rule:jurisdiction-name-dative",
+      "path": "body[1].children[0].children[1].text",
+      "start": 309,
+      "end": 336,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…r Aufnahme in die Einrichtung ihren gewöhnlichen Aufenthalt im Land Nordrhein-Westfalen hatten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].children[1].text@337:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].children[1].text",
+      "start": 337,
+      "end": 356,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Vorschriften erhalten und ihren gewöhnlichen Aufenthalt in Nordrhein-Westfalen haben. Leistungen nach Satz 1 bleiben als Einkommen bei Soz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[2].text@266:rule:jurisdiction-name-dative",
+      "path": "body[3].children[0].children[2].text",
+      "start": 266,
+      "end": 293,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…hen Vorschriften erhalten und ihren gewöhnlichen Aufenthalt im Land Nordrhein-Westfalen haben. Gehörlos sind Personen mit angeborener oder bis zum …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[2].text@140:rule:jurisdiction-name-bare",
+      "path": "body[4].children[0].children[2].text",
+      "start": 140,
+      "end": 159,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Gehörlose, wenn sie ihren gewöhnlichen Aufenthalt nicht in Nordrhein-Westfalen haben, soweit sie nach der Verordnung (EG) Nr. 883/2004 des…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@4:regional-body-association",
+      "path": "body[5].children[2].children[0].text",
+      "start": 4,
+      "end": 23,
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände führen dieses Gesetz durch und tragen die Kosten.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[3].children[0].text@85:protected:gazette-nrw",
+      "path": "body[5].children[3].children[0].text",
+      "start": 85,
+      "end": 100,
+      "term": "GV. NRW. S. 446",
+      "context": "…tz in der Fassung der Bekanntmachung vom 24. November 1992 (GV. NRW. S. 446) wird aufgehoben.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[3].children[1].text@83:protected:gazette-nrw",
+      "path": "body[5].children[3].children[1].text",
+      "start": 83,
+      "end": 98,
+      "term": "GV. NRW. S. 332",
+      "context": "…ch Artikel 74 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332); in Kraft getreten am 30. April 2005; aufgehoben durch Ges…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[3].children[1].text@180:protected:gazette-nrw",
+      "path": "body[5].children[3].children[1].text",
+      "start": 180,
+      "end": 195,
+      "term": "GV. NRW. S. 221",
+      "context": "…m 30. April 2005; aufgehoben durch Gesetz v. 21. Juni 2012 (GV. NRW. S. 221), in Kraft getreten am 28. Juni 2012.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "body[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].children[0].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[5].children[2].children[0].text",
+      "term": "Landschaftsverbände",
+      "context": "Die Landschaftsverbände führen dieses Gesetz durch und tragen die Kosten.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 60,
+    "residuals": [
+      {
+        "path": "body[5].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 24. November 1992 (GV. NRW. S. 446) wird aufgehoben.",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…rtikel 74 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332); in Kraft getreten am 30. April 2005; aufgehoben d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[3].children[1].text",
+        "term": "NRW",
+        "context": "…. April 2005; aufgehoben durch Gesetz v. 21. Juni 2012 (GV. NRW. S. 221), in Kraft getreten am 28. Juni 2012.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Hilfen für Blinde und Gehörlose vom 25. November 1997",
+    "sourceVersion": "Gesetz über die Hilfen für Blinde und Gehörlose vom 25. November 1997",
+    "simulation": "Gesetz über die Hilfen für Blinde und Gehörlose in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7160,
+          "actual": 7441,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7441,
+          "actual": 7422,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:16:38.346Z"
+}

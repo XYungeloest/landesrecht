@@ -1,0 +1,1723 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28360",
+  "slug": "verordnung-ueber-den-nationalpark-eifel-np-vo-eifel-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@33:geography-region",
+      "path": "meta.title",
+      "start": 33,
+      "end": 38,
+      "term": "Eifel",
+      "context": "Verordnung über den Nationalpark Eifel (NP-VO Eifel)",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@46:geography-region",
+      "path": "meta.title",
+      "start": 46,
+      "end": 51,
+      "term": "Eifel",
+      "context": "Verordnung über den Nationalpark Eifel (NP-VO Eifel)",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].title@13:geography-region",
+      "path": "body[2].title",
+      "start": 13,
+      "end": 18,
+      "term": "Eifel",
+      "context": "Nationalpark Eifel",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].text@143:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 143,
+      "end": 151,
+      "term": "GV. NRW.",
+      "context": "… der Landschaft (Landschaftsgesetz - LG) vom 21. Juli 2000 (GV. NRW. 568) in der geltenden Fassung verordnet das Ministerium für…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@196:ministry-portfolio",
+      "path": "body[3].text",
+      "start": 196,
+      "end": 272,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "… 2000 (GV. NRW. 568) in der geltenden Fassung verordnet das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen nach Anhörung des Ausschusse…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].text@277:rule:jurisdiction-name-genitive",
+      "path": "body[3].text",
+      "start": 277,
+      "end": 303,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen nach Anhörung des Ausschusses für Ernährung, Landwirtschaft…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].text@32:geography-region",
+      "path": "body[5].text",
+      "start": 32,
+      "end": 37,
+      "term": "Eifel",
+      "context": "Die für die Naturlandschaft der Eifel charakteristischen Lebensräume von Laubwäldern, Quellgebiet…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].text@405:geography-region",
+      "path": "body[5].text",
+      "start": 405,
+      "end": 410,
+      "term": "Eifel",
+      "context": "…en nach spätestens 30 Jahren erfüllt sein. Der Nationalpark Eifel repräsentiert innerhalb der kontinentalen biogeographischen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].text@184:rule:jurisdiction-name",
+      "path": "body[6].text",
+      "start": 184,
+      "end": 208,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…t und für die Bevölkerung unmittelbar erlebbar gemacht. Das Land Nordrhein-Westfalen verfolgt das Ziel, langfristig den Nationalpark räumlich we…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].children[1].text@39:municipality",
+      "path": "body[8].children[0].children[1].text",
+      "start": 39,
+      "end": 45,
+      "term": "Aachen",
+      "context": "Die im südlichen Teil der Städteregion Aachen und des Kreises Düren sowie im westlichen Teil des Kreises …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[0].children[2].text@47:geography-region",
+      "path": "body[8].children[0].children[2].text",
+      "start": 47,
+      "end": 52,
+      "term": "Eifel",
+      "context": "Der Nationalpark trägt den Namen \"Nationalpark Eifel\".",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[2].text@212:authority-district-government",
+      "path": "body[8].children[1].children[2].text",
+      "start": 212,
+      "end": 228,
+      "term": "Bezirksregierung",
+      "context": "…Bestandteil dieser Verordnung und liegen mit dieser bei der Bezirksregierung Köln, der Nationalparkverwaltung (§ 18) sowie der Städtereg…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[2].text@229:municipality",
+      "path": "body[8].children[1].children[2].text",
+      "start": 229,
+      "end": 233,
+      "term": "Köln",
+      "context": "…r Verordnung und liegen mit dieser bei der Bezirksregierung Köln, der Nationalparkverwaltung (§ 18) sowie der Städteregion A…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[2].text@292:municipality",
+      "path": "body[8].children[1].children[2].text",
+      "start": 292,
+      "end": 298,
+      "term": "Aachen",
+      "context": "…n, der Nationalparkverwaltung (§ 18) sowie der Städteregion Aachen und den Kreisen Düren und Euskirchen und den Städten und Ge…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[7].text@585:protected:gazette-nrw",
+      "path": "body[8].children[1].children[7].text",
+      "start": 585,
+      "end": 600,
+      "term": "GV. NRW. S. 568",
+      "context": "…ässig (§53 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November 2016 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[1].children[7].text@659:protected:gazette-nrw",
+      "path": "body[8].children[1].children[7].text",
+      "start": 659,
+      "end": 674,
+      "term": "GV. NRW. S. 934",
+      "context": "…8), das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist,).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].children[1].text@53:geography-region",
+      "path": "body[8].children[2].children[1].text",
+      "start": 53,
+      "end": 58,
+      "term": "Eifel",
+      "context": "Der Nationalpark repräsentiert die für die nördliche Eifel typischen natürlichen und naturnahen Lebensräume und Lebens…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[1].children[3].text@142:geography-region",
+      "path": "body[9].children[0].children[1].children[3].text",
+      "start": 142,
+      "end": 147,
+      "term": "Eifel",
+      "context": "…für ein touristisches Angebot \"Naturerleben im Nationalpark Eifel\" (Anlage 4). Dabei werden das \"Perspektivenbuch Tourismus f…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[1].children[3].text@233:geography-region",
+      "path": "body[9].children[0].children[1].children[3].text",
+      "start": 233,
+      "end": 238,
+      "term": "Eifel",
+      "context": "… das \"Perspektivenbuch Tourismus für die Nationalparkregion Eifel im Deutsch-Belgischen Naturpark Hohes Venn-Eifel\" und der \"…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[1].children[3].text@282:geography-region",
+      "path": "body[9].children[0].children[1].children[3].text",
+      "start": 282,
+      "end": 287,
+      "term": "Eifel",
+      "context": "…parkregion Eifel im Deutsch-Belgischen Naturpark Hohes Venn-Eifel\" und der \"Touristische Masterplan Nationalparkregion Eifel\"…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[1].children[3].text@341:geography-region",
+      "path": "body[9].children[0].children[1].children[3].text",
+      "start": 341,
+      "end": 346,
+      "term": "Eifel",
+      "context": "…-Eifel\" und der \"Touristische Masterplan Nationalparkregion Eifel\" berücksichtigt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[1].text@188:protected:gazette-nrw",
+      "path": "body[9].children[2].children[1].text",
+      "start": 188,
+      "end": 203,
+      "term": "GV. NRW. S. 683",
+      "context": "…rung des Landschaftsgesetzes (DVO-LG) vom 22. Oktober 1986 (GV. NRW. S. 683), zuletzt geändert durch Gesetz vom 25. September 2001 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[1].text@260:protected:gazette-nrw",
+      "path": "body[9].children[2].children[1].text",
+      "start": 260,
+      "end": 275,
+      "term": "GV. NRW. S. 708",
+      "context": "…683), zuletzt geändert durch Gesetz vom 25. September 2001 (GV. NRW. S. 708), den danach zu beteiligenden Trägern öffentlicher Belange,…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[9].children[2].children[1].text@477:ministry-portfolio",
+      "path": "body[9].children[2].children[1].text",
+      "start": 477,
+      "end": 553,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "…üft diese Stellungnahmen und legt den geprüften Entwurf dem Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen zur Genehmigung vor. Die Gen…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[1].text@558:rule:jurisdiction-name-genitive",
+      "path": "body[9].children[2].children[1].text",
+      "start": 558,
+      "end": 584,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen zur Genehmigung vor. Die Genehmigung kann mit Nebenbestimmu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[9].children[3].children[1].text@40:municipality",
+      "path": "body[9].children[3].children[1].text",
+      "start": 40,
+      "end": 46,
+      "term": "Aachen",
+      "context": "Die Landschaftsplanung der Städteregion Aachen und der Kreise Düren und Euskirchen sowie die Planungshohei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[5].children[2].text@95:rule:jurisdiction-name-bare",
+      "path": "body[9].children[5].children[2].text",
+      "start": 95,
+      "end": 114,
+      "term": "Nordrhein-Westfalen",
+      "context": "…im Nationalpark werden gemäß § 20 Absatz 2 Landesjagdgesetz Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].children[5].children[2].text@171:protected:gazette-nrw",
+      "path": "body[9].children[5].children[2].text",
+      "start": 171,
+      "end": 189,
+      "term": "GV. NRW. 1995 S. 2",
+      "context": "…len in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. 1995 S. 2, ber. 1997 S. 56) in der jeweils geltenden Fassung durch di…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[0].children[2].children[20].text@190:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[0].children[2].children[20].text",
+      "start": 190,
+      "end": 193,
+      "term": "NRW",
+      "context": "… im Sinne des Gemeingebrauchs gemäß § 33 Landeswassergesetz NRW zu fahren,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[2].children[4].text@124:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[2].children[4].text",
+      "start": 124,
+      "end": 127,
+      "term": "NRW",
+      "context": "…ach § 9 dieser Verordnung in Verbindung mit § 20 Abs. 2 LJG-NRW sowie die rechtmäßige und ordnungsgemäße Jagdausübung auf d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[2].children[4].text@384:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[2].children[4].text",
+      "start": 384,
+      "end": 387,
+      "term": "NRW",
+      "context": "…tzes gemäß § 23 Bundesjagdgesetz in Verbindung mit § 25 LJG-NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[0].children[1].text@60:geography-region",
+      "path": "body[11].children[0].children[1].text",
+      "start": 60,
+      "end": 65,
+      "term": "Eifel",
+      "context": "Die Nationalparkverwaltung obliegt dem Nationalparkforstamt Eifel. Sie hat insbesondere folgende Aufgaben:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[0].children[3].text@4:authority-district-government",
+      "path": "body[11].children[0].children[3].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln koordiniert die Zusammenarbeit der für das Gebiet des …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].children[0].children[3].text@21:municipality",
+      "path": "body[11].children[0].children[3].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln koordiniert die Zusammenarbeit der für das Gebiet des Natio…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[1].children[0].text@56:authority-district-government",
+      "path": "body[11].children[1].children[1].children[0].text",
+      "start": 56,
+      "end": 72,
+      "term": "Bezirksregierung",
+      "context": "dem/der Regierungspräsidenten/Regierungspräsidentin der Bezirksregierung Köln,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[1].children[0].text@73:municipality",
+      "path": "body[11].children[1].children[1].children[0].text",
+      "start": 73,
+      "end": 77,
+      "term": "Köln",
+      "context": "…rungspräsidenten/Regierungspräsidentin der Bezirksregierung Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[1].children[1].text@63:municipality",
+      "path": "body[11].children[1].children[1].children[1].text",
+      "start": 63,
+      "end": 69,
+      "term": "Aachen",
+      "context": "… Städteregionsrat / der Städteregionsrätin der Städteregion Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[1].children[4].text@46:geography-region",
+      "path": "body[11].children[1].children[1].children[4].text",
+      "start": 46,
+      "end": 51,
+      "term": "Eifel",
+      "context": "dem Vorstandsvorsitzenden des Wasserverbandes Eifel-Rur.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[2].text@402:ministry-portfolio",
+      "path": "body[11].children[1].children[2].text",
+      "start": 402,
+      "end": 478,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "…ann, entscheidet unter Beachtung des Schutzzwecks (§ 3) das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen im Benehmen mit den betroffe…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].children[1].children[2].text@483:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[1].children[2].text",
+      "start": 483,
+      "end": 509,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen im Benehmen mit den betroffenen Ressorts nach pflichtgemäße…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].children[1].children[1].text@4:authority-district-government",
+      "path": "body[11].children[2].children[1].children[1].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "der Bezirksregierung Köln als höherer Naturschutzbehörde,",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[1].children[1].text@21:municipality",
+      "path": "body[11].children[2].children[1].children[1].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "der Bezirksregierung Köln als höherer Naturschutzbehörde,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[1].children[2].text@55:municipality",
+      "path": "body[11].children[2].children[1].children[2].text",
+      "start": 55,
+      "end": 61,
+      "term": "Aachen",
+      "context": "der Kreise Euskirchen und Düren sowie der Städteregion Aachen als unteren Naturschutzbehörden,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[1].children[3].text@56:rule:jurisdiction-name-bare",
+      "path": "body[11].children[2].children[1].children[3].text",
+      "start": 56,
+      "end": 75,
+      "term": "Nordrhein-Westfalen",
+      "context": "des Landesamtes für Natur, Umwelt und Verbraucherschutz Nordrhein-Westfalen (LANUV),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].children[1].children[6].text@64:municipality",
+      "path": "body[11].children[2].children[1].children[6].text",
+      "start": 64,
+      "end": 70,
+      "term": "Aachen",
+      "context": "…Biologischen Stationen in den Kreisen Euskirchen, Düren und Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[1].children[8].text@31:geography-region",
+      "path": "body[11].children[2].children[1].children[8].text",
+      "start": 31,
+      "end": 36,
+      "term": "Eifel",
+      "context": "des Fördervereins Nationalpark Eifel e.V.,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[1].children[12].text@4:rule:jurisdiction-name-bare",
+      "path": "body[11].children[2].children[1].children[12].text",
+      "start": 4,
+      "end": 23,
+      "term": "Nordrhein-Westfalen",
+      "context": "der Nordrhein-Westfalen-Stiftung Naturschutz, Heimat- und Kulturpflege,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].children[1].children[13].text@45:geography-region",
+      "path": "body[11].children[2].children[1].children[13].text",
+      "start": 45,
+      "end": 50,
+      "term": "Eifel",
+      "context": "des Deutsch-Belgischen Naturparks Hohes Venn-Eifel aus Nordrhein-Westfalen, Rheinland-Pfalz und Belgien,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[1].children[13].text@55:rule:jurisdiction-name-bare",
+      "path": "body[11].children[2].children[1].children[13].text",
+      "start": 55,
+      "end": 74,
+      "term": "Nordrhein-Westfalen",
+      "context": "des Deutsch-Belgischen Naturparks Hohes Venn-Eifel aus Nordrhein-Westfalen, Rheinland-Pfalz und Belgien,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].children[1].children[13].text@76:geography-region",
+      "path": "body[11].children[2].children[1].children[13].text",
+      "start": 76,
+      "end": 85,
+      "term": "Rheinland",
+      "context": "…ischen Naturparks Hohes Venn-Eifel aus Nordrhein-Westfalen, Rheinland-Pfalz und Belgien,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[2].children[2].text@133:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[2].children[2].text",
+      "start": 133,
+      "end": 159,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen weitere Mitglieder in die Arbeitsgruppe berufen. Unabhängig…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[3].children[0].text@132:ministry-portfolio",
+      "path": "body[11].children[3].children[0].text",
+      "start": 132,
+      "end": 208,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "… Fragen des Nationalparks ein wissenschaftlicher Beirat vom Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen berufen werden. Den Vorsitz …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].children[3].children[0].text@213:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[3].children[0].text",
+      "start": 213,
+      "end": 239,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen berufen werden. Den Vorsitz des Beirates führt das Minister…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[3].children[0].text@291:ministry-portfolio",
+      "path": "body[11].children[3].children[0].text",
+      "start": 291,
+      "end": 367,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "…estfalen berufen werden. Den Vorsitz des Beirates führt das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen oder ein/eine von ihm bestel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].children[3].children[0].text@372:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[3].children[0].text",
+      "start": 372,
+      "end": 398,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen oder ein/eine von ihm bestellte/r Vertreter/Vertreterin.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[1].text@4:ministry-portfolio",
+      "path": "body[11].children[4].children[1].text",
+      "start": 4,
+      "end": 80,
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen kann weiteren Gebietskörpers…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[11].children[4].children[1].text@85:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[4].children[1].text",
+      "start": 85,
+      "end": 111,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen kann weiteren Gebietskörperschaften auf Antrag das Gütesieg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].children[2].text@4:ministry-portfolio",
+      "path": "body[13].children[0].children[2].text",
+      "start": 4,
+      "end": 79,
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].children[0].children[2].text@84:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[0].children[2].text",
+      "start": 84,
+      "end": 110,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].children[4].text@99:protected:gazette-nrw",
+      "path": "body[13].children[0].children[4].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 351",
+      "context": "… (Artikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "geography": {
+      "manual-review": 16
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 7
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 16
+    },
+    "municipality": {
+      "manual-review": 10
+    },
+    "authority": {
+      "manual-review": 4
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[9].children[2].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[9].children[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].children[2].children[20].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[2].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[2].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[1].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[2].children[1].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[2].children[1].children[12].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[2].children[1].children[13].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[2].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[3].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[3].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Eifel",
+      "context": "Verordnung über den Nationalpark Eifel (NP-VO Eifel)",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Eifel",
+      "context": "Verordnung über den Nationalpark Eifel (NP-VO Eifel)",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].title",
+      "term": "Eifel",
+      "context": "Nationalpark Eifel",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "… 2000 (GV. NRW. 568) in der geltenden Fassung verordnet das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen nach Anhörung des Ausschusse…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].text",
+      "term": "Eifel",
+      "context": "Die für die Naturlandschaft der Eifel charakteristischen Lebensräume von Laubwäldern, Quellgebiet…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].text",
+      "term": "Eifel",
+      "context": "…en nach spätestens 30 Jahren erfüllt sein. Der Nationalpark Eifel repräsentiert innerhalb der kontinentalen biogeographischen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].children[1].text",
+      "term": "Aachen",
+      "context": "Die im südlichen Teil der Städteregion Aachen und des Kreises Düren sowie im westlichen Teil des Kreises …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].children[2].text",
+      "term": "Eifel",
+      "context": "Der Nationalpark trägt den Namen \"Nationalpark Eifel\".",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…Bestandteil dieser Verordnung und liegen mit dieser bei der Bezirksregierung Köln, der Nationalparkverwaltung (§ 18) sowie der Städtereg…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[2].text",
+      "term": "Köln",
+      "context": "…r Verordnung und liegen mit dieser bei der Bezirksregierung Köln, der Nationalparkverwaltung (§ 18) sowie der Städteregion A…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[2].text",
+      "term": "Aachen",
+      "context": "…n, der Nationalparkverwaltung (§ 18) sowie der Städteregion Aachen und den Kreisen Düren und Euskirchen und den Städten und Ge…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].children[1].text",
+      "term": "Eifel",
+      "context": "Der Nationalpark repräsentiert die für die nördliche Eifel typischen natürlichen und naturnahen Lebensräume und Lebens…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[1].children[3].text",
+      "term": "Eifel",
+      "context": "…für ein touristisches Angebot \"Naturerleben im Nationalpark Eifel\" (Anlage 4). Dabei werden das \"Perspektivenbuch Tourismus f…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[1].children[3].text",
+      "term": "Eifel",
+      "context": "… das \"Perspektivenbuch Tourismus für die Nationalparkregion Eifel im Deutsch-Belgischen Naturpark Hohes Venn-Eifel\" und der \"…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[1].children[3].text",
+      "term": "Eifel",
+      "context": "…parkregion Eifel im Deutsch-Belgischen Naturpark Hohes Venn-Eifel\" und der \"Touristische Masterplan Nationalparkregion Eifel\"…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[1].children[3].text",
+      "term": "Eifel",
+      "context": "…-Eifel\" und der \"Touristische Masterplan Nationalparkregion Eifel\" berücksichtigt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].children[1].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "…üft diese Stellungnahmen und legt den geprüften Entwurf dem Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen zur Genehmigung vor. Die Gen…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[3].children[1].text",
+      "term": "Aachen",
+      "context": "Die Landschaftsplanung der Städteregion Aachen und der Kreise Düren und Euskirchen sowie die Planungshohei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[0].children[1].text",
+      "term": "Eifel",
+      "context": "Die Nationalparkverwaltung obliegt dem Nationalparkforstamt Eifel. Sie hat insbesondere folgende Aufgaben:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[0].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln koordiniert die Zusammenarbeit der für das Gebiet des …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[0].children[3].text",
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln koordiniert die Zusammenarbeit der für das Gebiet des Natio…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].children[1].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "dem/der Regierungspräsidenten/Regierungspräsidentin der Bezirksregierung Köln,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].children[1].children[0].text",
+      "term": "Köln",
+      "context": "…rungspräsidenten/Regierungspräsidentin der Bezirksregierung Köln,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].children[1].children[1].text",
+      "term": "Aachen",
+      "context": "… Städteregionsrat / der Städteregionsrätin der Städteregion Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].children[1].children[4].text",
+      "term": "Eifel",
+      "context": "dem Vorstandsvorsitzenden des Wasserverbandes Eifel-Rur.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].children[2].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "…ann, entscheidet unter Beachtung des Schutzzwecks (§ 3) das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen im Benehmen mit den betroffe…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "der Bezirksregierung Köln als höherer Naturschutzbehörde,",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[1].text",
+      "term": "Köln",
+      "context": "der Bezirksregierung Köln als höherer Naturschutzbehörde,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[2].text",
+      "term": "Aachen",
+      "context": "der Kreise Euskirchen und Düren sowie der Städteregion Aachen als unteren Naturschutzbehörden,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[6].text",
+      "term": "Aachen",
+      "context": "…Biologischen Stationen in den Kreisen Euskirchen, Düren und Aachen,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[8].text",
+      "term": "Eifel",
+      "context": "des Fördervereins Nationalpark Eifel e.V.,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[13].text",
+      "term": "Eifel",
+      "context": "des Deutsch-Belgischen Naturparks Hohes Venn-Eifel aus Nordrhein-Westfalen, Rheinland-Pfalz und Belgien,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].children[13].text",
+      "term": "Rheinland",
+      "context": "…ischen Naturparks Hohes Venn-Eifel aus Nordrhein-Westfalen, Rheinland-Pfalz und Belgien,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[3].children[0].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "… Fragen des Nationalparks ein wissenschaftlicher Beirat vom Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen berufen werden. Den Vorsitz …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[3].children[0].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "…estfalen berufen werden. Den Vorsitz des Beirates führt das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen oder ein/eine von ihm bestel…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[4].children[1].text",
+      "term": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen kann weiteren Gebietskörpers…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].children[2].text",
+      "term": "Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Die Ministerin für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 451,
+    "residuals": [
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "… Landschaft (Landschaftsgesetz - LG) vom 21. Juli 2000 (GV. NRW. 568) in der geltenden Fassung verordnet das Ministerium fü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].children[7].text",
+        "term": "NRW",
+        "context": "…g (§53 des Landesnaturschutzgesetzes vom 21. Juli 2000 (GV. NRW. S. 568), das durch Artikel 1 des Gesetzes vom 15. November…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[1].children[7].text",
+        "term": "NRW",
+        "context": "…das durch Artikel 1 des Gesetzes vom 15. November 2016 (GV. NRW. S. 934) neu gefasst worden ist,).",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[1].text",
+        "term": "NRW",
+        "context": "… des Landschaftsgesetzes (DVO-LG) vom 22. Oktober 1986 (GV. NRW. S. 683), zuletzt geändert durch Gesetz vom 25. September 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…, zuletzt geändert durch Gesetz vom 25. September 2001 (GV. NRW. S. 708), den danach zu beteiligenden Trägern öffentlicher …",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[5].children[2].text",
+        "term": "NRW",
+        "context": "…in der Fassung der Bekanntmachung vom 7. Dezember 1994 (GV. NRW. 1995 S. 2, ber. 1997 S. 56) in der jeweils geltenden Fassu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[0].children[4].text",
+        "term": "NRW",
+        "context": "…tikel 121 des Fünften Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 351))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+        "path": "body[3].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "path": "body[3].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über den Nationalpark Eifel (NP-VO Eifel) vom 17. Dezember 2003",
+    "sourceVersion": "Verordnung über den Nationalpark Eifel (NP-VO Eifel) vom 17. Dezember 2003",
+    "simulation": "Verordnung über den Nationalpark Eifel (NP-VO Eifel) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 34285,
+          "actual": 35034,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 320,
+          "actual": 320,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 24,
+          "actual": 24,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 35034,
+          "actual": 34985,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "24 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "24 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (Karte) (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/5218-3194-sgv_791_20031217_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/5218-3195-sgv_791_20031217_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 5,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (Karte) (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/5218-3196-sgv_791_20031217_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (Eckpunkte Karte - Seite 1) (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/5218-3197-sgv_791_20031217_1_anlage4.1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (Eckpunkte Seiten 2 und 3) (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/5218-3198-sgv_791_20031217_1_anlage4.2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (Karte) (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (Karte) (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (Eckpunkte Karte - Seite 1) (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (Eckpunkte Seiten 2 und 3) (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:58:19.336Z"
+}

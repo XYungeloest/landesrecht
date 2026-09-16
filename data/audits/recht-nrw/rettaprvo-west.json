@@ -1,0 +1,831 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33493",
+  "slug": "rettaprvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.abbr@10:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 10,
+      "end": 13,
+      "term": "NRW",
+      "context": "RettAPrVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@48:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 48,
+      "end": 51,
+      "term": "NRW",
+      "context": "Auf Grund des § 4 Absatz 6 des Rettungsgesetzes NRW vom 24. November 1992 (GV. NRW. S. 458), der durch Artikel …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@75:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 75,
+      "end": 90,
+      "term": "GV. NRW. S. 458",
+      "context": "… 4 Absatz 6 des Rettungsgesetzes NRW vom 24. November 1992 (GV. NRW. S. 458), der durch Artikel 17 Nummer 6 Buchstabe e des Gesetzes vo…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@167:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 167,
+      "end": 182,
+      "term": "GV. NRW. S. 386",
+      "context": "…kel 17 Nummer 6 Buchstabe e des Gesetzes vom 15. Juni 1999 (GV. NRW. S. 386) eingefügt worden ist, verordnet das Ministerium für Arbeit…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@220:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 220,
+      "end": 267,
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "… 1999 (GV. NRW. S. 386) eingefügt worden ist, verordnet das Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].children[4].children[0].children[1].text@134:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[4].children[0].children[1].text",
+      "start": 134,
+      "end": 137,
+      "term": "NRW",
+      "context": "…ge 13 im Sinne des § 4 Absatz 2 Satz 1 des Rettungsgesetzes NRW vom 24. November 1992 (GV. NRW. S. 458) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[4].children[0].children[1].text@161:protected:gazette-nrw",
+      "path": "body[8].children[4].children[0].children[1].text",
+      "start": 161,
+      "end": 176,
+      "term": "GV. NRW. S. 458",
+      "context": "…tz 2 Satz 1 des Rettungsgesetzes NRW vom 24. November 1992 (GV. NRW. S. 458) in der jeweils geltenden Fassung, das zu Ausbildungsbeginn…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[0].children[1].text@785:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[0].children[1].text",
+      "start": 785,
+      "end": 788,
+      "term": "NRW",
+      "context": "…e Fortbildung nach § 5 Absatz 4 Satz 1 des Rettungsgesetzes NRW nachgewiesen wird.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[1].children[0].text@91:rule:jurisdiction-name-bare",
+      "path": "body[11].children[1].children[0].text",
+      "start": 91,
+      "end": 110,
+      "term": "Nordrhein-Westfalen",
+      "context": "…20-Stunden-Programms vor Inkrafttreten dieser Verordnung in Nordrhein-Westfalen oder in einem anderen Bundesland, bei der Bundeswehr oder d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[11].children[2].children[1].text@4:authority-district-government",
+      "path": "body[11].children[2].children[1].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung ist zuständige Behörde für die Entscheidung über die Anerke…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[12].children[0].children[0].text@379:protected:gazette-nrw",
+      "path": "body[12].children[0].children[0].text",
+      "start": 379,
+      "end": 394,
+      "term": "GV. NRW. S. 919",
+      "context": "…ettungshelferinnen und Rettungshelfer vom 4. Dezember 2017 (GV. NRW. S. 919) abgeschlossen. Lehrgänge, die bis zum 31. Dezember 2022 be…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[0].children[0].text@659:protected:gazette-nrw",
+      "path": "body[12].children[0].children[0].text",
+      "start": 659,
+      "end": 674,
+      "term": "GV. NRW. S. 919",
+      "context": "…ettungshelferinnen und Rettungshelfer vom 4. Dezember 2017 (GV. NRW. S. 919) durchgeführt werden. Ausbildungen gemäß den Sätzen 1 und 2…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[1].children[0].text@235:protected:gazette-nrw",
+      "path": "body[12].children[1].children[0].text",
+      "start": 235,
+      "end": 250,
+      "term": "GV. NRW. S. 919",
+      "context": "…ettungshelferinnen und Rettungshelfer vom 4. Dezember 2017 (GV. NRW. S. 919) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[1].children[1].text@4:ministry-portfolio",
+      "path": "body[12].children[1].children[1].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].children[1].children[1].text@53:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[1].children[1].text",
+      "start": 53,
+      "end": 79,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 6
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[4].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "… 1999 (GV. NRW. S. 386) eingefügt worden ist, verordnet das Ministerium für Arbeit, Gesundheit und Soziales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung ist zuständige Behörde für die Entscheidung über die Anerke…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].children[1].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 324,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…satz 6 des Rettungsgesetzes West vom 24. November 1992 (GV. NRW. S. 458), der durch Artikel 17 Nummer 6 Buchstabe e des Ges…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…17 Nummer 6 Buchstabe e des Gesetzes vom 15. Juni 1999 (GV. NRW. S. 386) eingefügt worden ist, verordnet das Ministerium fü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[4].children[0].children[1].text",
+        "term": "NRW",
+        "context": "…Satz 1 des Rettungsgesetzes West vom 24. November 1992 (GV. NRW. S. 458) in der jeweils geltenden Fassung, das zu Ausbildun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…ngshelferinnen und Rettungshelfer vom 4. Dezember 2017 (GV. NRW. S. 919) abgeschlossen. Lehrgänge, die bis zum 31. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…ngshelferinnen und Rettungshelfer vom 4. Dezember 2017 (GV. NRW. S. 919) durchgeführt werden. Ausbildungen gemäß den Sätzen…",
+        "status": "protected"
+      },
+      {
+        "path": "body[12].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…ngshelferinnen und Rettungshelfer vom 4. Dezember 2017 (GV. NRW. S. 919) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Arbeit, Gesundheit und Soziales",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Ausbildungs- und Prüfungsverordnung für Rettungssanitäterinnen und Rettungssanitäter sowie Rettungshelferinnen und Rettungshelfer vom 25. April 2022",
+    "sourceVersion": "Ausbildungs- und Prüfungsverordnung für Rettungssanitäterinnen und Rettungssanitäter sowie Rettungshelferinnen und Rettungshelfer vom 25. April 2022",
+    "simulation": "Ausbildungs- und Prüfungsverordnung für Rettungssanitäterinnen und Rettungssanitäter sowie Rettungshelferinnen und Rettungshelfer in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 31067,
+          "actual": 31832,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 178,
+          "actual": 178,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 31832,
+          "actual": 31827,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "23 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "23 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 01 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45721-sgv_215_20220425_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 9,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 10 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45722-sgv_215_20220425_1_anlage10.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 11 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45723-sgv_215_20220425_1_anlage11.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 12 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45724-sgv_215_20220425_1_anlage12.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 15 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45727-sgv_215_20220425_1_anlage15.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 16 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45728-sgv_215_20220425_1_anlage16.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 03 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45731-sgv_215_20220425_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 04 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45732-sgv_215_20220425_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 07 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45735-sgv_215_20220425_1_anlage7.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 13 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45738-sgv_215_20220425_1_anlage13.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 14 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45739-sgv_215_20220425_1_anlage14.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 02 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45740-sgv_215_20220425_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 5,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 05 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45741-sgv_215_20220425_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 06 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45742-sgv_215_20220425_1_anlage6.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 8,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 08 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45743-sgv_215_20220425_1_anlage8.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 16,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 09 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-45744-sgv_215_20220425_1_anlage9.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 15,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 17 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/48707-46975-sgv_215_20220425_1_anlage17.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 8,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 01 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 10 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 11 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 12 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 15 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 16 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 03 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 04 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 07 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 13 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 14 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 02 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 05 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 06 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 08 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 09 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 17 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:41:02.101Z"
+}

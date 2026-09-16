@@ -1,0 +1,583 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33518",
+  "slug": "digitalerprobungsverordnung-fm-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@70:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 70,
+      "end": 89,
+      "term": "Nordrhein-Westfalen",
+      "context": "…des § 25a Absatz 1 Nummer 1 und 2 des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551), der durch Artikel 1 Num…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@108:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 108,
+      "end": 123,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551), der durch Artikel 1 Nummer 9 des Gesetzes vom 1. Februar …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@189:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 189,
+      "end": 204,
+      "term": "GV. NRW. S. 122",
+      "context": "… durch Artikel 1 Nummer 9 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium der Fina…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@244:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 244,
+      "end": 268,
+      "term": "Ministerium der Finanzen",
+      "context": "…022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium der Finanzen im Einvernehmen mit dem Beauftragten der Landesregierung No…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[2].text@310:constitutional-organ-state",
+      "path": "body[2].text",
+      "start": 310,
+      "end": 345,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "…erium der Finanzen im Einvernehmen mit dem Beauftragten der Landesregierung Nordrhein-Westfalen für Informationstechnik und dem Ministerium des Inneren:",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[2].text@326:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 326,
+      "end": 345,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en im Einvernehmen mit dem Beauftragten der Landesregierung Nordrhein-Westfalen für Informationstechnik und dem Ministerium des Inneren:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@378:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 378,
+      "end": 401,
+      "term": "Ministerium des Inneren",
+      "context": "…gierung Nordrhein-Westfalen für Informationstechnik und dem Ministerium des Inneren:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].title@144:rule:jurisdiction-name-bare",
+      "path": "body[3].title",
+      "start": 144,
+      "end": 163,
+      "term": "Nordrhein-Westfalen",
+      "context": "…fe und des Versorgungswerks der Mitglieder der Landtage von Nordrhein-Westfalen, Brandenburg und Baden-Württemberg durch Bereitstellung zum…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@72:rule:jurisdiction-name",
+      "path": "body[3].children[0].children[0].text",
+      "start": 72,
+      "end": 96,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…on § 41 Absatz 2a des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@154:protected:gazette-nrw",
+      "path": "body[3].children[0].children[0].text",
+      "start": 154,
+      "end": 169,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung gilt § 5 Absatz 3 des E-G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@248:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[0].text",
+      "start": 248,
+      "end": 267,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ltenden Fassung gilt § 5 Absatz 3 des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@286:protected:gazette-nrw",
+      "path": "body[3].children[0].children[0].text",
+      "start": 286,
+      "end": 301,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung entsprechend für elektron…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@425:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[0].text",
+      "start": 425,
+      "end": 444,
+      "term": "Nordrhein-Westfalen",
+      "context": "…e Verwaltungsakte der Versorgungswerke der Freien Berufe in Nordrhein-Westfalen und des Versorgungswerks der Mitglieder der Landtage von No…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].children[0].text@502:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[0].text",
+      "start": 502,
+      "end": 521,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en und des Versorgungswerks der Mitglieder der Landtage von Nordrhein-Westfalen, Brandenburg und Baden-Württemberg, im Folgenden Versorgung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[0].text@82:protected:gazette-nrw",
+      "path": "body[3].children[1].children[0].text",
+      "start": 82,
+      "end": 96,
+      "term": "GV. NRW. S. 94",
+      "context": "…atz 4 bis 7 des Landeszustellungsgesetzes vom 7. März 2006 (GV. NRW. S. 94) in der jeweils geltenden Fassung kann ein elektronischer V…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].children[0].text@484:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].children[0].text",
+      "start": 484,
+      "end": 503,
+      "term": "Nordrhein-Westfalen",
+      "context": "…gerufen wird. § 5 Absatz 3 Satz 2 des E-Government-Gesetzes Nordrhein-Westfalen gilt entsprechend. Die abrufberechtige Person ist elektroni…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].children[1].text@4:ministry-portfolio",
+      "path": "body[4].children[0].children[1].text",
+      "start": 4,
+      "end": 25,
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[1].text@30:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[0].children[1].text",
+      "start": 30,
+      "end": 56,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister der Finanzen des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "source-citation": {
+      "protected": 5
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium der Finanzen",
+      "context": "…022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium der Finanzen im Einvernehmen mit dem Beauftragten der Landesregierung No…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium des Inneren",
+      "context": "…gierung Nordrhein-Westfalen für Informationstechnik und dem Ministerium des Inneren:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[1].text",
+      "term": "Minister der Finanzen",
+      "context": "Der Minister der Finanzen des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 24,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551), der durch Artikel 1 Nummer 9 des Gesetzes vom 1. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ch Artikel 1 Nummer 9 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium …",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung gilt § 5 Absatz 3…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung entsprechend für …",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].children[0].text",
+        "term": "NRW",
+        "context": "…4 bis 7 des Landeszustellungsgesetzes vom 7. März 2006 (GV. NRW. S. 94) in der jeweils geltenden Fassung kann ein elektroni…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium der Finanzen",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium der Finanzen",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium der Finanzen",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium der Finanzen",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "finanzministerium"
+  },
+  "citations": {
+    "source": "Verordnung zur Erprobung digitaler Formen der Aufgabenerledigung in der Verwaltung und zur Fortentwicklung des E-Governments im Zuständigkeitsbereich des Ministeriums der Finanzen vom 3. Mai 2022",
+    "sourceVersion": "Verordnung zur Erprobung digitaler Formen der Aufgabenerledigung in der Verwaltung und zur Fortentwicklung des E-Governments im Zuständigkeitsbereich des Ministeriums der Finanzen vom 3. Mai 2022",
+    "simulation": "Verordnung zur Erprobung digitaler Formen der Aufgabenerledigung in der Verwaltung und zur Fortentwicklung des E-Governments im Zuständigkeitsbereich des Ministeriums der Finanzen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 3825,
+          "actual": 4030,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4030,
+          "actual": 3994,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:43:53.672Z"
+}

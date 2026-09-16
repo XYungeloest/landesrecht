@@ -1,0 +1,1730 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29972",
+  "slug": "bvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.shortTitle@20:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 20,
+      "end": 23,
+      "term": "NRW",
+      "context": "Beihilfenverordnung NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.abbr@4:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "BVO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@74:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 74,
+      "end": 89,
+      "term": "GV. NRW. S. 224",
+      "context": "…§ 77 Absatz 8 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].children[2].text@126:protected:gazette-nrw",
+      "path": "body[2].children[1].children[2].text",
+      "start": 126,
+      "end": 141,
+      "term": "GV. NRW. S. 310",
+      "context": "… 28 des Landesbeamtenversorgungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642)) der unter Nummer 1 und 2 bezeichneten Person…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[3].children[0].children[0].text@207:protected:gazette-nrw",
+      "path": "body[2].children[3].children[0].children[0].text",
+      "start": 207,
+      "end": 222,
+      "term": "GV. NRW. S. 310",
+      "context": "…43 Absatz 6 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das durch Artikel 29 des Gesetzes vom 14. Ju…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[3].children[0].children[0].text@291:protected:gazette-nrw",
+      "path": "body[2].children[3].children[0].children[0].text",
+      "start": 291,
+      "end": 306,
+      "term": "GV. NRW. S. 310",
+      "context": "… 642), das durch Artikel 29 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist,) tätig sind, oder",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[5].text@127:ministry-portfolio",
+      "path": "body[2].children[5].text",
+      "start": 127,
+      "end": 156,
+      "term": "Ministerium der Finanzen kann",
+      "context": "…z im Ausland haben oder in das Ausland abgeordnet sind. Das Ministerium der Finanzen kann im Rahmen der Verwaltungsvorschriften zu dieser Verordnung …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[4].children[4].text@392:protected:gazette-nrw",
+      "path": "body[4].children[4].text",
+      "start": 392,
+      "end": 407,
+      "term": "GV. NRW. S. 310",
+      "context": "… die nach § 81 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) auf den Dienstherrn oder eine Versorgungskass…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@1109:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[1].text",
+      "start": 1109,
+      "end": 1128,
+      "term": "Nordrhein-Westfalen",
+      "context": "…leger erbrachte Leistungen nach der Hebammengebührenordnung Nordrhein-Westfalen vom 30. Juni 2015 (GV. NRW. S. 541), in der jeweils geltend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[1].text@1148:protected:gazette-nrw",
+      "path": "body[5].children[1].children[1].text",
+      "start": 1148,
+      "end": 1163,
+      "term": "GV. NRW. S. 541",
+      "context": "…ammengebührenordnung Nordrhein-Westfalen vom 30. Juni 2015 (GV. NRW. S. 541), in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[1].children[18].text@4:ministry-portfolio",
+      "path": "body[5].children[1].children[18].text",
+      "start": 4,
+      "end": 33,
+      "term": "Ministerium der Finanzen kann",
+      "context": "Das Ministerium der Finanzen kann in Anlage 2 Arzneimittel von der Beihilfefähigkeit ausschli…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[22].text@549:protected:gazette-nrw",
+      "path": "body[5].children[1].children[22].text",
+      "start": 549,
+      "end": 565,
+      "term": "GV. NRW. S. 1367",
+      "context": "…1 und 2 des Landesreisekostengesetzes vom 1. Dezember 2021 (GV. NRW. S. 1367) in der jeweils geltenden Fassung genannte Betrag beihilfef…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[5].text@4:ministry-portfolio",
+      "path": "body[13].children[5].text",
+      "start": 4,
+      "end": 48,
+      "term": "Ministerium der Finanzen kann Vereinbarungen",
+      "context": "Das Ministerium der Finanzen kann Vereinbarungen über Pauschalabrechnungen im Rahmen der integrierten Versor…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[15].children[2].text@861:ministry-portfolio",
+      "path": "body[15].children[2].text",
+      "start": 861,
+      "end": 917,
+      "term": "Ministerium der Finanzen kann weitere Ausnahmen zulassen",
+      "context": "…ssen oder Rentenversicherungsträgern vereinbart wurden. Das Ministerium der Finanzen kann weitere Ausnahmen zulassen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[16].children[5].text@129:rule:jurisdiction-name",
+      "path": "body[16].children[5].text",
+      "start": 129,
+      "end": 153,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ng nach § 7a des Elften Buches Sozialgesetzbuch, soweit das Land Nordrhein-Westfalen, vertreten durch das Ministerium der Finanzen, entsprechend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[5].text@175:ministry-portfolio",
+      "path": "body[16].children[5].text",
+      "start": 175,
+      "end": 199,
+      "term": "Ministerium der Finanzen",
+      "context": "…h, soweit das Land Nordrhein-Westfalen, vertreten durch das Ministerium der Finanzen, entsprechenden Rahmenvereinbarungen des Bundesministeriums…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[24].children[1].text@1682:rule:jurisdiction-name-bare",
+      "path": "body[24].children[1].text",
+      "start": 1682,
+      "end": 1701,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ird bei notwendigen Behandlungen in einem Ort außerhalb von Nordrhein-Westfalen insgesamt ein Zuschuss von 100 Euro, innerhalb von Nordrhei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].children[1].text@1753:rule:jurisdiction-name-bare",
+      "path": "body[24].children[1].text",
+      "start": 1753,
+      "end": 1772,
+      "term": "Nordrhein-Westfalen",
+      "context": "…estfalen insgesamt ein Zuschuss von 100 Euro, innerhalb von Nordrhein-Westfalen von 50 Euro gezahlt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[32].children[3].text@990:ministry-portfolio",
+      "path": "body[32].children[3].text",
+      "start": 990,
+      "end": 1077,
+      "term": "Ministerium der Finanzen auf Grund eines amtsärztlichen Gutachtens anerkannt worden ist",
+      "context": "…eilerfolg zu erwarten ist und die Behandlung vor Beginn vom Ministerium der Finanzen auf Grund eines amtsärztlichen Gutachtens anerkannt worden ist.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[32].children[4].children[1].text@325:ministry-portfolio",
+      "path": "body[32].children[4].children[1].text",
+      "start": 325,
+      "end": 372,
+      "term": "Ministerium der Finanzen anerkannt worden sein,",
+      "context": "… Beihilfestelle und bei Beihilfeberechtigten des Landes vom Ministerium der Finanzen anerkannt worden sein,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[36].children[1].children[0].text@4:authority-state-office",
+      "path": "body[36].children[1].children[0].text",
+      "start": 4,
+      "end": 27,
+      "term": "Landesamt für Besoldung",
+      "context": "das Landesamt für Besoldung und Versorgung über Anträge der Beihilfeberechtigten der Ob…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[36].children[1].children[0].text@121:ministry-portfolio",
+      "path": "body[36].children[1].children[0].text",
+      "start": 121,
+      "end": 188,
+      "term": "Ministerium der Finanzen nachgeordneten Behörden und Einrichtungen,",
+      "context": "…eihilfeberechtigten der Obersten Landesbehörden und der dem Ministerium der Finanzen nachgeordneten Behörden und Einrichtungen,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[36].children[1].children[1].text@4:authority-district-government",
+      "path": "body[36].children[1].children[1].text",
+      "start": 4,
+      "end": 22,
+      "term": "Bezirksregierungen",
+      "context": "die Bezirksregierungen über die Anträge der Beihilfeberechtigten ihres Geschäftsbe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[36].children[1].children[2].text@121:ministry-compound",
+      "path": "body[36].children[1].children[2].text",
+      "start": 121,
+      "end": 139,
+      "term": "Justizministeriums",
+      "context": "…ten ihres Geschäftsbereichs und nach näherer Bestimmung des Justizministeriums über die Anträge der Beihilfeberechtigten der anderen Geric…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[36].children[1].children[2].text@217:ministry-portfolio",
+      "path": "body[36].children[1].children[2].text",
+      "start": 217,
+      "end": 282,
+      "term": "Ministerium der Justiz nachgeordneten Behörden und Einrichtungen,",
+      "context": "…der Beihilfeberechtigten der anderen Gerichte sowie der dem Ministerium der Justiz nachgeordneten Behörden und Einrichtungen,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    },
+    {
+      "id": "body[36].children[1].children[5].text@198:protected:gazette-nrw",
+      "path": "body[36].children[1].children[5].text",
+      "start": 198,
+      "end": 213,
+      "term": "GV. NRW. S. 195",
+      "context": "…§ 74 Absatz 3 des Kunsthochschulgesetzes vom 13. März 2008 (GV. NRW. S. 195), das zuletzt durch Artikel 10 des Gesetzes vom 14. Juni 20…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[1].children[5].text@277:protected:gazette-nrw",
+      "path": "body[36].children[1].children[5].text",
+      "start": 277,
+      "end": 292,
+      "term": "GV. NRW. S. 310",
+      "context": "…as zuletzt durch Artikel 10 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist, oder § 77 Absatz 5 in Verbindung mit …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[1].children[5].text@407:protected:gazette-nrw",
+      "path": "body[36].children[1].children[5].text",
+      "start": 407,
+      "end": 422,
+      "term": "GV. NRW. S. 547",
+      "context": "… mit Absatz 3 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547), das zuletzt durch Artikel 1 des Gesetzes vom 12. Juli 201…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[1].children[5].text@485:protected:gazette-nrw",
+      "path": "body[36].children[1].children[5].text",
+      "start": 485,
+      "end": 500,
+      "term": "GV. NRW. S. 425",
+      "context": "…das zuletzt durch Artikel 1 des Gesetzes vom 12. Juli 2019 (GV. NRW. S. 425, ber. S. 593) geändert worden ist, nicht etwas anderes gere…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[1].children[7].text@182:ministry-portfolio",
+      "path": "body[36].children[1].children[7].text",
+      "start": 182,
+      "end": 211,
+      "term": "Ministerium der Finanzen kann",
+      "context": "…bt die Zuständigkeit bei der bisherigen Beihilfestelle. Das Ministerium der Finanzen kann im Einvernehmen mit der jeweiligen obersten Dienstbehörde i…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[36].children[2].text@72:ministry-portfolio",
+      "path": "body[36].children[2].text",
+      "start": 72,
+      "end": 96,
+      "term": "Ministerium der Finanzen",
+      "context": "…Fachaufsicht über die Festsetzung der Beihilfen obliegt dem Ministerium der Finanzen. Über Widersprüche gegen Beihilfefestsetzungen entscheiden …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[36].children[2].text@367:authority-district-government",
+      "path": "body[36].children[2].text",
+      "start": 367,
+      "end": 383,
+      "term": "Bezirksregierung",
+      "context": "…nd 5 zuständigen Stellen entscheidet die jeweils zuständige Bezirksregierung. Satz 2 gilt entsprechend für die Vertretung des Landes vor…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[36].children[3].text@300:ministry-portfolio",
+      "path": "body[36].children[3].text",
+      "start": 300,
+      "end": 365,
+      "term": "Ministerium der Finanzen herausgegebenen Formblätter zu verwenden",
+      "context": "…ngen einzeln nachzuweisen sind. Für den Antrag sind die vom Ministerium der Finanzen herausgegebenen Formblätter zu verwenden. Die in den Anträgen enthaltenen Beihilfedaten unterliegen …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[36].children[15].text@347:authority-state-office",
+      "path": "body[36].children[15].text",
+      "start": 347,
+      "end": 370,
+      "term": "Landesamt für Besoldung",
+      "context": "…telle zur Abrechnung von Arzneimittelrabatten GmbH, ist das Landesamt für Besoldung und Versorgung in den Fällen zuständig, in denen Ansprüche …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[36].children[15].text@604:authority-state-office",
+      "path": "body[36].children[15].text",
+      "start": 604,
+      "end": 627,
+      "term": "Landesamt für Besoldung",
+      "context": "…nstitutskennzeichen des Landes festgesetzt worden sind. Das Landesamt für Besoldung und Versorgung ist zuständig für die Annahme der Arzneimitt…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[36].children[15].text@777:protected:gazette-nrw",
+      "path": "body[36].children[15].text",
+      "start": 777,
+      "end": 791,
+      "term": "GV. NRW S. 246",
+      "context": "…r Hochschulwirtschaftsführungsverordnung vom 11. Juni 2007 (GV. NRW S. 246), die zuletzt durch Verordnung vom 30. Juni 2018 (GV. NRW S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[36].children[15].text@842:protected:gazette-nrw",
+      "path": "body[36].children[15].text",
+      "start": 842,
+      "end": 856,
+      "term": "GV. NRW S. 392",
+      "context": "…RW S. 246), die zuletzt durch Verordnung vom 30. Juni 2018 (GV. NRW S. 392) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[1].text@43:protected:gazette-nrw",
+      "path": "body[41].children[1].text",
+      "start": 43,
+      "end": 58,
+      "term": "GV. NRW. S. 332",
+      "context": "Die Beihilfenverordnung vom 27. März 1975 (GV. NRW. S. 332), zuletzt geändert durch Verordnung vom 27. Juni 2008 (GV. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[1].text@114:protected:gazette-nrw",
+      "path": "body[41].children[1].text",
+      "start": 114,
+      "end": 129,
+      "term": "GV. NRW. S. 530",
+      "context": "… 332), zuletzt geändert durch Verordnung vom 27. Juni 2008 (GV. NRW. S. 530), gilt für Aufwendungen, die bis zum 31. März 2009 entstand…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[3].text@75:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[3].text",
+      "start": 75,
+      "end": 78,
+      "term": "NRW",
+      "context": "…der Zweiten Verordnung zur Änderung der Beihilfenverordnung NRW vom 9. Dezember 2012 (GV. NRW. S. 642) gelten vorbehaltlich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[3].text@101:protected:gazette-nrw",
+      "path": "body[41].children[3].text",
+      "start": 101,
+      "end": 116,
+      "term": "GV. NRW. S. 642",
+      "context": "… Änderung der Beihilfenverordnung NRW vom 9. Dezember 2012 (GV. NRW. S. 642) gelten vorbehaltlich des Absatzes 4 für Aufwendungen, die …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[4].text@202:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[4].text",
+      "start": 202,
+      "end": 205,
+      "term": "NRW",
+      "context": "…der Zweiten Verordnung zur Änderung der Beihilfenverordnung NRW (GV. NRW. S. 642) zu § 5 b Absatz 8 und § 5 c Absatz 6 Satz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[4].text@207:protected:gazette-nrw",
+      "path": "body[41].children[4].text",
+      "start": 207,
+      "end": 222,
+      "term": "GV. NRW. S. 642",
+      "context": "…weiten Verordnung zur Änderung der Beihilfenverordnung NRW (GV. NRW. S. 642) zu § 5 b Absatz 8 und § 5 c Absatz 6 Satz 2 gelten für Auf…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[5].text@98:protected:gazette-nrw",
+      "path": "body[41].children[5].text",
+      "start": 98,
+      "end": 113,
+      "term": "GV. NRW. S. 644",
+      "context": "…zur Änderung der Beihilfenverordnung vom 15. November 2013 (GV. NRW. S. 644) gelten für Aufwendungen, die nach dem 31. Dezember 2013 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[6].text@75:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[6].text",
+      "start": 75,
+      "end": 78,
+      "term": "NRW",
+      "context": "…der Fünften Verordnung zur Änderung der Beihilfenverordnung NRW vom 10. Dezember 2014 (GV. NRW. S. 890) gelten mit Ausnahme…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[6].text@102:protected:gazette-nrw",
+      "path": "body[41].children[6].text",
+      "start": 102,
+      "end": 117,
+      "term": "GV. NRW. S. 890",
+      "context": "…Änderung der Beihilfenverordnung NRW vom 10. Dezember 2014 (GV. NRW. S. 890) gelten mit Ausnahme des Artikels 1 Nummer 14 Buchstabe b f…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[7].text@76:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[7].text",
+      "start": 76,
+      "end": 79,
+      "term": "NRW",
+      "context": "…er Sechsten Verordnung zur Änderung der Beihilfenverordnung NRW vom 1. Dezember 2015 (GV. NRW. S. 844) gelten für Aufwendun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[7].text@102:protected:gazette-nrw",
+      "path": "body[41].children[7].text",
+      "start": 102,
+      "end": 117,
+      "term": "GV. NRW. S. 844",
+      "context": "… Änderung der Beihilfenverordnung NRW vom 1. Dezember 2015 (GV. NRW. S. 844) gelten für Aufwendungen, die nach dem 31. Dezember 2015 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[8].text@98:protected:gazette-nrw",
+      "path": "body[41].children[8].text",
+      "start": 98,
+      "end": 114,
+      "term": "GV. NRW. S. 1196",
+      "context": "…zur Änderung der Beihilfenverordnung vom 16. Dezember 2016 (GV. NRW. S. 1196) gelten für Aufwendungen, die nach dem 31. Dezember 2016 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[10].text@74:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[10].text",
+      "start": 74,
+      "end": 77,
+      "term": "NRW",
+      "context": "… der Achten Verordnung zur Änderung der Beihilfenverordnung NRW vom 15. Dezember 2017 (GV. NRW. S. 967) gelten für Aufwendu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[10].text@101:protected:gazette-nrw",
+      "path": "body[41].children[10].text",
+      "start": 101,
+      "end": 116,
+      "term": "GV. NRW. S. 967",
+      "context": "…Änderung der Beihilfenverordnung NRW vom 15. Dezember 2017 (GV. NRW. S. 967) gelten für Aufwendungen, die nach dem 31. Dezember 2017 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[11].text@75:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[11].text",
+      "start": 75,
+      "end": 78,
+      "term": "NRW",
+      "context": "…der Neunten Verordnung zur Änderung der Beihilfenverordnung NRW vom 6. Dezember 2018 (GV. NRW S. 644) gelten für Aufwendung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[11].text@101:protected:gazette-nrw",
+      "path": "body[41].children[11].text",
+      "start": 101,
+      "end": 115,
+      "term": "GV. NRW S. 644",
+      "context": "… Änderung der Beihilfenverordnung NRW vom 6. Dezember 2018 (GV. NRW S. 644) gelten für Aufwendungen, die nach dem 31. Dezember 2018 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[12].text@75:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[12].text",
+      "start": 75,
+      "end": 78,
+      "term": "NRW",
+      "context": "…der Zehnten Verordnung zur Änderung der Beihilfenverordnung NRW vom 12 Dezember 2019 (GV. NRW. S. 944) gelten für Aufwendun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[12].text@101:protected:gazette-nrw",
+      "path": "body[41].children[12].text",
+      "start": 101,
+      "end": 116,
+      "term": "GV. NRW. S. 944",
+      "context": "… Änderung der Beihilfenverordnung NRW vom 12 Dezember 2019 (GV. NRW. S. 944) gelten für Aufwendungen, die nach dem 31. Dezember 2019 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[13].text@74:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[13].text",
+      "start": 74,
+      "end": 77,
+      "term": "NRW",
+      "context": "… der Elften Verordnung zur Änderung der Beihilfenverordnung NRW vom 1. Dezember 2021 (GV. NRW. S. 1446) gelten für Aufwendu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[13].text@100:protected:gazette-nrw",
+      "path": "body[41].children[13].text",
+      "start": 100,
+      "end": 116,
+      "term": "GV. NRW. S. 1446",
+      "context": "… Änderung der Beihilfenverordnung NRW vom 1. Dezember 2021 (GV. NRW. S. 1446) gelten für Aufwendungen, die nach dem 23. Dezember 2021 en…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[14].text@179:protected:gazette-nrw",
+      "path": "body[41].children[14].text",
+      "start": 179,
+      "end": 194,
+      "term": "GV. NRW. S. 389",
+      "context": "… weiterer dienstrechtlicher Vorschriften vom 25. März 2022 (GV. NRW. S. 389) gilt für Aufwendungen, die nach dem 31. Dezember 2021 in R…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[15].text@76:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[15].text",
+      "start": 76,
+      "end": 79,
+      "term": "NRW",
+      "context": "…er Zwölften Verordnung zur Änderung der Beihilfenverordnung NRW vom 17. März 2023 (GV. NRW. S. 180) gelten für Aufwendungen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[15].text@99:protected:gazette-nrw",
+      "path": "body[41].children[15].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 180",
+      "context": "…zur Änderung der Beihilfenverordnung NRW vom 17. März 2023 (GV. NRW. S. 180) gelten für Aufwendungen, die nach dem 31. März 2023 entste…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[41].children[16].text@79:rule:jurisdiction-abbreviation",
+      "path": "body[41].children[16].text",
+      "start": 79,
+      "end": 82,
+      "term": "NRW",
+      "context": "…Dreizehnten Verordnung zur Änderung der Beihilfenverordnung NRW vom 10. Juli 2023 (GV. NRW. S. 1016) gelten für Aufwendunge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[41].children[16].text@102:protected:gazette-nrw",
+      "path": "body[41].children[16].text",
+      "start": 102,
+      "end": 118,
+      "term": "GV. NRW. S. 1016",
+      "context": "…zur Änderung der Beihilfenverordnung NRW vom 10. Juli 2023 (GV. NRW. S. 1016) gelten für Aufwendungen, die nach dem 31. Mai 2023 entsteh…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[42].children[2].text@4:ministry-compound",
+      "path": "body[42].children[2].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[42].children[2].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[42].children[2].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Finanzminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[42].children[3].text@79:rule:jurisdiction-abbreviation",
+      "path": "body[42].children[3].text",
+      "start": 79,
+      "end": 82,
+      "term": "NRW",
+      "context": "… der Elften Verordnung zur Änderung der Beihilfenverordnung NRW vom 1. Dezember 2021 (GV. NRW. S. 1446))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[42].children[3].text@105:protected:gazette-nrw",
+      "path": "body[42].children[3].text",
+      "start": 105,
+      "end": 121,
+      "term": "GV. NRW. S. 1446",
+      "context": "… Änderung der Beihilfenverordnung NRW vom 1. Dezember 2021 (GV. NRW. S. 1446))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 18
+    },
+    "source-citation": {
+      "protected": 29
+    },
+    "ministry": {
+      "manual-review": 14
+    },
+    "authority": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[16].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[24].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[24].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[41].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[10].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[11].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[12].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[13].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[15].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[41].children[16].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[42].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[42].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[5].text",
+      "term": "Ministerium der Finanzen kann",
+      "context": "…z im Ausland haben oder in das Ausland abgeordnet sind. Das Ministerium der Finanzen kann im Rahmen der Verwaltungsvorschriften zu dieser Verordnung …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[18].text",
+      "term": "Ministerium der Finanzen kann",
+      "context": "Das Ministerium der Finanzen kann in Anlage 2 Arzneimittel von der Beihilfefähigkeit ausschli…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[5].text",
+      "term": "Ministerium der Finanzen kann Vereinbarungen",
+      "context": "Das Ministerium der Finanzen kann Vereinbarungen über Pauschalabrechnungen im Rahmen der integrierten Versor…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[2].text",
+      "term": "Ministerium der Finanzen kann weitere Ausnahmen zulassen",
+      "context": "…ssen oder Rentenversicherungsträgern vereinbart wurden. Das Ministerium der Finanzen kann weitere Ausnahmen zulassen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[5].text",
+      "term": "Ministerium der Finanzen",
+      "context": "…h, soweit das Land Nordrhein-Westfalen, vertreten durch das Ministerium der Finanzen, entsprechenden Rahmenvereinbarungen des Bundesministeriums…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[32].children[3].text",
+      "term": "Ministerium der Finanzen auf Grund eines amtsärztlichen Gutachtens anerkannt worden ist",
+      "context": "…eilerfolg zu erwarten ist und die Behandlung vor Beginn vom Ministerium der Finanzen auf Grund eines amtsärztlichen Gutachtens anerkannt worden ist.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[32].children[4].children[1].text",
+      "term": "Ministerium der Finanzen anerkannt worden sein,",
+      "context": "… Beihilfestelle und bei Beihilfeberechtigten des Landes vom Ministerium der Finanzen anerkannt worden sein,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[1].children[0].text",
+      "term": "Landesamt für Besoldung",
+      "context": "das Landesamt für Besoldung und Versorgung über Anträge der Beihilfeberechtigten der Ob…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[1].children[0].text",
+      "term": "Ministerium der Finanzen nachgeordneten Behörden und Einrichtungen,",
+      "context": "…eihilfeberechtigten der Obersten Landesbehörden und der dem Ministerium der Finanzen nachgeordneten Behörden und Einrichtungen,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[1].children[1].text",
+      "term": "Bezirksregierungen",
+      "context": "die Bezirksregierungen über die Anträge der Beihilfeberechtigten ihres Geschäftsbe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[1].children[2].text",
+      "term": "Justizministeriums",
+      "context": "…ten ihres Geschäftsbereichs und nach näherer Bestimmung des Justizministeriums über die Anträge der Beihilfeberechtigten der anderen Geric…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[1].children[2].text",
+      "term": "Ministerium der Justiz nachgeordneten Behörden und Einrichtungen,",
+      "context": "…der Beihilfeberechtigten der anderen Gerichte sowie der dem Ministerium der Justiz nachgeordneten Behörden und Einrichtungen,",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[1].children[7].text",
+      "term": "Ministerium der Finanzen kann",
+      "context": "…bt die Zuständigkeit bei der bisherigen Beihilfestelle. Das Ministerium der Finanzen kann im Einvernehmen mit der jeweiligen obersten Dienstbehörde i…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[2].text",
+      "term": "Ministerium der Finanzen",
+      "context": "…Fachaufsicht über die Festsetzung der Beihilfen obliegt dem Ministerium der Finanzen. Über Widersprüche gegen Beihilfefestsetzungen entscheiden …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…nd 5 zuständigen Stellen entscheidet die jeweils zuständige Bezirksregierung. Satz 2 gilt entsprechend für die Vertretung des Landes vor…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[3].text",
+      "term": "Ministerium der Finanzen herausgegebenen Formblätter zu verwenden",
+      "context": "…ngen einzeln nachzuweisen sind. Für den Antrag sind die vom Ministerium der Finanzen herausgegebenen Formblätter zu verwenden. Die in den Anträgen enthaltenen Beihilfedaten unterliegen …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[15].text",
+      "term": "Landesamt für Besoldung",
+      "context": "…telle zur Abrechnung von Arzneimittelrabatten GmbH, ist das Landesamt für Besoldung und Versorgung in den Fällen zuständig, in denen Ansprüche …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[36].children[15].text",
+      "term": "Landesamt für Besoldung",
+      "context": "…nstitutskennzeichen des Landes festgesetzt worden sind. Das Landesamt für Besoldung und Versorgung ist zuständig für die Annahme der Arzneimitt…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[42].children[2].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 952,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… Absatz 8 des Landesbeamtengesetzes vom 21. April 2009 (GV. NRW. S. 224) wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…des Landesbeamtenversorgungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642)) der unter Nummer 1 und 2 bezeichnete…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[3].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…bsatz 6 des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642), das durch Artikel 29 des Gesetzes vo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[3].children[0].children[0].text",
+        "term": "NRW",
+        "context": "…), das durch Artikel 29 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist,) tätig sind, oder",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[4].text",
+        "term": "NRW",
+        "context": "… nach § 81 des Landesbeamtengesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) auf den Dienstherrn oder eine Versorg…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ammengebührenordnung Westdeutschland vom 30. Juni 2015 (GV. NRW. S. 541), in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[1].children[22].text",
+        "term": "NRW",
+        "context": "…d 2 des Landesreisekostengesetzes vom 1. Dezember 2021 (GV. NRW. S. 1367) in der jeweils geltenden Fassung genannte Betrag …",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[1].children[5].text",
+        "term": "NRW",
+        "context": "… Absatz 3 des Kunsthochschulgesetzes vom 13. März 2008 (GV. NRW. S. 195), das zuletzt durch Artikel 10 des Gesetzes vom 14.…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[1].children[5].text",
+        "term": "NRW",
+        "context": "…uletzt durch Artikel 10 des Gesetzes vom 14. Juni 2016 (GV. NRW. S. 310) geändert worden ist, oder § 77 Absatz 5 in Verbind…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[1].children[5].text",
+        "term": "NRW",
+        "context": "… Absatz 3 des Hochschulgesetzes vom 16. September 2014 (GV. NRW. S. 547), das zuletzt durch Artikel 1 des Gesetzes vom 12. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[1].children[5].text",
+        "term": "NRW",
+        "context": "…zuletzt durch Artikel 1 des Gesetzes vom 12. Juli 2019 (GV. NRW. S. 425, ber. S. 593) geändert worden ist, nicht etwas ande…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[15].text",
+        "term": "NRW",
+        "context": "…chschulwirtschaftsführungsverordnung vom 11. Juni 2007 (GV. NRW S. 246), die zuletzt durch Verordnung vom 30. Juni 2018 (GV…",
+        "status": "protected"
+      },
+      {
+        "path": "body[36].children[15].text",
+        "term": "NRW",
+        "context": "…. 246), die zuletzt durch Verordnung vom 30. Juni 2018 (GV. NRW S. 392) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[1].text",
+        "term": "NRW",
+        "context": "Die Beihilfenverordnung vom 27. März 1975 (GV. NRW. S. 332), zuletzt geändert durch Verordnung vom 27. Juni 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[1].text",
+        "term": "NRW",
+        "context": "…), zuletzt geändert durch Verordnung vom 27. Juni 2008 (GV. NRW. S. 530), gilt für Aufwendungen, die bis zum 31. März 2009 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[3].text",
+        "term": "NRW",
+        "context": "…rung der Beihilfenverordnung West vom 9. Dezember 2012 (GV. NRW. S. 642) gelten vorbehaltlich des Absatzes 4 für Aufwendung…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[4].text",
+        "term": "NRW",
+        "context": "…n Verordnung zur Änderung der Beihilfenverordnung West (GV. NRW. S. 642) zu § 5 b Absatz 8 und § 5 c Absatz 6 Satz 2 gelten…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[5].text",
+        "term": "NRW",
+        "context": "…Änderung der Beihilfenverordnung vom 15. November 2013 (GV. NRW. S. 644) gelten für Aufwendungen, die nach dem 31. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[6].text",
+        "term": "NRW",
+        "context": "…ung der Beihilfenverordnung West vom 10. Dezember 2014 (GV. NRW. S. 890) gelten mit Ausnahme des Artikels 1 Nummer 14 Buchs…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[7].text",
+        "term": "NRW",
+        "context": "…rung der Beihilfenverordnung West vom 1. Dezember 2015 (GV. NRW. S. 844) gelten für Aufwendungen, die nach dem 31. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[8].text",
+        "term": "NRW",
+        "context": "…Änderung der Beihilfenverordnung vom 16. Dezember 2016 (GV. NRW. S. 1196) gelten für Aufwendungen, die nach dem 31. Dezembe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[10].text",
+        "term": "NRW",
+        "context": "…ung der Beihilfenverordnung West vom 15. Dezember 2017 (GV. NRW. S. 967) gelten für Aufwendungen, die nach dem 31. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[11].text",
+        "term": "NRW",
+        "context": "…rung der Beihilfenverordnung West vom 6. Dezember 2018 (GV. NRW S. 644) gelten für Aufwendungen, die nach dem 31. Dezember …",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[12].text",
+        "term": "NRW",
+        "context": "…rung der Beihilfenverordnung West vom 12 Dezember 2019 (GV. NRW. S. 944) gelten für Aufwendungen, die nach dem 31. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[13].text",
+        "term": "NRW",
+        "context": "…rung der Beihilfenverordnung West vom 1. Dezember 2021 (GV. NRW. S. 1446) gelten für Aufwendungen, die nach dem 23. Dezembe…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[14].text",
+        "term": "NRW",
+        "context": "…terer dienstrechtlicher Vorschriften vom 25. März 2022 (GV. NRW. S. 389) gilt für Aufwendungen, die nach dem 31. Dezember 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[15].text",
+        "term": "NRW",
+        "context": "…nderung der Beihilfenverordnung West vom 17. März 2023 (GV. NRW. S. 180) gelten für Aufwendungen, die nach dem 31. März 202…",
+        "status": "protected"
+      },
+      {
+        "path": "body[41].children[16].text",
+        "term": "NRW",
+        "context": "…nderung der Beihilfenverordnung West vom 10. Juli 2023 (GV. NRW. S. 1016) gelten für Aufwendungen, die nach dem 31. Mai 202…",
+        "status": "protected"
+      },
+      {
+        "path": "body[42].children[3].text",
+        "term": "NRW",
+        "context": "…rung der Beihilfenverordnung West vom 1. Dezember 2021 (GV. NRW. S. 1446))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über Beihilfen in Geburts-, Krankheits-, Pflege- und Todesfällen vom 5. November 2009 (GV. NRW. S. 602)",
+    "sourceVersion": "Verordnung über Beihilfen in Geburts-, Krankheits-, Pflege- und Todesfällen vom 5. November 2009 (GV. NRW. S. 602)",
+    "simulation": "Verordnung über Beihilfen in Geburts-, Krankheits-, Pflege- und Todesfällen in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 126036,
+          "actual": 125600,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 631,
+          "actual": 631,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 41,
+          "actual": 41,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 125600,
+          "actual": 125591,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "41 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "41 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40502-sgv_20320_20091105_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 6,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40503-sgv_20320_20091105_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 6,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40504-sgv_20320_20091105_1_anlage3.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 10,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40505-sgv_20320_20091105_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 8,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40506-sgv_20320_20091105_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 13,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 6 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40507-sgv_20320_20091105_1_anlage6.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 8,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 7 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40508-sgv_20320_20091105_1_anlage7.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 15,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 8 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/26230-40509-sgv_20320_20091105_1_anlage8.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 6 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 7 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 8 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:42:26.057Z"
+}

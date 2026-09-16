@@ -1,0 +1,809 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33487",
+  "slug": "rechtsverordnung-zur-aufgabenuebertragung-auf-die-d-west-aoer-d-west-vo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@51:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 51,
+      "end": 54,
+      "term": "NRW",
+      "context": "Rechtsverordnung zur Aufgabenübertragung auf die d-NRW AöR (d-NRW VO)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.title@62:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 62,
+      "end": 65,
+      "term": "NRW",
+      "context": "…chtsverordnung zur Aufgabenübertragung auf die d-NRW AöR (d-NRW VO)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@53:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 53,
+      "end": 56,
+      "term": "NRW",
+      "context": "Auf Grund des § 6 Absatz 2 des Errichtungsgesetzes d-NRW AöR vom 25. Oktober 2016 (GV. NRW. S. 862), der durch Artik…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@83:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 83,
+      "end": 98,
+      "term": "GV. NRW. S. 862",
+      "context": "…z 2 des Errichtungsgesetzes d-NRW AöR vom 25. Oktober 2016 (GV. NRW. S. 862), der durch Artikel 5 des Gesetzes vom 1. Februar 2022 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@155:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 155,
+      "end": 170,
+      "term": "GV. NRW. S. 122",
+      "context": "…862), der durch Artikel 5 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium für Wirt…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@210:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 210,
+      "end": 277,
+      "term": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "…022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie im Einvernehmen mit dem Ministerium der Finanzen, dem Minis…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@302:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 302,
+      "end": 326,
+      "term": "Ministerium der Finanzen",
+      "context": "…vation, Digitalisierung und Energie im Einvernehmen mit dem Ministerium der Finanzen, dem Ministerium des Inneren, dem Ministerium für Arbeit, G…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[1].text@332:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 332,
+      "end": 355,
+      "term": "Ministerium des Inneren",
+      "context": "…ergie im Einvernehmen mit dem Ministerium der Finanzen, dem Ministerium des Inneren, dem Ministerium für Arbeit, Gesundheit und Soziales, dem M…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@361:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 361,
+      "end": 408,
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "… Ministerium der Finanzen, dem Ministerium des Inneren, dem Ministerium für Arbeit, Gesundheit und Soziales, dem Ministerium für Kinder, Familie, Flüchtlinge und Integ…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@414:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 414,
+      "end": 474,
+      "term": "Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+      "context": "…n, dem Ministerium für Arbeit, Gesundheit und Soziales, dem Ministerium für Kinder, Familie, Flüchtlinge und Integration, dem Ministerium für Kultur und Wissenschaft und dem Minist…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[1].text@480:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 480,
+      "end": 586,
+      "term": "Ministerium für Kultur und Wissenschaft und dem Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "…erium für Kinder, Familie, Flüchtlinge und Integration, dem Ministerium für Kultur und Wissenschaft und dem Ministerium für Heimat, Kommunales, Bau und Gleichstellung:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@6:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].text",
+      "start": 6,
+      "end": 9,
+      "term": "NRW",
+      "context": "Der d-NRW AöR werden folgende Aufgaben zur ausschließlichen Wahrnehmu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[0].text@124:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].text",
+      "start": 124,
+      "end": 127,
+      "term": "NRW",
+      "context": "…nehmung im Sinne des § 6 Absatz 2 des Errichtungsgesetzes d-NRW AöR zugewiesen:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[2].text@175:rule:jurisdiction-name-bare",
+      "path": "body[2].children[2].text",
+      "start": 175,
+      "end": 194,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nsten aus den Bundesländern für die Mit- und Nachnutzung in Nordrhein-Westfalen, einschließlich des kommunalen Bereichs, sowie die Koordini…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[2].text@341:rule:jurisdiction-name-bare",
+      "path": "body[2].children[2].text",
+      "start": 341,
+      "end": 360,
+      "term": "Nordrhein-Westfalen",
+      "context": "…reitstellung von EfA-Diensten und weiteren OZG-Diensten aus Nordrhein-Westfalen für die Mit- und Nachnutzung in den Bundesländern, mit Ausn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[3].text@181:rule:jurisdiction-name-bare",
+      "path": "body[2].children[3].text",
+      "start": 181,
+      "end": 200,
+      "term": "Nordrhein-Westfalen",
+      "context": "…en, Sollprozessen und Datenfeldern über die Landesredaktion Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[4].text@60:jurisdiction-name-residual",
+      "path": "body[2].children[4].text",
+      "start": 60,
+      "end": 63,
+      "term": "NRW",
+      "context": "die Weiterentwicklung, Pflege und Wartung von Serviceportal.NRW,",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[2].children[5].text@103:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[5].text",
+      "start": 103,
+      "end": 106,
+      "term": "NRW",
+      "context": "…euerung, Pflege und Wartung des Wirtschafts-Service-Portal. NRW (WSP. NRW), einschließlich einer Plattform für den Betrieb …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[5].text@113:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[5].text",
+      "start": 113,
+      "end": 116,
+      "term": "NRW",
+      "context": "…flege und Wartung des Wirtschafts-Service-Portal. NRW (WSP. NRW), einschließlich einer Plattform für den Betrieb von wirtsc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[6].text@61:rule:jurisdiction-name-bare",
+      "path": "body[2].children[6].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ie Weiterentwicklung, Pflege und Wartung des Vergabeportals Nordrhein-Westfalen einschließlich seiner bestehenden Module wie Vergabemarktpl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[7].text@72:jurisdiction-name-residual",
+      "path": "body[2].children[7].text",
+      "start": 72,
+      "end": 92,
+      "term": "Nordrhein-Westfalens",
+      "context": "…twicklung, Pflege und Wartung des Meldeportals für Behörden Nordrhein-Westfalens einschließlich des Lichtbildportals,",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[2].children[9].text@51:rule:jurisdiction-name-bare",
+      "path": "body[2].children[9].text",
+      "start": 51,
+      "end": 70,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Geschäftsstellenleitung des Digitalen Archives Nordrhein-Westfalen (DA NRW) und gemeinsam mit der Koordinierungsstelle für IT-…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].children[9].text@75:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[9].text",
+      "start": 75,
+      "end": 78,
+      "term": "NRW",
+      "context": "…ellenleitung des Digitalen Archives Nordrhein-Westfalen (DA NRW) und gemeinsam mit der Koordinierungsstelle für IT-Standard…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[14].text@57:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[14].text",
+      "start": 57,
+      "end": 60,
+      "term": "NRW",
+      "context": "die Weiterentwicklung, Pflege und Wartung von Bauportal. NRW,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[15].text@122:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[15].text",
+      "start": 122,
+      "end": 125,
+      "term": "NRW",
+      "context": "…D.web, PfAD.uia, PfAD.invest, PfAD.wtg sowie der Heimfinder NRW und der Angebotsfinder sowie",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].text@129:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 129,
+      "end": 132,
+      "term": "NRW",
+      "context": "…darf die Landesverwaltung Dritte nicht mehr betrauen. Die d-NRW AöR darf sich bei der Erfüllung der Aufgaben nach § 1 jedoc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[1].text@4:ministry-portfolio",
+      "path": "body[4].children[1].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 16,
+      "manual-review": 2
+    },
+    "source-citation": {
+      "protected": 2
+    },
+    "ministry": {
+      "manual-review": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[9].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[9].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[14].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[15].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "…022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie im Einvernehmen mit dem Ministerium der Finanzen, dem Minis…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium der Finanzen",
+      "context": "…vation, Digitalisierung und Energie im Einvernehmen mit dem Ministerium der Finanzen, dem Ministerium des Inneren, dem Ministerium für Arbeit, G…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium des Inneren",
+      "context": "…ergie im Einvernehmen mit dem Ministerium der Finanzen, dem Ministerium des Inneren, dem Ministerium für Arbeit, Gesundheit und Soziales, dem M…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Arbeit, Gesundheit und Soziales",
+      "context": "… Ministerium der Finanzen, dem Ministerium des Inneren, dem Ministerium für Arbeit, Gesundheit und Soziales, dem Ministerium für Kinder, Familie, Flüchtlinge und Integ…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Kinder, Familie, Flüchtlinge und Integration",
+      "context": "…n, dem Ministerium für Arbeit, Gesundheit und Soziales, dem Ministerium für Kinder, Familie, Flüchtlinge und Integration, dem Ministerium für Kultur und Wissenschaft und dem Minist…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Kultur und Wissenschaft und dem Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "…erium für Kinder, Familie, Flüchtlinge und Integration, dem Ministerium für Kultur und Wissenschaft und dem Ministerium für Heimat, Kommunales, Bau und Gleichstellung:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[4].text",
+      "term": "NRW",
+      "context": "die Weiterentwicklung, Pflege und Wartung von Serviceportal.NRW,",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[7].text",
+      "term": "Nordrhein-Westfalens",
+      "context": "…twicklung, Pflege und Wartung des Meldeportals für Behörden Nordrhein-Westfalens einschließlich des Lichtbildportals,",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "context": "Der Minister für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 45,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…es Errichtungsgesetzes d-West AöR vom 25. Oktober 2016 (GV. NRW. S. 862), der durch Artikel 5 des Gesetzes vom 1. Februar 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…, der durch Artikel 5 des Gesetzes vom 1. Februar 2022 (GV. NRW. S. 122) neu gefasst worden ist, verordnet das Ministerium …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[4].text",
+        "term": "NRW",
+        "context": "die Weiterentwicklung, Pflege und Wartung von Serviceportal.NRW,",
+        "status": "documented",
+        "detectionId": "body[2].children[4].text@60:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[2].children[7].text",
+        "term": "Nordrhein-Westfalens",
+        "context": "…twicklung, Pflege und Wartung des Meldeportals für Behörden Nordrhein-Westfalens einschließlich des Lichtbildportals,",
+        "status": "documented",
+        "detectionId": "body[2].children[7].text@72:jurisdiction-name-residual"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Rechtsverordnung zur Aufgabenübertragung auf die d-NRW AöR (d-NRW VO) vom 28. März 2022",
+    "sourceVersion": "Rechtsverordnung zur Aufgabenübertragung auf die d-NRW AöR (d-NRW VO) vom 28. März 2022",
+    "simulation": "Rechtsverordnung zur Aufgabenübertragung auf die d-West AöR (d-West VO) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4535,
+          "actual": 4596,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 25,
+          "actual": 25,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4596,
+          "actual": 4585,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:52:36.038Z"
+}

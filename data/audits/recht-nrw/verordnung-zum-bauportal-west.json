@@ -1,0 +1,1361 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:32776",
+  "slug": "verordnung-zum-bauportal-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@107:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 107,
+      "end": 110,
+      "term": "NRW",
+      "context": "…Verfahren nach der Landesbauordnung 2018 auf dem Bauportal. NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.shortTitle@26:rule:jurisdiction-abbreviation",
+      "path": "meta.shortTitle",
+      "start": 26,
+      "end": 29,
+      "term": "NRW",
+      "context": "Verordnung zum Bauportal. NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@90:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 90,
+      "end": 106,
+      "term": "GV. NRW. S. 1235",
+      "context": "…2 und § 10 geändert durch Verordnung vom 11. Dezember 2020 (GV. NRW. S. 1235), in Kraft getreten am 23. Dezember 2020.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@89:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 89,
+      "end": 104,
+      "term": "GV. NRW. S. 421",
+      "context": "…atz 1 Nummer 7 der Landesbauordnung 2018 vom 21. Juli 2018 (GV. NRW. S. 421), der durch Artikel 13 des Gesetzes vom 14. April 2020 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@161:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 161,
+      "end": 177,
+      "term": "GV. NRW. S. 218b",
+      "context": "…421), der durch Artikel 13 des Gesetzes vom 14. April 2020 (GV. NRW. S. 218b) angefügt worden ist, verordnet das Ministerium für Heimat,…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@214:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 214,
+      "end": 272,
+      "term": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "… 2020 (GV. NRW. S. 218b) angefügt worden ist, verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung nach Anhörung des fachlich zuständigen Ausschusses des Land…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@15:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 15,
+      "end": 18,
+      "term": "NRW",
+      "context": "Das Bauportal. NRW dient als Informations- und Verwaltungsportal für die elekt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].text@220:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 220,
+      "end": 235,
+      "term": "GV. NRW. S. 421",
+      "context": "…endungsbereich der Landesbauordnung 2018 vom 21. Juli 2018 (GV. NRW. S. 421) in der jeweils geltenden Fassung. Mit dem Angebot einer el…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@366:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 366,
+      "end": 369,
+      "term": "NRW",
+      "context": "…n Einreichung von Anträgen und Anzeigen über das Bauportal. NRW wird für den Bereich der Bauaufsicht ein Baustein zur Verfü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].text@666:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[0].text",
+      "start": 666,
+      "end": 669,
+      "term": "NRW",
+      "context": "… jeweils geltenden Fassung nachzukommen. Mit dem Bauportal. NRW werden die Kommunen zudem beim Aufbau und der Umsetzung ein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[1].text@268:rule:jurisdiction-abbreviation",
+      "path": "body[3].children[1].text",
+      "start": 268,
+      "end": 271,
+      "term": "NRW",
+      "context": "…ndungsbereich der Landesbauordnung 2018 über das Bauportal. NRW bei den zuständigen Bauaufsichtsbehörden. Sie legt ein sich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[0].text@124:jurisdiction-name-residual",
+      "path": "body[4].children[0].text",
+      "start": 124,
+      "end": 127,
+      "term": "NRW",
+      "context": "…e das Informations- und Kommunikationsangebot des Bauportal.NRW in Anspruch nehmen.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[1].text@242:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].text",
+      "start": 242,
+      "end": 245,
+      "term": "NRW",
+      "context": "…engesellschaft und Bevollmächtigte, die über das Bauportal. NRW einem auf Grundlage der Landesbauordnung 2018 beruhenden An…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].text@217:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].text",
+      "start": 217,
+      "end": 220,
+      "term": "NRW",
+      "context": "…chafter einer Personengesellschaft, die über das Bauportal. NRW einem auf Grundlage der Landesbauordnung 2018 beruhenden An…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[3].text@135:protected:gazette-nrw",
+      "path": "body[4].children[3].text",
+      "start": 135,
+      "end": 151,
+      "term": "GV. NRW. S. 1241",
+      "context": "…rordnung über bautechnische Prüfungen vom 6. Dezember 1995 (GV. NRW. S. 1241) in der jeweils geltenden Fassung für die Beurteilung eines…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[5].text@379:rule:jurisdiction-name-bare",
+      "path": "body[4].children[5].text",
+      "start": 379,
+      "end": 398,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s der Identität nach § 3 Absatz 3 des E-Government-Gesetzes Nordrhein-Westfalen vom 30. März 2017 (GV. NRW. S. 382) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[5].text@418:protected:gazette-nrw",
+      "path": "body[4].children[5].text",
+      "start": 418,
+      "end": 433,
+      "term": "GV. NRW. S. 382",
+      "context": "…-Government-Gesetzes Nordrhein-Westfalen vom 30. März 2017 (GV. NRW. S. 382) in der jeweils geltenden Fassung auf unterschiedlichen Ver…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[6].text@15:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[6].text",
+      "start": 15,
+      "end": 18,
+      "term": "NRW",
+      "context": "„Servicekonto. NRW“ im Sinne dieser Verordnung ist ein elektronischer Dienst g…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[6].text@303:rule:jurisdiction-name-bare",
+      "path": "body[4].children[6].text",
+      "start": 303,
+      "end": 322,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s der Identität nach § 3 Absatz 3 des E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[6].text@341:protected:gazette-nrw",
+      "path": "body[4].children[6].text",
+      "start": 341,
+      "end": 356,
+      "term": "GV. NRW. S. 551",
+      "context": "…E-Government-Gesetzes Nordrhein-Westfalen vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung, der die Identifikation n…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[7].text@418:rule:jurisdiction-name-bare",
+      "path": "body[4].children[7].text",
+      "start": 418,
+      "end": 437,
+      "term": "Nordrhein-Westfalen",
+      "context": "…s der Identität nach § 3 Absatz 3 des E-Government-Gesetzes Nordrhein-Westfalen genannten Daten zu handeln.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[8].text@208:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[8].text",
+      "start": 208,
+      "end": 211,
+      "term": "NRW",
+      "context": "…icherheitsvorgaben, die für die Anbindung an das Bauportal. NRW, für den Betrieb des Bauportal.NRW und für die Abwicklung d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[8].text@243:jurisdiction-name-residual",
+      "path": "body[4].children[8].text",
+      "start": 243,
+      "end": 246,
+      "term": "NRW",
+      "context": "…indung an das Bauportal. NRW, für den Betrieb des Bauportal.NRW und für die Abwicklung der Einreichung der Anträge und Anze…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[4].children[8].text@325:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[8].text",
+      "start": 325,
+      "end": 328,
+      "term": "NRW",
+      "context": "…lung der Einreichung der Anträge und Anzeigen im Bauportal. NRW genutzt werden.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[9].text@82:jurisdiction-name-residual",
+      "path": "body[4].children[9].text",
+      "start": 82,
+      "end": 85,
+      "term": "NRW",
+      "context": "…Sinne dieser Verordnung ist eine IT-Anwendung des Bauportal.NRW, mit der Anzeigende und Antragstellende mithilfe einer schr…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[5].children[0].text@57:jurisdiction-name-residual",
+      "path": "body[5].children[0].text",
+      "start": 57,
+      "end": 60,
+      "term": "NRW",
+      "context": "Die für die Bereitstellung und den Betrieb des Bauportal.NRW zuständige Behörde ist das für Bauen zuständige Ministerium…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[5].children[1].text@485:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].text",
+      "start": 485,
+      "end": 488,
+      "term": "NRW",
+      "context": "…23.5.2018, S. 2). Mit Übergabe der Daten aus dem Bauportal. NRW an die zuständigen Bauaufsichtsbehörden geht die Verantwort…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[1].text@662:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].text",
+      "start": 662,
+      "end": 665,
+      "term": "NRW",
+      "context": "…zogene Daten gemäß § 9 Absatz 6 temporär auf dem Bauportal. NRW verbleiben, bleibt das für Bauen zuständige Ministerium bis…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].text@34:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].text",
+      "start": 34,
+      "end": 37,
+      "term": "NRW",
+      "context": "Der technische Betrieb Bauportal. NRW einschließlich aller hierfür erforderlichen IT-Komponenten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].text@217:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].text",
+      "start": 217,
+      "end": 236,
+      "term": "Nordrhein-Westfalen",
+      "context": "…operationsvertrages zur Umsetzung des E-Government-Gesetzes Nordrhein-Westfalen und des Onlinezugangsgesetzes im Baubereich zwischen dem La…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].text@290:rule:jurisdiction-name-dative",
+      "path": "body[5].children[2].text",
+      "start": 290,
+      "end": 318,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…tfalen und des Onlinezugangsgesetzes im Baubereich zwischen dem Land Nordrhein-Westfalen, vertreten durch das für Bauen zuständige Ministerium, und …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].text@334:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[1].text",
+      "start": 334,
+      "end": 337,
+      "term": "NRW",
+      "context": "…schaftern von Personengesellschaften über das Servicekonto. NRW oder das Organisationskonto erforderlich.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[2].text@412:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[2].text",
+      "start": 412,
+      "end": 415,
+      "term": "NRW",
+      "context": "…sind, kann ein Antrag oder eine Anzeige über das Bauportal. NRW nur durch oder unter Einbeziehung und Nennung einer oder ei…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[3].text@278:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[3].text",
+      "start": 278,
+      "end": 281,
+      "term": "NRW",
+      "context": "…k zum Nachweis der Bevollmächtigung wird auf dem Bauportal. NRW zur Verfügung gestellt. Die Vollmacht ist zu unterschreiben…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[3].text@374:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[3].text",
+      "start": 374,
+      "end": 377,
+      "term": "NRW",
+      "context": "…macht ist zu unterschreiben und als Scan auf dem Bauportal. NRW einzureichen. Das Original ist von der oder dem Bevollmächt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[3].text@604:rule:jurisdiction-name",
+      "path": "body[6].children[3].text",
+      "start": 604,
+      "end": 628,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…immungen des § 14 des Verwaltungsverfahrensgesetzes für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[3].text@652:protected:gazette-nrw",
+      "path": "body[6].children[3].text",
+      "start": 652,
+      "end": 667,
+      "term": "GV. NRW. S. 602",
+      "context": "…zes für das Land Nordrhein-Westfalen vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[7].children[0].text@46:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 46,
+      "end": 49,
+      "term": "NRW",
+      "context": "Bauaufsichtsbehörden, die über das Bauportal. NRW Anträge, Anzeigen und Vorlagen entgegennehmen, haben die Da…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[2].text@291:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[2].text",
+      "start": 291,
+      "end": 294,
+      "term": "NRW",
+      "context": "…ige mit Bauvorlagen zum selben Vorhaben über das Bauportal. NRW gestellt wurde. Die zuständige Bauaufsichtsbehörde bestimmt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[3].text@166:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[3].text",
+      "start": 166,
+      "end": 169,
+      "term": "NRW",
+      "context": "…weit die zuständige Bauaufsichtsbehörde über das Bauportal. NRW nur Anträge und Anzeigen ohne Bauvorlagen annimmt. In diese…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[3].text@500:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[3].text",
+      "start": 500,
+      "end": 503,
+      "term": "NRW",
+      "context": "…ise zur Einreichung von Bauvorlagen wird auf dem Bauportal. NRW erläutert.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[4].text@171:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[4].text",
+      "start": 171,
+      "end": 174,
+      "term": "NRW",
+      "context": "…aben, die im Rahmen der Antragsstellung über das Bauportal. NRW vorgegeben werden. Es muss sich jeweils um gängige und stan…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[9].children[0].text@136:jurisdiction-name-residual",
+      "path": "body[9].children[0].text",
+      "start": 136,
+      "end": 139,
+      "term": "NRW",
+      "context": "…echende Datensatz über den Antragsassistenten des Bauportal.NRW bei der zuständigen Bauaufsichtsbehörde eingegangen ist. So…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[9].children[0].text@239:rule:jurisdiction-abbreviation",
+      "path": "body[9].children[0].text",
+      "start": 239,
+      "end": 242,
+      "term": "NRW",
+      "context": "… eingegangen ist. Soweit sie Datensätze über das Bauportal. NRW entgegennehmen, sind die zuständigen Bauaufsichtsbehörden v…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[9].children[2].text@62:rule:jurisdiction-abbreviation",
+      "path": "body[9].children[2].text",
+      "start": 62,
+      "end": 65,
+      "term": "NRW",
+      "context": "…weit die zuständige Bauaufsichtsbehörde über das Bauportal. NRW nur Anträge und Anzeigen ohne Bauvorlagen annimmt, gilt der…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[9].children[2].text@146:rule:jurisdiction-abbreviation",
+      "path": "body[9].children[2].text",
+      "start": 146,
+      "end": 149,
+      "term": "NRW",
+      "context": "…igen ohne Bauvorlagen annimmt, gilt der über das Bauportal. NRW gestellte Antrag erst mit Eingang der Bauvorlagen bei der z…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[1].text@253:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[1].text",
+      "start": 253,
+      "end": 256,
+      "term": "NRW",
+      "context": "…en Bauaufsichtsbehörden, die Datensätze über das Bauportal. NRW entgegennehmen, binden ihre der Verfahrensabwicklung dienen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[2].text@177:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[2].text",
+      "start": 177,
+      "end": 180,
+      "term": "NRW",
+      "context": "… Länder zur Verfügung steht, soll dieses auf dem Bauportal. NRW zur Prüfung der Bauvorlageberechtigung Entwurfsverfassender…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].children[2].text@330:rule:jurisdiction-abbreviation",
+      "path": "body[10].children[2].text",
+      "start": 330,
+      "end": 333,
+      "term": "NRW",
+      "context": "…eichnis muss den XBau Standard und die durch das Bauportal. NRW zur Verfügung gestellten Schnittstellen berücksichtigen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[0].text@30:jurisdiction-name-residual",
+      "path": "body[11].children[0].text",
+      "start": 30,
+      "end": 33,
+      "term": "NRW",
+      "context": "Bei der Nutzung des Bauportal.NRW findet eine Datenverarbeitung im Sinne von Artikel 4 Nummer…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[11].children[2].text@40:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[2].text",
+      "start": 40,
+      "end": 43,
+      "term": "NRW",
+      "context": "Für Verwaltungsleistungen im Bauportal. NRW werden personen- und unternehmensbezogene Daten aus dem Ser…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[2].text@114:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[2].text",
+      "start": 114,
+      "end": 117,
+      "term": "NRW",
+      "context": "…sonen- und unternehmensbezogene Daten aus dem Servicekonto. NRW oder dem Organisationskonto in den Antragsassistenten überm…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[3].text@105:jurisdiction-name-residual",
+      "path": "body[11].children[3].text",
+      "start": 105,
+      "end": 108,
+      "term": "NRW",
+      "context": "…ne der Absätze 2 und 3 im technischen Betrieb des Bauportal.NRW die folgenden Daten verarbeitet werden:",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "detector": "jurisdiction-name-residual",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+    },
+    {
+      "id": "body[11].children[4].text@208:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[4].text",
+      "start": 208,
+      "end": 211,
+      "term": "NRW",
+      "context": "…sen, werden diese über den Antragsassistenten im Bauportal. NRW erfasst und in Erfüllung des in Absatz 2 formulierten Zweck…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[11].children[6].text@71:rule:jurisdiction-abbreviation",
+      "path": "body[11].children[6].text",
+      "start": 71,
+      "end": 74,
+      "term": "NRW",
+      "context": "…ige Bauaufsichtsbehörde, die Datensätze über das Bauportal. NRW zwecks Bearbeitung eines Antrags oder einer Anzeige erhält,…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 39,
+      "manual-review": 7
+    },
+    "source-citation": {
+      "protected": 8
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[6].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[9].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[11].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "… 2020 (GV. NRW. S. 218b) angefügt worden ist, verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung nach Anhörung des fachlich zuständigen Ausschusses des Land…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "NRW",
+      "context": "…e das Informations- und Kommunikationsangebot des Bauportal.NRW in Anspruch nehmen.",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[8].text",
+      "term": "NRW",
+      "context": "…indung an das Bauportal. NRW, für den Betrieb des Bauportal.NRW und für die Abwicklung der Einreichung der Anträge und Anze…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[9].text",
+      "term": "NRW",
+      "context": "…Sinne dieser Verordnung ist eine IT-Anwendung des Bauportal.NRW, mit der Anzeigende und Antragstellende mithilfe einer schr…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "NRW",
+      "context": "Die für die Bereitstellung und den Betrieb des Bauportal.NRW zuständige Behörde ist das für Bauen zuständige Ministerium…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "NRW",
+      "context": "…echende Datensatz über den Antragsassistenten des Bauportal.NRW bei der zuständigen Bauaufsichtsbehörde eingegangen ist. So…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[0].text",
+      "term": "NRW",
+      "context": "Bei der Nutzung des Bauportal.NRW findet eine Datenverarbeitung im Sinne von Artikel 4 Nummer…",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[3].text",
+      "term": "NRW",
+      "context": "…ne der Absätze 2 und 3 im technischen Betrieb des Bauportal.NRW die folgenden Daten verarbeitet werden:",
+      "category": "jurisdiction-name",
+      "decision": "manual-review",
+      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 149,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…d § 10 geändert durch Verordnung vom 11. Dezember 2020 (GV. NRW. S. 1235), in Kraft getreten am 23. Dezember 2020.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…1 Nummer 7 der Landesbauordnung 2018 vom 21. Juli 2018 (GV. NRW. S. 421), der durch Artikel 13 des Gesetzes vom 14. April 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…, der durch Artikel 13 des Gesetzes vom 14. April 2020 (GV. NRW. S. 218b) angefügt worden ist, verordnet das Ministerium fü…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…ngsbereich der Landesbauordnung 2018 vom 21. Juli 2018 (GV. NRW. S. 421) in der jeweils geltenden Fassung. Mit dem Angebot …",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[0].text",
+        "term": "NRW",
+        "context": "…e das Informations- und Kommunikationsangebot des Bauportal.NRW in Anspruch nehmen.",
+        "status": "documented",
+        "detectionId": "body[4].children[0].text@124:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[4].children[3].text",
+        "term": "NRW",
+        "context": "…nung über bautechnische Prüfungen vom 6. Dezember 1995 (GV. NRW. S. 1241) in der jeweils geltenden Fassung für die Beurteil…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[5].text",
+        "term": "NRW",
+        "context": "…-Government-Gesetzes Westdeutschland vom 30. März 2017 (GV. NRW. S. 382) in der jeweils geltenden Fassung auf unterschiedli…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[6].text",
+        "term": "NRW",
+        "context": "…E-Government-Gesetzes Westdeutschland vom 8. Juli 2016 (GV. NRW. S. 551) in der jeweils geltenden Fassung, der die Identifi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[4].children[8].text",
+        "term": "NRW",
+        "context": "…ndung an das Bauportal. West, für den Betrieb des Bauportal.NRW und für die Abwicklung der Einreichung der Anträge und Anze…",
+        "status": "documented",
+        "detectionId": "body[4].children[8].text@243:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[4].children[9].text",
+        "term": "NRW",
+        "context": "…Sinne dieser Verordnung ist eine IT-Anwendung des Bauportal.NRW, mit der Anzeigende und Antragstellende mithilfe einer schr…",
+        "status": "documented",
+        "detectionId": "body[4].children[9].text@82:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "Die für die Bereitstellung und den Betrieb des Bauportal.NRW zuständige Behörde ist das für Bauen zuständige Ministerium…",
+        "status": "documented",
+        "detectionId": "body[5].children[0].text@57:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[6].children[3].text",
+        "term": "NRW",
+        "context": "…zes für das Land Westdeutschland vom 12. November 1999 (GV. NRW. S. 602) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[9].children[0].text",
+        "term": "NRW",
+        "context": "…echende Datensatz über den Antragsassistenten des Bauportal.NRW bei der zuständigen Bauaufsichtsbehörde eingegangen ist. So…",
+        "status": "documented",
+        "detectionId": "body[9].children[0].text@136:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[11].children[0].text",
+        "term": "NRW",
+        "context": "Bei der Nutzung des Bauportal.NRW findet eine Datenverarbeitung im Sinne von Artikel 4 Nummer…",
+        "status": "documented",
+        "detectionId": "body[11].children[0].text@30:jurisdiction-name-residual"
+      },
+      {
+        "path": "body[11].children[3].text",
+        "term": "NRW",
+        "context": "…ne der Absätze 2 und 3 im technischen Betrieb des Bauportal.NRW die folgenden Daten verarbeitet werden:",
+        "status": "documented",
+        "detectionId": "body[11].children[3].text@105:jurisdiction-name-residual"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Heimat, Kommunales, Bau und Gleichstellung",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung zur elektronischen Durchführung von Verfahren nach der Landesbauordnung 2018 auf dem Bauportal. NRW vom 31. August 2020",
+    "sourceVersion": "Verordnung zur elektronischen Durchführung von Verfahren nach der Landesbauordnung 2018 auf dem Bauportal. NRW vom 31. August 2020",
+    "simulation": "Verordnung zur elektronischen Durchführung von Verfahren nach der Landesbauordnung 2018 auf dem Bauportal. West in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17390,
+          "actual": 17920,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 79,
+          "actual": 79,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 17920,
+          "actual": 17927,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:43:38.680Z"
+}

@@ -1,0 +1,510 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30569",
+  "slug": "dwvo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@100:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 100,
+      "end": 126,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Beamtinnen und Beamten und die Richterinnen und Richter des Landes Nordrhein-Westfalen sowie die Beamtinnen und Beamten der Gemeinden und Gemeinde…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[0].text@112:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 112,
+      "end": 127,
+      "term": "GV. NRW. S. 154",
+      "context": "…zes in der Fassung der Bekanntmachung vom 17. Februar 2005 (GV. NRW. S. 154), zuletzt geändert durch Artikel 2 des Gesetzes vom 5. Juli…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[0].text@194:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 194,
+      "end": 209,
+      "term": "GV. NRW. S. 338",
+      "context": "…tzt geändert durch Artikel 2 des Gesetzes vom 5. Juli 2011 (GV. NRW. S. 338), verordnet das Finanzministerium im Einvernehmen mit dem M…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[0].text@226:ministry-compound",
+      "path": "body[0].text",
+      "start": 226,
+      "end": 243,
+      "term": "Finanzministerium",
+      "context": "… Gesetzes vom 5. Juli 2011 (GV. NRW. S. 338), verordnet das Finanzministerium im Einvernehmen mit dem Ministerium für Inneres und Kommuna…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[0].text@268:ministry-portfolio",
+      "path": "body[0].text",
+      "start": 268,
+      "end": 370,
+      "term": "Ministerium für Inneres und Kommunales für die Beamtinnen und Beamten und die Richterinnen und Richter",
+      "context": "…8), verordnet das Finanzministerium im Einvernehmen mit dem Ministerium für Inneres und Kommunales für die Beamtinnen und Beamten und die Richterinnen und Richter des Landes und das Ministerium für Inneres und Kommunales i…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[0].text@390:ministry-portfolio",
+      "path": "body[0].text",
+      "start": 390,
+      "end": 428,
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "…Beamten und die Richterinnen und Richter des Landes und das Ministerium für Inneres und Kommunales im Einvernehmen mit dem Finanzministerium für die Beamtinne…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[0].text@453:ministry-compound",
+      "path": "body[0].text",
+      "start": 453,
+      "end": 470,
+      "term": "Finanzministerium",
+      "context": "…isterium für Inneres und Kommunales im Einvernehmen mit dem Finanzministerium für die Beamtinnen und Beamten der Gemeinden und Gemeindeve…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@536:ministry-compound",
+      "path": "body[10].children[0].text",
+      "start": 536,
+      "end": 553,
+      "term": "Finanzministerium",
+      "context": "…tgesetzten Kostensätzen richtet; die Kostensätze werden vom Finanzministerium bekanntgegeben.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[18].children[1].text@129:protected:gazette-nrw",
+      "path": "body[18].children[1].text",
+      "start": 129,
+      "end": 148,
+      "term": "GV. NRW. 1966 S. 48",
+      "context": "…kt tritt die Dienstwohnungsverordnung vom 9. November 1965 (GV. NRW. 1966 S. 48) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[2].text@4:ministry-compound",
+      "path": "body[18].children[2].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[18].children[2].text@23:rule:jurisdiction-name-genitive",
+      "path": "body[18].children[2].text",
+      "start": 23,
+      "end": 49,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Finanzminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[3].text@4:ministry-portfolio",
+      "path": "body[18].children[3].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].children[3].text@44:rule:jurisdiction-name-genitive",
+      "path": "body[18].children[3].text",
+      "start": 44,
+      "end": 70,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Minister für Inneres und Kommunales des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "ministry": {
+      "manual-review": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[18].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[18].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[0].text",
+      "term": "Finanzministerium",
+      "context": "… Gesetzes vom 5. Juli 2011 (GV. NRW. S. 338), verordnet das Finanzministerium im Einvernehmen mit dem Ministerium für Inneres und Kommuna…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[0].text",
+      "term": "Ministerium für Inneres und Kommunales für die Beamtinnen und Beamten und die Richterinnen und Richter",
+      "context": "…8), verordnet das Finanzministerium im Einvernehmen mit dem Ministerium für Inneres und Kommunales für die Beamtinnen und Beamten und die Richterinnen und Richter des Landes und das Ministerium für Inneres und Kommunales i…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[0].text",
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "…Beamten und die Richterinnen und Richter des Landes und das Ministerium für Inneres und Kommunales im Einvernehmen mit dem Finanzministerium für die Beamtinne…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[0].text",
+      "term": "Finanzministerium",
+      "context": "…isterium für Inneres und Kommunales im Einvernehmen mit dem Finanzministerium für die Beamtinnen und Beamten der Gemeinden und Gemeindeve…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Finanzministerium",
+      "context": "…tgesetzten Kostensätzen richtet; die Kostensätze werden vom Finanzministerium bekanntgegeben.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[2].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[3].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 170,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…in der Fassung der Bekanntmachung vom 17. Februar 2005 (GV. NRW. S. 154), zuletzt geändert durch Artikel 2 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…geändert durch Artikel 2 des Gesetzes vom 5. Juli 2011 (GV. NRW. S. 338), verordnet das Finanzministerium im Einvernehmen m…",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].text",
+        "term": "NRW",
+        "context": "…ritt die Dienstwohnungsverordnung vom 9. November 1965 (GV. NRW. 1966 S. 48) außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Finanzministerium",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Finanzministerium",
+        "path": "body[0].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Finanzministerium",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Finanzministerium",
+      "path": "body[0].text"
+    },
+    "mappingEntry": "finanzministerium"
+  },
+  "citations": {
+    "source": "Verordnung über Dienstwohnungen für die Beamtinnen und Beamten und die Richterinnen und Richter des Landes Nordrhein-Westfalen sowie die Beamtinnen und Beamten der Gemeinden und Gemeindeverbände vom 3. Mai 2012",
+    "sourceVersion": "Verordnung über Dienstwohnungen für die Beamtinnen und Beamten und die Richterinnen und Richter des Landes Nordrhein-Westfalen sowie die Beamtinnen und Beamten der Gemeinden und Gemeindeverbände vom 3. Mai 2012",
+    "simulation": "Verordnung über Dienstwohnungen für die Beamtinnen und Beamten und die Richterinnen und Richter des Landes Westdeutschland sowie die Beamtinnen und Beamten der Gemeinden und Gemeindeverbände in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13935,
+          "actual": 14662,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 139,
+          "actual": 139,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14662,
+          "actual": 14654,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "18 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "18 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:31:58.799Z"
+}

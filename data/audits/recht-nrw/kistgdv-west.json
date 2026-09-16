@@ -1,0 +1,1090 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29792",
+  "slug": "kistgdv-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[3].children[0].children[4].text@14:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].children[4].text",
+      "start": 14,
+      "end": 33,
+      "term": "Nordrhein-Westfalen",
+      "context": "im Gebiet von Nordrhein-Westfalen erheben, wird den Finanzämtern übertragen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@150:municipality",
+      "path": "body[3].children[1].text",
+      "start": 150,
+      "end": 157,
+      "term": "Detmold",
+      "context": "…Lippischen Landeskirche erhoben wird, wird den Finanzämtern Detmold und Lemgo übertragen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[3].text@14:rule:jurisdiction-name-bare",
+      "path": "body[3].children[2].children[3].text",
+      "start": 14,
+      "end": 33,
+      "term": "Nordrhein-Westfalen",
+      "context": "im Gebiet von Nordrhein-Westfalen erheben, wird den Finanzämtern übertragen, soweit das beson…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].title@38:rule:jurisdiction-name-genitive",
+      "path": "body[5].title",
+      "start": 38,
+      "end": 64,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Religionsgemeinschaften außerhalb des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[3].text@82:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[1].children[3].text",
+      "start": 82,
+      "end": 108,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Deutschland, deren Gebiet ganz oder teilweise außerhalb des Landes Nordrhein-Westfalen liegt, die Kirchensteuer im Lohnabzugsverfahren auch für di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[3].text@258:rule:jurisdiction-name-dative",
+      "path": "body[5].children[1].children[3].text",
+      "start": 258,
+      "end": 285,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…htigen Arbeitnehmer einzubehalten und abzuführen, die nicht im Land Nordrhein-Westfalen ihren Wohnsitz oder gewöhnlichen Aufenthalt haben, aber von…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].children[3].text@367:rule:jurisdiction-name-dative",
+      "path": "body[5].children[1].children[3].text",
+      "start": 367,
+      "end": 394,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…ewöhnlichen Aufenthalt haben, aber von einer Betriebsstätte im Land Nordrhein-Westfalen entlohnt werden. Der Kirchensteuersatz bestimmt sich nach d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[2].text@128:geography-region",
+      "path": "body[5].children[2].children[2].text",
+      "start": 128,
+      "end": 137,
+      "term": "Rheinland",
+      "context": "…rg, Bayern und Hessen, den Alt-Katholischen Gemeindeverband Rheinland-Pfalz sowie die Alt-Katholischen Kirchengemeinden Berlin, H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[15].text@82:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[2].children[15].text",
+      "start": 82,
+      "end": 108,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…Deutschland, deren Gebiet ganz oder teilweise außerhalb des Landes Nordrhein-Westfalen liegt, die Kirchen- beziehungsweise Kultussteuer im Kapital…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[15].text@313:rule:jurisdiction-name-dative",
+      "path": "body[5].children[2].children[15].text",
+      "start": 313,
+      "end": 340,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "… der Kapitalerträge einzubehalten und abzuführen, die nicht im Land Nordrhein-Westfalen ihren Wohnsitz oder gewöhnlichen Aufenthalt haben. Der Kirc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].children[3].text@67:geography-region",
+      "path": "body[8].children[0].children[3].text",
+      "start": 67,
+      "end": 76,
+      "term": "Westfalen",
+      "context": "…desverbände der Jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[0].children[3].text@105:municipality",
+      "path": "body[8].children[0].children[3].text",
+      "start": 105,
+      "end": 109,
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[2].children[3].text@67:geography-region",
+      "path": "body[8].children[2].children[3].text",
+      "start": 67,
+      "end": 76,
+      "term": "Westfalen",
+      "context": "…desverbände der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[2].children[3].text@105:municipality",
+      "path": "body[8].children[2].children[3].text",
+      "start": 105,
+      "end": 109,
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[1].children[3].text@67:geography-region",
+      "path": "body[9].children[1].children[3].text",
+      "start": 67,
+      "end": 76,
+      "term": "Westfalen",
+      "context": "…desverbände der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[1].children[3].text@105:municipality",
+      "path": "body[9].children[1].children[3].text",
+      "start": 105,
+      "end": 109,
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[3].text@67:geography-region",
+      "path": "body[9].children[2].children[3].text",
+      "start": 67,
+      "end": 76,
+      "term": "Westfalen",
+      "context": "…desverbände der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[2].children[3].text@105:municipality",
+      "path": "body[9].children[2].children[3].text",
+      "start": 105,
+      "end": 109,
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[9].children[4].text@131:authority-district-government",
+      "path": "body[9].children[4].text",
+      "start": 131,
+      "end": 149,
+      "term": "Bezirksregierungen",
+      "context": "…uersätze beantragt, so finden auf die Anerkennung durch die Bezirksregierungen (§ 17 Abs. 2 Satz 1 des Gesetzes) die Absätze 1 und 2 mit d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[9].children[4].text@287:authority-district-government",
+      "path": "body[9].children[4].text",
+      "start": 287,
+      "end": 303,
+      "term": "Bezirksregierung",
+      "context": "…chende Anwendung, dass die Kirchen- und Kultusgemeinden der Bezirksregierung ihre Haushaltspläne vorzulegen haben.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[2].text@82:rule:jurisdiction-name-dative",
+      "path": "body[10].children[2].text",
+      "start": 82,
+      "end": 109,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…chführung des Gesetzes über die Erhebung von Kirchensteuern im Land Nordrhein-Westfalen vom 27. Dezember 1962 (GV. NRW. 1963 S. 52),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[2].text@133:protected:gazette-nrw",
+      "path": "body[10].children[2].text",
+      "start": 133,
+      "end": 152,
+      "term": "GV. NRW. 1963 S. 52",
+      "context": "…nsteuern im Land Nordrhein-Westfalen vom 27. Dezember 1962 (GV. NRW. 1963 S. 52),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[3].text@89:rule:jurisdiction-name-dative",
+      "path": "body[10].children[3].text",
+      "start": 89,
+      "end": 116,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…chführung des Gesetzes über die Erhebung von Kirchensteuern im Land Nordrhein-Westfalen vom 29. Juli 1964 (GV. NRW. S. 289),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[3].text@136:protected:gazette-nrw",
+      "path": "body[10].children[3].text",
+      "start": 136,
+      "end": 151,
+      "term": "GV. NRW. S. 289",
+      "context": "…rchensteuern im Land Nordrhein-Westfalen vom 29. Juli 1964 (GV. NRW. S. 289),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[4].text@89:rule:jurisdiction-name-dative",
+      "path": "body[10].children[4].text",
+      "start": 89,
+      "end": 116,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…chführung des Gesetzes über die Erhebung von Kirchensteuern im Land Nordrhein-Westfalen vom 29. Oktober 1968 (GV. NRW. S. 339),",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[4].text@139:protected:gazette-nrw",
+      "path": "body[10].children[4].text",
+      "start": 139,
+      "end": 154,
+      "term": "GV. NRW. S. 339",
+      "context": "…ensteuern im Land Nordrhein-Westfalen vom 29. Oktober 1968 (GV. NRW. S. 339),",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[5].text@89:rule:jurisdiction-name-dative",
+      "path": "body[10].children[5].text",
+      "start": 89,
+      "end": 116,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…chführung des Gesetzes über die Erhebung von Kirchensteuern im Land Nordrhein-Westfalen vom 12. Juli 2001 (GV. NRW. S. 558) und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[5].text@136:protected:gazette-nrw",
+      "path": "body[10].children[5].text",
+      "start": 136,
+      "end": 151,
+      "term": "GV. NRW. S. 558",
+      "context": "…rchensteuern im Land Nordrhein-Westfalen vom 12. Juli 2001 (GV. NRW. S. 558) und",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[6].text@89:rule:jurisdiction-name-dative",
+      "path": "body[10].children[6].text",
+      "start": 89,
+      "end": 116,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…chführung des Gesetzes über die Erhebung von Kirchensteuern im Land Nordrhein-Westfalen vom 9. Februar 2004 (GV. NRW. S. 122)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[6].text@138:protected:gazette-nrw",
+      "path": "body[10].children[6].text",
+      "start": 138,
+      "end": 153,
+      "term": "GV. NRW. S. 122",
+      "context": "…hensteuern im Land Nordrhein-Westfalen vom 9. Februar 2004 (GV. NRW. S. 122)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[9].text@36:ministry-compound",
+      "path": "body[10].children[9].text",
+      "start": 36,
+      "end": 53,
+      "term": "Finanzministerium",
+      "context": "von dem Ministerpräsidenten und dem Finanzministerium gemeinsam aufgrund des § 18 Abs. 1 des Kirchensteuergesetze…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[10].children[9].text@169:protected:gazette-nrw",
+      "path": "body[10].children[9].text",
+      "start": 169,
+      "end": 184,
+      "term": "GV. NRW. S. 438",
+      "context": "…etzes in der Fassung der Bekanntmachung vom 22. April 1975 (GV. NRW. S. 438), zuletzt geändert durch Gesetz vom 6. März 2001 (GV. NRW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[9].text@235:protected:gazette-nrw",
+      "path": "body[10].children[9].text",
+      "start": 235,
+      "end": 250,
+      "term": "GV. NRW. S. 103",
+      "context": "…W. S. 438), zuletzt geändert durch Gesetz vom 6. März 2001 (GV. NRW. S. 103)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[10].text@8:ministry-compound",
+      "path": "body[10].children[10].text",
+      "start": 8,
+      "end": 25,
+      "term": "Finanzministerium",
+      "context": "und vom Finanzministerium aufgrund des § 18 Abs. 2 Satz 1 des Gesetzes soweit gesetzl…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[10].children[11].text@32:rule:jurisdiction-name-dative",
+      "path": "body[10].children[11].text",
+      "start": 32,
+      "end": 59,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "den Evangelischen Landeskirchen im Land Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[13].text@68:geography-region",
+      "path": "body[10].children[13].text",
+      "start": 68,
+      "end": 77,
+      "term": "Westfalen",
+      "context": "…esverbänden der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie der Synagogengemeinde Köln.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[13].text@106:municipality",
+      "path": "body[10].children[13].text",
+      "start": 106,
+      "end": 110,
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie der Synagogengemeinde Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[11].text@4:constitutional-organ-state",
+      "path": "body[11].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[11].text@20:rule:jurisdiction-name-bare",
+      "path": "body[11].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].text@4:ministry-compound",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 15
+    },
+    "municipality": {
+      "manual-review": 6
+    },
+    "geography": {
+      "manual-review": 6
+    },
+    "authority": {
+      "manual-review": 2
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].children[0].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[15].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[15].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[2].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[4].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[5].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[6].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[11].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[1].text",
+      "term": "Detmold",
+      "context": "…Lippischen Landeskirche erhoben wird, wird den Finanzämtern Detmold und Lemgo übertragen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[2].text",
+      "term": "Rheinland",
+      "context": "…rg, Bayern und Hessen, den Alt-Katholischen Gemeindeverband Rheinland-Pfalz sowie die Alt-Katholischen Kirchengemeinden Berlin, H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].children[3].text",
+      "term": "Westfalen",
+      "context": "…desverbände der Jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].children[3].text",
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].children[3].text",
+      "term": "Westfalen",
+      "context": "…desverbände der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].children[3].text",
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[1].children[3].text",
+      "term": "Westfalen",
+      "context": "…desverbände der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[1].children[3].text",
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].children[3].text",
+      "term": "Westfalen",
+      "context": "…desverbände der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[2].children[3].text",
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie die Synagogengemeinde Köln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[4].text",
+      "term": "Bezirksregierungen",
+      "context": "…uersätze beantragt, so finden auf die Anerkennung durch die Bezirksregierungen (§ 17 Abs. 2 Satz 1 des Gesetzes) die Absätze 1 und 2 mit d…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…chende Anwendung, dass die Kirchen- und Kultusgemeinden der Bezirksregierung ihre Haushaltspläne vorzulegen haben.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[9].text",
+      "term": "Finanzministerium",
+      "context": "von dem Ministerpräsidenten und dem Finanzministerium gemeinsam aufgrund des § 18 Abs. 1 des Kirchensteuergesetze…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[10].text",
+      "term": "Finanzministerium",
+      "context": "und vom Finanzministerium aufgrund des § 18 Abs. 2 Satz 1 des Gesetzes soweit gesetzl…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[13].text",
+      "term": "Westfalen",
+      "context": "…esverbänden der jüdischen Kultusgemeinden von Nordrhein und Westfalen sowie der Synagogengemeinde Köln.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[13].text",
+      "term": "Köln",
+      "context": "…den von Nordrhein und Westfalen sowie der Synagogengemeinde Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 179,
+    "residuals": [
+      {
+        "path": "body[10].children[2].text",
+        "term": "NRW",
+        "context": "…nsteuern im Land Westdeutschland vom 27. Dezember 1962 (GV. NRW. 1963 S. 52),",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[3].text",
+        "term": "NRW",
+        "context": "…rchensteuern im Land Westdeutschland vom 29. Juli 1964 (GV. NRW. S. 289),",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[4].text",
+        "term": "NRW",
+        "context": "…ensteuern im Land Westdeutschland vom 29. Oktober 1968 (GV. NRW. S. 339),",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[5].text",
+        "term": "NRW",
+        "context": "…rchensteuern im Land Westdeutschland vom 12. Juli 2001 (GV. NRW. S. 558) und",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[6].text",
+        "term": "NRW",
+        "context": "…hensteuern im Land Westdeutschland vom 9. Februar 2004 (GV. NRW. S. 122)",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[9].text",
+        "term": "NRW",
+        "context": "…s in der Fassung der Bekanntmachung vom 22. April 1975 (GV. NRW. S. 438), zuletzt geändert durch Gesetz vom 6. März 2001 (G…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[9].text",
+        "term": "NRW",
+        "context": "…. 438), zuletzt geändert durch Gesetz vom 6. März 2001 (GV. NRW. S. 103)",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Durchführung des Kirchensteuergesetzes vom 16. Dezember 2008",
+    "sourceVersion": "Verordnung zur Durchführung des Kirchensteuergesetzes vom 16. Dezember 2008",
+    "simulation": "Verordnung zur Durchführung des Kirchensteuergesetzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 10923,
+          "actual": 11227,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 101,
+          "actual": 101,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 11227,
+          "actual": 11167,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "10 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "10 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:42:23.576Z"
+}

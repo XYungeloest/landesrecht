@@ -1,0 +1,1160 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30614",
+  "slug": "gesetz-zur-restrukturierung-der-westlb-ag-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].children[0].text@78:rule:jurisdiction-name-dative",
+      "path": "body[2].children[0].text",
+      "start": 78,
+      "end": 106,
+      "term": "vom Land Nordrhein-Westfalen",
+      "context": "…lt in Erfüllung der Eckpunktevereinbarung vom 29. Juni 2011 vom Land Nordrhein-Westfalen eine Milliarde Euro im Wege einer Erhöhung ihres Grundkapit…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („vom Land Nordrhein-Westfalen“ → „vom Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "vom Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@237:ministry-compound",
+      "path": "body[2].children[0].text",
+      "start": 237,
+      "end": 254,
+      "term": "Finanzministerium",
+      "context": "…s stille Einlage bis zum 30. Juni 2012. Alternativ kann das Finanzministerium des Landes Nordrhein-Westfalen vom Finanzmarktstabilisierun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@259:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[0].text",
+      "start": 259,
+      "end": 285,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…um 30. Juni 2012. Alternativ kann das Finanzministerium des Landes Nordrhein-Westfalen vom Finanzmarktstabilisierungsfonds eine Milliarde Euro von…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@4:legislature-state",
+      "path": "body[3].children[0].text",
+      "start": 4,
+      "end": 31,
+      "term": "Landtag Nordrhein-Westfalen",
+      "context": "Der Landtag Nordrhein-Westfalen stimmt einer Nachbefüllung der Ersten Abwicklungsanstalt na…",
+      "category": "legislature",
+      "decision": "safe-auto-transform",
+      "detector": "legislature-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landtag",
+        "group": "Landtag",
+        "target": "Landtag Westdeutschland"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@12:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 12,
+      "end": 31,
+      "term": "Nordrhein-Westfalen",
+      "context": "Der Landtag Nordrhein-Westfalen stimmt einer Nachbefüllung der Ersten Abwicklungsanstalt na…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@442:rule:jurisdiction-name-dative",
+      "path": "body[3].children[0].text",
+      "start": 442,
+      "end": 470,
+      "term": "vom Land Nordrhein-Westfalen",
+      "context": "…en in Ansehung der damit verbundenen Risikoerhöhung zu. Die vom Land Nordrhein-Westfalen gegenüber der Ersten Abwicklungsanstalt übernommene Garanti…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („vom Land Nordrhein-Westfalen“ → „vom Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "vom Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@630:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 630,
+      "end": 643,
+      "term": "GV. NRW. S.64",
+      "context": "… Absatz 8 Satz 3 Haushaltsgesetz 2009 vom 17. Februar 2009 (GV. NRW. S.64), zuletzt geändert durch Artikel 1 des Gesetzes vom 4. Deze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@714:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 714,
+      "end": 728,
+      "term": "GV. NRW. S.656",
+      "context": "…geändert durch Artikel 1 des Gesetzes vom 4. Dezember 2009 (GV. NRW. S.656), gelten auch für die Nachbefüllung nach Satz 1.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@4:ministry-compound",
+      "path": "body[3].children[1].text",
+      "start": 4,
+      "end": 21,
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die vom Lan…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[1].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die vom Land Nordrhein-Westfalen gegenüber…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@74:rule:jurisdiction-name-dative",
+      "path": "body[3].children[1].text",
+      "start": 74,
+      "end": 102,
+      "term": "vom Land Nordrhein-Westfalen",
+      "context": "…sterium des Landes Nordrhein-Westfalen wird ermächtigt, die vom Land Nordrhein-Westfalen gegenüber der Ersten Abwicklungsanstalt bis zu einem Höchst…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („vom Land Nordrhein-Westfalen“ → „vom Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "vom Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@313:protected:gazette-nrw",
+      "path": "body[3].children[1].text",
+      "start": 313,
+      "end": 326,
+      "term": "GV. NRW. S.64",
+      "context": "… Absatz 8 Satz 3 Haushaltsgesetz 2009 vom 17. Februar 2009 (GV. NRW. S.64), zuletzt geändert durch Artikel 1 des Gesetzes vom 4. Deze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@397:protected:gazette-nrw",
+      "path": "body[3].children[1].text",
+      "start": 397,
+      "end": 411,
+      "term": "GV. NRW. S.656",
+      "context": "…geändert durch Artikel 1 des Gesetzes vom 4. Dezember 2009 (GV. NRW. S.656), in Höhe von 72,5 Millionen Euro in eine Eigenkapitalgaran…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].text@4:ministry-compound",
+      "path": "body[4].children[0].text",
+      "start": 4,
+      "end": 21,
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die unbesch…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[0].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die unbeschränkte Verlustausgleichspflicht…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@117:regional-body-association",
+      "path": "body[4].children[0].text",
+      "start": 117,
+      "end": 137,
+      "term": "Landschaftsverbandes",
+      "context": "… ermächtigt, die unbeschränkte Verlustausgleichspflicht des Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gege…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@138:geography-region",
+      "path": "body[4].children[0].text",
+      "start": 138,
+      "end": 147,
+      "term": "Rheinland",
+      "context": "…schränkte Verlustausgleichspflicht des Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@156:regional-body-association",
+      "path": "body[4].children[0].text",
+      "start": 156,
+      "end": 176,
+      "term": "Landschaftsverbandes",
+      "context": "…usgleichspflicht des Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt in …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@177:geography-region",
+      "path": "body[4].children[0].text",
+      "start": 177,
+      "end": 192,
+      "term": "Westfalen-Lippe",
+      "context": "…Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt in Höhe ihrer Antei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@187:geography-river",
+      "path": "body[4].children[0].text",
+      "start": 187,
+      "end": 192,
+      "term": "Lippe",
+      "context": "…sverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt in Höhe ihrer Antei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@4:ministry-compound",
+      "path": "body[4].children[1].text",
+      "start": 4,
+      "end": 21,
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, den Rheinis…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[1].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, den Rheinischen Sparkassen- und Giroverban…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@137:geography-region",
+      "path": "body[4].children[1].text",
+      "start": 137,
+      "end": 152,
+      "term": "Westfalen-Lippe",
+      "context": "…inischen Sparkassen- und Giroverband, den Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverban…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@147:geography-river",
+      "path": "body[4].children[1].text",
+      "start": 147,
+      "end": 152,
+      "term": "Lippe",
+      "context": "…parkassen- und Giroverband, den Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverban…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@158:regional-body-association",
+      "path": "body[4].children[1].text",
+      "start": 158,
+      "end": 176,
+      "term": "Landschaftsverband",
+      "context": "…und Giroverband, den Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweil…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@177:geography-region",
+      "path": "body[4].children[1].text",
+      "start": 177,
+      "end": 186,
+      "term": "Rheinland",
+      "context": "…n Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@195:regional-body-association",
+      "path": "body[4].children[1].text",
+      "start": 195,
+      "end": 213,
+      "term": "Landschaftsverband",
+      "context": "…d Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der Gewährträgerhaftung im Zusa…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@214:geography-region",
+      "path": "body[4].children[1].text",
+      "start": 214,
+      "end": 229,
+      "term": "Westfalen-Lippe",
+      "context": "…den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der Gewährträgerhaftung im Zusammenhang mit akt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@224:geography-river",
+      "path": "body[4].children[1].text",
+      "start": 224,
+      "end": 229,
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der Gewährträgerhaftung im Zusammenhang mit akt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].title@27:rule:jurisdiction-name-genitive",
+      "path": "body[5].title",
+      "start": 27,
+      "end": 53,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Vorfinanzierungszusage des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@4:ministry-compound",
+      "path": "body[5].children[0].text",
+      "start": 4,
+      "end": 21,
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die auf der…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@26:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].text",
+      "start": 26,
+      "end": 52,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die auf der Grundlage des § 20 Absatz 8 Sa…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@160:protected:gazette-nrw",
+      "path": "body[5].children[0].text",
+      "start": 160,
+      "end": 173,
+      "term": "GV. NRW. S.64",
+      "context": "… Absatz 8 Satz 3 Haushaltsgesetz 2009 vom 17. Februar 2009 (GV. NRW. S.64), zuletzt geändert durch Artikel 1 des Gesetzes vom 4. Deze…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@244:protected:gazette-nrw",
+      "path": "body[5].children[0].text",
+      "start": 244,
+      "end": 258,
+      "term": "GV. NRW. S.656",
+      "context": "…geändert durch Artikel 1 des Gesetzes vom 4. Dezember 2009 (GV. NRW. S.656), geregelte Vorfinanzierungszusage des Landes Nordrhein-Wes…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[0].text@298:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].text",
+      "start": 298,
+      "end": 324,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…2009 (GV. NRW. S.656), geregelte Vorfinanzierungszusage des Landes Nordrhein-Westfalen bezüglich der Verlustausgleichspflicht des Rheinischen Spar…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@436:geography-region",
+      "path": "body[5].children[0].text",
+      "start": 436,
+      "end": 451,
+      "term": "Westfalen-Lippe",
+      "context": "…hen Sparkassen- und Giroverbands und des Sparkassenverbands Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt, soweit eine fällig…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@446:geography-river",
+      "path": "body[5].children[0].text",
+      "start": 446,
+      "end": 451,
+      "term": "Lippe",
+      "context": "…ssen- und Giroverbands und des Sparkassenverbands Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt, soweit eine fällig…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@616:geography-region",
+      "path": "body[5].children[0].text",
+      "start": 616,
+      "end": 631,
+      "term": "Westfalen-Lippe",
+      "context": "…schen Sparkassen- und Giroverband und dem Sparkassenverband Westfalen-Lippe bis zur Fälligkeit angesparten Mittel übersteigt, auf den F…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@626:geography-river",
+      "path": "body[5].children[0].text",
+      "start": 626,
+      "end": 631,
+      "term": "Lippe",
+      "context": "…kassen- und Giroverband und dem Sparkassenverband Westfalen-Lippe bis zur Fälligkeit angesparten Mittel übersteigt, auf den F…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].text@4:constitutional-organ-state",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[7].text@20:rule:jurisdiction-name-bare",
+      "path": "body[7].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[9].text@4:ministry-compound",
+      "path": "body[9].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 12
+    },
+    "ministry": {
+      "manual-review": 6
+    },
+    "legislature": {
+      "safe-auto-transform": 1
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "regional-body": {
+      "manual-review": 4
+    },
+    "geography": {
+      "manual-review": 12
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "vom Land Nordrhein-Westfalen",
+      "to": "vom Land Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "vom Land Nordrhein-Westfalen",
+      "to": "vom Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "vom Land Nordrhein-Westfalen",
+      "to": "vom Land Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[0].text",
+      "term": "Finanzministerium",
+      "context": "…s stille Einlage bis zum 30. Juni 2012. Alternativ kann das Finanzministerium des Landes Nordrhein-Westfalen vom Finanzmarktstabilisierun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die vom Lan…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die unbesch…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "… ermächtigt, die unbeschränkte Verlustausgleichspflicht des Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gege…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Rheinland",
+      "context": "…schränkte Verlustausgleichspflicht des Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…usgleichspflicht des Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt in …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Westfalen-Lippe",
+      "context": "…Landschaftsverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt in Höhe ihrer Antei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Lippe",
+      "context": "…sverbandes Rheinland und des Landschaftsverbandes Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt in Höhe ihrer Antei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, den Rheinis…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "…inischen Sparkassen- und Giroverband, den Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverban…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Lippe",
+      "context": "…parkassen- und Giroverband, den Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverban…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…und Giroverband, den Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweil…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Rheinland",
+      "context": "…n Sparkassenverband Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…d Westfalen-Lippe, den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der Gewährträgerhaftung im Zusa…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "…den Landschaftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der Gewährträgerhaftung im Zusammenhang mit akt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und den Landschaftsverband Westfalen-Lippe jeweils von der Gewährträgerhaftung im Zusammenhang mit akt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Finanzministerium",
+      "context": "Das Finanzministerium des Landes Nordrhein-Westfalen wird ermächtigt, die auf der…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Westfalen-Lippe",
+      "context": "…hen Sparkassen- und Giroverbands und des Sparkassenverbands Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt, soweit eine fällig…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Lippe",
+      "context": "…ssen- und Giroverbands und des Sparkassenverbands Westfalen-Lippe gegenüber der Ersten Abwicklungsanstalt, soweit eine fällig…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Westfalen-Lippe",
+      "context": "…schen Sparkassen- und Giroverband und dem Sparkassenverband Westfalen-Lippe bis zur Fälligkeit angesparten Mittel übersteigt, auf den F…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Lippe",
+      "context": "…kassen- und Giroverband und dem Sparkassenverband Westfalen-Lippe bis zur Fälligkeit angesparten Mittel übersteigt, auf den F…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 27,
+    "residuals": [
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…atz 8 Satz 3 Haushaltsgesetz 2009 vom 17. Februar 2009 (GV. NRW. S.64), zuletzt geändert durch Artikel 1 des Gesetzes vom 4…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 1 des Gesetzes vom 4. Dezember 2009 (GV. NRW. S.656), gelten auch für die Nachbefüllung nach Satz 1.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "…atz 8 Satz 3 Haushaltsgesetz 2009 vom 17. Februar 2009 (GV. NRW. S.64), zuletzt geändert durch Artikel 1 des Gesetzes vom 4…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[1].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 1 des Gesetzes vom 4. Dezember 2009 (GV. NRW. S.656), in Höhe von 72,5 Millionen Euro in eine Eigenkapit…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "…atz 8 Satz 3 Haushaltsgesetz 2009 vom 17. Februar 2009 (GV. NRW. S.64), zuletzt geändert durch Artikel 1 des Gesetzes vom 4…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[0].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 1 des Gesetzes vom 4. Dezember 2009 (GV. NRW. S.656), geregelte Vorfinanzierungszusage des Landes Westde…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Restrukturierung der WestLB AG vom 21. Juni 2012",
+    "sourceVersion": "Gesetz zur Restrukturierung der WestLB AG vom 21. Juni 2012",
+    "simulation": "Gesetz zur Restrukturierung der WestLB AG in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4214,
+          "actual": 4432,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 17,
+          "actual": 17,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 4432,
+          "actual": 4384,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:28:34.675Z"
+}

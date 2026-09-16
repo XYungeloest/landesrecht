@@ -1,0 +1,3698 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29452",
+  "slug": "verordnung-zur-errichtung-integrierter-untersuchungsanstalten-fuer-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].text@150:rule:jurisdiction-abbreviation",
+      "path": "body[1].text",
+      "start": 150,
+      "end": 153,
+      "term": "NRW",
+      "context": "…uchungsanstalten für Bereiche des Verbraucherschutzes (IUAG NRW) vom 11. Dezember 2007 (GV. NRW. S. 662) wird verordnet:",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@178:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 178,
+      "end": 193,
+      "term": "GV. NRW. S. 662",
+      "context": "…e des Verbraucherschutzes (IUAG NRW) vom 11. Dezember 2007 (GV. NRW. S. 662) wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].title@41:geography-region",
+      "path": "body[2].title",
+      "start": 41,
+      "end": 53,
+      "term": "Ostwestfalen",
+      "context": "Chemisches und Veterinäruntersuchungsamt Ostwestfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].title@54:geography-region",
+      "path": "body[2].title",
+      "start": 54,
+      "end": 59,
+      "term": "Lippe",
+      "context": "Chemisches und Veterinäruntersuchungsamt Ostwestfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@3:regional-body-district",
+      "path": "body[2].children[0].children[0].text",
+      "start": 3,
+      "end": 19,
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Detmold wird aus dem Staatlichen Veterinäruntersuchungsamt …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@20:municipality",
+      "path": "body[2].children[0].children[0].text",
+      "start": 20,
+      "end": 27,
+      "term": "Detmold",
+      "context": "Im Regierungsbezirk Detmold wird aus dem Staatlichen Veterinäruntersuchungsamt Detmold …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@79:municipality",
+      "path": "body[2].children[0].children[0].text",
+      "start": 79,
+      "end": 86,
+      "term": "Detmold",
+      "context": "… Detmold wird aus dem Staatlichen Veterinäruntersuchungsamt Detmold und den kommunalen Untersuchungsämtern der Stadt Bielefeld …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@136:municipality",
+      "path": "body[2].children[0].children[0].text",
+      "start": 136,
+      "end": 145,
+      "term": "Bielefeld",
+      "context": "…mt Detmold und den kommunalen Untersuchungsämtern der Stadt Bielefeld und des Kreises Paderborn eine integrierte Untersuchungsans…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[0].text@162:municipality",
+      "path": "body[2].children[0].children[0].text",
+      "start": 162,
+      "end": 171,
+      "term": "Paderborn",
+      "context": "…len Untersuchungsämtern der Stadt Bielefeld und des Kreises Paderborn eine integrierte Untersuchungsanstalt für Bereiche des Verb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@83:geography-region",
+      "path": "body[2].children[0].children[1].text",
+      "start": 83,
+      "end": 95,
+      "term": "Ostwestfalen",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Ostwestfalen – Lippe“ (CVUA – OWL) mit dem Zusatz „Anstalt des öffentlic…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[1].text@98:geography-region",
+      "path": "body[2].children[0].children[1].text",
+      "start": 98,
+      "end": 103,
+      "term": "Lippe",
+      "context": "…en „Chemisches und Veterinäruntersuchungsamt Ostwestfalen – Lippe“ (CVUA – OWL) mit dem Zusatz „Anstalt des öffentlichen Rech…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[2].text@318:regional-body-district",
+      "path": "body[2].children[0].children[2].text",
+      "start": 318,
+      "end": 334,
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Detmold.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[2].children[0].children[2].text@335:municipality",
+      "path": "body[2].children[0].children[2].text",
+      "start": 335,
+      "end": 342,
+      "term": "Detmold",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@41:rule:jurisdiction-name",
+      "path": "body[2].children[1].children[0].text",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Träger der Untersuchungsanstalt sind das Land Nordrhein-Westfalen sowie die Stadt Bielefeld und die Kreise Gütersloh, Herford…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].children[0].text@82:municipality",
+      "path": "body[2].children[1].children[0].text",
+      "start": 82,
+      "end": 91,
+      "term": "Bielefeld",
+      "context": "…gsanstalt sind das Land Nordrhein-Westfalen sowie die Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lü…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@107:municipality",
+      "path": "body[2].children[1].children[0].text",
+      "start": 107,
+      "end": 116,
+      "term": "Gütersloh",
+      "context": "…ordrhein-Westfalen sowie die Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kom…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@135:geography-region",
+      "path": "body[2].children[1].children[0].text",
+      "start": 135,
+      "end": 140,
+      "term": "Lippe",
+      "context": "… Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@135:geography-river",
+      "path": "body[2].children[1].children[0].text",
+      "start": 135,
+      "end": 140,
+      "term": "Lippe",
+      "context": "… Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@142:municipality",
+      "path": "body[2].children[1].children[0].text",
+      "start": 142,
+      "end": 148,
+      "term": "Minden",
+      "context": "…Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[0].text@162:municipality",
+      "path": "body[2].children[1].children[0].text",
+      "start": 162,
+      "end": 171,
+      "term": "Paderborn",
+      "context": "…eise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[0].text@255:municipality",
+      "path": "body[2].children[3].children[0].text",
+      "start": 255,
+      "end": 264,
+      "term": "Bielefeld",
+      "context": "…den, die Leiter der Chemischen Untersuchungsämter der Stadt Bielefeld und des Kreises Paderborn werden zu weiteren Vorstandsmitgl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[0].text@281:municipality",
+      "path": "body[2].children[3].children[0].text",
+      "start": 281,
+      "end": 290,
+      "term": "Paderborn",
+      "context": "…chen Untersuchungsämter der Stadt Bielefeld und des Kreises Paderborn werden zu weiteren Vorstandsmitgliedern bestellt. Das Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[3].children[0].text@521:protected:gazette-nrw",
+      "path": "body[2].children[3].children[0].text",
+      "start": 521,
+      "end": 536,
+      "term": "GV. NRW. S. 662",
+      "context": "…für Bereiche des Verbraucherschutzes vom 11. Dezember 2007 (GV. NRW. S. 662), das durch Artikel 12 des Gesetzes vom 7. April 2017 (GV. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[3].children[0].text@592:protected:gazette-nrw",
+      "path": "body[2].children[3].children[0].text",
+      "start": 592,
+      "end": 607,
+      "term": "GV. NRW. S. 414",
+      "context": "… 662), das durch Artikel 12 des Gesetzes vom 7. April 2017 (GV. NRW. S. 414) geändert worden ist, die in Satz 2 geregelte Besetzung des…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].title@47:geography-region",
+      "path": "body[3].title",
+      "start": 47,
+      "end": 51,
+      "term": "Ruhr",
+      "context": "Chemisches und Veterinäruntersuchungsamt Rhein-Ruhr-Wupper",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@3:regional-body-district",
+      "path": "body[3].children[0].children[0].text",
+      "start": 3,
+      "end": 19,
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Düsseldorf wird aus dem Staatlichen Veterinäruntersuchungsa…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@20:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 20,
+      "end": 30,
+      "term": "Düsseldorf",
+      "context": "Im Regierungsbezirk Düsseldorf wird aus dem Staatlichen Veterinäruntersuchungsamt Krefeld …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@82:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 82,
+      "end": 89,
+      "term": "Krefeld",
+      "context": "…sseldorf wird aus dem Staatlichen Veterinäruntersuchungsamt Krefeld und den kommunalen Untersuchungsämtern der Städte Essen und…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@140:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 140,
+      "end": 145,
+      "term": "Essen",
+      "context": "…t Krefeld und den kommunalen Untersuchungsämtern der Städte Essen und Wuppertal und des Kreises Wesel eine integrierte Unters…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@150:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 150,
+      "end": 159,
+      "term": "Wuppertal",
+      "context": "…und den kommunalen Untersuchungsämtern der Städte Essen und Wuppertal und des Kreises Wesel eine integrierte Untersuchungsanstalt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@463:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 463,
+      "end": 473,
+      "term": "Düsseldorf",
+      "context": "… 1. Januar 2020 die kommunalen Untersuchungsämter der Stadt Düsseldorf und des Kreises Mettmann mit ihren Aufgaben integriert.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[1].text@89:geography-region",
+      "path": "body[3].children[0].children[1].text",
+      "start": 89,
+      "end": 93,
+      "term": "Ruhr",
+      "context": "…t den Namen „Chemisches und Veterinäruntersuchungsamt Rhein-Ruhr-Wupper“ (CVUA-RRW) mit dem Zusatz „Anstalt des öffentlichen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@325:regional-body-district",
+      "path": "body[3].children[0].children[2].text",
+      "start": 325,
+      "end": 341,
+      "term": "Regierungsbezirk",
+      "context": "…igen gehören zum Einzugsbereich der Untersuchungsanstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld,…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@342:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 342,
+      "end": 352,
+      "term": "Düsseldorf",
+      "context": "…Einzugsbereich der Untersuchungsanstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@364:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 364,
+      "end": 372,
+      "term": "Duisburg",
+      "context": "…ersuchungsanstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhause…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@374:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 374,
+      "end": 384,
+      "term": "Düsseldorf",
+      "context": "…anstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@386:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 386,
+      "end": 391,
+      "term": "Essen",
+      "context": "…egierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@393:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 393,
+      "end": 400,
+      "term": "Krefeld",
+      "context": "…gsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wupp…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@402:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 402,
+      "end": 421,
+      "term": "Mülheim an der Ruhr",
+      "context": "…Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@417:geography-region",
+      "path": "body[3].children[0].children[2].text",
+      "start": 417,
+      "end": 421,
+      "term": "Ruhr",
+      "context": "…Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@417:geography-river",
+      "path": "body[3].children[0].children[2].text",
+      "start": 417,
+      "end": 421,
+      "term": "Ruhr",
+      "context": "…Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@423:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 423,
+      "end": 433,
+      "term": "Oberhausen",
+      "context": "… Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann u…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@435:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 435,
+      "end": 444,
+      "term": "Remscheid",
+      "context": "…üsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann und Wesel. D…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@446:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 446,
+      "end": 454,
+      "term": "Solingen",
+      "context": "…Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann und Wesel. Darüber hin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@456:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 456,
+      "end": 465,
+      "term": "Wuppertal",
+      "context": "…feld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann und Wesel. Darüber hinaus gehören…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@584:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 584,
+      "end": 589,
+      "term": "Kleve",
+      "context": "…n zu diesem Einzugsbereich ab dem 1. Januar 2021 die Kreise Kleve und Viersen und ab dem 1. Januar 2022 die Stadt Mönchenglad…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@638:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 638,
+      "end": 653,
+      "term": "Mönchengladbach",
+      "context": "…reise Kleve und Viersen und ab dem 1. Januar 2022 die Stadt Mönchengladbach und der Rhein-Kreis Neuss.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@674:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 674,
+      "end": 679,
+      "term": "Neuss",
+      "context": "…. Januar 2022 die Stadt Mönchengladbach und der Rhein-Kreis Neuss.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@41:rule:jurisdiction-name",
+      "path": "body[3].children[1].children[0].text",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Träger der Untersuchungsanstalt sind das Land Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].children[0].text@83:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 83,
+      "end": 91,
+      "term": "Duisburg",
+      "context": "…sanstalt sind das Land Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@93:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 93,
+      "end": 103,
+      "term": "Düsseldorf",
+      "context": "…ind das Land Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Ober…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@105:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 105,
+      "end": 110,
+      "term": "Essen",
+      "context": "… Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@112:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 112,
+      "end": 119,
+      "term": "Krefeld",
+      "context": "…ein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remschei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@121:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 121,
+      "end": 136,
+      "term": "Mönchengladbach",
+      "context": "…alen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wupp…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@138:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 138,
+      "end": 157,
+      "term": "Mülheim an der Ruhr",
+      "context": "…ädte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Krei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@153:geography-region",
+      "path": "body[3].children[1].children[0].text",
+      "start": 153,
+      "end": 157,
+      "term": "Ruhr",
+      "context": "…Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Krei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@153:geography-river",
+      "path": "body[3].children[1].children[0].text",
+      "start": 153,
+      "end": 157,
+      "term": "Ruhr",
+      "context": "…Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Krei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@159:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 159,
+      "end": 169,
+      "term": "Oberhausen",
+      "context": "…dorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@171:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 171,
+      "end": 180,
+      "term": "Remscheid",
+      "context": "… Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@182:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 182,
+      "end": 190,
+      "term": "Solingen",
+      "context": "…önchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Met…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@192:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 192,
+      "end": 201,
+      "term": "Wuppertal",
+      "context": "…bach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Mettmann, Vier…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@219:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 219,
+      "end": 224,
+      "term": "Neuss",
+      "context": "…Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Mettmann, Viersen und Wesel (Kommunen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[0].text@240:municipality",
+      "path": "body[3].children[1].children[0].text",
+      "start": 240,
+      "end": 245,
+      "term": "Kleve",
+      "context": "…, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Mettmann, Viersen und Wesel (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[0].text@168:municipality",
+      "path": "body[3].children[3].children[0].text",
+      "start": 168,
+      "end": 175,
+      "term": "Krefeld",
+      "context": "…ied. Der Leiter des Staatlichen Veterinäruntersuchungsamtes Krefeld wird zum Vorstandsvorsitzenden, der Leiter des Instituts fü…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].children[1].children[0].text@48:geography-region",
+      "path": "body[3].children[6].children[1].children[0].text",
+      "start": 48,
+      "end": 59,
+      "term": "Münsterland",
+      "context": "Teil 3 Chemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[6].children[1].children[0].text@68:geography-region",
+      "path": "body[3].children[6].children[1].children[0].text",
+      "start": 68,
+      "end": 73,
+      "term": "Lippe",
+      "context": "…hemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@3:regional-body-district",
+      "path": "body[3].children[7].children[0].text",
+      "start": 3,
+      "end": 19,
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Münster wird aus dem Chemischen Landes- und Staatlichen Vet…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@20:municipality",
+      "path": "body[3].children[7].children[0].text",
+      "start": 20,
+      "end": 27,
+      "term": "Münster",
+      "context": "Im Regierungsbezirk Münster wird aus dem Chemischen Landes- und Staatlichen Veterinärun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@105:municipality",
+      "path": "body[3].children[7].children[0].text",
+      "start": 105,
+      "end": 112,
+      "term": "Münster",
+      "context": "…ischen Landes- und Staatlichen Veterinäruntersuchungsamt in Münster (CVUA MS) und dem Gemeinsamen Chemischen- und Lebensmittelu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@202:municipality",
+      "path": "body[3].children[7].children[0].text",
+      "start": 202,
+      "end": 216,
+      "term": "Recklinghausen",
+      "context": "… Chemischen- und Lebensmitteluntersuchungsamt für den Kreis Recklinghausen und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@231:municipality",
+      "path": "body[3].children[7].children[0].text",
+      "start": 231,
+      "end": 244,
+      "term": "Gelsenkirchen",
+      "context": "…untersuchungsamt für den Kreis Recklinghausen und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in Recklinghausen (CEL) eine in…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@260:geography-region",
+      "path": "body[3].children[7].children[0].text",
+      "start": 260,
+      "end": 265,
+      "term": "Lippe",
+      "context": "…s Recklinghausen und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in Recklinghausen (CEL) eine integrierte Untersuchun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[0].text@276:municipality",
+      "path": "body[3].children[7].children[0].text",
+      "start": 276,
+      "end": 290,
+      "term": "Recklinghausen",
+      "context": "… und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in Recklinghausen (CEL) eine integrierte Untersuchungsanstalt für Bereiche de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[1].text@83:geography-region",
+      "path": "body[3].children[7].children[1].text",
+      "start": 83,
+      "end": 94,
+      "term": "Münsterland",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe“ (CVUA-MEL) mit dem Zusatz „Anstalt des öffen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[1].text@103:geography-region",
+      "path": "body[3].children[7].children[1].text",
+      "start": 103,
+      "end": 108,
+      "term": "Lippe",
+      "context": "…hemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe“ (CVUA-MEL) mit dem Zusatz „Anstalt des öffentlichen Rechts…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[2].text@318:regional-body-district",
+      "path": "body[3].children[7].children[2].text",
+      "start": 318,
+      "end": 334,
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Münster.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[7].children[2].text@335:municipality",
+      "path": "body[3].children[7].children[2].text",
+      "start": 335,
+      "end": 342,
+      "term": "Münster",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].children[0].text@41:rule:jurisdiction-name",
+      "path": "body[3].children[8].children[0].text",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Träger der Untersuchungsanstalt sind das Land Nordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[8].children[0].text@83:municipality",
+      "path": "body[3].children[8].children[0].text",
+      "start": 83,
+      "end": 90,
+      "term": "Bottrop",
+      "context": "…sanstalt sind das Land Nordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Re…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].children[0].text@92:municipality",
+      "path": "body[3].children[8].children[0].text",
+      "start": 92,
+      "end": 105,
+      "term": "Gelsenkirchen",
+      "context": "…sind das Land Nordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Recklinghausen, S…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].children[0].text@107:municipality",
+      "path": "body[3].children[8].children[0].text",
+      "start": 107,
+      "end": 114,
+      "term": "Münster",
+      "context": "…ordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Recklinghausen, Steinfurt …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[8].children[0].text@148:municipality",
+      "path": "body[3].children[8].children[0].text",
+      "start": 148,
+      "end": 162,
+      "term": "Recklinghausen",
+      "context": "…op, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Recklinghausen, Steinfurt und Warendorf (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[9].children[3].text@82:municipality",
+      "path": "body[3].children[9].children[3].text",
+      "start": 82,
+      "end": 96,
+      "term": "Recklinghausen",
+      "context": "…altungsrates über die Auflösung des Untersuchungsstandortes Recklinghausen kann nur mit der Stimme des Kreises Recklinghausen gefasst …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[9].children[3].text@133:municipality",
+      "path": "body[3].children[9].children[3].text",
+      "start": 133,
+      "end": 147,
+      "term": "Recklinghausen",
+      "context": "…andortes Recklinghausen kann nur mit der Stimme des Kreises Recklinghausen gefasst werden.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[13].children[1].children[0].text@48:geography-region",
+      "path": "body[3].children[13].children[1].children[0].text",
+      "start": 48,
+      "end": 57,
+      "term": "Rheinland",
+      "context": "Teil 4 Chemisches und Veterinäruntersuchungsamt Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[0].text@3:regional-body-district",
+      "path": "body[3].children[14].children[0].text",
+      "start": 3,
+      "end": 19,
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Köln wird aus dem Fachbereich Chemische Lebensmitteluntersu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[0].text@20:municipality",
+      "path": "body[3].children[14].children[0].text",
+      "start": 20,
+      "end": 24,
+      "term": "Köln",
+      "context": "Im Regierungsbezirk Köln wird aus dem Fachbereich Chemische Lebensmitteluntersuchung…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[0].text@95:municipality",
+      "path": "body[3].children[14].children[0].text",
+      "start": 95,
+      "end": 101,
+      "term": "Aachen",
+      "context": "…em Fachbereich Chemische Lebensmitteluntersuchung der Stadt Aachen, der Amtlichen Lebensmitteluntersuchung - Leistungszentrum …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[0].text@196:municipality",
+      "path": "body[3].children[14].children[0].text",
+      "start": 196,
+      "end": 200,
+      "term": "Bonn",
+      "context": "…chung - Leistungszentrum optimierter Laborbetrieb der Stadt Bonn, dem Institut für Lebensmitteluntersuchungen der Stadt Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[0].text@256:municipality",
+      "path": "body[3].children[14].children[0].text",
+      "start": 256,
+      "end": 260,
+      "term": "Köln",
+      "context": "…Bonn, dem Institut für Lebensmitteluntersuchungen der Stadt Köln und dem Chemischen Untersuchungsinstitut der Stadt Leverkus…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[0].text@312:municipality",
+      "path": "body[3].children[14].children[0].text",
+      "start": 312,
+      "end": 322,
+      "term": "Leverkusen",
+      "context": "…adt Köln und dem Chemischen Untersuchungsinstitut der Stadt Leverkusen eine integrierte Untersuchungsanstalt für Bereiche des Verb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[1].text@83:geography-region",
+      "path": "body[3].children[14].children[1].text",
+      "start": 83,
+      "end": 92,
+      "term": "Rheinland",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Rheinland“ (CVUA Rheinland) mit dem Zusatz „Anstalt des öffentlichen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[1].text@100:geography-region",
+      "path": "body[3].children[14].children[1].text",
+      "start": 100,
+      "end": 109,
+      "term": "Rheinland",
+      "context": "… „Chemisches und Veterinäruntersuchungsamt Rheinland“ (CVUA Rheinland) mit dem Zusatz „Anstalt des öffentlichen Rechts“.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[2].text@318:regional-body-district",
+      "path": "body[3].children[14].children[2].text",
+      "start": 318,
+      "end": 334,
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Köln.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[14].children[2].text@335:municipality",
+      "path": "body[3].children[14].children[2].text",
+      "start": 335,
+      "end": 339,
+      "term": "Köln",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].children[0].text@41:rule:jurisdiction-name",
+      "path": "body[3].children[15].children[0].text",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Träger der Untersuchungsanstalt sind das Land Nordrhein-Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[15].children[0].text@89:municipality",
+      "path": "body[3].children[15].children[0].text",
+      "start": 89,
+      "end": 95,
+      "term": "Aachen",
+      "context": "…lt sind das Land Nordrhein-Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düre…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].children[0].text@108:municipality",
+      "path": "body[3].children[15].children[0].text",
+      "start": 108,
+      "end": 114,
+      "term": "Aachen",
+      "context": "…rdrhein-Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Hein…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].children[0].text@116:municipality",
+      "path": "body[3].children[15].children[0].text",
+      "start": 116,
+      "end": 120,
+      "term": "Bonn",
+      "context": "…Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Heinsberg,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].children[0].text@122:municipality",
+      "path": "body[3].children[15].children[0].text",
+      "start": 122,
+      "end": 126,
+      "term": "Köln",
+      "context": "…len sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Heinsberg, der O…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[15].children[0].text@128:municipality",
+      "path": "body[3].children[15].children[0].text",
+      "start": 128,
+      "end": 138,
+      "term": "Leverkusen",
+      "context": "…wie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Heinsberg, der Oberbergische…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].children[0].text@186:municipality",
+      "path": "body[3].children[17].children[0].text",
+      "start": 186,
+      "end": 192,
+      "term": "Aachen",
+      "context": "…s Fachbereichs Chemische Lebensmitteluntersuchung der Stadt Aachen wird zum Vorstandsvorsitzenden, die Leiterin des Chemischen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[17].children[0].text@286:municipality",
+      "path": "body[3].children[17].children[0].text",
+      "start": 286,
+      "end": 296,
+      "term": "Leverkusen",
+      "context": "…ie Leiterin des Chemischen Untersuchungsinstituts der Stadt Leverkusen wird zum weiteren Vorstandsmitglied bestellt. Das Recht des…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[20].children[1].children[0].text@48:geography-region",
+      "path": "body[3].children[20].children[1].children[0].text",
+      "start": 48,
+      "end": 57,
+      "term": "Westfalen",
+      "context": "Teil 5 Chemisches und Veterinäruntersuchungsamt Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@3:regional-body-district",
+      "path": "body[3].children[21].children[0].text",
+      "start": 3,
+      "end": 19,
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Arnsberg wird aus den Chemischen Untersuchungsämtern der St…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@20:municipality",
+      "path": "body[3].children[21].children[0].text",
+      "start": 20,
+      "end": 28,
+      "term": "Arnsberg",
+      "context": "Im Regierungsbezirk Arnsberg wird aus den Chemischen Untersuchungsämtern der Städte Hamm…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@84:municipality",
+      "path": "body[3].children[21].children[0].text",
+      "start": 84,
+      "end": 88,
+      "term": "Hamm",
+      "context": "…berg wird aus den Chemischen Untersuchungsämtern der Städte Hamm, Hagen und Bochum, dem Chemischen- und Lebensmitteluntersuc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@90:municipality",
+      "path": "body[3].children[21].children[0].text",
+      "start": 90,
+      "end": 95,
+      "term": "Hagen",
+      "context": "…ird aus den Chemischen Untersuchungsämtern der Städte Hamm, Hagen und Bochum, dem Chemischen- und Lebensmitteluntersuchungsam…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@100:municipality",
+      "path": "body[3].children[21].children[0].text",
+      "start": 100,
+      "end": 106,
+      "term": "Bochum",
+      "context": "…n Chemischen Untersuchungsämtern der Städte Hamm, Hagen und Bochum, dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@167:municipality",
+      "path": "body[3].children[21].children[0].text",
+      "start": 167,
+      "end": 175,
+      "term": "Dortmund",
+      "context": "… dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg ei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[0].text@224:municipality",
+      "path": "body[3].children[21].children[0].text",
+      "start": 224,
+      "end": 232,
+      "term": "Arnsberg",
+      "context": "…dt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg eine integrierte Untersuchungsanstalt für Bereiche des Verb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[1].text@83:geography-region",
+      "path": "body[3].children[21].children[1].text",
+      "start": 83,
+      "end": 92,
+      "term": "Westfalen",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Westfalen“ (CVUA-Westfalen) mit dem Zusatz „Anstalt des öffentlichen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[1].text@100:geography-region",
+      "path": "body[3].children[21].children[1].text",
+      "start": 100,
+      "end": 109,
+      "term": "Westfalen",
+      "context": "… „Chemisches und Veterinäruntersuchungsamt Westfalen“ (CVUA-Westfalen) mit dem Zusatz „Anstalt des öffentlichen Rechts“.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[2].text@318:regional-body-district",
+      "path": "body[3].children[21].children[2].text",
+      "start": 318,
+      "end": 334,
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Arnsberg.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[21].children[2].text@335:municipality",
+      "path": "body[3].children[21].children[2].text",
+      "start": 335,
+      "end": 343,
+      "term": "Arnsberg",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Arnsberg.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@41:rule:jurisdiction-name",
+      "path": "body[3].children[22].children[0].text",
+      "start": 41,
+      "end": 65,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Träger der Untersuchungsanstalt sind das Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[22].children[0].text@83:municipality",
+      "path": "body[3].children[22].children[0].text",
+      "start": 83,
+      "end": 89,
+      "term": "Bochum",
+      "context": "…sanstalt sind das Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsaue…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@91:municipality",
+      "path": "body[3].children[22].children[0].text",
+      "start": 91,
+      "end": 99,
+      "term": "Dortmund",
+      "context": "… sind das Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@101:municipality",
+      "path": "body[3].children[22].children[0].text",
+      "start": 101,
+      "end": 106,
+      "term": "Hagen",
+      "context": "…Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis, der M…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@108:municipality",
+      "path": "body[3].children[22].children[0].text",
+      "start": 108,
+      "end": 112,
+      "term": "Hamm",
+      "context": "…rdrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis, der Märkisc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@125:geography-region",
+      "path": "body[3].children[22].children[0].text",
+      "start": 125,
+      "end": 129,
+      "term": "Ruhr",
+      "context": "… sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis, der Märkische Kreis, die Kre…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@199:municipality",
+      "path": "body[3].children[22].children[0].text",
+      "start": 199,
+      "end": 205,
+      "term": "Siegen",
+      "context": "…r Hochsauerlandkreis, der Märkische Kreis, die Kreise Olpe, Siegen-Wittgenstein, Soest und Unna (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[22].children[0].text@220:municipality",
+      "path": "body[3].children[22].children[0].text",
+      "start": 220,
+      "end": 225,
+      "term": "Soest",
+      "context": "… der Märkische Kreis, die Kreise Olpe, Siegen-Wittgenstein, Soest und Unna (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].children[0].text@159:municipality",
+      "path": "body[3].children[24].children[0].text",
+      "start": 159,
+      "end": 165,
+      "term": "Bochum",
+      "context": "…ern. Der Leiter des Chemischen Untersuchungsamtes der Stadt Bochum wird zum Vorstandsvorsitzenden, die Leiter des Chemischen U…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].children[0].text@243:municipality",
+      "path": "body[3].children[24].children[0].text",
+      "start": 243,
+      "end": 248,
+      "term": "Hagen",
+      "context": "…svorsitzenden, die Leiter des Chemischen Untersuchungsamtes Hagen und Hamm, des Chemischen und Lebensmitteluntersuchungsamtes…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].children[0].text@253:municipality",
+      "path": "body[3].children[24].children[0].text",
+      "start": 253,
+      "end": 257,
+      "term": "Hamm",
+      "context": "…den, die Leiter des Chemischen Untersuchungsamtes Hagen und Hamm, des Chemischen und Lebensmitteluntersuchungsamtes Dortmund…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].children[0].text@309:municipality",
+      "path": "body[3].children[24].children[0].text",
+      "start": 309,
+      "end": 317,
+      "term": "Dortmund",
+      "context": "…und Hamm, des Chemischen und Lebensmitteluntersuchungsamtes Dortmund und des Staatlichen Veterinäruntersuchungsamtes Arnsberg we…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[24].children[0].text@366:municipality",
+      "path": "body[3].children[24].children[0].text",
+      "start": 366,
+      "end": 374,
+      "term": "Arnsberg",
+      "context": "…es Dortmund und des Staatlichen Veterinäruntersuchungsamtes Arnsberg werden zu weiteren Vorstandsmitgliedern bestellt. Das Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].children[2].text@85:municipality",
+      "path": "body[3].children[27].children[2].text",
+      "start": 85,
+      "end": 90,
+      "term": "Hagen",
+      "context": "…tersuchungsanstalt im Chemischen Untersuchungsamt der Stadt Hagen, Chemischen Untersuchungsamt der Stadt Hamm, Chemischen Unt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].children[2].text@130:municipality",
+      "path": "body[3].children[27].children[2].text",
+      "start": 130,
+      "end": 134,
+      "term": "Hamm",
+      "context": "…samt der Stadt Hagen, Chemischen Untersuchungsamt der Stadt Hamm, Chemischen Untersuchungsamt der Stadt Bochum, dem Chemisch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].children[2].text@174:municipality",
+      "path": "body[3].children[27].children[2].text",
+      "start": 174,
+      "end": 180,
+      "term": "Bochum",
+      "context": "…gsamt der Stadt Hamm, Chemischen Untersuchungsamt der Stadt Bochum, dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].children[2].text@241:municipality",
+      "path": "body[3].children[27].children[2].text",
+      "start": 241,
+      "end": 249,
+      "term": "Dortmund",
+      "context": "… dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg tä…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[27].children[2].text@298:municipality",
+      "path": "body[3].children[27].children[2].text",
+      "start": 298,
+      "end": 306,
+      "term": "Arnsberg",
+      "context": "…dt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg tätigen tariflich Beschäftigten sollen der Untersuchungsans…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[28].children[5].text@4:ministry-portfolio",
+      "path": "body[3].children[28].children[5].text",
+      "start": 4,
+      "end": 77,
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[3].children[28].children[5].text@82:rule:jurisdiction-name-genitive",
+      "path": "body[3].children[28].children[5].text",
+      "start": 82,
+      "end": 108,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…t und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 7
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "geography": {
+      "manual-review": 24
+    },
+    "regional-body": {
+      "manual-review": 10
+    },
+    "municipality": {
+      "manual-review": 90
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[8].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[15].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].children[28].children[5].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].title",
+      "term": "Ostwestfalen",
+      "context": "Chemisches und Veterinäruntersuchungsamt Ostwestfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].title",
+      "term": "Lippe",
+      "context": "Chemisches und Veterinäruntersuchungsamt Ostwestfalen-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Detmold wird aus dem Staatlichen Veterinäruntersuchungsamt …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "term": "Detmold",
+      "context": "Im Regierungsbezirk Detmold wird aus dem Staatlichen Veterinäruntersuchungsamt Detmold …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "term": "Detmold",
+      "context": "… Detmold wird aus dem Staatlichen Veterinäruntersuchungsamt Detmold und den kommunalen Untersuchungsämtern der Stadt Bielefeld …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "term": "Bielefeld",
+      "context": "…mt Detmold und den kommunalen Untersuchungsämtern der Stadt Bielefeld und des Kreises Paderborn eine integrierte Untersuchungsans…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[0].text",
+      "term": "Paderborn",
+      "context": "…len Untersuchungsämtern der Stadt Bielefeld und des Kreises Paderborn eine integrierte Untersuchungsanstalt für Bereiche des Verb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Ostwestfalen",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Ostwestfalen – Lippe“ (CVUA – OWL) mit dem Zusatz „Anstalt des öffentlic…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[1].text",
+      "term": "Lippe",
+      "context": "…en „Chemisches und Veterinäruntersuchungsamt Ostwestfalen – Lippe“ (CVUA – OWL) mit dem Zusatz „Anstalt des öffentlichen Rech…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Detmold.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].children[2].text",
+      "term": "Detmold",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Detmold.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "term": "Bielefeld",
+      "context": "…gsanstalt sind das Land Nordrhein-Westfalen sowie die Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lü…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "term": "Gütersloh",
+      "context": "…ordrhein-Westfalen sowie die Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kom…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "term": "Lippe",
+      "context": "… Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "term": "Lippe",
+      "context": "… Stadt Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "term": "Minden",
+      "context": "…Bielefeld und die Kreise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[0].text",
+      "term": "Paderborn",
+      "context": "…eise Gütersloh, Herford, Höxter, Lippe, Minden-Lübbecke und Paderborn (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[0].text",
+      "term": "Bielefeld",
+      "context": "…den, die Leiter der Chemischen Untersuchungsämter der Stadt Bielefeld und des Kreises Paderborn werden zu weiteren Vorstandsmitgl…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[3].children[0].text",
+      "term": "Paderborn",
+      "context": "…chen Untersuchungsämter der Stadt Bielefeld und des Kreises Paderborn werden zu weiteren Vorstandsmitgliedern bestellt. Das Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].title",
+      "term": "Ruhr",
+      "context": "Chemisches und Veterinäruntersuchungsamt Rhein-Ruhr-Wupper",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Düsseldorf wird aus dem Staatlichen Veterinäruntersuchungsa…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Düsseldorf",
+      "context": "Im Regierungsbezirk Düsseldorf wird aus dem Staatlichen Veterinäruntersuchungsamt Krefeld …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Krefeld",
+      "context": "…sseldorf wird aus dem Staatlichen Veterinäruntersuchungsamt Krefeld und den kommunalen Untersuchungsämtern der Städte Essen und…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Essen",
+      "context": "…t Krefeld und den kommunalen Untersuchungsämtern der Städte Essen und Wuppertal und des Kreises Wesel eine integrierte Unters…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Wuppertal",
+      "context": "…und den kommunalen Untersuchungsämtern der Städte Essen und Wuppertal und des Kreises Wesel eine integrierte Untersuchungsanstalt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Düsseldorf",
+      "context": "… 1. Januar 2020 die kommunalen Untersuchungsämter der Stadt Düsseldorf und des Kreises Mettmann mit ihren Aufgaben integriert.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[1].text",
+      "term": "Ruhr",
+      "context": "…t den Namen „Chemisches und Veterinäruntersuchungsamt Rhein-Ruhr-Wupper“ (CVUA-RRW) mit dem Zusatz „Anstalt des öffentlichen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "…igen gehören zum Einzugsbereich der Untersuchungsanstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld,…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Düsseldorf",
+      "context": "…Einzugsbereich der Untersuchungsanstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Duisburg",
+      "context": "…ersuchungsanstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhause…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Düsseldorf",
+      "context": "…anstalt im Regierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Essen",
+      "context": "…egierungsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Krefeld",
+      "context": "…gsbezirk Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wupp…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Mülheim an der Ruhr",
+      "context": "…Düsseldorf die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Ruhr",
+      "context": "…Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Ruhr",
+      "context": "…Städte Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreis…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Oberhausen",
+      "context": "… Duisburg, Düsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann u…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Remscheid",
+      "context": "…üsseldorf, Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann und Wesel. D…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Solingen",
+      "context": "…Essen, Krefeld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann und Wesel. Darüber hin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Wuppertal",
+      "context": "…feld, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal sowie die Kreise Mettmann und Wesel. Darüber hinaus gehören…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Kleve",
+      "context": "…n zu diesem Einzugsbereich ab dem 1. Januar 2021 die Kreise Kleve und Viersen und ab dem 1. Januar 2022 die Stadt Mönchenglad…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Mönchengladbach",
+      "context": "…reise Kleve und Viersen und ab dem 1. Januar 2022 die Stadt Mönchengladbach und der Rhein-Kreis Neuss.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Neuss",
+      "context": "…. Januar 2022 die Stadt Mönchengladbach und der Rhein-Kreis Neuss.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Duisburg",
+      "context": "…sanstalt sind das Land Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…ind das Land Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Ober…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Essen",
+      "context": "… Nordrhein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Krefeld",
+      "context": "…ein-Westfalen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remschei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Mönchengladbach",
+      "context": "…alen sowie die Städte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wupp…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Mülheim an der Ruhr",
+      "context": "…ädte Duisburg, Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Krei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Ruhr",
+      "context": "…Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Krei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Ruhr",
+      "context": "…Düsseldorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Krei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Oberhausen",
+      "context": "…dorf, Essen, Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Remscheid",
+      "context": "… Krefeld, Mönchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Solingen",
+      "context": "…önchengladbach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Met…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Wuppertal",
+      "context": "…bach, Mülheim an der Ruhr, Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Mettmann, Vier…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Neuss",
+      "context": "…Oberhausen, Remscheid, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Mettmann, Viersen und Wesel (Kommunen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[0].text",
+      "term": "Kleve",
+      "context": "…, Solingen, Wuppertal, der Rhein-Kreis Neuss und die Kreise Kleve, Mettmann, Viersen und Wesel (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[0].text",
+      "term": "Krefeld",
+      "context": "…ied. Der Leiter des Staatlichen Veterinäruntersuchungsamtes Krefeld wird zum Vorstandsvorsitzenden, der Leiter des Instituts fü…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].children[1].children[0].text",
+      "term": "Münsterland",
+      "context": "Teil 3 Chemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].children[1].children[0].text",
+      "term": "Lippe",
+      "context": "…hemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Münster wird aus dem Chemischen Landes- und Staatlichen Vet…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Münster",
+      "context": "Im Regierungsbezirk Münster wird aus dem Chemischen Landes- und Staatlichen Veterinärun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Münster",
+      "context": "…ischen Landes- und Staatlichen Veterinäruntersuchungsamt in Münster (CVUA MS) und dem Gemeinsamen Chemischen- und Lebensmittelu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Recklinghausen",
+      "context": "… Chemischen- und Lebensmitteluntersuchungsamt für den Kreis Recklinghausen und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Gelsenkirchen",
+      "context": "…untersuchungsamt für den Kreis Recklinghausen und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in Recklinghausen (CEL) eine in…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Lippe",
+      "context": "…s Recklinghausen und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in Recklinghausen (CEL) eine integrierte Untersuchun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[0].text",
+      "term": "Recklinghausen",
+      "context": "… und die Stadt Gelsenkirchen in der Emscher-Lippe-Region in Recklinghausen (CEL) eine integrierte Untersuchungsanstalt für Bereiche de…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[1].text",
+      "term": "Münsterland",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe“ (CVUA-MEL) mit dem Zusatz „Anstalt des öffen…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[1].text",
+      "term": "Lippe",
+      "context": "…hemisches und Veterinäruntersuchungsamt Münsterland-Emscher-Lippe“ (CVUA-MEL) mit dem Zusatz „Anstalt des öffentlichen Rechts…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Münster.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[7].children[2].text",
+      "term": "Münster",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].children[0].text",
+      "term": "Bottrop",
+      "context": "…sanstalt sind das Land Nordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Re…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].children[0].text",
+      "term": "Gelsenkirchen",
+      "context": "…sind das Land Nordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Recklinghausen, S…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].children[0].text",
+      "term": "Münster",
+      "context": "…ordrhein-Westfalen sowie die Städte Bottrop, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Recklinghausen, Steinfurt …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[8].children[0].text",
+      "term": "Recklinghausen",
+      "context": "…op, Gelsenkirchen, Münster und die Kreise Borken, Coesfeld, Recklinghausen, Steinfurt und Warendorf (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[9].children[3].text",
+      "term": "Recklinghausen",
+      "context": "…altungsrates über die Auflösung des Untersuchungsstandortes Recklinghausen kann nur mit der Stimme des Kreises Recklinghausen gefasst …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[9].children[3].text",
+      "term": "Recklinghausen",
+      "context": "…andortes Recklinghausen kann nur mit der Stimme des Kreises Recklinghausen gefasst werden.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[13].children[1].children[0].text",
+      "term": "Rheinland",
+      "context": "Teil 4 Chemisches und Veterinäruntersuchungsamt Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Köln wird aus dem Fachbereich Chemische Lebensmitteluntersu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[0].text",
+      "term": "Köln",
+      "context": "Im Regierungsbezirk Köln wird aus dem Fachbereich Chemische Lebensmitteluntersuchung…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[0].text",
+      "term": "Aachen",
+      "context": "…em Fachbereich Chemische Lebensmitteluntersuchung der Stadt Aachen, der Amtlichen Lebensmitteluntersuchung - Leistungszentrum …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[0].text",
+      "term": "Bonn",
+      "context": "…chung - Leistungszentrum optimierter Laborbetrieb der Stadt Bonn, dem Institut für Lebensmitteluntersuchungen der Stadt Köln…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[0].text",
+      "term": "Köln",
+      "context": "…Bonn, dem Institut für Lebensmitteluntersuchungen der Stadt Köln und dem Chemischen Untersuchungsinstitut der Stadt Leverkus…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[0].text",
+      "term": "Leverkusen",
+      "context": "…adt Köln und dem Chemischen Untersuchungsinstitut der Stadt Leverkusen eine integrierte Untersuchungsanstalt für Bereiche des Verb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[1].text",
+      "term": "Rheinland",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Rheinland“ (CVUA Rheinland) mit dem Zusatz „Anstalt des öffentlichen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[1].text",
+      "term": "Rheinland",
+      "context": "… „Chemisches und Veterinäruntersuchungsamt Rheinland“ (CVUA Rheinland) mit dem Zusatz „Anstalt des öffentlichen Rechts“.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Köln.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[14].children[2].text",
+      "term": "Köln",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Köln.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].children[0].text",
+      "term": "Aachen",
+      "context": "…lt sind das Land Nordrhein-Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düre…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].children[0].text",
+      "term": "Aachen",
+      "context": "…rdrhein-Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Hein…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].children[0].text",
+      "term": "Bonn",
+      "context": "…Westfalen sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Heinsberg,…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].children[0].text",
+      "term": "Köln",
+      "context": "…len sowie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Heinsberg, der O…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[15].children[0].text",
+      "term": "Leverkusen",
+      "context": "…wie die Städteregion Aachen, die Städte Aachen, Bonn, Köln, Leverkusen, die Kreise Düren, Euskirchen, Heinsberg, der Oberbergische…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].children[0].text",
+      "term": "Aachen",
+      "context": "…s Fachbereichs Chemische Lebensmitteluntersuchung der Stadt Aachen wird zum Vorstandsvorsitzenden, die Leiterin des Chemischen…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[17].children[0].text",
+      "term": "Leverkusen",
+      "context": "…ie Leiterin des Chemischen Untersuchungsinstituts der Stadt Leverkusen wird zum weiteren Vorstandsmitglied bestellt. Das Recht des…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[20].children[1].children[0].text",
+      "term": "Westfalen",
+      "context": "Teil 5 Chemisches und Veterinäruntersuchungsamt Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "Im Regierungsbezirk Arnsberg wird aus den Chemischen Untersuchungsämtern der St…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Arnsberg",
+      "context": "Im Regierungsbezirk Arnsberg wird aus den Chemischen Untersuchungsämtern der Städte Hamm…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Hamm",
+      "context": "…berg wird aus den Chemischen Untersuchungsämtern der Städte Hamm, Hagen und Bochum, dem Chemischen- und Lebensmitteluntersuc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Hagen",
+      "context": "…ird aus den Chemischen Untersuchungsämtern der Städte Hamm, Hagen und Bochum, dem Chemischen- und Lebensmitteluntersuchungsam…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Bochum",
+      "context": "…n Chemischen Untersuchungsämtern der Städte Hamm, Hagen und Bochum, dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Dortmund",
+      "context": "… dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg ei…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[0].text",
+      "term": "Arnsberg",
+      "context": "…dt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg eine integrierte Untersuchungsanstalt für Bereiche des Verb…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[1].text",
+      "term": "Westfalen",
+      "context": "…t führt den Namen „Chemisches und Veterinäruntersuchungsamt Westfalen“ (CVUA-Westfalen) mit dem Zusatz „Anstalt des öffentlichen …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[1].text",
+      "term": "Westfalen",
+      "context": "… „Chemisches und Veterinäruntersuchungsamt Westfalen“ (CVUA-Westfalen) mit dem Zusatz „Anstalt des öffentlichen Rechts“.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[2].text",
+      "term": "Regierungsbezirk",
+      "context": "… Im Übrigen ist Einzugsbereich der Untersuchungsanstalt der Regierungsbezirk Arnsberg.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[21].children[2].text",
+      "term": "Arnsberg",
+      "context": "…inzugsbereich der Untersuchungsanstalt der Regierungsbezirk Arnsberg.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Bochum",
+      "context": "…sanstalt sind das Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsaue…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Dortmund",
+      "context": "… sind das Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Hagen",
+      "context": "…Land Nordrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis, der M…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Hamm",
+      "context": "…rdrhein-Westfalen sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis, der Märkisc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Ruhr",
+      "context": "… sowie die Städte Bochum, Dortmund, Hagen, Hamm, der Ennepe-Ruhr-Kreis, der Hochsauerlandkreis, der Märkische Kreis, die Kre…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Siegen",
+      "context": "…r Hochsauerlandkreis, der Märkische Kreis, die Kreise Olpe, Siegen-Wittgenstein, Soest und Unna (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[22].children[0].text",
+      "term": "Soest",
+      "context": "… der Märkische Kreis, die Kreise Olpe, Siegen-Wittgenstein, Soest und Unna (Kommunen).",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].children[0].text",
+      "term": "Bochum",
+      "context": "…ern. Der Leiter des Chemischen Untersuchungsamtes der Stadt Bochum wird zum Vorstandsvorsitzenden, die Leiter des Chemischen U…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].children[0].text",
+      "term": "Hagen",
+      "context": "…svorsitzenden, die Leiter des Chemischen Untersuchungsamtes Hagen und Hamm, des Chemischen und Lebensmitteluntersuchungsamtes…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].children[0].text",
+      "term": "Hamm",
+      "context": "…den, die Leiter des Chemischen Untersuchungsamtes Hagen und Hamm, des Chemischen und Lebensmitteluntersuchungsamtes Dortmund…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].children[0].text",
+      "term": "Dortmund",
+      "context": "…und Hamm, des Chemischen und Lebensmitteluntersuchungsamtes Dortmund und des Staatlichen Veterinäruntersuchungsamtes Arnsberg we…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[24].children[0].text",
+      "term": "Arnsberg",
+      "context": "…es Dortmund und des Staatlichen Veterinäruntersuchungsamtes Arnsberg werden zu weiteren Vorstandsmitgliedern bestellt. Das Recht…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].children[2].text",
+      "term": "Hagen",
+      "context": "…tersuchungsanstalt im Chemischen Untersuchungsamt der Stadt Hagen, Chemischen Untersuchungsamt der Stadt Hamm, Chemischen Unt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].children[2].text",
+      "term": "Hamm",
+      "context": "…samt der Stadt Hagen, Chemischen Untersuchungsamt der Stadt Hamm, Chemischen Untersuchungsamt der Stadt Bochum, dem Chemisch…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].children[2].text",
+      "term": "Bochum",
+      "context": "…gsamt der Stadt Hamm, Chemischen Untersuchungsamt der Stadt Bochum, dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].children[2].text",
+      "term": "Dortmund",
+      "context": "… dem Chemischen- und Lebensmitteluntersuchungsamt der Stadt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg tä…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[27].children[2].text",
+      "term": "Arnsberg",
+      "context": "…dt Dortmund sowie dem Staatlichen Veterinäruntersuchungsamt Arnsberg tätigen tariflich Beschäftigten sollen der Untersuchungsans…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[28].children[5].text",
+      "term": "Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz",
+      "context": "Der Minister für Umwelt und Naturschutz, Landwirtschaft und Verbraucherschutz des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 197,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "… Verbraucherschutzes (IUAG West) vom 11. Dezember 2007 (GV. NRW. S. 662) wird verordnet:",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…Bereiche des Verbraucherschutzes vom 11. Dezember 2007 (GV. NRW. S. 662), das durch Artikel 12 des Gesetzes vom 7. April 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].children[3].children[0].text",
+        "term": "NRW",
+        "context": "…), das durch Artikel 12 des Gesetzes vom 7. April 2017 (GV. NRW. S. 414) geändert worden ist, die in Satz 2 geregelte Beset…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung zur Errichtung integrierter Untersuchungsanstalten für Bereiche des Verbraucherschutzes vom 20. Dezember 2007 (GV. NRW. S. 740)",
+    "sourceVersion": "Verordnung zur Errichtung integrierter Untersuchungsanstalten für Bereiche des Verbraucherschutzes vom 20. Dezember 2007 (GV. NRW. S. 740)",
+    "simulation": "Verordnung zur Errichtung integrierter Untersuchungsanstalten für Bereiche des Verbraucherschutzes in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 36,
+          "actual": 36,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 20593,
+          "actual": 20409,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 36,
+          "actual": 36,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 124,
+          "actual": 124,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 36,
+          "actual": 36,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 20409,
+          "actual": 20386,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "36 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "36 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25282-41800-sgv_2125_20071220_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 8,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25282-41801-sgv_2125_20071220_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 3,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:44:10.201Z"
+}

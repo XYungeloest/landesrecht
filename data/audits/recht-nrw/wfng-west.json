@@ -1,0 +1,1515 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29998",
+  "slug": "wfng-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@54:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 54,
+      "end": 78,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Gesetz zur Förderung und Nutzung von Wohnraum für das Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@5:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 5,
+      "end": 8,
+      "term": "NRW",
+      "context": "WFNG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[0].text@104:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 104,
+      "end": 119,
+      "term": "GV. NRW. S. 269",
+      "context": "…5 geändert durch Artikel 1 des Gesetzes vom 10. April 2014 (GV. NRW. S. 269), in Kraft getreten am 30. April 2014.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@122:protected:external-nrw-dot-names",
+      "path": "body[2].text",
+      "start": 122,
+      "end": 130,
+      "term": "NRW.BANK",
+      "context": "…m Wohnungswesen, zur Steigerung der Fördermöglichkeiten der NRW.BANK und zur Änderung anderer Gesetze vom 8. Dezember 2009 (GV. …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@186:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 186,
+      "end": 201,
+      "term": "GV. NRW. S. 772",
+      "context": "…BANK und zur Änderung anderer Gesetze vom 8. Dezember 2009 (GV. NRW. S. 772))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[1].text@167:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[1].text",
+      "start": 167,
+      "end": 175,
+      "term": "NRW.BANK",
+      "context": "…isfreien Städte, Kreise, kreisangehörigen Gemeinden und der NRW.BANK, soweit nichts anderes bestimmt ist. Die NRW.BANK und die B…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[1].text@217:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[1].text",
+      "start": 217,
+      "end": 225,
+      "term": "NRW.BANK",
+      "context": "…n und der NRW.BANK, soweit nichts anderes bestimmt ist. Die NRW.BANK und die Bewilligungsbehörden sowie die zuständigen Stellen …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[1].text@450:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[1].text",
+      "start": 450,
+      "end": 458,
+      "term": "NRW.BANK",
+      "context": "…zu unterstützen. Die Verantwortung der Geschäftsleitung der NRW.BANK nach den Vorschriften des Gesetzes über das Kreditwesen ble…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[1].text@580:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[1].text",
+      "start": 580,
+      "end": 588,
+      "term": "NRW.BANK",
+      "context": "…t unberührt. Zuständige Stelle, Bewilligungsbehörde und die NRW.BANK sind berechtigt und gegenseitig verpflichtet, auf Verlangen…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[4].text@220:rule:jurisdiction-name",
+      "path": "body[13].children[2].children[4].text",
+      "start": 220,
+      "end": 244,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…nd § 57 Absatz 1 Satz 1 Halbsatz 1 der Kreisordnung für das Land Nordrhein-Westfalen zuständigen Behörden. Obere Aufsichtsbehörde für die kreisa…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[2].children[4].text@364:authority-district-government",
+      "path": "body[13].children[2].children[4].text",
+      "start": 364,
+      "end": 380,
+      "term": "Bezirksregierung",
+      "context": "…ngehörigen Gemeinden, Kreise und kreisfreien Städte ist die Bezirksregierung. Oberste Aufsichtsbehörde ist das für das Wohnungswesen zus…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[13].children[2].children[5].text@4:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[5].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "Die NRW.BANK unterstützt das für das Wohnungswesen zuständige Ministeriu…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[5].text@360:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[5].text",
+      "start": 360,
+      "end": 368,
+      "term": "NRW.BANK",
+      "context": "…. Das für das Wohnungswesen zuständige Ministerium kann der NRW.BANK weitere Aufgaben auf dem Gebiet des Wohnungswesens durch Re…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[5].text@607:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[5].text",
+      "start": 607,
+      "end": 615,
+      "term": "NRW.BANK",
+      "context": "…n dem für das Wohnungswesen zuständigen Ministerium und der NRW.BANK vertraglich geregelt.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[6].text@96:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[6].text",
+      "start": 96,
+      "end": 104,
+      "term": "NRW.BANK",
+      "context": "…5 kann das für das Wohnungswesen zuständige Ministerium der NRW.BANK die Verwaltung der zur Förderung des Wohnungswesens vom Bun…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[6].text@286:rule:jurisdiction-name-dative",
+      "path": "body[13].children[2].children[6].text",
+      "start": 286,
+      "end": 314,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "…tlichen Rechts gewährten Darlehen und Zuschüsse, soweit sie dem Land Nordrhein-Westfalen bereitgestellt werden, übertragen. Der NRW.BANK kann darin …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[13].children[2].children[6].text@354:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[6].text",
+      "start": 354,
+      "end": 362,
+      "term": "NRW.BANK",
+      "context": "… Nordrhein-Westfalen bereitgestellt werden, übertragen. Der NRW.BANK kann darin ferner die Verwaltung der vom Land in der Vergan…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[2].children[7].text@4:protected:external-nrw-dot-names",
+      "path": "body[13].children[2].children[7].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "Die NRW.BANK kann mit Zustimmung des für das Wohnungswesen zuständigen M…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[1].text@50:protected:external-nrw-dot-names",
+      "path": "body[14].children[1].children[1].text",
+      "start": 50,
+      "end": 58,
+      "term": "NRW.BANK",
+      "context": "Die Landesregierung entscheidet nach Anhörung der NRW.BANK auf Vorschlag des für das Wohnungswesen zuständigen Ministe…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[1].text@329:protected:external-nrw-dot-names",
+      "path": "body[14].children[1].children[1].text",
+      "start": 329,
+      "end": 337,
+      "term": "NRW.BANK",
+      "context": "… Förderdarlehen (Eckwerte). Die Gewährträgerversammlung der NRW.BANK beschließt auf der Grundlage der Entscheidung der Landesreg…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[1].text@517:protected:external-nrw-dot-names",
+      "path": "body[14].children[1].children[1].text",
+      "start": 517,
+      "end": 525,
+      "term": "NRW.BANK",
+      "context": "…ie Grundsätze der Geschäfts-, Förder- und Risikopolitik der NRW.BANK.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[3].text@171:protected:external-nrw-dot-names",
+      "path": "body[14].children[1].children[3].text",
+      "start": 171,
+      "end": 179,
+      "term": "NRW.BANK",
+      "context": "…kungen auf die Risikosteuerung und das Risikomanagement der NRW.BANK haben, im Einvernehmen mit dem Vorstand der NRW.BANK fest. …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[3].text@224:protected:external-nrw-dot-names",
+      "path": "body[14].children[1].children[3].text",
+      "start": 224,
+      "end": 232,
+      "term": "NRW.BANK",
+      "context": "…nt der NRW.BANK haben, im Einvernehmen mit dem Vorstand der NRW.BANK fest. Die Gewährträgerversammlung ist zu unterrichten.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[1].children[4].text@534:protected:external-nrw-dot-names",
+      "path": "body[14].children[1].children[4].text",
+      "start": 534,
+      "end": 542,
+      "term": "NRW.BANK",
+      "context": "…n dem für das Wohnungswesen zuständigen Ministerium und der NRW.BANK geregelt.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[4].text@26:protected:external-nrw-dot-names",
+      "path": "body[14].children[2].children[4].text",
+      "start": 26,
+      "end": 34,
+      "term": "NRW.BANK",
+      "context": "Zuschüsse aus Mitteln der NRW.BANK dürfen nur gewährt werden, soweit die NRW.BANK Haushaltsmit…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[4].text@73:protected:external-nrw-dot-names",
+      "path": "body[14].children[2].children[4].text",
+      "start": 73,
+      "end": 81,
+      "term": "NRW.BANK",
+      "context": "… Mitteln der NRW.BANK dürfen nur gewährt werden, soweit die NRW.BANK Haushaltsmittel vom Land erhält.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[1].text@133:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[1].text",
+      "start": 133,
+      "end": 141,
+      "term": "NRW.BANK",
+      "context": "…ligungsbehörde, die diese im eigenen Namen für Rechnung der NRW.BANK erteilt. Die Förderzusage erfolgt durch Verwaltungsakt oder…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[5].text@88:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[5].text",
+      "start": 88,
+      "end": 96,
+      "term": "NRW.BANK",
+      "context": "…hnraum haben die Bewilligungsbehörden eine Entscheidung der NRW.BANK zu den persönlichen Voraussetzungen der Förderempfängerin o…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[5].text@355:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[5].text",
+      "start": 355,
+      "end": 363,
+      "term": "NRW.BANK",
+      "context": "…igungsentscheidung zu Grunde zu legen. Die Entscheidung der NRW.BANK erfolgt nach Maßgabe der von der Gewährträgerversammlung de…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[5].text@425:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[5].text",
+      "start": 425,
+      "end": 433,
+      "term": "NRW.BANK",
+      "context": "…rfolgt nach Maßgabe der von der Gewährträgerversammlung der NRW.BANK nach § 7 Absatz 1 Buchstabe i des Gesetzes über die NRW.BAN…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[5].text@486:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[5].text",
+      "start": 486,
+      "end": 494,
+      "term": "NRW.BANK",
+      "context": "…RW.BANK nach § 7 Absatz 1 Buchstabe i des Gesetzes über die NRW.BANK (NRW.BANK G) zu beschließenden Kriterien.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[5].text@496:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[5].text",
+      "start": 496,
+      "end": 504,
+      "term": "NRW.BANK",
+      "context": "…ch § 7 Absatz 1 Buchstabe i des Gesetzes über die NRW.BANK (NRW.BANK G) zu beschließenden Kriterien.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[7].text@149:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[7].text",
+      "start": 149,
+      "end": 157,
+      "term": "NRW.BANK",
+      "context": "…uherrin oder ein Bauherr, bei deren oder dessen Prüfung die NRW.BANK einzuschalten ist, die persönlichen Voraussetzungen nach § …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[5].children[7].text@282:protected:external-nrw-dot-names",
+      "path": "body[14].children[5].children[7].text",
+      "start": 282,
+      "end": 290,
+      "term": "NRW.BANK",
+      "context": "…atz 1 Satz 1 Nummern 2, 3 oder 5 nicht erfüllt, hat sie die NRW.BANK unverzüglich zu unterrichten.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[6].children[0].text@55:protected:external-nrw-dot-names",
+      "path": "body[14].children[6].children[0].text",
+      "start": 55,
+      "end": 63,
+      "term": "NRW.BANK",
+      "context": "Auf Basis der Förderzusage gewährt oder vermittelt die NRW.BANK Darlehen oder gibt Zuschüsse aus oder übernimmt Bürgschafte…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[6].children[0].text@481:protected:external-nrw-dot-names",
+      "path": "body[14].children[6].children[0].text",
+      "start": 481,
+      "end": 489,
+      "term": "NRW.BANK",
+      "context": "…haften nach Maßgabe der hierfür geltenden Bestimmungen. Die NRW.BANK verwaltet die gewährten Darlehen und Zuschüsse sowie die üb…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[6].children[1].text@4:protected:external-nrw-dot-names",
+      "path": "body[14].children[6].children[1].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "Die NRW.BANK kann zur Deckung des Verwaltungsaufwandes bei der Gewährung…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[6].children[1].text@335:protected:external-nrw-dot-names",
+      "path": "body[14].children[6].children[1].text",
+      "start": 335,
+      "end": 343,
+      "term": "NRW.BANK",
+      "context": "…ngskostenbeiträge bestimmt auf Vorschlag des Vorstandes der NRW.BANK das für das Wohnungswesen zuständige Ministerium.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[6].children[2].text@123:protected:external-nrw-dot-names",
+      "path": "body[14].children[6].children[2].text",
+      "start": 123,
+      "end": 131,
+      "term": "NRW.BANK",
+      "context": "…ndigkeit für die Bewilligung von Bürgschaften zugunsten der NRW.BANK durch Rechtsverordnung einer Landesmittelbehörde für den Be…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[7].children[1].text@4:protected:external-nrw-dot-names",
+      "path": "body[14].children[7].children[1].text",
+      "start": 4,
+      "end": 12,
+      "term": "NRW.BANK",
+      "context": "Die NRW.BANK kann die Bewilligung von Darlehen oder Zuschüssen durch die…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[7].children[2].text@193:protected:external-nrw-dot-names",
+      "path": "body[14].children[7].children[2].text",
+      "start": 193,
+      "end": 201,
+      "term": "NRW.BANK",
+      "context": "…ngsbehörde erteilte Weisungen nicht beachtet hat, teilt die NRW.BANK dies der Bewilligungsbehörde schriftlich oder elektronisch …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[7].children[3].text@24:protected:external-nrw-dot-names",
+      "path": "body[14].children[7].children[3].text",
+      "start": 24,
+      "end": 32,
+      "term": "NRW.BANK",
+      "context": "Wird die Auffassung der NRW.BANK von der Bewilligungsbehörde oder dem für das Wohnungswesen …",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[7].children[3].text@136:protected:external-nrw-dot-names",
+      "path": "body[14].children[7].children[3].text",
+      "start": 136,
+      "end": 144,
+      "term": "NRW.BANK",
+      "context": "…s Wohnungswesen zuständigen Ministerium bestätigt, kann die NRW.BANK von der Bewilligungsbehörde die Freistellung von allen Verb…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[7].children[4].text@110:protected:external-nrw-dot-names",
+      "path": "body[14].children[7].children[4].text",
+      "start": 110,
+      "end": 118,
+      "term": "NRW.BANK",
+      "context": "…ässig gegen § 10 Absatz 4 oder Absatz 5 verstoßen, kann die NRW.BANK ungeachtet der Entscheidung des für das Wohnungswesen zustä…",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[16].children[3].children[3].text@102:rule:jurisdiction-name",
+      "path": "body[16].children[3].children[3].text",
+      "start": 102,
+      "end": 126,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…n versehen werden (§ 36 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen). In den Fällen des Absatzes 2 Nummer 3 ist ein Förderausgl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[16].children[3].children[3].text@634:protected:external-nrw-dot-names",
+      "path": "body[16].children[3].children[3].text",
+      "start": 634,
+      "end": 642,
+      "term": "NRW.BANK",
+      "context": "…e zuständige Stelle setzt den Förderausgleich zugunsten der NRW.BANK als Gläubigerin der Forderung fest.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[0].children[3].text@165:protected:external-nrw-dot-names",
+      "path": "body[18].children[0].children[3].text",
+      "start": 165,
+      "end": 173,
+      "term": "NRW.BANK",
+      "context": "…indung unterliegt, erhalten die zuständigen Stellen von der NRW.BANK einen angemessenen Verwaltungskostenbeitrag.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[1].children[3].text@120:protected:external-nrw-dot-names",
+      "path": "body[18].children[1].children[3].text",
+      "start": 120,
+      "end": 128,
+      "term": "NRW.BANK",
+      "context": "…dleistungen jeweils vierteljährlich zum Quartalsende an die NRW.BANK abzuführen.",
+      "category": "external-name",
+      "decision": "protected",
+      "detector": "protected:external-nrw-dot-names",
+      "reason": "Eigenname mit Präfix „NRW.“ (z. B. NRW.BANK) bleibt unverändert"
+    },
+    {
+      "id": "body[19].children[0].children[0].text@58:rule:jurisdiction-name-genitive",
+      "path": "body[19].children[0].children[0].text",
+      "start": 58,
+      "end": 84,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Verzinsung von Wohnraumförderdarlehen aus Mitteln des Landes Nordrhein-Westfalen für Wohnraum im Sinne des § 1 Absatz 1 Satz 1 Nummer 1 rich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[19].children[0].children[1].text@58:rule:jurisdiction-name-genitive",
+      "path": "body[19].children[0].children[1].text",
+      "start": 58,
+      "end": 84,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Verzinsung von Wohnraumförderdarlehen aus Mitteln des Landes Nordrhein-Westfalen für Wohnraum im Sinne des § 1 Absatz 1 Satz 1 Nummer 2 rich…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[19].children[0].children[2].text@120:rule:jurisdiction-name-genitive",
+      "path": "body[19].children[0].children[2].text",
+      "start": 120,
+      "end": 146,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…m im Sinne des § 1 Absatz 1 Satz 1 Nummer 3 aus Mitteln des Landes Nordrhein-Westfalen oder aus öffentlichen Mitteln der Gemeinden und Gemeindever…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[19].children[1].children[0].text@312:rule:jurisdiction-name-genitive",
+      "path": "body[19].children[1].children[0].text",
+      "start": 312,
+      "end": 338,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…mung des für das Wohnungswesen zuständigen Ministeriums des Landes Nordrhein-Westfalen ausgeübt werden kann, so gilt diese Zustimmung als erteilt.…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[19].children[2].children[3].text@370:rule:jurisdiction-name-bare",
+      "path": "body[19].children[2].children[3].text",
+      "start": 370,
+      "end": 389,
+      "term": "Nordrhein-Westfalen",
+      "context": "…amtlichen Statistik im Rahmen des Verbraucherpreisindex für Nordrhein-Westfalen festgestellten Wohnungsnettomieten (Kaltmieten) bezogen auf…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[19].children[9].children[1].text@951:rule:jurisdiction-name-bare",
+      "path": "body[19].children[9].children[1].text",
+      "start": 951,
+      "end": 970,
+      "term": "Nordrhein-Westfalen",
+      "context": "…linien zur Förderung von investiven Maßnahmen im Bestand in Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[21].children[0].children[3].text@199:rule:jurisdiction-abbreviation",
+      "path": "body[21].children[0].children[3].text",
+      "start": 199,
+      "end": 202,
+      "term": "NRW",
+      "context": "…rordnung über die Abweichung von Einkommensgrenzen (VO WoFG NRW) vom 17. Dezember 2002 (GV. NRW. S. 648), zuletzt geändert …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[21].children[0].children[3].text@227:protected:gazette-nrw",
+      "path": "body[21].children[0].children[3].text",
+      "start": 227,
+      "end": 242,
+      "term": "GV. NRW. S. 648",
+      "context": "… von Einkommensgrenzen (VO WoFG NRW) vom 17. Dezember 2002 (GV. NRW. S. 648), zuletzt geändert durch Verordnung vom 1. Dezember 2005 (G…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[0].children[3].text@301:protected:gazette-nrw",
+      "path": "body[21].children[0].children[3].text",
+      "start": 301,
+      "end": 316,
+      "term": "GV. NRW. S. 948",
+      "context": "…8), zuletzt geändert durch Verordnung vom 1. Dezember 2005 (GV. NRW. S. 948), Bezug genommen worden, so gilt stattdessen § 13.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[1].children[1].text@108:protected:gazette-nrw",
+      "path": "body[21].children[1].children[1].text",
+      "start": 108,
+      "end": 128,
+      "term": "GV. NRW. 2004 S. 212",
+      "context": "…tz in der Fassung der Bekanntmachung vom 27. November 2003 (GV. NRW. 2004 S. 212), zuletzt geändert durch Gesetz vom 17. Februar 2009 (GV. N…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[1].children[1].text@183:protected:gazette-nrw",
+      "path": "body[21].children[1].children[1].text",
+      "start": 183,
+      "end": 197,
+      "term": "GV. NRW. S. 83",
+      "context": "…. 212), zuletzt geändert durch Gesetz vom 17. Februar 2009 (GV. NRW. S. 83), außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[22].text@4:constitutional-organ-state",
+      "path": "body[22].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[22].text@20:rule:jurisdiction-name-bare",
+      "path": "body[22].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[24].text@4:ministry-portfolio",
+      "path": "body[24].text",
+      "start": 4,
+      "end": 68,
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[25].text@4:ministry-portfolio",
+      "path": "body[25].text",
+      "start": 4,
+      "end": 54,
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[25].text@72:ministry-compound",
+      "path": "body[25].text",
+      "start": 72,
+      "end": 86,
+      "term": "Finanzminister",
+      "context": "…in für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[26].text@4:ministry-portfolio",
+      "path": "body[26].text",
+      "start": 4,
+      "end": 48,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[26].text@66:ministry-compound",
+      "path": "body[26].text",
+      "start": 66,
+      "end": 79,
+      "term": "Innenminister",
+      "context": "…nister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[27].text@8:ministry-portfolio",
+      "path": "body[27].text",
+      "start": 8,
+      "end": 96,
+      "term": "Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "context": "Für den Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[28].text@4:ministry-compound",
+      "path": "body[28].text",
+      "start": 4,
+      "end": 20,
+      "term": "Justizministerin",
+      "context": "Die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "justizministerium",
+        "group": "Justizministerium"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 13
+    },
+    "source-citation": {
+      "protected": 6
+    },
+    "external-name": {
+      "protected": 40
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[2].children[4].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[13].children[2].children[6].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[16].children[3].children[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[19].children[0].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[19].children[0].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[19].children[0].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[19].children[1].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[19].children[2].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[19].children[9].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[21].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[22].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[13].children[2].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…ngehörigen Gemeinden, Kreise und kreisfreien Städte ist die Bezirksregierung. Oberste Aufsichtsbehörde ist das für das Wohnungswesen zus…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[24].text",
+      "term": "Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "context": "Der Minister für Innovation, Wissenschaft, Forschung und Technologie",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[25].text",
+      "term": "Ministerin für Wirtschaft, Mittelstand und Energie",
+      "context": "Die Ministerin für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[25].text",
+      "term": "Finanzminister",
+      "context": "…in für Wirtschaft, Mittelstand und Energie zugleich für den Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[26].text",
+      "term": "Innenminister",
+      "context": "…nister für Arbeit, Gesundheit und Soziales zugleich für den Innenminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[27].text",
+      "term": "Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "context": "Für den Minister für Bauen und Verkehr der Minister für Bundesangelegenheiten, Europa und Medien",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[28].text",
+      "term": "Justizministerin",
+      "context": "Die Justizministerin",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung justizministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 746,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…ändert durch Artikel 1 des Gesetzes vom 10. April 2014 (GV. NRW. S. 269), in Kraft getreten am 30. April 2014.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…m Wohnungswesen, zur Steigerung der Fördermöglichkeiten der NRW.BANK und zur Änderung anderer Gesetze vom 8. Dezember 2009 …",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… und zur Änderung anderer Gesetze vom 8. Dezember 2009 (GV. NRW. S. 772))",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…isfreien Städte, Kreise, kreisangehörigen Gemeinden und der NRW.BANK, soweit nichts anderes bestimmt ist. Die NRW.BANK und …",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…n und der NRW.BANK, soweit nichts anderes bestimmt ist. Die NRW.BANK und die Bewilligungsbehörden sowie die zuständigen Ste…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…zu unterstützen. Die Verantwortung der Geschäftsleitung der NRW.BANK nach den Vorschriften des Gesetzes über das Kreditwese…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…t unberührt. Zuständige Stelle, Bewilligungsbehörde und die NRW.BANK sind berechtigt und gegenseitig verpflichtet, auf Verl…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[5].text",
+        "term": "NRW",
+        "context": "Die NRW.BANK unterstützt das für das Wohnungswesen zuständige Minis…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[5].text",
+        "term": "NRW",
+        "context": "…. Das für das Wohnungswesen zuständige Ministerium kann der NRW.BANK weitere Aufgaben auf dem Gebiet des Wohnungswesens dur…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[5].text",
+        "term": "NRW",
+        "context": "…n dem für das Wohnungswesen zuständigen Ministerium und der NRW.BANK vertraglich geregelt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[6].text",
+        "term": "NRW",
+        "context": "…5 kann das für das Wohnungswesen zuständige Ministerium der NRW.BANK die Verwaltung der zur Förderung des Wohnungswesens vo…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[6].text",
+        "term": "NRW",
+        "context": "…Land Westdeutschland bereitgestellt werden, übertragen. Der NRW.BANK kann darin ferner die Verwaltung der vom Land in der V…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[2].children[7].text",
+        "term": "NRW",
+        "context": "Die NRW.BANK kann mit Zustimmung des für das Wohnungswesen zuständi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[1].text",
+        "term": "NRW",
+        "context": "Die Landesregierung entscheidet nach Anhörung der NRW.BANK auf Vorschlag des für das Wohnungswesen zuständigen Mi…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[1].text",
+        "term": "NRW",
+        "context": "… Förderdarlehen (Eckwerte). Die Gewährträgerversammlung der NRW.BANK beschließt auf der Grundlage der Entscheidung der Land…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…ie Grundsätze der Geschäfts-, Förder- und Risikopolitik der NRW.BANK.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…kungen auf die Risikosteuerung und das Risikomanagement der NRW.BANK haben, im Einvernehmen mit dem Vorstand der NRW.BANK f…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…nt der NRW.BANK haben, im Einvernehmen mit dem Vorstand der NRW.BANK fest. Die Gewährträgerversammlung ist zu unterrichten.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…n dem für das Wohnungswesen zuständigen Ministerium und der NRW.BANK geregelt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[2].children[4].text",
+        "term": "NRW",
+        "context": "Zuschüsse aus Mitteln der NRW.BANK dürfen nur gewährt werden, soweit die NRW.BANK Haushal…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[2].children[4].text",
+        "term": "NRW",
+        "context": "… Mitteln der NRW.BANK dürfen nur gewährt werden, soweit die NRW.BANK Haushaltsmittel vom Land erhält.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[1].text",
+        "term": "NRW",
+        "context": "…ligungsbehörde, die diese im eigenen Namen für Rechnung der NRW.BANK erteilt. Die Förderzusage erfolgt durch Verwaltungsakt…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[5].text",
+        "term": "NRW",
+        "context": "…hnraum haben die Bewilligungsbehörden eine Entscheidung der NRW.BANK zu den persönlichen Voraussetzungen der Förderempfänge…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[5].text",
+        "term": "NRW",
+        "context": "…igungsentscheidung zu Grunde zu legen. Die Entscheidung der NRW.BANK erfolgt nach Maßgabe der von der Gewährträgerversammlu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[5].text",
+        "term": "NRW",
+        "context": "…rfolgt nach Maßgabe der von der Gewährträgerversammlung der NRW.BANK nach § 7 Absatz 1 Buchstabe i des Gesetzes über die NR…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[5].text",
+        "term": "NRW",
+        "context": "…RW.BANK nach § 7 Absatz 1 Buchstabe i des Gesetzes über die NRW.BANK (NRW.BANK G) zu beschließenden Kriterien.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[5].text",
+        "term": "NRW",
+        "context": "…ch § 7 Absatz 1 Buchstabe i des Gesetzes über die NRW.BANK (NRW.BANK G) zu beschließenden Kriterien.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[7].text",
+        "term": "NRW",
+        "context": "…uherrin oder ein Bauherr, bei deren oder dessen Prüfung die NRW.BANK einzuschalten ist, die persönlichen Voraussetzungen na…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[5].children[7].text",
+        "term": "NRW",
+        "context": "…atz 1 Satz 1 Nummern 2, 3 oder 5 nicht erfüllt, hat sie die NRW.BANK unverzüglich zu unterrichten.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[6].children[0].text",
+        "term": "NRW",
+        "context": "Auf Basis der Förderzusage gewährt oder vermittelt die NRW.BANK Darlehen oder gibt Zuschüsse aus oder übernimmt Bürgsc…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[6].children[0].text",
+        "term": "NRW",
+        "context": "…haften nach Maßgabe der hierfür geltenden Bestimmungen. Die NRW.BANK verwaltet die gewährten Darlehen und Zuschüsse sowie d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[6].children[1].text",
+        "term": "NRW",
+        "context": "Die NRW.BANK kann zur Deckung des Verwaltungsaufwandes bei der Gewä…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[6].children[1].text",
+        "term": "NRW",
+        "context": "…ngskostenbeiträge bestimmt auf Vorschlag des Vorstandes der NRW.BANK das für das Wohnungswesen zuständige Ministerium.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[6].children[2].text",
+        "term": "NRW",
+        "context": "…ndigkeit für die Bewilligung von Bürgschaften zugunsten der NRW.BANK durch Rechtsverordnung einer Landesmittelbehörde für d…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[7].children[1].text",
+        "term": "NRW",
+        "context": "Die NRW.BANK kann die Bewilligung von Darlehen oder Zuschüssen durc…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[7].children[2].text",
+        "term": "NRW",
+        "context": "…ngsbehörde erteilte Weisungen nicht beachtet hat, teilt die NRW.BANK dies der Bewilligungsbehörde schriftlich oder elektron…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[7].children[3].text",
+        "term": "NRW",
+        "context": "Wird die Auffassung der NRW.BANK von der Bewilligungsbehörde oder dem für das Wohnungsw…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[7].children[3].text",
+        "term": "NRW",
+        "context": "…s Wohnungswesen zuständigen Ministerium bestätigt, kann die NRW.BANK von der Bewilligungsbehörde die Freistellung von allen…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[7].children[4].text",
+        "term": "NRW",
+        "context": "…ässig gegen § 10 Absatz 4 oder Absatz 5 verstoßen, kann die NRW.BANK ungeachtet der Entscheidung des für das Wohnungswesen …",
+        "status": "protected"
+      },
+      {
+        "path": "body[16].children[3].children[3].text",
+        "term": "NRW",
+        "context": "…e zuständige Stelle setzt den Förderausgleich zugunsten der NRW.BANK als Gläubigerin der Forderung fest.",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…indung unterliegt, erhalten die zuständigen Stellen von der NRW.BANK einen angemessenen Verwaltungskostenbeitrag.",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…dleistungen jeweils vierteljährlich zum Quartalsende an die NRW.BANK abzuführen.",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…Einkommensgrenzen (VO WoFG West) vom 17. Dezember 2002 (GV. NRW. S. 648), zuletzt geändert durch Verordnung vom 1. Dezember…",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[0].children[3].text",
+        "term": "NRW",
+        "context": "…zuletzt geändert durch Verordnung vom 1. Dezember 2005 (GV. NRW. S. 948), Bezug genommen worden, so gilt stattdessen § 13.",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 27. November 2003 (GV. NRW. 2004 S. 212), zuletzt geändert durch Gesetz vom 17. Februa…",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…2), zuletzt geändert durch Gesetz vom 17. Februar 2009 (GV. NRW. S. 83), außer Kraft.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Förderung und Nutzung von Wohnraum für das Land Nordrhein-Westfalen vom 8. Dezember 2009",
+    "sourceVersion": "Gesetz zur Förderung und Nutzung von Wohnraum für das Land Nordrhein-Westfalen vom 8. Dezember 2009",
+    "simulation": "Gesetz zur Förderung und Nutzung von Wohnraum für das Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 89386,
+          "actual": 91489,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 482,
+          "actual": 482,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 35,
+          "actual": 35,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 45,
+          "actual": 45,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 91489,
+          "actual": 91450,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "45 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "45 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:25:57.278Z"
+}

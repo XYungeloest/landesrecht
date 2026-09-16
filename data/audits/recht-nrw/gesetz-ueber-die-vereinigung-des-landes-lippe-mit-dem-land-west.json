@@ -1,0 +1,2234 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26487",
+  "slug": "gesetz-ueber-die-vereinigung-des-landes-lippe-mit-dem-land-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@39:geography-region",
+      "path": "meta.title",
+      "start": 39,
+      "end": 44,
+      "term": "Lippe",
+      "context": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@39:geography-river",
+      "path": "meta.title",
+      "start": 39,
+      "end": 44,
+      "term": "Lippe",
+      "context": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "meta.title@49:rule:jurisdiction-name-dative",
+      "path": "meta.title",
+      "start": 49,
+      "end": 77,
+      "term": "dem Land Nordrhein-Westfalen",
+      "context": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („dem Land Nordrhein-Westfalen“ → „dem Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "dem Land Westdeutschland"
+    },
+    {
+      "id": "body[2].text@62:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 62,
+      "end": 81,
+      "term": "Nordrhein-Westfalen",
+      "context": "…m Zwecke der Vermögensauseinandersetzung zwischen dem Lande Nordrhein-Westfalen und dem früheren Lande Lippe hat der Landtag im Sinne der V…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@105:geography-region",
+      "path": "body[2].text",
+      "start": 105,
+      "end": 110,
+      "term": "Lippe",
+      "context": "…ischen dem Lande Nordrhein-Westfalen und dem früheren Lande Lippe hat der Landtag im Sinne der Vereinbarungen, die zwischen d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].text@105:geography-river",
+      "path": "body[2].text",
+      "start": 105,
+      "end": 110,
+      "term": "Lippe",
+      "context": "…ischen dem Lande Nordrhein-Westfalen und dem früheren Lande Lippe hat der Landtag im Sinne der Vereinbarungen, die zwischen d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].text@195:rule:jurisdiction-name-bare",
+      "path": "body[2].text",
+      "start": 195,
+      "end": 214,
+      "term": "Nordrhein-Westfalen",
+      "context": "… der Vereinbarungen, die zwischen den Landesregierungen von Nordrhein-Westfalen und von Lippe getroffen worden sind, das folgende Gesetz be…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[2].text@223:geography-region",
+      "path": "body[2].text",
+      "start": 223,
+      "end": 228,
+      "term": "Lippe",
+      "context": "…schen den Landesregierungen von Nordrhein-Westfalen und von Lippe getroffen worden sind, das folgende Gesetz beschlossen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].text@223:geography-river",
+      "path": "body[2].text",
+      "start": 223,
+      "end": 228,
+      "term": "Lippe",
+      "context": "…schen den Landesregierungen von Nordrhein-Westfalen und von Lippe getroffen worden sind, das folgende Gesetz beschlossen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@45:geography-region",
+      "path": "body[3].children[0].text",
+      "start": 45,
+      "end": 50,
+      "term": "Lippe",
+      "context": "Mit Wirkung vom 21. Januar 1947 ist das Land Lippe dem Lande Nordrhein-Westfalen zugelegt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@45:geography-river",
+      "path": "body[3].children[0].text",
+      "start": 45,
+      "end": 50,
+      "term": "Lippe",
+      "context": "Mit Wirkung vom 21. Januar 1947 ist das Land Lippe dem Lande Nordrhein-Westfalen zugelegt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@61:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 61,
+      "end": 80,
+      "term": "Nordrhein-Westfalen",
+      "context": "…it Wirkung vom 21. Januar 1947 ist das Land Lippe dem Lande Nordrhein-Westfalen zugelegt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@28:rule:jurisdiction-name-genitive",
+      "path": "body[4].children[0].text",
+      "start": 28,
+      "end": 54,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landeshoheitsrechte des Landes Nordrhein-Westfalen erstrecken sich auf das bisherige Land Lippe.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@94:geography-region",
+      "path": "body[4].children[0].text",
+      "start": 94,
+      "end": 99,
+      "term": "Lippe",
+      "context": "… Nordrhein-Westfalen erstrecken sich auf das bisherige Land Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@94:geography-river",
+      "path": "body[4].children[0].text",
+      "start": 94,
+      "end": 99,
+      "term": "Lippe",
+      "context": "… Nordrhein-Westfalen erstrecken sich auf das bisherige Land Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@15:municipality",
+      "path": "body[5].children[0].text",
+      "start": 15,
+      "end": 22,
+      "term": "Detmold",
+      "context": "Die Landkreise Detmold und Lemgo werden als Kreise des Landes Nordrhein-Westfalen …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@55:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[0].text",
+      "start": 55,
+      "end": 81,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landkreise Detmold und Lemgo werden als Kreise des Landes Nordrhein-Westfalen übernommen und dem Regierungsbezirk Detmold eingegliedert.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[0].text@101:regional-body-district",
+      "path": "body[5].children[0].text",
+      "start": 101,
+      "end": 117,
+      "term": "Regierungsbezirk",
+      "context": "…ls Kreise des Landes Nordrhein-Westfalen übernommen und dem Regierungsbezirk Detmold eingegliedert.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@118:municipality",
+      "path": "body[5].children[0].text",
+      "start": 118,
+      "end": 125,
+      "term": "Detmold",
+      "context": "…des Nordrhein-Westfalen übernommen und dem Regierungsbezirk Detmold eingegliedert.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].text@93:municipality",
+      "path": "body[5].children[1].text",
+      "start": 93,
+      "end": 100,
+      "term": "Detmold",
+      "context": "…l bei Lippstadt werden bis zum 1. April 1949 aus dem Kreise Detmold ausgegliedert und dem Kreis Lippstadt als amtsfreie Gemeind…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@41:geography-region",
+      "path": "body[6].children[0].text",
+      "start": 41,
+      "end": 46,
+      "term": "Lippe",
+      "context": "Das allgemeine Landesvermögen des Landes Lippe ist mit allen auf ihm ruhenden Lasten und Verpflichtungen a…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@41:geography-river",
+      "path": "body[6].children[0].text",
+      "start": 41,
+      "end": 46,
+      "term": "Lippe",
+      "context": "Das allgemeine Landesvermögen des Landes Lippe ist mit allen auf ihm ruhenden Lasten und Verpflichtungen a…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@113:rule:jurisdiction-name",
+      "path": "body[6].children[0].text",
+      "start": 113,
+      "end": 137,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…t allen auf ihm ruhenden Lasten und Verpflichtungen auf das Land Nordrhein-Westfalen als Gesamtrechtsnachfolger übergegangen. Das in der Anlage …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[0].text@388:geography-region",
+      "path": "body[6].children[0].text",
+      "start": 388,
+      "end": 393,
+      "term": "Lippe",
+      "context": "… durch Gesetz vom heutigen Tage errichteten ,,Landesverband Lippe\" als Gesamtrechtsnachfolger über. Der Landesverband ist ver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[0].text@479:municipality",
+      "path": "body[6].children[0].text",
+      "start": 479,
+      "end": 486,
+      "term": "Detmold",
+      "context": "…er über. Der Landesverband ist verpflichtet, auf die Kreise Detmold und Lemgo das in der Anlage 2 aufgeführte Vermögen zu übert…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@264:geography-region",
+      "path": "body[6].children[1].text",
+      "start": 264,
+      "end": 269,
+      "term": "Lippe",
+      "context": "…e in dem Umfange zugewiesen, in welchem sie früher dem Land Lippe zustanden. Das auf den Landesverband übergehende Grundvermö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@264:geography-river",
+      "path": "body[6].children[1].text",
+      "start": 264,
+      "end": 269,
+      "term": "Lippe",
+      "context": "…e in dem Umfange zugewiesen, in welchem sie früher dem Land Lippe zustanden. Das auf den Landesverband übergehende Grundvermö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@413:rule:jurisdiction-name-genitive",
+      "path": "body[6].children[1].text",
+      "start": 413,
+      "end": 439,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…etzes zur Beschaffung von Siedlungsland dem Grundbesitz des Landes Nordrhein-Westfalen gleichzustellen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[7].children[0].text@130:rule:jurisdiction-name-bare",
+      "path": "body[7].children[0].text",
+      "start": 130,
+      "end": 149,
+      "term": "Nordrhein-Westfalen",
+      "context": "…nden Lasten und Schulden, soweit sie nicht ausdrücklich von Nordrhein-Westfalen übernommen sind.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[8].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[8].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen hat an den dem Landesverband gehörigen Domänen und Forsten …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[9].children[0].text@73:geography-region",
+      "path": "body[9].children[0].text",
+      "start": 73,
+      "end": 78,
+      "term": "Lippe",
+      "context": "…band übernimmt die bisher dem Forstgemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforste…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@73:geography-river",
+      "path": "body[9].children[0].text",
+      "start": 73,
+      "end": 78,
+      "term": "Lippe",
+      "context": "…band übernimmt die bisher dem Forstgemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforste…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@108:geography-region",
+      "path": "body[9].children[0].text",
+      "start": 108,
+      "end": 113,
+      "term": "Lippe",
+      "context": "…gemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforsten nach den bisherigen Grundsätzen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@108:geography-river",
+      "path": "body[9].children[0].text",
+      "start": 108,
+      "end": 113,
+      "term": "Lippe",
+      "context": "…gemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforsten nach den bisherigen Grundsätzen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@4:rule:jurisdiction-name",
+      "path": "body[10].children[0].text",
+      "start": 4,
+      "end": 28,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Das Land Nordrhein-Westfalen verpflichtet sich, Grundstücke, die ihm nach der Errichtung…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[10].children[0].text@148:geography-region",
+      "path": "body[10].children[0].text",
+      "start": 148,
+      "end": 153,
+      "term": "Lippe",
+      "context": "… des Verbandes aus dem früheren Domanialvermögen des Landes Lippe gesetzlich unmittelbar zufallen, oder die es bevorzugt zu e…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@148:geography-river",
+      "path": "body[10].children[0].text",
+      "start": 148,
+      "end": 153,
+      "term": "Lippe",
+      "context": "… des Verbandes aus dem früheren Domanialvermögen des Landes Lippe gesetzlich unmittelbar zufallen, oder die es bevorzugt zu e…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@189:geography-region",
+      "path": "body[11].children[1].text",
+      "start": 189,
+      "end": 194,
+      "term": "Lippe",
+      "context": "…Lippische Landesbrandversicherungsanstalt dem Landesverband Lippe angegliedert. Danach gehen die Rechte und Verpflichtungen, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@189:geography-river",
+      "path": "body[11].children[1].text",
+      "start": 189,
+      "end": 194,
+      "term": "Lippe",
+      "context": "…Lippische Landesbrandversicherungsanstalt dem Landesverband Lippe angegliedert. Danach gehen die Rechte und Verpflichtungen, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@274:geography-region",
+      "path": "body[11].children[1].text",
+      "start": 274,
+      "end": 279,
+      "term": "Lippe",
+      "context": "…h gehen die Rechte und Verpflichtungen, die bisher dem Land Lippe zustanden oder von ihm getragen wurden, auf den Landesverba…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@274:geography-river",
+      "path": "body[11].children[1].text",
+      "start": 274,
+      "end": 279,
+      "term": "Lippe",
+      "context": "…h gehen die Rechte und Verpflichtungen, die bisher dem Land Lippe zustanden oder von ihm getragen wurden, auf den Landesverba…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@366:geography-region",
+      "path": "body[11].children[1].text",
+      "start": 366,
+      "end": 371,
+      "term": "Lippe",
+      "context": "…ragen wurden, auf den Landesverband über. Der Landesverband Lippe kann unter Übertragung seiner Rechte und Pflichten auf die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@366:geography-river",
+      "path": "body[11].children[1].text",
+      "start": 366,
+      "end": 371,
+      "term": "Lippe",
+      "context": "…ragen wurden, auf den Landesverband über. Der Landesverband Lippe kann unter Übertragung seiner Rechte und Pflichten auf die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[2].text@390:municipality",
+      "path": "body[11].children[2].text",
+      "start": 390,
+      "end": 397,
+      "term": "Detmold",
+      "context": "…der Wohnungskreditanstalt bei ihrer Auflösung an die Kreise Detmold und Lemgo fällt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[0].text@80:geography-region",
+      "path": "body[12].children[0].text",
+      "start": 80,
+      "end": 85,
+      "term": "Lippe",
+      "context": "…staatlichen Verwaltungen und Betriebe des ehemaligen Landes Lippe finden die Bestimmungen der §§ 22 und 23 des Gesetzes zur Ä…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[0].text@80:geography-river",
+      "path": "body[12].children[0].text",
+      "start": 80,
+      "end": 85,
+      "term": "Lippe",
+      "context": "…staatlichen Verwaltungen und Betriebe des ehemaligen Landes Lippe finden die Bestimmungen der §§ 22 und 23 des Gesetzes zur Ä…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[0].text@304:rule:jurisdiction-name",
+      "path": "body[12].children[0].text",
+      "start": 304,
+      "end": 328,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ngsrechts vom 30. Juni 1933 (RGBl. I S. 433) Anwendung. Das Land Nordrhein-Westfalen übernimmt auch die Versorgungsbezüge der in den Ruhestand v…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@60:geography-region",
+      "path": "body[12].children[1].text",
+      "start": 60,
+      "end": 65,
+      "term": "Lippe",
+      "context": "Die Versorgungslasten der in den Dienst des Landesverbandes Lippe übertretenden Beamten bzw. deren Hinterbliebenen sind entsp…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[1].text@60:geography-river",
+      "path": "body[12].children[1].text",
+      "start": 60,
+      "end": 65,
+      "term": "Lippe",
+      "context": "Die Versorgungslasten der in den Dienst des Landesverbandes Lippe übertretenden Beamten bzw. deren Hinterbliebenen sind entsp…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[1].text@151:ministry-compound",
+      "path": "body[12].children[1].text",
+      "start": 151,
+      "end": 165,
+      "term": "Innenministers",
+      "context": "…. deren Hinterbliebenen sind entsprechend dem Runderlaß des Innenministers des Landes Nordrhein-Westfalen vom 24. September 1947 - II …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[12].children[1].text@170:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[1].text",
+      "start": 170,
+      "end": 196,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…enen sind entsprechend dem Runderlaß des Innenministers des Landes Nordrhein-Westfalen vom 24. September 1947 - II - C - 1 - 5259 - 47 -, betreffe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@275:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[1].text",
+      "start": 275,
+      "end": 301,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…1947 - II - C - 1 - 5259 - 47 -, betreffend Beteiligung des Landes Nordrhein-Westfalen an den Versorgungslasten der in den Kommunaldienst übergetr…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@423:rule:jurisdiction-name-bare",
+      "path": "body[12].children[1].text",
+      "start": 423,
+      "end": 442,
+      "term": "Nordrhein-Westfalen",
+      "context": "…enen bzw. übertretenden Landesbeamten anteilmäßig vom Lande Nordrhein-Westfalen und vom Landesverband Lippe zu tragen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@465:geography-region",
+      "path": "body[12].children[1].text",
+      "start": 465,
+      "end": 470,
+      "term": "Lippe",
+      "context": "…ilmäßig vom Lande Nordrhein-Westfalen und vom Landesverband Lippe zu tragen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[12].children[1].text@465:geography-river",
+      "path": "body[12].children[1].text",
+      "start": 465,
+      "end": 470,
+      "term": "Lippe",
+      "context": "…ilmäßig vom Lande Nordrhein-Westfalen und vom Landesverband Lippe zu tragen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@36:geography-region",
+      "path": "body[13].children[0].text",
+      "start": 36,
+      "end": 41,
+      "term": "Lippe",
+      "context": "Die im Gebiet des ehemaligen Landes Lippe geltenden Gesetze, Verordnungen und Verwaltungsvorschriften…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@36:geography-river",
+      "path": "body[13].children[0].text",
+      "start": 36,
+      "end": 41,
+      "term": "Lippe",
+      "context": "Die im Gebiet des ehemaligen Landes Lippe geltenden Gesetze, Verordnungen und Verwaltungsvorschriften…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@141:ministry-compound",
+      "path": "body[13].children[0].text",
+      "start": 141,
+      "end": 154,
+      "term": "Innenminister",
+      "context": "…waltungsvorschriften bleiben bis auf weiteres in Kraft. Der Innenminister des Landes Nordrhein-Westfalen wird ermächtigt, das Lippisc…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@159:rule:jurisdiction-name-genitive",
+      "path": "body[13].children[0].text",
+      "start": 159,
+      "end": 185,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…en bleiben bis auf weiteres in Kraft. Der Innenminister des Landes Nordrhein-Westfalen wird ermächtigt, das Lippische Recht im Verordnungswege an …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].text@252:rule:jurisdiction-name-bare",
+      "path": "body[13].children[0].text",
+      "start": 252,
+      "end": 271,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rmächtigt, das Lippische Recht im Verordnungswege an das in Nordrhein-Westfalen geltende Recht nach Anhörung der Kreistage Detmold und Lemg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].text@315:municipality",
+      "path": "body[13].children[0].text",
+      "start": 315,
+      "end": 322,
+      "term": "Detmold",
+      "context": "…drhein-Westfalen geltende Recht nach Anhörung der Kreistage Detmold und Lemgo anzugleichen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[14].children[0].text@4:ministry-compound",
+      "path": "body[14].children[0].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen erläßt im Einvernehmen mit d…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[14].children[0].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[14].children[0].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen erläßt im Einvernehmen mit den zuständigen Landtagsausschüs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[15].children[1].text@22:geography-region",
+      "path": "body[15].children[1].text",
+      "start": 22,
+      "end": 27,
+      "term": "Lippe",
+      "context": "Auf den Landesverband Lippe übergehendes Vermögen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[1].text@22:geography-river",
+      "path": "body[15].children[1].text",
+      "start": 22,
+      "end": 27,
+      "term": "Lippe",
+      "context": "Auf den Landesverband Lippe übergehendes Vermögen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[7].text@122:municipality",
+      "path": "body[15].children[7].text",
+      "start": 122,
+      "end": 131,
+      "term": "Paderborn",
+      "context": "…n Hameln, Paderborner Elektrizitäts- und Straßenbahn AG. in Paderborn, Westfälische Ferngas AG., Dortmund, Extertalbahn AG., Hame…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[7].text@159:municipality",
+      "path": "body[15].children[7].text",
+      "start": 159,
+      "end": 167,
+      "term": "Dortmund",
+      "context": "…und Straßenbahn AG. in Paderborn, Westfälische Ferngas AG., Dortmund, Extertalbahn AG., Hameln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[18].children[1].children[2].text@0:municipality",
+      "path": "body[15].children[18].children[1].children[2].text",
+      "start": 0,
+      "end": 7,
+      "term": "Detmold",
+      "context": "Detmold",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[30].children[0].children[0].text@0:municipality",
+      "path": "body[15].children[30].children[0].children[0].text",
+      "start": 0,
+      "end": 7,
+      "term": "Detmold",
+      "context": "Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[30].children[14].children[0].text@17:municipality",
+      "path": "body[15].children[30].children[14].children[0].text",
+      "start": 17,
+      "end": 24,
+      "term": "Detmold",
+      "context": "Schloßvorgebäude Detmold:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[30].children[24].children[0].text@0:municipality",
+      "path": "body[15].children[30].children[24].children[0].text",
+      "start": 0,
+      "end": 7,
+      "term": "Detmold",
+      "context": "Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[30].children[31].children[0].text@0:municipality",
+      "path": "body[15].children[30].children[31].children[0].text",
+      "start": 0,
+      "end": 7,
+      "term": "Detmold",
+      "context": "Detmold, Krummes Haus",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[30].children[34].children[0].text@15:municipality",
+      "path": "body[15].children[30].children[34].children[0].text",
+      "start": 15,
+      "end": 22,
+      "term": "Detmold",
+      "context": "Gesundheitsamt Detmold",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[30].children[54].children[0].text@12:municipality",
+      "path": "body[15].children[30].children[54].children[0].text",
+      "start": 12,
+      "end": 19,
+      "term": "Detmold",
+      "context": "Landratsamt Detmold",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[32].children[0].children[0].text@16:municipality",
+      "path": "body[15].children[32].children[0].children[0].text",
+      "start": 16,
+      "end": 23,
+      "term": "Detmold",
+      "context": "Landkrankenhaus Detmold und\n\nHeilanstalt Lindenhaus Brake\n\nGrundbesitz",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[32].children[7].children[0].text@58:geography-region",
+      "path": "body[15].children[32].children[7].children[0].text",
+      "start": 58,
+      "end": 63,
+      "term": "Lippe",
+      "context": "Infolge vertraglicher Verpflichtung des ehemaligen Landes Lippe erhöht sich dieser Betrag in Kürze durch den bereits begonn…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[32].children[7].children[0].text@58:geography-river",
+      "path": "body[15].children[32].children[7].children[0].text",
+      "start": 58,
+      "end": 63,
+      "term": "Lippe",
+      "context": "Infolge vertraglicher Verpflichtung des ehemaligen Landes Lippe erhöht sich dieser Betrag in Kürze durch den bereits begonn…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[32].children[7].children[0].text@162:municipality",
+      "path": "body[15].children[32].children[7].children[0].text",
+      "start": 162,
+      "end": 171,
+      "term": "Bielefeld",
+      "context": "…ch den bereits begonnenen Ausbau der Ferngasanschlußleitung Bielefeld-Heepen-Lage bzw. Detmold um einen Betrag bis 200 000 RM bzw…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[15].children[32].children[7].children[0].text@189:municipality",
+      "path": "body[15].children[32].children[7].children[0].text",
+      "start": 189,
+      "end": 196,
+      "term": "Detmold",
+      "context": "…usbau der Ferngasanschlußleitung Bielefeld-Heepen-Lage bzw. Detmold um einen Betrag bis 200 000 RM bzw. 350 000 RM.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[16].children[1].children[0].children[0].text@15:municipality",
+      "path": "body[16].children[1].children[0].children[0].text",
+      "start": 15,
+      "end": 22,
+      "term": "Detmold",
+      "context": "Auf die Kreise Detmold und Lemgo zu übertragende Vermögen:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[16].children[1].children[3].children[0].text@53:municipality",
+      "path": "body[16].children[1].children[3].children[0].text",
+      "start": 53,
+      "end": 62,
+      "term": "Paderborn",
+      "context": "Paderborner Elektrizitäts- und Straßen-\n\nbahn AG. in Paderborn (Pesag)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[16].children[1].children[5].children[0].text@34:municipality",
+      "path": "body[16].children[1].children[5].children[0].text",
+      "start": 34,
+      "end": 41,
+      "term": "Detmold",
+      "context": "Dienstgebäude der Kreisbehörde in Detmold\n\nFriedensbrandkassenwert",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[17].children[4].children[0].children[1].text@34:protected:gazette-nw",
+      "path": "body[17].children[4].children[0].children[1].text",
+      "start": 34,
+      "end": 48,
+      "term": "GV. NW. S. 327",
+      "context": "Durch Gesetz vom 5. Oktober 1971 (GV. NW. S. 327 / SGV. NW. 40) ist das Stift Cappel mit dem Stift St. Marie…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "geography": {
+      "manual-review": 39
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 18
+    },
+    "municipality": {
+      "manual-review": 21
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 3
+    },
+    "source-citation": {
+      "protected": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-dative",
+      "from": "dem Land Nordrhein-Westfalen",
+      "to": "dem Land Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[10].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[14].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Lippe",
+      "context": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Lippe",
+      "context": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Lippe",
+      "context": "…ischen dem Lande Nordrhein-Westfalen und dem früheren Lande Lippe hat der Landtag im Sinne der Vereinbarungen, die zwischen d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Lippe",
+      "context": "…ischen dem Lande Nordrhein-Westfalen und dem früheren Lande Lippe hat der Landtag im Sinne der Vereinbarungen, die zwischen d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Lippe",
+      "context": "…schen den Landesregierungen von Nordrhein-Westfalen und von Lippe getroffen worden sind, das folgende Gesetz beschlossen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Lippe",
+      "context": "…schen den Landesregierungen von Nordrhein-Westfalen und von Lippe getroffen worden sind, das folgende Gesetz beschlossen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Lippe",
+      "context": "Mit Wirkung vom 21. Januar 1947 ist das Land Lippe dem Lande Nordrhein-Westfalen zugelegt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Lippe",
+      "context": "Mit Wirkung vom 21. Januar 1947 ist das Land Lippe dem Lande Nordrhein-Westfalen zugelegt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Lippe",
+      "context": "… Nordrhein-Westfalen erstrecken sich auf das bisherige Land Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Lippe",
+      "context": "… Nordrhein-Westfalen erstrecken sich auf das bisherige Land Lippe.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Detmold",
+      "context": "Die Landkreise Detmold und Lemgo werden als Kreise des Landes Nordrhein-Westfalen …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Regierungsbezirk",
+      "context": "…ls Kreise des Landes Nordrhein-Westfalen übernommen und dem Regierungsbezirk Detmold eingegliedert.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Detmold",
+      "context": "…des Nordrhein-Westfalen übernommen und dem Regierungsbezirk Detmold eingegliedert.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].text",
+      "term": "Detmold",
+      "context": "…l bei Lippstadt werden bis zum 1. April 1949 aus dem Kreise Detmold ausgegliedert und dem Kreis Lippstadt als amtsfreie Gemeind…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Lippe",
+      "context": "Das allgemeine Landesvermögen des Landes Lippe ist mit allen auf ihm ruhenden Lasten und Verpflichtungen a…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Lippe",
+      "context": "Das allgemeine Landesvermögen des Landes Lippe ist mit allen auf ihm ruhenden Lasten und Verpflichtungen a…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Lippe",
+      "context": "… durch Gesetz vom heutigen Tage errichteten ,,Landesverband Lippe\" als Gesamtrechtsnachfolger über. Der Landesverband ist ver…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[0].text",
+      "term": "Detmold",
+      "context": "…er über. Der Landesverband ist verpflichtet, auf die Kreise Detmold und Lemgo das in der Anlage 2 aufgeführte Vermögen zu übert…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].text",
+      "term": "Lippe",
+      "context": "…e in dem Umfange zugewiesen, in welchem sie früher dem Land Lippe zustanden. Das auf den Landesverband übergehende Grundvermö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].text",
+      "term": "Lippe",
+      "context": "…e in dem Umfange zugewiesen, in welchem sie früher dem Land Lippe zustanden. Das auf den Landesverband übergehende Grundvermö…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Lippe",
+      "context": "…band übernimmt die bisher dem Forstgemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforste…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Lippe",
+      "context": "…band übernimmt die bisher dem Forstgemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforste…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Lippe",
+      "context": "…gemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforsten nach den bisherigen Grundsätzen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Lippe",
+      "context": "…gemeindezweckverband für Lippe obliegende Verwaltung der in Lippe gelegenen Gemeindeforsten nach den bisherigen Grundsätzen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Lippe",
+      "context": "… des Verbandes aus dem früheren Domanialvermögen des Landes Lippe gesetzlich unmittelbar zufallen, oder die es bevorzugt zu e…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Lippe",
+      "context": "… des Verbandes aus dem früheren Domanialvermögen des Landes Lippe gesetzlich unmittelbar zufallen, oder die es bevorzugt zu e…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…Lippische Landesbrandversicherungsanstalt dem Landesverband Lippe angegliedert. Danach gehen die Rechte und Verpflichtungen, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…Lippische Landesbrandversicherungsanstalt dem Landesverband Lippe angegliedert. Danach gehen die Rechte und Verpflichtungen, …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…h gehen die Rechte und Verpflichtungen, die bisher dem Land Lippe zustanden oder von ihm getragen wurden, auf den Landesverba…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…h gehen die Rechte und Verpflichtungen, die bisher dem Land Lippe zustanden oder von ihm getragen wurden, auf den Landesverba…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…ragen wurden, auf den Landesverband über. Der Landesverband Lippe kann unter Übertragung seiner Rechte und Pflichten auf die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Lippe",
+      "context": "…ragen wurden, auf den Landesverband über. Der Landesverband Lippe kann unter Übertragung seiner Rechte und Pflichten auf die …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[2].text",
+      "term": "Detmold",
+      "context": "…der Wohnungskreditanstalt bei ihrer Auflösung an die Kreise Detmold und Lemgo fällt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].text",
+      "term": "Lippe",
+      "context": "…staatlichen Verwaltungen und Betriebe des ehemaligen Landes Lippe finden die Bestimmungen der §§ 22 und 23 des Gesetzes zur Ä…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].text",
+      "term": "Lippe",
+      "context": "…staatlichen Verwaltungen und Betriebe des ehemaligen Landes Lippe finden die Bestimmungen der §§ 22 und 23 des Gesetzes zur Ä…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].text",
+      "term": "Lippe",
+      "context": "Die Versorgungslasten der in den Dienst des Landesverbandes Lippe übertretenden Beamten bzw. deren Hinterbliebenen sind entsp…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].text",
+      "term": "Lippe",
+      "context": "Die Versorgungslasten der in den Dienst des Landesverbandes Lippe übertretenden Beamten bzw. deren Hinterbliebenen sind entsp…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].text",
+      "term": "Innenministers",
+      "context": "…. deren Hinterbliebenen sind entsprechend dem Runderlaß des Innenministers des Landes Nordrhein-Westfalen vom 24. September 1947 - II …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].text",
+      "term": "Lippe",
+      "context": "…ilmäßig vom Lande Nordrhein-Westfalen und vom Landesverband Lippe zu tragen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[1].text",
+      "term": "Lippe",
+      "context": "…ilmäßig vom Lande Nordrhein-Westfalen und vom Landesverband Lippe zu tragen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Lippe",
+      "context": "Die im Gebiet des ehemaligen Landes Lippe geltenden Gesetze, Verordnungen und Verwaltungsvorschriften…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Lippe",
+      "context": "Die im Gebiet des ehemaligen Landes Lippe geltenden Gesetze, Verordnungen und Verwaltungsvorschriften…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Innenminister",
+      "context": "…waltungsvorschriften bleiben bis auf weiteres in Kraft. Der Innenminister des Landes Nordrhein-Westfalen wird ermächtigt, das Lippisc…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Detmold",
+      "context": "…drhein-Westfalen geltende Recht nach Anhörung der Kreistage Detmold und Lemgo anzugleichen.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen erläßt im Einvernehmen mit d…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].text",
+      "term": "Lippe",
+      "context": "Auf den Landesverband Lippe übergehendes Vermögen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].text",
+      "term": "Lippe",
+      "context": "Auf den Landesverband Lippe übergehendes Vermögen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[7].text",
+      "term": "Paderborn",
+      "context": "…n Hameln, Paderborner Elektrizitäts- und Straßenbahn AG. in Paderborn, Westfälische Ferngas AG., Dortmund, Extertalbahn AG., Hame…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[7].text",
+      "term": "Dortmund",
+      "context": "…und Straßenbahn AG. in Paderborn, Westfälische Ferngas AG., Dortmund, Extertalbahn AG., Hameln",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[18].children[1].children[2].text",
+      "term": "Detmold",
+      "context": "Detmold",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[30].children[0].children[0].text",
+      "term": "Detmold",
+      "context": "Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[30].children[14].children[0].text",
+      "term": "Detmold",
+      "context": "Schloßvorgebäude Detmold:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[30].children[24].children[0].text",
+      "term": "Detmold",
+      "context": "Detmold,",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[30].children[31].children[0].text",
+      "term": "Detmold",
+      "context": "Detmold, Krummes Haus",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[30].children[34].children[0].text",
+      "term": "Detmold",
+      "context": "Gesundheitsamt Detmold",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[30].children[54].children[0].text",
+      "term": "Detmold",
+      "context": "Landratsamt Detmold",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[32].children[0].children[0].text",
+      "term": "Detmold",
+      "context": "Landkrankenhaus Detmold und\n\nHeilanstalt Lindenhaus Brake\n\nGrundbesitz",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[32].children[7].children[0].text",
+      "term": "Lippe",
+      "context": "Infolge vertraglicher Verpflichtung des ehemaligen Landes Lippe erhöht sich dieser Betrag in Kürze durch den bereits begonn…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[32].children[7].children[0].text",
+      "term": "Lippe",
+      "context": "Infolge vertraglicher Verpflichtung des ehemaligen Landes Lippe erhöht sich dieser Betrag in Kürze durch den bereits begonn…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[32].children[7].children[0].text",
+      "term": "Bielefeld",
+      "context": "…ch den bereits begonnenen Ausbau der Ferngasanschlußleitung Bielefeld-Heepen-Lage bzw. Detmold um einen Betrag bis 200 000 RM bzw…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[32].children[7].children[0].text",
+      "term": "Detmold",
+      "context": "…usbau der Ferngasanschlußleitung Bielefeld-Heepen-Lage bzw. Detmold um einen Betrag bis 200 000 RM bzw. 350 000 RM.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].children[0].children[0].text",
+      "term": "Detmold",
+      "context": "Auf die Kreise Detmold und Lemgo zu übertragende Vermögen:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].children[3].children[0].text",
+      "term": "Paderborn",
+      "context": "Paderborner Elektrizitäts- und Straßen-\n\nbahn AG. in Paderborn (Pesag)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].children[5].children[0].text",
+      "term": "Detmold",
+      "context": "Dienstgebäude der Kreisbehörde in Detmold\n\nFriedensbrandkassenwert",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 656,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen vom 5. November 1948",
+    "sourceVersion": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Nordrhein-Westfalen vom 5. November 1948",
+    "simulation": "Gesetz über die Vereinigung des Landes Lippe mit dem Land Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 5174,
+          "actual": 5238,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 912,
+          "actual": 912,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14513,
+          "actual": 14445,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "12 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "12 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:18:51.956Z"
+}

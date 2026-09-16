@@ -1,0 +1,533 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31213",
+  "slug": "verordnung-ueber-die-fachbereiche-und-abteilungen-der-hochschule-fuer-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@103:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 103,
+      "end": 122,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ungen der Hochschule für Polizei und öffentliche Verwaltung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[0].text@78:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 78,
+      "end": 93,
+      "term": "GV. NRW. S. 394",
+      "context": "… §§ 1, 2 und 3 geändert durch Verordnung vom 25. März 2021 (GV. NRW. S. 394), in Kraft getreten am 17. April 2021.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@227:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 227,
+      "end": 323,
+      "term": "Ministerium für Arbeit, Integration und Soziales - des Fachhochschulgesetzes öffentlicher Dienst",
+      "context": "…terium für Innovation, Wissenschaft und Forschung sowie dem Ministerium für Arbeit, Integration und Soziales - des Fachhochschulgesetzes öffentlicher Dienst vom 29. Mai 1984 (GV. NRW. S. 303), die zuletzt durch Artik…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].text@342:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 342,
+      "end": 357,
+      "term": "GV. NRW. S. 303",
+      "context": "…Fachhochschulgesetzes öffentlicher Dienst vom 29. Mai 1984 (GV. NRW. S. 303), die zuletzt durch Artikel 1 des Gesetzes vom 1. März 2005…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@419:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 419,
+      "end": 434,
+      "term": "GV. NRW. S. 168",
+      "context": "… die zuletzt durch Artikel 1 des Gesetzes vom 1. März 2005 (GV. NRW. S. 168) geändert worden sind, verordnet das Ministerium für Innere…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@472:ministry-portfolio",
+      "path": "body[2].text",
+      "start": 472,
+      "end": 510,
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "… 2005 (GV. NRW. S. 168) geändert worden sind, verordnet das Ministerium für Inneres und Kommunales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@54:rule:jurisdiction-name-bare",
+      "path": "body[3].children[1].text",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Hochschule für Polizei und öffentliche Verwaltung Nordrhein-Westfalen gliedert sich in die Fachbereiche Allgemeine Verwaltung/Ren…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@54:rule:jurisdiction-name-bare",
+      "path": "body[4].children[1].text",
+      "start": 54,
+      "end": 73,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Hochschule für Polizei und öffentliche Verwaltung Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@93:municipality",
+      "path": "body[4].children[1].text",
+      "start": 93,
+      "end": 102,
+      "term": "Bielefeld",
+      "context": "…fentliche Verwaltung Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@104:municipality",
+      "path": "body[4].children[1].text",
+      "start": 104,
+      "end": 112,
+      "term": "Duisburg",
+      "context": "…erwaltung Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständig…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@114:municipality",
+      "path": "body[4].children[1].text",
+      "start": 114,
+      "end": 118,
+      "term": "Köln",
+      "context": "…Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständige Mini…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@120:municipality",
+      "path": "body[4].children[1].text",
+      "start": 120,
+      "end": 133,
+      "term": "Gelsenkirchen",
+      "context": "…ein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständige Ministerium kann du…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@138:municipality",
+      "path": "body[4].children[1].text",
+      "start": 138,
+      "end": 145,
+      "term": "Münster",
+      "context": "…Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständige Ministerium kann durch Erlass d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[4].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[4].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 4
+    },
+    "source-citation": {
+      "protected": 3
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "municipality": {
+      "manual-review": 5
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Arbeit, Integration und Soziales - des Fachhochschulgesetzes öffentlicher Dienst",
+      "context": "…terium für Innovation, Wissenschaft und Forschung sowie dem Ministerium für Arbeit, Integration und Soziales - des Fachhochschulgesetzes öffentlicher Dienst vom 29. Mai 1984 (GV. NRW. S. 303), die zuletzt durch Artik…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Ministerium für Inneres und Kommunales",
+      "context": "… 2005 (GV. NRW. S. 168) geändert worden sind, verordnet das Ministerium für Inneres und Kommunales:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Bielefeld",
+      "context": "…fentliche Verwaltung Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Duisburg",
+      "context": "…erwaltung Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständig…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Köln",
+      "context": "…Nordrhein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständige Mini…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Gelsenkirchen",
+      "context": "…ein-Westfalen hat Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständige Ministerium kann du…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[1].text",
+      "term": "Münster",
+      "context": "…Abteilungen in Bielefeld, Duisburg, Köln, Gelsenkirchen und Münster. Das für Inneres zuständige Ministerium kann durch Erlass d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 16,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…1, 2 und 3 geändert durch Verordnung vom 25. März 2021 (GV. NRW. S. 394), in Kraft getreten am 17. April 2021.",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…hochschulgesetzes öffentlicher Dienst vom 29. Mai 1984 (GV. NRW. S. 303), die zuletzt durch Artikel 1 des Gesetzes vom 1. M…",
+        "status": "protected"
+      },
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 1. März 2005 (GV. NRW. S. 168) geändert worden sind, verordnet das Ministerium fü…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Inneres und Kommunales",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Inneres und Kommunales",
+        "path": "body[2].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Inneres und Kommunales",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Inneres und Kommunales",
+      "path": "body[2].text"
+    },
+    "mappingEntry": "innenministerium"
+  },
+  "citations": {
+    "source": "Verordnung über die Fachbereiche und Abteilungen der Hochschule für Polizei und öffentliche Verwaltung Nordrhein-Westfalen vom 19. Dezember 2014",
+    "sourceVersion": "Verordnung über die Fachbereiche und Abteilungen der Hochschule für Polizei und öffentliche Verwaltung Nordrhein-Westfalen vom 19. Dezember 2014",
+    "simulation": "Verordnung über die Fachbereiche und Abteilungen der Hochschule für Polizei und öffentliche Verwaltung Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1123,
+          "actual": 1329,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 15,
+          "actual": 15,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 3,
+          "actual": 3,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1329,
+          "actual": 1317,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "3 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "3 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:21:44.522Z"
+}

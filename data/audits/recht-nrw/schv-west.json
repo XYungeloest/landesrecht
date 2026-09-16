@@ -1,0 +1,1612 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27475",
+  "slug": "schv-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@103:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 103,
+      "end": 118,
+      "term": "GV. NRW. S. 414",
+      "context": "…neu gefasst durch Artikel 7 des Gesetzes vom 21. Juli 2018 (GV. NRW. S. 414), in Kraft getreten am 1. Juli 2019.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@3:rule:jurisdiction-name",
+      "path": "body[3].children[1].text",
+      "start": 3,
+      "end": 27,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Im Land Nordrhein-Westfalen wird bei der Bezirksregierung Köln eine Schiedsstelle nach …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].children[1].text@41:authority-district-government",
+      "path": "body[3].children[1].text",
+      "start": 41,
+      "end": 57,
+      "term": "Bezirksregierung",
+      "context": "Im Land Nordrhein-Westfalen wird bei der Bezirksregierung Köln eine Schiedsstelle nach § 133 des Neunten Buches Sozia…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@58:municipality",
+      "path": "body[3].children[1].text",
+      "start": 58,
+      "end": 62,
+      "term": "Köln",
+      "context": "Im Land Nordrhein-Westfalen wird bei der Bezirksregierung Köln eine Schiedsstelle nach § 133 des Neunten Buches Sozialgese…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@404:authority-district-government",
+      "path": "body[3].children[1].text",
+      "start": 404,
+      "end": 420,
+      "term": "Bezirksregierung",
+      "context": "…worden ist, (Schiedsstelle Eingliederungshilfe) und bei der Bezirksregierung Münster eine Schiedsstelle nach § 80 des Zwölften Buch Sozi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@421:municipality",
+      "path": "body[3].children[1].text",
+      "start": 421,
+      "end": 428,
+      "term": "Münster",
+      "context": "…edsstelle Eingliederungshilfe) und bei der Bezirksregierung Münster eine Schiedsstelle nach § 80 des Zwölften Buch Sozialgesetz…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@4:authority-district-government",
+      "path": "body[3].children[2].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Ge…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@21:municipality",
+      "path": "body[3].children[2].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Geschäf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@34:authority-district-government",
+      "path": "body[3].children[2].text",
+      "start": 34,
+      "end": 50,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Geschäfte der Schiedsstelle.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@51:municipality",
+      "path": "body[3].children[2].text",
+      "start": 51,
+      "end": 58,
+      "term": "Münster",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Geschäfte der Schiedsstelle.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@4:authority-district-government",
+      "path": "body[3].children[3].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rech…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@21:municipality",
+      "path": "body[3].children[3].text",
+      "start": 21,
+      "end": 25,
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rechtsauf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@34:authority-district-government",
+      "path": "body[3].children[3].text",
+      "start": 34,
+      "end": 50,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rechtsaufsicht über die bei ihnen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@51:municipality",
+      "path": "body[3].children[3].text",
+      "start": 51,
+      "end": 58,
+      "term": "Münster",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rechtsaufsicht über die bei ihnen gebildet…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[4].text@247:authority-district-government",
+      "path": "body[4].children[4].text",
+      "start": 247,
+      "end": 265,
+      "term": "Bezirksregierungen",
+      "context": "… Sie dürfen darüber hinaus nicht Angehörige der zuständigen Bezirksregierungen sein. Sie müssen die Befähigung zum Richteramt oder zum höh…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[2].children[0].text@76:rule:jurisdiction-name-genitive",
+      "path": "body[5].children[2].children[0].text",
+      "start": 76,
+      "end": 102,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nschaft der Spitzenverbände der Freien Wohlfahrtspflege des Landes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[1].text@58:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].children[1].text",
+      "start": 58,
+      "end": 77,
+      "term": "Nordrhein-Westfalen",
+      "context": "die Arbeitsgemeinschaft der kommunalen Spitzenverbände in Nordrhein-Westfalen und",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[2].text@83:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].children[2].text",
+      "start": 83,
+      "end": 102,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rivat-gewerblichen Träger von Einrichtungen und Diensten in Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@115:regional-body-association",
+      "path": "body[5].children[3].text",
+      "start": 115,
+      "end": 133,
+      "term": "Landschaftsverband",
+      "context": "…gliederungshilfe für die Träger der Eingliederungshilfe der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und fü…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@134:geography-region",
+      "path": "body[5].children[3].text",
+      "start": 134,
+      "end": 143,
+      "term": "Rheinland",
+      "context": "…r die Träger der Eingliederungshilfe der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Krei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@152:regional-body-association",
+      "path": "body[5].children[3].text",
+      "start": 152,
+      "end": 170,
+      "term": "Landschaftsverband",
+      "context": "…ingliederungshilfe der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Kreise und kreisfreien Städte d…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@171:geography-region",
+      "path": "body[5].children[3].text",
+      "start": 171,
+      "end": 186,
+      "term": "Westfalen-Lippe",
+      "context": "…der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Kreise und kreisfreien Städte der Städtetag Nor…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@181:geography-river",
+      "path": "body[5].children[3].text",
+      "start": 181,
+      "end": 186,
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Kreise und kreisfreien Städte der Städtetag Nor…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@243:rule:jurisdiction-name-bare",
+      "path": "body[5].children[3].text",
+      "start": 243,
+      "end": 262,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ppe und für die Kreise und kreisfreien Städte der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen. Der Landschaftsve…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@284:rule:jurisdiction-name-bare",
+      "path": "body[5].children[3].text",
+      "start": 284,
+      "end": 303,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ädte der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverban…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@309:regional-body-association",
+      "path": "body[5].children[3].text",
+      "start": 309,
+      "end": 327,
+      "term": "Landschaftsverband",
+      "context": "…ein-Westfalen und der Landkreistag Nordrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestel…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@328:geography-region",
+      "path": "body[5].children[3].text",
+      "start": 328,
+      "end": 337,
+      "term": "Rheinland",
+      "context": "…er Landkreistag Nordrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemein…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@346:regional-body-association",
+      "path": "body[5].children[3].text",
+      "start": 346,
+      "end": 364,
+      "term": "Landschaftsverband",
+      "context": "…rdrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemeinsam drei Mitglieder und sec…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@365:geography-region",
+      "path": "body[5].children[3].text",
+      "start": 365,
+      "end": 380,
+      "term": "Westfalen-Lippe",
+      "context": "…Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemeinsam drei Mitglieder und sechs stellvertrete…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@375:geography-river",
+      "path": "body[5].children[3].text",
+      "start": 375,
+      "end": 380,
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemeinsam drei Mitglieder und sechs stellvertrete…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@470:rule:jurisdiction-name-bare",
+      "path": "body[5].children[3].text",
+      "start": 470,
+      "end": 489,
+      "term": "Nordrhein-Westfalen",
+      "context": "…lieder und sechs stellvertretende Mitglieder. Der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen bestellen gemeinsa…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@511:rule:jurisdiction-name-bare",
+      "path": "body[5].children[3].text",
+      "start": 511,
+      "end": 530,
+      "term": "Nordrhein-Westfalen",
+      "context": "…der. Der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen bestellen gemeinsam zwei Mitglieder und vier stellvertreten…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].children[0].text@4:regional-body-association",
+      "path": "body[5].children[4].children[0].text",
+      "start": 4,
+      "end": 22,
+      "term": "Landschaftsverband",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als üb…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[0].text@23:geography-region",
+      "path": "body[5].children[4].children[0].text",
+      "start": 23,
+      "end": 38,
+      "term": "Westfalen-Lippe",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[0].text@33:geography-river",
+      "path": "body[5].children[4].children[0].text",
+      "start": 33,
+      "end": 38,
+      "term": "Lippe",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[0].text@47:regional-body-association",
+      "path": "body[5].children[4].children[0].text",
+      "start": 47,
+      "end": 65,
+      "term": "Landschaftsverband",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träger der Sozialhilfe und",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[0].text@66:geography-region",
+      "path": "body[5].children[4].children[0].text",
+      "start": 66,
+      "end": 75,
+      "term": "Rheinland",
+      "context": "…ndschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träger der Sozialhilfe und",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[1].text@14:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[1].text",
+      "start": 14,
+      "end": 33,
+      "term": "Nordrhein-Westfalen",
+      "context": "der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen für die örtlichen …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[4].children[1].text@55:rule:jurisdiction-name-bare",
+      "path": "body[5].children[4].children[1].text",
+      "start": 55,
+      "end": 74,
+      "term": "Nordrhein-Westfalen",
+      "context": "der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen für die örtlichen Träger der Sozialhilfe.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[5].text@161:authority-district-government",
+      "path": "body[5].children[5].text",
+      "start": 161,
+      "end": 177,
+      "term": "Bezirksregierung",
+      "context": "…t; sie gelten als bestellt, sobald sie sich der zuständigen Bezirksregierung gegenüber schriftlich zur Amtsübernahme bereit erklärt habe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[6].text@359:authority-district-government",
+      "path": "body[5].children[6].text",
+      "start": 359,
+      "end": 375,
+      "term": "Bezirksregierung",
+      "context": "…§ 80 Abs. 2 Satz 4 SGB XII benannt, bestellt die zuständige Bezirksregierung auf Antrag einer der beteiligten Organisationen die Mitglie…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[7].children[0].text@89:authority-district-government",
+      "path": "body[7].children[0].text",
+      "start": 89,
+      "end": 105,
+      "term": "Bezirksregierung",
+      "context": "…llvertretung können aus wichtigem Grund von der zuständigen Bezirksregierung abberufen werden.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@169:authority-district-government",
+      "path": "body[7].children[1].text",
+      "start": 169,
+      "end": 185,
+      "term": "Bezirksregierung",
+      "context": "…m Falle der Bestellung nach § 3 Abs. 5 durch die zuständige Bezirksregierung abberufen werden. Die Abberufung ist der Geschäftsstelle un…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@185:authority-district-government",
+      "path": "body[7].children[2].text",
+      "start": 185,
+      "end": 201,
+      "term": "Bezirksregierung",
+      "context": "…itzenden, die beteiligten Organisationen und die zuständige Bezirksregierung zu benachrichtigen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[8].children[3].text@45:authority-district-government",
+      "path": "body[8].children[3].text",
+      "start": 45,
+      "end": 61,
+      "term": "Bezirksregierung",
+      "context": "Vertreterinnen und Vertreter der zuständigen Bezirksregierung können an der Sitzung teilnehmen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@211:authority-district-government",
+      "path": "body[10].children[0].text",
+      "start": 211,
+      "end": 227,
+      "term": "Bezirksregierung",
+      "context": "… ein und unterrichtet die für die Rechtsaufsicht zuständige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[16].children[1].text@227:authority-district-government",
+      "path": "body[16].children[1].text",
+      "start": 227,
+      "end": 243,
+      "term": "Bezirksregierung",
+      "context": "…e beteiligten Organisationen mit Zustimmung der zuständigen Bezirksregierung festsetzen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[17].children[1].text@340:regional-body-association",
+      "path": "body[17].children[1].text",
+      "start": 340,
+      "end": 358,
+      "term": "Landschaftsverband",
+      "context": "…chen und persönlichen Kosten der Geschäftsstelle tragen der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemein…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[17].children[1].text@359:geography-region",
+      "path": "body[17].children[1].text",
+      "start": 359,
+      "end": 368,
+      "term": "Rheinland",
+      "context": "…en Kosten der Geschäftsstelle tragen der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der S…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[17].children[1].text@377:regional-body-association",
+      "path": "body[17].children[1].text",
+      "start": 377,
+      "end": 395,
+      "term": "Landschaftsverband",
+      "context": "…häftsstelle tragen der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfale…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[17].children[1].text@396:geography-region",
+      "path": "body[17].children[1].text",
+      "start": 396,
+      "end": 411,
+      "term": "Westfalen-Lippe",
+      "context": "…der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfalen und der Landkr…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[17].children[1].text@406:geography-river",
+      "path": "body[17].children[1].text",
+      "start": 406,
+      "end": 411,
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfalen und der Landkr…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[17].children[1].text@437:rule:jurisdiction-name-bare",
+      "path": "body[17].children[1].text",
+      "start": 437,
+      "end": 456,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen gemeinsam sowie di…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].children[1].text@478:rule:jurisdiction-name-bare",
+      "path": "body[17].children[1].text",
+      "start": 478,
+      "end": 497,
+      "term": "Nordrhein-Westfalen",
+      "context": "…sam, der Städtetag Nordrhein-Westfalen und der Landkreistag Nordrhein-Westfalen gemeinsam sowie die Arbeitsgemeinschaft der Spitzenverbände…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[17].children[1].text@590:rule:jurisdiction-name-genitive",
+      "path": "body[17].children[1].text",
+      "start": 590,
+      "end": 616,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…nschaft der Spitzenverbände der Freien Wohlfahrtspflege des Landes Nordrhein-Westfalen je zu drei Zehntel, die Vereinigungen der privaten Alten- u…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[21].text@4:constitutional-organ-state",
+      "path": "body[21].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[21].text@20:rule:jurisdiction-name-bare",
+      "path": "body[21].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[23].text@179:protected:gazette-nrw",
+      "path": "body[23].text",
+      "start": 179,
+      "end": 194,
+      "term": "GV. NRW. S. 816",
+      "context": "…uch (SGB) Zwölftes Buch (XII) - Sozialhilfe vom 16.12.2004 (GV. NRW. S. 816))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 14
+    },
+    "authority": {
+      "manual-review": 15
+    },
+    "municipality": {
+      "manual-review": 6
+    },
+    "regional-body": {
+      "manual-review": 8
+    },
+    "geography": {
+      "manual-review": 12
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[4].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[17].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[17].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[17].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[21].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "Im Land Nordrhein-Westfalen wird bei der Bezirksregierung Köln eine Schiedsstelle nach § 133 des Neunten Buches Sozia…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Köln",
+      "context": "Im Land Nordrhein-Westfalen wird bei der Bezirksregierung Köln eine Schiedsstelle nach § 133 des Neunten Buches Sozialgese…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…worden ist, (Schiedsstelle Eingliederungshilfe) und bei der Bezirksregierung Münster eine Schiedsstelle nach § 80 des Zwölften Buch Sozi…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Münster",
+      "context": "…edsstelle Eingliederungshilfe) und bei der Bezirksregierung Münster eine Schiedsstelle nach § 80 des Zwölften Buch Sozialgesetz…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Ge…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Geschäf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Geschäfte der Schiedsstelle.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Münster",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster führen jeweils die Geschäfte der Schiedsstelle.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rech…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Köln",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rechtsauf…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rechtsaufsicht über die bei ihnen …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Münster",
+      "context": "Die Bezirksregierung Köln und die Bezirksregierung Münster üben jeweils die Rechtsaufsicht über die bei ihnen gebildet…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[4].text",
+      "term": "Bezirksregierungen",
+      "context": "… Sie dürfen darüber hinaus nicht Angehörige der zuständigen Bezirksregierungen sein. Sie müssen die Befähigung zum Richteramt oder zum höh…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Landschaftsverband",
+      "context": "…gliederungshilfe für die Träger der Eingliederungshilfe der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und fü…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Rheinland",
+      "context": "…r die Träger der Eingliederungshilfe der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Krei…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Landschaftsverband",
+      "context": "…ingliederungshilfe der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Kreise und kreisfreien Städte d…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Westfalen-Lippe",
+      "context": "…der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Kreise und kreisfreien Städte der Städtetag Nor…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und der Landschaftsverband Westfalen-Lippe und für die Kreise und kreisfreien Städte der Städtetag Nor…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Landschaftsverband",
+      "context": "…ein-Westfalen und der Landkreistag Nordrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestel…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Rheinland",
+      "context": "…er Landkreistag Nordrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemein…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Landschaftsverband",
+      "context": "…rdrhein-Westfalen. Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemeinsam drei Mitglieder und sec…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Westfalen-Lippe",
+      "context": "…Der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemeinsam drei Mitglieder und sechs stellvertrete…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und der Landschaftsverband Westfalen-Lippe bestellen gemeinsam drei Mitglieder und sechs stellvertrete…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[0].text",
+      "term": "Landschaftsverband",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als üb…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[0].text",
+      "term": "Westfalen-Lippe",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[0].text",
+      "term": "Lippe",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träge…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[0].text",
+      "term": "Landschaftsverband",
+      "context": "Der Landschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träger der Sozialhilfe und",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[0].text",
+      "term": "Rheinland",
+      "context": "…ndschaftsverband Westfalen-Lippe und der Landschaftsverband Rheinland als überörtliche Träger der Sozialhilfe und",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[5].text",
+      "term": "Bezirksregierung",
+      "context": "…t; sie gelten als bestellt, sobald sie sich der zuständigen Bezirksregierung gegenüber schriftlich zur Amtsübernahme bereit erklärt habe…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[6].text",
+      "term": "Bezirksregierung",
+      "context": "…§ 80 Abs. 2 Satz 4 SGB XII benannt, bestellt die zuständige Bezirksregierung auf Antrag einer der beteiligten Organisationen die Mitglie…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…llvertretung können aus wichtigem Grund von der zuständigen Bezirksregierung abberufen werden.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…m Falle der Bestellung nach § 3 Abs. 5 durch die zuständige Bezirksregierung abberufen werden. Die Abberufung ist der Geschäftsstelle un…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…itzenden, die beteiligten Organisationen und die zuständige Bezirksregierung zu benachrichtigen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[3].text",
+      "term": "Bezirksregierung",
+      "context": "Vertreterinnen und Vertreter der zuständigen Bezirksregierung können an der Sitzung teilnehmen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "… ein und unterrichtet die für die Rechtsaufsicht zuständige Bezirksregierung.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "…e beteiligten Organisationen mit Zustimmung der zuständigen Bezirksregierung festsetzen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…chen und persönlichen Kosten der Geschäftsstelle tragen der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemein…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[1].text",
+      "term": "Rheinland",
+      "context": "…en Kosten der Geschäftsstelle tragen der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der S…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[1].text",
+      "term": "Landschaftsverband",
+      "context": "…häftsstelle tragen der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfale…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[1].text",
+      "term": "Westfalen-Lippe",
+      "context": "…der Landschaftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfalen und der Landkr…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[17].children[1].text",
+      "term": "Lippe",
+      "context": "…haftsverband Rheinland und der Landschaftsverband Westfalen-Lippe gemeinsam, der Städtetag Nordrhein-Westfalen und der Landkr…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 140,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…gefasst durch Artikel 7 des Gesetzes vom 21. Juli 2018 (GV. NRW. S. 414), in Kraft getreten am 1. Juli 2019.",
+        "status": "protected"
+      },
+      {
+        "path": "body[23].text",
+        "term": "NRW",
+        "context": "…(SGB) Zwölftes Buch (XII) - Sozialhilfe vom 16.12.2004 (GV. NRW. S. 816))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Schiedsstellen nach dem Neunten Buch Sozialgesetzbuch - Rehabilitation und Teilhabe von Menschen mit Behinderungen und nach dem Zwölften Buch Sozialgesetzbuch - Sozialhilfe - vom 14. Juni 1994",
+    "sourceVersion": "Verordnung über die Schiedsstellen nach dem Neunten Buch Sozialgesetzbuch - Rehabilitation und Teilhabe von Menschen mit Behinderungen und nach dem Zwölften Buch Sozialgesetzbuch - Sozialhilfe - vom 14. Juni 1994",
+    "simulation": "Verordnung über die Schiedsstellen nach dem Neunten Buch Sozialgesetzbuch - Rehabilitation und Teilhabe von Menschen mit Behinderungen und nach dem Zwölften Buch Sozialgesetzbuch - Sozialhilfe - in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12642,
+          "actual": 13321,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 87,
+          "actual": 87,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 11,
+          "actual": 11,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 18,
+          "actual": 18,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 13321,
+          "actual": 13265,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "18 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "18 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "inline",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:27:04.462Z"
+}

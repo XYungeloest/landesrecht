@@ -1,0 +1,1084 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31446",
+  "slug": "ahaftvollzg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@48:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 48,
+      "end": 67,
+      "term": "Nordrhein-Westfalen",
+      "context": "Gesetz über den Vollzug der Abschiebungshaft in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@31:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 31,
+      "end": 50,
+      "term": "Nordrhein-Westfalen",
+      "context": "Abschiebungshaftvollzugsgesetz Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@12:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 12,
+      "end": 15,
+      "term": "NRW",
+      "context": "AHaftVollzG NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@47:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 47,
+      "end": 62,
+      "term": "GV. NRW. S. 901",
+      "context": "(Artikel 1 des Gesetzes vom 17. Dezember 2015 (GV. NRW. S. 901))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[38].text@74:rule:jurisdiction-name-bare",
+      "path": "body[38].text",
+      "start": 74,
+      "end": 93,
+      "term": "Nordrhein-Westfalen",
+      "context": "… der Datenschutzgrundverordnung und des Datenschutzgesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[63].children[4].text@82:protected:gazette-nrw",
+      "path": "body[63].children[4].text",
+      "start": 82,
+      "end": 97,
+      "term": "GV. NRW. S. 389",
+      "context": "…g über Zuständigkeiten im Ausländerwesen vom 4. April 2017 (GV. NRW. S. 389, ber. S. 594) in der jeweils geltenden Fassung zuständige B…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[63].children[4].text@156:authority-district-government",
+      "path": "body[63].children[4].text",
+      "start": 156,
+      "end": 172,
+      "term": "Bezirksregierung",
+      "context": "…9, ber. S. 594) in der jeweils geltenden Fassung zuständige Bezirksregierung kann eine der Aufrechterhaltung der inneren Ordnung der Ein…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[71].children[1].text@162:rule:jurisdiction-abbreviation",
+      "path": "body[71].children[1].text",
+      "start": 162,
+      "end": 165,
+      "term": "NRW",
+      "context": "…r Anwendung des § 3 Absatz 4 des Nichtraucherschutzgesetzes NRW vom 20. Dezember 2007 (GV. NRW. S. 742) in der jeweils gelt…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[71].children[1].text@189:protected:gazette-nrw",
+      "path": "body[71].children[1].text",
+      "start": 189,
+      "end": 204,
+      "term": "GV. NRW. S. 742",
+      "context": "…4 des Nichtraucherschutzgesetzes NRW vom 20. Dezember 2007 (GV. NRW. S. 742) in der jeweils geltenden Fassung auch in den Zimmern bei g…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[80].children[8].text@128:authority-district-government",
+      "path": "body[80].children[8].text",
+      "start": 128,
+      "end": 144,
+      "term": "Bezirksregierung",
+      "context": "…n. Die für den Fachbereich zuständige Abteilungsleitung der Bezirksregierung entscheidet, falls sich die Verfehlung des Ausreisepflichti…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[89].children[1].text@176:rule:jurisdiction-name-bare",
+      "path": "body[89].children[1].text",
+      "start": 176,
+      "end": 195,
+      "term": "Nordrhein-Westfalen",
+      "context": "…, des § 78 und des § 121 Nummer 5 des Strafvollzugsgesetzes Nordrhein-Westfalen vom 13. Januar 2015 (GV. NRW. S. 76) in der jeweils geltend…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[89].children[1].text@217:protected:gazette-nrw",
+      "path": "body[89].children[1].text",
+      "start": 217,
+      "end": 231,
+      "term": "GV. NRW. S. 76",
+      "context": "…afvollzugsgesetzes Nordrhein-Westfalen vom 13. Januar 2015 (GV. NRW. S. 76) in der jeweils geltenden Fassung entsprechend.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[91].children[7].text@4:authority-district-government",
+      "path": "body[91].children[7].text",
+      "start": 4,
+      "end": 20,
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung, die eine Einrichtung betreibt, stellt bei Bedarf für die z…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[93].children[2].text@214:authority-district-government",
+      "path": "body[93].children[2].text",
+      "start": 214,
+      "end": 230,
+      "term": "Bezirksregierung",
+      "context": "…tung richtet sich nach der Geschäftsordnung der zuständigen Bezirksregierung. Das Ergebnis ist den Untergebrachten mündlich bekannt zu g…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[94].children[1].text@212:authority-district-government",
+      "path": "body[94].children[1].text",
+      "start": 212,
+      "end": 228,
+      "term": "Bezirksregierung",
+      "context": "… Untergebrachten mitzuwirken. Er unterstützt die zuständige Bezirksregierung durch Anregungen und Verbesserungsvorschläge und berät das …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[94].children[2].text@55:rule:jurisdiction-name-adjective",
+      "path": "body[94].children[2].text",
+      "start": 55,
+      "end": 78,
+      "term": "nordrhein-westfälischen",
+      "context": "Die Amtsperiode des Beirats ist an der Wahlperiode des nordrhein-westfälischen Landtags orientiert und beginnt am Tag der konstituierenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective übergeleitet („nordrhein-westfälischen“ → „westdeutschen“).",
+      "transformRule": "jurisdiction-name-adjective",
+      "replacement": "westdeutschen"
+    },
+    {
+      "id": "body[94].children[3].text@380:rule:jurisdiction-abbreviation",
+      "path": "body[94].children[3].text",
+      "start": 380,
+      "end": 383,
+      "term": "NRW",
+      "context": "… der Spitzenverbände der Freien Wohlfahrtspflege des Landes NRW und der Flüchtlingsrat NRW e. V. benennen jeweils zwei Mitg…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[94].children[3].text@407:rule:jurisdiction-abbreviation",
+      "path": "body[94].children[3].text",
+      "start": 407,
+      "end": 410,
+      "term": "NRW",
+      "context": "…eien Wohlfahrtspflege des Landes NRW und der Flüchtlingsrat NRW e. V. benennen jeweils zwei Mitglieder. Für jedes Mitglied …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[94].children[9].text@260:authority-district-government",
+      "path": "body[94].children[9].text",
+      "start": 260,
+      "end": 276,
+      "term": "Bezirksregierung",
+      "context": "…es Beirats an dessen Sitzungen teil. Die jeweils zuständige Bezirksregierung händigt den Mitgliedern des Beirats Ausweise aus. Aus den U…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[94].children[13].text@144:protected:gazette-nrw",
+      "path": "body[94].children[13].text",
+      "start": 144,
+      "end": 159,
+      "term": "GV. NRW. S. 193",
+      "context": "…m Ausschußmitglieder-Entschädigungsgesetz vom 13. Mai 1958 (GV. NRW. S. 193) in der jeweils geltenden Fassung entschädigt. Beiratsmitgl…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[96].children[1].text@246:protected:gazette-nrw",
+      "path": "body[96].children[1].text",
+      "start": 246,
+      "end": 261,
+      "term": "GV. NRW. S. 310",
+      "context": "…sordnung A) des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung zuzuweisen.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[96].children[4].children[0].text@245:rule:jurisdiction-name",
+      "path": "body[96].children[4].children[0].text",
+      "start": 245,
+      "end": 269,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… der Anlage I des Übergeleiteten Besoldungsgesetzes für das Land Nordrhein-Westfalen wenigstens der Besoldungsgruppe A 9 verliehen ist, oder",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[96].children[4].children[1].text@282:rule:jurisdiction-name",
+      "path": "body[96].children[4].children[1].text",
+      "start": 282,
+      "end": 306,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… der Anlage I des Übergeleiteten Besoldungsgesetzes für das Land Nordrhein-Westfalen verliehen ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[96].children[6].text@100:authority-district-government",
+      "path": "body[96].children[6].text",
+      "start": 100,
+      "end": 116,
+      "term": "Bezirksregierung",
+      "context": "…g üben die Leiterin oder der Leiter des bei der zuständigen Bezirksregierung für den Abschiebungshaftvollzug eingerichteten Dezernates u…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[97].title@69:rule:jurisdiction-name-bare",
+      "path": "body[97].title",
+      "start": 69,
+      "end": 88,
+      "term": "Nordrhein-Westfalen",
+      "context": "… der Datenschutzgrundverordnung und des Datenschutzgesetzes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[97].children[1].text@76:rule:jurisdiction-name-bare",
+      "path": "body[97].children[1].text",
+      "start": 76,
+      "end": 95,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rschriften des Aufenthaltsgesetzes, des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244) in der jeweils geltenden…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[97].children[1].text@114:protected:gazette-nrw",
+      "path": "body[97].children[1].text",
+      "start": 114,
+      "end": 129,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244) in der jeweils geltenden Fassung und den §§ 3, 31 und den …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[98].children[11].text@105:rule:jurisdiction-name-bare",
+      "path": "body[98].children[11].text",
+      "start": 105,
+      "end": 124,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Absatz 1 und 2 sowie § 36 Nummer 20 des Datenschutzgesetzes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[103].children[2].text@144:rule:jurisdiction-name-bare",
+      "path": "body[103].children[2].text",
+      "start": 144,
+      "end": 163,
+      "term": "Nordrhein-Westfalen",
+      "context": "…anderen Zwecken ist über die in § 9 des Datenschutzgesetzes Nordrhein-Westfalen aufgeführten Gründe hinaus zulässig, wenn diese zur Wahrneh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[104].children[2].children[0].text@100:rule:jurisdiction-name-bare",
+      "path": "body[104].children[2].children[0].text",
+      "start": 100,
+      "end": 119,
+      "term": "Nordrhein-Westfalen",
+      "context": "…rachten gemäß § 9 Absatz 2 Nummer 4 des Datenschutzgesetzes Nordrhein-Westfalen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[105].children[1].text@25:rule:jurisdiction-name-bare",
+      "path": "body[105].children[1].text",
+      "start": 25,
+      "end": 44,
+      "term": "Nordrhein-Westfalen",
+      "context": "Bei Vorinhaftierungen in Nordrhein-Westfalen übermittelt die Justizvollzugsbehörde, in der eine frühere …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[116].children[3].text@227:geography-region",
+      "path": "body[116].children[3].text",
+      "start": 227,
+      "end": 236,
+      "term": "Westfalen",
+      "context": "…ft gemäß den §§ 11 bis 13 des Datenschutzgesetzes Nordrhein Westfalen beschränken. Über die Zwecke der §§ 11 bis 13 des Datenschu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[116].children[3].text@307:rule:jurisdiction-name-bare",
+      "path": "body[116].children[3].text",
+      "start": 307,
+      "end": 326,
+      "term": "Nordrhein-Westfalen",
+      "context": "…n. Über die Zwecke der §§ 11 bis 13 des Datenschutzgesetzes Nordrhein-Westfalen hinausgehend, ist eine Beschränkung auch zulässig, sofern e…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[116].children[4].text@838:rule:jurisdiction-name-bare",
+      "path": "body[116].children[4].text",
+      "start": 838,
+      "end": 857,
+      "term": "Nordrhein-Westfalen",
+      "context": "…unftserteilung findet § 12 Absatz 4 des Datenschutzgesetzes Nordrhein-Westfalen Anwendung. Die betroffene Person ist über die Beschränkung …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[119].children[1].text@516:rule:jurisdiction-name",
+      "path": "body[119].children[1].text",
+      "start": 516,
+      "end": 540,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…in Verbindung mit Artikel 4 Absatz 1 der Verfassung für das Land Nordrhein-Westfalen eingeschränkt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[121].text@4:constitutional-organ-state",
+      "path": "body[121].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[121].text@20:rule:jurisdiction-name-bare",
+      "path": "body[121].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[122].text@32:ministry-portfolio",
+      "path": "body[122].text",
+      "start": 32,
+      "end": 71,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Für die Ministerpräsidentin Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[123].text@4:ministry-compound",
+      "path": "body[123].text",
+      "start": 4,
+      "end": 18,
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[124].text@4:ministry-portfolio",
+      "path": "body[124].text",
+      "start": 4,
+      "end": 39,
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[125].text@4:ministry-portfolio",
+      "path": "body[125].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 21
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "authority": {
+      "manual-review": 7
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 4
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[38].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[71].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[89].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[94].children[2].text",
+      "rule": "jurisdiction-name-adjective",
+      "from": "nordrhein-westfälischen",
+      "to": "westdeutschen"
+    },
+    {
+      "path": "body[94].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[94].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[96].children[4].children[0].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[96].children[4].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[97].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[97].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[98].children[11].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[103].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[104].children[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[105].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[116].children[3].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[116].children[4].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[119].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[121].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[63].children[4].text",
+      "term": "Bezirksregierung",
+      "context": "…9, ber. S. 594) in der jeweils geltenden Fassung zuständige Bezirksregierung kann eine der Aufrechterhaltung der inneren Ordnung der Ein…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[80].children[8].text",
+      "term": "Bezirksregierung",
+      "context": "…n. Die für den Fachbereich zuständige Abteilungsleitung der Bezirksregierung entscheidet, falls sich die Verfehlung des Ausreisepflichti…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[91].children[7].text",
+      "term": "Bezirksregierung",
+      "context": "Die Bezirksregierung, die eine Einrichtung betreibt, stellt bei Bedarf für die z…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[93].children[2].text",
+      "term": "Bezirksregierung",
+      "context": "…tung richtet sich nach der Geschäftsordnung der zuständigen Bezirksregierung. Das Ergebnis ist den Untergebrachten mündlich bekannt zu g…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[94].children[1].text",
+      "term": "Bezirksregierung",
+      "context": "… Untergebrachten mitzuwirken. Er unterstützt die zuständige Bezirksregierung durch Anregungen und Verbesserungsvorschläge und berät das …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[94].children[9].text",
+      "term": "Bezirksregierung",
+      "context": "…es Beirats an dessen Sitzungen teil. Die jeweils zuständige Bezirksregierung händigt den Mitgliedern des Beirats Ausweise aus. Aus den U…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[96].children[6].text",
+      "term": "Bezirksregierung",
+      "context": "…g üben die Leiterin oder der Leiter des bei der zuständigen Bezirksregierung für den Abschiebungshaftvollzug eingerichteten Dezernates u…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[116].children[3].text",
+      "term": "Westfalen",
+      "context": "…ft gemäß den §§ 11 bis 13 des Datenschutzgesetzes Nordrhein Westfalen beschränken. Über die Zwecke der §§ 11 bis 13 des Datenschu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[122].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Für die Ministerpräsidentin Die Ministerin für Schule und Weiterbildung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[123].text",
+      "term": "Finanzminister",
+      "context": "Der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[124].text",
+      "term": "Minister für Inneres und Kommunales",
+      "context": "Der Minister für Inneres und Kommunales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[125].text",
+      "term": "Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "context": "Die Ministerin für Gesundheit, Emanzipation, Pflege und Alter",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 684,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "(Artikel 1 des Gesetzes vom 17. Dezember 2015 (GV. NRW. S. 901))",
+        "status": "protected"
+      },
+      {
+        "path": "body[63].children[4].text",
+        "term": "NRW",
+        "context": "…er Zuständigkeiten im Ausländerwesen vom 4. April 2017 (GV. NRW. S. 389, ber. S. 594) in der jeweils geltenden Fassung zust…",
+        "status": "protected"
+      },
+      {
+        "path": "body[71].children[1].text",
+        "term": "NRW",
+        "context": "… Nichtraucherschutzgesetzes West vom 20. Dezember 2007 (GV. NRW. S. 742) in der jeweils geltenden Fassung auch in den Zimme…",
+        "status": "protected"
+      },
+      {
+        "path": "body[89].children[1].text",
+        "term": "NRW",
+        "context": "…afvollzugsgesetzes Westdeutschland vom 13. Januar 2015 (GV. NRW. S. 76) in der jeweils geltenden Fassung entsprechend.",
+        "status": "protected"
+      },
+      {
+        "path": "body[94].children[13].text",
+        "term": "NRW",
+        "context": "…sschußmitglieder-Entschädigungsgesetz vom 13. Mai 1958 (GV. NRW. S. 193) in der jeweils geltenden Fassung entschädigt. Beir…",
+        "status": "protected"
+      },
+      {
+        "path": "body[96].children[1].text",
+        "term": "NRW",
+        "context": "…nung A) des Landesbesoldungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung zuzu…",
+        "status": "protected"
+      },
+      {
+        "path": "body[97].children[1].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244) in der jeweils geltenden Fassung und den §§ 3, 31 …",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über den Vollzug der Abschiebungshaft in Nordrhein-Westfalen vom 17. Dezember 2015 (In Kraft getreten am 1. Januar 2016 (GV. NRW. 2015 S.\n901))",
+    "sourceVersion": "Gesetz über den Vollzug der Abschiebungshaft in Nordrhein-Westfalen vom 17. Dezember 2015 (In Kraft getreten am 1. Januar 2016 (GV. NRW. 2015 S.\n901))",
+    "simulation": "Gesetz über den Vollzug der Abschiebungshaft in Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 59,
+          "actual": 59,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 88336,
+          "actual": 87755,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 59,
+          "actual": 59,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 460,
+          "actual": 460,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 61,
+          "actual": 61,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 59,
+          "actual": 59,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 87755,
+          "actual": 87692,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "59 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "59 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:13:30.801Z"
+}

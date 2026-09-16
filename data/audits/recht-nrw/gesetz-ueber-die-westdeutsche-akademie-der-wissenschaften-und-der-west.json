@@ -1,0 +1,397 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27088",
+  "slug": "gesetz-ueber-die-westdeutsche-akademie-der-wissenschaften-und-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@16:rule:jurisdiction-name-adjective-capital",
+      "path": "meta.title",
+      "start": 16,
+      "end": 38,
+      "term": "Nordrhein-Westfälische",
+      "context": "Gesetz über die Nordrhein-Westfälische Akademie der Wissenschaften und der Künste",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective-capital",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective-capital übergeleitet („Nordrhein-Westfälische“ → „Westdeutsche“).",
+      "transformRule": "jurisdiction-name-adjective-capital",
+      "replacement": "Westdeutsche"
+    },
+    {
+      "id": "body[0].text@59:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 59,
+      "end": 74,
+      "term": "GV. NRW. S. 516",
+      "context": "Fn 1: Überschrift geändert durch Gesetz vom 24. Juni 2008 (GV. NRW. S. 516), in Kraft getreten am 16. Juli 2008.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@42:rule:jurisdiction-name-genitive",
+      "path": "body[2].children[1].text",
+      "start": 42,
+      "end": 68,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Arbeitsgemeinschaft für Forschung des Landes Nordrhein-Westfalen wird Körperschaft des öffentlichen Rechts, die den Namen „N…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[1].text@127:rule:jurisdiction-name-adjective-capital",
+      "path": "body[2].children[1].text",
+      "start": 127,
+      "end": 149,
+      "term": "Nordrhein-Westfälische",
+      "context": "…n wird Körperschaft des öffentlichen Rechts, die den Namen „Nordrhein-Westfälische Akademie der Wissenschaften und der Künste“ führt. Ihr Sitz…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-adjective-capital",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-adjective-capital übergeleitet („Nordrhein-Westfälische“ → „Westdeutsche“).",
+      "transformRule": "jurisdiction-name-adjective-capital",
+      "replacement": "Westdeutsche"
+    },
+    {
+      "id": "body[2].children[1].text@214:municipality",
+      "path": "body[2].children[1].text",
+      "start": 214,
+      "end": 224,
+      "term": "Düsseldorf",
+      "context": "…emie der Wissenschaften und der Künste“ führt. Ihr Sitz ist Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@123:rule:jurisdiction-name",
+      "path": "body[7].children[2].text",
+      "start": 123,
+      "end": 147,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…en Änderungen. Die Satzung wird im Ministerialblatt für das Land Nordrhein-Westfalen veröffentlicht.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[12].children[0].text@80:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[0].text",
+      "start": 80,
+      "end": 106,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n dieses Gesetzes der Arbeitsgemeinschaft für Forschung des Landes Nordrhein-Westfalen angehörenden ordentlichen und korrespondierenden wissenscha…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@80:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[1].text",
+      "start": 80,
+      "end": 106,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…n dieses Gesetzes der Arbeitsgemeinschaft für Forschung des Landes Nordrhein-Westfalen angehörenden Ehrenmitglieder werden Ehrenmitglieder der Aka…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[14].text@4:constitutional-organ-state",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[14].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[14].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 7
+    },
+    "source-citation": {
+      "protected": 1
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-adjective-capital",
+      "from": "Nordrhein-Westfälische",
+      "to": "Westdeutsche"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[2].children[1].text",
+      "rule": "jurisdiction-name-adjective-capital",
+      "from": "Nordrhein-Westfälische",
+      "to": "Westdeutsche"
+    },
+    {
+      "path": "body[7].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[12].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[14].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[1].text",
+      "term": "Düsseldorf",
+      "context": "…emie der Wissenschaften und der Künste“ führt. Ihr Sitz ist Düsseldorf.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 101,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…1: Überschrift geändert durch Gesetz vom 24. Juni 2008 (GV. NRW. S. 516), in Kraft getreten am 16. Juli 2008.",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über die Nordrhein-Westfälische Akademie der Wissenschaften und der Künste vom 16. Juli 1969",
+    "sourceVersion": "Gesetz über die Nordrhein-Westfälische Akademie der Wissenschaften und der Künste vom 16. Juli 1969",
+    "simulation": "Gesetz über die Westdeutsche Akademie der Wissenschaften und der Künste in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 6838,
+          "actual": 7160,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 64,
+          "actual": 64,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 7160,
+          "actual": 7130,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "12 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "12 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:17:21.901Z"
+}

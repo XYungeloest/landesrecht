@@ -1,0 +1,1037 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:33130",
+  "slug": "gesetz-zur-ausfuehrung-des-zensusgesetzes-2022-fuer-das-land-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@54:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 54,
+      "end": 78,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Gesetz zur Ausführung des Zensusgesetzes 2022 für das Land Nordrhein-Westfalen (Zensusgesetz 2022-Ausführungsgesetz NRW - ZensG 2022 AG NR…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "meta.title@116:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 116,
+      "end": 119,
+      "term": "NRW",
+      "context": "…nd Nordrhein-Westfalen (Zensusgesetz 2022-Ausführungsgesetz NRW - ZensG 2022 AG NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "meta.title@136:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 136,
+      "end": 139,
+      "term": "NRW",
+      "context": "…en (Zensusgesetz 2022-Ausführungsgesetz NRW - ZensG 2022 AG NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].children[0].text@301:authority-state-enterprise",
+      "path": "body[1].children[0].text",
+      "start": 301,
+      "end": 326,
+      "term": "Landesbetrieb Information",
+      "context": "…5) geändert worden ist, und oberste Erhebungsstelle ist der Landesbetrieb Information und Technik Nordrhein-Westfalen (im Folgenden „IT. NRW - St…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[1].children[0].text@339:rule:jurisdiction-name-bare",
+      "path": "body[1].children[0].text",
+      "start": 339,
+      "end": 358,
+      "term": "Nordrhein-Westfalen",
+      "context": "…hebungsstelle ist der Landesbetrieb Information und Technik Nordrhein-Westfalen (im Folgenden „IT. NRW - Statistisches Landesamt“ genannt).…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].children[0].text@378:rule:jurisdiction-abbreviation",
+      "path": "body[1].children[0].text",
+      "start": 378,
+      "end": 381,
+      "term": "NRW",
+      "context": "…ormation und Technik Nordrhein-Westfalen (im Folgenden „IT. NRW - Statistisches Landesamt“ genannt). IT. NRW - Statistische…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].children[0].text@423:rule:jurisdiction-abbreviation",
+      "path": "body[1].children[0].text",
+      "start": 423,
+      "end": 426,
+      "term": "NRW",
+      "context": "…Folgenden „IT. NRW - Statistisches Landesamt“ genannt). IT. NRW - Statistisches Landesamt - führt den Zensus 2022 nach den …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].children[0].text@703:rule:jurisdiction-name-bare",
+      "path": "body[1].children[0].text",
+      "start": 703,
+      "end": 722,
+      "term": "Nordrhein-Westfalen",
+      "context": "…. 2675) geändert worden ist, und des Zensusgesetzes 2022 in Nordrhein-Westfalen durch, soweit durch Gesetz nichts anderes bestimmt ist.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].children[1].text@4:rule:jurisdiction-abbreviation",
+      "path": "body[1].children[1].text",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "IT. NRW - Statistisches Landesamt - stellt die zur Durchführung der…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].children[2].text@4:rule:jurisdiction-abbreviation",
+      "path": "body[1].children[2].text",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "IT. NRW - Statistisches Landesamt - trifft die erforderlichen organ…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].children[0].text@4:rule:jurisdiction-abbreviation",
+      "path": "body[2].children[0].text",
+      "start": 4,
+      "end": 7,
+      "term": "NRW",
+      "context": "IT. NRW - Statistisches Landesamt - stellt die durch den Zensus 202…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].children[0].children[2].text@17:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 17,
+      "end": 23,
+      "term": "Aachen",
+      "context": "der Städteregion Aachen für ihr gesamtes Regionsgebiet, § 6 Absatz 3 Satz 2 und 3 d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@99:municipality",
+      "path": "body[3].children[0].children[2].text",
+      "start": 99,
+      "end": 105,
+      "term": "Aachen",
+      "context": "…s Regionsgebiet, § 6 Absatz 3 Satz 2 und 3 des Städteregion Aachen Gesetzes vom 26. Februar 2008 (GV. NRW. S. 162) in der jewe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[2].text@137:protected:gazette-nrw",
+      "path": "body[3].children[0].children[2].text",
+      "start": 137,
+      "end": 152,
+      "term": "GV. NRW. S. 162",
+      "context": "…nd 3 des Städteregion Aachen Gesetzes vom 26. Februar 2008 (GV. NRW. S. 162) in der jeweils geltenden Fassung bleibt unberührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[1].text@57:municipality",
+      "path": "body[3].children[1].text",
+      "start": 57,
+      "end": 63,
+      "term": "Aachen",
+      "context": "Die kreisfreien Städte und Kreise sowie die Städteregion Aachen nehmen die Aufgaben nach Absatz 1 als Pflichtaufgaben zur E…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@52:municipality",
+      "path": "body[3].children[2].text",
+      "start": 52,
+      "end": 58,
+      "term": "Aachen",
+      "context": "Kreisfreie Städte und Kreise sowie die Städteregion Aachen können die Aufgaben nach Absatz 1 gemeinsam wahrnehmen, sof…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].text@647:protected:gazette-nrw",
+      "path": "body[3].children[2].text",
+      "start": 647,
+      "end": 662,
+      "term": "GV. NRW. S. 621",
+      "context": "…beit in der Fassung der Bekanntmachung vom 1. Oktober 1979 (GV. NRW. S. 621) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[0].text@59:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[0].text",
+      "start": 59,
+      "end": 62,
+      "term": "NRW",
+      "context": "Die Aufsicht über die örtlichen Erhebungsstellen führt IT. NRW - Statistisches Landesamt. Oberste Aufsichtsbehörde ist die…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[0].text@426:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[0].text",
+      "start": 426,
+      "end": 429,
+      "term": "NRW",
+      "context": "…nterlagen übermitteln die örtlichen Erhebungsstellen an IT. NRW - Statistisches Landesamt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[1].children[8].text@135:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[1].children[8].text",
+      "start": 135,
+      "end": 138,
+      "term": "NRW",
+      "context": "…d innerhalb der vorgegebenen Fristen zur Abholung durch IT. NRW - Statistisches Landesamt - bereitzustellen,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[5].children[2].text@188:rule:jurisdiction-abbreviation",
+      "path": "body[5].children[2].text",
+      "start": 188,
+      "end": 191,
+      "term": "NRW",
+      "context": "…ebungsstellen übertragen werden. Die Ergebnisse sind an IT. NRW - Statistisches Landesamt - zu übermitteln.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].text@115:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[0].text",
+      "start": 115,
+      "end": 118,
+      "term": "NRW",
+      "context": "…erbereichen nach § 14 des Zensusgesetz 2022 übermittelt IT. NRW - Statistisches Landesamt - bei Bedarf an die Gemeinden Ans…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[0].text@308:rule:jurisdiction-abbreviation",
+      "path": "body[6].children[0].text",
+      "start": 308,
+      "end": 311,
+      "term": "NRW",
+      "context": "…ähligkeit und übermitteln die Ergebnisse der Prüfung an IT. NRW - Statistisches Landesamt.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[0].text@25:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 25,
+      "end": 28,
+      "term": "NRW",
+      "context": "Die Gemeinden können IT. NRW - Statistisches Landesamt - kleinräumige Gliederungssysteme…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[0].text@231:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 231,
+      "end": 234,
+      "term": "NRW",
+      "context": "…atzes und zu seiner technischen Übermittlung werden von IT. NRW - Statistisches Landesamt - bereitgestellt. IT. NRW kann mi…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[7].children[0].text@283:rule:jurisdiction-abbreviation",
+      "path": "body[7].children[0].text",
+      "start": 283,
+      "end": 286,
+      "term": "NRW",
+      "context": "…von IT. NRW - Statistisches Landesamt - bereitgestellt. IT. NRW kann mit einmaliger Zustimmung der Gemeinde die kleinräumig…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[0].text@76:municipality",
+      "path": "body[8].children[0].text",
+      "start": 76,
+      "end": 82,
+      "term": "Aachen",
+      "context": "… den kreisfreien Städten und Kreisen sowie der Städteregion Aachen für die mit diesem Gesetz verbundenen Belastungen einen fin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[8].children[0].text@540:protected:gazette-nrw",
+      "path": "body[8].children[0].text",
+      "start": 540,
+      "end": 555,
+      "term": "GV. NRW. S. 360",
+      "context": "…atz 1 des Konnexitätsausführungsgesetzes vom 22. Juni 2004 (GV. NRW. S. 360), das zuletzt durch Artikel 1 des Gesetzes vom 23. Oktober …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[0].text@621:protected:gazette-nrw",
+      "path": "body[8].children[0].text",
+      "start": 621,
+      "end": 636,
+      "term": "GV. NRW. S. 474",
+      "context": "… zuletzt durch Artikel 1 des Gesetzes vom 23. Oktober 2012 (GV. NRW. S. 474) geändert worden ist, berechnet. Die Ermittlungen zur Koste…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].text@42:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[2].text",
+      "start": 42,
+      "end": 45,
+      "term": "NRW",
+      "context": "Die Kosten der Datenübermittlungen an IT. NRW - Statistisches Landesamt - und an das Statistische Bundesa…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[10].text@4:constitutional-organ-state",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[10].text@20:rule:jurisdiction-name-bare",
+      "path": "body[10].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[12].text@4:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 4,
+      "end": 23,
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[13].text@86:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 86,
+      "end": 179,
+      "term": "Minister für Kinder, Familie, Flüchtlinge und Integration sowie Für den Minister der Finanzen",
+      "context": "…t, Innovation, Digitalisierung und Energie Zugleich für den Minister für Kinder, Familie, Flüchtlinge und Integration sowie Für den Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[14].text@4:ministry-portfolio",
+      "path": "body[14].text",
+      "start": 4,
+      "end": 61,
+      "term": "Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 21
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "municipality": {
+      "manual-review": 5
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    },
+    "ministry": {
+      "manual-review": 3
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[1].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[1].children[8].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[6].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[7].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[10].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[0].text",
+      "term": "Landesbetrieb Information",
+      "context": "…5) geändert worden ist, und oberste Erhebungsstelle ist der Landesbetrieb Information und Technik Nordrhein-Westfalen (im Folgenden „IT. NRW - St…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Aachen",
+      "context": "der Städteregion Aachen für ihr gesamtes Regionsgebiet, § 6 Absatz 3 Satz 2 und 3 d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[2].text",
+      "term": "Aachen",
+      "context": "…s Regionsgebiet, § 6 Absatz 3 Satz 2 und 3 des Städteregion Aachen Gesetzes vom 26. Februar 2008 (GV. NRW. S. 162) in der jewe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Aachen",
+      "context": "Die kreisfreien Städte und Kreise sowie die Städteregion Aachen nehmen die Aufgaben nach Absatz 1 als Pflichtaufgaben zur E…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].text",
+      "term": "Aachen",
+      "context": "Kreisfreie Städte und Kreise sowie die Städteregion Aachen können die Aufgaben nach Absatz 1 gemeinsam wahrnehmen, sof…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[0].text",
+      "term": "Aachen",
+      "context": "… den kreisfreien Städten und Kreisen sowie der Städteregion Aachen für die mit diesem Gesetz verbundenen Belastungen einen fin…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Minister des Innern",
+      "context": "Der Minister des Innern",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Minister für Kinder, Familie, Flüchtlinge und Integration sowie Für den Minister der Finanzen",
+      "context": "…t, Innovation, Digitalisierung und Energie Zugleich für den Minister für Kinder, Familie, Flüchtlinge und Integration sowie Für den Minister der Finanzen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].text",
+      "term": "Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "context": "Die Ministerin für Heimat, Kommunales, Bau und Gleichstellung",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 107,
+    "residuals": [
+      {
+        "path": "body[3].children[0].children[2].text",
+        "term": "NRW",
+        "context": "… des Städteregion Aachen Gesetzes vom 26. Februar 2008 (GV. NRW. S. 162) in der jeweils geltenden Fassung bleibt unberührt.",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[2].text",
+        "term": "NRW",
+        "context": "… in der Fassung der Bekanntmachung vom 1. Oktober 1979 (GV. NRW. S. 621) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[0].text",
+        "term": "NRW",
+        "context": "…1 des Konnexitätsausführungsgesetzes vom 22. Juni 2004 (GV. NRW. S. 360), das zuletzt durch Artikel 1 des Gesetzes vom 23. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[0].text",
+        "term": "NRW",
+        "context": "…etzt durch Artikel 1 des Gesetzes vom 23. Oktober 2012 (GV. NRW. S. 474) geändert worden ist, berechnet. Die Ermittlungen z…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur Ausführung des Zensusgesetzes 2022 für das Land Nordrhein-Westfalen (Zensusgesetz 2022-Ausführungsgesetz NRW - ZensG 2022 AG NRW) vom 1. Juni 2021",
+    "sourceVersion": "Gesetz zur Ausführung des Zensusgesetzes 2022 für das Land Nordrhein-Westfalen (Zensusgesetz 2022-Ausführungsgesetz NRW - ZensG 2022 AG NRW) vom 1. Juni 2021",
+    "simulation": "Gesetz zur Ausführung des Zensusgesetzes 2022 für das Land Westdeutschland (Zensusgesetz 2022-Ausführungsgesetz West - ZensG 2022 AG West) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 9839,
+          "actual": 10262,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 58,
+          "actual": 58,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 9,
+          "actual": 9,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 10262,
+          "actual": 10265,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "9 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "9 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/45848-42882-sgv_29_20210601_1_anlage1.htm.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/45848-42883-sgv_29_20210601_1_anlage2.htm.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 19,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/45848-42884-sgv_29_20210601_1_anlage3.htm.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/45848-42885-sgv_29_20210601_1_anlage4.htm.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/45848-42886-sgv_29_20210601_1_anlage5.htm.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:23:37.787Z"
+}

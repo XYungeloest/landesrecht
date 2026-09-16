@@ -1,0 +1,746 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27240",
+  "slug": "erstes-gesetz-zur-funktionalreform-1-frg-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].children[8].children[1].text@91:rule:jurisdiction-name-bare",
+      "path": "body[2].children[8].children[1].text",
+      "start": 91,
+      "end": 110,
+      "term": "Nordrhein-Westfalen",
+      "context": "…kommunalen Versorgungskassen und Zusatzversorgungskassen in Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[0].text@335:authority-state-office",
+      "path": "body[4].children[0].text",
+      "start": 335,
+      "end": 366,
+      "term": "Landesamt für Datenverarbeitung",
+      "context": "…nehmen haben. Sie hat hierbei die auf den 30. Juni 1979 vom Landesamt für Datenverarbeitung und Statistik fortgeschriebenen und veröffentlichten Einwoh…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-office",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
+    },
+    {
+      "id": "body[6].children[2].text@364:ministry-portfolio",
+      "path": "body[6].children[2].text",
+      "start": 364,
+      "end": 416,
+      "term": "Minister für Landes- und Stadtentwicklung verzichten",
+      "context": "…ben der Bauaufsicht jederzeit durch Erklärung gegenüber dem Minister für Landes- und Stadtentwicklung verzichten. Der Minister für Landes- und Stadtentwicklung bestimmt dur…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[2].text@422:ministry-portfolio",
+      "path": "body[6].children[2].text",
+      "start": 422,
+      "end": 495,
+      "term": "Minister für Landes- und Stadtentwicklung bestimmt durch Rechtsverordnung",
+      "context": "…m Minister für Landes- und Stadtentwicklung verzichten. Der Minister für Landes- und Stadtentwicklung bestimmt durch Rechtsverordnung, wann der Verzicht wirksam wird. Der Minister für Landes- u…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[6].children[2].text@533:ministry-portfolio",
+      "path": "body[6].children[2].text",
+      "start": 533,
+      "end": 658,
+      "term": "Minister für Landes- und Stadtentwicklung kann durch Rechtsverordnung diesen Gemeinden die Aufgaben der Bauaufsicht entziehen",
+      "context": "…durch Rechtsverordnung, wann der Verzicht wirksam wird. Der Minister für Landes- und Stadtentwicklung kann durch Rechtsverordnung diesen Gemeinden die Aufgaben der Bauaufsicht entziehen, wenn die ausreichende personelle Besetzung oder die ordnun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@4:ministry-portfolio",
+      "path": "body[7].children[1].text",
+      "start": 4,
+      "end": 55,
+      "term": "Minister für Arbeit, Gesundheit und Soziales stellt",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales stellt nach Verkündung der Rechtsverordnung der Landesregierung na…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@1050:ministry-portfolio",
+      "path": "body[7].children[2].text",
+      "start": 1050,
+      "end": 1129,
+      "term": "Minister für Arbeit, Gesundheit und Soziales stellt durch Rechtsverordnung fest",
+      "context": "…indeordnung erforderliche Einwohnerzahl erreicht haben. Der Minister für Arbeit, Gesundheit und Soziales stellt durch Rechtsverordnung fest, welche Gemeinden diese Voraussetzungen erfüllen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[3].text@4:ministry-portfolio",
+      "path": "body[7].children[3].text",
+      "start": 4,
+      "end": 93,
+      "term": "Minister für Arbeit, Gesundheit und Soziales bestimmt gleichzeitig durch Rechtsverordnung",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales bestimmt gleichzeitig durch Rechtsverordnung, daß die kreisangehörigen Gemeinden, die beim Inkrafttreten…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[3].text@340:ministry-compound",
+      "path": "body[7].children[3].text",
+      "start": 340,
+      "end": 353,
+      "term": "Innenminister",
+      "context": "…der Jugendhilfe sind; er wird dabei im Einvernehmen mit dem Innenminister den Zeitpunkt bestimmen, zu dem diese Zuständigkeitsänderun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[7].children[4].text@380:ministry-portfolio",
+      "path": "body[7].children[4].text",
+      "start": 380,
+      "end": 435,
+      "term": "Minister für Arbeit, Gesundheit und Soziales verzichten",
+      "context": "… 14 dieses Gesetzes jederzeit durch Erklärung gegenüber dem Minister für Arbeit, Gesundheit und Soziales verzichten. Der Minister für Arbeit, Gesundheit und Soziales bestimmt …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[4].text@441:ministry-portfolio",
+      "path": "body[7].children[4].text",
+      "start": 441,
+      "end": 494,
+      "term": "Minister für Arbeit, Gesundheit und Soziales bestimmt",
+      "context": "…inister für Arbeit, Gesundheit und Soziales verzichten. Der Minister für Arbeit, Gesundheit und Soziales bestimmt im Einvernehmen mit dem Innenminister durch Rechtsverordnun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[4].text@519:ministry-compound",
+      "path": "body[7].children[4].text",
+      "start": 519,
+      "end": 532,
+      "term": "Innenminister",
+      "context": "…t, Gesundheit und Soziales bestimmt im Einvernehmen mit dem Innenminister durch Rechtsverordnung, wann der Verzicht wirksam wird. Der…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[7].children[4].text@593:ministry-portfolio",
+      "path": "body[7].children[4].text",
+      "start": 593,
+      "end": 695,
+      "term": "Minister für Arbeit, Gesundheit und Soziales kann durch Rechtsverordnung diesen Gemeinden die Aufgaben",
+      "context": "…durch Rechtsverordnung, wann der Verzicht wirksam wird. Der Minister für Arbeit, Gesundheit und Soziales kann durch Rechtsverordnung diesen Gemeinden die Aufgaben nach Artikel 14 dieses Gesetzes entziehen, wenn die ausreic…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[7].children[5].text@4:ministry-portfolio",
+      "path": "body[7].children[5].text",
+      "start": 4,
+      "end": 80,
+      "term": "Minister für Arbeit, Gesundheit und Soziales bestimmt durch Rechtsverordnung",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales bestimmt durch Rechtsverordnung, daß kreisangehörige Gemeinden mit eigenem Jugendamt, die a…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@4:ministry-compound",
+      "path": "body[8].children[1].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister wird ermächtigt, das Gesetz zur Neuregelung der Wohnungsbau…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[10].text@4:constitutional-organ-state",
+      "path": "body[10].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[10].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[10].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].text@8:ministry-portfolio",
+      "path": "body[12].text",
+      "start": 8,
+      "end": 97,
+      "term": "Minister für Wirtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "context": "Für den Minister für Wirtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[12].text@65:ministry-compound",
+      "path": "body[12].text",
+      "start": 65,
+      "end": 78,
+      "term": "Innenminister",
+      "context": "…en Minister für Wirtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[12].text@83:ministry-compound",
+      "path": "body[12].text",
+      "start": 83,
+      "end": 97,
+      "term": "Finanzminister",
+      "context": "…rtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[13].text@4:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 4,
+      "end": 54,
+      "term": "Minister für Ernährung, Landwirtschaft und Forsten",
+      "context": "Der Minister für Ernährung, Landwirtschaft und Forsten zugleich für den Minister für Arbeit, Gesundheit und Sozial…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[13].text@72:ministry-portfolio",
+      "path": "body[13].text",
+      "start": 72,
+      "end": 116,
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "… für Ernährung, Landwirtschaft und Forsten zugleich für den Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 18
+    },
+    "institution": {
+      "safe-auto-transform": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].children[8].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[10].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].children[0].text",
+      "term": "Landesamt für Datenverarbeitung",
+      "context": "…nehmen haben. Sie hat hierbei die auf den 30. Juni 1979 vom Landesamt für Datenverarbeitung und Statistik fortgeschriebenen und veröffentlichten Einwoh…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Minister für Landes- und Stadtentwicklung verzichten",
+      "context": "…ben der Bauaufsicht jederzeit durch Erklärung gegenüber dem Minister für Landes- und Stadtentwicklung verzichten. Der Minister für Landes- und Stadtentwicklung bestimmt dur…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Minister für Landes- und Stadtentwicklung bestimmt durch Rechtsverordnung",
+      "context": "…m Minister für Landes- und Stadtentwicklung verzichten. Der Minister für Landes- und Stadtentwicklung bestimmt durch Rechtsverordnung, wann der Verzicht wirksam wird. Der Minister für Landes- u…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Minister für Landes- und Stadtentwicklung kann durch Rechtsverordnung diesen Gemeinden die Aufgaben der Bauaufsicht entziehen",
+      "context": "…durch Rechtsverordnung, wann der Verzicht wirksam wird. Der Minister für Landes- und Stadtentwicklung kann durch Rechtsverordnung diesen Gemeinden die Aufgaben der Bauaufsicht entziehen, wenn die ausreichende personelle Besetzung oder die ordnun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales stellt",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales stellt nach Verkündung der Rechtsverordnung der Landesregierung na…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales stellt durch Rechtsverordnung fest",
+      "context": "…indeordnung erforderliche Einwohnerzahl erreicht haben. Der Minister für Arbeit, Gesundheit und Soziales stellt durch Rechtsverordnung fest, welche Gemeinden diese Voraussetzungen erfüllen.",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[3].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales bestimmt gleichzeitig durch Rechtsverordnung",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales bestimmt gleichzeitig durch Rechtsverordnung, daß die kreisangehörigen Gemeinden, die beim Inkrafttreten…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[3].text",
+      "term": "Innenminister",
+      "context": "…der Jugendhilfe sind; er wird dabei im Einvernehmen mit dem Innenminister den Zeitpunkt bestimmen, zu dem diese Zuständigkeitsänderun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales verzichten",
+      "context": "… 14 dieses Gesetzes jederzeit durch Erklärung gegenüber dem Minister für Arbeit, Gesundheit und Soziales verzichten. Der Minister für Arbeit, Gesundheit und Soziales bestimmt …",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales bestimmt",
+      "context": "…inister für Arbeit, Gesundheit und Soziales verzichten. Der Minister für Arbeit, Gesundheit und Soziales bestimmt im Einvernehmen mit dem Innenminister durch Rechtsverordnun…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].text",
+      "term": "Innenminister",
+      "context": "…t, Gesundheit und Soziales bestimmt im Einvernehmen mit dem Innenminister durch Rechtsverordnung, wann der Verzicht wirksam wird. Der…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[4].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales kann durch Rechtsverordnung diesen Gemeinden die Aufgaben",
+      "context": "…durch Rechtsverordnung, wann der Verzicht wirksam wird. Der Minister für Arbeit, Gesundheit und Soziales kann durch Rechtsverordnung diesen Gemeinden die Aufgaben nach Artikel 14 dieses Gesetzes entziehen, wenn die ausreic…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[5].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales bestimmt durch Rechtsverordnung",
+      "context": "Der Minister für Arbeit, Gesundheit und Soziales bestimmt durch Rechtsverordnung, daß kreisangehörige Gemeinden mit eigenem Jugendamt, die a…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister wird ermächtigt, das Gesetz zur Neuregelung der Wohnungsbau…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Minister für Wirtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "context": "Für den Minister für Wirtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Innenminister",
+      "context": "…en Minister für Wirtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].text",
+      "term": "Finanzminister",
+      "context": "…rtschaft, Mittelstand und Verkehr und den Innenminister der Finanzminister",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Minister für Ernährung, Landwirtschaft und Forsten",
+      "context": "Der Minister für Ernährung, Landwirtschaft und Forsten zugleich für den Minister für Arbeit, Gesundheit und Sozial…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].text",
+      "term": "Minister für Arbeit, Gesundheit und Soziales",
+      "context": "… für Ernährung, Landwirtschaft und Forsten zugleich für den Minister für Arbeit, Gesundheit und Soziales",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 108,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Erstes Gesetz zur Funktionalreform (1. FRG) vom 11. Juli 1978",
+    "sourceVersion": "Erstes Gesetz zur Funktionalreform (1. FRG) vom 11. Juli 1978",
+    "simulation": "Erstes Gesetz zur Funktionalreform (1. FRG) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8868,
+          "actual": 9390,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 129,
+          "actual": 129,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 7,
+          "actual": 7,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 9390,
+          "actual": 9382,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "7 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "7 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:11:15.533Z"
+}

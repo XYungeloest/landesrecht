@@ -323,6 +323,7 @@ describe('RECHT.NRW Enumeration: Aufbau und Abgleich', () => {
       termConflicts: 0,
       ok: true,
       problems: [],
+      notes: [],
     });
     expect(file.items.map((item) => item.key)).toEqual(['stem:verwaltungsvorschrift/alpha-erlass', 'stem:verwaltungsvorschrift/beta-richtlinie', 'stem:verwaltungsvorschrift/delta-runderlass', 'stem:verwaltungsvorschrift/gamma-vorschrift']);
 
@@ -372,14 +373,17 @@ describe('RECHT.NRW Enumeration: Aufbau und Abgleich', () => {
     expect(file.crosscheck).toMatchObject({ items: 4, resolvedTerms: 2, termConflicts: 0, duplicateUrlAssignments: 0, ok: true });
   });
 
-  it('ordnet eine Adresse mit widersprüchlichen Term-IDs keiner Stammnorm zu und meldet den Konflikt', () => {
+  it('lässt eine widersprüchliche Adresse beim Slug-Stamm, führt die Terme weiter und meldet den Konflikt als Hinweis', () => {
     const manifest = manifestOf([manifestEntry('term:1', [GAMMA_2019]), manifestEntry('term:2', [GAMMA_2019])]);
     const file = buildEnumeration(crosscheckInput({ manifest }));
     expect(file.crosscheck.termConflicts).toBe(1);
-    expect(file.crosscheck.ok).toBe(false);
-    expect(file.crosscheck.problems).toContain(`${GAMMA_2019} ist mehreren Stammnormen zugeordnet (term:1, term:2)`);
+    expect(file.crosscheck.problems).toEqual([]);
+    expect(file.crosscheck.ok).toBe(true);
+    expect(file.crosscheck.notes).toContain(`${GAMMA_2019} ist mehreren Stammnormen zugeordnet (term:1, term:2)`);
     expect(itemByKey(file, 'stem:verwaltungsvorschrift/gamma-vorschrift').urls).toEqual([GAMMA_2021, GAMMA_2019]);
-    expect(file.items.some((item) => item.key === 'term:1' || item.key === 'term:2')).toBe(false);
+    // Beide Stammnormen bleiben sichtbar (aus dem Manifest geführt), damit nichts aus dem Nenner fällt.
+    expect(itemByKey(file, 'term:1')).toMatchObject({ sourceIdentity: 'term:1', titleSource: 'manifest' });
+    expect(itemByKey(file, 'term:2')).toMatchObject({ sourceIdentity: 'term:2', titleSource: 'manifest' });
   });
 
   it('übernimmt Term-IDs und Bearbeitungsstand (Status, Versuche, Fehler, Ergebnis) aus der früheren Enumeration', () => {
@@ -427,6 +431,29 @@ describe('RECHT.NRW Enumeration: Aufbau und Abgleich', () => {
     // Lauf 3: die alte Fassungsseite ist aus der Sitemap verschwunden, nur der neue Slug bleibt.
     const third = buildEnumeration(input([NEW], [hit(NEW, '11', 'Alpha-Erlass (neue Bezeichnung)')], second));
     expect(third.items.map((item) => [item.key, item.status, item.urls])).toEqual([['term:500', 'done', [NEW]]]);
+  });
+});
+
+describe('RECHT.NRW Enumeration: Terme aus dem Manifest (Regression)', () => {
+  /**
+   * Regression aus dem echten LRGV-Bulk: Führen die Fassungslisten mehrerer Stammnormen dieselbe Adresse, blieb
+   * die Adresse beim Slug-Stamm. Terme, deren Adressen sämtlich betroffen waren, verloren ihren Eintrag – nach
+   * dem Bulk fehlten 164 bereits verarbeitete Quellidentitäten im Nenner der Coverage.
+   */
+  it('behält bekannte Terme trotz Adresskonflikten und wertet den Konflikt als Hinweis', () => {
+    const manifest = manifestOf([
+      manifestEntry('term:100', [ALPHA_2020, ALPHA_2022]),
+      manifestEntry('term:200', [ALPHA_2020, ALPHA_2022], { importStatus: 'not-at-baseline' }),
+    ]);
+    const file = buildEnumeration(crosscheckInput({ manifest }));
+    expect(file.crosscheck.termConflicts).toBeGreaterThan(0);
+    expect(file.crosscheck.problems).toEqual([]);
+    expect(file.crosscheck.ok).toBe(true);
+    expect(file.crosscheck.notes.some((note) => note.includes('mehreren Stammnormen zugeordnet'))).toBe(true);
+    const identities = new Set(file.items.flatMap((item) => [item.sourceIdentity, item.mergedInto].filter(Boolean)));
+    expect(identities.has('term:100')).toBe(true);
+    expect(identities.has('term:200')).toBe(true);
+    expect(itemByKey(file, 'term:200')).toMatchObject({ status: 'done', titleSource: 'manifest' });
   });
 });
 

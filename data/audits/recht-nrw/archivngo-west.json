@@ -1,0 +1,690 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31388",
+  "slug": "archivngo-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@71:rule:jurisdiction-name-bare",
+      "path": "meta.title",
+      "start": 71,
+      "end": 90,
+      "term": "Nordrhein-Westfalen",
+      "context": "…über die Nutzung und die Gebührenerhebung des Landesarchivs Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.shortTitle@36:rule:jurisdiction-name-bare",
+      "path": "meta.shortTitle",
+      "start": 36,
+      "end": 55,
+      "term": "Nordrhein-Westfalen",
+      "context": "Archivnutzungs- und Gebührenordnung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "meta.abbr@10:rule:jurisdiction-abbreviation",
+      "path": "meta.abbr",
+      "start": 10,
+      "end": 13,
+      "term": "NRW",
+      "context": "ArchivNGO NRW",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@38:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 38,
+      "end": 57,
+      "term": "Nordrhein-Westfalen",
+      "context": "Auf Grund des § 12 des Archivgesetzes Nordrhein-Westfalen vom 16. März 2010 (GV. NRW. S. 188) verordnet das Ministeri…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@77:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 77,
+      "end": 92,
+      "term": "GV. NRW. S. 188",
+      "context": "…2 des Archivgesetzes Nordrhein-Westfalen vom 16. März 2010 (GV. NRW. S. 188) verordnet das Ministerium für Familie, Kinder, Jugend, Kul…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[1].text@108:ministry-portfolio",
+      "path": "body[1].text",
+      "start": 108,
+      "end": 165,
+      "term": "Ministerium für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "…Westfalen vom 16. März 2010 (GV. NRW. S. 188) verordnet das Ministerium für Familie, Kinder, Jugend, Kultur und Sport:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[2].children[0].text@43:rule:jurisdiction-name-bare",
+      "path": "body[2].children[0].text",
+      "start": 43,
+      "end": 62,
+      "term": "Nordrhein-Westfalen",
+      "context": "Diese Verordnung gilt für das Landesarchiv Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@32:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 32,
+      "end": 51,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nach Maßgabe des Archivgesetzes Nordrhein-Westfalen vom 16. März 2010 (GV. NRW. S. 188), das zuletzt durch Gese…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[3].children[0].text@71:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 71,
+      "end": 86,
+      "term": "GV. NRW. S. 188",
+      "context": "…e des Archivgesetzes Nordrhein-Westfalen vom 16. März 2010 (GV. NRW. S. 188), das zuletzt durch Gesetz vom 16. September 2014 (GV. NRW.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@138:protected:gazette-nrw",
+      "path": "body[3].children[0].text",
+      "start": 138,
+      "end": 153,
+      "term": "GV. NRW. S. 603",
+      "context": "…. S. 188), das zuletzt durch Gesetz vom 16. September 2014 (GV. NRW. S. 603) geändert worden ist, und dieser Verordnung stehen Archivgu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[4].children[2].text@17:rule:jurisdiction-name-bare",
+      "path": "body[4].children[2].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Landesarchiv Nordrhein-Westfalen kann auf Antrag abweichend von Absatz 1 unter fachlichen Ge…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[1].text@64:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].text",
+      "start": 64,
+      "end": 83,
+      "term": "Nordrhein-Westfalen",
+      "context": "…Nutzung richtet sich nach den §§ 6 und 7 des Archivgesetzes Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].text@45:rule:jurisdiction-name-bare",
+      "path": "body[5].children[2].text",
+      "start": 45,
+      "end": 64,
+      "term": "Nordrhein-Westfalen",
+      "context": "Anträge nach § 7 Absatz 6 des Archivgesetzes Nordrhein-Westfalen sind mit genauer Bezeichnung des Themas der Arbeit, detaill…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[3].text@65:ministry-compound",
+      "path": "body[5].children[3].text",
+      "start": 65,
+      "end": 82,
+      "term": "Innenministeriums",
+      "context": "…en Umgang mit Verschlusssachen (VS) gilt der Runderlass des Innenministeriums „VS-Anweisung“ vom 9. April 2001 (MBl. NRW. S. 666), der du…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[5].children[3].text@117:protected:gazette-nrw",
+      "path": "body[5].children[3].text",
+      "start": 117,
+      "end": 133,
+      "term": "MBl. NRW. S. 666",
+      "context": "…ass des Innenministeriums „VS-Anweisung“ vom 9. April 2001 (MBl. NRW. S. 666), der durch Runderlass vom 13. Juni 20014 (MBl. NRW. S. 610…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[5].children[3].text@177:protected:gazette-nrw",
+      "path": "body[5].children[3].text",
+      "start": 177,
+      "end": 193,
+      "term": "MBl. NRW. S. 610",
+      "context": "…MBl. NRW. S. 666), der durch Runderlass vom 13. Juni 20014 (MBl. NRW. S. 610) geändert worden ist. Darüber hinaus dürfen im Landesarchiv…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[2].text@294:rule:jurisdiction-name",
+      "path": "body[6].children[1].children[2].text",
+      "start": 294,
+      "end": 318,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Absatz 1 Nummer 3 und 4 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 12. November 1999 (GV…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[6].children[1].children[2].text@376:protected:gazette-nrw",
+      "path": "body[6].children[1].children[2].text",
+      "start": 376,
+      "end": 391,
+      "term": "GV. NRW. S. 602",
+      "context": "…en in der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 1 des Gesetzes vom 20. Mai 2014…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[2].text@453:protected:gazette-nrw",
+      "path": "body[6].children[1].children[2].text",
+      "start": 453,
+      "end": 468,
+      "term": "GV. NRW. S. 294",
+      "context": "… das zuletzt durch Artikel 1 des Gesetzes vom 20. Mai 2014 (GV. NRW. S. 294) geändert worden ist, für die Leitungen, Vertretungen und B…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[5].text@78:rule:jurisdiction-name-bare",
+      "path": "body[6].children[5].text",
+      "start": 78,
+      "end": 97,
+      "term": "Nordrhein-Westfalen",
+      "context": "…igung kann außer aus den in § 6 Absatz 2 des Archivgesetzes Nordrhein-Westfalen genannten Gründen eingeschränkt oder versagt werden, wenn",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[7].children[2].text@166:rule:jurisdiction-name-bare",
+      "path": "body[7].children[2].text",
+      "start": 166,
+      "end": 185,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ichen Bedingungen wie für die Archivalien des Landesarchivs Nordrhein-Westfalen, sofern die übersendende Stelle nicht anderslautende Auflag…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].text@17:rule:jurisdiction-name-bare",
+      "path": "body[13].children[0].text",
+      "start": 17,
+      "end": 36,
+      "term": "Nordrhein-Westfalen",
+      "context": "Das Landesarchiv Nordrhein-Westfalen erhebt für die von ihm erbrachten Leistungen sowie für die …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[15].children[4].text@4:rule:jurisdiction-name-genitive",
+      "path": "body[15].children[4].text",
+      "start": 4,
+      "end": 30,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 14
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "ministry": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.shortTitle",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "meta.abbr",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[2].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[5].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[6].children[1].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[6].children[5].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[7].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[15].children[4].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].text",
+      "term": "Ministerium für Familie, Kinder, Jugend, Kultur und Sport",
+      "context": "…Westfalen vom 16. März 2010 (GV. NRW. S. 188) verordnet das Ministerium für Familie, Kinder, Jugend, Kultur und Sport:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[3].text",
+      "term": "Innenministeriums",
+      "context": "…en Umgang mit Verschlusssachen (VS) gilt der Runderlass des Innenministeriums „VS-Anweisung“ vom 9. April 2001 (MBl. NRW. S. 666), der du…",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 162,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…2 des Archivgesetzes Westdeutschland vom 16. März 2010 (GV. NRW. S. 188) verordnet das Ministerium für Familie, Kinder, Jug…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "…e des Archivgesetzes Westdeutschland vom 16. März 2010 (GV. NRW. S. 188), das zuletzt durch Gesetz vom 16. September 2014 (…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].children[0].text",
+        "term": "NRW",
+        "context": "… 188), das zuletzt durch Gesetz vom 16. September 2014 (GV. NRW. S. 603) geändert worden ist, und dieser Verordnung stehen …",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[3].text",
+        "term": "NRW",
+        "context": "…es Innenministeriums „VS-Anweisung“ vom 9. April 2001 (MBl. NRW. S. 666), der durch Runderlass vom 13. Juni 20014 (MBl. NRW…",
+        "status": "protected"
+      },
+      {
+        "path": "body[5].children[3].text",
+        "term": "NRW",
+        "context": "…NRW. S. 666), der durch Runderlass vom 13. Juni 20014 (MBl. NRW. S. 610) geändert worden ist. Darüber hinaus dürfen im Land…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…n der Fassung der Bekanntmachung vom 12. November 1999 (GV. NRW. S. 602), das zuletzt durch Artikel 1 des Gesetzes vom 20. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[2].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 1 des Gesetzes vom 20. Mai 2014 (GV. NRW. S. 294) geändert worden ist, für die Leitungen, Vertretung…",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [
+      {
+        "name": "Ministerium für Familie, Kinder, Jugend, Kultur und Sport",
+        "formula": "ordinance-formula",
+        "text": "verordnet das Ministerium für Familie, Kinder, Jugend, Kultur und Sport",
+        "path": "body[1].text"
+      }
+    ],
+    "conflict": false,
+    "decision": "manual-review",
+    "reason": "Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.",
+    "source": {
+      "name": "Ministerium für Familie, Kinder, Jugend, Kultur und Sport",
+      "formula": "ordinance-formula",
+      "text": "verordnet das Ministerium für Familie, Kinder, Jugend, Kultur und Sport",
+      "path": "body[1].text"
+    },
+    "mappingEntry": "sonstige-ministerien"
+  },
+  "citations": {
+    "source": "Verordnung über die Nutzung und die Gebührenerhebung des Landesarchivs Nordrhein-Westfalen vom 29. Mai 2015",
+    "sourceVersion": "Verordnung über die Nutzung und die Gebührenerhebung des Landesarchivs Nordrhein-Westfalen vom 29. Mai 2015",
+    "simulation": "Verordnung über die Nutzung und die Gebührenerhebung des Landesarchivs Westdeutschland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12281,
+          "actual": 12658,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 91,
+          "actual": 91,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12658,
+          "actual": 12614,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage (PDF)",
+        "url": "https://recht.nrw.de/system/files/BA/31724-28781-sgv_221_20150529_1_anlage.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:25:50.942Z"
+}

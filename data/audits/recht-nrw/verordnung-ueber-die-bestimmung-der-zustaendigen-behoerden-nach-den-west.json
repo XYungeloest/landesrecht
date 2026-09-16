@@ -1,0 +1,878 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:31582",
+  "slug": "verordnung-ueber-die-bestimmung-der-zustaendigen-behoerden-nach-den-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[1].children[0].children[0].text@201:authority-district-government",
+      "path": "body[1].children[0].children[0].text",
+      "start": 201,
+      "end": 219,
+      "term": "Bezirksregierungen",
+      "context": "…(BGBl. I S. 1795) in der jeweils geltenden Fassung sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@207:authority-district-government",
+      "path": "body[3].children[0].children[0].text",
+      "start": 207,
+      "end": 225,
+      "term": "Bezirksregierungen",
+      "context": "…(BGBl. I S. 2389) in der jeweils geltenden Fassung sind die Bezirksregierungen. Hat die Luftfahrzeughalterin oder der Luftfahrzeughalter i…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@331:regional-body-district",
+      "path": "body[3].children[0].children[0].text",
+      "start": 331,
+      "end": 349,
+      "term": "Regierungsbezirken",
+      "context": "…hrzeughalter ihren oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf ö…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@350:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 350,
+      "end": 360,
+      "term": "Düsseldorf",
+      "context": "…oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zust…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@366:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 366,
+      "end": 370,
+      "term": "Köln",
+      "context": "…- oder Firmensitz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zuständig. Hat…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@380:authority-district-government",
+      "path": "body[3].children[0].children[0].text",
+      "start": 380,
+      "end": 396,
+      "term": "Bezirksregierung",
+      "context": "…itz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zuständig. Hat die Luftfahrzeughalterin …",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@397:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 397,
+      "end": 407,
+      "term": "Düsseldorf",
+      "context": "…ungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zuständig. Hat die Luftfahrzeughalterin oder der Lu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@531:regional-body-district",
+      "path": "body[3].children[0].children[0].text",
+      "start": 531,
+      "end": 549,
+      "term": "Regierungsbezirken",
+      "context": "…hrzeughalter ihren oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münst…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-district",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regierungsbezirke",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@550:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 550,
+      "end": 558,
+      "term": "Arnsberg",
+      "context": "…oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlic…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@560:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 560,
+      "end": 567,
+      "term": "Detmold",
+      "context": "…n Wohn- oder Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständ…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@573:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 573,
+      "end": 577,
+      "term": "Köln",
+      "context": "…Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständig.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@587:authority-district-government",
+      "path": "body[3].children[0].children[0].text",
+      "start": 587,
+      "end": 603,
+      "term": "Bezirksregierung",
+      "context": "…den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständig.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[3].children[0].children[0].text@604:municipality",
+      "path": "body[3].children[0].children[0].text",
+      "start": 604,
+      "end": 611,
+      "term": "Münster",
+      "context": "…irken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständig.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[0].children[0].text@174:authority-district-government",
+      "path": "body[4].children[0].children[0].text",
+      "start": 174,
+      "end": 192,
+      "term": "Bezirksregierungen",
+      "context": "…(BGBl. I S. 2730) in der jeweils geltenden Fassung sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@447:authority-state-enterprise",
+      "path": "body[5].children[1].children[0].text",
+      "start": 447,
+      "end": 491,
+      "term": "Landesbetrieb Straßenbau Nordrhein-Westfalen",
+      "context": "…nd Straßen, deren Baulastträger nicht der Bund ist, ist der Landesbetrieb Straßenbau Nordrhein-Westfalen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@472:rule:jurisdiction-name-bare",
+      "path": "body[5].children[1].children[0].text",
+      "start": 472,
+      "end": 491,
+      "term": "Nordrhein-Westfalen",
+      "context": "…träger nicht der Bund ist, ist der Landesbetrieb Straßenbau Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[5].children[2].children[0].text@132:authority-district-government",
+      "path": "body[5].children[2].children[0].text",
+      "start": 132,
+      "end": 150,
+      "term": "Bezirksregierungen",
+      "context": "…ehrssicherstellungsgesetz-Zuständigkeitsverordnung sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[5].children[4].children[0].text@325:authority-district-government",
+      "path": "body[5].children[4].children[0].text",
+      "start": 325,
+      "end": 343,
+      "term": "Bezirksregierungen",
+      "context": "…hrssicherstellungsgesetz-Zuständigkeitsverordnung, sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[1].text@140:protected:gazette-nrw",
+      "path": "body[6].children[1].children[1].text",
+      "start": 140,
+      "end": 154,
+      "term": "GV. NRW. S. 13",
+      "context": "…zur Sicherstellung des Straßenverkehrs vom 12. Januar 1983 (GV. NRW. S. 13), die durch Artikel 236 des Gesetzes vom 5. April 2005 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[1].text@211:protected:gazette-nrw",
+      "path": "body[6].children[1].children[1].text",
+      "start": 211,
+      "end": 226,
+      "term": "GV. NRW. S. 274",
+      "context": "… 13), die durch Artikel 236 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[2].text@159:protected:gazette-nrw",
+      "path": "body[6].children[1].children[2].text",
+      "start": 159,
+      "end": 174,
+      "term": "GV. NRW. S. 805",
+      "context": "…erstellung des Binnenschiffsverkehrs vom 14. Dezember 1982 (GV. NRW. S. 805), die durch Artikel 237 des Gesetzes vom 5. April 2005 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[2].text@231:protected:gazette-nrw",
+      "path": "body[6].children[1].children[2].text",
+      "start": 231,
+      "end": 246,
+      "term": "GV. NRW. S. 274",
+      "context": "…805), die durch Artikel 237 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist,",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[3].text@142:protected:gazette-nrw",
+      "path": "body[6].children[1].children[3].text",
+      "start": 142,
+      "end": 156,
+      "term": "GV. NRW. S. 92",
+      "context": "… Sicherstellung des Eisenbahnverkehrs vom 15. Februar 1977 (GV. NRW. S. 92), die durch Artikel 163 des Gesetzes vom 5. April 2005 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[3].text@213:protected:gazette-nrw",
+      "path": "body[6].children[1].children[3].text",
+      "start": 213,
+      "end": 228,
+      "term": "GV. NRW. S. 274",
+      "context": "… 92), die durch Artikel 163 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist und",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[4].text@140:protected:gazette-nrw",
+      "path": "body[6].children[1].children[4].text",
+      "start": 140,
+      "end": 155,
+      "term": "GV. NRW. S. 885",
+      "context": "…zur Sicherstellung des Luftverkehrs vom 23. September 1980 (GV. NRW. S. 885), die durch Artikel 164 des Gesetzes vom 5. April 2005 (GV.…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[4].text@212:protected:gazette-nrw",
+      "path": "body[6].children[1].children[4].text",
+      "start": 212,
+      "end": 227,
+      "term": "GV. NRW. S. 274",
+      "context": "…885), die durch Artikel 164 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[6].text@102:protected:gazette-nrw",
+      "path": "body[6].children[1].children[6].text",
+      "start": 102,
+      "end": 117,
+      "term": "GV. NRW. S. 421",
+      "context": "…Absatz 4 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), der zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[6].text@179:protected:gazette-nrw",
+      "path": "body[6].children[1].children[6].text",
+      "start": 179,
+      "end": 194,
+      "term": "GV. NRW. S. 462",
+      "context": "… der zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, in Verbindung mit",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[1].children[15].text@175:protected:gazette-nrw",
+      "path": "body[6].children[1].children[15].text",
+      "start": 175,
+      "end": 190,
+      "term": "GV. NRW. S. 438",
+      "context": "…esetzes, der durch § 97 des Gesetzes vom 21. Dezember 1976 (GV. NRW. S. 438) neu gefasst worden ist, in Verbindung mit",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].text@0:rule:jurisdiction-name-bare",
+      "path": "body[8].text",
+      "start": 0,
+      "end": 19,
+      "term": "Nordrhein-Westfalen",
+      "context": "Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "authority": {
+      "manual-review": 8
+    },
+    "regional-body": {
+      "manual-review": 2
+    },
+    "municipality": {
+      "manual-review": 7
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 11
+    }
+  },
+  "changes": [
+    {
+      "path": "body[5].children[1].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[8].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[1].children[0].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…(BGBl. I S. 1795) in der jeweils geltenden Fassung sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…(BGBl. I S. 2389) in der jeweils geltenden Fassung sind die Bezirksregierungen. Hat die Luftfahrzeughalterin oder der Luftfahrzeughalter i…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Regierungsbezirken",
+      "context": "…hrzeughalter ihren oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf ö…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zust…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Köln",
+      "context": "…- oder Firmensitz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zuständig. Hat…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…itz in den Regierungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zuständig. Hat die Luftfahrzeughalterin …",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Düsseldorf",
+      "context": "…ungsbezirken Düsseldorf oder Köln, ist die Bezirksregierung Düsseldorf örtlich zuständig. Hat die Luftfahrzeughalterin oder der Lu…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Regierungsbezirken",
+      "context": "…hrzeughalter ihren oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münst…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regierungsbezirke (review): Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Arnsberg",
+      "context": "…oder seinen Wohn- oder Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlic…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Detmold",
+      "context": "…n Wohn- oder Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständ…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Köln",
+      "context": "…Firmensitz in den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständig.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Bezirksregierung",
+      "context": "…den Regierungsbezirken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständig.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].children[0].text",
+      "term": "Münster",
+      "context": "…irken Arnsberg, Detmold oder Köln, ist die Bezirksregierung Münster örtlich zuständig.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…(BGBl. I S. 2730) in der jeweils geltenden Fassung sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "term": "Landesbetrieb Straßenbau Nordrhein-Westfalen",
+      "context": "…nd Straßen, deren Baulastträger nicht der Bund ist, ist der Landesbetrieb Straßenbau Nordrhein-Westfalen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[2].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…ehrssicherstellungsgesetz-Zuständigkeitsverordnung sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].children[0].text",
+      "term": "Bezirksregierungen",
+      "context": "…hrssicherstellungsgesetz-Zuständigkeitsverordnung, sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 86,
+    "residuals": [
+      {
+        "path": "body[6].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…Sicherstellung des Straßenverkehrs vom 12. Januar 1983 (GV. NRW. S. 13), die durch Artikel 236 des Gesetzes vom 5. April 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[1].text",
+        "term": "NRW",
+        "context": "…, die durch Artikel 236 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…ellung des Binnenschiffsverkehrs vom 14. Dezember 1982 (GV. NRW. S. 805), die durch Artikel 237 des Gesetzes vom 5. April 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[2].text",
+        "term": "NRW",
+        "context": "…, die durch Artikel 237 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist,",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…herstellung des Eisenbahnverkehrs vom 15. Februar 1977 (GV. NRW. S. 92), die durch Artikel 163 des Gesetzes vom 5. April 20…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[3].text",
+        "term": "NRW",
+        "context": "…, die durch Artikel 163 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist und",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…Sicherstellung des Luftverkehrs vom 23. September 1980 (GV. NRW. S. 885), die durch Artikel 164 des Gesetzes vom 5. April 2…",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[4].text",
+        "term": "NRW",
+        "context": "…, die durch Artikel 164 des Gesetzes vom 5. April 2005 (GV. NRW. S. 274) geändert worden ist.",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[6].text",
+        "term": "NRW",
+        "context": "…tz 4 des Landesorganisationsgesetzes vom 10. Juli 1962 (GV. NRW. S. 421), der zuletzt durch Artikel 10 des Gesetzes vom 9. …",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[6].text",
+        "term": "NRW",
+        "context": "… zuletzt durch Artikel 10 des Gesetzes vom 9. Mai 2000 (GV. NRW. S. 462) geändert worden ist, in Verbindung mit",
+        "status": "protected"
+      },
+      {
+        "path": "body[6].children[1].children[15].text",
+        "term": "NRW",
+        "context": "…zes, der durch § 97 des Gesetzes vom 21. Dezember 1976 (GV. NRW. S. 438) neu gefasst worden ist, in Verbindung mit",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Bestimmung der zuständigen Behörden nach den Verordnungen zur Sicherstellung des Straßen-, Eisenbahn-, Luft- und Binnenschiffsverkehrs und nach der Verkehrssicherstellungsgesetz-Zuständigkeitsverordnung vom 31. Mai 2016",
+    "sourceVersion": "Verordnung über die Bestimmung der zuständigen Behörden nach den Verordnungen zur Sicherstellung des Straßen-, Eisenbahn-, Luft- und Binnenschiffsverkehrs und nach der Verkehrssicherstellungsgesetz-Zuständigkeitsverordnung vom 31. Mai 2016",
+    "simulation": "Verordnung über die Bestimmung der zuständigen Behörden nach den Verordnungen zur Sicherstellung des Straßen-, Eisenbahn-, Luft- und Binnenschiffsverkehrs und nach der Verkehrssicherstellungsgesetz-Zuständigkeitsverordnung in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8667,
+          "actual": 8731,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 59,
+          "actual": 59,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 8731,
+          "actual": 8723,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "12 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "12 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:05:46.720Z"
+}

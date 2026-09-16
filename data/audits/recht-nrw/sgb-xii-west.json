@@ -1,0 +1,379 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28836",
+  "slug": "sgb-xii-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@83:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 83,
+      "end": 107,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… zum Sozialgesetzbuch Zwölftes Buch - Sozialhilfe - für das Land Nordrhein-Westfalen (AG-SGB XII NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "meta.title@120:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 120,
+      "end": 123,
+      "term": "NRW",
+      "context": "… Sozialhilfe - für das Land Nordrhein-Westfalen (AG-SGB XII NRW)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[1].text@135:protected:gazette-nrw",
+      "path": "body[1].text",
+      "start": 135,
+      "end": 150,
+      "term": "GV. NRW. S. 816",
+      "context": "…uch (SGB) Zwölftes Buch (XII) - Sozialhilfe vom 16.12.2004 (GV. NRW. S. 816))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[2].children[1].text@96:regional-body-association",
+      "path": "body[2].children[1].text",
+      "start": 96,
+      "end": 115,
+      "term": "Landschaftsverbände",
+      "context": "…s örtliche Träger der Sozialhilfe (örtliche Träger) und die Landschaftsverbände als überörtliche Träger der Sozialhilfe (überörtliche Träge…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[3].text@433:authority-district-government",
+      "path": "body[3].children[3].text",
+      "start": 433,
+      "end": 451,
+      "term": "Bezirksregierungen",
+      "context": "…re Fachaufsichtsbehörden über die örtlichen Träger sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-district-government",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
+    },
+    {
+      "id": "body[13].children[1].text@67:rule:jurisdiction-name-bare",
+      "path": "body[13].children[1].text",
+      "start": 67,
+      "end": 86,
+      "term": "Nordrhein-Westfalen",
+      "context": "… das Sozialhilferecht zuständige Ministerium leitet den auf Nordrhein-Westfalen entfallenden Anteil an der Bundeserstattung nach § 136a des…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[14].children[2].children[0].text@169:protected:gazette-nrw",
+      "path": "body[14].children[2].children[0].text",
+      "start": 169,
+      "end": 184,
+      "term": "GV. NRW. S. 816",
+      "context": "…B) Zwölftes Buch (XII) – Sozialhilfe vom 16. Dezember 2004 (GV. NRW. S. 816) aufgehoben durch Artikel 2 des Gesetzes vom 9. Juni 2009 (…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[0].text@244:protected:gazette-nrw",
+      "path": "body[14].children[2].children[0].text",
+      "start": 244,
+      "end": 259,
+      "term": "GV. NRW. S. 335",
+      "context": "…) aufgehoben durch Artikel 2 des Gesetzes vom 9. Juni 2009 (GV. NRW. S. 335), in Kraft getreten am 1. Juli 2009.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[14].children[2].children[1].text@163:protected:gazette-nrw",
+      "path": "body[14].children[2].children[1].text",
+      "start": 163,
+      "end": 178,
+      "term": "GV. NRW. S. 816",
+      "context": "…uch (SGB) Zwölftes Buch (XII) - Sozialhilfe vom 16.12.2004 (GV. NRW. S. 816))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 3
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "regional-body": {
+      "manual-review": 1
+    },
+    "authority": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[2].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "…s örtliche Träger der Sozialhilfe (örtliche Träger) und die Landschaftsverbände als überörtliche Träger der Sozialhilfe (überörtliche Träge…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].text",
+      "term": "Bezirksregierungen",
+      "context": "…re Fachaufsichtsbehörden über die örtlichen Träger sind die Bezirksregierungen.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 129,
+    "residuals": [
+      {
+        "path": "body[1].text",
+        "term": "NRW",
+        "context": "…(SGB) Zwölftes Buch (XII) - Sozialhilfe vom 16.12.2004 (GV. NRW. S. 816))",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…wölftes Buch (XII) – Sozialhilfe vom 16. Dezember 2004 (GV. NRW. S. 816) aufgehoben durch Artikel 2 des Gesetzes vom 9. Jun…",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[2].children[0].text",
+        "term": "NRW",
+        "context": "…fgehoben durch Artikel 2 des Gesetzes vom 9. Juni 2009 (GV. NRW. S. 335), in Kraft getreten am 1. Juli 2009.",
+        "status": "protected"
+      },
+      {
+        "path": "body[14].children[2].children[1].text",
+        "term": "NRW",
+        "context": "…(SGB) Zwölftes Buch (XII) - Sozialhilfe vom 16.12.2004 (GV. NRW. S. 816))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Landesausführungsgesetz zum Sozialgesetzbuch Zwölftes Buch - Sozialhilfe - für das Land Nordrhein-Westfalen (AG-SGB XII NRW) vom 16. Dezember 2004",
+    "sourceVersion": "Landesausführungsgesetz zum Sozialgesetzbuch Zwölftes Buch - Sozialhilfe - für das Land Nordrhein-Westfalen (AG-SGB XII NRW) vom 16. Dezember 2004",
+    "simulation": "Landesausführungsgesetz zum Sozialgesetzbuch Zwölftes Buch - Sozialhilfe - für das Land Westdeutschland (AG-SGB XII West) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 21912,
+          "actual": 22280,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 86,
+          "actual": 86,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 12,
+          "actual": 12,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 13,
+          "actual": 13,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 22280,
+          "actual": 22276,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "13 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "13 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:31:22.307Z"
+}

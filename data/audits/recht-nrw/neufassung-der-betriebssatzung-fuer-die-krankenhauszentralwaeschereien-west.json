@@ -1,0 +1,2286 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:28530",
+  "slug": "neufassung-der-betriebssatzung-fuer-die-krankenhauszentralwaeschereien-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@73:regional-body-association",
+      "path": "meta.title",
+      "start": 73,
+      "end": 93,
+      "term": "Landschaftsverbandes",
+      "context": "…r Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "meta.title@94:geography-region",
+      "path": "meta.title",
+      "start": 94,
+      "end": 103,
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].text@91:rule:jurisdiction-name",
+      "path": "body[2].text",
+      "start": 91,
+      "end": 115,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "… Abs. 1 Buchstabe d) der Landschaftsverbandsordnung für das Land Nordrhein-Westfalen in der Fassung der Bekanntmachung vom 27. August 1984 (GV. …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].text@171:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 171,
+      "end": 185,
+      "term": "GV. NW. S. 544",
+      "context": "…alen in der Fassung der Bekanntmachung vom 27. August 1984 (GV. NW. S. 544) geändert durch Artikel 11 des Rechtsbereinigungsgesetzes f…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@252:rule:jurisdiction-name",
+      "path": "body[2].text",
+      "start": 252,
+      "end": 276,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…ert durch Artikel 11 des Rechtsbereinigungsgesetzes für das Land Nordrhein-Westfalen v. 6. Juni 1987 (GV. NW. S. 342), hat die Landschaftsversam…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[2].text@294:protected:gazette-nw",
+      "path": "body[2].text",
+      "start": 294,
+      "end": 308,
+      "term": "GV. NW. S. 342",
+      "context": "…sgesetzes für das Land Nordrhein-Westfalen v. 6. Juni 1987 (GV. NW. S. 342), hat die Landschaftsversammlung Rheinland am 5. Juni 1989 …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[2].text@319:regional-body-association",
+      "path": "body[2].text",
+      "start": 319,
+      "end": 341,
+      "term": "Landschaftsversammlung",
+      "context": "…rdrhein-Westfalen v. 6. Juni 1987 (GV. NW. S. 342), hat die Landschaftsversammlung Rheinland am 5. Juni 1989 folgende Neufassung der Betriebss…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].text@342:geography-region",
+      "path": "body[2].text",
+      "start": 342,
+      "end": 351,
+      "term": "Rheinland",
+      "context": "… Juni 1987 (GV. NW. S. 342), hat die Landschaftsversammlung Rheinland am 5. Juni 1989 folgende Neufassung der Betriebssatzung für…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].text@450:regional-body-association",
+      "path": "body[2].text",
+      "start": 450,
+      "end": 470,
+      "term": "Landschaftsverbandes",
+      "context": "…r Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beschlossen:",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[2].text@471:geography-region",
+      "path": "body[2].text",
+      "start": 471,
+      "end": 480,
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beschlossen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@38:regional-body-association",
+      "path": "body[3].children[0].text",
+      "start": 38,
+      "end": 58,
+      "term": "Landschaftsverbandes",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland werden organisatorisch, verwaltungsmäßig und fina…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@59:geography-region",
+      "path": "body[3].children[0].text",
+      "start": 59,
+      "end": 68,
+      "term": "Rheinland",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland werden organisatorisch, verwaltungsmäßig und finanzwirtscha…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@97:regional-body-association",
+      "path": "body[3].children[1].text",
+      "start": 97,
+      "end": 117,
+      "term": "Landschaftsverbandes",
+      "context": "…llung der Wäscheversorgung, vorrangig der Einrichtungen des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[3].children[1].text@118:geography-region",
+      "path": "body[3].children[1].text",
+      "start": 118,
+      "end": 127,
+      "term": "Rheinland",
+      "context": "…rgung, vorrangig der Einrichtungen des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@70:regional-body-association",
+      "path": "body[4].children[0].text",
+      "start": 70,
+      "end": 90,
+      "term": "Landschaftsverbandes",
+      "context": "…b führt die Bezeichnung ,,Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland\".",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[4].children[0].text@91:geography-region",
+      "path": "body[4].children[0].text",
+      "start": 91,
+      "end": 100,
+      "term": "Rheinland",
+      "context": "…ng ,,Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland\".",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@231:regional-body-association",
+      "path": "body[5].children[0].text",
+      "start": 231,
+      "end": 251,
+      "term": "Landschaftsverbandes",
+      "context": "… verantwortlich, dass die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland nach wirtschaftlichen Grundsätzen geführt werden.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[5].children[0].text@252:geography-region",
+      "path": "body[5].children[0].text",
+      "start": 252,
+      "end": 261,
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland nach wirtschaftlichen Grundsätzen geführt werden.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[4].text@282:regional-body-association",
+      "path": "body[5].children[4].text",
+      "start": 282,
+      "end": 302,
+      "term": "Landschaftsverbandes",
+      "context": "…. Näheres regelt eine Dienstanweisung, die der Direktor des Landschaftsverbandes im Benehmen mit dem Werksausschuss erlässt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[1].text@17:regional-body-association",
+      "path": "body[6].children[1].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes oder sein Vertreter kann im Werksausschuß jederzeit das Wor…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[7].children[0].text@61:regional-body-association",
+      "path": "body[7].children[0].text",
+      "start": 61,
+      "end": 83,
+      "term": "Landschaftsversammlung",
+      "context": "…er Werksausschuß berät alle Angelegenheiten vor, die in der Landschaftsversammlung, dem Landschaftsausschuß oder einem anderen Fachausschuß zu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[5].text@19:regional-body-association",
+      "path": "body[8].children[1].children[5].text",
+      "start": 19,
+      "end": 39,
+      "term": "Landschaftsverbandes",
+      "context": "Stellungnahmen des Landschaftsverbandes zu öffentlichen Planungsvorhaben, soweit das Sondervermögen…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[8].children[1].children[6].text@74:regional-body-association",
+      "path": "body[8].children[1].children[6].text",
+      "start": 74,
+      "end": 94,
+      "term": "Landschaftsverbandes",
+      "context": "…iedenheiten zwischen dem Werksausschuß und dem Direktor des Landschaftsverbandes gemäß § 8 Abs. 3 Satz 2 sowie zwischen dem Werksausschuß un…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[9].title@18:regional-body-association",
+      "path": "body[9].title",
+      "start": 18,
+      "end": 40,
+      "term": "Landschaftsversammlung",
+      "context": "Zuständigkeit der Landschaftsversammlung",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[9].children[0].text@4:regional-body-association",
+      "path": "body[9].children[0].text",
+      "start": 4,
+      "end": 26,
+      "term": "Landschaftsversammlung",
+      "context": "Die Landschaftsversammlung entscheidet über die Angelegenheiten, für die sie nach der …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[3].text@48:regional-body-association",
+      "path": "body[9].children[0].children[3].text",
+      "start": 48,
+      "end": 68,
+      "term": "Landschaftsverbandes",
+      "context": "Auflösung der Krankenhauszentralwäschereien des Landschaftsverbandes,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[9].children[0].children[4].text@36:regional-body-association",
+      "path": "body[9].children[0].children[4].text",
+      "start": 36,
+      "end": 54,
+      "term": "Landschaftsverband",
+      "context": "Rückzahlung von Eigenkapital an den Landschaftsverband.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].title@17:regional-body-association",
+      "path": "body[10].title",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@17:regional-body-association",
+      "path": "body[10].children[0].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes ist Dienstvorgesetzter aller Beschäftigten der Krankenhausz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[0].text@119:regional-body-association",
+      "path": "body[10].children[0].text",
+      "start": 119,
+      "end": 139,
+      "term": "Landschaftsverbandes",
+      "context": "…r aller Beschäftigten der Krankenhauszentralwäschereien des Landschaftsverbandes.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@17:regional-body-association",
+      "path": "body[10].children[1].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland achtet auf die Übereinstimmung der Tätigkeit der …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@38:geography-region",
+      "path": "body[10].children[1].text",
+      "start": 38,
+      "end": 47,
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland achtet auf die Übereinstimmung der Tätigkeit der Werkleitun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@140:regional-body-association",
+      "path": "body[10].children[1].text",
+      "start": 140,
+      "end": 160,
+      "term": "Landschaftsverbandes",
+      "context": "…er Tätigkeit der Werkleitung mit den allgemeinen Zielen des Landschaftsverbandes. Im Interesse der Einheitlichkeit der Verwaltungsführung ka…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[2].text@356:regional-body-association",
+      "path": "body[10].children[2].text",
+      "start": 356,
+      "end": 376,
+      "term": "Landschaftsverbandes",
+      "context": "…einstimmung zwischen dem Werksausschuß und dem Direktor des Landschaftsverbandes Rheinland erzielt, so ist die Entscheidung des Landschaftsa…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[2].text@377:geography-region",
+      "path": "body[10].children[2].text",
+      "start": 377,
+      "end": 386,
+      "term": "Rheinland",
+      "context": "…dem Werksausschuß und dem Direktor des Landschaftsverbandes Rheinland erzielt, so ist die Entscheidung des Landschaftsausschusses…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[3].text@17:regional-body-association",
+      "path": "body[10].children[3].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland regelt mit Zustimmung des Werksausschusses in ein…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[3].text@38:geography-region",
+      "path": "body[10].children[3].text",
+      "start": 38,
+      "end": 47,
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland regelt mit Zustimmung des Werksausschusses in einer Diensta…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[4].text@37:regional-body-association",
+      "path": "body[10].children[4].text",
+      "start": 37,
+      "end": 57,
+      "term": "Landschaftsverbandes",
+      "context": "Die Werkleitung hat den Direktor des Landschaftsverbandes über alle wichtigen Angelegenheiten zu unterrichten und ihm…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[4].children[0].text@273:regional-body-association",
+      "path": "body[10].children[4].children[0].text",
+      "start": 273,
+      "end": 293,
+      "term": "Landschaftsverbandes",
+      "context": "…rtschaftsjahres erfolgt die Unterrichtung des Direktors des Landschaftsverbandes monatlich mit einer Hochrechnung auf das voraussichtliche B…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[5].text@17:regional-body-association",
+      "path": "body[10].children[5].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland bereitet im Benehmen mit der Werkleitung die Vorl…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[5].text@38:geography-region",
+      "path": "body[10].children[5].text",
+      "start": 38,
+      "end": 47,
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland bereitet im Benehmen mit der Werkleitung die Vorlagen für d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[10].children[5].text@110:regional-body-association",
+      "path": "body[10].children[5].text",
+      "start": 110,
+      "end": 132,
+      "term": "Landschaftsversammlung",
+      "context": "…reitet im Benehmen mit der Werkleitung die Vorlagen für die Landschaftsversammlung oder den Landschaftsausschuß vor. Er ist, unbeschadet der Z…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[5].children[7].text@19:regional-body-association",
+      "path": "body[10].children[5].children[7].text",
+      "start": 19,
+      "end": 39,
+      "term": "Landschaftsverbandes",
+      "context": "Stellungnahmen des Landschaftsverbandes zu Flächennutzungsplänen und Bebauungsplänen. Die Werkleitu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[6].text@56:regional-body-association",
+      "path": "body[10].children[6].text",
+      "start": 56,
+      "end": 76,
+      "term": "Landschaftsverbandes",
+      "context": "In Fällen äußerster Dringlichkeit kann der Direktor des Landschaftsverbandes Rheinland Anordnungen, die einen Beschluß des Landschaftsau…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[10].children[6].text@77:geography-region",
+      "path": "body[10].children[6].text",
+      "start": 77,
+      "end": 86,
+      "term": "Rheinland",
+      "context": "…er Dringlichkeit kann der Direktor des Landschaftsverbandes Rheinland Anordnungen, die einen Beschluß des Landschaftsausschusses …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[11].children[1].text@84:regional-body-association",
+      "path": "body[11].children[1].text",
+      "start": 84,
+      "end": 104,
+      "term": "Landschaftsverbandes",
+      "context": "…finanzwirtschaftliche Angelegenheiten, die den Haushalt des Landschaftsverbandes berühren, ist der Kämmerer im Werksausschuß zu hören. Wird …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[12].children[0].text@193:regional-body-association",
+      "path": "body[12].children[0].text",
+      "start": 193,
+      "end": 213,
+      "term": "Landschaftsverbandes",
+      "context": "…tung im Einvernehmen mit dem Werksausschuß vom Direktor des Landschaftsverbandes eingestellt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[12].children[3].text@75:regional-body-association",
+      "path": "body[12].children[3].text",
+      "start": 75,
+      "end": 95,
+      "term": "Landschaftsverbandes",
+      "context": "…ungen, Kündigungen oder Entlassungen durch den Direktor des Landschaftsverbandes ist die Werkleitung zu hören.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].title@48:regional-body-association",
+      "path": "body[13].title",
+      "start": 48,
+      "end": 68,
+      "term": "Landschaftsverbandes",
+      "context": "Vertretung der Krankenhauszentralwäschereiendes Landschaftsverbandes",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@29:regional-body-association",
+      "path": "body[13].children[0].text",
+      "start": 29,
+      "end": 47,
+      "term": "Landschaftsverband",
+      "context": "Die Werkleitung vertritt den Landschaftsverband Rheinland in den Angelegenheiten der Krankenhauszentralwäsc…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@48:geography-region",
+      "path": "body[13].children[0].text",
+      "start": 48,
+      "end": 57,
+      "term": "Rheinland",
+      "context": "Die Werkleitung vertritt den Landschaftsverband Rheinland in den Angelegenheiten der Krankenhauszentralwäschereien de…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@119:regional-body-association",
+      "path": "body[13].children[0].text",
+      "start": 119,
+      "end": 139,
+      "term": "Landschaftsverbandes",
+      "context": "…n den Angelegenheiten der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[0].text@140:geography-region",
+      "path": "body[13].children[0].text",
+      "start": 140,
+      "end": 149,
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[3].text@57:regional-body-association",
+      "path": "body[13].children[3].text",
+      "start": 57,
+      "end": 77,
+      "term": "Landschaftsverbandes",
+      "context": "Der Schriftwechsel der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird sowohl in Angelegenheiten der laufenden Betr…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[3].text@78:geography-region",
+      "path": "body[13].children[3].text",
+      "start": 78,
+      "end": 87,
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird sowohl in Angelegenheiten der laufenden Betriebsführun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[13].children[3].text@218:regional-body-association",
+      "path": "body[13].children[3].text",
+      "start": 218,
+      "end": 240,
+      "term": "Landschaftsversammlung",
+      "context": "… in Ausführung von Beschlüssen des Werksausschusses und der Landschaftsversammlung bzw. des Landschaftsausschusses unter der Bezeichnung ,,Lan…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[3].text@297:regional-body-association",
+      "path": "body[13].children[3].text",
+      "start": 297,
+      "end": 315,
+      "term": "Landschaftsverband",
+      "context": "…ung bzw. des Landschaftsausschusses unter der Bezeichnung ,,Landschaftsverband Rheinland, Krankenhauszentralwäschereien\" geführt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[13].children[3].text@316:geography-region",
+      "path": "body[13].children[3].text",
+      "start": 316,
+      "end": 325,
+      "term": "Rheinland",
+      "context": "…haftsausschusses unter der Bezeichnung ,,Landschaftsverband Rheinland, Krankenhauszentralwäschereien\" geführt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[14].children[0].text@162:regional-body-association",
+      "path": "body[14].children[0].text",
+      "start": 162,
+      "end": 182,
+      "term": "Landschaftsverbandes",
+      "context": "… sind von der Werkleitung aufzustellen und dem Kämmerer des Landschaftsverbandes Rheinland vorzulegen.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[14].children[0].text@183:geography-region",
+      "path": "body[14].children[0].text",
+      "start": 183,
+      "end": 192,
+      "term": "Rheinland",
+      "context": "…tung aufzustellen und dem Kämmerer des Landschaftsverbandes Rheinland vorzulegen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@38:regional-body-association",
+      "path": "body[15].children[0].text",
+      "start": 38,
+      "end": 58,
+      "term": "Landschaftsverbandes",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland sind als Sondervermögen zu verwalten und nachzuwe…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[15].children[0].text@59:geography-region",
+      "path": "body[15].children[0].text",
+      "start": 59,
+      "end": 68,
+      "term": "Rheinland",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland sind als Sondervermögen zu verwalten und nachzuweisen. Auf …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[1].text@58:regional-body-association",
+      "path": "body[15].children[1].text",
+      "start": 58,
+      "end": 78,
+      "term": "Landschaftsverbandes",
+      "context": "Das Wirtschaftsjahr der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland entspricht dem Haushaltsjahr des Landschaftsverba…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[15].children[1].text@79:geography-region",
+      "path": "body[15].children[1].text",
+      "start": 79,
+      "end": 88,
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland entspricht dem Haushaltsjahr des Landschaftsverbandes Rhein…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[1].text@122:regional-body-association",
+      "path": "body[15].children[1].text",
+      "start": 122,
+      "end": 142,
+      "term": "Landschaftsverbandes",
+      "context": "…schaftsverbandes Rheinland entspricht dem Haushaltsjahr des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[15].children[1].text@143:geography-region",
+      "path": "body[15].children[1].text",
+      "start": 143,
+      "end": 152,
+      "term": "Rheinland",
+      "context": "…nland entspricht dem Haushaltsjahr des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[2].text@54:regional-body-association",
+      "path": "body[15].children[2].text",
+      "start": 54,
+      "end": 74,
+      "term": "Landschaftsverbandes",
+      "context": "Die Buchführung der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird nach den Regeln der doppelten kaufmännischen…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[15].children[2].text@75:geography-region",
+      "path": "body[15].children[2].text",
+      "start": 75,
+      "end": 84,
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird nach den Regeln der doppelten kaufmännischen Buchführu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[15].children[4].text@151:regional-body-association",
+      "path": "body[15].children[4].text",
+      "start": 151,
+      "end": 171,
+      "term": "Landschaftsverbandes",
+      "context": "…mt gelten die Vorschriften der Rechnungsprüfungsordnung des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[15].children[4].text@172:geography-region",
+      "path": "body[15].children[4].text",
+      "start": 172,
+      "end": 181,
+      "term": "Rheinland",
+      "context": "…iften der Rechnungsprüfungsordnung des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[0].text@55:regional-body-association",
+      "path": "body[16].children[0].text",
+      "start": 55,
+      "end": 75,
+      "term": "Landschaftsverbandes",
+      "context": "Das Stammkapital der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beträgt 11 000 000,00 DM.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[0].text@76:geography-region",
+      "path": "body[16].children[0].text",
+      "start": 76,
+      "end": 85,
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beträgt 11 000 000,00 DM.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[1].text@20:regional-body-association",
+      "path": "body[16].children[1].text",
+      "start": 20,
+      "end": 42,
+      "term": "Landschaftsversammlung",
+      "context": "Der Vorsitzende der Landschaftsversammlung Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[1].text@43:geography-region",
+      "path": "body[16].children[1].text",
+      "start": 43,
+      "end": 52,
+      "term": "Rheinland",
+      "context": "Der Vorsitzende der Landschaftsversammlung Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[2].text@18:regional-body-association",
+      "path": "body[16].children[2].text",
+      "start": 18,
+      "end": 40,
+      "term": "Landschaftsversammlung",
+      "context": "Schriftführer der Landschaftsversammlung Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[2].text@41:geography-region",
+      "path": "body[16].children[2].text",
+      "start": 41,
+      "end": 50,
+      "term": "Rheinland",
+      "context": "Schriftführer der Landschaftsversammlung Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[3].text@89:regional-body-association",
+      "path": "body[16].children[3].text",
+      "start": 89,
+      "end": 109,
+      "term": "Landschaftsverbandes",
+      "context": "…r Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird gemäß § 6 Abs. 2 der Landschaftsverbandsordn…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[3].text@110:geography-region",
+      "path": "body[16].children[3].text",
+      "start": 110,
+      "end": 119,
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird gemäß § 6 Abs. 2 der Landschaftsverbandsordnung in der…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[16].children[7].text@17:regional-body-association",
+      "path": "body[16].children[7].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "der Direktor des Landschaftsverbandes hat den Beschluß der Landschaftsverbandsordnung vorher bean…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[8].text@50:regional-body-association",
+      "path": "body[16].children[8].text",
+      "start": 50,
+      "end": 68,
+      "term": "Landschaftsverband",
+      "context": "der Form- oder Verfahrensmangel ist gegenüber dem Landschaftsverband vorher gerügt und dabei die verletzte Rechtsvorschrift und …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[9].text@17:regional-body-association",
+      "path": "body[16].children[9].text",
+      "start": 17,
+      "end": 37,
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[16].children[9].text@38:geography-region",
+      "path": "body[16].children[9].text",
+      "start": 38,
+      "end": 47,
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    }
+  ],
+  "decisions": {
+    "regional-body": {
+      "manual-review": 51
+    },
+    "geography": {
+      "manual-review": 27
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "source-citation": {
+      "protected": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Landschaftsverbandes",
+      "context": "…r Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.title",
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Landschaftsversammlung",
+      "context": "…rdrhein-Westfalen v. 6. Juni 1987 (GV. NW. S. 342), hat die Landschaftsversammlung Rheinland am 5. Juni 1989 folgende Neufassung der Betriebss…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Rheinland",
+      "context": "… Juni 1987 (GV. NW. S. 342), hat die Landschaftsversammlung Rheinland am 5. Juni 1989 folgende Neufassung der Betriebssatzung für…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…r Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beschlossen:",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].text",
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beschlossen:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland werden organisatorisch, verwaltungsmäßig und fina…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Rheinland",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland werden organisatorisch, verwaltungsmäßig und finanzwirtscha…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…llung der Wäscheversorgung, vorrangig der Einrichtungen des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].text",
+      "term": "Rheinland",
+      "context": "…rgung, vorrangig der Einrichtungen des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…b führt die Bezeichnung ,,Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland\".",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[0].text",
+      "term": "Rheinland",
+      "context": "…ng ,,Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland\".",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "… verantwortlich, dass die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland nach wirtschaftlichen Grundsätzen geführt werden.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[0].text",
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland nach wirtschaftlichen Grundsätzen geführt werden.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[4].text",
+      "term": "Landschaftsverbandes",
+      "context": "…. Näheres regelt eine Dienstanweisung, die der Direktor des Landschaftsverbandes im Benehmen mit dem Werksausschuss erlässt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes oder sein Vertreter kann im Werksausschuß jederzeit das Wor…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[0].text",
+      "term": "Landschaftsversammlung",
+      "context": "…er Werksausschuß berät alle Angelegenheiten vor, die in der Landschaftsversammlung, dem Landschaftsausschuß oder einem anderen Fachausschuß zu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[5].text",
+      "term": "Landschaftsverbandes",
+      "context": "Stellungnahmen des Landschaftsverbandes zu öffentlichen Planungsvorhaben, soweit das Sondervermögen…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].children[6].text",
+      "term": "Landschaftsverbandes",
+      "context": "…iedenheiten zwischen dem Werksausschuß und dem Direktor des Landschaftsverbandes gemäß § 8 Abs. 3 Satz 2 sowie zwischen dem Werksausschuß un…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].title",
+      "term": "Landschaftsversammlung",
+      "context": "Zuständigkeit der Landschaftsversammlung",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].text",
+      "term": "Landschaftsversammlung",
+      "context": "Die Landschaftsversammlung entscheidet über die Angelegenheiten, für die sie nach der …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "Auflösung der Krankenhauszentralwäschereien des Landschaftsverbandes,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[9].children[0].children[4].text",
+      "term": "Landschaftsverband",
+      "context": "Rückzahlung von Eigenkapital an den Landschaftsverband.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].title",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes ist Dienstvorgesetzter aller Beschäftigten der Krankenhausz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…r aller Beschäftigten der Krankenhauszentralwäschereien des Landschaftsverbandes.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland achtet auf die Übereinstimmung der Tätigkeit der …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].text",
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland achtet auf die Übereinstimmung der Tätigkeit der Werkleitun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…er Tätigkeit der Werkleitung mit den allgemeinen Zielen des Landschaftsverbandes. Im Interesse der Einheitlichkeit der Verwaltungsführung ka…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "…einstimmung zwischen dem Werksausschuß und dem Direktor des Landschaftsverbandes Rheinland erzielt, so ist die Entscheidung des Landschaftsa…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[2].text",
+      "term": "Rheinland",
+      "context": "…dem Werksausschuß und dem Direktor des Landschaftsverbandes Rheinland erzielt, so ist die Entscheidung des Landschaftsausschusses…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland regelt mit Zustimmung des Werksausschusses in ein…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[3].text",
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland regelt mit Zustimmung des Werksausschusses in einer Diensta…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[4].text",
+      "term": "Landschaftsverbandes",
+      "context": "Die Werkleitung hat den Direktor des Landschaftsverbandes über alle wichtigen Angelegenheiten zu unterrichten und ihm…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[4].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…rtschaftsjahres erfolgt die Unterrichtung des Direktors des Landschaftsverbandes monatlich mit einer Hochrechnung auf das voraussichtliche B…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[5].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland bereitet im Benehmen mit der Werkleitung die Vorl…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[5].text",
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland bereitet im Benehmen mit der Werkleitung die Vorlagen für d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[5].text",
+      "term": "Landschaftsversammlung",
+      "context": "…reitet im Benehmen mit der Werkleitung die Vorlagen für die Landschaftsversammlung oder den Landschaftsausschuß vor. Er ist, unbeschadet der Z…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[5].children[7].text",
+      "term": "Landschaftsverbandes",
+      "context": "Stellungnahmen des Landschaftsverbandes zu Flächennutzungsplänen und Bebauungsplänen. Die Werkleitu…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[6].text",
+      "term": "Landschaftsverbandes",
+      "context": "In Fällen äußerster Dringlichkeit kann der Direktor des Landschaftsverbandes Rheinland Anordnungen, die einen Beschluß des Landschaftsau…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[6].text",
+      "term": "Rheinland",
+      "context": "…er Dringlichkeit kann der Direktor des Landschaftsverbandes Rheinland Anordnungen, die einen Beschluß des Landschaftsausschusses …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…finanzwirtschaftliche Angelegenheiten, die den Haushalt des Landschaftsverbandes berühren, ist der Kämmerer im Werksausschuß zu hören. Wird …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…tung im Einvernehmen mit dem Werksausschuß vom Direktor des Landschaftsverbandes eingestellt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[12].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "…ungen, Kündigungen oder Entlassungen durch den Direktor des Landschaftsverbandes ist die Werkleitung zu hören.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].title",
+      "term": "Landschaftsverbandes",
+      "context": "Vertretung der Krankenhauszentralwäschereiendes Landschaftsverbandes",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Landschaftsverband",
+      "context": "Die Werkleitung vertritt den Landschaftsverband Rheinland in den Angelegenheiten der Krankenhauszentralwäsc…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Rheinland",
+      "context": "Die Werkleitung vertritt den Landschaftsverband Rheinland in den Angelegenheiten der Krankenhauszentralwäschereien de…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "…n den Angelegenheiten der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[0].text",
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Schriftwechsel der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird sowohl in Angelegenheiten der laufenden Betr…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[3].text",
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird sowohl in Angelegenheiten der laufenden Betriebsführun…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[3].text",
+      "term": "Landschaftsversammlung",
+      "context": "… in Ausführung von Beschlüssen des Werksausschusses und der Landschaftsversammlung bzw. des Landschaftsausschusses unter der Bezeichnung ,,Lan…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[3].text",
+      "term": "Landschaftsverband",
+      "context": "…ung bzw. des Landschaftsausschusses unter der Bezeichnung ,,Landschaftsverband Rheinland, Krankenhauszentralwäschereien\" geführt.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[13].children[3].text",
+      "term": "Rheinland",
+      "context": "…haftsausschusses unter der Bezeichnung ,,Landschaftsverband Rheinland, Krankenhauszentralwäschereien\" geführt.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "… sind von der Werkleitung aufzustellen und dem Kämmerer des Landschaftsverbandes Rheinland vorzulegen.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[14].children[0].text",
+      "term": "Rheinland",
+      "context": "…tung aufzustellen und dem Kämmerer des Landschaftsverbandes Rheinland vorzulegen.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland sind als Sondervermögen zu verwalten und nachzuwe…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[0].text",
+      "term": "Rheinland",
+      "context": "Die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland sind als Sondervermögen zu verwalten und nachzuweisen. Auf …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "Das Wirtschaftsjahr der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland entspricht dem Haushaltsjahr des Landschaftsverba…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].text",
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland entspricht dem Haushaltsjahr des Landschaftsverbandes Rhein…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].text",
+      "term": "Landschaftsverbandes",
+      "context": "…schaftsverbandes Rheinland entspricht dem Haushaltsjahr des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[1].text",
+      "term": "Rheinland",
+      "context": "…nland entspricht dem Haushaltsjahr des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[2].text",
+      "term": "Landschaftsverbandes",
+      "context": "Die Buchführung der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird nach den Regeln der doppelten kaufmännischen…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[2].text",
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird nach den Regeln der doppelten kaufmännischen Buchführu…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[4].text",
+      "term": "Landschaftsverbandes",
+      "context": "…mt gelten die Vorschriften der Rechnungsprüfungsordnung des Landschaftsverbandes Rheinland.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[15].children[4].text",
+      "term": "Rheinland",
+      "context": "…iften der Rechnungsprüfungsordnung des Landschaftsverbandes Rheinland.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Das Stammkapital der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beträgt 11 000 000,00 DM.",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[0].text",
+      "term": "Rheinland",
+      "context": "… der Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland beträgt 11 000 000,00 DM.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].text",
+      "term": "Landschaftsversammlung",
+      "context": "Der Vorsitzende der Landschaftsversammlung Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[1].text",
+      "term": "Rheinland",
+      "context": "Der Vorsitzende der Landschaftsversammlung Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[2].text",
+      "term": "Landschaftsversammlung",
+      "context": "Schriftführer der Landschaftsversammlung Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[2].text",
+      "term": "Rheinland",
+      "context": "Schriftführer der Landschaftsversammlung Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "…r Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird gemäß § 6 Abs. 2 der Landschaftsverbandsordn…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[3].text",
+      "term": "Rheinland",
+      "context": "… die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland wird gemäß § 6 Abs. 2 der Landschaftsverbandsordnung in der…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[7].text",
+      "term": "Landschaftsverbandes",
+      "context": "der Direktor des Landschaftsverbandes hat den Beschluß der Landschaftsverbandsordnung vorher bean…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[8].text",
+      "term": "Landschaftsverband",
+      "context": "der Form- oder Verfahrensmangel ist gegenüber dem Landschaftsverband vorher gerügt und dabei die verletzte Rechtsvorschrift und …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[9].text",
+      "term": "Landschaftsverbandes",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[16].children[9].text",
+      "term": "Rheinland",
+      "context": "Der Direktor des Landschaftsverbandes Rheinland",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 200,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Neufassung der Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland vom 5. Juni 1989",
+    "sourceVersion": "Neufassung der Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland vom 5. Juni 1989",
+    "simulation": "Neufassung der Betriebssatzung für die Krankenhauszentralwäschereien des Landschaftsverbandes Rheinland in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 14568,
+          "actual": 15068,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 105,
+          "actual": 105,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 14,
+          "actual": 14,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 15068,
+          "actual": 15060,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "14 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "14 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:32:26.884Z"
+}

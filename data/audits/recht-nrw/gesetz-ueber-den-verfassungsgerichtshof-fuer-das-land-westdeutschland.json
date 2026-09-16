@@ -1,0 +1,587 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:26514",
+  "slug": "gesetz-ueber-den-verfassungsgerichtshof-fuer-das-land-westdeutschland",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@16:constitutional-organ-state",
+      "path": "meta.title",
+      "start": 16,
+      "end": 71,
+      "term": "Verfassungsgerichtshof für das Land Nordrhein-Westfalen",
+      "context": "Gesetz über den Verfassungsgerichtshof für das Land Nordrhein-Westfalen (Verfassungsgerichtshofgesetz - VerfGHG NRW -)",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "meta.title@47:rule:jurisdiction-name",
+      "path": "meta.title",
+      "start": 47,
+      "end": 71,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Gesetz über den Verfassungsgerichtshof für das Land Nordrhein-Westfalen (Verfassungsgerichtshofgesetz - VerfGHG NRW -)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "meta.title@112:rule:jurisdiction-abbreviation",
+      "path": "meta.title",
+      "start": 112,
+      "end": 115,
+      "term": "NRW",
+      "context": "…Nordrhein-Westfalen (Verfassungsgerichtshofgesetz - VerfGHG NRW -)",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[112].children[1].text@46:municipality",
+      "path": "body[112].children[1].text",
+      "start": 46,
+      "end": 53,
+      "term": "Münster",
+      "context": "Der Verfassungsgerichtshof hat seinen Sitz in Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[120].children[1].text@129:rule:jurisdiction-name-genitive",
+      "path": "body[120].children[1].text",
+      "start": 129,
+      "end": 155,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…zent der Abgeordnetenbezüge nach dem Abgeordnetengesetz des Landes Nordrhein-Westfalen vom 5. April 2005 (GV. NRW. S. 252) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[120].children[1].text@175:protected:gazette-nrw",
+      "path": "body[120].children[1].text",
+      "start": 175,
+      "end": 190,
+      "term": "GV. NRW. S. 252",
+      "context": "…tengesetz des Landes Nordrhein-Westfalen vom 5. April 2005 (GV. NRW. S. 252) in der jeweils geltenden Fassung. Der Vizepräsident erhält…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[120].children[1].text@447:rule:jurisdiction-name-genitive",
+      "path": "body[120].children[1].text",
+      "start": 447,
+      "end": 473,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…zent der Abgeordnetenbezüge nach dem Abgeordnetengesetz des Landes Nordrhein-Westfalen für jeden Monat, in dem sie wenigstens an einer Sitzung zur…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[120].children[2].text@179:rule:jurisdiction-name-genitive",
+      "path": "body[120].children[2].text",
+      "start": 179,
+      "end": 205,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…zent der Abgeordnetenbezüge nach dem Abgeordnetengesetz des Landes Nordrhein-Westfalen vom 5. April 2005 (GV. NRW. S. 252) in der jeweils geltende…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[120].children[2].text@225:protected:gazette-nrw",
+      "path": "body[120].children[2].text",
+      "start": 225,
+      "end": 240,
+      "term": "GV. NRW. S. 252",
+      "context": "…tengesetz des Landes Nordrhein-Westfalen vom 5. April 2005 (GV. NRW. S. 252) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[120].children[4].text@82:protected:gazette-nrw",
+      "path": "body[120].children[4].text",
+      "start": 82,
+      "end": 97,
+      "term": "GV. NRW. S. 738",
+      "context": "…ird nach dem Landesreisekostengesetz vom 16. Dezember 1998 (GV. NRW. S. 738) in der jeweils geltenden Fassung gewährt. Tagegeld wird ni…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[120].children[5].text@243:protected:gazette-nrw",
+      "path": "body[120].children[5].text",
+      "start": 243,
+      "end": 258,
+      "term": "GV. NRW. S. 310",
+      "context": "… 41 des Landesbeamtenversorgungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung gewährt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[121].children[1].text@65:rule:jurisdiction-name",
+      "path": "body[121].children[1].text",
+      "start": 65,
+      "end": 89,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…eschäftsordnung ist im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen zu veröffentlichen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[128].children[2].text@373:rule:jurisdiction-name-bare",
+      "path": "body[128].children[2].text",
+      "start": 373,
+      "end": 392,
+      "term": "Nordrhein-Westfalen",
+      "context": "…erlich ist oder die in § 9 Absatz 2 des Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[128].children[2].text@411:protected:gazette-nrw",
+      "path": "body[128].children[2].text",
+      "start": 411,
+      "end": 426,
+      "term": "GV. NRW. S. 244",
+      "context": "…s Datenschutzgesetzes Nordrhein-Westfalen vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) genannten Voraussetzungen vorliege…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[141].children[2].text@427:rule:jurisdiction-name",
+      "path": "body[141].children[2].text",
+      "start": 427,
+      "end": 451,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…Ministerpräsidenten im Gesetz- und Verordnungsblatt für das Land Nordrhein-Westfalen zu veröffentlichen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[181].text@4:constitutional-organ-state",
+      "path": "body[181].text",
+      "start": 4,
+      "end": 39,
+      "term": "Landesregierung Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[181].text@20:rule:jurisdiction-name-bare",
+      "path": "body[181].text",
+      "start": 20,
+      "end": 39,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Landesregierung Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[182].title@51:protected:gazette-nrw",
+      "path": "body[182].title",
+      "start": 51,
+      "end": 66,
+      "term": "GV. NRW. S. 330",
+      "context": "Zusatz: (Artikel 4 des Gesetzes vom 25. März 2021 (GV. NRW. S. 330)):",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[185].title@54:protected:gazette-nrw",
+      "path": "body[185].title",
+      "start": 54,
+      "end": 69,
+      "term": "GV. NRW. S. 231",
+      "context": "Zusatz: (Artikel 3 des Gesetzes vom 23. Februar 2022 (GV. NRW. S. 231)):",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[187].text@91:rule:jurisdiction-name",
+      "path": "body[187].text",
+      "start": 91,
+      "end": 115,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…in oder des Präsidenten des Verfassungsgerichtshofs für das Land Nordrhein-Westfalen, die oder der am 5. März 2022 im Amt ist, bestimmt sich bis…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "institution": {
+      "safe-auto-transform": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 10
+    },
+    "municipality": {
+      "manual-review": 1
+    },
+    "source-citation": {
+      "protected": 7
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[120].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[120].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[120].children[2].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[121].children[1].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[128].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[141].children[2].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[181].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[187].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[112].children[1].text",
+      "term": "Münster",
+      "context": "Der Verfassungsgerichtshof hat seinen Sitz in Münster.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 629,
+    "residuals": [
+      {
+        "path": "body[120].children[1].text",
+        "term": "NRW",
+        "context": "…tengesetz des Landes Westdeutschland vom 5. April 2005 (GV. NRW. S. 252) in der jeweils geltenden Fassung. Der Vizepräsiden…",
+        "status": "protected"
+      },
+      {
+        "path": "body[120].children[2].text",
+        "term": "NRW",
+        "context": "…tengesetz des Landes Westdeutschland vom 5. April 2005 (GV. NRW. S. 252) in der jeweils geltenden Fassung.",
+        "status": "protected"
+      },
+      {
+        "path": "body[120].children[4].text",
+        "term": "NRW",
+        "context": "…nach dem Landesreisekostengesetz vom 16. Dezember 1998 (GV. NRW. S. 738) in der jeweils geltenden Fassung gewährt. Tagegeld…",
+        "status": "protected"
+      },
+      {
+        "path": "body[120].children[5].text",
+        "term": "NRW",
+        "context": "…des Landesbeamtenversorgungsgesetzes vom 14. Juni 2016 (GV. NRW. S. 310, ber. S. 642) in der jeweils geltenden Fassung gewä…",
+        "status": "protected"
+      },
+      {
+        "path": "body[128].children[2].text",
+        "term": "NRW",
+        "context": "…s Datenschutzgesetzes Westdeutschland vom 17. Mai 2018 (GV. NRW. S. 244, ber. S. 278 und S. 404) genannten Voraussetzungen …",
+        "status": "protected"
+      },
+      {
+        "path": "body[182].title",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 4 des Gesetzes vom 25. März 2021 (GV. NRW. S. 330)):",
+        "status": "protected"
+      },
+      {
+        "path": "body[185].title",
+        "term": "NRW",
+        "context": "Zusatz: (Artikel 3 des Gesetzes vom 23. Februar 2022 (GV. NRW. S. 231)):",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz über den Verfassungsgerichtshof für das Land Nordrhein-Westfalen (Verfassungsgerichtshofgesetz - VerfGHG NRW -) vom 14. Dezember 1989 (GV. NW. 1989 S. 708)",
+    "sourceVersion": "Gesetz über den Verfassungsgerichtshof für das Land Nordrhein-Westfalen (Verfassungsgerichtshofgesetz - VerfGHG NRW -) vom 14. Dezember 1989 (GV. NW. 1989 S. 708)",
+    "simulation": "Gesetz über den Verfassungsgerichtshof für das Land Westdeutschland (Verfassungsgerichtshofgesetz - VerfGHG West -) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 69,
+          "actual": 69,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 53853,
+          "actual": 53381,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 69,
+          "actual": 69,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 453,
+          "actual": 453,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 69,
+          "actual": 69,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 53381,
+          "actual": 53349,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "69 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "69 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:13:24.750Z"
+}

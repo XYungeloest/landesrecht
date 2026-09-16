@@ -1,0 +1,569 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27263",
+  "slug": "verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-laufbahn-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@143:rule:jurisdiction-name-genitive",
+      "path": "meta.title",
+      "start": 143,
+      "end": 169,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…iten Einstiegsamtes der Laufbahngruppe 2 im Forstdienst des Landes Nordrhein-Westfalen (Ausbildungs- und Prüfungsverordnung Forstdienst 2.2 - VAP …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[1].text@133:rule:jurisdiction-name-bare",
+      "path": "body[1].text",
+      "start": 133,
+      "end": 152,
+      "term": "Nordrhein-Westfalen",
+      "context": "…bahnen des gehobenen und des höheren Forstdienstes im Lande Nordrhein-Westfalen (Forstdienstausbildungsgesetz - FDAG NW) vom 19. März 1985 …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[1].text@213:protected:gazette-nw",
+      "path": "body[1].text",
+      "start": 213,
+      "end": 227,
+      "term": "GV. NW. S. 257",
+      "context": "…(Forstdienstausbildungsgesetz - FDAG NW) vom 19. März 1985 (GV. NW. S. 257) wird verordnet:",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].children[0].text@183:rule:jurisdiction-name-bare",
+      "path": "body[3].children[0].text",
+      "start": 183,
+      "end": 202,
+      "term": "Nordrhein-Westfalen",
+      "context": "…ewerber für die Laufbahn des höheren Forstdienstes im Lande Nordrhein-Westfalen.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[4].children[1].text@126:authority-state-enterprise",
+      "path": "body[4].children[1].text",
+      "start": 126,
+      "end": 144,
+      "term": "Landesbetrieb Wald",
+      "context": "…ns zwei Monate vor dem jeweiligen Einstellungstermin an den Landesbetrieb Wald und Holz NRW (Einstellungsbehörde) zu richten.",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[4].children[1].text@154:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[1].text",
+      "start": 154,
+      "end": 157,
+      "term": "NRW",
+      "context": "…ligen Einstellungstermin an den Landesbetrieb Wald und Holz NRW (Einstellungsbehörde) zu richten.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].children[2].text@111:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].children[2].text",
+      "start": 111,
+      "end": 114,
+      "term": "NRW",
+      "context": "…ulprüfungen eines § 2 Absatz 3 Forstdienstausbildungsgesetz NRW entsprechenden Studiengangs,",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[4].children[2].children[3].text@180:rule:jurisdiction-abbreviation",
+      "path": "body[4].children[2].children[3].text",
+      "start": 180,
+      "end": 183,
+      "term": "NRW",
+      "context": "…ernfächern (§ 2 Absatz 3 und 4 Forstdienstausbildungsgesetz NRW) zu belegen, soweit dies nicht aus den unter Nummer 3 genan…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[6].children[2].text@145:geography-region",
+      "path": "body[6].children[2].text",
+      "start": 145,
+      "end": 150,
+      "term": "Eifel",
+      "context": "…stellungsbehörde mit Ausnahme der Außenstellen Nationalpark Eifel und Arnsberger Wald. Davon kann nach oben abgewichen werden…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@94:rule:jurisdiction-abbreviation",
+      "path": "body[8].children[1].text",
+      "start": 94,
+      "end": 97,
+      "term": "NRW",
+      "context": "…tze nach § 3 Absatz 2 Nummer 1 Forstdienstausbildungsgesetz NRW nach der Qualifikation ist die Gesamtnote maßgebend. Bei gl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[8].children[2].text@484:rule:jurisdiction-name-dative",
+      "path": "body[8].children[2].text",
+      "start": 484,
+      "end": 511,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…Bewerbungsfrist nach § 2 Abs. 1 zu jedem Einstellungstermin im Land Nordrhein-Westfalen um Zulassung beworben hat (ununterbrochene Bewerbung).",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[20].children[1].text@224:protected:gazette-nw",
+      "path": "body[20].children[1].text",
+      "start": 224,
+      "end": 241,
+      "term": "GV. NW. 1996 S. 1",
+      "context": "…ng in der Fassung der Bekanntmachung vom 23. November 1995 (GV. NW. 1996 S. 1) in der jeweils geltenden Fassung.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[3].text@4:ministry-portfolio",
+      "path": "body[21].children[3].text",
+      "start": 4,
+      "end": 57,
+      "term": "Ministerin für Umwelt, Raumordnung und Landwirtschaft",
+      "context": "Die Ministerin für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[21].children[3].text@62:rule:jurisdiction-name-genitive",
+      "path": "body[21].children[3].text",
+      "start": 62,
+      "end": 88,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…e Ministerin für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[21].children[5].text@99:protected:gazette-nrw",
+      "path": "body[21].children[5].text",
+      "start": 99,
+      "end": 114,
+      "term": "GV. NRW. S. 332",
+      "context": "… (Artikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[21].children[7].text@40:protected:gazette-nrw",
+      "path": "body[21].children[7].text",
+      "start": 40,
+      "end": 55,
+      "term": "GV. NRW. S. 498",
+      "context": "(Dritter Teil des Gesetzes v. 3.5.2005 (GV. NRW. S. 498))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "meta.title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[3].children[0].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[4].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[4].children[2].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[8].children[2].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[21].children[3].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[4].children[1].text",
+      "term": "Landesbetrieb Wald",
+      "context": "…ns zwei Monate vor dem jeweiligen Einstellungstermin an den Landesbetrieb Wald und Holz NRW (Einstellungsbehörde) zu richten.",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].text",
+      "term": "Eifel",
+      "context": "…stellungsbehörde mit Ausnahme der Außenstellen Nationalpark Eifel und Arnsberger Wald. Davon kann nach oben abgewichen werden…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[21].children[3].text",
+      "term": "Ministerin für Umwelt, Raumordnung und Landwirtschaft",
+      "context": "Die Ministerin für Umwelt, Raumordnung und Landwirtschaft des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 151,
+    "residuals": [
+      {
+        "path": "body[21].children[5].text",
+        "term": "NRW",
+        "context": "…tikel 170 des Vierten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 332))",
+        "status": "protected"
+      },
+      {
+        "path": "body[21].children[7].text",
+        "term": "NRW",
+        "context": "(Dritter Teil des Gesetzes v. 3.5.2005 (GV. NRW. S. 498))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und Prüfung für die Laufbahn der Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 2 im Forstdienst des Landes Nordrhein-Westfalen (Ausbildungs- und Prüfungsverordnung Forstdienst 2.2 - VAP FD 2.2) vom 5. September 1996 (GV. NW. S.388)",
+    "sourceVersion": "Verordnung über die Ausbildung und Prüfung für die Laufbahn der Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 2 im Forstdienst des Landes Nordrhein-Westfalen (Ausbildungs- und Prüfungsverordnung Forstdienst 2.2 - VAP FD 2.2) vom 5. September 1996 (GV. NW. S.388)",
+    "simulation": "Verordnung über die Ausbildung und Prüfung für die Laufbahn der Ämtergruppe des zweiten Einstiegsamtes der Laufbahngruppe 2 im Forstdienst des Landes Westdeutschland (Ausbildungs- und Prüfungsverordnung Forstdienst 2.2 - VAP FD 2.2) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 19,
+          "actual": 19,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 15987,
+          "actual": 15698,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 19,
+          "actual": 19,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 110,
+          "actual": 110,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 21,
+          "actual": 21,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 19,
+          "actual": 19,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 15698,
+          "actual": 15686,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „wird verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "19 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „wird verordnet“"
+      ],
+      "supporting": [
+        "19 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/21112-41044-sgv_20301_19960905_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/21112-41045-sgv_20301_19960905_1_anlage2h.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 7,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:03:16.686Z"
+}

@@ -1,0 +1,937 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27350",
+  "slug": "verordnung-ueber-die-eingruppierung-der-kommunalen-wahlbeamtinnen-und-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[0].text@92:protected:gazette-nrw",
+      "path": "body[0].text",
+      "start": 92,
+      "end": 107,
+      "term": "GV. NRW. S. 340",
+      "context": "…rt und § 1 neu gefasst durch Verordnung vom 15. April 2020 (GV. NRW. S. 340), in Kraft getreten mit Wirkung vom 1. Januar 2020.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@496:protected:gazette-nw",
+      "path": "body[3].text",
+      "start": 496,
+      "end": 510,
+      "term": "GV. NW. S. 544",
+      "context": "…esoldungsrechtlicher Zuständigkeiten vom 2. September 1975 (GV. NW. S. 544), geändert durch Verordnung vom 5. September 1978 (GV. NW. …",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@562:protected:gazette-nw",
+      "path": "body[3].text",
+      "start": 562,
+      "end": 576,
+      "term": "GV. NW. S. 498",
+      "context": "…. S. 544), geändert durch Verordnung vom 5. September 1978 (GV. NW. S. 498), wird nach Maßgabe der Kommunalbesoldungsverordnung des Bu…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@711:ministry-compound",
+      "path": "body[3].text",
+      "start": 711,
+      "end": 725,
+      "term": "Finanzminister",
+      "context": "… vom 7. April 1978 (BGBl. I S. 468) im Einvernehmen mit dem Finanzminister verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
+    },
+    {
+      "id": "body[7].title@23:regional-body-association",
+      "path": "body[7].title",
+      "start": 23,
+      "end": 43,
+      "term": "Landschaftsverbänden",
+      "context": "Eingruppierung bei den Landschaftsverbänden und im Regionalverband Ruhr",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[7].title@51:regional-body-association",
+      "path": "body[7].title",
+      "start": 51,
+      "end": 71,
+      "term": "Regionalverband Ruhr",
+      "context": "Eingruppierung bei den Landschaftsverbänden und im Regionalverband Ruhr",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[7].title@67:geography-region",
+      "path": "body[7].title",
+      "start": 67,
+      "end": 71,
+      "term": "Ruhr",
+      "context": "…pierung bei den Landschaftsverbänden und im Regionalverband Ruhr",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].children[1].text@16:regional-body-association",
+      "path": "body[7].children[1].text",
+      "start": 16,
+      "end": 36,
+      "term": "Landschaftsverbänden",
+      "context": "Es sind bei den Landschaftsverbänden einzugruppieren:",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[7].children[1].children[0].text@46:regional-body-association",
+      "path": "body[7].children[1].children[0].text",
+      "start": 46,
+      "end": 66,
+      "term": "Landschaftsverbandes",
+      "context": "Das Amt der Direktorin oder des Direktors des Landschaftsverbandes in Besoldungsgruppe B 8,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@11:regional-body-association",
+      "path": "body[7].children[2].text",
+      "start": 11,
+      "end": 31,
+      "term": "Regionalverband Ruhr",
+      "context": "Es sind im Regionalverband Ruhr einzugruppieren:",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "regionalverband-ruhr",
+        "group": "Regionalverband Ruhr"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@27:geography-region",
+      "path": "body[7].children[2].text",
+      "start": 27,
+      "end": 31,
+      "term": "Ruhr",
+      "context": "Es sind im Regionalverband Ruhr einzugruppieren:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].children[2].text@27:geography-river",
+      "path": "body[7].children[2].text",
+      "start": 27,
+      "end": 31,
+      "term": "Ruhr",
+      "context": "Es sind im Regionalverband Ruhr einzugruppieren:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[0].text@80:geography-region",
+      "path": "body[7].children[2].children[0].text",
+      "start": 80,
+      "end": 84,
+      "term": "Ruhr",
+      "context": "…direktorin oder des Regionaldirektors des Regionalverbandes Ruhr in Besoldungsgruppe B 8,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[7].children[2].children[0].text@80:geography-river",
+      "path": "body[7].children[2].children[0].text",
+      "start": 80,
+      "end": 84,
+      "term": "Ruhr",
+      "context": "…direktorin oder des Regionaldirektors des Regionalverbandes Ruhr in Besoldungsgruppe B 8,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@155:regional-body-association",
+      "path": "body[8].children[1].text",
+      "start": 155,
+      "end": 174,
+      "term": "Landschaftsverbände",
+      "context": "…rätinnen und Landräte, die Direktorinnen und Direktoren der Landschaftsverbände sowie die Regionaldirektorin oder der Regionaldirektor des …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@252:geography-region",
+      "path": "body[8].children[1].text",
+      "start": 252,
+      "end": 256,
+      "term": "Ruhr",
+      "context": "…ldirektorin oder der Regionaldirektor des Regionalverbandes Ruhr erhalten jeweils eine monatliche Aufwandsentschädigung in H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[1].text@252:geography-river",
+      "path": "body[8].children[1].text",
+      "start": 252,
+      "end": 256,
+      "term": "Ruhr",
+      "context": "…ldirektorin oder der Regionaldirektor des Regionalverbandes Ruhr erhalten jeweils eine monatliche Aufwandsentschädigung in H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@131:geography-region",
+      "path": "body[8].children[2].text",
+      "start": 131,
+      "end": 136,
+      "term": "Lippe",
+      "context": "… Leitern wirtschaftlicher Einrichtungen des Landesverbandes Lippe kann eine Aufwandsentschädigung bis zu den Beträgen gewährt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@131:geography-river",
+      "path": "body[8].children[2].text",
+      "start": 131,
+      "end": 136,
+      "term": "Lippe",
+      "context": "… Leitern wirtschaftlicher Einrichtungen des Landesverbandes Lippe kann eine Aufwandsentschädigung bis zu den Beträgen gewährt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@288:geography-region",
+      "path": "body[8].children[2].text",
+      "start": 288,
+      "end": 293,
+      "term": "Lippe",
+      "context": "…ushaltssatzung nach § 9 des Gesetzes über den Landesverband Lippe in der Fassung der Bekanntmachung vom 5. November 1948 (GV.…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@288:geography-river",
+      "path": "body[8].children[2].text",
+      "start": 288,
+      "end": 293,
+      "term": "Lippe",
+      "context": "…ushaltssatzung nach § 9 des Gesetzes über den Landesverband Lippe in der Fassung der Bekanntmachung vom 5. November 1948 (GV.…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[8].children[2].text@350:protected:gazette-nrw",
+      "path": "body[8].children[2].text",
+      "start": 350,
+      "end": 370,
+      "term": "GV. NRW. 1949 S. 269",
+      "context": "…ppe in der Fassung der Bekanntmachung vom 5. November 1948 (GV. NRW. 1949 S. 269), das zuletzt durch Artikel 6 des Gesetzes vom 18. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[8].children[2].text@437:protected:gazette-nrw",
+      "path": "body[8].children[2].text",
+      "start": 437,
+      "end": 452,
+      "term": "GV. NRW. S. 738",
+      "context": "…zuletzt durch Artikel 6 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 738) geändert worden ist, genehmigt werden. Der allgemeinen Ver…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[1].text@82:authority-state-enterprise",
+      "path": "body[10].children[1].text",
+      "start": 82,
+      "end": 107,
+      "term": "Landesbetrieb Information",
+      "context": "… der Ämter nach den §§ 2 und 3 ist die jeweils aktuelle vom Landesbetrieb Information und Technik Nordrhein-Westfalen veröffentlichte Einwohnerza…",
+      "category": "authority",
+      "decision": "manual-review",
+      "detector": "authority-state-enterprise",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
+    },
+    {
+      "id": "body[10].children[1].text@120:rule:jurisdiction-name-bare",
+      "path": "body[10].children[1].text",
+      "start": 120,
+      "end": 139,
+      "term": "Nordrhein-Westfalen",
+      "context": "… jeweils aktuelle vom Landesbetrieb Information und Technik Nordrhein-Westfalen veröffentlichte Einwohnerzahl maßgebend. Änderungen der Ein…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[10].children[3].text@156:protected:gazette-nrw",
+      "path": "body[10].children[3].text",
+      "start": 156,
+      "end": 174,
+      "term": "GV. NRW. 2008 S. 8",
+      "context": "…den Vorschriften des Kurortegesetzes vom 11. Dezember 2007 (GV. NRW. 2008 S. 8), das zuletzt durch Artikel 1 des Gesetzes vom 15. Dezember…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[10].children[3].text@241:protected:gazette-nrw",
+      "path": "body[10].children[3].text",
+      "start": 241,
+      "end": 257,
+      "term": "GV. NRW. S. 1150",
+      "context": "…zuletzt durch Artikel 1 des Gesetzes vom 15. Dezember 2016 (GV. NRW. S. 1150) geändert worden ist, ganz oder teilweise anerkannt sind, g…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[4].children[0].text@4:ministry-compound",
+      "path": "body[11].children[4].children[0].text",
+      "start": 4,
+      "end": 17,
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-compound",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "innenministerium",
+        "group": "Innenministerium"
+      }
+    },
+    {
+      "id": "body[11].children[4].children[0].text@22:rule:jurisdiction-name-genitive",
+      "path": "body[11].children[4].children[0].text",
+      "start": 22,
+      "end": 48,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[11].children[4].children[1].text@107:protected:gazette-nrw",
+      "path": "body[11].children[4].children[1].text",
+      "start": 107,
+      "end": 122,
+      "term": "GV. NRW. S. 274",
+      "context": "… (Artikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[4].children[3].title@54:protected:gazette-nrw",
+      "path": "body[11].children[4].children[3].title",
+      "start": 54,
+      "end": 69,
+      "term": "GV. NRW. S. 340",
+      "context": "Hinweis: Artikel 2 der Verordnung vom 15. April 2020 (GV. NRW. S. 340)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[11].children[4].children[5].title@53:protected:gazette-nrw",
+      "path": "body[11].children[4].children[5].title",
+      "start": 53,
+      "end": 68,
+      "term": "GV. NRW. S. 486",
+      "context": "Hinweis: Artikel 2 der Verordnung vom 27. Juni 2023 (GV. NRW. S. 486)",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 10
+    },
+    "ministry": {
+      "manual-review": 2
+    },
+    "regional-body": {
+      "manual-review": 6
+    },
+    "geography": {
+      "manual-review": 11
+    },
+    "authority": {
+      "manual-review": 1
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[10].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[11].children[4].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[3].text",
+      "term": "Finanzminister",
+      "context": "… vom 7. April 1978 (BGBl. I S. 468) im Einvernehmen mit dem Finanzminister verordnet:",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].title",
+      "term": "Landschaftsverbänden",
+      "context": "Eingruppierung bei den Landschaftsverbänden und im Regionalverband Ruhr",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].title",
+      "term": "Regionalverband Ruhr",
+      "context": "Eingruppierung bei den Landschaftsverbänden und im Regionalverband Ruhr",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].title",
+      "term": "Ruhr",
+      "context": "…pierung bei den Landschaftsverbänden und im Regionalverband Ruhr",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].text",
+      "term": "Landschaftsverbänden",
+      "context": "Es sind bei den Landschaftsverbänden einzugruppieren:",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[1].children[0].text",
+      "term": "Landschaftsverbandes",
+      "context": "Das Amt der Direktorin oder des Direktors des Landschaftsverbandes in Besoldungsgruppe B 8,",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Regionalverband Ruhr",
+      "context": "Es sind im Regionalverband Ruhr einzugruppieren:",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung regionalverband-ruhr (review): Regionalverband; Entsprechung nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Ruhr",
+      "context": "Es sind im Regionalverband Ruhr einzugruppieren:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].text",
+      "term": "Ruhr",
+      "context": "Es sind im Regionalverband Ruhr einzugruppieren:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[0].text",
+      "term": "Ruhr",
+      "context": "…direktorin oder des Regionaldirektors des Regionalverbandes Ruhr in Besoldungsgruppe B 8,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[7].children[2].children[0].text",
+      "term": "Ruhr",
+      "context": "…direktorin oder des Regionaldirektors des Regionalverbandes Ruhr in Besoldungsgruppe B 8,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].text",
+      "term": "Landschaftsverbände",
+      "context": "…rätinnen und Landräte, die Direktorinnen und Direktoren der Landschaftsverbände sowie die Regionaldirektorin oder der Regionaldirektor des …",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].text",
+      "term": "Ruhr",
+      "context": "…ldirektorin oder der Regionaldirektor des Regionalverbandes Ruhr erhalten jeweils eine monatliche Aufwandsentschädigung in H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[1].text",
+      "term": "Ruhr",
+      "context": "…ldirektorin oder der Regionaldirektor des Regionalverbandes Ruhr erhalten jeweils eine monatliche Aufwandsentschädigung in H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Lippe",
+      "context": "… Leitern wirtschaftlicher Einrichtungen des Landesverbandes Lippe kann eine Aufwandsentschädigung bis zu den Beträgen gewährt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Lippe",
+      "context": "… Leitern wirtschaftlicher Einrichtungen des Landesverbandes Lippe kann eine Aufwandsentschädigung bis zu den Beträgen gewährt…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Lippe",
+      "context": "…ushaltssatzung nach § 9 des Gesetzes über den Landesverband Lippe in der Fassung der Bekanntmachung vom 5. November 1948 (GV.…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[8].children[2].text",
+      "term": "Lippe",
+      "context": "…ushaltssatzung nach § 9 des Gesetzes über den Landesverband Lippe in der Fassung der Bekanntmachung vom 5. November 1948 (GV.…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[10].children[1].text",
+      "term": "Landesbetrieb Information",
+      "context": "… der Ämter nach den §§ 2 und 3 ist die jeweils aktuelle vom Landesbetrieb Information und Technik Nordrhein-Westfalen veröffentlichte Einwohnerza…",
+      "category": "authority",
+      "decision": "manual-review",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[11].children[4].children[0].text",
+      "term": "Innenminister",
+      "context": "Der Innenminister des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung innenministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 177,
+    "residuals": [
+      {
+        "path": "body[0].text",
+        "term": "NRW",
+        "context": "…nd § 1 neu gefasst durch Verordnung vom 15. April 2020 (GV. NRW. S. 340), in Kraft getreten mit Wirkung vom 1. Januar 2020.",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[2].text",
+        "term": "NRW",
+        "context": "…in der Fassung der Bekanntmachung vom 5. November 1948 (GV. NRW. 1949 S. 269), das zuletzt durch Artikel 6 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[8].children[2].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 6 des Gesetzes vom 18. Dezember 2018 (GV. NRW. S. 738) geändert worden ist, genehmigt werden. Der allgeme…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[3].text",
+        "term": "NRW",
+        "context": "…Vorschriften des Kurortegesetzes vom 11. Dezember 2007 (GV. NRW. 2008 S. 8), das zuletzt durch Artikel 1 des Gesetzes vom 1…",
+        "status": "protected"
+      },
+      {
+        "path": "body[10].children[3].text",
+        "term": "NRW",
+        "context": "…tzt durch Artikel 1 des Gesetzes vom 15. Dezember 2016 (GV. NRW. S. 1150) geändert worden ist, ganz oder teilweise anerkann…",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[4].children[1].text",
+        "term": "NRW",
+        "context": "…tikel 270 des Zweiten Befristungsgesetzes vom 5.4.2005 (GV. NRW. S. 274))",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[4].children[3].title",
+        "term": "NRW",
+        "context": "Hinweis: Artikel 2 der Verordnung vom 15. April 2020 (GV. NRW. S. 340)",
+        "status": "protected"
+      },
+      {
+        "path": "body[11].children[4].children[5].title",
+        "term": "NRW",
+        "context": "Hinweis: Artikel 2 der Verordnung vom 27. Juni 2023 (GV. NRW. S. 486)",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Eingruppierung der kommunalen Wahlbeamtinnen und Wahlbeamten auf Zeit und die Gewährung von Aufwandsentschädigungen durch die Gemeinden und Gemeindeverbände sowie weitere Körperschaften des öffentlichen Rechts (Eingruppierungsverordnung - EingrVO -) vom 9. Februar 1979",
+    "sourceVersion": "Verordnung über die Eingruppierung der kommunalen Wahlbeamtinnen und Wahlbeamten auf Zeit und die Gewährung von Aufwandsentschädigungen durch die Gemeinden und Gemeindeverbände sowie weitere Körperschaften des öffentlichen Rechts (Eingruppierungsverordnung - EingrVO -) vom 9. Februar 1979",
+    "simulation": "Verordnung über die Eingruppierung der kommunalen Wahlbeamtinnen und Wahlbeamten auf Zeit und die Gewährung von Aufwandsentschädigungen durch die Gemeinden und Gemeindeverbände sowie weitere Körperschaften des öffentlichen Rechts (Eingruppierungsverordnung - EingrVO -) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12437,
+          "actual": 12943,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 166,
+          "actual": 166,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 2,
+          "actual": 2,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 10,
+          "actual": 10,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 8,
+          "actual": 8,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 12943,
+          "actual": 12935,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "8 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "8 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T05:07:10.845Z"
+}

@@ -1,0 +1,2323 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:27185",
+  "slug": "bonn-gesetz-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "meta.title@47:municipality",
+      "path": "meta.title",
+      "start": 47,
+      "end": 51,
+      "term": "Bonn",
+      "context": "Gesetz zur kommunalen Neugliederung des Raumes Bonn (Fn 2)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "meta.abbr@0:municipality",
+      "path": "meta.abbr",
+      "start": 0,
+      "end": 4,
+      "term": "Bonn",
+      "context": "Bonn-Gesetz",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[0].text@10:constitutional-organ-state",
+      "path": "body[0].text",
+      "start": 10,
+      "end": 63,
+      "term": "Verfassungsgerichtshof des Landes Nordrhein-Westfalen",
+      "context": "Fn 1: Der Verfassungsgerichtshof des Landes Nordrhein-Westfalen hat den Vollzug des Gesetzes für die Zeit vom 1. bis 31. Ju…",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "review"
+      }
+    },
+    {
+      "id": "body[0].text@37:rule:jurisdiction-name-genitive",
+      "path": "body[0].text",
+      "start": 37,
+      "end": 63,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Fn 1: Der Verfassungsgerichtshof des Landes Nordrhein-Westfalen hat den Vollzug des Gesetzes für die Zeit vom 1. bis 31. Ju…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[2].children[0].text@17:municipality",
+      "path": "body[2].children[0].text",
+      "start": 17,
+      "end": 21,
+      "term": "Bonn",
+      "context": "Kreisfreie Stadt Bonn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[2].text@78:municipality",
+      "path": "body[2].children[1].children[2].text",
+      "start": 78,
+      "end": 82,
+      "term": "Bonn",
+      "context": "… ohne die in § 10 Abs. 3 genannten Fluren und Flurstücke -, Bonn und Bad Godesberg und die Gemeinden Buschdorf, Duisdorf, Ip…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[2].text@238:geography-region",
+      "path": "body[2].children[1].children[2].text",
+      "start": 238,
+      "end": 247,
+      "term": "Rheinland",
+      "context": "…ttgen, alle Amt Duisdorf, die Gemeinde Holzlar, Amt Menden (Rheinland), - ohne die in § 10 Abs. 4 genannten Flurstücke - sowie di…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[2].text@518:municipality",
+      "path": "body[2].children[1].children[2].text",
+      "start": 518,
+      "end": 522,
+      "term": "Bonn",
+      "context": "…reien Stadt zusammengeschlossen. Die Stadt erhält den Namen Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[3].text@18:municipality",
+      "path": "body[2].children[1].children[3].text",
+      "start": 18,
+      "end": 22,
+      "term": "Bonn",
+      "context": "In die neue Stadt Bonn werden aus der Gemeinde Stieldorf folgende Fluren und Flurs…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[4].text@66:municipality",
+      "path": "body[2].children[1].children[4].text",
+      "start": 66,
+      "end": 70,
+      "term": "Bonn",
+      "context": "…t Duisdorf wird aufgelöst. Rechtsnachfolgerin ist die Stadt Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[5].text@46:municipality",
+      "path": "body[2].children[1].children[5].text",
+      "start": 46,
+      "end": 50,
+      "term": "Köln",
+      "context": "Die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß des Zusammenschlusses der Städte Beuel, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[5].text@110:municipality",
+      "path": "body[2].children[1].children[5].text",
+      "start": 110,
+      "end": 114,
+      "term": "Bonn",
+      "context": "… über die aus Anlaß des Zusammenschlusses der Städte Beuel, Bonn und Bad Godesberg sowie der Gemeinden Buschdorf, Duisdorf, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[2].children[1].children[5].text@458:municipality",
+      "path": "body[2].children[1].children[5].text",
+      "start": 458,
+      "end": 462,
+      "term": "Bonn",
+      "context": "…969 werden mit der Maßgabe bestätigt, daß der Rat der Stadt Bonn für die einzelnen Bezirksausschüsse in der Hauptsatzung auc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[0].text@10:municipality",
+      "path": "body[3].children[0].text",
+      "start": 10,
+      "end": 14,
+      "term": "Bonn",
+      "context": "Landkreis Bonn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[2].text@117:municipality",
+      "path": "body[3].children[1].children[2].text",
+      "start": 117,
+      "end": 121,
+      "term": "Köln",
+      "context": "…e folgender Flurstücke in die Gemeinde Wesseling, Landkreis Köln, eingegliedert:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[2].children[1].text@179:geography-river",
+      "path": "body[3].children[1].children[2].children[1].text",
+      "start": 179,
+      "end": 184,
+      "term": "Rhein",
+      "context": "… 86 der Flur 14 in östlicher Richtung bis zur Flurgrenze im Rhein verläuft,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[4].text@84:municipality",
+      "path": "body[3].children[1].children[4].text",
+      "start": 84,
+      "end": 88,
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die Einzelheiten zur Bildung der neuen Gemeinde Bornhe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[1].children[4].children[3].text@46:municipality",
+      "path": "body[3].children[1].children[4].children[3].text",
+      "start": 46,
+      "end": 50,
+      "term": "Köln",
+      "context": "Die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß der Eingliederung des Ortsteils Urfeld d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[2].children[3].text@313:municipality",
+      "path": "body[3].children[2].children[3].text",
+      "start": 313,
+      "end": 317,
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die Einzelheiten des Zusammenschlusses der Gemeinde Od…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[3].children[2].text@161:municipality",
+      "path": "body[3].children[3].children[2].text",
+      "start": 161,
+      "end": 165,
+      "term": "Köln",
+      "context": "… Mai 1968 und die Bestimmungen des Regierungspräsidenten in Köln über die Einzelheiten des Zusammenschlusses der Gemeinde Wi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].children[3].text@233:municipality",
+      "path": "body[3].children[5].children[3].text",
+      "start": 233,
+      "end": 237,
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn vom 14. Juni 1968 über die Einzelheiten des Zusammenschluss…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[5].children[4].text@84:municipality",
+      "path": "body[3].children[5].children[4].text",
+      "start": 84,
+      "end": 88,
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die aus Anlaß der Auflösung des Amtes Meckenheim zu re…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[3].children[6].children[3].text@308:municipality",
+      "path": "body[3].children[6].children[3].text",
+      "start": 308,
+      "end": 312,
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die Einzelheiten des Zusammenschlusses der Gemeinde Vi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[0].text@39:geography-region",
+      "path": "body[4].children[2].children[2].children[0].text",
+      "start": 39,
+      "end": 48,
+      "term": "Rheinland",
+      "context": "aus der Gemeinde Meindorf, Amt Menden (Rheinland), die Fluren und Flurstücke",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[2].text@74:geography-river",
+      "path": "body[4].children[2].children[2].children[2].text",
+      "start": 74,
+      "end": 78,
+      "term": "Sieg",
+      "context": "…, 824, 826 und der jeweils nordwestlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 710/208 und 825,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[3].text@48:geography-river",
+      "path": "body[4].children[2].children[2].children[3].text",
+      "start": 48,
+      "end": 52,
+      "term": "Sieg",
+      "context": "Flur 5 der jeweils nördlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 1517, 1518, 1519, 1520 und…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[7].text@25:geography-region",
+      "path": "body[4].children[2].children[2].children[7].text",
+      "start": 25,
+      "end": 34,
+      "term": "Rheinland",
+      "context": "aus der Gemeinde Menden (Rheinland), Amt Menden (Rheinland), der Ortsteil Friedrich-Wilhelms-H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[7].text@49:geography-region",
+      "path": "body[4].children[2].children[2].children[7].text",
+      "start": 49,
+      "end": 58,
+      "term": "Rheinland",
+      "context": "aus der Gemeinde Menden (Rheinland), Amt Menden (Rheinland), der Ortsteil Friedrich-Wilhelms-Hütte mit den Fluren und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[9].text@73:geography-river",
+      "path": "body[4].children[2].children[2].children[9].text",
+      "start": 73,
+      "end": 77,
+      "term": "Sieg",
+      "context": "…1/233, 702/233 und der jeweils nördlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 682/233 und 798,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[10].text@94:geography-river",
+      "path": "body[4].children[2].children[2].children[10].text",
+      "start": 94,
+      "end": 98,
+      "term": "Sieg",
+      "context": "…60/64, 783/185 und der jeweils westlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 1075, 655/186, 656/187, 45…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[11].text@72:geography-river",
+      "path": "body[4].children[2].children[2].children[11].text",
+      "start": 72,
+      "end": 76,
+      "term": "Sieg",
+      "context": "…usnahme der Flurstücke Nr. 620/400, 621/400,des südlich der Sieg gelegenen Teils des Flurstücks Nr. 1423/401 (Bahngelände) u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[11].text@171:geography-river",
+      "path": "body[4].children[2].children[2].children[11].text",
+      "start": 171,
+      "end": 175,
+      "term": "Sieg",
+      "context": "… 1423/401 (Bahngelände) und des südlich der Mittellinie der Sieg gelegenen Teils des Flurstücks Nr. 1583,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[2].children[16].text@160:geography-river",
+      "path": "body[4].children[2].children[2].children[16].text",
+      "start": 160,
+      "end": 164,
+      "term": "Sieg",
+      "context": "…1, 140/1, 140/2 und der jeweils südlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 832/1 und 837/140.",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[2].children[3].text@143:geography-region",
+      "path": "body[4].children[2].children[3].text",
+      "start": 143,
+      "end": 152,
+      "term": "Rheinland",
+      "context": "…glar, der Stadt Troisdorf und den Ämtern Lohmar und Menden (Rheinland) vom Juni 1968 wird mit folgenden Maßgaben bestätigt: [Anla…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[1].text@177:geography-region",
+      "path": "body[4].children[3].children[1].text",
+      "start": 177,
+      "end": 186,
+      "term": "Rheinland",
+      "context": "…§ 9 Abs. 2 Nr. 1 genannten Fluren und Flurstücke -, Menden (Rheinland) - ohne die in § 9 Abs. 2 Nr. 2 genannten Fluren und Flurst…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[1].text@306:geography-region",
+      "path": "body[4].children[3].children[1].text",
+      "start": 306,
+      "end": 315,
+      "term": "Rheinland",
+      "context": "…ücke -, Niederpleis und Siegburg-Mülldorf, alle Amt Menden (Rheinland), werden zu einer neuen amtsfreien Gemeinde zusammengeschlo…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[4].text@81:geography-region",
+      "path": "body[4].children[3].children[4].text",
+      "start": 81,
+      "end": 90,
+      "term": "Rheinland",
+      "context": "…Sankt Augustin werden aus der Gemeinde Holzlar, Amt Menden (Rheinland), folgende Flurstücke eingegliedert:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[5].text@16:geography-region",
+      "path": "body[4].children[3].children[5].text",
+      "start": 16,
+      "end": 25,
+      "term": "Rheinland",
+      "context": "Das Amt Menden (Rheinland) wird aufgelöst. Rechtsnachfolgerin ist die Gemeinde Sankt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[6].text@98:geography-region",
+      "path": "body[4].children[3].children[6].text",
+      "start": 98,
+      "end": 107,
+      "term": "Rheinland",
+      "context": "…en Gemeinden Buisdorf, Hangelar, Holzlar, Meindorf, Menden (Rheinland), Niederpleis, Siegburg-Mülldorf und dem Amt Menden (Rheinl…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[6].text@161:geography-region",
+      "path": "body[4].children[3].children[6].text",
+      "start": 161,
+      "end": 170,
+      "term": "Rheinland",
+      "context": "…inland), Niederpleis, Siegburg-Mülldorf und dem Amt Menden (Rheinland) vom 31. Juli 1968 wird mit folgenden Maßgaben bestätigt: […",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[7].text@220:geography-region",
+      "path": "body[4].children[3].children[7].text",
+      "start": 220,
+      "end": 229,
+      "term": "Rheinland",
+      "context": "… Hoholz der Gemeinde Stieldorf in die neue Gemeinde Menden (Rheinland) zu regelnden Einzelheiten vom 12. August 1968 werden mit d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[7].children[0].text@46:municipality",
+      "path": "body[4].children[3].children[7].children[0].text",
+      "start": 46,
+      "end": 50,
+      "term": "Köln",
+      "context": "die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß der Eingliederung von Gebietsteilen der …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[3].children[7].children[0].text@151:geography-region",
+      "path": "body[4].children[3].children[7].children[0].text",
+      "start": 151,
+      "end": 160,
+      "term": "Rheinland",
+      "context": "… Gebietsteilen der Stadt Beuel in die neue Gemeinde Menden (Rheinland) zu regelnden Einzelheiten vom 7. August 1968 werden bestät…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[5].children[1].text@24:geography-river",
+      "path": "body[4].children[5].children[1].text",
+      "start": 24,
+      "end": 29,
+      "term": "Rhein",
+      "context": "Die Stadt Bad Honnef am Rhein und die Gemeinde Aegidienberg, Amt Königswinter-Land, werde…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[8].children[2].children[2].text@143:geography-river",
+      "path": "body[4].children[8].children[2].children[2].text",
+      "start": 143,
+      "end": 147,
+      "term": "Sieg",
+      "context": "… zwischen den Flurstücken 69 und 70 bis zur Mittellinie der Sieg und von dort in westlicher Richtung der Mittellinie folgend…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[8].children[3].text@68:geography-region",
+      "path": "body[4].children[8].children[3].text",
+      "start": 68,
+      "end": 77,
+      "term": "Rheinland",
+      "context": "…tadt Siegburg werden aus der Gemeinde Buisdorf, Amt Menden (Rheinland), folgende Fluren und Flurstücke eingegliedert:",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[8].children[3].children[1].text@72:geography-river",
+      "path": "body[4].children[8].children[3].children[1].text",
+      "start": 72,
+      "end": 76,
+      "term": "Sieg",
+      "context": "…1 bis 12, 13/1, 14 bis 29, der nördlich der Mittellinie der Sieg gelegene Teil des Flurstücks Nr. 30,",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-river",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[4].children[13].children[1].text@14:municipality",
+      "path": "body[4].children[13].children[1].text",
+      "start": 14,
+      "end": 18,
+      "term": "Bonn",
+      "context": "Der Landkreis Bonn wird aufgelöst.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[13].children[3].text@101:municipality",
+      "path": "body[4].children[13].children[3].text",
+      "start": 101,
+      "end": 105,
+      "term": "Bonn",
+      "context": "…-Kreis. Er ist Rechtsnachfolger des aufgelösten Landkreises Bonn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[13].children[4].text@46:municipality",
+      "path": "body[4].children[13].children[4].text",
+      "start": 46,
+      "end": 50,
+      "term": "Köln",
+      "context": "Die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß der Auflösung des Landkreises Bonn und d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[4].children[13].children[4].text@100:municipality",
+      "path": "body[4].children[13].children[4].text",
+      "start": 100,
+      "end": 104,
+      "term": "Bonn",
+      "context": "…en in Köln über die aus Anlaß der Auflösung des Landkreises Bonn und der Eingliederung der Gemeinden Alfter, Bornheim, Mecke…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@31:geography-region",
+      "path": "body[5].children[1].children[0].text",
+      "start": 31,
+      "end": 40,
+      "term": "Rheinland",
+      "context": "Die Landesplanungsgemeinschaft Rheinland bildet für das Gebiet der neuen kreisfreien Stadt Bonn und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[0].text@91:municipality",
+      "path": "body[5].children[1].children[0].text",
+      "start": 91,
+      "end": 95,
+      "term": "Bonn",
+      "context": "…Rheinland bildet für das Gebiet der neuen kreisfreien Stadt Bonn und des Rhein-Sieg-Kreises einen Sonderplanungsausschuß im …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[1].children[0].text@47:municipality",
+      "path": "body[5].children[1].children[1].children[0].text",
+      "start": 47,
+      "end": 51,
+      "term": "Bonn",
+      "context": "fünf Mitglieder, die von der kreisfreien Stadt Bonn vorgeschlagen werden;",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[1].children[2].text@91:geography-region",
+      "path": "body[5].children[1].children[1].children[2].text",
+      "start": 91,
+      "end": 100,
+      "term": "Rheinland",
+      "context": "…ltungs- und Planungsausschuß der Landesplanungsgemeinschaft Rheinland bestimmt wird;",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[1].children[4].text@27:municipality",
+      "path": "body[5].children[1].children[1].children[4].text",
+      "start": 27,
+      "end": 31,
+      "term": "Köln",
+      "context": "der Regierungspräsident in Köln und ein weiteres von der Landesregierung zu bestimmendes Mi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].text@71:municipality",
+      "path": "body[5].children[1].children[2].text",
+      "start": 71,
+      "end": 75,
+      "term": "Bonn",
+      "context": "…lanungsausschuß erhält für das Gebiet der kreisfreien Stadt Bonn und des Rhein-Sieg-Kreises die Befugnisse des Verwaltungs- …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[2].text@190:geography-region",
+      "path": "body[5].children[1].children[2].text",
+      "start": 190,
+      "end": 199,
+      "term": "Rheinland",
+      "context": "…ngs- und Planungsausschusses der Landesplanungsgemeinschaft Rheinland zur Aufstellung des Gebietsentwicklungsplanes und von Fläch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[3].text@48:geography-region",
+      "path": "body[5].children[1].children[3].text",
+      "start": 48,
+      "end": 57,
+      "term": "Rheinland",
+      "context": "Der Landesplaner der Landesplanungsgemeinschaft Rheinland erarbeitet Raumordnungspläne nach Absatz 3 zusammen mit dem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[5].children[1].children[3].text@146:municipality",
+      "path": "body[5].children[1].children[3].text",
+      "start": 146,
+      "end": 150,
+      "term": "Bonn",
+      "context": "… nach Absatz 3 zusammen mit dem Oberstadtdirektor der Stadt Bonn und dem Oberkreisdirektor des Rhein-Sieg-Kreises.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[0].text@21:municipality",
+      "path": "body[6].children[1].children[0].text",
+      "start": 21,
+      "end": 25,
+      "term": "Bonn",
+      "context": "Die kreisfreie Stadt Bonn sowie die Gemeinden Alfter und Bornheim werden dem Amtsgeri…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[0].text@89:municipality",
+      "path": "body[6].children[1].children[0].text",
+      "start": 89,
+      "end": 93,
+      "term": "Bonn",
+      "context": "…ie die Gemeinden Alfter und Bornheim werden dem Amtsgericht Bonn zugeordnet.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[1].text@62:municipality",
+      "path": "body[6].children[1].children[1].text",
+      "start": 62,
+      "end": 66,
+      "term": "Bonn",
+      "context": "…e Gemeinde Wachtberg wird ab 1. Januar 1970 dem Amtsgericht Bonn zugeordnet. Bis zu diesem Zeitpunkt gehören ihre Ortsteile …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[1].text@248:municipality",
+      "path": "body[6].children[1].children[1].text",
+      "start": 248,
+      "end": 252,
+      "term": "Bonn",
+      "context": "…einbach, ihre übrigen Ortsteile zum Bezirk des Amtsgerichts Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[1].children[2].text@181:municipality",
+      "path": "body[6].children[1].children[2].text",
+      "start": 181,
+      "end": 185,
+      "term": "Bonn",
+      "context": "…snahme ihres Ortsteils Berzdorf zum Bezirk des Amtsgerichts Bonn. ihr Ortsteil Berzdorf mit den Fluren 1 bis 11 der Gemarkun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[0].text@10:municipality",
+      "path": "body[6].children[2].children[0].text",
+      "start": 10,
+      "end": 14,
+      "term": "Bonn",
+      "context": "Die Stadt Bonn wird Gewährträger der Kreissparkasse Bonn. Diese überträgt …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[0].text@52:municipality",
+      "path": "body[6].children[2].children[0].text",
+      "start": 52,
+      "end": 56,
+      "term": "Bonn",
+      "context": "Die Stadt Bonn wird Gewährträger der Kreissparkasse Bonn. Diese überträgt die Zweigstellen, die sich im Rhein-Sieg-K…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[0].text@275:municipality",
+      "path": "body[6].children[2].children[0].text",
+      "start": 275,
+      "end": 279,
+      "term": "Bonn",
+      "context": "…rägt die Zweigstelle Oberkassel auf die Sparkasse der Stadt Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].text@93:municipality",
+      "path": "body[6].children[2].children[1].text",
+      "start": 93,
+      "end": 97,
+      "term": "Bonn",
+      "context": "…htet. die bisherigen Vorstandsmitglieder der Kreissparkasse Bonn mit ihrem Einverständnis auf Verlangen der Stadt Bonn als V…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].text@147:municipality",
+      "path": "body[6].children[2].children[1].text",
+      "start": 147,
+      "end": 151,
+      "term": "Bonn",
+      "context": "…kasse Bonn mit ihrem Einverständnis auf Verlangen der Stadt Bonn als Vorstandsmitglieder der Sparkasse des Rhein-Sieg-Kreise…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[1].text@253:municipality",
+      "path": "body[6].children[2].children[1].text",
+      "start": 253,
+      "end": 257,
+      "term": "Bonn",
+      "context": "… Rhein-Sieg-Kreises zu übernehmen. Die Sparkassen der Stadt Bonn und des Rhein-Sieg-Kreises sind verpflichtet, die bei den z…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[2].children[2].text@10:municipality",
+      "path": "body[6].children[2].children[2].text",
+      "start": 10,
+      "end": 14,
+      "term": "Bonn",
+      "context": "Die Stadt Bonn vereinigt die Sparkassen ihrer Gewährträgerschaft zu einer …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[3].children[1].text@74:municipality",
+      "path": "body[6].children[3].children[1].text",
+      "start": 74,
+      "end": 78,
+      "term": "Bonn",
+      "context": "… jeder Gruppe des Personalrates des aufgelösten Landkreises Bonn wählen je einen Vertreter, der zu der entsprechenden Gruppe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[3].children[1].text@430:protected:gazette-nw",
+      "path": "body[6].children[3].children[1].text",
+      "start": 430,
+      "end": 444,
+      "term": "GV. NW. S. 209",
+      "context": "… Landespersonalvertretungsgesetzes (LPVG) vom 28. Mai 1958 (GV. NW. S. 209), zuletzt geändert durch Gesetz vom 24. Mai 1966 (GV. NW. S…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[3].children[1].text@495:protected:gazette-nw",
+      "path": "body[6].children[3].children[1].text",
+      "start": 495,
+      "end": 509,
+      "term": "GV. NW. S. 305",
+      "context": "…W. S. 209), zuletzt geändert durch Gesetz vom 24. Mai 1966 (GV. NW. S. 305), am 31. Dezember 1969.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[3].children[3].children[1].text@51:municipality",
+      "path": "body[6].children[3].children[3].children[1].text",
+      "start": 51,
+      "end": 55,
+      "term": "Bonn",
+      "context": "der aufgelösten Ämter, des aufgelösten Landkreises Bonn und des aufgelösten Zweckverbandes Hardtberg, wenn Aufgaben…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[3].children[5].text@252:municipality",
+      "path": "body[6].children[3].children[5].text",
+      "start": 252,
+      "end": 256,
+      "term": "Bonn",
+      "context": "…teten der aufgelösten Ämter und des aufgelösten Landkreises Bonn in den Dienst der aufnehmenden Körperschaft übernommen sind…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[3].text@35:regional-body-association",
+      "path": "body[6].children[4].children[3].text",
+      "start": 35,
+      "end": 57,
+      "term": "Landschaftsversammlung",
+      "context": "Die Wählbarkeit der Mitglieder der Landschaftsversammlung des Landschaftsverbandes Rheinland wird durch dieses Gesetz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[3].text@62:regional-body-association",
+      "path": "body[6].children[4].children[3].text",
+      "start": 62,
+      "end": 82,
+      "term": "Landschaftsverbandes",
+      "context": "…e Wählbarkeit der Mitglieder der Landschaftsversammlung des Landschaftsverbandes Rheinland wird durch dieses Gesetz, das Gesetz zur Neuglied…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "detector": "regional-body-association",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[3].text@83:geography-region",
+      "path": "body[6].children[4].children[3].text",
+      "start": 83,
+      "end": 92,
+      "term": "Rheinland",
+      "context": "…glieder der Landschaftsversammlung des Landschaftsverbandes Rheinland wird durch dieses Gesetz, das Gesetz zur Neugliederung des …",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[3].text@191:protected:gazette-nw",
+      "path": "body[6].children[4].children[3].text",
+      "start": 191,
+      "end": 205,
+      "term": "GV. NW. S. 152",
+      "context": "…ur Neugliederung des Landkreises Geldern vom 11. März 1969 (GV. NW. S. 152) und das Gesetz zur Neugliederung des Landkreises Kleve vom…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[6].children[4].children[3].text@256:municipality",
+      "path": "body[6].children[4].children[3].text",
+      "start": 256,
+      "end": 261,
+      "term": "Kleve",
+      "context": "…W. S. 152) und das Gesetz zur Neugliederung des Landkreises Kleve vom 11. März 1969 (GV. NW. S. 160) nicht berührt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[6].children[4].children[3].text@281:protected:gazette-nw",
+      "path": "body[6].children[4].children[3].text",
+      "start": 281,
+      "end": 295,
+      "term": "GV. NW. S. 160",
+      "context": "… zur Neugliederung des Landkreises Kleve vom 11. März 1969 (GV. NW. S. 160) nicht berührt.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[7].text@4:constitutional-organ-state",
+      "path": "body[7].text",
+      "start": 4,
+      "end": 50,
+      "term": "Landesregierung des Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "institution",
+      "decision": "safe-auto-transform",
+      "detector": "constitutional-organ-state",
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
+    },
+    {
+      "id": "body[7].text@24:rule:jurisdiction-name-genitive",
+      "path": "body[7].text",
+      "start": 24,
+      "end": 50,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    }
+  ],
+  "decisions": {
+    "municipality": {
+      "manual-review": 45
+    },
+    "institution": {
+      "safe-auto-transform": 2
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 2
+    },
+    "geography": {
+      "manual-review": 30
+    },
+    "source-citation": {
+      "protected": 4
+    },
+    "regional-body": {
+      "manual-review": 2
+    }
+  },
+  "changes": [
+    {
+      "path": "body[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[7].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "meta.title",
+      "term": "Bonn",
+      "context": "Gesetz zur kommunalen Neugliederung des Raumes Bonn (Fn 2)",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "meta.abbr",
+      "term": "Bonn",
+      "context": "Bonn-Gesetz",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[0].text",
+      "term": "Bonn",
+      "context": "Kreisfreie Stadt Bonn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[2].text",
+      "term": "Bonn",
+      "context": "… ohne die in § 10 Abs. 3 genannten Fluren und Flurstücke -, Bonn und Bad Godesberg und die Gemeinden Buschdorf, Duisdorf, Ip…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[2].text",
+      "term": "Rheinland",
+      "context": "…ttgen, alle Amt Duisdorf, die Gemeinde Holzlar, Amt Menden (Rheinland), - ohne die in § 10 Abs. 4 genannten Flurstücke - sowie di…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[2].text",
+      "term": "Bonn",
+      "context": "…reien Stadt zusammengeschlossen. Die Stadt erhält den Namen Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[3].text",
+      "term": "Bonn",
+      "context": "In die neue Stadt Bonn werden aus der Gemeinde Stieldorf folgende Fluren und Flurs…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[4].text",
+      "term": "Bonn",
+      "context": "…t Duisdorf wird aufgelöst. Rechtsnachfolgerin ist die Stadt Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[5].text",
+      "term": "Köln",
+      "context": "Die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß des Zusammenschlusses der Städte Beuel, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[5].text",
+      "term": "Bonn",
+      "context": "… über die aus Anlaß des Zusammenschlusses der Städte Beuel, Bonn und Bad Godesberg sowie der Gemeinden Buschdorf, Duisdorf, …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[2].children[1].children[5].text",
+      "term": "Bonn",
+      "context": "…969 werden mit der Maßgabe bestätigt, daß der Rat der Stadt Bonn für die einzelnen Bezirksausschüsse in der Hauptsatzung auc…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[0].text",
+      "term": "Bonn",
+      "context": "Landkreis Bonn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[2].text",
+      "term": "Köln",
+      "context": "…e folgender Flurstücke in die Gemeinde Wesseling, Landkreis Köln, eingegliedert:",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[2].children[1].text",
+      "term": "Rhein",
+      "context": "… 86 der Flur 14 in östlicher Richtung bis zur Flurgrenze im Rhein verläuft,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[4].text",
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die Einzelheiten zur Bildung der neuen Gemeinde Bornhe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[1].children[4].children[3].text",
+      "term": "Köln",
+      "context": "Die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß der Eingliederung des Ortsteils Urfeld d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[2].children[3].text",
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die Einzelheiten des Zusammenschlusses der Gemeinde Od…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[3].children[2].text",
+      "term": "Köln",
+      "context": "… Mai 1968 und die Bestimmungen des Regierungspräsidenten in Köln über die Einzelheiten des Zusammenschlusses der Gemeinde Wi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].children[3].text",
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn vom 14. Juni 1968 über die Einzelheiten des Zusammenschluss…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[5].children[4].text",
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die aus Anlaß der Auflösung des Amtes Meckenheim zu re…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[3].children[6].children[3].text",
+      "term": "Bonn",
+      "context": "…rkreisdirektors als untere staatliche Verwaltungsbehörde in Bonn über die Einzelheiten des Zusammenschlusses der Gemeinde Vi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[0].text",
+      "term": "Rheinland",
+      "context": "aus der Gemeinde Meindorf, Amt Menden (Rheinland), die Fluren und Flurstücke",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[2].text",
+      "term": "Sieg",
+      "context": "…, 824, 826 und der jeweils nordwestlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 710/208 und 825,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[3].text",
+      "term": "Sieg",
+      "context": "Flur 5 der jeweils nördlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 1517, 1518, 1519, 1520 und…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[7].text",
+      "term": "Rheinland",
+      "context": "aus der Gemeinde Menden (Rheinland), Amt Menden (Rheinland), der Ortsteil Friedrich-Wilhelms-H…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[7].text",
+      "term": "Rheinland",
+      "context": "aus der Gemeinde Menden (Rheinland), Amt Menden (Rheinland), der Ortsteil Friedrich-Wilhelms-Hütte mit den Fluren und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[9].text",
+      "term": "Sieg",
+      "context": "…1/233, 702/233 und der jeweils nördlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 682/233 und 798,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[10].text",
+      "term": "Sieg",
+      "context": "…60/64, 783/185 und der jeweils westlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 1075, 655/186, 656/187, 45…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[11].text",
+      "term": "Sieg",
+      "context": "…usnahme der Flurstücke Nr. 620/400, 621/400,des südlich der Sieg gelegenen Teils des Flurstücks Nr. 1423/401 (Bahngelände) u…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[11].text",
+      "term": "Sieg",
+      "context": "… 1423/401 (Bahngelände) und des südlich der Mittellinie der Sieg gelegenen Teils des Flurstücks Nr. 1583,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[2].children[16].text",
+      "term": "Sieg",
+      "context": "…1, 140/1, 140/2 und der jeweils südlich der Mittellinie der Sieg gelegene Teil der Flurstücke Nr. 832/1 und 837/140.",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[2].children[3].text",
+      "term": "Rheinland",
+      "context": "…glar, der Stadt Troisdorf und den Ämtern Lohmar und Menden (Rheinland) vom Juni 1968 wird mit folgenden Maßgaben bestätigt: [Anla…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[1].text",
+      "term": "Rheinland",
+      "context": "…§ 9 Abs. 2 Nr. 1 genannten Fluren und Flurstücke -, Menden (Rheinland) - ohne die in § 9 Abs. 2 Nr. 2 genannten Fluren und Flurst…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[1].text",
+      "term": "Rheinland",
+      "context": "…ücke -, Niederpleis und Siegburg-Mülldorf, alle Amt Menden (Rheinland), werden zu einer neuen amtsfreien Gemeinde zusammengeschlo…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[4].text",
+      "term": "Rheinland",
+      "context": "…Sankt Augustin werden aus der Gemeinde Holzlar, Amt Menden (Rheinland), folgende Flurstücke eingegliedert:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[5].text",
+      "term": "Rheinland",
+      "context": "Das Amt Menden (Rheinland) wird aufgelöst. Rechtsnachfolgerin ist die Gemeinde Sankt …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[6].text",
+      "term": "Rheinland",
+      "context": "…en Gemeinden Buisdorf, Hangelar, Holzlar, Meindorf, Menden (Rheinland), Niederpleis, Siegburg-Mülldorf und dem Amt Menden (Rheinl…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[6].text",
+      "term": "Rheinland",
+      "context": "…inland), Niederpleis, Siegburg-Mülldorf und dem Amt Menden (Rheinland) vom 31. Juli 1968 wird mit folgenden Maßgaben bestätigt: […",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[7].text",
+      "term": "Rheinland",
+      "context": "… Hoholz der Gemeinde Stieldorf in die neue Gemeinde Menden (Rheinland) zu regelnden Einzelheiten vom 12. August 1968 werden mit d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[7].children[0].text",
+      "term": "Köln",
+      "context": "die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß der Eingliederung von Gebietsteilen der …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[3].children[7].children[0].text",
+      "term": "Rheinland",
+      "context": "… Gebietsteilen der Stadt Beuel in die neue Gemeinde Menden (Rheinland) zu regelnden Einzelheiten vom 7. August 1968 werden bestät…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[5].children[1].text",
+      "term": "Rhein",
+      "context": "Die Stadt Bad Honnef am Rhein und die Gemeinde Aegidienberg, Amt Königswinter-Land, werde…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[8].children[2].children[2].text",
+      "term": "Sieg",
+      "context": "… zwischen den Flurstücken 69 und 70 bis zur Mittellinie der Sieg und von dort in westlicher Richtung der Mittellinie folgend…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[8].children[3].text",
+      "term": "Rheinland",
+      "context": "…tadt Siegburg werden aus der Gemeinde Buisdorf, Amt Menden (Rheinland), folgende Fluren und Flurstücke eingegliedert:",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[8].children[3].children[1].text",
+      "term": "Sieg",
+      "context": "…1 bis 12, 13/1, 14 bis 29, der nördlich der Mittellinie der Sieg gelegene Teil des Flurstücks Nr. 30,",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[13].children[1].text",
+      "term": "Bonn",
+      "context": "Der Landkreis Bonn wird aufgelöst.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[13].children[3].text",
+      "term": "Bonn",
+      "context": "…-Kreis. Er ist Rechtsnachfolger des aufgelösten Landkreises Bonn",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[13].children[4].text",
+      "term": "Köln",
+      "context": "Die Bestimmungen des Regierungspräsidenten in Köln über die aus Anlaß der Auflösung des Landkreises Bonn und d…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[4].children[13].children[4].text",
+      "term": "Bonn",
+      "context": "…en in Köln über die aus Anlaß der Auflösung des Landkreises Bonn und der Eingliederung der Gemeinden Alfter, Bornheim, Mecke…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "term": "Rheinland",
+      "context": "Die Landesplanungsgemeinschaft Rheinland bildet für das Gebiet der neuen kreisfreien Stadt Bonn und …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[0].text",
+      "term": "Bonn",
+      "context": "…Rheinland bildet für das Gebiet der neuen kreisfreien Stadt Bonn und des Rhein-Sieg-Kreises einen Sonderplanungsausschuß im …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].children[0].text",
+      "term": "Bonn",
+      "context": "fünf Mitglieder, die von der kreisfreien Stadt Bonn vorgeschlagen werden;",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].children[2].text",
+      "term": "Rheinland",
+      "context": "…ltungs- und Planungsausschuß der Landesplanungsgemeinschaft Rheinland bestimmt wird;",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[1].children[4].text",
+      "term": "Köln",
+      "context": "der Regierungspräsident in Köln und ein weiteres von der Landesregierung zu bestimmendes Mi…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "term": "Bonn",
+      "context": "…lanungsausschuß erhält für das Gebiet der kreisfreien Stadt Bonn und des Rhein-Sieg-Kreises die Befugnisse des Verwaltungs- …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[2].text",
+      "term": "Rheinland",
+      "context": "…ngs- und Planungsausschusses der Landesplanungsgemeinschaft Rheinland zur Aufstellung des Gebietsentwicklungsplanes und von Fläch…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "term": "Rheinland",
+      "context": "Der Landesplaner der Landesplanungsgemeinschaft Rheinland erarbeitet Raumordnungspläne nach Absatz 3 zusammen mit dem…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[5].children[1].children[3].text",
+      "term": "Bonn",
+      "context": "… nach Absatz 3 zusammen mit dem Oberstadtdirektor der Stadt Bonn und dem Oberkreisdirektor des Rhein-Sieg-Kreises.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[0].text",
+      "term": "Bonn",
+      "context": "Die kreisfreie Stadt Bonn sowie die Gemeinden Alfter und Bornheim werden dem Amtsgeri…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[0].text",
+      "term": "Bonn",
+      "context": "…ie die Gemeinden Alfter und Bornheim werden dem Amtsgericht Bonn zugeordnet.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[1].text",
+      "term": "Bonn",
+      "context": "…e Gemeinde Wachtberg wird ab 1. Januar 1970 dem Amtsgericht Bonn zugeordnet. Bis zu diesem Zeitpunkt gehören ihre Ortsteile …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[1].text",
+      "term": "Bonn",
+      "context": "…einbach, ihre übrigen Ortsteile zum Bezirk des Amtsgerichts Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[1].children[2].text",
+      "term": "Bonn",
+      "context": "…snahme ihres Ortsteils Berzdorf zum Bezirk des Amtsgerichts Bonn. ihr Ortsteil Berzdorf mit den Fluren 1 bis 11 der Gemarkun…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[0].text",
+      "term": "Bonn",
+      "context": "Die Stadt Bonn wird Gewährträger der Kreissparkasse Bonn. Diese überträgt …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[0].text",
+      "term": "Bonn",
+      "context": "Die Stadt Bonn wird Gewährträger der Kreissparkasse Bonn. Diese überträgt die Zweigstellen, die sich im Rhein-Sieg-K…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[0].text",
+      "term": "Bonn",
+      "context": "…rägt die Zweigstelle Oberkassel auf die Sparkasse der Stadt Bonn.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].text",
+      "term": "Bonn",
+      "context": "…htet. die bisherigen Vorstandsmitglieder der Kreissparkasse Bonn mit ihrem Einverständnis auf Verlangen der Stadt Bonn als V…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].text",
+      "term": "Bonn",
+      "context": "…kasse Bonn mit ihrem Einverständnis auf Verlangen der Stadt Bonn als Vorstandsmitglieder der Sparkasse des Rhein-Sieg-Kreise…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[1].text",
+      "term": "Bonn",
+      "context": "… Rhein-Sieg-Kreises zu übernehmen. Die Sparkassen der Stadt Bonn und des Rhein-Sieg-Kreises sind verpflichtet, die bei den z…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[2].children[2].text",
+      "term": "Bonn",
+      "context": "Die Stadt Bonn vereinigt die Sparkassen ihrer Gewährträgerschaft zu einer …",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[3].children[1].text",
+      "term": "Bonn",
+      "context": "… jeder Gruppe des Personalrates des aufgelösten Landkreises Bonn wählen je einen Vertreter, der zu der entsprechenden Gruppe…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[3].children[3].children[1].text",
+      "term": "Bonn",
+      "context": "der aufgelösten Ämter, des aufgelösten Landkreises Bonn und des aufgelösten Zweckverbandes Hardtberg, wenn Aufgaben…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[3].children[5].text",
+      "term": "Bonn",
+      "context": "…teten der aufgelösten Ämter und des aufgelösten Landkreises Bonn in den Dienst der aufnehmenden Körperschaft übernommen sind…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[3].text",
+      "term": "Landschaftsversammlung",
+      "context": "Die Wählbarkeit der Mitglieder der Landschaftsversammlung des Landschaftsverbandes Rheinland wird durch dieses Gesetz…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[3].text",
+      "term": "Landschaftsverbandes",
+      "context": "…e Wählbarkeit der Mitglieder der Landschaftsversammlung des Landschaftsverbandes Rheinland wird durch dieses Gesetz, das Gesetz zur Neuglied…",
+      "category": "regional-body",
+      "decision": "manual-review",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[3].text",
+      "term": "Rheinland",
+      "context": "…glieder der Landschaftsversammlung des Landschaftsverbandes Rheinland wird durch dieses Gesetz, das Gesetz zur Neugliederung des …",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[6].children[4].children[3].text",
+      "term": "Kleve",
+      "context": "…W. S. 152) und das Gesetz zur Neugliederung des Landkreises Kleve vom 11. März 1969 (GV. NW. S. 160) nicht berührt.",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 444,
+    "residuals": [],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Gesetz zur kommunalen Neugliederung des Raumes Bonn (Fn 2) vom 10. Juni 1969",
+    "sourceVersion": "Gesetz zur kommunalen Neugliederung des Raumes Bonn (Fn 2) vom 10. Juni 1969",
+    "simulation": "Gesetz zur kommunalen Neugliederung des Raumes Bonn (Fn 2) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 42453,
+          "actual": 42798,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 311,
+          "actual": 311,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 23,
+          "actual": 23,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 42798,
+          "actual": 42790,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "26 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "26 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T04:26:21.151Z"
+}
