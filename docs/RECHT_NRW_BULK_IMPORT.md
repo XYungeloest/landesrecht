@@ -1,102 +1,155 @@
-# Plan: vollständiger Ausgangsimport RECHT.NRW → Land Westdeutschland (LRGV und LRMB)
+# Vollständiger Ausgangsimport RECHT.NRW → Land Westdeutschland (LRGV und LRMB)
 
-Status: Plan, nicht ausgeführt. Voraussetzungen erfüllt: gehärteter LRGV-Importpfad mit validiertem
-Korpus (`docs/RECHT_NRW_IMPORT.md`), LRMB-Importpfad mit validiertem Korpus
-(`docs/RECHT_NRW_LRMB_IMPORT.md`), gemeinsames Manifest, Review-Queue und Coverage-Report. Umfang nach
-`docs/LEGAL_SCOPE.md`: alle am 2023-12-01 geltenden Gesetze, Rechtsverordnungen und landesweiten
-Verwaltungsvorschriften des Landes Nordrhein-Westfalen, je Stammnorm genau eine Simulationsfassung
+Status: Werkzeuge umgesetzt und getestet, der vollständige Lauf ist noch nicht ausgeführt. Bereitschaft,
+Policies, GO/No-Go-Checkliste und die genauen Befehle des Laufs stehen in
+`docs/RECHT_NRW_BULK_READINESS.md`. Umfang nach `docs/LEGAL_SCOPE.md`: alle am 2023-12-01 geltenden
+Gesetze, Rechtsverordnungen und landesweiten Verwaltungsvorschriften des Landes Nordrhein-Westfalen als
+Recht des Landes Westdeutschland (`west`, Kurzname „West“), je Stammnorm genau eine Simulationsfassung
 `2023-12-01`.
 
 ```text
-Phase A  LRGV  (Gesetze, Rechtsverordnungen)          → Audit A
-Phase B  LRMB  (Verwaltungsvorschriften)              → Audit B
-Gemeinsames Audit (Slugs, Verweise, Coverage, Suche)  → Freigabe des West-Bestands
+Enumeration LRGV + LRMB (committet)            → Abgleich Sitemap ↔ Suchindex ↔ Term
+Phase A  Bulk LRGV (Gesetze, Rechtsverordnungen) → Audit A (Coverage, Suche, Stichproben)
+Phase B  Bulk LRMB (Verwaltungsvorschriften)     → Audit B (+ Rekonstruktionsqueue)
+R2-Sync, D1-Batches lokal                        → Freigabe des West-Bestands
 ```
 
-## Gemeinsame Grundlagen
+## Grundregeln
 
 | Thema | Regel |
 | --- | --- |
-| Identität | `term:<id>` (Taxonomie-Term) für beide Bereiche; Manifest-Schlüssel; Dubletten über Term, nicht über URL oder Titel. |
-| Enumeration | Getrennt je Bereich in `data/imports/recht-nrw/enumeration-<area>.json` (Term, Einstiegs-URL, Portaltyp, Status `pending\|done\|failed\|review\|excluded`). Fortsetzungspunkt für `--resume`. |
-| Deduplizierung | Mehrere Adressen je Term werden zusammengeführt (Sitemap-Gruppe über Slug-Stamm, bestätigt durch den Term der ersten abgerufenen Seite). Ein Term, der in beiden Bereichen auftaucht, ist ein Review-Fall (`metadata-conflict`). |
-| Rate Limiting | Ein sequenzieller Fetcher für beide Phasen, Mindestabstand 1–2 s, Timeout 20 s, Backoff bei 5xx/429, Abbruch nach n aufeinanderfolgenden `rate-limited`/`forbidden`, Tagesbudget (z. B. 3 000 Abrufe). Keine Umgehung von Zugriffsbeschränkungen. |
-| Checkpoints | Manifest und Review-Queue nach jeder Stammnorm atomar fortschreiben (Temp-Datei + Umbenennen); Content erst nach bestandener Validierung – es gibt keine halben Normen. `--limit n`, `--only <term>`, `--resume`, `--refresh`. |
-| Cache | `.cache/recht-nrw/` (SHA-256-geprüft) macht Wiederholungsläufe netzfrei; Regeneration nach Parser- oder Transformerwechsel ohne Netz. |
-| Review-Queue | Eine Queue für beide Bereiche, Kategorien nach `common/review-queue.ts`; Fälle verschwinden nie; Entscheidungen bleiben beim Reimport erhalten. |
-| R2 | Rohquellen nach `landesrecht-quellen` unter `west/recht-nrw/2023-12-01/term-<id>/<sha256[0..16]>-<rolle>.<ext>`, Quellenreferenz `availability: r2-archived` mit `objectKey`, `sha256`, `url`, `retrievedAt`. Rückleseprüfung; Objekte mit abweichendem Hash werden nie überschrieben. Im Repository bleiben nur Manifest, Queue, Reports und Rezepte; die Beispielkorpora unter `sources/recht-nrw/` sind die einzige Ausnahme. |
-| Manifest | Ein Manifest (Schema 2) für beide Bereiche; bei mehreren Tausend Einträgen Aufteilung in `manifest-lrgv.json`/`manifest-lrmb.json` mit gleichem Schema erwägen. |
-| D1 | Vollprojektion `npm run d1:seed:local`, `npm run d1:schema:check`; Remote-Pläne `npm run d1:apply:remote` (manuell nach Prüfung). Ab einigen Tausend Normen inkrementelle Projektion aus `git diff` (OstRecht-Muster). |
-| Suche | Nach jeder Phase: FTS5-Integrität, Stichproben für Titel, Abkürzung, Strukturadresse (§, Artikel), Nummernanker (LRMB) und Typfilter („Verwaltungsvorschrift“ umfasst alle Arten). |
-| Qualitätsmetriken | Je Lauf: Integritätsfehler, Prüfung nach Transformation fehlgeschlagen, manuelle Entscheidungen je Kategorie, Anteil `imported-with-warnings`, Review-Fälle je Kategorie, Rekonstruktionen, Laufzeit, Netzabrufe. |
-| Coverage | `npm run import:recht-nrw:coverage -- --write` mit Enumerationszahlen (`scope: bulk`): LRGV enumeriert / am Stichtag / importiert / Review / nicht verfügbar / ausgeschlossen; LRMB enumeriert / normativ / am Stichtag / direkt / rekonstruiert / Review / ausgeschlossen. |
+| Identität | `term:<id>` (Taxonomie-Term der Stammnorm) für beide Bereiche; vor dem ersten Abruf `stem:<typ>/<slug>`. Der Lauf löst die Term-ID über die Fassungsliste auf, führt Dubletten zusammen (`mergedInto`) und trennt fremde Adressen ab. |
+| Rechtsumfang | Nur Eindeutiges wird übernommen; Zweifelsfälle (Normativität, Dokumentidentität, Geltung, PDF, Rekonstruktion) werden vollständig erfasst und in die Review-Queue gestellt, nie automatisch aufgenommen. |
+| Fehlerklassen | Normlokale Fehler → `review` bzw. `failed`, der Lauf geht weiter. Systemische Fehler (Portalstruktur, Parserverlust, Sperren, R2-Ausfall, beschädigter Zustand) → kontrollierter Abbruch `aborted-systemic` mit Exit-Code 2. |
+| Institutionen | `institution-mapping.json`; offene Zuordnungen blockieren nicht (`imported-with-warnings`, `originEnactingBody` = Quelle, `enactingBody` leer). Korrekter Text geht vor kosmetischer Umbenennung. |
+| Bundesrecht | Verweise bleiben Text; der Bundesrechts-Provider bleibt funktionsfähig; keine irreversible Rohlink-Bindung. Kein Blocker. |
+| Keine Umgehung | Keine Umgehung von Rate Limits, Sperren, CAPTCHAs oder Bot-Schutz; Sperrantworten beenden den Lauf. |
 
-## Phase A – LRGV
+## Enumeration (`common/enumeration.ts`)
 
-1. **Enumeration:** Sitemaps (`/sitemap.xml`, 36 Teilsitemaps; 3 205 `lrgv/gesetz`- und 5 844
-   `lrgv/rechtsverordnung`-Fassungsseiten) plus Suchindex (`state_law_and_regulations`: 1 009 Gesetze,
-   2 234 Rechtsverordnungen als Stammnormen mit aktuellster Fassung). Abgleich über den Term.
-2. **Filter:** nur `gesetz` und `rechtsverordnung`; `lrgv/bekanntmachung` bleibt außen vor (Belege für
-   Inkrafttreten von Staatsverträgen, `docs/LEGAL_SCOPE.md`).
-3. **Stichtagsfassung:** lokale Stichtagsauswahl je Stammnorm; historische Befunde sind Warnungen.
-   Erwartet: 2 Seiten + Textdatei (Legacy) + Anlagen je Stammnorm, ≈ 7 000 Abrufe.
-4. **Review-Schwerpunkte:** `version-selection` (lokale Lücken/Überlappungen, nicht darstellbare
-   Stichtagsfassung), `text-integrity`, `unknown-structure`, `attachment` (PDF), `institution-mapping`
-   (nicht blockierend).
-5. **Audit A:** `import:recht-nrw:audit`, `content:check`, `d1:schema:check`, `test`, Stichproben je
-   Sachgebiet, Determinismus-Lauf aus dem Cache (byteidentisch bis auf Zeitstempel).
+`npm run import:recht-nrw:enumerate -- --area lrgv|lrmb [--write]` liest den Sitemap-Index (47 Teilsitemaps)
+und den Suchindex (`/search/middleware`, `search_after`-Paging, 500 Treffer je Seite) und schreibt
+`data/imports/recht-nrw/enumeration-<bereich>.json` (`recht-nrw-enumeration/1`, ein Eintrag je Zeile,
+deterministisch, kein Diff bei Wiederholung):
 
-## Phase B – LRMB
+| Feld | Inhalt |
+| --- | --- |
+| `key`, `sourceIdentity` | `term:<id>` oder `stem:<typ>/<slug>` |
+| `entryUrl`, `urls`, `portalType`, `title`, `titleSource` | Einstieg, alle Fassungsadressen des Stamms, Portaltyp, Titel (Suchindex vor Slug) |
+| `status` | `pending | processing | done | review | failed | excluded` |
+| `signals`, `search` | Sitemap/Suchindex, `field_historically`, Außerkrafttreten, Gültig ab (nur Hinweise) |
+| `preclassification` | `likely-include | likely-exclude | review | unknown` mit Grund; ohne Abruf ausgeschlossen nur bei eindeutigem Titel |
+| `role` | `norm-candidate` oder `evidence` (LRGV-Bekanntmachungen: Belege für Staatsverträge) |
+| `attempts`, `lastError`, `outcome`, `lastRunId` | Fortschritt |
 
-1. **Enumeration:** Sitemaps (4 747 `lrmb/verwaltungsvorschrift`: 785 datiert, 3 962 undatiert;
-   1 563 `lrmb/bekanntmachung`) plus Suchindex (`state_law_ministerial_gazette`: 4 770 VwV).
-   `field_effective_from`, `field_outforce_date` und `field_historically` dienen nur der Priorisierung
-   und Querprüfung, nie als alleiniger Beleg.
-2. **Vorfilter ohne Abruf:** Titelregeln der Normativität (Ausschlussgründe) auf die Enumeration
-   anwenden; ausgeschlossene Titel werden mit Grund im Manifest geführt, ohne Seitenabruf nur, wenn der
-   Titel eindeutig ist – sonst Abruf und Entscheidung auf der Seite.
-3. **Je Dokument:** Einstiegsseite, jüngste Fassung, gewählte Fassung, Ministerialblatt-Einträge der
-   eingearbeiteten Änderungen (mit Kandidaten `-0/-1`), Anlagen der übernommenen Dokumente.
-   Größenordnung ≈ 3–6 Abrufe je datierter VwV.
-4. **Ministerialblatt-Index:** Ausgabenseiten `/mblnrw/<Jahr>-<Nr>` (≈ 50 je Jahr) einmalig je Jahr
-   laden und als Index versionieren (Titel, Seite, Adresse, Veröffentlichungsdatum). Nutzen: Auflösung von
-   Seitenkollisionen ohne Probierabrufe und Querprüfung, dass keine Änderung außerhalb des
-   Fundstellenverlaufs übersehen wurde (Befund, nie alleiniger Beleg).
-5. **Undatierte Altdatensätze:** Ohne Änderung nach dem Stichtag ist die Geltung nicht belegbar.
-   Vorgehen: erst die Teilmenge mit Fundstellenverlauf und Änderungen nach 2023 importieren, die übrigen
-   als `historical-gap` sammeln; eine redaktionelle Entscheidung zur Nutzung von `field_historically`
-   (nach Stichprobenprüfung) steht aus.
-6. **Rekonstruktionen:** `reconstruction-required` sammelt die Queue; Rezepte entstehen nur einzeln mit
-   Prüfung (Priorität nach Bedeutung der Vorschrift). Kein automatischer Rezeptgenerator ohne Prüfschritt.
-7. **Review-Schwerpunkte:** `normativity`, `historical-gap`, `reconstruction-required`,
-   `reconstruction-uncertain`, `attachment` (PDF-only-Vorschriften wie VV zur LHO), `metadata-conflict`.
-8. **Audit B:** wie Audit A, zusätzlich Rekonstruktionsprüfung (Fingerabdrücke, Quellen-Hashes) und
-   Stichproben der Stichtagsbelege.
+Stand der committeten Enumeration (15./16. September 2026):
 
-Erwartung aus dem Beispielkorpus (15 Dokumente): 8 übernommen (davon 1 rekonstruiert), 2 nicht am
-Stichtag, 4 Review, 1 ausgeschlossen. Im Bulk ist der Review-Anteil wegen der undatierten Altdatensätze
-deutlich höher.
+| Bereich | Sitemap-Adressen / Stämme | Suchindex (Treffer / eindeutig) | Vereinigung = Schnittmenge + nur Sitemap + nur Suchindex | Einträge |
+| --- | --- | --- | --- | --- |
+| LRGV | 10 518 / 3 338 | 4 074 / 3 967 | 3 338 = 3 171 + 167 + 0 | 3 342 (2 766 likely-include, 5 review, 571 Belege) |
+| LRMB | 6 532 / 5 971 | 6 351 | 5 971 = 5 953 + 18 + 0 | 5 974 (3 580 likely-include, 519 likely-exclude, 1 247 review, 628 unknown, 147 ohne Abruf ausgeschlossen) |
 
-## Gemeinsames Audit
+Die Enumeration wird vor dem Lauf nicht erneuert; `--write` einer neuen Enumeration übernimmt Status und
+Fortschritt vorhandener Einträge.
 
-- Slug-Kollisionen über beide Bereiche (gleicher Slug, andere Term-ID) und gleiche Kurzbezeichnungen.
-- Coverage-Report mit Enumerationszahlen; Abgleich Manifest ↔ Enumeration ↔ `content/norms/west/`.
-- Suche: Typfilter, Nummernanker, Strukturadressen; Stichproben „Gesetz + zugehörige VwV“ (z. B.
-  Landesreisekostengesetz und VVzLRKG).
-- Review-Queue: keine offenen blockierenden Fälle bei übernommenen Normen; offene Fälle dokumentiert.
-- Wiederholungslauf aus dem Cache ohne inhaltliche Abweichung.
+## Bulk-Runner (`common/bulk-runner.ts`, `cli-bulk.ts`)
 
-## Blocker vor dem vollständigen West-Import
+```sh
+npm run import:recht-nrw:bulk -- --area lrgv|lrmb [--write] [--resume] [--limit n] [--only a,b]
+  [--retry-failed] [--retry-review] [--regenerate-stale] [--refresh] [--offline]
+  [--max-requests n] [--max-bytes n] [--max-runtime 8h] [--min-delay 1500]
+  [--archive staging|r2] [--r2-transport s3|wrangler] [--staging-dir dir] [--output-root dir]
+```
 
-1. **Bulk-Werkzeuge fehlen:** Enumeration je Bereich, `--resume/--limit/--only`, atomare Checkpoints,
-   Tagesbudget, R2-Archivierung (bisher nur versionierte Beispielquellen).
-2. **Institutionen:** 178 manuelle Entscheidungen allein im Beispielbestand (Ministerien, Behörden,
-   Kommunen, Regionen). Nicht blockierend für den Text, aber eine redaktionelle Zuordnungstabelle
-   (West-Ressortzuschnitt) ist nötig, bevor Organe übergeleitet werden.
-3. **Restformen der Landesbezeichnung:** z. B. „VwVfG. NRW.“ oder „…gesetz NRW.“ am Satzende bleiben
-   unverändert (dokumentiert); eine sichere Regel braucht eine Entscheidung.
-4. **LRMB-Altbestand:** Entscheidung zu undatierten SMBl-Datensätzen und zu `field_historically`.
-5. **PDF-only-Vorschriften und PDF-Anlagen:** Entscheidung, ob PDF-Texte transkribiert werden.
-6. **Rekonstruktionsaufwand:** Rezepte sind Einzelarbeit; Priorisierung und Kapazität festlegen.
-7. **D1-Größe:** inkrementelle Projektion vor dem Remote-Einspielen mehrerer Tausend Normen.
-8. **Bundesrechtsverweise:** noch nicht verlinkt (`docs/RECHT_NRW_IMPORT.md`, Abschnitt 9).
+- **Dry-run ist Standard.** Ohne `--write` wird nichts geschrieben (Enumeration, Manifest, Queue, Inhalte,
+  Archiv). `--output-root` lenkt einen Schreiblauf in eine Testumgebung.
+- **Auswahl:** `pending` und unterbrochene `processing`-Einträge; zusätzlich `--retry-failed`,
+  `--retry-review`, `--regenerate-stale` (Parser-/Transformerwechsel); `--only` (Term-ID, Schlüssel oder
+  Adresse) und `--limit`. Ein Schreiblauf über vorhandenen Fortschritt verlangt `--resume`.
+- **Je Stammnorm:** Checkpoint `processing` → Importpfad LRGV/LRMB → Rohquellen ins Archiv → Slug-Registry →
+  Norm (Temp-Verzeichnis + Austausch) → Report → Review- und Manifest-Datei → Enumeration `done|review|
+  failed|excluded`. Alle Dateien atomar (Temp-Datei → fsync → rename → Verzeichnis-fsync); unterbrochene
+  Normschreibvorgänge werden beim nächsten Start zurückgerollt.
+- **Signale:** Erstes SIGINT/SIGTERM beendet den Lauf nach der laufenden Stammnorm (`interrupted`, Exit 130),
+  ein zweites bricht den laufenden Abruf ab; die offene Norm geht zurück auf `pending`.
+- **Systemerkennung:** 20 Fehlschläge in Folge oder derselbe Fehlercode in 15 der letzten 25 Normen →
+  `aborted-systemic`. Budget-, Sperr- und Abbruchfehler, Archivfehler und beschädigter Zustand beenden den
+  Lauf sofort; die betroffene Norm bleibt `pending`.
+- **Laufbericht:** `data/audits/recht-nrw/runs/recht-nrw-2023-12-01-<bereich>-<zeit>.json` mit Git-Commit,
+  Parser-/Transformerversion, Stichtag, Bereich, Beginn/Ende, Budget, Abrufen, Cachetreffern, Bytes,
+  Ergebnissen (übernommen, Review, fehlgeschlagen, ausgeschlossen, nicht am Stichtag, rekonstruiert,
+  zusammengeführt, abgetrennt), Archiv (gestagt, hochgeladen, geprüft), Fehlerliste und Enumerationsstand.
+  Laufstatus: `completed | limit-reached | nothing-to-do | budget-exhausted | interrupted | aborted-systemic`
+  (`budget-exhausted` ist kein Fehler).
+
+## Abrufe, Budgets, Cache (`common/fetcher.ts`)
+
+| Regel | Wert |
+| --- | --- |
+| Mindestabstand | 1 500 ms zwischen Netzabrufen (`--min-delay`), strikt sequenziell |
+| Timeout, Wiederholungen | 20 s; höchstens 3 Wiederholungen bei Timeout, Netzfehler, 5xx (Backoff 2 s, 4 s, 8 s) |
+| 429/403 | `Retry-After` wird beachtet (Sekunden oder HTTP-Datum); 3 Sperrantworten in Folge oder `Retry-After` > 120 s → `blocked`, Lauf endet |
+| Budgets | Bulk-Standard 3 000 Netzabrufe und 8 h je Lauf; optional Bytes; Enumeration 250 Abrufe |
+| Cache | `.cache/recht-nrw/` (nicht in Git): Schlüssel aus URL (POST: Methode, URL, Body), Metadaten `finalUrl`, `status`, `contentType`, `retrievedAt`, `byteLength`, `sha256`, relevante Header; beschädigte Einträge zählen als Fehlschlag des Caches und werden online neu geladen, offline nie ersetzt; 404-Antworten werden negativ gecacht |
+| Offline | `--offline` verarbeitet ausschließlich aus dem Cache (Regeneration ohne Netz); `--refresh` lädt kontrolliert neu |
+
+Größenordnung: LRGV ≈ 2–4 Abrufe je Stammnorm (Einstiegsseite, Stichtagsfassung, Textdatei, Anlagen);
+LRMB ≈ 2–6 (Fassungen, Ministerialblatt-Einträge, Anlagen). Bei 1,5 s Abstand sind 3 000 Abrufe ≈ 75 min.
+
+## Rohquellen und R2 (`common/archive.ts`, `common/r2-transport.ts`)
+
+- Objektschlüssel `west/recht-nrw/2023-12-01/term-<id>/<sha256[0..16]>-<rolle>.<ext>`, Rollen
+  `version-page | text-document | attachment | gazette | amendment | source-pdf | reconstruction-source |
+  envelope`; zu jedem Objekt ein Umschlag `<schlüssel>.envelope.json` mit URL, Abrufzeit, SHA-256, Typ.
+- Unveränderlich: gleicher Schlüssel mit gleichem Hash → `already-present`; anderer Hash → harter Fehler
+  (Lauf endet). Nach jedem Upload Rücklesung mit Größen- und Hashprüfung.
+- `--archive staging` (Standard, ohne Zugangsdaten): Ablage unter `.cache/recht-nrw-r2-staging/`, später
+  `npm run import:recht-nrw:r2-sync -- --write` (gleiche Prüfungen). `--archive r2`: sofortiger Upload
+  (S3-API mit `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` oder `wrangler`).
+- Quellenreferenz der Norm: `{ availability: "r2-archived", bucket: "landesrecht-quellen", objectKey,
+  sha256, url, retrievedAt }`; nie ein Pfad unter `sources/`. Der Bulkmodus bricht ab, wenn das Archiv oder
+  das Staging in einem versionierten Verzeichnis läge.
+
+## Zustand im Repository
+
+| Datei | Inhalt |
+| --- | --- |
+| `data/imports/recht-nrw/enumeration-<bereich>.json` | Enumeration und Fortschritt |
+| `data/imports/recht-nrw/manifest/<bereich>/term-<id>.json` | Manifest je Quelle (alle Status) |
+| `data/imports/recht-nrw/review/<bereich>/term-<id>.json` | Review-Fälle je Quelle mit Entscheidungen |
+| `data/imports/recht-nrw/evidence/lrgv/term-<id>.json` | registrierte Belege (Bekanntmachungen) |
+| `data/imports/recht-nrw/slug-registry.json` | Slug je Quelle, stabil; Kollision → `<slug>-<term>` |
+| `data/imports/recht-nrw/overrides.json` | dokumentierte Abweichungen vom Portal |
+| `data/imports/recht-nrw/institution-mapping.json` | Institutionen-Zuordnung |
+| `data/imports/recht-nrw/reconstructions/`, `transcriptions/` | geprüfte Rezepte und Transkriptionen |
+| `data/audits/recht-nrw/<slug>.json`, `lrgv/`, `lrmb/` | Reports übernommener und Belege nicht übernommener Dokumente |
+| `data/audits/recht-nrw/coverage.json`, `COVERAGE.md`, `runs/` | Coverage und Laufberichte |
+| `content/norms/west/<slug>/` | übernommene Normen |
+
+Im Laufe des Bulks entstehen einige Tausend kleine JSON-Dateien; Commits je Phase (oder je
+`--max-runtime`-Abschnitt) halten Diffs überschaubar.
+
+## Coverage und Audit
+
+- `npm run import:recht-nrw:coverage -- --write`: Basis ist die Enumeration. Anteile beziehen sich immer auf
+  die ausgewiesene Basis, offene Einträge werden als `pending` gezählt; es gibt keine 100 %, solange etwas
+  offen ist. Abgleich Sitemap ↔ Suchindex ↔ Term ↔ Manifest ↔ Enumeration ↔ Inhalt, veraltete Importe
+  (`parserVersion`/`transformerVersion`) mit Regenerationsbefehl.
+- `npm run import:recht-nrw:audit`: Manifest ↔ Inhalte ↔ Slug-Registry ↔ Enumeration, Hashes, Reports,
+  Rekonstruktionen, Quellpfade (keine Bulk-Norm mit `sources/`-Pfad), Coverage aktuell.
+- `npm run import:recht-nrw:search-audit`: Titel, Abkürzung, §/Artikel, Nummernadressen, Typfilter, West
+  allein und alle Länder, keine Fixtures, keine Dubletten, FTS-Integrität.
+- `npm run import:recht-nrw:reconstruction-queue -- --write`: Rekonstruktionsbedarf mit Priorisierungshilfe.
+
+## D1
+
+Vollprojektion und Remote-Einspielung über SQL-Batches; Folgeläufe inkrementell mit Basisprüfung
+(`docs/DEPLOYMENT.md`). Skalierungsnachweis mit 5 000 synthetischen Normen:
+`data/audits/recht-nrw/d1-scale.json`. Remote-D1 wird nur manuell mit `--confirm-remote` beschrieben.
+
+## Nachweise vor dem Lauf
+
+- Offline-Simulation mehrerer Tausend Stammnormen mit Abbruch und Resume, Speicher-R2, Determinismus und
+  D1-Projektion: `npm run import:recht-nrw:simulate -- --report` → `data/audits/recht-nrw/bulk-simulation.json`.
+- Echte Kleinläufe im Dry-run (`--limit 20` je Bereich) ohne Fehler und ohne Sperrantworten.
+- `npm run import:recht-nrw:readiness` → `READY`.

@@ -7,10 +7,29 @@ werden, regelt `docs/LEGAL_SCOPE.md`.
 ## Pipeline
 
 ```text
-Fetch → Archive Raw Source → Parse Source Format → Normalize Source Law
-  → Select Source Version at Baseline → Detect → Transform into Simulation Jurisdiction → Post-Transform Audit
-  → Validate → Write Canonical JSON → Project to D1 → Audit (Manifest, Review-Queue, Coverage)
+Enumerate (Sitemaps + Suchindex, Abgleich) → je Stammnorm:
+Fetch → Select Source Version at Baseline → Parse Source Format → Document Identity and Body Sanity
+  → Classify (Normativität) → Text Completeness (PDF-Policy) → Assess Validity → Archive Raw Source
+  → Normalize Source Law → Detect → Transform into Simulation Jurisdiction → Post-Transform Audit
+  → Validate → Write Canonical JSON → Checkpoint (Manifest, Review, Enumeration)
+→ Project to D1 (voll oder inkrementell, in Batches) → Audit (Coverage, Suche, Readiness)
 ```
+
+Die Dokumentidentität wird nach dem Parsen und vor jeder Normativitätsentscheidung und jedem Schreiben
+geprüft (`consistent | review | mismatch`); `mismatch` wird nie übernommen.
+
+## Bulkbetrieb
+
+| Baustein | Modul | Regel |
+| --- | --- | --- |
+| Enumeration | `common/enumeration.ts` | `data/imports/recht-nrw/enumeration-<bereich>.json`, deterministisch, Fortschritt je Eintrag (`pending → processing → done/review/failed/excluded`) |
+| Bulk-Runner | `common/bulk-runner.ts`, `cli-bulk.ts` | Dry-run Standard; `--resume`, `--limit`, `--only`, `--retry-failed`, `--retry-review`, `--regenerate-stale`; Normfehler → Review/fehlgeschlagen und weiter, systemische Fehler → kontrollierter Abbruch (`aborted-systemic`) |
+| Checkpoints | `common/atomic.ts`, `common/persist.ts` | nach jeder Stammnorm atomar (Temp-Datei → fsync → rename); Norm über Temp-Verzeichnis und Austausch; SIGINT/SIGTERM beenden nach der laufenden Norm |
+| Abrufe | `common/fetcher.ts` | ein sequenzieller Fetcher, Mindestabstand 1,5 s, Retry-After, Backoff, Abbruch nach wiederholten Sperren, Budgets (Abrufe, Bytes, Laufzeit); `budget-exhausted` ist kein Fehler |
+| Cache | `common/fetcher.ts` | `.cache/recht-nrw/` (nicht in Git), SHA-256-geprüft, Offline-Neuverarbeitung |
+| Archiv | `common/archive.ts`, `common/r2-transport.ts` | R2 `landesrecht-quellen`, unveränderliche Objekte mit Rücklesung; ohne Zugangsdaten Staging unter `.cache/` und späterer Upload |
+| Zustand | `common/manifest.ts`, `common/review-queue.ts`, `common/slug-registry.ts`, `common/overrides.ts` | je Quelle eine Datei (`manifest/<bereich>/term-<id>.json`, `review/<bereich>/term-<id>.json`), stabile Slugs, dokumentierte Overrides |
+| Auswertung | `common/coverage.ts`, `common/search-audit.ts`, `common/readiness.ts` | Coverage (JSON + Markdown), Suchintegrität, READY/NOT READY |
 
 | Phase | Schnittstelle | Ergebnis |
 | --- | --- | --- |
@@ -34,7 +53,7 @@ Analog: Schleswig-Holstein → NSH, Bayern → BayWü, Sachsen/OstRecht → Ost.
 
 | Paket | Quelle | Ziel | Stand |
 | --- | --- | --- | --- |
-| `importer-recht-nrw` | RECHT.NRW: LRGV (Gesetze, Rechtsverordnungen) und LRMB (Verwaltungsvorschriften) | west | **Phase 2**: gehärteter Importpfad, validierte Beispielkorpora (12 LRGV, 15 LRMB), gemeinsames Manifest/Review/Coverage; kein Bulkimport (`docs/RECHT_NRW_IMPORT.md`, `docs/RECHT_NRW_LRMB_IMPORT.md`, `docs/RECHT_NRW_BULK_IMPORT.md`) |
+| `importer-recht-nrw` | RECHT.NRW: LRGV (Gesetze, Rechtsverordnungen) und LRMB (Verwaltungsvorschriften) | west | **Phase 3 – bulkbereit**: gehärteter Importpfad, validierte Beispielkorpora (12 LRGV, 15 LRMB), vollständige Enumeration beider Bereiche, Bulk-Runner mit Resume/Checkpoints/Budgets, R2-Archiv, Coverage und Readiness-Prüfung; der vollständige Ausgangsimport ist noch nicht gelaufen (`docs/RECHT_NRW_IMPORT.md`, `docs/RECHT_NRW_LRMB_IMPORT.md`, `docs/RECHT_NRW_BULK_IMPORT.md`, `docs/RECHT_NRW_BULK_READINESS.md`) |
 | `importer-juris-sh` | juris Schleswig-Holstein | nsh | Platzhalter |
 | `importer-bayernrecht` | BAYERN.RECHT | baywue | Platzhalter |
 | `importer-ostrecht` | OstRecht-Normordner | ost | Leser + Adapter vorhanden, kein Schreiblauf |
@@ -42,7 +61,8 @@ Analog: Schleswig-Holstein → NSH, Bayern → BayWü, Sachsen/OstRecht → Ost.
 ## Verbindliche Regeln für alle Importer
 
 1. Discovery und Abruf nur über einen ausdrücklichen Befehl; Rohquellen unverändert mit SHA-256
-   archivieren (`sources/` nur für Beispielkorpora, produktiv R2), Manifest committen.
+   archivieren (`sources/` nur für Beispielkorpora, im Bulkmodus ausschließlich R2 bzw. Staging außerhalb
+   von Git – der Bulkmodus bricht sonst ab), Manifest committen.
 2. Ausgangsfassung = die am 2023-12-01 geltende Fassung; `sourceValidFrom/To` nur aus Belegen,
    `simulationValidFrom = 2023-12-01`, `simulationValidTo = null`. Nach dem Stichtag gilt
    Simulationsrecht; spätere reale Änderungen werden nie übernommen.

@@ -154,20 +154,31 @@ Fußnotenblöcke und Einheitenfolge sowie Textumfang ±3 %; doppelte Einheitenke
 
 ## 8. Manifest, Review-Queue, Coverage (LRGV und LRMB)
 
-- `data/imports/recht-nrw/manifest.json` (Schema 2): je Stammnorm `sourceArea`, `sourceDocumentType`,
+- Manifest je Quelle: `data/imports/recht-nrw/manifest/<bereich>/term-<id>.json`
+  (`recht-nrw-import-manifest-entry/2`), atomar geschrieben: `sourceArea`, `sourceDocumentType`,
   `sourceIdentity`, `sourceTitle`, `sourceUrl`, `sourceVersion`, `baselineStatus`, `validityEvidence`,
+  `validityProvenance`, `documentIdentity`, `textCompleteness`, `attachments`, `consentLaw`, `archive`,
   `retrievedAt`, `sha256`, `parserVersion`, `transformerVersion`, `targetJurisdiction`, `targetSlug`,
-  `importStatus`, `reviewStatus`, `reconstructionStatus`, `reconstructionSources`, `reconstructionSteps`
-  sowie Rohquellen, geprüfte Fassungen, Befunde, Integrität und Transformationszahlen. Manifeste der
-  Version 1 werden beim Lesen hochgestuft.
-- `data/imports/recht-nrw/review-queue.json`: Kategorien `version-selection`, `source-unavailable`,
-  `historical-gap`, `reconstruction-required`, `reconstruction-uncertain`, `unknown-structure`,
-  `text-integrity`, `normativity`, `institution-mapping`, `slug-collision`, `attachment`,
-  `metadata-conflict`, `other`. Stabile Kennung je Quelle, Kategorie und Schlüssel; Fälle verschwinden
-  bei Reimport nicht (`occurrence: not-reproduced`), Entscheidungen (`resolved`, `accepted`) bleiben.
-- `data/audits/recht-nrw/coverage.json`: LRGV enumeriert / am Stichtag / importiert / Review / nicht
-  verfügbar / ausgeschlossen; LRMB enumeriert / normativ / am Stichtag / direkt / rekonstruiert / Review /
-  ausgeschlossen; offene Review-Fälle; Qualitätskennzahlen. Das Audit prüft die Datei gegen Manifest und Queue.
+  `importStatus`, `reviewStatus`, `reconstructionStatus`/`-Plan`/`-Sources`/`-Steps`, `runId` sowie
+  Rohquellen, Befunde, Integrität und Transformationszahlen. Laufmetadaten (`importedAt`, `runId`) ändern sich
+  nur mit dem Inhalt. Ein früher übernommener Eintrag wird von einem späteren Fehlschlag nicht überschrieben
+  (Befund `import-regression`). Das frühere `manifest.json` wird gelesen und migriert.
+- Review je Quelle: `data/imports/recht-nrw/review/<bereich>/term-<id>.json` (`recht-nrw-review-shard/2`):
+  Kategorien `version-selection`, `source-unavailable`, `historical-gap`, `reconstruction-required`,
+  `reconstruction-uncertain`, `unknown-structure`, `text-integrity`, `normativity`, `document-identity`,
+  `institution-mapping`, `slug-collision`, `attachment`, `metadata-conflict`, `other`. Status
+  `open | accepted | resolved | excluded | deferred | superseded`; jede Entscheidung mit `decision`, `reason`,
+  `decidedAt`, optional `decidedBy`, `replacement`, `override` und Verlauf. Derselbe Befund behält seine
+  Entscheidung; ein verschwundener offener Fall wird `superseded`, nie gelöscht, und bei Wiederauftreten
+  wieder geöffnet.
+- Overrides `data/imports/recht-nrw/overrides.json` (Felder `sourceValidTo`, `sourceValidFrom`, `normativity`,
+  `sourceDocument`, `attachmentHandling`, `institutionMapping`, je mit Wert, Begründung, Beleg, Prüfdatum),
+  Slug-Registry `data/imports/recht-nrw/slug-registry.json` (stabil je Quelle; Kollision → `<slug>-<term>`
+  mit Review-Hinweis), Institutionen `data/imports/recht-nrw/institution-mapping.json`.
+- Coverage `data/audits/recht-nrw/coverage.json` + `COVERAGE.md` (Schema 2): Enumeration als Basis,
+  Kennzahlen mit Anzahl und Anteil je Bereich, Abgleich Sitemap ↔ Suchindex ↔ Term ↔ Manifest ↔ Inhalt,
+  Review, Institutionen, Archiv, Rekonstruktion, veraltete Importe, Läufe. Solange Einträge offen sind,
+  weist der Bericht keine Vollständigkeit aus.
 
 ## 9. Validierungskorpus LRGV (12 Vorschriften)
 
@@ -215,6 +226,8 @@ npm run import:recht-nrw:audit                           # Manifest, Hashes, Dat
 ```
 
 Optionen: `--offline` (nur Cache), `--cache-dir <pfad>`, `--baseline <datum>`, `--json`, `--area`.
+Bulkbetrieb (Enumeration, Bulk-Runner, R2, Readiness): `docs/RECHT_NRW_BULK_IMPORT.md` und
+`docs/RECHT_NRW_BULK_READINESS.md`.
 Nach einem Schreiblauf: `npm run content:check`, `npm run d1:schema:check`, `npm run test`,
 `npm run d1:seed:dev` und Sichtprüfung unter `/west/`, `/west/norm/<slug>/`, `/west/norm/<slug>/daten/`,
 `/west/norm/<slug>/quellen/`.
@@ -233,8 +246,15 @@ Verwaltungsvorschriften (Bereich LRMB) werden über denselben Importer in einem 
 
 ## 13. Bekannte Grenzen
 
-- PDF-Anlagen werden nur als Quelle registriert, nicht als Text übernommen (Review `attachment`).
+- PDF-Anlagen werden archiviert und als Quelle registriert, nicht als Text übernommen. Liegt der
+  Regelungsgehalt nur im PDF, wird die Norm nicht übernommen (Review `attachment`, PDF-Policy in
+  `docs/RECHT_NRW_BULK_READINESS.md`); eine fehlende Anlage ist ein Review-Fall (`attachment-fetch-failed`).
 - Inline-Auszeichnung und Links werden nicht übernommen (Text bleibt vollständig).
 - Fußnotennummern des nativen Formats werden dokumentweit fortlaufend vergeben.
-- Restformen der Landesbezeichnung ohne sichere Regel („VwVfG. NRW.“, „…gesetzes NRW.“) bleiben unverändert und stehen als manuelle Entscheidung im Report (7 Stellen im Korpus).
-- Ministerien, Behörden, Kommunen und Regionen werden nicht übergeleitet; eine redaktionelle Zuordnung fehlt.
+- Restformen der Landesbezeichnung: sichere Regeln (Transformer 2.1.0) für „…gesetz/-verordnung/-ordnung NRW.“
+  am Satzende und bekannte Landesrechtsabkürzungen („VwVfG. NRW.“ → „VwVfG West“); Fundstellenabkürzungen
+  (`GV. NRW.`, `MBl. NRW.`, `SMBl. NRW.`, `SGV. NRW.`) bleiben immer unverändert. Es gibt keine pauschale
+  Ersetzung „NRW → West“.
+- Ministerien, Behörden, Kommunen, Regionen und Gerichte werden nur nach `institution-mapping.json`
+  übergeleitet (Standard `review`, nicht blockierend: Quellorgan bleibt `originEnactingBody`, `enactingBody`
+  leer).

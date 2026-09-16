@@ -72,6 +72,7 @@ export interface GazetteDocument {
   sha256: string;
   retrievedAt: string;
   localSource?: string;
+  objectKey?: string;
 }
 
 export interface ReconstructionResult {
@@ -218,6 +219,7 @@ export function applyReconstruction(recipe: ReconstructionRecipe, input: { block
     const required = input.required.find((entry) => entry.note.decreeDate === amendment.decreeDate);
     const source: ReconstructionSource = { role: 'amendment', label: `Runderlass vom ${amendment.decreeDate} (${amendment.citation})`, url: gazette.url, sha256: gazette.sha256, retrievedAt: gazette.retrievedAt, citation: amendment.citation };
     if (gazette.localSource) source.localSource = gazette.localSource;
+    if (gazette.objectKey) source.objectKey = gazette.objectKey;
     if (required?.inForce) source.inForce = required.inForce;
     sources.push(source);
     const normalizedGazette = normalizeWording(gazette.text);

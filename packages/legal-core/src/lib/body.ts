@@ -137,6 +137,8 @@ export interface StructuralReference {
   article?: string;
   /** Absatznummern unterhalb der Einheit. */
   subsections?: string[];
+  /** Dezimalnummer einer Verwaltungsvorschrift („2.3“). */
+  number?: string;
 }
 
 export function getStructuralReferenceNumber(label: string | undefined): string | undefined {
@@ -149,6 +151,8 @@ export function getSubsectionNumber(block: NormBodyBlock): string | undefined {
 
 /** Strukturadresse einer Provision („§ 3 Absatz 2“ → { paragraph: '3', subsections: ['1','2'] }). */
 export function getStructuralReference(block: NormBodyBlock): StructuralReference | undefined {
+  // Dezimalnummern von Verwaltungsvorschriften („2.3.1“) sind eigene Strukturadressen („Nr. 2.3.1“).
+  if ((block.type === 'section' || block.type === 'subsection') && /^\d{1,2}(?:\.\d{1,2}){0,5}\.?$/u.test((block.label ?? '').trim())) return { number: block.label!.trim().replace(/\.$/u, '') };
   const number = getStructuralReferenceNumber(block.label);
   if (!number) return undefined;
   const subsections: string[] = [];

@@ -6,7 +6,8 @@
  * apps/web/wrangler.jsonc zeigen dort auf lokale, zunächst leere Datenbanken unter
  * apps/web/.wrangler/state. Dieses Skript rendert je Jurisdiktion den vollständigen
  * Projektionsplan als SQL und spielt Schema und Plan mit `wrangler d1 execute --local` ein.
- * Es berührt nie eine Remote-Datenbank (kein --remote, keine Zugangsdaten nötig).
+ * Es berührt nie eine Remote-Datenbank (kein --remote, keine Zugangsdaten nötig). Synthetische
+ * Testfixtures (tests/fixtures/content/) werden nie eingespielt.
  *
  *   node scripts/seed-dev-d1.ts [--jurisdiction west]
  */
@@ -17,6 +18,7 @@ import { join } from 'node:path';
 import { JURISDICTION_IDS, isJurisdictionId, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
+import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
 import { D1_DATABASE_NAMES } from '@landesrecht/runtime/bindings.ts';
 import { buildProjectionPlan, renderPlanSql } from '@landesrecht/runtime/projection.ts';
 import { listMigrations } from '@landesrecht/runtime/sqlite-d1.ts';
@@ -42,6 +44,8 @@ function wranglerExecute(database: string, file: string): void {
 for (const jurisdiction of jurisdictions) {
   const database = D1_DATABASE_NAMES[jurisdiction];
   const records = await loadJurisdictionNorms(jurisdiction, root);
+  const fixtures = records.filter((record) => isSyntheticFixtureNorm(record.meta));
+  if (fixtures.length > 0) throw new Error(`${jurisdiction}: synthetische Testfixtures im Produktionsbestand (${fixtures.map((record) => record.meta.slug).join(', ')})`);
   const plan = buildProjectionPlan(records, { jurisdiction, full: true, now: new Date().toISOString() });
   const planFile = join(runtimeDir, `${database}.dev.sql`);
   await writeFile(planFile, `${renderPlanSql(plan)}\n`, 'utf8');

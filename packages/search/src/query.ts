@@ -37,7 +37,7 @@ export interface QueryToken {
 }
 
 export interface StructuralIntent {
-  kind: 'paragraph' | 'article' | 'subsection';
+  kind: 'paragraph' | 'article' | 'subsection' | 'number';
   number: string;
   subsection?: string;
 }
@@ -91,6 +91,7 @@ export function buildSearchVariants(value: string): string[] {
 const PARAGRAPH_PATTERN = /§{1,2}\s*([0-9]+[a-z]?(?:\s*(?:,|und)\s*[0-9]+[a-z]?)*)(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;
 const ARTICLE_PATTERN = /\b(?:Artikel|Art\.)\s*([0-9]+[a-z]?)(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;
 const SUBSECTION_PATTERN = /\b(?:Absatz|Abs\.)\s*([0-9]+[a-z]?)/giu;
+const NUMBER_PATTERN = /\b(?:Nr\.|Nummer|Ziffer|Ziff\.)\s*(\d{1,2}(?:\.\d{1,2}){0,5})(?![\d.]*\d)\.?/giu;
 
 export function extractStructuralIntents(value: string): { references: StructuralIntent[]; remaining: string } {
   const references: StructuralIntent[] = [];
@@ -120,6 +121,13 @@ export function extractStructuralIntents(value: string): { references: Structura
     push({ kind: 'subsection', number: number.toLowerCase() });
     return ' ';
   });
+  // „Nr. 2.3“ adressiert Nummern von Verwaltungsvorschriften – nicht als Nummer innerhalb eines Paragraphen.
+  if (!references.some((intent) => intent.kind === 'paragraph' || intent.kind === 'article')) {
+    remaining = remaining.replace(NUMBER_PATTERN, (_match, number: string) => {
+      push({ kind: 'number', number });
+      return ' ';
+    });
+  }
   return { references, remaining };
 }
 

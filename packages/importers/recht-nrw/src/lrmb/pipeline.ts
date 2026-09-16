@@ -3,10 +3,12 @@
  * Ministerialblatt) von RECHT.NRW → Land Westdeutschland:
  *
  *   Fetch (Einstieg, jüngste Fassung) → Select Source Version at Baseline (lokal, datierte Stammnormen)
- *     → Parse (LRMB-Parser, Erlasskopf, Fundstellenverlauf) → Classify (Dokumenttyp, Normativität)
+ *     → Parse (LRMB-Parser, Erlasskopf, Fundstellenverlauf) → Document Identity and Body Sanity
+ *     → Text Completeness (PDF-Policy, Kopferlass) → Classify (Dokumenttyp, Normativität, Override)
  *     → Resolve Amendments (Ministerialblatt, Zuordnung über Datum und Fundstelle, Inkrafttreten)
- *     → Assess Validity (Stichtag, Textstand) → Reconstruct (nur mit geprüftem Rezept)
- *     → Integrity → Attachments → Normalize → Transform → Validate → Write → Project → Audit
+ *     → Assess Validity (Stichtag, Kontinuität undatierter Datensätze, Textstand)
+ *     → Reconstruct (nur mit geprüftem Rezept) → Integrity → Attachments → Normalize → Transform
+ *     → Validate → Project → Write (Rohquellen → Slug-Registry → Norm → Report) → Audit
  *
  * Ergebnisse: importiert (direkt oder rekonstruiert), ausgeschlossen (Normativität), nicht am
  * Stichtag geltend, Review. Nur `versions/<Stichtag>.json` entsteht; die reale Historie steht in
@@ -22,20 +24,26 @@ import type { ImportFinding, SourceLaw } from '@landesrecht/importer-common/pipe
 import { buildProjectionPlan, type ProjectionPlan } from '@landesrecht/runtime/projection.ts';
 
 import { SOURCE_SYSTEM, TARGET_JURISDICTION } from '../common/constants.ts';
-import { decodeHtml, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
+import { checkDocumentIdentityAndBody, type DocumentSanityResult } from '../common/document-sanity.ts';
+import { loadImportEnvironment, slugReservationFor, type ImportEnvironment } from '../common/environment.ts';
+import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
 import { bodyMetrics, checkTransformIntegrity, type IntegrityCheck, type IntegrityReport } from '../common/integrity.ts';
-import { AUDIT_DIR, RAW_ARCHIVE_DIR, readManifest, type ImportManifest, type ManifestEntry, type ManifestRawDocument } from '../common/manifest.ts';
-import { createSlugReservation, FileWriter, persistReview, writeInitialNorm } from '../common/persist.ts';
+import { AUDIT_DIR, isImportedStatus, readManifest, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type ReconstructionPlan } from '../common/manifest.ts';
+import { overridesFor, overrideValue, type ImportOverride } from '../common/overrides.ts';
+import { assessTextCompleteness, type AttachmentInput, type TextCompletenessAssessment } from '../common/pdf.ts';
+import { FileWriter, persistReview, writeInitialNorm } from '../common/persist.ts';
 import { deriveReviewItems } from '../common/review-derivation.ts';
 import { readReviewQueue, type ReviewItemInput, type ReviewQueue } from '../common/review-queue.ts';
+import { writeSlugRegistry } from '../common/slug-registry.ts';
 import { parseVersionUrl, stemIdentifier } from '../common/source-identity.ts';
+import { readTranscriptions, usableTranscription } from '../common/transcription.ts';
 import { selectSourceVersionAtBaseline, type SelectionResult, type SourceVersionCandidate } from '../common/version-selection.ts';
 import { parseVersionPage, type RechtNrwVersionPage } from '../common/version-page.ts';
 import { splitTitle } from '../lrgv/normalize.ts';
-import { assertSourceMetadataProtected } from '../lrgv/pipeline.ts';
+import { assertSourceMetadataProtected, versionUrlsOf } from '../lrgv/pipeline.ts';
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
 import { formatBaseline, transformToWest, type TransformationReport } from '../transform/transform.ts';
-import { assessNormativity, classifyLrmbDocumentType, type DocumentTypeClassification, type NormativityDecision } from './classify.ts';
+import { applyNormativityOverride, assessNormativity, classifyLrmbDocumentType, type DocumentTypeClassification, type NormativityDecision } from './classify.ts';
 import { gazetteEntryUrlCandidates, identifiesBaseDocument, parseGazetteEntry, resolveInForceDate, type GazetteEntry } from './gazette.ts';
 import { LRMB_PARSER_VERSION, lrmbRawMetrics, parseLrmbDocument, type LrmbParseResult } from './parser.ts';
 import { applyReconstruction, readReconstructionRecipe, type GazetteDocument, type ReconstructionRecipe, type ReconstructionResult } from './reconstruction.ts';
@@ -52,6 +60,9 @@ export interface LrmbImportOptions {
   baselineDate?: string;
   manifest?: ImportManifest;
   reviewQueue?: ReviewQueue;
+  environment?: ImportEnvironment;
+  /** Zusätzliche dokumentierte Overrides (Tests); produktiv aus `data/imports/recht-nrw/overrides.json`. */
+  overrides?: ImportOverride[];
   now?: () => Date;
   log?: (message: string) => void;
 }
@@ -66,6 +77,8 @@ export interface LrmbImportResult {
   parse?: LrmbParseResult;
   classification?: DocumentTypeClassification;
   normativity?: NormativityDecision;
+  sanity?: DocumentSanityResult;
+  completeness?: TextCompletenessAssessment;
   changeNote?: ChangeNote;
   amendments?: AmendmentEvidence[];
   validity?: LrmbValidityAssessment;
@@ -79,17 +92,14 @@ export interface LrmbImportResult {
   writtenFiles: string[];
   manifest?: ImportManifest;
   reviewQueue?: ReviewQueue;
+  termId?: string;
+  versionUrls?: string[];
 }
 
 interface RawEntry {
   role: ManifestRawDocument['role'];
   document: FetchedDocument;
   label: string;
-}
-
-function archivePath(termId: string, document: FetchedDocument, role: ManifestRawDocument['role']): string {
-  const extension = /pdf/iu.test(document.contentType) ? 'pdf' : 'html';
-  return join(RAW_ARCHIVE_DIR, `term-${termId}`, `${document.sha256.slice(0, 16)}-${role}.${extension}`).replace(/\\/gu, '/');
 }
 
 const hasErrors = (findings: readonly ImportFinding[]): boolean => findings.some((finding) => finding.severity === 'error');
@@ -100,21 +110,39 @@ export async function importRechtNrwLrmbDocument(options: LrmbImportOptions): Pr
   const now = options.now ?? (() => new Date());
   const manifest = options.manifest ?? (await readManifest(options.root));
   const reviewQueue = options.reviewQueue ?? (await readReviewQueue(options.root));
-  const result = await runLrmbImport({ ...options, manifest, now });
+  const environment = options.environment ?? (await loadImportEnvironment(options.root, { mode: 'sample', manifest }));
+  const result = await runLrmbImport({ ...options, manifest, now, environment });
+  const previous = result.manifestEntry ? manifest.entries.find((entry) => entry.sourceIdentity === result.manifestEntry!.sourceIdentity) : undefined;
+  const regression = Boolean(previous && isImportedStatus(previous.importStatus) && result.manifestEntry && !isImportedStatus(result.status) && result.status !== 'dry-run');
+  if (regression) result.findings.push({ severity: 'error', code: 'import-regression', message: `Bereits übernommene Vorschrift ${previous!.targetSlug} ergibt jetzt ${result.status}; Manifest und Inhalt bleiben beim zuletzt übernommenen Stand (manuelle Prüfung)` });
   result.reviewItems = deriveReviewItems(result.findings, result.report);
   const sourceIdentity = result.manifestEntry?.sourceIdentity ?? (result.page?.stemTermId ? `term:${result.page.stemTermId}` : `url:${parseVersionUrl(options.url)?.url ?? options.url}`);
   const run: Parameters<typeof persistReview>[0]['run'] = { sourceArea: 'lrmb', sourceIdentity, sourceUrl: options.url, now: now().toISOString() };
   if (result.record) run.targetSlug = result.record.meta.slug;
   const persistOptions: Parameters<typeof persistReview>[0] = { root: options.root, write: Boolean(options.write), manifest, reviewQueue, run, items: result.reviewItems };
-  if (result.manifestEntry && result.status !== 'failed') persistOptions.entry = result.manifestEntry;
+  if (result.manifestEntry && !regression) persistOptions.entry = result.manifestEntry;
   const persisted = await persistReview(persistOptions);
   result.writtenFiles.push(...persisted.written);
   result.manifest = persisted.manifest;
   result.reviewQueue = persisted.reviewQueue;
+  if (regression) result.manifestEntry = previous!;
   return result;
 }
 
-async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportManifest; now: () => Date }): Promise<LrmbImportResult> {
+interface LrmbState {
+  validity?: LrmbValidityAssessment;
+  reconstruction?: ReconstructionResult;
+  recipe?: ReconstructionRecipe;
+  fetchParse?: IntegrityReport;
+  sourceCanonical?: IntegrityReport;
+  record?: NormRecord;
+  report?: TransformationReport;
+  slugs?: Awaited<ReturnType<typeof slugReservationFor>>;
+  attachmentsLoaded?: boolean;
+}
+
+async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportManifest; now: () => Date; environment: ImportEnvironment }): Promise<LrmbImportResult> {
+  const env = options.environment;
   const baseline = options.baselineDate ?? SIMULATION_BASELINE_DATE;
   const log = options.log ?? (() => undefined);
   const findings: ImportFinding[] = [];
@@ -140,12 +168,16 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   let pageDocument = await fetchDocument(address.url, 'version-page', 'RECHT.NRW-Seite der gewählten Fassung');
   let page = parseVersionPage(decodeHtml(pageDocument), address.url);
   result.page = page;
+  result.versionUrls = versionUrlsOf(page);
   if (!page.stemTermId) {
     findings.push({ severity: 'error', code: 'missing-stem-id', message: 'Keine Stammnorm-Kennung (Taxonomie-Term)' });
     return { ...result, status: 'failed' };
   }
   const termId = page.stemTermId;
+  result.termId = termId;
   const undated = !address.pathDate;
+  const overrides: ImportOverride[] = [...overridesFor(env.overrides, `term:${termId}`), ...(options.overrides ?? [])];
+  const locate = (document: FetchedDocument, role: RawEntry['role']) => env.archive.locate(document, { termId, sourceArea: 'lrmb', role });
 
   // --- Jüngste Fassung der Stammnorm (Fundstellenverlauf, Veröffentlichungsvermerke) ------------
   result.stage = 'stem-history';
@@ -201,6 +233,7 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
       if (contradictions.length > 0) findings.push({ severity: 'error', code: 'selection-page-contradiction', message: contradictions.join('; ') });
     }
   }
+  result.versionUrls = [...new Set([...(result.versionUrls ?? []), ...versionUrlsOf(page), ...versionUrlsOf(latestPage)])].sort();
 
   // --- Parse -------------------------------------------------------------------------------------
   result.stage = 'parse-source-format';
@@ -217,27 +250,94 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   const changeNote = parse.changeNoteText ? parseChangeNote(parse.changeNoteText) : undefined;
   if (changeNote) result.changeNote = changeNote;
 
-  // --- Classify ---------------------------------------------------------------------------------
+  const state: LrmbState = {};
+  const finish = async (status: ManifestEntry['importStatus']): Promise<LrmbImportResult> => finishLrmb({ status, result, state, env, options, address, termId, baseline, overrides, rawEntries, pageDocument, page, locate, now: options.now });
+
+  // --- Document Identity and Body Sanity ------------------------------------------------------
+  result.stage = 'document-identity';
+  const titleDecreeSignals: { issuedOn?: string; fileReference?: string } = {};
+  if (titleDecree?.issuedOn) titleDecreeSignals.issuedOn = titleDecree.issuedOn;
+  if (titleDecree?.fileReference) titleDecreeSignals.fileReference = titleDecree.fileReference;
+  const sanity = checkDocumentIdentityAndBody({
+    sourceArea: 'lrmb',
+    portalType: address.documentType,
+    portalTitle: title,
+    documentTitleLines: parse.head.titleLines,
+    head: parse.head,
+    ...(titleDecree ? { titleDecree: titleDecreeSignals } : {}),
+    ...(page.issuedOn ? { infoboxIssuedOn: page.issuedOn } : {}),
+    ...(changeNote?.base ? { baseCitation: changeNote.base.text } : {}),
+    blocks: parse.blocks,
+    attachments: page.attachments,
+  });
+  result.sanity = sanity;
+  findings.push(...sanity.findings);
+
+  // --- Classify -----------------------------------------------------------------------------------
   result.stage = 'classify';
   const classification = classifyLrmbDocumentType(decreeKind ? { title, decreeKind } : { title });
-  const normativity = assessNormativity({ portalType: address.documentType, title, ...(decreeKind ? { decreeKind } : {}), bodyText: parse.bodyTexts.join(' ') });
+  const normativityOverride = overrideValue<string>(overrides, 'normativity');
+  const normativity = applyNormativityOverride(assessNormativity({ portalType: address.documentType, title, ...(decreeKind ? { decreeKind } : {}), bodyText: parse.bodyTexts.join(' ') }), normativityOverride ? { value: normativityOverride.value, reason: normativityOverride.override.reason, id: normativityOverride.override.id } : undefined);
   result.classification = classification;
   result.normativity = normativity;
 
-  const state: { validity?: LrmbValidityAssessment; reconstruction?: ReconstructionResult; recipe?: ReconstructionRecipe; fetchParse?: IntegrityReport; sourceCanonical?: IntegrityReport; record?: NormRecord; report?: TransformationReport } = {};
-  const finish = async (status: ManifestEntry['importStatus']): Promise<LrmbImportResult> => {
-    result.status = status;
-    const entry = buildManifestEntry({ address, page, pageDocument, termId, baseline, status, classification, normativity, selection, state, rawEntries, findings, now: options.now });
-    result.manifestEntry = entry;
-    if (options.write && status !== 'dry-run' && status !== 'failed') {
-      const writer = new FileWriter(options.root);
-      for (const raw of rawEntries) await writer.bytes(archivePath(termId, raw.document, raw.role), raw.document.bytes);
-      await writer.json(entry.transformation.reportPath!, auditReport(result, entry, options.now()));
-      result.writtenFiles.push(...writer.written);
+  // --- Anlagen laden (PDF-Policy, Transkriptionen) ------------------------------------------------
+  const transcriptions = await readTranscriptions(env.root, `term:${termId}`);
+  const attachmentBlocks: NormBodyBlock[] = [];
+  const loadAttachments = async (): Promise<AttachmentInput[]> => {
+    const inputs: AttachmentInput[] = [];
+    if (!state.attachmentsLoaded) state.attachmentsLoaded = true;
+    for (const attachment of page.attachments) {
+      const role: RawEntry['role'] = attachment.mediaType === 'text/html' ? 'annex' : 'pdf';
+      let document: FetchedDocument | undefined = rawEntries.find((entry) => entry.document.url === attachment.url)?.document;
+      if (!document) {
+        try {
+          document = await fetchDocument(attachment.url, role, `RECHT.NRW-Anlage: ${attachment.label}`);
+        } catch (error) {
+          if (error instanceof RechtNrwFetchError && RUN_STOPPING_FETCH_ERRORS.includes(error.kind)) throw error;
+          findings.push({ severity: 'error', code: 'attachment-fetch-failed', message: `Anlage „${attachment.label}“ nicht abrufbar (${(error as Error).message}); nicht archiviert` });
+        }
+      }
+      const input: AttachmentInput = { label: attachment.label, url: attachment.url, mediaType: attachment.mediaType === 'unknown' ? document?.contentType ?? 'application/octet-stream' : attachment.mediaType };
+      if (document) input.bytes = document.bytes;
+      const handling = overrides.find((override) => override.field === 'attachmentHandling' && (override.value as { label: string }).label === attachment.label)?.value as { handling: AttachmentInput['handlingOverride'] } | undefined;
+      if (handling?.handling) input.handlingOverride = handling.handling;
+      const transcription = transcriptions.find((candidate) => candidate.target.type === 'attachment' && candidate.target.label === attachment.label);
+      if (transcription && document) {
+        const usable = usableTranscription(transcription, document);
+        if (usable.ok) {
+          input.transcription = true;
+          attachmentBlocks.push({ type: 'annex', label: attachment.label, children: transcription.body });
+          findings.push({ severity: 'info', code: 'attachment-transcription-applied', message: `Anlage „${attachment.label}“: ${usable.reason}` });
+        } else {
+          findings.push({ severity: 'warning', code: 'attachment-transcription-unusable', message: `Transkription der Anlage „${attachment.label}“ nicht verwendbar: ${usable.reason}` });
+        }
+      }
+      inputs.push(input);
     }
-    return result;
+    return inputs;
   };
 
+  // --- Text Completeness: Kopferlass mit Regelungsgehalt nur in PDF-Anlagen -------------------------
+  result.stage = 'text-completeness';
+  const bodyText = parse.bodyTexts.join(' ');
+  const preliminary = assessTextCompleteness({ bodyText, bodyUnits: parse.stats.units, attachments: page.attachments.map((attachment) => ({ label: attachment.label, url: attachment.url, mediaType: attachment.mediaType })) });
+  // Blockierte Textvollständigkeit verhindert jede Übernahme. Ist die Normativität des Kopferlasses
+  // eindeutig, wird die Geltung am Stichtag trotzdem bestimmt (Coverage, Transkriptionspriorität).
+  let textBlocked = false;
+  if (preliminary.blocking) {
+    const completeness = assessTextCompleteness({ bodyText, bodyUnits: parse.stats.units, attachments: await loadAttachments() });
+    result.completeness = completeness;
+    if (completeness.blocking) {
+      textBlocked = true;
+      findings.push(...completeness.findings);
+      if (normativity.decision === 'review') findings.push({ severity: 'info', code: 'normativity-deferred', message: `Normativität erst nach Transkription entscheidbar: ${normativity.reasons.join('; ')}` });
+      if (normativity.decision !== 'include') return finish('needs-review');
+    }
+  }
+  result.stage = 'classify';
+
+  if (sanity.status === 'mismatch') return finish('needs-review');
   if (normativity.decision === 'exclude') {
     findings.push({ severity: 'info', code: 'normativity-exclude', message: `Nicht übernommen (docs/LEGAL_SCOPE.md): ${normativity.reasons.join('; ')}` });
     return finish('excluded');
@@ -278,6 +378,7 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
         log(`Abruf Ministerialblatt ${candidate}`);
         document = await options.fetcher.fetch(candidate);
       } catch (error) {
+        if (error instanceof RechtNrwFetchError && RUN_STOPPING_FETCH_ERRORS.includes(error.kind)) throw error;
         attempts.push(`${candidate}: ${(error as Error).message}`);
         continue;
       }
@@ -293,6 +394,7 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
       amendment.gazetteUrl = candidate;
       amendment.gazetteSha256 = document.sha256;
       amendment.gazetteTitle = entry.title;
+      amendment.gazetteText = entry.text;
       if (entry.publishedOn) amendment.publishedOn = entry.publishedOn;
       amendment.identification = identification;
       if (inForce.date) amendment.inForce = inForce.date;
@@ -316,6 +418,7 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
     clauses,
     amendments: result.amendments,
     versionStarts: page.versions.map((entry) => entry.validFrom),
+    contraryTexts: [...new Set([...page.changeHistoryItems, ...latestPage.changeHistoryItems])].filter((item) => !/Redaktioneller Hinweis/u.test(item)),
   };
   if (page.validFrom) validityInput.page.validFrom = page.validFrom;
   if (page.validTo) validityInput.page.validTo = page.validTo;
@@ -323,12 +426,20 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   if (completenessText) validityInput.completenessNotice = { text: completenessText.replace(/^Redaktioneller Hinweis\s*:?\s*/u, ''), url: latestPage.address.url, sha256: latestDocument.sha256 };
   if (changeNote) validityInput.changeNote = changeNote;
   if (issuedOn) validityInput.issuedOn = issuedOn;
+  const signals = env.searchSignals.get(page.address.url) ?? env.searchSignals.get(address.url);
+  if (signals) {
+    validityInput.indexSignals = {};
+    if (signals.historically !== undefined) validityInput.indexSignals.historically = signals.historically;
+    if (signals.outforceDate) validityInput.indexSignals.outforceDate = signals.outforceDate;
+    if (signals.effectiveFrom) validityInput.indexSignals.effectiveFrom = signals.effectiveFrom;
+  }
   const validity = assessLrmbValidity(validityInput);
   state.validity = validity;
   result.validity = validity;
   findings.push(...validity.findings);
   if (validity.baselineStatus === 'not-active-at-baseline') return finish('not-at-baseline');
   if (validity.baselineStatus === 'undetermined') return finish('needs-review');
+  if (textBlocked) return finish('needs-review');
 
   // --- Reconstruct ------------------------------------------------------------------------------
   let blocks: NormBodyBlock[] = parse.blocks;
@@ -343,8 +454,15 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
     state.recipe = recipe;
     const required = recipe.mode === 'reverse' ? validity.postBaselineAmendments : validity.missingPreBaselineAmendments;
     const documents = new Map<string, GazetteDocument>();
-    for (const [url, { entry, document }] of gazettes) documents.set(url, { url, text: entry.text, sha256: document.sha256, retrievedAt: document.retrievedAt, localSource: archivePath(termId, document, 'gazette-amendment') });
-    const reconstructionInput: Parameters<typeof applyReconstruction>[1] = { blocks: parse.blocks, baselineDate: baseline, required, gazettes: documents, baseSource: { url: pageDocument.finalUrl, sha256: pageDocument.sha256, retrievedAt: pageDocument.retrievedAt, localSource: archivePath(termId, pageDocument, 'version-page') } };
+    for (const [url, { entry, document }] of gazettes) {
+      const object = locate(document, 'gazette-amendment');
+      const gazette: GazetteDocument = { url, text: entry.text, sha256: document.sha256, retrievedAt: document.retrievedAt };
+      if (object.localSource) gazette.localSource = object.localSource;
+      if (object.objectKey) gazette.objectKey = object.objectKey;
+      documents.set(url, gazette);
+    }
+    const baseObject = locate(pageDocument, 'version-page');
+    const reconstructionInput: Parameters<typeof applyReconstruction>[1] = { blocks: parse.blocks, baselineDate: baseline, required, gazettes: documents, baseSource: { url: pageDocument.finalUrl, sha256: pageDocument.sha256, retrievedAt: pageDocument.retrievedAt, ...(baseObject.localSource ? { localSource: baseObject.localSource } : {}), ...(baseObject.objectKey ? { objectKey: baseObject.objectKey } : {}) } };
     const reconstruction = applyReconstruction(recipe, reconstructionInput);
     state.reconstruction = reconstruction;
     result.reconstruction = reconstruction;
@@ -352,8 +470,8 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
     const repeated = applyReconstruction(recipe, reconstructionInput);
     if (repeated.resultFingerprint !== reconstruction.resultFingerprint) findings.push({ severity: 'error', code: 'reconstruction-nondeterministic', message: 'Wiederholte Rekonstruktion liefert ein anderes Ergebnis' });
     if (!reconstruction.ok || hasErrors(findings.filter((finding) => finding.code !== 'reconstruction-required'))) return finish('needs-review');
-    const required_ = findings.findIndex((finding) => finding.code === 'reconstruction-required');
-    if (required_ >= 0) findings.splice(required_, 1, { severity: 'info', code: 'reconstruction-applied', message: `Stichtagsfassung mit geprüftem Rezept rekonstruiert (${reconstruction.steps.length} Schritte; Basis ${reconstruction.baseFingerprint.slice(0, 12)} → Ergebnis ${reconstruction.resultFingerprint.slice(0, 12)})` });
+    const requiredIndex = findings.findIndex((finding) => finding.code === 'reconstruction-required');
+    if (requiredIndex >= 0) findings.splice(requiredIndex, 1, { severity: 'info', code: 'reconstruction-applied', message: `Stichtagsfassung mit geprüftem Rezept rekonstruiert (${reconstruction.steps.length} Schritte; Basis ${reconstruction.baseFingerprint.slice(0, 12)} → Ergebnis ${reconstruction.resultFingerprint.slice(0, 12)})` });
     blocks = reconstruction.blocks;
   }
 
@@ -380,23 +498,21 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   }
   const fetchParse: IntegrityReport = { stage: 'fetch-parse', ok: checks.every((check) => check.ok), checks };
   state.fetchParse = fetchParse;
+  result.integrity = { fetchParse };
   for (const check of checks) if (!check.ok) findings.push({ severity: 'error', code: `integrity-parse-${check.name}`, message: `${check.message} (erwartet ${check.expected}, gefunden ${check.actual})` });
-  if (hasErrors(findings)) {
-    result.integrity = { fetchParse };
-    return finish('needs-review');
-  }
+  if (hasErrors(findings)) return finish('needs-review');
 
   // --- Attachments ---------------------------------------------------------------------------------
   result.stage = 'attachments';
-  const attachmentEntries: RawEntry[] = [];
+  const attachmentInputs = await loadAttachments();
   for (const attachment of page.attachments) {
-    const role: RawEntry['role'] = attachment.mediaType === 'text/html' ? 'annex' : 'pdf';
-    await fetchDocument(attachment.url, role, `RECHT.NRW-Anlage: ${attachment.label}`);
-    attachmentEntries.push(rawEntries[rawEntries.length - 1]!);
-    if (role === 'annex') findings.push({ severity: 'error', code: 'annex-html-not-parsed', message: `HTML-Anlage „${attachment.label}“ wird vom LRMB-Parser nicht als Text übernommen (Review)` });
-    else findings.push({ severity: 'warning', code: 'annex-pdf-only', message: `Anlage „${attachment.label}“ liegt nur als PDF vor und wird als Quelle registriert, nicht als Text übernommen` });
+    if (attachment.mediaType === 'text/html' && !attachmentInputs.find((input) => input.label === attachment.label)?.transcription) findings.push({ severity: 'error', code: 'annex-html-not-parsed', message: `HTML-Anlage „${attachment.label}“ wird vom LRMB-Parser nicht als Text übernommen (Review)` });
   }
+  const completeness = assessTextCompleteness({ bodyText, bodyUnits: parse.stats.units, attachments: attachmentInputs.filter((input) => input.mediaType !== 'text/html') });
+  result.completeness = completeness;
+  findings.push(...completeness.findings);
   if (hasErrors(findings)) return finish('needs-review');
+  if (attachmentBlocks.length > 0) blocks = [...blocks, ...attachmentBlocks];
 
   // --- Normalize -----------------------------------------------------------------------------------
   result.stage = 'normalize-source-law';
@@ -408,7 +524,11 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   const fullCitation = last ? `${citation}, zuletzt geändert durch Runderlass vom ${longDate(last.note.decreeDate)}${last.note.citation ? ` (${last.note.citation.text})` : ''}` : citation;
   const referenceOf = (entry: RawEntry, sourceRole: SourceRole, note?: string): SourceReference => {
     const pdf = /pdf/iu.test(entry.document.contentType);
-    const reference: SourceReference = { kind: entry.role === 'gazette-amendment' ? 'amendment-source' : pdf ? 'primary-pdf' : 'official-portal-snapshot', system: SOURCE_SYSTEM, label: entry.label, availability: 'versioned', localSource: archivePath(termId, entry.document, entry.role), url: entry.document.finalUrl, retrievedAt: entry.document.retrievedAt.slice(0, 10), sha256: entry.document.sha256, externalId: `term:${termId}`, mediaType: pdf ? 'application/pdf' : 'text/html', sourceRole };
+    const object = locate(entry.document, entry.role);
+    const reference: SourceReference = { kind: entry.role === 'gazette-amendment' ? 'amendment-source' : pdf ? 'primary-pdf' : 'official-portal-snapshot', system: SOURCE_SYSTEM, label: entry.label, ...env.archive.referenceFields(object), url: entry.document.finalUrl, retrievedAt: entry.document.retrievedAt.slice(0, 10), sha256: entry.document.sha256, externalId: `term:${termId}`, mediaType: pdf ? 'application/pdf' : 'text/html', sourceRole };
+    if (reference.localSource === undefined) delete reference.localSource;
+    if (reference.bucket === undefined) delete reference.bucket;
+    if (reference.objectKey === undefined) delete reference.objectKey;
     if (note) reference.note = note;
     return reference;
   };
@@ -424,8 +544,9 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
     } else if (entry.role === 'gazette-amendment') {
       const amendment = [...amendments.values()].find((candidate) => candidate.gazetteSha256 === entry.document.sha256);
       sourceReferences.push(referenceOf(entry, 'amendment-evidence', amendment ? `Inkrafttreten ${amendment.inForce ?? 'unbekannt'} (${amendment.inForceDerivation}); ${amendment.identification?.reason ?? ''}${validity.postBaselineAmendments.includes(amendment) ? '; nach dem Stichtag – für die Stichtagsfassung zurückgenommen' : ''}` : undefined));
-    } else if (attachmentEntries.includes(entry)) {
-      sourceReferences.push(referenceOf(entry, 'structure-bearing', 'Anlage nur als PDF; nicht als Text übernommen'));
+    } else if (entry.role === 'pdf' || entry.role === 'annex') {
+      const transcribed = attachmentInputs.find((input) => input.url === entry.document.url)?.transcription;
+      sourceReferences.push(referenceOf(entry, 'structure-bearing', transcribed ? 'Anlage nur als PDF; Text aus geprüfter strukturierter Transkription' : 'Anlage nur als PDF; nicht als Text übernommen'));
     }
   }
   const law: SourceLaw = {
@@ -458,7 +579,8 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   // --- Transform ------------------------------------------------------------------------------------
   result.stage = 'transform-into-simulation-jurisdiction';
   const sourceIdentity = `term:${termId}`;
-  const { reserveSlug, collisions } = await createSlugReservation(options.root, options.manifest, sourceIdentity);
+  const slugs = await slugReservationFor(env, sourceIdentity);
+  state.slugs = slugs;
   const sourceStatus: VersionSourceStatus = state.reconstruction
     ? { validity: 'reconstructed', text: 'reconstructed', note: `Stichtagsfassung rekonstruiert: konsolidierter Portaltext abzüglich ${validity.postBaselineAmendments.length > 0 ? `der nach dem Stichtag in Kraft getretenen Änderung(en) (${validity.postBaselineAmendments.map((entry) => `Runderlass vom ${longDate(entry.note.decreeDate)}, ${entry.note.citation?.text ?? ''}`).join('; ')})` : ''}${validity.missingPreBaselineAmendments.length > 0 ? `zuzüglich ${validity.missingPreBaselineAmendments.length} Änderung(en) vor dem Stichtag` : ''}; jeder Schritt ist im Quellenbereich belegt.` }
     : { validity: validity.sourceValidity, text: 'direct', ...(validity.sourceValidity === 'verified-active-at-baseline' ? { note: 'Textstand am Stichtag über den Fundstellenverlauf und die Ministerialblatt-Einträge der Änderungen belegt.' } : {}) };
@@ -467,11 +589,14 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
     headLines,
     sourceStatus,
     dateNote: `Übernommen zum Ausgangsrechtsstand ${baseline}; Textstand der Quelle ${validity.sourceValidFrom ?? '?'} bis ${validity.sourceValidTo ?? 'offen'} (${sourceStatus.validity}).`,
+    transformation: env.transformation,
+    institutions: env.institutions,
   };
   if (sourceStatus.note) transformOptions.provenanceNote = sourceStatus.note;
-  const { record, report, findings: transformFindings } = transformToWest(law, { targetJurisdiction: TARGET_JURISDICTION, baselineDate: baseline, reserveSlug }, transformOptions);
+  const { record, report, findings: transformFindings } = transformToWest(law, { targetJurisdiction: TARGET_JURISDICTION, baselineDate: baseline, reserveSlug: slugs.reserveSlug }, transformOptions);
   findings.push(...transformFindings);
-  for (const collision of collisions) findings.push({ severity: 'warning', code: 'slug-collision', message: `Slug ${collision} (Kollision mit bestehender Norm)` });
+  for (const collision of slugs.collisions) findings.push({ severity: 'warning', code: 'slug-collision', message: `Slug ${collision}` });
+  for (const note of slugs.notes) findings.push({ severity: 'info', code: 'slug-stable', message: note });
   state.record = record;
   state.report = report;
   result.record = record;
@@ -493,24 +618,93 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
 
   // --- Project to D1 (Plan) ---------------------------------------------------------------------------
   result.stage = 'project-to-d1';
-  const existingWest = (await loadJurisdictionNorms(TARGET_JURISDICTION, options.root).catch(() => [] as NormRecord[])).filter((entry) => entry.meta.slug !== record.meta.slug);
-  result.projection = buildProjectionPlan([...existingWest, record], { jurisdiction: TARGET_JURISDICTION, full: true, now: options.now().toISOString() }).stats;
+  if (env.projection === 'full-plan') {
+    const existingWest = (await loadJurisdictionNorms(TARGET_JURISDICTION, options.root).catch(() => [] as NormRecord[])).filter((entry) => entry.meta.slug !== record.meta.slug);
+    result.projection = buildProjectionPlan([...existingWest, record], { jurisdiction: TARGET_JURISDICTION, full: true, now: options.now().toISOString() }).stats;
+  } else {
+    result.projection = buildProjectionPlan([record], { jurisdiction: TARGET_JURISDICTION, full: true, now: options.now().toISOString() }).stats;
+  }
 
-  // --- Write ------------------------------------------------------------------------------------------
   if (hasErrors(findings)) return finish('failed');
-  const status: ManifestEntry['importStatus'] = options.write ? (findings.some((finding) => finding.severity === 'warning') ? 'imported-with-warnings' : 'imported') : 'dry-run';
-  if (options.write) {
+  return finish(options.write ? (findings.some((finding) => finding.severity === 'warning') ? 'imported-with-warnings' : 'imported') : 'dry-run');
+}
+
+async function finishLrmb(input: {
+  status: ManifestEntry['importStatus'];
+  result: LrmbImportResult;
+  state: LrmbState;
+  env: ImportEnvironment;
+  options: LrmbImportOptions & { now: () => Date };
+  address: NonNullable<ReturnType<typeof parseVersionUrl>>;
+  termId: string;
+  baseline: string;
+  overrides: readonly ImportOverride[];
+  rawEntries: RawEntry[];
+  pageDocument: FetchedDocument;
+  page: RechtNrwVersionPage;
+  locate: (document: FetchedDocument, role: RawEntry['role']) => ReturnType<ImportEnvironment['archive']['locate']>;
+  now: () => Date;
+}): Promise<LrmbImportResult> {
+  const { status, result, state, env, options, termId, baseline } = input;
+  result.status = status;
+  const page = result.page ?? input.page;
+  const pageDocument = input.rawEntries.find((entry) => entry.role === 'version-page')?.document ?? input.pageDocument;
+  const entry = buildManifestEntry({ ...input, page, pageDocument });
+  result.manifestEntry = entry;
+  const imported = (isImportedStatus(status) || status === 'dry-run') && state.record !== undefined;
+  if (imported && state.slugs) state.slugs.commit();
+  if (!options.write || status === 'dry-run' || status === 'failed') return result;
+
+  // Reihenfolge der Checkpoints: Rohquellen → Slug-Registry → Norm → Report; Manifest und Queue danach.
+  const writer = new FileWriter(env.root);
+  for (const raw of input.rawEntries) {
+    const object = input.locate(raw.document, raw.role);
+    const stored = await env.archive.store(raw.document, object);
+    const manifestRaw = entry.rawDocuments.find((candidate) => candidate.sha256 === raw.document.sha256 && candidate.role === raw.role);
+    if (manifestRaw) manifestRaw.archiveStatus = stored.status;
+    if (object.localSource) writer.written.push(object.localSource);
+  }
+  if (imported && state.record) {
     result.stage = 'write-canonical-json';
-    const writer = new FileWriter(options.root);
-    const blocked = await writeInitialNorm(writer, record, baseline);
-    result.writtenFiles.push(...writer.written);
+    await writeSlugRegistry(env.root, env.slugRegistry);
+    const blocked = await writeInitialNorm(writer, state.record, baseline, { protectVersionedSources: env.mode === 'bulk' });
     if (blocked) {
-      findings.push(blocked);
-      return finish('failed');
+      result.findings.push(blocked);
+      entry.findings.push(blocked);
+      result.status = 'failed';
+      entry.importStatus = 'failed';
+      entry.targetSlug = '';
+      result.writtenFiles.push(...writer.written);
+      return result;
     }
   }
-  // Rohquellen und Audit-Report schreibt `finish` (auch für ausgeschlossene und Review-Fälle).
-  return finish(status);
+  await writer.jsonStable(entry.transformation.reportPath!, auditReport(result, entry, input.now()));
+  result.writtenFiles.push(...writer.written);
+  return result;
+}
+
+const INSTRUCTION = /\b(?:eingefügt|ersetzt|gestrichen|aufgehoben|angefügt|gefasst|neu\s+gefasst)\b/gu;
+
+/** Arbeitsgrundlage der Rekonstruktionsqueue: Richtung, Änderungen, Quellenlage, geschätzte Schritte. */
+export function reconstructionPlanFor(validity: LrmbValidityAssessment): ReconstructionPlan | undefined {
+  const entries = [...validity.missingPreBaselineAmendments.map((amendment) => ({ amendment, direction: 'forward' as const })), ...validity.postBaselineAmendments.map((amendment) => ({ amendment, direction: 'reverse' as const }))];
+  if (entries.length === 0) return undefined;
+  const amendments = entries.map(({ amendment, direction }) => {
+    const planned: ReconstructionPlan['amendments'][number] = { instructionCount: [...(amendment.gazetteText ?? '').matchAll(INSTRUCTION)].length, direction };
+    if (amendment.note.decreeDate) planned.decreeDate = amendment.note.decreeDate;
+    if (amendment.note.citation) planned.citation = amendment.note.citation.text;
+    if (amendment.inForce) planned.inForce = amendment.inForce;
+    if (amendment.gazetteUrl) planned.gazetteUrl = amendment.gazetteUrl;
+    if (amendment.gazetteSha256) planned.gazetteSha256 = amendment.gazetteSha256;
+    return planned;
+  });
+  const directions = new Set(entries.map((entry) => entry.direction));
+  return {
+    direction: directions.size > 1 ? 'mixed' : entries[0]!.direction,
+    amendments,
+    sourceCompleteness: Math.round((entries.filter(({ amendment }) => amendment.gazetteUrl && amendment.identification?.ok).length / entries.length) * 100) / 100,
+    estimatedSteps: amendments.reduce((sum, amendment) => sum + amendment.instructionCount, 0),
+  };
 }
 
 function buildManifestEntry(input: {
@@ -520,23 +714,24 @@ function buildManifestEntry(input: {
   termId: string;
   baseline: string;
   status: ManifestEntry['importStatus'];
-  classification: DocumentTypeClassification;
-  normativity: NormativityDecision;
-  selection: SelectionResult | undefined;
-  state: { validity?: LrmbValidityAssessment; reconstruction?: ReconstructionResult; fetchParse?: IntegrityReport; sourceCanonical?: IntegrityReport; record?: NormRecord; report?: TransformationReport };
+  result: LrmbImportResult;
+  state: LrmbState;
+  env: ImportEnvironment;
+  overrides: readonly ImportOverride[];
   rawEntries: RawEntry[];
-  findings: ImportFinding[];
+  locate: (document: FetchedDocument, role: RawEntry['role']) => ReturnType<ImportEnvironment['archive']['locate']>;
   now: () => Date;
 }): ManifestEntry {
-  const { page, state } = input;
+  const { page, state, result } = input;
   const imported = state.record !== undefined && (input.status === 'imported' || input.status === 'imported-with-warnings' || input.status === 'dry-run');
   const reportPath = (imported && state.record ? join(AUDIT_DIR, `${state.record.meta.slug}.json`) : join(LRMB_AUDIT_DIR, `term-${input.termId}.json`)).replace(/\\/gu, '/');
   const validity = state.validity;
   const reconstructionStatus: ManifestEntry['reconstructionStatus'] = state.reconstruction?.ok && imported ? 'reconstructed' : validity?.textStatus === 'direct' ? 'direct' : validity?.textStatus === 'reconstruction-required' ? 'reconstruction-required' : 'not-applicable';
-  return {
+  const classification = result.classification ?? classifyLrmbDocumentType({ title: page.title });
+  const entry: ManifestEntry = {
     sourceSystem: 'recht-nrw',
     sourceArea: 'lrmb',
-    sourceDocumentType: input.classification.sourceDocumentType,
+    sourceDocumentType: classification.sourceDocumentType,
     sourceIdentity: `term:${input.termId}`,
     sourceTitle: page.title,
     sourceType: input.address.documentType,
@@ -547,6 +742,7 @@ function buildManifestEntry(input: {
     sourceValidFrom: validity?.sourceValidFrom ?? page.validFrom ?? '',
     sourceValidTo: validity?.sourceValidTo ?? page.validTo ?? null,
     baselineStatus: validity?.baselineStatus ?? 'undetermined',
+    validityProvenance: validity ? (state.reconstruction?.ok && imported ? 'reconstructed' : validity.provenance) : 'undetermined',
     validityEvidence: validity?.evidence ?? [],
     retrievedAt: input.pageDocument.retrievedAt,
     sha256: input.pageDocument.sha256,
@@ -562,15 +758,36 @@ function buildManifestEntry(input: {
     reconstructionStatus,
     reconstructionSources: state.reconstruction?.sources ?? [],
     reconstructionSteps: state.reconstruction?.steps ?? [],
-    normativity: { decision: input.normativity.decision, reasons: input.normativity.reasons },
+    normativity: result.normativity ? { decision: result.normativity.decision, reasons: result.normativity.reasons } : { decision: 'review', reasons: ['nicht bestimmt'] },
+    archive: input.env.archive.mode === 'r2' ? { mode: 'r2', bucket: 'landesrecht-quellen' } : { mode: 'versioned-sample' },
     importedAt: input.now().toISOString(),
-    rawDocuments: input.rawEntries.map((entry) => ({ role: entry.role, url: entry.document.url, finalUrl: entry.document.finalUrl, sha256: entry.document.sha256, contentType: entry.document.contentType, retrievedAt: entry.document.retrievedAt, byteLength: entry.document.bytes.byteLength, localSource: archivePath(input.termId, entry.document, entry.role) })),
-    versionsConsidered: input.selection ? input.selection.candidates.map((candidate) => ({ validFrom: candidate.validFrom, validTo: candidate.validTo, ...(candidate.url ? { url: candidate.url } : {}), selected: candidate.validFrom === input.selection!.selected?.validFrom })) : [],
-    overrides: [],
-    findings: input.findings.filter((finding) => finding.severity !== 'info'),
+    rawDocuments: input.rawEntries.map((raw) => {
+      const object = input.locate(raw.document, raw.role);
+      const document: ManifestRawDocument = { role: raw.role, url: raw.document.url, finalUrl: raw.document.finalUrl, sha256: raw.document.sha256, contentType: raw.document.contentType, retrievedAt: raw.document.retrievedAt, byteLength: raw.document.bytes.byteLength, archiveStatus: object.status };
+      if (object.localSource) document.localSource = object.localSource;
+      if (object.bucket) document.bucket = object.bucket;
+      if (object.objectKey) document.objectKey = object.objectKey;
+      return document;
+    }),
+    versionsConsidered: result.selection ? result.selection.candidates.map((candidate) => ({ validFrom: candidate.validFrom, validTo: candidate.validTo, ...(candidate.url ? { url: candidate.url } : {}), selected: candidate.validFrom === result.selection!.selected?.validFrom })) : [],
+    overrides: input.overrides.filter((override) => override.field !== 'attachmentHandling' && override.field !== 'institutionMapping').map((override): ManifestOverride => ({ id: override.id, field: override.field, value: override.value, reason: override.reason, evidence: override.evidence, reviewedAt: override.reviewedAt })),
+    findings: result.findings.filter((finding) => finding.severity !== 'info'),
     integrity: { fetchParse: state.fetchParse?.ok ?? false, sourceCanonical: state.sourceCanonical?.ok ?? false },
     transformation: { changes: state.report?.changes.length ?? 0, unresolved: state.report?.unresolved.length ?? 0, detections: state.report?.detections.length ?? 0, ...(state.report ? { postTransformAudit: state.report.postTransformAudit.ok } : {}), reportPath },
   };
+  if (input.env.runId) entry.runId = input.env.runId;
+  if (result.sanity) entry.documentIdentity = { status: result.sanity.status, signals: result.sanity.signals.map((signal) => `${signal.effect}:${signal.code}`) };
+  if (result.completeness) {
+    entry.textCompleteness = result.completeness.completeness;
+    if (result.completeness.attachments.length > 0) entry.attachments = result.completeness.attachments;
+  } else if (result.parse && page.attachments.length === 0 && entry.baselineStatus === 'active-at-baseline') {
+    entry.textCompleteness = 'html-complete';
+  }
+  if (validity?.textStatus === 'reconstruction-required') {
+    const plan = reconstructionPlanFor(validity);
+    if (plan) entry.reconstructionPlan = plan;
+  }
+  return entry;
 }
 
 function auditReport(result: LrmbImportResult, entry: ManifestEntry, generatedAt: Date): unknown {
@@ -584,10 +801,13 @@ function auditReport(result: LrmbImportResult, entry: ManifestEntry, generatedAt
     head: result.parse?.head,
     classification: result.classification,
     normativity: result.normativity,
+    documentIdentity: result.sanity,
+    textCompleteness: result.completeness,
     changeNote: result.changeNote,
-    amendments: result.amendments?.map((amendment) => ({ ...amendment })),
-    validity: result.validity ? { baselineStatus: result.validity.baselineStatus, textStatus: result.validity.textStatus, sourceValidFrom: result.validity.sourceValidFrom, sourceValidTo: result.validity.sourceValidTo, sourceValidity: result.validity.sourceValidity, evidence: result.validity.evidence } : undefined,
+    amendments: result.amendments?.map(({ gazetteText: _text, ...amendment }) => amendment),
+    validity: result.validity ? { baselineStatus: result.validity.baselineStatus, textStatus: result.validity.textStatus, sourceValidFrom: result.validity.sourceValidFrom, sourceValidTo: result.validity.sourceValidTo, sourceValidity: result.validity.sourceValidity, provenance: result.validity.provenance, continuity: result.validity.continuity, evidence: result.validity.evidence } : undefined,
     reconstruction: result.reconstruction ? { ok: result.reconstruction.ok, baseFingerprint: result.reconstruction.baseFingerprint, resultFingerprint: result.reconstruction.resultFingerprint, steps: result.reconstruction.steps, sources: result.reconstruction.sources } : undefined,
+    reconstructionPlan: entry.reconstructionPlan,
     parseStats: result.parse?.stats,
     integrity: result.integrity,
     transformation: result.report,

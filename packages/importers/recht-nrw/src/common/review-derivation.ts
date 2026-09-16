@@ -17,6 +17,7 @@ interface Rule {
 const blockingIfError = (finding: ImportFinding): ReviewItemInput['severity'] => (finding.severity === 'error' ? 'blocking' : 'non-blocking');
 
 const RULES: readonly Rule[] = [
+  { test: (finding) => finding.code.startsWith('document-identity-'), category: 'document-identity', severity: blockingIfError, key: (finding) => finding.code },
   { test: (finding) => /^selection-(page-contradiction|not-confirmed)$/u.test(finding.code), category: 'metadata-conflict', severity: () => 'blocking', key: (finding) => finding.code },
   { test: (finding) => finding.code.startsWith('selection-'), category: 'version-selection', severity: () => 'blocking', key: (finding) => finding.code },
   { test: (finding) => finding.code.startsWith('version-history-'), category: 'historical-gap', severity: () => 'non-blocking', key: (finding) => `${finding.code}:${finding.message}` },

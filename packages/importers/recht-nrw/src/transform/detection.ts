@@ -5,13 +5,15 @@
  *     protected            Fundstelle, URL, Eigenname – bleibt byteidentisch
  *     safe-auto-transform  Landesbezeichnung mit benannter Regel; Verfassungsorgane mit Landesnamen
  *     manual-review        Ministerium, Behörde, Körperschaft, Kommune, Geographie, Restformen – bleibt unverändert
- *     informational        reiner Hinweis ohne Handlungsbedarf
+ *     informational        reiner Hinweis ohne Handlungsbedarf (z. B. Institutionen-Mapping `preserve`)
  *   → Transformation → Prüfung nach der Transformation (Residuen, nicht angewandte Regeln, stille Änderungen)
  *
- * Kein Befund geht verloren: jede Erkennung steht mit Pfad, Quellposition, Kontext, Kategorie,
- * Entscheidung und Begründung im Transformationsreport.
+ * Institutionen werden über die zentrale Zuordnung (`institution-registry.ts`) eingeordnet; der Normtext
+ * ändert sich dadurch nicht. Kein Befund geht verloren: jede Erkennung steht mit Pfad, Quellposition,
+ * Kontext, Kategorie, Entscheidung, Begründung und gegebenenfalls dem Zuordnungseintrag im Report.
  */
-import { findProtectedSpans, planTransformation, PROTECTED_PATTERNS } from './rules.ts';
+import type { CompiledInstitutionRegistry, InstitutionStatus } from './institution-registry.ts';
+import { findProtectedSpans, planTransformation, PROTECTED_PATTERNS, type TransformationOptions } from './rules.ts';
 
 export const REFERENCE_CATEGORIES = [
   'jurisdiction-name',
@@ -37,6 +39,11 @@ export interface DetectionField {
   text: string;
 }
 
+export interface DetectionOptions {
+  transformation?: TransformationOptions;
+  institutions?: CompiledInstitutionRegistry;
+}
+
 export interface DetectedReference {
   /** Stabil je Quelltext: Pfad, Quellposition, Detektor. */
   id: string;
@@ -51,6 +58,8 @@ export interface DetectedReference {
   /** Nur bei `safe-auto-transform` der Landesbezeichnung: angewandte Regel und Ergebnis. */
   transformRule?: string;
   replacement?: string;
+  /** Eintrag der zentralen Institutionen-Zuordnung. */
+  mapping?: { status: InstitutionStatus; entry?: string; group?: string; target?: string };
   reason: string;
 }
 
@@ -71,7 +80,7 @@ const REASONS = {
   regionalBody: 'Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.',
   municipality: 'Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation.',
   geography: 'Geographische Bezeichnung – keine automatische Entsprechung in der Simulation.',
-  residual: 'Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.',
+  residual: 'Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.',
 } as const;
 
 const STATE = 'Nordrhein-Westfalen';
@@ -118,13 +127,33 @@ function reference(field: DetectionField, start: number, end: number, category: 
   return { id: `${field.path}@${start}:${detector}`, path: field.path, start, end, term: field.text.slice(start, end), context: contextOf(field.text, start, end), category, decision, detector, reason };
 }
 
+/** Wendet die zentrale Institutionen-Zuordnung auf eine manuelle Erkennung an (Text bleibt unverändert). */
+function applyInstitutionMapping(detection: DetectedReference, registry: CompiledInstitutionRegistry): void {
+  const resolved = registry.resolve(detection.term, detection.category);
+  if (resolved.source === 'none') return;
+  const mapping: NonNullable<DetectedReference['mapping']> = { status: resolved.status };
+  if (resolved.entry) {
+    mapping.entry = resolved.entry.id;
+    mapping.group = resolved.entry.group;
+    if (resolved.entry.target) mapping.target = resolved.entry.target;
+  }
+  detection.mapping = mapping;
+  if (detection.decision !== 'manual-review') return;
+  if (resolved.status === 'preserve' || resolved.status === 'historical-source-only') {
+    detection.decision = 'informational';
+    detection.reason = `Institutionen-Zuordnung ${resolved.entry?.id ?? detection.category} (${resolved.status}): ${resolved.entry?.reason ?? 'Standard der Kategorie'}`;
+  } else if (resolved.entry) {
+    detection.reason = `${detection.reason} Zuordnung ${resolved.entry.id} (${resolved.status}${resolved.entry.target ? ` → ${resolved.entry.target}` : ''}): ${resolved.entry.reason}`;
+  }
+}
+
 /** Erkennt alle landesbezogenen Bezeichnungen im unveränderten Quelltext. */
-export function detectReferences(fields: readonly DetectionField[]): DetectedReference[] {
+export function detectReferences(fields: readonly DetectionField[], options: DetectionOptions = {}): DetectedReference[] {
   const detections: DetectedReference[] = [];
   for (const field of fields) {
     if (!field.text) continue;
     const found: DetectedReference[] = [];
-    const { protectedSpans, segments } = planTransformation(field.text);
+    const { protectedSpans, segments } = planTransformation(field.text, options.transformation);
     for (const span of protectedSpans) {
       if (!STATE_SPECIFIC.test(span.text)) continue;
       const pattern = PROTECTED_PATTERNS.find((entry) => entry.id === span.id);
@@ -146,7 +175,9 @@ export function detectReferences(fields: readonly DetectionField[]): DetectedRef
       for (const match of institutionMasked.matchAll(new RegExp(detector.pattern.source, detector.pattern.flags))) {
         const start = match.index ?? 0;
         if (match[0].length === 0 || match[0].includes(MASK)) continue;
-        found.push(reference(field, start, start + match[0].length, detector.category, detector.decision, detector.id, detector.reason));
+        const detection = reference(field, start, start + match[0].length, detector.category, detector.decision, detector.id, detector.reason);
+        if (options.institutions) applyInstitutionMapping(detection, options.institutions);
+        found.push(detection);
       }
     }
     detections.push(...found.sort((left, right) => left.start - right.start || left.end - right.end || left.detector.localeCompare(right.detector)));

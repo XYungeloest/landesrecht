@@ -6,9 +6,11 @@
 import type { NormBodyBlock, NormType, SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 import type { ImportFinding, SourceLaw } from '@landesrecht/importer-common/pipeline.ts';
 
+import type { ArchivedObject } from '../common/archive.ts';
 import type { BodyStats, SourceFootnote } from '../common/body-common.ts';
 import { PARSER_VERSION, SOURCE_SYSTEM } from '../common/constants.ts';
 import type { FetchedDocument } from '../common/fetcher.ts';
+import type { ManifestRawDocument } from '../common/manifest.ts';
 import { parseGermanLongDate, stemIdentifier } from '../common/source-identity.ts';
 import type { RechtNrwVersionPage } from '../common/version-page.ts';
 
@@ -23,7 +25,7 @@ export interface RechtNrwSourceLaw extends SourceLaw {
   annexes: Array<{ label: string; sourceUrl: string; mediaType: string; parsed: boolean; findings: ImportFinding[] }>;
   stats: BodyStats;
   parserVersion: string;
-  rawDocuments: Array<{ role: 'version-page' | 'legacy-text' | 'annex' | 'pdf'; url: string; finalUrl: string; sha256: string; contentType: string; retrievedAt: string; byteLength: number; localSource?: string }>;
+  rawDocuments: ManifestRawDocument[];
 }
 
 export interface NormalizeInput {
@@ -31,9 +33,11 @@ export interface NormalizeInput {
   pageDocument: FetchedDocument;
   body: { blocks: NormBodyBlock[]; footnotes: SourceFootnote[]; findings: ImportFinding[]; stats: BodyStats; titleLines?: string[]; issuedLine?: string; citationNote?: string };
   textDocument?: FetchedDocument;
-  annexes?: Array<{ label: string; document: FetchedDocument; blocks: NormBodyBlock[]; findings: ImportFinding[]; parsed: boolean }>;
+  annexes?: Array<{ label: string; document: FetchedDocument; blocks: NormBodyBlock[]; findings: ImportFinding[]; parsed: boolean; transcription?: boolean }>;
   pdfDocument?: FetchedDocument;
-  /** Relative Repositorypfade der archivierten Rohquellen (Schlüssel: sha256). */
+  /** Archivierte Rohquellen (Schlüssel: sha256) und die Quellenreferenz-Felder des Archivs. */
+  archived?: { objects: Record<string, ArchivedObject>; referenceFields: (object: ArchivedObject) => Pick<SourceReference, 'availability' | 'localSource' | 'bucket' | 'objectKey'> };
+  /** Frühere Form: relative Repositorypfade der versionierten Rohquellen (Schlüssel: sha256). */
   archivedPaths?: Record<string, string>;
 }
 
@@ -94,19 +98,24 @@ export function looksLikeAbbreviation(value: string): boolean {
   return words.every((word) => /^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß0-9.-]*$/u.test(word) && (/[A-Z].*[A-Z]/u.test(word) || /^[A-ZÄÖÜ]{2,}/u.test(word) || word === 'NRW' || /^\d/u.test(word) || /\.$/u.test(word))) && words.length <= 4;
 }
 
-function sourceReference(entry: RechtNrwSourceLaw['rawDocuments'][number], label: string, page: RechtNrwVersionPage, role: SourceReference['sourceRole']): SourceReference {
+function sourceReference(entry: ManifestRawDocument, label: string, page: RechtNrwVersionPage, role: SourceReference['sourceRole'], fields?: Pick<SourceReference, 'availability' | 'localSource' | 'bucket' | 'objectKey'>): SourceReference {
   const reference: SourceReference = {
     kind: entry.role === 'pdf' ? 'primary-pdf' : 'official-portal-snapshot',
     system: SOURCE_SYSTEM,
     label,
-    availability: entry.localSource ? 'versioned' : 'external',
+    availability: fields?.availability ?? (entry.localSource ? 'versioned' : 'external'),
     url: entry.finalUrl,
     retrievedAt: entry.retrievedAt.slice(0, 10),
     sha256: entry.sha256,
     externalId: `term:${page.stemTermId ?? '?'}`,
     mediaType: entry.role === 'pdf' ? 'application/pdf' : 'text/html',
   };
-  if (entry.localSource) reference.localSource = entry.localSource;
+  if (fields?.availability === 'r2-archived') {
+    if (fields.bucket) reference.bucket = fields.bucket;
+    if (fields.objectKey) reference.objectKey = fields.objectKey;
+  } else if (entry.localSource) {
+    reference.localSource = entry.localSource;
+  }
   if (page.validFrom) reference.sourceValidFrom = page.validFrom;
   if (page.validTo) reference.sourceValidTo = page.validTo;
   if (role) reference.sourceRole = role;
@@ -129,9 +138,10 @@ export function normalizeSourceLaw(input: NormalizeInput): RechtNrwSourceLaw {
       ? `${title} vom ${formatIssued(issuedOn)} (${body.citationNote.split(/[;,]/u)[0]!.trim()})`
       : `${title} vom ${formatIssued(issuedOn)}`;
 
-  const rawDocuments: RechtNrwSourceLaw['rawDocuments'] = [];
-  const pushRaw = (role: RechtNrwSourceLaw['rawDocuments'][number]['role'], document: FetchedDocument): RechtNrwSourceLaw['rawDocuments'][number] => {
-    const entry: RechtNrwSourceLaw['rawDocuments'][number] = {
+  const rawDocuments: ManifestRawDocument[] = [];
+  const fieldsOf = new Map<ManifestRawDocument, Pick<SourceReference, 'availability' | 'localSource' | 'bucket' | 'objectKey'>>();
+  const pushRaw = (role: ManifestRawDocument['role'], document: FetchedDocument): ManifestRawDocument => {
+    const entry: ManifestRawDocument = {
       role,
       url: document.url,
       finalUrl: document.finalUrl,
@@ -140,21 +150,33 @@ export function normalizeSourceLaw(input: NormalizeInput): RechtNrwSourceLaw {
       retrievedAt: document.retrievedAt,
       byteLength: document.bytes.byteLength,
     };
-    const local = input.archivedPaths?.[document.sha256];
-    if (local) entry.localSource = local;
+    const object = input.archived?.objects[document.sha256];
+    if (object && input.archived) {
+      if (object.localSource) entry.localSource = object.localSource;
+      if (object.bucket) entry.bucket = object.bucket;
+      if (object.objectKey) entry.objectKey = object.objectKey;
+      entry.archiveStatus = object.status;
+      fieldsOf.set(entry, input.archived.referenceFields(object));
+    } else {
+      const local = input.archivedPaths?.[document.sha256];
+      if (local) entry.localSource = local;
+    }
     rawDocuments.push(entry);
     return entry;
   };
   const pageEntry = pushRaw('version-page', input.pageDocument);
   const textEntry = input.textDocument ? pushRaw('legacy-text', input.textDocument) : undefined;
-  const sourceReferences: SourceReference[] = [sourceReference(pageEntry, `RECHT.NRW-Fassungsseite, gültig ab ${page.validFrom ?? '?'}`, page, 'official-snapshot')];
-  if (textEntry) sourceReferences.push(sourceReference(textEntry, 'RECHT.NRW-Textdokument (Legacy-Datei) dieser Fassung', page, 'structure-bearing'));
+  const sourceReferences: SourceReference[] = [sourceReference(pageEntry, `RECHT.NRW-Fassungsseite, gültig ab ${page.validFrom ?? '?'}`, page, 'official-snapshot', fieldsOf.get(pageEntry))];
+  if (textEntry) sourceReferences.push(sourceReference(textEntry, 'RECHT.NRW-Textdokument (Legacy-Datei) dieser Fassung', page, 'structure-bearing', fieldsOf.get(textEntry)));
 
   const blocks: NormBodyBlock[] = [...body.blocks];
   const annexes: RechtNrwSourceLaw['annexes'] = [];
   for (const annex of input.annexes ?? []) {
     const entry = pushRaw('annex', annex.document);
-    sourceReferences.push(sourceReference(entry, `RECHT.NRW-Anlage: ${annex.label}`, page, 'structure-bearing'));
+    const reference = sourceReference(entry, `RECHT.NRW-Anlage: ${annex.label}`, page, 'structure-bearing', fieldsOf.get(entry));
+    if (/pdf/iu.test(annex.document.contentType)) reference.mediaType = 'application/pdf';
+    if (annex.transcription) reference.note = 'Anlage nur als PDF; Text aus geprüfter strukturierter Transkription (data/imports/recht-nrw/transcriptions/)';
+    sourceReferences.push(reference);
     annexes.push({ label: annex.label, sourceUrl: annex.document.finalUrl, mediaType: annex.document.contentType, parsed: annex.parsed, findings: annex.findings });
     findings.push(...annex.findings);
     if (annex.parsed) {
@@ -167,7 +189,7 @@ export function normalizeSourceLaw(input: NormalizeInput): RechtNrwSourceLaw {
   }
   if (input.pdfDocument) {
     const entry = pushRaw('pdf', input.pdfDocument);
-    sourceReferences.push(sourceReference(entry, 'RECHT.NRW-PDF der konsolidierten Fassung (visuelle Kontrolle)', page, 'visual-control'));
+    sourceReferences.push(sourceReference(entry, 'RECHT.NRW-PDF der konsolidierten Fassung (visuelle Kontrolle)', page, 'visual-control', fieldsOf.get(entry)));
   }
 
   const changeHistory = page.changeHistory ?? body.citationNote;

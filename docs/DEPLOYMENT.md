@@ -50,6 +50,29 @@ Die Projektion ist deterministisch (`projection_fingerprint` in `law_runtime_met
 nie automatisch gegen eine produktive Datenbank. Lokale Prüfung: `npm run d1:seed:local`,
 `npm run d1:schema:check`. Reihenfolge bei Änderungen: lokal → Staging → Produktion.
 
+`d1:apply:remote` schreibt eine einzige SQL-Datei und ist nur für kleine Bestände gedacht. Für mehrere
+Tausend Normen (West nach dem Bulkimport) gilt der Batch-Weg:
+
+```sh
+npm run d1:plan -- --jurisdiction west                                  # data/runtime/d1-batches/landesrecht-west/NNNN.sql + plan.json + state.json
+npm run d1:apply:batches -- --database landesrecht-west                  # Dry-run: SHA-256, Reihenfolge, offene Dateien
+npm run d1:apply:batches -- --database landesrecht-west --local --execute  # lokale Miniflare-D1
+npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remote landesrecht-west [--resume]
+```
+
+- Aufteilung: höchstens 1 500 Anweisungen und 6 MB je Datei, einzelne Anweisungen höchstens 100 KB
+  (`packages/runtime/src/sql-batches.ts`); je Norm Löschen und Neuaufbau in derselben Datei, damit ein
+  abgebrochener Lauf mit `--resume` fortgesetzt werden kann (`apply-state.json`).
+- Inkrementell: `npm run d1:plan -- --jurisdiction west --incremental --since <git-ref>` oder
+  `--state data/runtime/projection-state-west.remote.json` projiziert nur neue, geänderte und entfernte Normen
+  (Fingerabdruck je Norm, `packages/runtime/src/incremental.ts`). Jede inkrementelle Datei beginnt mit einer
+  Basisprüfung: stimmt der Projektionszustand der Zieldatenbank nicht mit der Planbasis überein, bricht die
+  Datei mit einem SQL-Fehler ab, bevor etwas geändert wird.
+- Nach der letzten Datei wird `state.json` als Remote-Zustand übernommen
+  (`data/runtime/projection-state-<jur>.remote.json`, nicht in Git).
+- Skalierungsnachweis: `npm run d1:scale-test -- --write` (5 000 synthetische Normen; Bericht
+  `data/audits/recht-nrw/d1-scale.json`).
+
 ## Worker
 
 `npm run build` erzeugt `apps/web/dist/` (Client-Assets + `dist/server/wrangler.json`).
@@ -68,6 +91,6 @@ und `wrangler dev` lesen daraus. Ein Remote-Zugriff findet dabei nicht statt.
 ## Offen
 
 - Playwright-Smokes gegen den lokalen Worker (Muster: OstRecht `serve-law-worker`).
-- Inkrementelle Projektion aus `git diff` mit Budgetprofilen (OstRecht-Muster), sobald der
-  Bestand groß wird.
+- R2-Upload der gestagten RECHT.NRW-Rohquellen (`npm run import:recht-nrw:r2-sync -- --write`) erst mit
+  eingerichteten Zugangsdaten (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `.env.example`).
 - Domain/Routes in `wrangler.jsonc` nach Festlegung der öffentlichen Site-URL.

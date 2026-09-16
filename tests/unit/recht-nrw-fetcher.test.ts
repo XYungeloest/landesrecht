@@ -43,7 +43,7 @@ describe('Schonender Fetcher', () => {
     expect(second.fromCache).toBe(true);
     expect(second.sha256).toBe(first.sha256);
     expect(calls).toHaveLength(1);
-    expect(fetcher.stats).toEqual({ networkRequests: 1, cacheHits: 1 });
+    expect(fetcher.stats).toMatchObject({ networkRequests: 1, cacheHits: 1, retries: 0, blockedResponses: 0 });
     const offline = createRechtNrwFetcher({ cacheDir, offline: true, fetchImplementation: implementation, sleep: noSleep, minDelayMs: 0 });
     expect((await offline.fetch('https://recht.nrw.de/lrgv/gesetz/01012020-test')).fromCache).toBe(true);
     await expect(offline.fetch('https://recht.nrw.de/lrgv/gesetz/01012021-neu')).rejects.toMatchObject({ kind: 'network' });

@@ -47,6 +47,8 @@ export const ADMINISTRATIVE_REGULATION_TYPES = [
 export function expandNormTypeFilter(types: readonly NormType[]): NormType[] {
   const expanded = new Set<NormType>(types);
   if (expanded.has('verwaltungsvorschrift')) for (const type of ADMINISTRATIVE_REGULATION_TYPES) expanded.add(type);
+  // Zustimmungsgesetze sind Gesetze: der Filter „Gesetz“ schließt sie ein.
+  if (expanded.has('gesetz')) expanded.add('zustimmungsgesetz');
   return [...expanded];
 }
 
@@ -297,6 +299,11 @@ export interface NormMeta {
   relations: NormRelation[];
   externalIdentifiers: ExternalIdentifier[];
   sourceReferences: SourceReference[];
+  /**
+   * Nur für Testbestände: `synthetic-fixture` kennzeichnet synthetische Normen (tests/fixtures/content/).
+   * Produktionsbestand, Projektion und Build weisen solche Normen zurück.
+   */
+  dataset?: 'synthetic-fixture';
 }
 
 /**
@@ -640,7 +647,13 @@ export function parseNormMeta(value: unknown, path = 'meta.json'): NormMeta {
     relations: expectOptionalArray(object.relations, `${path}.relations`).map((entry, index) => parseNormRelation(entry, `${path}.relations[${index}]`)),
     externalIdentifiers,
     sourceReferences: parseSourceReferences(object.sourceReferences, `${path}.sourceReferences`),
+    dataset: object.dataset === undefined ? undefined : expectEnumValue(object.dataset, `${path}.dataset`, ['synthetic-fixture'] as const),
   };
+}
+
+/** Synthetische Testnorm (Kennzeichen `dataset` oder Präfix `testfixture-`). */
+export function isSyntheticFixtureNorm(meta: Pick<NormMeta, 'dataset' | 'slug'>): boolean {
+  return meta.dataset === 'synthetic-fixture' || meta.slug.startsWith('testfixture-');
 }
 
 const CONTAINER_TYPES_REQUIRING_HEADING: readonly StructureType[] = ['book', 'part', 'chapter', 'section', 'subsection', 'paragraph', 'article', 'annex'];

@@ -6,7 +6,7 @@
   "sourceIdentity": "term:27474",
   "slug": "lbtg-west",
   "baselineDate": "2023-12-01",
-  "transformerVersion": "recht-nrw-transformer/2.0.0",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
   "rules": [
     "jurisdiction-name-genitive",
     "jurisdiction-name-dative",
@@ -14,6 +14,9 @@
     "jurisdiction-name-adjective",
     "jurisdiction-name-adjective-capital",
     "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
     "jurisdiction-abbreviation"
   ],
   "detections": [
@@ -27,7 +30,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[1].children[2].children[1].text@4:authority-state-office",
@@ -39,7 +47,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-office",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
     },
     {
       "id": "body[1].children[3].text@4:regional-body-association",
@@ -51,7 +64,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[4].children[1].text@91:rule:jurisdiction-name-bare",
@@ -101,7 +119,13 @@
       "category": "institution",
       "decision": "safe-auto-transform",
       "detector": "constitutional-organ-state",
-      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet."
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
     },
     {
       "id": "body[10].text@20:rule:jurisdiction-name-bare",
@@ -156,7 +180,7 @@
       "context": "die Landschaftsverbände für die Anerkennung von rechtsfähigen Vereinen als Betreuun…",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -165,7 +189,7 @@
       "context": "das Landesamt für Finanzen für die Beschäftigung von Landesbediensteten, die als sachkundige Behördenbetreuerinnen oder Behördenbet…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -174,7 +198,7 @@
       "context": "Die Landschaftsverbände führen bei der Wahrnehmung von Aufgaben nach diesem Gesetz …",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     }
   ],
@@ -307,5 +331,47 @@
       ]
     }
   },
-  "generatedAt": "2026-09-15T18:52:40.909Z"
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "9 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "9 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-15T21:41:38.811Z"
 }

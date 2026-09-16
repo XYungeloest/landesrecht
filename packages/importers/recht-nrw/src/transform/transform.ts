@@ -3,8 +3,9 @@
  *
  * Ablauf: (1) Erlassorgan nur aus ausdrücklicher Formel bestimmen (organs.ts), (2) alle
  * landesbezogenen Bezeichnungen auf dem unveränderten Quelltext erkennen und entscheiden
- * (detection.ts), (3) nur die Landesbezeichnung nach benannten Regeln überleiten (rules.ts),
- * (4) nach der Transformation prüfen: Residuen, nicht angewandte Regeln, stille Änderungen.
+ * (detection.ts, zentrale Institutionen-Zuordnung), (3) nur die Landesbezeichnung nach benannten
+ * Regeln überleiten (rules.ts), (4) nach der Transformation prüfen: Residuen, nicht angewandte
+ * Regeln, stille Änderungen.
  *
  * Quellmetadaten bleiben unverändert: Quellen-URLs, SHA-256, reales Quellintervall, reale
  * Fundstelle (`sourceCitation`), Fußnoten/Quellhinweise, Änderungshistorie und das historische
@@ -18,8 +19,9 @@ import { slugify, type ImportFinding, type SourceLaw, type TransformContext } fr
 
 import { SOURCE_STATE_NAME, TARGET_JURISDICTION } from '../common/constants.ts';
 import { auditTransformation, detectReferences, summarizeDecisions, type DetectedReference, type DetectionField, type PostTransformAudit, type ReferenceCategory, type ReferenceDecision } from './detection.ts';
+import type { CompiledInstitutionRegistry } from './institution-registry.ts';
 import { extractSourceOrgans, mapEnactingBody, type EnactingBodyMapping, type OrganEvidence } from './organs.ts';
-import { applySegments, planTransformation, targetProperName, TRANSFORMATION_RULES, TRANSFORMER_VERSION } from './rules.ts';
+import { applySegments, planTransformation, targetProperName, transformationRules, TRANSFORMER_VERSION, type TransformationOptions } from './rules.ts';
 
 export interface TransformationChange {
   path: string;
@@ -56,7 +58,7 @@ export interface TransformationReport {
   changes: TransformationChange[];
   unresolved: UnresolvedReference[];
   postTransformAudit: PostTransformAudit;
-  organs: { source?: OrganEvidence; candidates: OrganEvidence[]; conflict: boolean; enactingBody?: string; decision: EnactingBodyMapping['decision']; reason: string };
+  organs: { source?: OrganEvidence; candidates: OrganEvidence[]; conflict: boolean; enactingBody?: string; decision: EnactingBodyMapping['decision']; reason: string; mappingEntry?: string };
   citations: { source: string; sourceVersion: string; simulation: string };
   /** Felder, die bewusst unverändert blieben. */
   protectedFields: string[];
@@ -70,6 +72,10 @@ export interface TransformOptions {
   /** Zusatz zum Änderungshinweis der Fassung (z. B. Rekonstruktionspfad). */
   provenanceNote?: string;
   dateNote?: string;
+  /** Regeloptionen (bekannte Normabkürzungen des Herkunftslandes). */
+  transformation?: TransformationOptions;
+  /** Zentrale Institutionen-Zuordnung. */
+  institutions?: CompiledInstitutionRegistry;
 }
 
 export interface TransformResult {
@@ -81,8 +87,8 @@ export interface TransformResult {
 const TARGET = getJurisdiction(TARGET_JURISDICTION);
 
 /** Wendet die Regeln auf einen Text an (Schutzmuster bleiben unverändert) und protokolliert jede Ersetzung. */
-export function transformText(value: string, path: string, changes: TransformationChange[]): string {
-  const { segments } = planTransformation(value);
+export function transformText(value: string, path: string, changes: TransformationChange[], options: TransformationOptions = {}): string {
+  const { segments } = planTransformation(value, options);
   for (const segment of segments) changes.push({ path, rule: segment.rule, from: segment.from, to: segment.to });
   return applySegments(value, segments);
 }
@@ -117,12 +123,13 @@ export function deriveSlug(transformedAbbr: string | undefined, transformedShort
 export function transformToWest(law: SourceLaw, context: TransformContext, options: TransformOptions = {}): TransformResult {
   const changes: TransformationChange[] = [];
   const findings: ImportFinding[] = [];
+  const ruleOptions = options.transformation ?? {};
   if (context.targetJurisdiction !== TARGET_JURISDICTION) throw new Error(`Der RECHT.NRW-Transformer bedient nur ${TARGET_JURISDICTION}, nicht ${context.targetJurisdiction}`);
   if (context.baselineDate !== SIMULATION_BASELINE_DATE) throw new Error(`Ausgangsrechtsstand ${context.baselineDate} weicht von ${SIMULATION_BASELINE_DATE} ab`);
 
   // 1. Erlassorgan nur aus ausdrücklicher Formel.
   const organs = extractSourceOrgans(options.headLines ? { blocks: law.body, headLines: options.headLines } : { blocks: law.body });
-  const mapping = mapEnactingBody(organs.enactingBody?.name);
+  const mapping = mapEnactingBody(organs.enactingBody?.name, { ...(options.institutions ? { institutions: options.institutions } : {}), transformation: ruleOptions });
   if (organs.conflict) findings.push({ severity: 'warning', code: 'organ-formula-conflict', message: `Widersprüchliche Erlassformeln (${[...new Set(organs.candidates.map((candidate) => candidate.name))].join(' / ')}); kein Erlassorgan übernommen` });
   if (mapping.decision === 'manual-review') findings.push({ severity: 'warning', code: 'enacting-body-mapping-required', message: `Erlassorgan der Quelle „${organs.enactingBody?.name}“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` });
 
@@ -138,19 +145,19 @@ export function transformToWest(law: SourceLaw, context: TransformContext, optio
     const value = field.get();
     if (value) detectionFields.push({ path: field.path, text: value });
   }
-  const detections = detectReferences(detectionFields);
+  const detections = detectReferences(detectionFields, { transformation: ruleOptions, ...(options.institutions ? { institutions: options.institutions } : {}) });
 
   // 3. Transformation der Landesbezeichnungen.
   const audited: Array<{ path: string; source: string; transformed: string }> = [];
   const transform = (value: string, path: string): string => {
-    const transformed = transformText(value, path, changes);
+    const transformed = transformText(value, path, changes, ruleOptions);
     audited.push({ path, source: value, transformed });
     return transformed;
   };
   const title = transform(law.title, 'meta.title');
   const shortTitle = law.shortTitle ? transform(law.shortTitle, 'meta.shortTitle') : undefined;
   const abbr = law.abbr ? transform(law.abbr, 'meta.abbr') : undefined;
-  const enactingBody = mapping.decision === 'safe-auto-transform' && organs.enactingBody ? transform(organs.enactingBody.name, 'meta.enactingBody') : undefined;
+  const enactingBody = mapping.decision === 'safe-auto-transform' && organs.enactingBody ? transform(organs.enactingBody.name, 'meta.enactingBody') : mapping.decision === 'registry-map' ? mapping.enactingBody : undefined;
   for (const field of bodyFields) {
     const value = field.get();
     if (!value) continue;
@@ -230,6 +237,7 @@ export function transformToWest(law: SourceLaw, context: TransformContext, optio
   const organReport: TransformationReport['organs'] = { candidates: organs.candidates, conflict: organs.conflict, decision: mapping.decision, reason: mapping.reason };
   if (organs.enactingBody) organReport.source = organs.enactingBody;
   if (enactingBody) organReport.enactingBody = enactingBody;
+  if (mapping.mappingEntry) organReport.mappingEntry = mapping.mappingEntry;
   const report: TransformationReport = {
     schemaVersion: 'recht-nrw-transformation-report/2',
     source: SOURCE_STATE_NAME,
@@ -239,7 +247,7 @@ export function transformToWest(law: SourceLaw, context: TransformContext, optio
     slug,
     baselineDate: context.baselineDate,
     transformerVersion: TRANSFORMER_VERSION,
-    rules: TRANSFORMATION_RULES.map((rule) => rule.id),
+    rules: transformationRules(ruleOptions).map((rule) => rule.id),
     detections,
     decisions: summarizeDecisions(detections),
     changes,

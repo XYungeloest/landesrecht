@@ -121,7 +121,10 @@ function runQuery(native: DatabaseSync, query: PlanQuery): void {
   native.prepare(query.sql).run(...query.params.map(bindable));
 }
 
-/** FTS5-Integritätsprüfung des Suchindex (wirft bei Abweichung). */
+/**
+ * FTS5-Integritätsprüfung des Suchindex (wirft bei Abweichung). `rank = 1` vergleicht den Index zusätzlich mit der
+ * externen Inhaltstabelle `law_search_units`; ohne diesen Wert bliebe ein veralteter Index unentdeckt.
+ */
 export function checkSearchIndexIntegrity(db: SqliteD1Database): void {
-  db.native.exec("INSERT INTO law_search(law_search) VALUES ('integrity-check')");
+  db.native.exec("INSERT INTO law_search(law_search, rank) VALUES ('integrity-check', 1)");
 }

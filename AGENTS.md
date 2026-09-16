@@ -31,7 +31,10 @@ Prioritäten:
   `packages/providers/src/federal.ts`.
 - Ostdeutsche Normen werden hier nicht redaktionell gepflegt; sie kommen über den
   OstRecht-Adapter (`packages/providers/src/ostrecht.ts`, `packages/importers/ostrecht`).
-- Keine Massenimporte, kein Scraping, keine Cloudflare-Ressourcen, keine Secrets im Repository.
+- Keine Massenimporte ohne ausdrücklichen Auftrag, kein Scraping, keine Cloudflare-Ressourcen, keine Secrets
+  im Repository. Der RECHT.NRW-Bulkimport läuft nur über `npm run import:recht-nrw:bulk` nach
+  `docs/RECHT_NRW_BULK_READINESS.md` (Dry-run Standard, Budgets, Mindestabstand, keine Umgehung von
+  Zugriffsbeschränkungen); Rohquellen des Bulks nie unter `sources/`.
 - Der Rechtsbestand umfasst Gesetze, Verordnungen und landesweite Verwaltungsvorschriften
   (`docs/LEGAL_SCOPE.md`). Zweifelhafte Dokumente nie automatisch aufnehmen; nach dem Stichtag gilt
   Simulationsrecht, reale spätere Änderungen werden nicht übernommen.
@@ -40,8 +43,11 @@ Prioritäten:
   (`docs/RECHT_NRW_IMPORT.md`, `docs/RECHT_NRW_LRMB_IMPORT.md`). Erlassorgane nie aus dem Normtyp
   ableiten; reale Fundstellen (`sourceCitation`) nie transformieren.
 - Rekonstruktionen von Stichtagsfassungen nur mit geprüftem Rezept unter
-  `data/imports/recht-nrw/reconstructions/`; Review-Fälle in `data/imports/recht-nrw/review-queue.json`
-  werden nie gelöscht, nur entschieden.
+  `data/imports/recht-nrw/reconstructions/`; Review-Fälle unter `data/imports/recht-nrw/review/` werden nie
+  gelöscht, nur entschieden (`npm run import:recht-nrw:review -- --decide …`). Abweichungen vom Portal nur
+  als dokumentierter Override in `data/imports/recht-nrw/overrides.json`, nie im Code.
+- Synthetische Testfixtures liegen nur unter `tests/fixtures/content/` (`"dataset": "synthetic-fixture"`);
+  `content/` enthält ausschließlich übernommene oder redaktionelle Normen.
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar
   (Hinweisleiste, Startseite, Fußzeile, Impressum).
 
@@ -51,7 +57,8 @@ Prioritäten:
 - Neue zentrale Regeln knapp hier oder im passenden Dokument unter `docs/` dokumentieren; keine
   Chroniken oder Statusberichte in Markdown.
 - Vor Abschluss ausführen: `npm run check`, `npm run test`, `npm run content:check`,
-  `npm run d1:schema:check`, `npm run build`.
+  `npm run d1:schema:check`, `npm run build`; bei Importänderungen zusätzlich
+  `npm run import:recht-nrw:audit`, `npm run import:recht-nrw:coverage` und `npm run import:recht-nrw:readiness`.
 
 ## Technik
 

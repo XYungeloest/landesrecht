@@ -11,12 +11,14 @@
  *
  * Überleitung ins Simulationsrecht nur, wenn sicher: Verfassungsorgane (Landtag, Landesregierung,
  * Ministerpräsident) existieren in jedem Land; ihre Bezeichnung wird wie der Normtext übergeleitet.
- * Ministerien und Behörden bleiben ohne Simulationsorgan (Ressortzuschnitt ungeklärt, manuelle
- * Entscheidung); das historische Organ bleibt als `originEnactingBody` erhalten.
+ * Andere Organe nur über die zentrale Institutionen-Zuordnung (`map` mit Ziel, `preserve`);
+ * sonst bleibt das Simulationsorgan leer (Review nicht blockierend), das historische Organ bleibt als
+ * `originEnactingBody` erhalten.
  */
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
-import { applySegments, planTransformation, type TransformSegment } from './rules.ts';
+import type { CompiledInstitutionRegistry } from './institution-registry.ts';
+import { applySegments, planTransformation, type TransformationOptions, type TransformSegment } from './rules.ts';
 
 export type OrganFormula = 'legislative-resolution' | 'ordinance-formula' | 'decree-head';
 
@@ -37,9 +39,11 @@ export interface SourceOrganExtraction {
 
 export interface EnactingBodyMapping {
   enactingBody?: string;
-  decision: 'safe-auto-transform' | 'manual-review' | 'not-available';
+  /** registry-map: Zuordnung laut Institutionen-Mapping; source-only: nur Provenienz, kein Review. */
+  decision: 'safe-auto-transform' | 'registry-map' | 'source-only' | 'manual-review' | 'not-available';
   reason: string;
   segments: TransformSegment[];
+  mappingEntry?: string;
 }
 
 const MINISTRY_HEAD = '(?:Landesregierung|Staatskanzlei|Ministerpräsident(?:in|en)?|(?:[A-ZÄÖÜ][a-zäöüß]+)?[Mm]inisteri(?:um|ums)|(?:[A-ZÄÖÜ][a-zäöüß]+)?[Mm]inister(?:in|s)?)';
@@ -91,12 +95,24 @@ export function extractSourceOrgans(input: { blocks: readonly NormBodyBlock[]; h
 
 const CONSTITUTIONAL_ORGAN = /^(?:Landtag|Landesregierung|Ministerpräsident(?:in)?)(?:\s+(?:von\s+|des\s+Landes\s+)?Nordrhein-Westfalen)?$/u;
 
-/** Überleitung des Erlassorgans in die Simulationsjurisdiktion – nur für Verfassungsorgane. */
-export function mapEnactingBody(origin: string | undefined): EnactingBodyMapping {
+/** Überleitung des Erlassorgans in die Simulationsjurisdiktion – Verfassungsorgane oder zentrale Zuordnung. */
+export function mapEnactingBody(origin: string | undefined, options: { institutions?: CompiledInstitutionRegistry; transformation?: TransformationOptions } = {}): EnactingBodyMapping {
   if (!origin) return { decision: 'not-available', reason: 'Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen.', segments: [] };
   if (CONSTITUTIONAL_ORGAN.test(origin)) {
-    const { segments } = planTransformation(origin);
+    const { segments } = planTransformation(origin, options.transformation);
     return { enactingBody: applySegments(origin, segments), decision: 'safe-auto-transform', reason: 'Verfassungsorgan des Landes; nur die Landesbezeichnung wird übergeleitet.', segments };
   }
-  return { decision: 'manual-review', reason: 'Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.', segments: [] };
+  const resolved = options.institutions?.resolve(origin);
+  if (resolved?.entry && resolved.status === 'map' && resolved.entry.target) {
+    return { enactingBody: resolved.entry.target, decision: 'registry-map', reason: `Institutionen-Zuordnung ${resolved.entry.id}: ${resolved.entry.reason}`, segments: [], mappingEntry: resolved.entry.id };
+  }
+  if (resolved?.entry && resolved.status === 'preserve') {
+    return { enactingBody: origin, decision: 'registry-map', reason: `Institutionen-Zuordnung ${resolved.entry.id} (preserve): ${resolved.entry.reason}`, segments: [], mappingEntry: resolved.entry.id };
+  }
+  if (resolved?.entry && resolved.status === 'historical-source-only') {
+    return { decision: 'source-only', reason: `Institutionen-Zuordnung ${resolved.entry.id} (historical-source-only): ${resolved.entry.reason}`, segments: [], mappingEntry: resolved.entry.id };
+  }
+  const mapping: EnactingBodyMapping = { decision: 'manual-review', reason: 'Ressort- oder Behördenbezeichnung des Herkunftslandes; Zuschnitt im Land Westdeutschland nicht festgelegt. Das historische Organ bleibt als Quellorgan erhalten.', segments: [] };
+  if (resolved?.entry) mapping.mappingEntry = resolved.entry.id;
+  return mapping;
 }

@@ -99,9 +99,27 @@ describe('Erkennung vor der Transformation', () => {
   });
 
   it('meldet Restformen ohne sichere Regel als manuelle Entscheidung, statt sie zu ersetzen', () => {
-    const detections = detectReferences([{ path: 'p', text: 'nach dem Nichtraucherschutzgesetz NRW. Die Landesfarben Nordrhein-Westfalens.' }]);
-    expect(detections.map((entry) => [entry.term, entry.decision])).toEqual([['NRW', 'manual-review'], ['Nordrhein-Westfalens', 'manual-review']]);
-    expect(planTransformation('Nichtraucherschutzgesetz NRW.').segments).toEqual([]);
+    const detections = detectReferences([{ path: 'p', text: 'beim Landesbetrieb Wald und Holz NRW. Die Landesfarben Nordrhein-Westfalens.' }]);
+    expect(detections.filter((entry) => entry.category === 'jurisdiction-name').map((entry) => [entry.term, entry.decision])).toEqual([['NRW', 'manual-review'], ['Nordrhein-Westfalens', 'manual-review']]);
+    expect(planTransformation('Landesbetrieb Wald und Holz NRW.').segments).toEqual([]);
+  });
+
+  it('leitet Restformen „NRW.“ nur bei Gesetzesbezeichnungen und bekannten Normabkürzungen über', () => {
+    const known = { knownStateLawAbbreviations: new Set(['VwVfG', 'PBefKostenV', 'SchulG']) };
+    const convert = (text: string, options = known): string => transformText(text, 'p', [], options);
+    expect(convert('Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.')).toBe('Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes West.');
+    expect(convert('richtet sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.“')).toBe('richtet sich nach den Vorschriften des Nichtraucherschutzgesetzes West.“');
+    expect(convert('(§ 36 VwVfG. NRW.). Bei den nach')).toBe('(§ 36 VwVfG West). Bei den nach');
+    expect(convert('Fassung des § 53 VwVfG. NRW. Wenn nach In-Kraft-Treten')).toBe('Fassung des § 53 VwVfG West. Wenn nach In-Kraft-Treten');
+    expect(convert('(VwVfG. NRW.) vom 21. Dezember 1976 (GV. NRW. S. 438)')).toBe('(VwVfG West) vom 21. Dezember 1976 (GV. NRW. S. 438)');
+    expect(convert('§ 45a PBefG in Verbindung mit der PBefKostenV NRW. Eine nach')).toBe('§ 45a PBefG in Verbindung mit der PBefKostenV West. Eine nach');
+    // Unbekannte Abkürzung, Institution, Fundstelle und externer Name bleiben unverändert.
+    expect(convert('nach der KostenVO NRW. Die')).toBe('nach der KostenVO NRW. Die');
+    expect(convert('PBefKostenV NRW.', { knownStateLawAbbreviations: new Set() })).toBe('PBefKostenV NRW.');
+    expect(convert('Landesbetrieb Straßenbau NRW. und IT.NRW sowie GV. NRW. S. 1')).toBe('Landesbetrieb Straßenbau NRW. und IT.NRW sowie GV. NRW. S. 1');
+    expect(convert('SGV. NRW. 2030 und MBl. NRW. 2020 S. 5')).toBe('SGV. NRW. 2030 und MBl. NRW. 2020 S. 5');
+    const detections = detectReferences([{ path: 'p', text: '§ 36 VwVfG. NRW. und das Schulgesetz NRW.' }], { transformation: known });
+    expect(detections.filter((entry) => entry.category === 'jurisdiction-name').map((entry) => [entry.term, entry.decision, entry.transformRule])).toEqual([['VwVfG. NRW.', 'safe-auto-transform', 'jurisdiction-abbreviation-known-law-dotted'], ['NRW', 'safe-auto-transform', 'jurisdiction-abbreviation-law-name-sentence-end']]);
   });
 
   it('ist deterministisch', () => {
@@ -112,7 +130,7 @@ describe('Erkennung vor der Transformation', () => {
 
 describe('Prüfung nach der Transformation', () => {
   it('akzeptiert geschützte und dokumentierte Reste und findet unerklärte Reste', () => {
-    const source = 'Nichtraucherschutzgesetz NRW. (GV. NRW. S. 1) im Land Nordrhein-Westfalen';
+    const source = 'Landesbetrieb Wald und Holz NRW. (GV. NRW. S. 1) im Land Nordrhein-Westfalen';
     const detections = detectReferences([{ path: 'p', text: source }]);
     const changes: TransformationChange[] = [];
     const transformed = transformText(source, 'p', changes);
@@ -136,7 +154,8 @@ describe('Prüfung nach der Transformation', () => {
     expect(report.postTransformAudit.ok).toBe(true);
     expect(report.decisions['regional-body']).toEqual({ 'manual-review': 1 });
     expect(report.decisions.institution).toEqual({ 'manual-review': 1 });
-    expect(report.unresolved.map((entry) => entry.term)).toEqual(expect.arrayContaining(['Landschaftsverband', 'Rheinland', 'NRW', 'Ministerium für Kinder, Familie, Flüchtlinge und Integration']));
+    expect(report.unresolved.map((entry) => entry.term)).toEqual(expect.arrayContaining(['Landschaftsverband', 'Rheinland', 'Ministerium für Kinder, Familie, Flüchtlinge und Integration']));
+    expect(report.changes.map((change) => change.to)).toContain('West');
   });
 });
 

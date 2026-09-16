@@ -1,11 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildAnchorMap, buildOutline, countBlockTypes, getStructuralReference } from '@landesrecht/legal-core/lib/body.ts';
-import { ContentValidationError, parseBodyBlock, parseNormMeta, parseNormVersion, parseSourceReference, STRUCTURE_TYPES, validateNormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import { ContentValidationError, expandNormTypeFilter, parseBodyBlock, parseNormMeta, parseNormVersion, parseSourceReference, STRUCTURE_TYPES, validateNormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { buildFixtureNorms, norm, paragraph } from '../helpers/fixture-corpus.ts';
 
 describe('Schema-Validierung', () => {
+  it('erweitert Typfilter: „Gesetz“ umfasst Zustimmungsgesetze, „Verwaltungsvorschrift“ alle Arten', () => {
+    expect(expandNormTypeFilter(['gesetz'])).toEqual(expect.arrayContaining(['gesetz', 'zustimmungsgesetz']));
+    expect(expandNormTypeFilter(['verordnung'])).toEqual(['verordnung']);
+    expect(expandNormTypeFilter(['verwaltungsvorschrift'])).toEqual(expect.arrayContaining(['verwaltungsvorschrift', 'runderlass', 'allgemeine-verwaltungsvorschrift']));
+    expect(expandNormTypeFilter(['verwaltungsvorschrift'])).not.toContain('zustimmungsgesetz');
+  });
+
   it('verlangt eine bekannte Jurisdiktion und generische externe Kennungen', () => {
     expect(() => parseNormMeta({ id: 'x', slug: 'x', jurisdiction: 'sachsen', title: 'T', type: 'gesetz', status: 'in-force', subjects: [], keywords: [], initialCitation: 'Z' })).toThrow(/Jurisdiktion/u);
     const meta = parseNormMeta({

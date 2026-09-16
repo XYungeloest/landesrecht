@@ -48,15 +48,15 @@ packages/search/          Sucheinheiten, Abfrageplan, FTS5-Vertrag, Ranking, Zus
 packages/runtime/         D1-Projektionsplan, D1-Store, Dateistore, Store-Registry, SQLite-Adapter, Bindings
 packages/providers/       LegalProvider-Schnittstelle, Content-, OstRecht-, Bundesrechts-Provider, Resolver
 packages/importers/       Pipeline-Schnittstellen (common), RECHT.NRW-Importer (recht-nrw), Platzhalter je weiterem Quellportal
-content/norms/<jur>/      kanonische Normen (synthetische Testfixtures; west: 12 LRGV- und 8 LRMB-Stichtagsfassungen aus RECHT.NRW)
+content/norms/<jur>/      kanonische Normen (west: 12 LRGV- und 8 LRMB-Stichtagsfassungen aus RECHT.NRW; keine Testfixtures)
 content/publications/     Verkündungsblatt-Ausgaben je Jurisdiktion
 data/d1/                  D1-Migrationen (Schema)
-data/runtime/             lokale SQLite-Projektionen / SQL-Pläne (generiert, nicht eingecheckt)
-data/audits/              Importberichte (recht-nrw/<slug>.json: Erkennungen, Transformation, Integrität; recht-nrw/lrmb/: Belege nicht übernommener LRMB-Dokumente; coverage.json)
-data/imports/             gemeinsames Importmanifest, Review-Queue, Korpora und Rekonstruktionsrezepte des RECHT.NRW-Imports
-sources/recht-nrw/        archivierte Rohquellen der RECHT.NRW-Beispielkorpora LRGV und LRMB (versioniert, SHA-256 im Manifest)
-scripts/                  Validierung, Projektion, Schemaprüfung, Unveränderlichkeitsprüfung
-tests/                    Vitest (synthetische Fixtures, lokale SQLite-D1, OstRecht-Kompatibilität)
+data/runtime/             lokale SQLite-Projektionen, SQL-Pläne und -Batches, Projektionszustand (generiert, nicht eingecheckt)
+data/audits/recht-nrw/    Importberichte je Norm, Belege nicht übernommener Dokumente (lrgv/, lrmb/), coverage.json + COVERAGE.md, runs/, d1-scale.json, bulk-simulation.json
+data/imports/recht-nrw/   Enumerationen, Manifest und Review je Quelle (manifest/, review/), Slug-Registry, Overrides, Institutionen-Zuordnung, Korpora, Rekonstruktionsrezepte, Transkriptionen
+sources/recht-nrw/        Rohquellen der RECHT.NRW-Beispielkorpora (Fixtures, versioniert); Bulk-Rohquellen nur in R2
+scripts/                  Validierung, Projektion (voll/inkrementell/Batches), Schemaprüfung, Unveränderlichkeitsprüfung, Skalierungstest, Bulk-Simulation
+tests/                    Vitest; synthetischer Bestand unter tests/fixtures/content/ (lokale SQLite-D1, OstRecht-Kompatibilität)
 docs/                     Datenmodell, OstRecht-/Bundesrechts-Kompatibilität, Import, Deployment
 ```
 
@@ -79,10 +79,18 @@ npm run import:recht-nrw:inspect -- --url <url>   # RECHT.NRW: Fassungsseite ana
 npm run import:recht-nrw -- --url <url> [--write] # RECHT.NRW: Einzelimport (Dry-run ohne --write)
 npm run import:recht-nrw:sample [-- --write]      # RECHT.NRW: Validierungskorpus
 npm run import:recht-nrw:lrmb:sample [-- --write] # RECHT.NRW: Verwaltungsvorschriften-Korpus (LRMB)
-npm run import:recht-nrw:review                   # RECHT.NRW: offene Review-Fälle
-npm run import:recht-nrw:coverage [-- --write]    # RECHT.NRW: Coverage-Report
+npm run import:recht-nrw:review                   # RECHT.NRW: offene Review-Fälle (entscheiden mit --decide)
+npm run import:recht-nrw:coverage [-- --write]    # RECHT.NRW: Coverage-Report (JSON + COVERAGE.md)
 npm run import:recht-nrw:audit                    # RECHT.NRW: Manifest, Rohquellen, Reports, Rekonstruktionen prüfen
+npm run import:recht-nrw:enumerate -- --area lrgv|lrmb [--write]   # vollständige Enumeration mit Abgleich
+npm run import:recht-nrw:bulk -- --area lrgv|lrmb [--limit n]      # Bulk-Runner (Dry-run ohne --write)
+npm run import:recht-nrw:readiness                # READY / NOT READY für den Bulkimport
+npm run import:recht-nrw:search-audit             # Suchintegrität des West-Bestands
+npm run d1:plan -- --jurisdiction west            # SQL-Batches für Remote-D1 (kein Remote-Zugriff)
+npm run d1:scale-test                             # D1-Skalierungstest mit synthetischem Bestand
 ```
+
+Bulkimport: Ablauf, Befehle und GO/No-Go-Checkliste in `docs/RECHT_NRW_BULK_READINESS.md`.
 
 Der Worker liest ausschließlich D1. Auch `astro dev` führt die Worker-Routen in workerd aus und
 liest die lokale Miniflare-D1, die `npm run d1:seed:dev` deterministisch aus `content/` befüllt.
@@ -116,5 +124,6 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/IMPORT_ARCHITECTURE.md` | Importpipeline und geplante Importer |
 | `docs/RECHT_NRW_IMPORT.md` | RECHT.NRW-Struktur, gehärteter Importpfad (Stichtagsauswahl, Organe, Erkennung, Fundstellen), Manifest, Bedienung |
 | `docs/RECHT_NRW_LRMB_IMPORT.md` | Verwaltungsvorschriften (LRMB): Befund, Zeitmodell, Rekonstruktion, Parser, Beispielkorpus |
-| `docs/RECHT_NRW_BULK_IMPORT.md` | Plan für den vollständigen Ausgangsimport (Phase A LRGV, Phase B LRMB, gemeinsames Audit) |
+| `docs/RECHT_NRW_BULK_IMPORT.md` | Vollständiger Ausgangsimport: Enumeration, Bulk-Runner, Checkpoints, Budgets, Cache, R2, Phasen und Audit |
+| `docs/RECHT_NRW_BULK_READINESS.md` | Bereitschaft: Policies (undatierte LRMB-Datensätze, PDF), GO/No-Go-Checkliste, Befehle und Reihenfolge des Bulk-Laufs |
 | `docs/DEPLOYMENT.md` | GitLab-CI, Cloudflare-Ressourcen, D1-Projektion, Variablen |

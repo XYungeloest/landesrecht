@@ -91,7 +91,7 @@ describe('Dokumenttyp und Normativitätsfilter', () => {
   });
 
   it('schließt Einzelfälle, Personalnachrichten, Sitzungen und Satzungen aus', () => {
-    for (const title of ['Stellenausschreibung Referentin im Ministerium', '9. öffentliche Sitzung der Vertreterversammlung der Unfallkasse', 'Satzung zur Änderung der Hauptsatzung des Landschaftsverbandes', 'Bekanntmachung der Verleihung von Körperschaftsrechten an die Testgemeinde', 'Plangenehmigung für das Hochwasserrückhaltebecken Teichmühle']) {
+    for (const title of ['Stellenausschreibung Referentin im Ministerium', '9. öffentliche Sitzung der Vertreterversammlung der Unfallkasse', 'Satzung zur Änderung der Hauptsatzung des Landschaftsverbandes', 'Bekanntmachung der Verleihung von Körperschaftsrechten an die Testgemeinde', 'Plangenehmigung für das Hochwasserrückhaltebecken Teichmühle', '14. Landschaftsversammlung Rheinland; Feststellung eines Nachfolgers', '12. Landschaftsversammlung Westfalen-Lippe Feststellung einer Nachfolgerin']) {
       expect(assessNormativity({ portalType: 'verwaltungsvorschrift', title, bodyText: 'Die Behörden gelten.' }).decision, title).toBe('exclude');
     }
   });
@@ -205,7 +205,7 @@ describe('Ministerialblatt-Einträge', () => {
 
 function amendment(decreeDate: string, inForce: string | undefined, incorporated: boolean, extra: Partial<AmendmentEvidence> = {}): AmendmentEvidence {
   const note: ChangeNoteAmendment = { raw: '', decreeDateText: decreeDate, decreeDate, decreeDateIncomplete: false, unpublished: false, citation: { gazette: 'MBl. NRW.', year: Number(decreeDate.slice(0, 4)), page: '1', text: `MBl. NRW. ${decreeDate.slice(0, 4)} S. 1` } };
-  const evidence: AmendmentEvidence = { note, incorporated, inForceDerivation: 'Test', identification: { ok: true, reason: 'Test' }, gazetteUrl: `${BASE}/mblnrw/${decreeDate}` , ...extra };
+  const evidence: AmendmentEvidence = { note, incorporated, inForceDerivation: 'Test', identification: { ok: true, reason: 'Test' }, gazetteUrl: `${BASE}/mblnrw/${decreeDate}`, gazetteText: 'Der Runderlass vom 2. Mai 2003 (MBl. NRW. S. 580) wird wie folgt geändert: 1. In Nummer 1 wird die Angabe „a“ durch die Angabe „b“ ersetzt.', ...extra };
   if (inForce) evidence.inForce = inForce;
   return evidence;
 }
@@ -230,7 +230,9 @@ describe('Stichtagsprüfung (LRMB-Zeitmodell)', () => {
   });
 
   it('Rekonstruktion rückwärts: eingearbeitete Änderung nach dem Stichtag, Intervall aus Belegen', () => {
-    const result = assessLrmbValidity({ baseline: BASELINE, page: { url: 'u', sha256: 's', undated: true, hasLaterVersions: false }, clauses: { unparsed: [] }, issuedOn: '2003-05-02', amendments: [amendment('2020-07-06', '2020-07-31', true), amendment('2024-07-16', '2024-07-31', true, { predecessor: { latest: true, date: '2020-07-06' } })], versionStarts: [] });
+    const changeNote = parseChangeNote('MBl. NRW. 2003 S. 580, geändert durch Runderlass vom 6. Juli 2020 (MBl. NRW. 2020 S. 446), 16. Juli 2024 (MBl. NRW. 2024 S. 805).');
+    const result = assessLrmbValidity({ baseline: BASELINE, page: { url: 'u', sha256: 's', undated: true, hasLaterVersions: false }, clauses: { unparsed: [] }, issuedOn: '2003-05-02', changeNote, amendments: [amendment('2020-07-06', '2020-07-31', true), amendment('2024-07-16', '2024-07-31', true, { predecessor: { latest: true, date: '2020-07-06' } })], versionStarts: [] });
+    expect(result.continuity?.supported).toBe(true);
     expect(result).toMatchObject({ baselineStatus: 'active-at-baseline', textStatus: 'reconstruction-required', sourceValidity: 'reconstructed', sourceValidFrom: '2020-07-31', sourceValidTo: '2024-07-30' });
     expect(result.postBaselineAmendments.map((entry) => entry.note.decreeDate)).toEqual(['2024-07-16']);
     expect(result.findings.map((finding) => finding.code)).toEqual(['reconstruction-required']);
@@ -342,7 +344,7 @@ describe('LRMB-Importpfad (Fixtures, ohne Netz)', () => {
     expect(result.report!.postTransformAudit.ok).toBe(true);
 
     const manifest = await readManifest(root);
-    expect(manifest.entries[0]).toMatchObject({ sourceArea: 'lrmb', sourceDocumentType: 'runderlass', sourceIdentity: 'term:700001', baselineStatus: 'active-at-baseline', reconstructionStatus: 'direct', importStatus: 'imported-with-warnings', normativity: { decision: 'include' }, parserVersion: 'recht-nrw-lrmb-parser/1.0.0', transformerVersion: 'recht-nrw-transformer/2.0.0' });
+    expect(manifest.entries[0]).toMatchObject({ sourceArea: 'lrmb', sourceDocumentType: 'runderlass', sourceIdentity: 'term:700001', baselineStatus: 'active-at-baseline', reconstructionStatus: 'direct', importStatus: 'imported-with-warnings', normativity: { decision: 'include' }, parserVersion: 'recht-nrw-lrmb-parser/1.0.0', transformerVersion: 'recht-nrw-transformer/2.1.0', validityProvenance: 'exact', documentIdentity: { status: 'consistent' }, textCompleteness: 'html-with-pdf-attachments', archive: { mode: 'versioned-sample' } });
     expect(manifest.entries[0]!.validityEvidence.map((entry) => entry.kind)).toEqual(expect.arrayContaining(['portal-completeness-notice', 'portal-version-interval', 'text-in-force-clause', 'portal-change-history']));
     const pdf = manifest.entries[0]!.rawDocuments.find((entry) => entry.role === 'pdf')!;
     expect(await readFile(join(root, pdf.localSource!), 'utf8')).toBe('%PDF-1.4 Testanlage');
@@ -427,7 +429,7 @@ describe('LRMB-Importpfad (Fixtures, ohne Netz)', () => {
     for (const source of entry.reconstructionSources) await readFile(join(root, source.localSource!));
     queue = await readReviewQueue(root);
     const reconstructionCase = queue.items.find((item) => item.sourceIdentity === 'term:700002' && item.category === 'reconstruction-required')!;
-    expect(reconstructionCase).toMatchObject({ status: 'open', occurrence: 'not-reproduced' });
+    expect(reconstructionCase).toMatchObject({ status: 'superseded', occurrence: 'not-reproduced', decision: { decision: 'superseded', decidedBy: 'importer' } });
   });
 
   it('lehnt Adressen außerhalb von LRMB ab', async () => {

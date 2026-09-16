@@ -22,6 +22,7 @@ import {
   buildFtsConjuncts,
   buildFtsMatch,
   buildSearchQueryPlan,
+  compareHits,
   evaluateDocument,
   MATCH_LABELS,
   SEARCH_RANK_WEIGHTS,
@@ -125,6 +126,9 @@ function referenceUnitConditions(references: readonly StructuralIntent[]): { con
       params.push(intent.number);
     } else if (intent.kind === 'article') {
       conditions.push("json_extract(u.references_json, '$.article') = ?");
+      params.push(intent.number);
+    } else if (intent.kind === 'number') {
+      conditions.push("json_extract(u.references_json, '$.number') = ?");
       params.push(intent.number);
     }
     const subsection = intent.kind === 'subsection' ? intent.number : intent.subsection;
@@ -323,6 +327,39 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
           `SELECT count(*) AS total FROM law_versions v JOIN law_norms n ON n.id = v.norm_id WHERE n.jurisdiction = ?${filters.sql}`,
         ).bind(jurisdiction, ...filters.params).first<{ total: number }>();
         total = Number(count?.total ?? 0);
+      }
+
+      // Titel mit Strukturangaben: Kandidaten zusätzlich ohne Strukturfilter suchen; übernommen wird nur, was
+      // evaluateDocument als Titeltreffer bestätigt (titleCarriesReferences). Sortiert wie im Dateistore: echte
+      // Adresstreffer vor Titeltreffern.
+      if (match && plan.references.length > 0 && plan.freeText) {
+        const relaxed = filterConditions(state, { ...plan, references: [] });
+        const known = new Set(candidates.map((row) => `${row.norm_id}#${row.version_id}`));
+        const rows = await db.prepare(
+          `SELECT s.norm_id, s.version_id, min(s.rank) AS best, 0 AS identity_hit
+           FROM law_search s
+           JOIN law_versions v ON v.norm_id = s.norm_id AND v.version_id = s.version_id
+           JOIN law_norms n ON n.id = s.norm_id
+           WHERE law_search MATCH ? AND rank MATCH ? AND n.jurisdiction = ?${relaxed.sql}
+           GROUP BY s.norm_id, s.version_id
+           ORDER BY ${orderBy(state.sort, true)} LIMIT ?`,
+        ).bind(match, SEARCH_RANK_WEIGHTS, jurisdiction, ...relaxed.params, pageLimit).all<CandidateRow>();
+        const titleHits: SearchHit[] = [];
+        for (const candidate of rows.results) {
+          if (known.has(`${candidate.norm_id}#${candidate.version_id}`)) continue;
+          const document = await loadDocument(candidate.norm_id, candidate.version_id, match, []);
+          const hit = document ? evaluateDocument(document, plan) : null;
+          if (hit) titleHits.push(hit);
+        }
+        if (titleHits.length > 0) {
+          const referenceHits: SearchHit[] = [];
+          for (const candidate of candidates) {
+            const document = await loadDocument(candidate.norm_id, candidate.version_id, match, plan.references);
+            if (document) referenceHits.push(evaluateDocument(document, plan) ?? fallbackHit(document));
+          }
+          const merged = [...referenceHits, ...titleHits].sort((left, right) => compareHits(left, right, state.sort));
+          return { total: total + titleHits.length, offset: state.offset, limit: state.limit, hits: merged.slice(state.offset, state.offset + state.limit) };
+        }
       }
 
       const hits: SearchHit[] = [];

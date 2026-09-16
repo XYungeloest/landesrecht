@@ -80,8 +80,13 @@ Bezeichnungen werden vor der Transformation erkannt und entschieden, danach gepr
 nur aus ausdrücklichen Formeln; Quellmetadaten (URLs, Hashes, Quellintervall, reale Fundstellen,
 Aktenzeichen) werden nie transformiert. LRMB-Dokumente brauchen Belege für Geltung und Textstand am
 Stichtag; Rekonstruktionen nur mit geprüftem Rezept. Manifest, Review-Queue und Coverage sind gemeinsam.
-Status: validierte Beispielkorpora (12 LRGV, 15 LRMB) – noch kein vollständiger Ausgangsimport
-(`docs/RECHT_NRW_BULK_IMPORT.md`). Umfang des Bestands: `docs/LEGAL_SCOPE.md`.
+Für den Bulkbetrieb kommen hinzu: vollständige Enumeration beider Bereiche, Prüfung der Dokumentidentität
+vor jeder Entscheidung, PDF-Policy, ein Bulk-Runner mit atomaren Checkpoints je Stammnorm, Budgets und
+Resume, ein unveränderliches R2-Archiv (Staging ohne Zugangsdaten), Slug-Registry, dokumentierte Overrides,
+Institutionen-Zuordnung und eine maschinelle Readiness-Prüfung. Die D1-Projektion skaliert über
+inkrementelle Pläne mit Basisprüfung und SQL-Batches (`packages/runtime/src/incremental.ts`,
+`sql-batches.ts`). Status: validierte Beispielkorpora (12 LRGV, 15 LRMB), Bulk vorbereitet
+(`docs/RECHT_NRW_BULK_IMPORT.md`, `docs/RECHT_NRW_BULK_READINESS.md`). Umfang: `docs/LEGAL_SCOPE.md`.
 
 ## Provider und Verweise
 

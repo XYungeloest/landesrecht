@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "recht-nrw-institution-mapping/1",
+  "description": "Zentrale Zuordnung von Institutionen Nordrhein-Westfalens für die Rechtsüberleitung nach Westdeutschland (docs/RECHT_NRW_BULK_READINESS.md, Abschnitt Institutionen). Quellorgane bleiben immer als originEnactingBody erhalten; ein Simulationsorgan entsteht nur bei Status map oder bei sicheren Verfassungsorganen. Status review ist nicht bulk-blockierend (imported-with-warnings) und bleibt messbar.",
+  "defaults": {
+    "ministry": "review",
+    "authority": "review",
+    "public-body": "review",
+    "regional-body": "review",
+    "municipality": "review",
+    "geography": "review",
+    "institution": "review",
+    "legislature": "safe-transform"
+  },
+  "entries": [
+    {
+      "id": "landtag",
+      "group": "Landtag",
+      "category": "legislature",
+      "match": ["Landtag Nordrhein-Westfalen", "Landtag von Nordrhein-Westfalen", "Landtag des Landes Nordrhein-Westfalen"],
+      "status": "safe-transform",
+      "target": "Landtag Westdeutschland",
+      "reason": "Verfassungsorgan, das in jedem Land besteht; nur die Landesbezeichnung wird übergeleitet (transform/organs.ts, Regel jurisdiction-name).",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "landesregierung",
+      "group": "Landesregierung NRW",
+      "category": "institution",
+      "match": ["Landesregierung Nordrhein-Westfalen", "Landesregierung des Landes Nordrhein-Westfalen", "Landesregierung von Nordrhein-Westfalen"],
+      "status": "safe-transform",
+      "target": "Landesregierung Westdeutschland",
+      "reason": "Verfassungsorgan; nur die Landesbezeichnung wird übergeleitet.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "ministerpraesident",
+      "group": "Landesregierung NRW",
+      "category": "institution",
+      "pattern": "^(?:Ministerpräsident(?:in|en)?)\\s+(?:des\\s+Landes\\s+)?Nordrhein-Westfalen$",
+      "status": "safe-transform",
+      "target": "Ministerpräsident des Landes Westdeutschland",
+      "reason": "Verfassungsorgan; nur die Landesbezeichnung wird übergeleitet.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "staatskanzlei",
+      "group": "Landesregierung NRW",
+      "category": "ministry",
+      "pattern": "^(?:Staatskanzlei|Minister(?:in|ium)? für Bundes- und Europaangelegenheiten)",
+      "status": "review",
+      "reason": "Behördenzuschnitt der Staatskanzlei im Land Westdeutschland nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "innenministerium",
+      "group": "Innenministerium",
+      "category": "ministry",
+      "pattern": "^(?:Ministerium (?:des Innern|für Inneres(?: und Kommunales)?)|Innenminister(?:ium|in)?|Minister(?:in)? des Innern)\\b",
+      "status": "review",
+      "reason": "Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "finanzministerium",
+      "group": "Finanzministerium",
+      "category": "ministry",
+      "pattern": "^(?:Ministerium der Finanzen|Finanzminister(?:ium|in)?|Minister(?:in)? der Finanzen)\\b",
+      "status": "review",
+      "reason": "Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "justizministerium",
+      "group": "Justizministerium",
+      "category": "ministry",
+      "pattern": "^(?:Ministerium der Justiz|Justizminister(?:ium|in)?|Minister(?:in)? der Justiz)\\b",
+      "status": "review",
+      "reason": "Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "schulministerium",
+      "group": "Schulministerium",
+      "category": "ministry",
+      "pattern": "^(?:Ministerium für Schule(?: und (?:Bildung|Weiterbildung))?|Kultusminister(?:ium|in)?|Schulminister(?:ium|in)?)\\b",
+      "status": "review",
+      "reason": "Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "sonstige-ministerien",
+      "group": "Sonstige Ministerien",
+      "category": "ministry",
+      "pattern": "^(?:Ministerium|Minister(?:in)?|[A-ZÄÖÜ][a-zäöü]+minister(?:ium|in)?)\\b",
+      "status": "review",
+      "reason": "Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "bezirksregierungen",
+      "group": "Bezirksregierungen",
+      "category": "authority",
+      "pattern": "^Bezirksregierung(?:en)?\\b",
+      "status": "review",
+      "reason": "Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "landesaemter",
+      "group": "Landesämter",
+      "category": "authority",
+      "pattern": "^(?:Landes(?:amt|anstalt|institut)\\b|Landeskriminalamt|Landesoberbergamt)",
+      "status": "review",
+      "reason": "Landesoberbehörde ohne festgelegte Entsprechung.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "landesbetriebe",
+      "group": "Landesbetriebe",
+      "category": "authority",
+      "pattern": "^Landesbetrieb\\b",
+      "status": "review",
+      "reason": "Landesbetrieb ohne festgelegte Entsprechung.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "landschaftsverbaende",
+      "group": "Landschaftsverbände",
+      "category": "regional-body",
+      "pattern": "^(?:Landschaftsverb(?:and|ände|andes|änden)|Landschaftsversammlung)\\b",
+      "status": "review",
+      "reason": "Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "regionalverband-ruhr",
+      "group": "Regionalverband Ruhr",
+      "category": "regional-body",
+      "match": ["Regionalverband Ruhr", "Kommunalverband Ruhrgebiet"],
+      "status": "review",
+      "reason": "Regionalverband; Entsprechung nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "regierungsbezirke",
+      "group": "Bezirksregierungen",
+      "category": "regional-body",
+      "pattern": "^Regierungsbezirk",
+      "status": "review",
+      "reason": "Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "kommunen",
+      "group": "Kommunen",
+      "category": "municipality",
+      "pattern": ".+",
+      "status": "review",
+      "reason": "Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "gerichte-land",
+      "group": "Gerichte",
+      "category": "institution",
+      "pattern": "^(?:Oberverwaltungsgericht|Landessozialgericht|Finanzgericht|Landesarbeitsgericht|Oberlandesgericht)\\b",
+      "status": "review",
+      "reason": "Gerichte werden nicht pauschal umbenannt; Gerichtsorganisation des Landes Westdeutschland nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "koerperschaften",
+      "group": "Körperschaften",
+      "category": "public-body",
+      "pattern": ".+",
+      "status": "review",
+      "reason": "Körperschaften und Anstalten mit regionaler Bezeichnung; Entsprechung nicht festgelegt.",
+      "reviewedAt": "2026-09-15"
+    },
+    {
+      "id": "geographie",
+      "group": "Geographie",
+      "category": "geography",
+      "pattern": ".+",
+      "status": "review",
+      "reason": "Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "reviewedAt": "2026-09-15"
+    }
+  ]
+}

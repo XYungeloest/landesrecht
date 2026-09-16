@@ -66,22 +66,32 @@ npm run d1:seed:local         # lokale Projektion zum Nachsehen
 
 ## Importierte Normen (RECHT.NRW → West)
 
-`content/norms/west/` enthält neben der synthetischen Fixture-Norm zwölf Stichtagsfassungen aus dem Bereich
-LRGV (Gesetze, Rechtsverordnungen) und acht aus dem Bereich LRMB (Verwaltungsvorschriften, davon eine
-rekonstruiert: `vv-lhundg-west`). Welche Vorschriften aufgenommen werden, regelt `docs/LEGAL_SCOPE.md`.
-Importierte Normen werden nicht von Hand bearbeitet. Quelle der Wahrheit für ihre Ausgangsfassung ist der
-Importlauf (`npm run import:recht-nrw:lrgv:sample -- --write`, `npm run import:recht-nrw:lrmb:sample -- --write`)
-mit gemeinsamem Manifest `data/imports/recht-nrw/manifest.json`, Review-Queue
-`data/imports/recht-nrw/review-queue.json`, Reports `data/audits/recht-nrw/`, Rekonstruktionsrezepten
-`data/imports/recht-nrw/reconstructions/` und archivierten Rohquellen `sources/recht-nrw/term-<id>/`.
+`content/norms/west/` enthält zwölf Stichtagsfassungen aus dem Bereich LRGV (Gesetze, Rechtsverordnungen)
+und acht aus dem Bereich LRMB (Verwaltungsvorschriften, davon eine rekonstruiert: `vv-lhundg-west`); der
+Bulkimport ergänzt den vollständigen Ausgangsbestand (`docs/RECHT_NRW_BULK_READINESS.md`). Welche
+Vorschriften aufgenommen werden, regelt `docs/LEGAL_SCOPE.md`. Importierte Normen werden nicht von Hand
+bearbeitet; jede Norm unter `content/norms/west/` braucht einen übernommenen Manifesteintrag
+(`npm run content:validate`). Quelle der Wahrheit für ihre Ausgangsfassung ist der Importlauf mit
+Manifest `data/imports/recht-nrw/manifest/<bereich>/term-<id>.json`, Review-Fällen
+`data/imports/recht-nrw/review/<bereich>/term-<id>.json`, Slug-Registry `data/imports/recht-nrw/slug-registry.json`,
+Overrides `data/imports/recht-nrw/overrides.json`, Reports `data/audits/recht-nrw/`, Rekonstruktionsrezepten
+`data/imports/recht-nrw/reconstructions/` und Rohquellen (Beispielkorpora: `sources/recht-nrw/term-<id>/`;
+Bulk: R2 `landesrecht-quellen`).
+
 Spätere Änderungen der Simulation entstehen als neue Fassungsdateien, nie durch Umschreiben von
 `versions/2023-12-01.json`. Eine Neuerzeugung der Ausgangsfassungen durch den Importer (z. B. nach einer
-Schemaerweiterung) wird mit `node scripts/check-version-immutability.ts --allow west/<slug>/2023-12-01`
-ausdrücklich freigegeben; der Normkörper muss dabei unverändert bleiben (Importaudit).
+Transformerkorrektur) wird gegenüber einem bestimmten Basis-Commit freigegeben: entweder einmalig mit
+`node scripts/check-version-immutability.ts --allow west/<slug>/2023-12-01` oder dokumentiert in
+`data/content-immutability-exceptions.json` (`baseCommit`, je Fassung `kind` und Begründung). Die Datei
+gilt nur für den genannten Basis-Commit und verfällt mit dem nächsten Commit von selbst.
 
 ## Testbestand
 
-Der synthetische Bestand: `testfixture-schulgesetz-west` („Testfixture Schulgesetz …“, zwei Fassungen,
-Quellintervall 2023-08-01 bis 2024-01-31), `kuestenschutzgesetz-nsh`, `testverordnung-ost`
-(OstRecht-Format mit zitierter Vorschrift), `gemeindeordnung-baywue` (Artikelgliederung) und die
-Verkündung `gv-west-2026-12`. Echte Gesetzestexte werden erst über die Importpipeline übernommen.
+Der synthetische Bestand liegt getrennt unter `tests/fixtures/content/` (gleiche Struktur wie `content/`):
+`testfixture-schulgesetz-west` („Testfixture Schulgesetz …“, zwei Fassungen, Quellintervall 2023-08-01 bis
+2024-01-31), `kuestenschutzgesetz-nsh`, `testverordnung-ost` (OstRecht-Format mit zitierter Vorschrift),
+`gemeindeordnung-baywue` (Artikelgliederung) und die Verkündung `gv-west-2026-12`. Jede Fixture-Norm trägt
+`"dataset": "synthetic-fixture"` in `meta.json`. Schutzregeln: `npm run content:validate` lehnt Fixtures
+unter `content/` ab, die D1-Projektion (`scripts/project-d1.ts`, `d1:seed:dev`) projiziert nie Fixtures,
+das Suchaudit meldet Fixture-Treffer in Produktionsergebnissen. Tests laden den Fixture-Bestand über
+`tests/helpers/fixture-corpus.ts`.

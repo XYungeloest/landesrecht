@@ -13,7 +13,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { loadNorm } from '@landesrecht/legal-core/lib/loader.ts';
 import { getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
-import type { FetchedDocument, RechtNrwFetcher } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
+import { RechtNrwFetchError, type FetchedDocument, type RechtNrwFetcher } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 import { readManifest } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
 import { importRechtNrwNorm, type ImportResult } from '@landesrecht/importer-recht-nrw/lrgv/pipeline.ts';
 import { createD1NormStore } from '@landesrecht/runtime/d1-store.ts';
@@ -52,7 +52,7 @@ beforeAll(async () => {
   await mkdir(join(root, 'packages', 'legal-core'), { recursive: true });
   await writeFile(join(root, 'package.json'), '{"name":"tmp"}');
   // Vorhandene Fixture-Norm (Slug-Kollision bleibt ausgeschlossen, Projektion enthält beide).
-  await cp(join(repoRoot, 'content', 'norms', 'west', 'testfixture-schulgesetz-west'), join(root, 'content', 'norms', 'west', 'testfixture-schulgesetz-west'), { recursive: true });
+  await cp(join(repoRoot, 'tests', 'fixtures', 'content', 'norms', 'west', 'testfixture-schulgesetz-west'), join(root, 'content', 'norms', 'west', 'testfixture-schulgesetz-west'), { recursive: true });
 });
 afterAll(async () => {
   await rm(root, { recursive: true, force: true });
@@ -86,7 +86,8 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
       'content/norms/west/testg-west/history.json',
       'content/norms/west/testg-west/versions/2023-12-01.json',
       'data/audits/recht-nrw/testg-west.json',
-      'data/imports/recht-nrw/manifest.json',
+      'data/imports/recht-nrw/manifest/lrgv/term-424242.json',
+      'data/imports/recht-nrw/review/lrgv/term-424242.json',
     ]));
     const rawFiles = written.writtenFiles.filter((file) => file.startsWith('sources/recht-nrw/term-424242/'));
     expect(rawFiles).toHaveLength(2);
@@ -163,6 +164,27 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     expect((await readManifest(root)).entries.map((entry) => entry.targetSlug).sort()).toEqual(['testg-west', 'testvo-west']);
   });
 
+  it('führt eine nicht abrufbare Anlage als Review-Fall; Budget- und Sperrfehler beenden den Lauf', async () => {
+    const isolated = await mkdtemp(join(tmpdir(), 'landesrecht-import-anlage-'));
+    try {
+      await mkdir(join(isolated, 'content', 'norms', 'west'), { recursive: true });
+      await writeFile(join(isolated, 'package.json'), '{"name":"tmp"}');
+      const base = fakeFetcher({ [NATIVE_URL]: 'version-page-native.html', [ANNEX_PDF_URL]: 'annex.pdf' });
+      const failingAnnex = (kind: 'not-found' | 'budget-exhausted'): RechtNrwFetcher => ({
+        stats: base.stats,
+        fetch: (url) => (url === ANNEX_URL ? Promise.reject(new RechtNrwFetchError(kind, url, kind === 'not-found' ? 'HTTP 404' : 'Abrufbudget erreicht', kind === 'not-found' ? 404 : undefined)) : base.fetch(url)),
+      });
+      const missing = await importRechtNrwNorm({ url: NATIVE_URL, root: isolated, fetcher: failingAnnex('not-found'), write: true, now });
+      expect(missing.status).toBe('needs-review');
+      expect(missing.findings.map((finding) => finding.code)).toContain('attachment-fetch-failed');
+      expect(missing.reviewItems.map((item) => item.category)).toContain('attachment');
+      expect(await readdir(join(isolated, 'content', 'norms', 'west'))).toEqual([]);
+      await expect(importRechtNrwNorm({ url: NATIVE_URL, root: isolated, fetcher: failingAnnex('budget-exhausted'), now })).rejects.toMatchObject({ kind: 'budget-exhausted' });
+    } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
   it('bricht bei Vorschriften außerhalb von LRGV und bei Datenfehlern fail-closed ab', async () => {
     const outside = await importRechtNrwNorm({ url: 'https://recht.nrw.de/lrmb/verwaltungsvorschrift/irgendwas', root, fetcher: fakeFetcher({}), now });
     expect(outside.status).toBe('failed');
@@ -173,12 +195,17 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     await writeFile(join(fixtures, '.tmp-broken.html'), broken);
     try {
       const failed = await importRechtNrwNorm({ url: NATIVE_URL, root, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-broken.html' }), now });
-      expect(failed.status).toBe('failed');
+      expect(failed.status).toBe('needs-review');
       expect(failed.findings[0]?.code).toBe('selection-inconsistent-interval');
-      const overridden = await importRechtNrwNorm({ url: NATIVE_URL, root, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-broken.html', [ANNEX_URL]: 'annex.htm', [ANNEX_PDF_URL]: 'annex.pdf' }), now, overrides: [{ field: 'sourceValidTo', value: null, reason: 'Testentscheidung' }] });
+      // Die Norm wurde im vorigen Test bereits übernommen: Manifest und Inhalt bleiben beim übernommenen Stand.
+      expect(failed.findings.map((finding) => finding.code)).toContain('import-regression');
+      expect(failed.manifestEntry).toMatchObject({ sourceIdentity: 'term:515151', importStatus: 'imported-with-warnings', targetSlug: 'testvo-west' });
+      expect(failed.reviewItems.map((item) => item.category)).toEqual(expect.arrayContaining(['version-selection', 'other']));
+      const override = { id: 'test-valid-to', sourceIdentity: 'term:515151', field: 'sourceValidTo' as const, value: null, reason: 'Testentscheidung', evidence: { source: 'Test' }, reviewedAt: '2026-09-15' };
+      const overridden = await importRechtNrwNorm({ url: NATIVE_URL, root, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-broken.html', [ANNEX_URL]: 'annex.htm', [ANNEX_PDF_URL]: 'annex.pdf' }), now, overrides: [override] });
       expect(overridden.status).toBe('dry-run');
       expect(overridden.findings.some((finding) => finding.code === 'override-applied')).toBe(true);
-      expect(overridden.manifestEntry?.overrides).toEqual([{ field: 'sourceValidTo', value: null, reason: 'Testentscheidung' }]);
+      expect(overridden.manifestEntry?.overrides).toEqual([{ id: 'test-valid-to', field: 'sourceValidTo', value: null, reason: 'Testentscheidung', evidence: { source: 'Test' }, reviewedAt: '2026-09-15' }]);
     } finally {
       await rm(join(fixtures, '.tmp-broken.html'), { force: true });
     }

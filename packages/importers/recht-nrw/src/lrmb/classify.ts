@@ -53,6 +53,7 @@ const EXCLUDE: ReadonlyArray<{ pattern: RegExp; reason: string }> = [
   { pattern: /Verleihung\s+von\s+Körperschaftsrechten|Anerkennung\s+als\s+(?:Erholungsort|Luftkurort|Kurort|Heilbad)|Verleihung\s+(?:der\s+Bezeichnung|des\s+Prädikats)/u, reason: 'Einzelfallentscheidung (Verleihung/Anerkennung)' },
   { pattern: /Plangenehmigung|Planfeststellung|Genehmigung\s+(?:des|der)\s+[A-ZÄÖÜ][\p{L}-]+\s+(?:in|für)\s+[A-ZÄÖÜ]/u, reason: 'Einzelfallentscheidung (Genehmigung/Planfeststellung)' },
   { pattern: /Wahlergebnis|Ergebnis\s+der\s+Wahl|Wahlbekanntmachung/u, reason: 'Wahlbekanntmachung' },
+  { pattern: /Feststellung\s+(?:eines\s+Nachfolgers|einer\s+Nachfolgerin|von\s+Nachfolgern|von\s+Nachfolgerinnen|der\s+Nachfolge)\b/u, reason: 'Wahlbekanntmachung (Feststellung der Mandatsnachfolge)' },
   { pattern: /^(?:[\p{L}\s-]+)?Satzung\b|Hauptsatzung|Betriebssatzung|Weiterbildungsordnung|Berufsordnung|Beitragsordnung|Haushaltssatzung/u, reason: 'Autonome Satzung einer Körperschaft (kein Landesrecht im Sinne von docs/LEGAL_SCOPE.md)' },
   { pattern: /^Berichtigung\b/u, reason: 'Berichtigung (wird an der berichtigten Vorschrift berücksichtigt, kein eigenes Dokument)' },
   { pattern: /Landesentwicklungsplan|Beteiligung\s+bei\s+der\s+Änderung|Öffentliche\s+Bekanntmachung\s+gemäß/u, reason: 'Verfahrensbekanntmachung ohne eigenen Regelungsgehalt' },
@@ -77,4 +78,10 @@ export function assessNormativity(input: NormativityInput): NormativityDecision 
   const abstractGeneral = /\b(?:Behörden|Dienststellen|Bußgeldbehörden|Ordnungsbehörden|Zuwendungsempfänger|Beschäftigten|Hochschulen|Bewilligungsbehörden|zuständige[nr]?\s+Stellen?|gilt|gelten|sind\s+.+?\s+anzuwenden|ist\s+.+?\s+zu\s+)/u.test(input.bodyText);
   if (head && abstractGeneral) return { decision: 'include', reasons: ['Verwaltungsvorschrift/Erlass mit abstrakt-generellem Regelungsgehalt (Adressatenkreis, Regelungsformeln)'] };
   return { decision: 'review', reasons: [head ? 'Erlasskopf vorhanden, abstrakt-genereller Regelungsgehalt nicht erkennbar' : 'Weder Erlasskopf noch Vorschriftentitel erkennbar'] };
+}
+
+/** Dokumentierter Override `normativity` (data/imports/recht-nrw/overrides.json) ersetzt die Regelentscheidung. */
+export function applyNormativityOverride(decision: NormativityDecision, override: { value: unknown; reason: string; id: string } | undefined): NormativityDecision {
+  if (!override) return decision;
+  return { decision: override.value as NormativityDecision['decision'], reasons: [`Override ${override.id}: ${override.reason}`, ...decision.reasons.map((reason) => `(Regel: ${reason})`)] };
 }

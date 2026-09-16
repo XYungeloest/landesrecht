@@ -5,17 +5,33 @@
  * benannt. Schutzmuster (amtliche Fundstellen, URLs, Eigennamen externer Träger) werden vor der
  * Anwendung maskiert und bleiben byteidentisch. Die Maskierung arbeitet längengleich auf dem
  * Quelltext, sodass jede Ersetzung mit ihrer Quellposition protokolliert werden kann.
+ *
+ * Restformen „NRW.“ (Version 2.1): kein pauschales NRW → West. Übergeleitet wird nur
+ *   - der Landeszusatz einer Gesetzes- oder Verordnungsbezeichnung am Satzende
+ *     („des Schulgesetzes NRW.“ → „des Schulgesetzes West.“),
+ *   - die Abkürzung einer bekannten Landesnorm des Herkunftslandes, auch in der Punktschreibweise
+ *     („VwVfG. NRW.“ → „VwVfG West“, „PBefKostenV NRW.“ → „PBefKostenV West.“). Bekannt sind nur
+ *     Abkürzungen aus der LRGV-Enumeration (`knownStateLawAbbreviations`).
+ * Institutionsnamen („Landesbetrieb Wald und Holz NRW.“), Gerichte und Fundstellen bleiben unverändert
+ * (Schutzmuster oder manuelle Entscheidung).
  */
 import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
 import { TARGET_JURISDICTION } from '../common/constants.ts';
 
-export const TRANSFORMER_VERSION = 'recht-nrw-transformer/2.0.0';
+export const TRANSFORMER_VERSION = 'recht-nrw-transformer/2.1.0';
 
 export interface TransformationRule {
   id: string;
   pattern: RegExp;
-  replacement: string;
+  replacement?: string;
+  /** Ersetzung aus dem Treffer; `null` = kein sicherer Fall, der Treffer bleibt unverändert. */
+  replace?: (match: RegExpMatchArray, source: string) => string | null;
+}
+
+export interface TransformationOptions {
+  /** Abkürzungen von Landesnormen des Herkunftslandes ohne Landeszusatz (z. B. „VwVfG“, „GO“). */
+  knownStateLawAbbreviations?: ReadonlySet<string>;
 }
 
 export interface ProtectedPattern {
@@ -32,16 +48,60 @@ export function targetProperName(): string {
   return TARGET.name.replace(/^(Land|Freistaat)\s+/u, '');
 }
 
+/** Fundstellenkürzel, die nie als Normabkürzung gelten. */
+const GAZETTE_ABBREVIATIONS = new Set(['GV', 'SGV', 'MBl', 'GVBl', 'SMBl', 'ABl', 'MB', 'BGBl', 'GVOBl']);
+
+/** Basis einer Normabkürzung ohne Landeszusatz („VwVfG NRW“ → „VwVfG“); mehrteilige Abkürzungen entfallen. */
+export function stateLawAbbreviationBase(abbreviation: string): string | undefined {
+  const base = abbreviation.replace(/\s+/gu, ' ').trim().replace(/\.?\s*(?:NRW|NW)\.?$/u, '').trim();
+  if (!/^[A-ZÄÖÜ][\p{L}\d-]*[\p{L}\d]$/u.test(base) || GAZETTE_ABBREVIATIONS.has(base)) return undefined;
+  return base;
+}
+
+/** Nach „… NRW.“ beginnt ein neuer Satz (Großbuchstabe, Anführungszeichen) oder der Text endet: Punkt bleibt. */
+const SENTENCE_CONTINUATION_AFTER_DOT = /^(?:\s*$|\s+[A-ZÄÖÜ„"])/u;
+const ABBREVIATION_FOLLOW = String.raw`(?=\s+\S|\s*$|[“”"'),;:\]])`;
+
 /** Reihenfolge ist Priorität: längere Muster zuerst. */
-export const TRANSFORMATION_RULES: readonly TransformationRule[] = [
-  { id: 'jurisdiction-name-genitive', pattern: /\bLandes Nordrhein-Westfalen\b/gu, replacement: `Landes ${targetProperName()}` },
-  { id: 'jurisdiction-name-dative', pattern: /\b(im|dem|vom|beim) Land Nordrhein-Westfalen\b/gu, replacement: `$1 Land ${targetProperName()}` },
-  { id: 'jurisdiction-name', pattern: /\bLand Nordrhein-Westfalen\b/gu, replacement: TARGET.name },
-  { id: 'jurisdiction-name-adjective', pattern: /\bnordrhein-westfälisch(e|en|er|es|em)?\b/gu, replacement: 'westdeutsch$1' },
-  { id: 'jurisdiction-name-adjective-capital', pattern: /\bNordrhein-Westfälisch(e|en|er|es|em)?\b/gu, replacement: 'Westdeutsch$1' },
-  { id: 'jurisdiction-name-bare', pattern: /\bNordrhein-Westfalen\b/gu, replacement: targetProperName() },
-  { id: 'jurisdiction-abbreviation', pattern: /(?<![\w.])NRW(?![\w.])/gu, replacement: TARGET.shortName },
-];
+export function transformationRules(options: TransformationOptions = {}): TransformationRule[] {
+  const known = options.knownStateLawAbbreviations;
+  const rules: TransformationRule[] = [
+    { id: 'jurisdiction-name-genitive', pattern: /\bLandes Nordrhein-Westfalen\b/gu, replacement: `Landes ${targetProperName()}` },
+    { id: 'jurisdiction-name-dative', pattern: /\b(im|dem|vom|beim) Land Nordrhein-Westfalen\b/gu, replacement: `$1 Land ${targetProperName()}` },
+    { id: 'jurisdiction-name', pattern: /\bLand Nordrhein-Westfalen\b/gu, replacement: TARGET.name },
+    { id: 'jurisdiction-name-adjective', pattern: /\bnordrhein-westfälisch(e|en|er|es|em)?\b/gu, replacement: 'westdeutsch$1' },
+    { id: 'jurisdiction-name-adjective-capital', pattern: /\bNordrhein-Westfälisch(e|en|er|es|em)?\b/gu, replacement: 'Westdeutsch$1' },
+    { id: 'jurisdiction-name-bare', pattern: /\bNordrhein-Westfalen\b/gu, replacement: targetProperName() },
+    { id: 'jurisdiction-abbreviation-law-name-sentence-end', pattern: /(?<=(?:gesetz|Gesetz|gesetzes|Gesetzes|verordnung|Verordnung|ordnung|Ordnung)\s)NRW(?=\.(?:\s|$|[“”"'),;:\]]))/gu, replacement: TARGET.shortName },
+  ];
+  if (known && known.size > 0) {
+    rules.push(
+      {
+        id: 'jurisdiction-abbreviation-known-law-dotted',
+        pattern: new RegExp(String.raw`(?<![\p{L}\d.])([A-ZÄÖÜ][\p{L}\d-]*[\p{L}\d])\.\s?NRW\.${ABBREVIATION_FOLLOW}`, 'gu'),
+        replace: (match, source) => {
+          const abbreviation = match[1]!;
+          if (GAZETTE_ABBREVIATIONS.has(abbreviation) || !known.has(abbreviation)) return null;
+          const after = source.slice((match.index ?? 0) + match[0].length);
+          return `${abbreviation} ${TARGET.shortName}${SENTENCE_CONTINUATION_AFTER_DOT.test(after) ? '.' : ''}`;
+        },
+      },
+      {
+        id: 'jurisdiction-abbreviation-known-law-sentence-end',
+        pattern: /(?<![\p{L}\d.])([A-ZÄÖÜ][\p{L}\d-]*[\p{L}\d])\s+NRW(?=\.(?:\s|$|[“”"'),;:\]]))/gu,
+        replace: (match) => {
+          const abbreviation = match[1]!;
+          return !GAZETTE_ABBREVIATIONS.has(abbreviation) && known.has(abbreviation) ? `${abbreviation} ${TARGET.shortName}` : null;
+        },
+      },
+    );
+  }
+  rules.push({ id: 'jurisdiction-abbreviation', pattern: /(?<![\w.])NRW(?![\w.])/gu, replacement: TARGET.shortName });
+  return rules;
+}
+
+/** Regelsatz ohne bekannte Normabkürzungen (Kompatibilität, Berichte). */
+export const TRANSFORMATION_RULES: readonly TransformationRule[] = transformationRules();
 
 /**
  * Schutzmuster. Fundstellen- und Verkündungsblattkürzel (GV. NRW., SGV. NRW., MBl. NRW.,
@@ -97,17 +157,23 @@ export function findProtectedSpans(value: string): { spans: ProtectedSpan[]; mas
 }
 
 /** Plant alle Ersetzungen auf dem Quelltext (Positionen beziehen sich auf den unveränderten Text). */
-export function planTransformation(value: string): { protectedSpans: ProtectedSpan[]; segments: TransformSegment[] } {
+export function planTransformation(value: string, options: TransformationOptions = {}): { protectedSpans: ProtectedSpan[]; segments: TransformSegment[] } {
   const { spans, masked: protectedMasked } = findProtectedSpans(value);
   let masked = protectedMasked;
   const segments: TransformSegment[] = [];
-  for (const rule of TRANSFORMATION_RULES) {
+  for (const rule of transformationRules(options)) {
     const found: TransformSegment[] = [];
     for (const match of masked.matchAll(new RegExp(rule.pattern.source, rule.pattern.flags))) {
       const start = match.index ?? 0;
       const end = start + match[0].length;
-      const groups = match.slice(1);
-      const replacement = rule.replacement.replace(/\$(\d)/gu, (_placeholder, index: string) => String(groups[Number.parseInt(index, 10) - 1] ?? ''));
+      if (match[0].includes(MASK)) continue;
+      let replacement: string | null;
+      if (rule.replace) replacement = rule.replace(match, masked);
+      else {
+        const groups = match.slice(1);
+        replacement = (rule.replacement ?? '').replace(/\$(\d)/gu, (_placeholder, index: string) => String(groups[Number.parseInt(index, 10) - 1] ?? ''));
+      }
+      if (replacement === null) continue;
       found.push({ start, end, rule: rule.id, from: value.slice(start, end), to: replacement });
     }
     for (const segment of found) masked = mask(masked, segment.start, segment.end);

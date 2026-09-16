@@ -7,20 +7,24 @@ import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editori
 import { JURISDICTION_IDS, SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { loadAllNorms, loadJurisdictionPublications, loadNorm } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
+import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
 import { getApplicableVersion, resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
 import { D1_BINDINGS, D1_DATABASE_NAMES, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME } from '@landesrecht/runtime/bindings.ts';
 
 const root = resolveRepositoryRoot();
+/** Synthetischer Testbestand: tests/fixtures/content/ (nie Teil von content/, Projektion oder Build). */
+const fixtureRoot = join(root, 'tests', 'fixtures');
 
 function parseJsonc(text: string): unknown {
   return JSON.parse(text.replace(/\/\*[\s\S]*?\*\//gu, '').replace(/^\s*\/\/.*$/gmu, ''));
 }
 
-describe('Committeter Testbestand', () => {
-  it('enthält je Jurisdiktion mindestens eine Norm und West zwei Fassungen', async () => {
-    const norms = await loadAllNorms(root);
+describe('Synthetischer Testbestand (tests/fixtures/content)', () => {
+  it('enthält je Jurisdiktion mindestens eine gekennzeichnete Norm und West zwei Fassungen', async () => {
+    const norms = await loadAllNorms(fixtureRoot);
     for (const jurisdiction of JURISDICTION_IDS) expect(norms.some((record) => record.meta.jurisdiction === jurisdiction), jurisdiction).toBe(true);
-    const west = await loadNorm('west', 'testfixture-schulgesetz-west', root);
+    for (const record of norms) expect(record.meta.dataset, record.meta.slug).toBe('synthetic-fixture');
+    const west = await loadNorm('west', 'testfixture-schulgesetz-west', fixtureRoot);
     expect(west.versions.map((version) => version.versionId)).toEqual(['2023-12-01', '2026-05-01']);
     expect(west.versions[0]!.sourceValidFrom).toBe('2023-08-01');
     expect(west.versions[0]!.sourceValidTo).toBe('2024-01-31');
@@ -31,13 +35,22 @@ describe('Committeter Testbestand', () => {
   });
 
   it('verknüpft Verkündungen mit gespeicherten Fassungen', async () => {
-    const publications = await loadJurisdictionPublications('west', root);
+    const publications = await loadJurisdictionPublications('west', fixtureRoot);
     expect(publications).toHaveLength(1);
     expect(publications[0]!.entries[0]).toMatchObject({ normSlug: 'testfixture-schulgesetz-west', versionId: '2026-05-01' });
   });
 
   it('lehnt Normen im falschen Jurisdiktionsverzeichnis ab', async () => {
-    await expect(loadNorm('nsh', 'testfixture-schulgesetz-west', root)).rejects.toThrow();
+    await expect(loadNorm('nsh', 'testfixture-schulgesetz-west', fixtureRoot)).rejects.toThrow();
+  });
+});
+
+describe('Produktionsbestand (content/)', () => {
+  it('enthält keine synthetischen Testfixtures, nur übernommene Normen mit Quellkennung', async () => {
+    const norms = await loadAllNorms(root);
+    expect(norms.filter((record) => isSyntheticFixtureNorm(record.meta)).map((record) => record.meta.slug)).toEqual([]);
+    for (const record of norms.filter((entry) => entry.meta.jurisdiction === 'west')) expect(record.meta.externalIdentifiers.some((identifier) => identifier.system === 'recht-nrw'), record.meta.slug).toBe(true);
+    for (const jurisdiction of JURISDICTION_IDS) expect(await loadJurisdictionPublications(jurisdiction, root)).toEqual([]);
   });
 });
 

@@ -7,7 +7,7 @@
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { expandNormTypeFilter, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import type { VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
-import { buildSearchVariants, normalizeSearchText, type QueryToken, type SearchQueryPlan, type SearchSort, type SearchState, type StructuralIntent } from './query.ts';
+import { buildSearchVariants, extractStructuralIntents, normalizeSearchText, type QueryToken, type SearchQueryPlan, type SearchSort, type SearchState, type StructuralIntent } from './query.ts';
 import { isSyntheticUnit, type SearchDocument, type SearchUnit } from './units.ts';
 
 export type MatchKind = 'identity' | 'title' | 'reference' | 'unit' | 'body' | 'browse';
@@ -62,6 +62,7 @@ export function unitMatchesIntent(unit: SearchUnit, intent: StructuralIntent): b
   const subsectionMatches = !intent.subsection || references.subsections?.includes(intent.subsection) === true;
   if (intent.kind === 'paragraph') return references.paragraph === intent.number && subsectionMatches;
   if (intent.kind === 'article') return references.article === intent.number && subsectionMatches;
+  if (intent.kind === 'number') return references.number === intent.number;
   return references.subsections?.includes(intent.number) === true;
 }
 
@@ -86,6 +87,19 @@ export function buildSnippet(unit: Pick<SearchUnit, 'label' | 'heading' | 'body'
   return `${text.slice(0, cut > limit / 2 ? cut : limit).trimEnd()}…`;
 }
 
+/**
+ * Titel mit Strukturangaben („Allgemeine Verwaltungsvorschrift zu § 74 Absatz 4 und § 79 Absatz 1 …“): Enthält der
+ * Titel alle Suchwörter und selbst jede Strukturangabe der Anfrage (gleiche Art und Nummer, Absatz sofern angegeben),
+ * ist die Anfrage auch eine Titelsuche – selbst wenn die Norm keine Einheit mit dieser Adresse hat. Die Bewertung
+ * ordnet solche Titeltreffer hinter echte Adresstreffer; Adressanfragen („§ 5 LÖG West“) bleiben sonst streng.
+ */
+export function titleCarriesReferences(titleText: string, plan: SearchQueryPlan): boolean {
+  if (!plan.freeText || plan.references.length === 0) return false;
+  if (!plan.tokens.every((token) => textContainsVariant(titleText, token)) || !plan.phrases.every((phrase) => textContainsPhrase(titleText, phrase))) return false;
+  const inTitle = extractStructuralIntents(titleText).references;
+  return plan.references.every((intent) => inTitle.some((own) => own.kind === intent.kind && own.number === intent.number && (!intent.subsection || own.subsection === intent.subsection)));
+}
+
 /** Bewertet ein Dokument gegen den Plan; `null`, wenn es die Anfrage nicht erfüllt. */
 export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan): SearchHit | null {
   const provisionUnits = document.units.filter((unit) => !isSyntheticUnit(unit));
@@ -95,7 +109,7 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
   let referenceUnit: SearchUnit | undefined;
   if (plan.references.length > 0) {
     const matching = provisionUnits.filter((unit) => plan.references.every((intent) => unitMatchesIntent(unit, intent)));
-    if (matching.length === 0) return null;
+    if (matching.length === 0 && !titleCarriesReferences(titleText, plan)) return null;
     referenceUnit = matching[0];
   }
 

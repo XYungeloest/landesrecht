@@ -1,26 +1,39 @@
 /**
- * Gemeinsames Importmanifest des RECHT.NRW-Imports (`data/imports/recht-nrw/manifest.json`) für
- * beide Quellbereiche: LRGV (Gesetze und Rechtsverordnungen) und LRMB (Verwaltungsvorschriften aus
- * dem Ministerialblatt). Je Stammnorm ein Eintrag; deterministisch aus dem Importlauf erzeugt, nach
- * Quellidentität sortiert und für den Bulkimport als Zustandsdatei (Resume, Deduplizierung) geeignet.
+ * Gemeinsames Importmanifest des RECHT.NRW-Imports für beide Quellbereiche: LRGV (Gesetze und
+ * Rechtsverordnungen) und LRMB (Verwaltungsvorschriften aus dem Ministerialblatt). Je Stammnorm ein
+ * Eintrag.
  *
- * Schemaversion 2 ergänzt Quellbereich, Dokumenttyp, Stichtagsstatus mit Belegen, Transformer- und
- * Reviewstatus sowie den Rekonstruktionspfad. Manifeste der Version 1 (nur LRGV) werden beim Lesen
- * verlustfrei hochgestuft und beim nächsten Schreiben als Version 2 gespeichert.
+ * Ablage (bulkfähig): eine Datei je Stammnorm unter
+ * `data/imports/recht-nrw/manifest/<bereich>/term-<id>.json`. Nach jeder verarbeiteten Stammnorm wird
+ * genau diese Datei atomar geschrieben – ein Manifest mit mehreren Tausend Einträgen muss dafür nicht
+ * neu geschrieben werden, und ein Abbruch beschädigt keine anderen Einträge. Das frühere
+ * Einzeldatei-Manifest (`manifest.json`, Schema 1 oder 2) wird beim Lesen übernommen und beim
+ * nächsten Schreiben in Einzeldateien überführt.
+ *
+ * Laufmetadaten (`importedAt`, `runId`) ändern sich nur, wenn sich der fachliche Inhalt eines Eintrags
+ * ändert; ein Wiederholungslauf mit unveränderten Quellen erzeugt keinen Diff.
  */
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { readdir, rm } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import { SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
+import { CorruptStateError, readJsonFile, TEMP_PREFIX, writeJsonAtomic } from './atomic.ts';
+
 export const MANIFEST_SCHEMA = 'recht-nrw-import-manifest/2' as const;
 export const MANIFEST_SCHEMA_V1 = 'recht-nrw-import-manifest/1';
-export const MANIFEST_PATH = join('data', 'imports', 'recht-nrw', 'manifest.json');
-export const SAMPLE_CORPUS_PATH = join('data', 'imports', 'recht-nrw', 'sample-corpus.json');
-export const LRMB_SAMPLE_CORPUS_PATH = join('data', 'imports', 'recht-nrw', 'lrmb-sample-corpus.json');
-export const RECONSTRUCTIONS_DIR = join('data', 'imports', 'recht-nrw', 'reconstructions');
+export const MANIFEST_ENTRY_SCHEMA = 'recht-nrw-import-manifest-entry/2' as const;
+export const IMPORT_DATA_DIR = join('data', 'imports', 'recht-nrw');
+/** Früheres Einzeldatei-Manifest (nur noch Lesen/Migration). */
+export const MANIFEST_PATH = join(IMPORT_DATA_DIR, 'manifest.json');
+export const MANIFEST_DIR = join(IMPORT_DATA_DIR, 'manifest');
+export const SAMPLE_CORPUS_PATH = join(IMPORT_DATA_DIR, 'sample-corpus.json');
+export const LRMB_SAMPLE_CORPUS_PATH = join(IMPORT_DATA_DIR, 'lrmb-sample-corpus.json');
+export const RECONSTRUCTIONS_DIR = join(IMPORT_DATA_DIR, 'reconstructions');
 export const AUDIT_DIR = join('data', 'audits', 'recht-nrw');
+/** Versionierte Rohquellen der Beispielkorpora (Ausnahme; im Bulkimport verboten). */
 export const RAW_ARCHIVE_DIR = join('sources', 'recht-nrw');
 
 export const SOURCE_AREAS = ['lrgv', 'lrmb'] as const;
@@ -36,8 +49,19 @@ export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
 export const BASELINE_STATUSES = ['active-at-baseline', 'not-active-at-baseline', 'undetermined'] as const;
 export type BaselineStatus = (typeof BASELINE_STATUSES)[number];
 
+/**
+ * Provenienz der Stichtagsgeltung: wie im kanonischen Modell (`exact`, `verified-active-at-baseline`,
+ * `reconstructed`), zusätzlich `undetermined` – nur im Manifest, nie in einer Fassung (kein Import).
+ */
+export const VALIDITY_PROVENANCES = ['exact', 'verified-active-at-baseline', 'reconstructed', 'undetermined'] as const;
+export type ValidityProvenance = (typeof VALIDITY_PROVENANCES)[number];
+
 export const RECONSTRUCTION_STATUSES = ['direct', 'reconstructed', 'reconstruction-required', 'not-applicable'] as const;
 export type ReconstructionStatus = (typeof RECONSTRUCTION_STATUSES)[number];
+
+/** Vollständigkeit des Normtextes (PDF-Policy, docs/RECHT_NRW_BULK_READINESS.md). */
+export const TEXT_COMPLETENESS = ['html-complete', 'html-with-pdf-attachments', 'pdf-only', 'pdf-only-essential-attachments', 'essential-attachment-missing', 'structured-transcription'] as const;
+export type TextCompleteness = (typeof TEXT_COMPLETENESS)[number];
 
 export const VALIDITY_EVIDENCE_KINDS = [
   'portal-version-interval',
@@ -49,6 +73,7 @@ export const VALIDITY_EVIDENCE_KINDS = [
   'gazette-publication',
   'gazette-amendment',
   'gazette-amendment-chain',
+  'search-index-signal',
   'reconstruction',
   'override',
 ] as const;
@@ -57,22 +82,33 @@ export type ValidityEvidenceKind = (typeof VALIDITY_EVIDENCE_KINDS)[number];
 export interface ValidityEvidence {
   kind: ValidityEvidenceKind;
   /** Was der Beleg stützt oder widerlegt. */
-  supports: 'valid-from' | 'valid-to' | 'active-at-baseline' | 'text-state' | 'completeness' | 'contradiction';
+  supports: 'valid-from' | 'valid-to' | 'active-at-baseline' | 'text-state' | 'completeness' | 'contradiction' | 'continuity';
+  /** Beweiswert (docs/RECHT_NRW_LRMB_IMPORT.md): strong | supporting | insufficient. */
+  strength?: 'strong' | 'supporting' | 'insufficient';
   statement: string;
   date?: string;
   sourceUrl?: string;
   sha256?: string;
 }
 
+export const RAW_DOCUMENT_ROLES = ['version-page', 'legacy-text', 'annex', 'pdf', 'stem-page', 'gazette-amendment'] as const;
+export type RawDocumentRole = (typeof RAW_DOCUMENT_ROLES)[number];
+
 export interface ManifestRawDocument {
-  role: 'version-page' | 'legacy-text' | 'annex' | 'pdf' | 'stem-page' | 'gazette-amendment';
+  role: RawDocumentRole;
   url: string;
   finalUrl: string;
   sha256: string;
   contentType: string;
   retrievedAt: string;
   byteLength: number;
+  /** Beispielkorpus: versionierte Kopie unter `sources/recht-nrw/`. */
   localSource?: string;
+  /** Bulk: unveränderliches R2-Objekt. */
+  bucket?: string;
+  objectKey?: string;
+  /** staged: im lokalen Staging (außerhalb von Git), uploaded/verified: in R2, Rücklesung geprüft. */
+  archiveStatus?: 'versioned' | 'staged' | 'uploaded' | 'verified';
 }
 
 export interface ReconstructionSource {
@@ -82,6 +118,7 @@ export interface ReconstructionSource {
   sha256: string;
   retrievedAt: string;
   localSource?: string;
+  objectKey?: string;
   citation?: string;
   inForce?: string;
 }
@@ -99,10 +136,32 @@ export interface ReconstructionStepRecord {
   removedBlocks?: number;
 }
 
+/** Arbeitsgrundlage der Rekonstruktionsqueue (keine rechtliche Bewertung). */
+export interface ReconstructionPlan {
+  direction: 'reverse' | 'forward' | 'mixed';
+  amendments: Array<{ decreeDate?: string; citation?: string; inForce?: string; gazetteUrl?: string; gazetteSha256?: string; instructionCount: number; direction: 'reverse' | 'forward' }>;
+  /** Anteil der Änderungen mit abrufbarem und zugeordnetem Ministerialblatt-Eintrag. */
+  sourceCompleteness: number;
+  estimatedSteps: number;
+}
+
 export interface ManifestOverride {
-  field: 'sourceValidTo';
-  value: string | null;
+  field: string;
+  value: unknown;
   reason: string;
+  id?: string;
+  evidence?: { source: string; url?: string; sha256?: string; note?: string };
+  reviewedAt?: string;
+}
+
+export interface ManifestAttachment {
+  label: string;
+  url: string;
+  mediaType: string;
+  /** Ergebnis der PDF-Prüfung (Textlayer oder Scan). */
+  pdf?: { pages?: number; textLayer: boolean; scanLike: boolean; encrypted: boolean };
+  essential: boolean;
+  handling: 'html-annex' | 'archived-source-only' | 'structured-transcription' | 'review';
 }
 
 export interface ManifestEntry {
@@ -124,6 +183,7 @@ export interface ManifestEntry {
   sourceValidFrom: string;
   sourceValidTo: string | null;
   baselineStatus: BaselineStatus;
+  validityProvenance?: ValidityProvenance;
   validityEvidence: ValidityEvidence[];
   retrievedAt: string;
   sha256: string;
@@ -140,9 +200,20 @@ export interface ManifestEntry {
   reconstructionStatus: ReconstructionStatus;
   reconstructionSources: ReconstructionSource[];
   reconstructionSteps: ReconstructionStepRecord[];
+  reconstructionPlan?: ReconstructionPlan;
   /** Nur LRMB: Normativitätsentscheidung mit Gründen. */
   normativity?: { decision: 'include' | 'exclude' | 'review'; reasons: string[] };
+  /** Dokumentidentität und Plausibilität des Normkörpers. */
+  documentIdentity?: { status: 'consistent' | 'review' | 'mismatch'; signals: string[] };
+  textCompleteness?: TextCompleteness;
+  attachments?: ManifestAttachment[];
+  /** Zustimmungsgesetz zu einem Staatsvertrag (LRGV). */
+  consentLaw?: { detected: boolean; treatyTitle?: string; treatyTextLocation: 'html-annex' | 'pdf-attachment' | 'inline' | 'unknown'; evidence: string[] };
+  /** Ablage der Rohquellen: versionierter Beispielkorpus oder R2. */
+  archive?: { mode: 'versioned-sample' | 'r2'; bucket?: string };
   importedAt: string;
+  /** Kennung des Laufs, der den fachlichen Inhalt zuletzt geändert hat. */
+  runId?: string;
   rawDocuments: ManifestRawDocument[];
   versionsConsidered: Array<{ validFrom: string; validTo: string | null; url?: string; selected: boolean }>;
   overrides: ManifestOverride[];
@@ -158,10 +229,14 @@ export interface ImportManifest {
   entries: ManifestEntry[];
 }
 
+export interface ManifestShard {
+  schemaVersion: typeof MANIFEST_ENTRY_SCHEMA;
+  entry: ManifestEntry;
+}
+
 export interface SampleCorpusEntry {
   url: string;
   rationale: string;
-  overrides?: ManifestOverride[];
 }
 
 export interface SampleCorpus {
@@ -185,14 +260,44 @@ export interface LrmbSampleCorpus {
   entries: LrmbSampleCorpusEntry[];
 }
 
+/** Laufmetadaten, die fachlich nicht zählen (Determinismus-Vergleich, stabile Zeitstempel). */
+export const MANIFEST_RUNTIME_FIELDS = ['importedAt', 'runId'] as const;
+
 export async function readLrmbSampleCorpus(root: string): Promise<LrmbSampleCorpus> {
-  const parsed = JSON.parse(await readFile(join(root, LRMB_SAMPLE_CORPUS_PATH), 'utf8')) as LrmbSampleCorpus;
-  if (parsed.schemaVersion !== 'recht-nrw-lrmb-sample-corpus/1') throw new Error(`${LRMB_SAMPLE_CORPUS_PATH}: unbekannte Schemaversion`);
+  const parsed = await readJsonFile<LrmbSampleCorpus>(join(root, LRMB_SAMPLE_CORPUS_PATH));
+  if (parsed?.schemaVersion !== 'recht-nrw-lrmb-sample-corpus/1') throw new Error(`${LRMB_SAMPLE_CORPUS_PATH}: fehlt oder unbekannte Schemaversion`);
+  return parsed;
+}
+
+export async function readSampleCorpus(root: string): Promise<SampleCorpus> {
+  const parsed = await readJsonFile<SampleCorpus>(join(root, SAMPLE_CORPUS_PATH));
+  if (parsed?.schemaVersion !== 'recht-nrw-sample-corpus/1') throw new Error(`${SAMPLE_CORPUS_PATH}: fehlt oder unbekannte Schemaversion`);
   return parsed;
 }
 
 export function emptyManifest(): ImportManifest {
   return { schemaVersion: MANIFEST_SCHEMA, sourceSystem: 'recht-nrw', baselineDate: SIMULATION_BASELINE_DATE, entries: [] };
+}
+
+/** Numerische Ordnung für `term:<id>`, sonst Codepunkt-Ordnung (unabhängig von der Locale). */
+export function compareSourceIdentity(left: string, right: string): number {
+  const leftTerm = /^term:(\d+)$/u.exec(left);
+  const rightTerm = /^term:(\d+)$/u.exec(right);
+  if (leftTerm && rightTerm) return Number(leftTerm[1]) - Number(rightTerm[1]);
+  if (leftTerm) return -1;
+  if (rightTerm) return 1;
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+/** Dateiname einer Stammnorm: `term-<id>`, sonst ein Hash der Kennung. */
+export function identityFileName(sourceIdentity: string): string {
+  const term = /^term:(\d+)$/u.exec(sourceIdentity);
+  if (term) return `term-${term[1]}`;
+  return `id-${createHash('sha256').update(sourceIdentity).digest('hex').slice(0, 20)}`;
+}
+
+export function manifestEntryPath(area: SourceArea, sourceIdentity: string): string {
+  return join(MANIFEST_DIR, area, `${identityFileName(sourceIdentity)}.json`);
 }
 
 /** Hochstufung eines Eintrags der Schemaversion 1 (nur LRGV, Transformer 1.0.0). */
@@ -214,27 +319,80 @@ export function upgradeManifestEntryV1(entry: Record<string, unknown>): Manifest
   };
 }
 
-export async function readManifest(root: string): Promise<ImportManifest> {
-  let parsed: { schemaVersion?: string; entries?: Array<Record<string, unknown>>; baselineDate?: string };
-  try {
-    parsed = JSON.parse(await readFile(join(root, MANIFEST_PATH), 'utf8')) as typeof parsed;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return emptyManifest();
-    throw error;
-  }
-  if (parsed.schemaVersion === MANIFEST_SCHEMA_V1) {
-    return { schemaVersion: MANIFEST_SCHEMA, sourceSystem: 'recht-nrw', baselineDate: parsed.baselineDate ?? SIMULATION_BASELINE_DATE, entries: (parsed.entries ?? []).map(upgradeManifestEntryV1) };
-  }
-  if (parsed.schemaVersion !== MANIFEST_SCHEMA) throw new Error(`${MANIFEST_PATH}: unbekannte Schemaversion ${parsed.schemaVersion}`);
-  return parsed as unknown as ImportManifest;
+async function readLegacyManifest(root: string): Promise<ManifestEntry[]> {
+  const parsed = await readJsonFile<{ schemaVersion?: string; entries?: Array<Record<string, unknown>> }>(join(root, MANIFEST_PATH));
+  if (!parsed) return [];
+  if (parsed.schemaVersion === MANIFEST_SCHEMA_V1) return (parsed.entries ?? []).map(upgradeManifestEntryV1);
+  if (parsed.schemaVersion !== MANIFEST_SCHEMA) throw new CorruptStateError(MANIFEST_PATH, `unbekannte Schemaversion ${parsed.schemaVersion}`);
+  return (parsed.entries ?? []) as unknown as ManifestEntry[];
 }
 
+async function listShardFiles(directory: string): Promise<string[]> {
+  try {
+    return (await readdir(directory)).filter((file) => file.endsWith('.json') && !file.startsWith(TEMP_PREFIX)).sort();
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+/** Liest einen einzelnen Manifesteintrag (Shard) oder `undefined`. */
+export async function readManifestEntry(root: string, area: SourceArea, sourceIdentity: string): Promise<ManifestEntry | undefined> {
+  const file = join(root, manifestEntryPath(area, sourceIdentity));
+  const shard = await readJsonFile<ManifestShard>(file);
+  if (!shard) return undefined;
+  if (shard.schemaVersion !== MANIFEST_ENTRY_SCHEMA || !shard.entry) throw new CorruptStateError(file, `unbekannte Schemaversion ${shard.schemaVersion}`);
+  return shard.entry;
+}
+
+export async function readManifest(root: string): Promise<ImportManifest> {
+  const byIdentity = new Map<string, ManifestEntry>();
+  for (const entry of await readLegacyManifest(root)) byIdentity.set(entry.sourceIdentity, entry);
+  for (const area of SOURCE_AREAS) {
+    const directory = join(root, MANIFEST_DIR, area);
+    for (const file of await listShardFiles(directory)) {
+      const path = join(directory, file);
+      const shard = await readJsonFile<ManifestShard>(path);
+      if (!shard || shard.schemaVersion !== MANIFEST_ENTRY_SCHEMA || !shard.entry?.sourceIdentity) throw new CorruptStateError(path, 'kein gültiger Manifesteintrag');
+      if (shard.entry.sourceArea !== area) throw new CorruptStateError(path, `Eintrag gehört zum Bereich ${shard.entry.sourceArea}, liegt aber unter ${area}`);
+      if (`${identityFileName(shard.entry.sourceIdentity)}.json` !== file) throw new CorruptStateError(path, `Dateiname passt nicht zur Quellidentität ${shard.entry.sourceIdentity}`);
+      byIdentity.set(shard.entry.sourceIdentity, shard.entry);
+    }
+  }
+  return { ...emptyManifest(), entries: [...byIdentity.values()].sort((left, right) => compareSourceIdentity(left.sourceIdentity, right.sourceIdentity)) };
+}
+
+function withoutRuntime(entry: ManifestEntry): Record<string, unknown> {
+  const copy: Record<string, unknown> = { ...entry };
+  for (const field of MANIFEST_RUNTIME_FIELDS) delete copy[field];
+  return copy;
+}
+
+/**
+ * Schreibt einen Eintrag atomar. Ist der fachliche Inhalt unverändert, bleiben die Laufmetadaten des
+ * gespeicherten Eintrags erhalten (kein Diff bei Wiederholungsläufen).
+ */
+export async function writeManifestEntry(root: string, entry: ManifestEntry): Promise<{ path: string; changed: boolean }> {
+  const path = manifestEntryPath(entry.sourceArea, entry.sourceIdentity);
+  const previous = await readManifestEntry(root, entry.sourceArea, entry.sourceIdentity);
+  let next = entry;
+  if (previous && JSON.stringify(withoutRuntime(previous)) === JSON.stringify(withoutRuntime(entry))) {
+    next = { ...entry };
+    for (const field of MANIFEST_RUNTIME_FIELDS) {
+      if (previous[field] === undefined) delete next[field];
+      else (next as unknown as Record<string, unknown>)[field] = previous[field];
+    }
+  }
+  const shard: ManifestShard = { schemaVersion: MANIFEST_ENTRY_SCHEMA, entry: next };
+  const changed = await writeJsonAtomic(join(root, path), shard);
+  return { path: path.replace(/\\/gu, '/'), changed };
+}
+
+/** Schreibt alle Einträge als Einzeldateien und entfernt das frühere Einzeldatei-Manifest. */
 export async function writeManifest(root: string, manifest: ImportManifest): Promise<string> {
-  const target = join(root, MANIFEST_PATH);
-  await mkdir(dirname(target), { recursive: true });
-  const sorted: ImportManifest = { ...manifest, schemaVersion: MANIFEST_SCHEMA, entries: [...manifest.entries].sort((left, right) => left.sourceIdentity.localeCompare(right.sourceIdentity)) };
-  await writeFile(target, `${JSON.stringify(sorted, null, 2)}\n`, 'utf8');
-  return target;
+  for (const entry of [...manifest.entries].sort((left, right) => compareSourceIdentity(left.sourceIdentity, right.sourceIdentity))) await writeManifestEntry(root, entry);
+  await rm(join(root, MANIFEST_PATH), { force: true });
+  return join(root, MANIFEST_DIR);
 }
 
 export function upsertManifestEntry(manifest: ImportManifest, entry: ManifestEntry): ImportManifest {
@@ -243,8 +401,4 @@ export function upsertManifestEntry(manifest: ImportManifest, entry: ManifestEnt
   return { ...manifest, entries };
 }
 
-export async function readSampleCorpus(root: string): Promise<SampleCorpus> {
-  const parsed = JSON.parse(await readFile(join(root, SAMPLE_CORPUS_PATH), 'utf8')) as SampleCorpus;
-  if (parsed.schemaVersion !== 'recht-nrw-sample-corpus/1') throw new Error(`${SAMPLE_CORPUS_PATH}: unbekannte Schemaversion`);
-  return parsed;
-}
+export const isImportedStatus = (status: ImportStatus): boolean => status === 'imported' || status === 'imported-with-warnings';

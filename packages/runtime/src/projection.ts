@@ -97,7 +97,7 @@ function fullResetQueries(): PlanQuery[] {
   ];
 }
 
-function deleteNormQueries(id: string): PlanQuery[] {
+export function deleteNormQueries(id: string): PlanQuery[] {
   return TABLES_IN_DELETE_ORDER.map((table) => ({ sql: `DELETE FROM ${table} WHERE norm_id = ?`, params: [id] }))
     .map((query) => (query.sql.includes('law_norms WHERE') ? { sql: 'DELETE FROM law_norms WHERE id = ?', params: [id] } : query));
 }
@@ -213,7 +213,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   return { queries, versions: record.versions.length, blocks, blockParts, searchUnits };
 }
 
-function runtimeMetaQueries(entries: Record<string, string>): PlanQuery[] {
+export function runtimeMetaQueries(entries: Record<string, string>): PlanQuery[] {
   return Object.entries(entries).map(([key, value]) => ({
     sql: 'INSERT INTO law_runtime_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
     params: [key, value],

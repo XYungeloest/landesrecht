@@ -90,8 +90,24 @@ Regeln (`lrmb/validity.ts`):
    (`validity-expired-before-baseline`, Review `metadata-conflict`). Liegt sie vor „Gültig bis“, ist das
    ein Konflikt; liegt sie danach, eine vorzeitige Ablösung (Warnung).
 2. **Geltung:** Datierte Stammnormen über die lokale Stichtagsauswahl. Undatierte Altdatensätze nur,
-   wenn sie vor dem Stichtag in Kraft waren (Klausel oder Änderung) **und** nach dem Stichtag noch
-   geändert wurden – eine aufgehobene Vorschrift wird nicht geändert. Sonst `undetermined`.
+   wenn sie vor dem Stichtag in Kraft waren (Klausel oder Änderung) **und** eine Änderung nach dem Stichtag
+   die ununterbrochene Fortgeltung belegt. Diese Kontinuität gilt nur, wenn alle fünf Bedingungen erfüllt
+   sind (`assessUndatedContinuity`):
+   1. `same-stem`: Der Ministerialblatt-Eintrag der späteren Änderung identifiziert dieselbe Stammvorschrift
+      (Titel, Ausfertigungsdatum, Stammfundstelle).
+   2. `explicit-amendment`: Er enthält einen ausdrücklichen Änderungsbefehl für diese Vorschrift.
+   3. `unbroken-chain`: Die Eingangsformel nennt die vorhergehende Änderung des Fundstellenverlaufs; keine
+      Lücke, keine Aufhebung, keine Neufassung dazwischen.
+   4. `consistent-identity`: Alle zugeordneten Änderungen nennen die Stammfundstelle des Fundstellenverlaufs.
+   5. `no-contrary-evidence`: kein Aufhebungs-, Ablösungs- oder Neufassungshinweis in Änderungstexten und
+      Portalvermerken.
+
+   Fehlt eine Bedingung, lautet das Ergebnis `undetermined` (Manifest und Review, keine Übernahme).
+   Belegstärken im Manifest (`validityEvidence[].strength`): `strong` (Ministerialblatt-Eintrag, Klausel,
+   Änderungsbefehl, Kette), `supporting` (Inkrafttretensklausel ohne Datum, Fehlen widersprechender Hinweise,
+   redaktioneller Portalhinweis), `insufficient` (Suchindex `field_historically`, `field_outforce_date`,
+   `field_effective_from` – werden genannt, entscheiden aber nie allein). Policy und Strategie für den
+   Altbestand: `docs/RECHT_NRW_BULK_READINESS.md`, Abschnitt „Undatierte LRMB-Altdatensätze“.
 3. **Textstand:** Der Fundstellenverlauf der gewählten Seite nennt die eingearbeiteten Änderungen. Jede
    Änderung braucht ein belegtes Inkrafttreten: Ministerialblatt-Eintrag, der die Vorschrift mit
    Ausfertigungsdatum und Fundstelle nennt (Seitenkollisionen `-0/-1` werden so aufgelöst), plus
@@ -178,15 +194,21 @@ ist als Quelle registriert.
 
 ## 9. Manifest, Review-Queue, Coverage
 
-- Gemeinsames Manifest `data/imports/recht-nrw/manifest.json` (Schema 2): `sourceArea`,
-  `sourceDocumentType`, `normativity`, `baselineStatus`, `validityEvidence`, `reconstructionStatus`,
+- Manifest je Quelle `data/imports/recht-nrw/manifest/lrmb/term-<id>.json`: `sourceArea`,
+  `sourceDocumentType`, `normativity`, `baselineStatus`, `validityEvidence` (mit Belegstärke),
+  `validityProvenance` (`exact | verified-active-at-baseline | reconstructed | undetermined`),
+  `documentIdentity`, `textCompleteness`, `attachments`, `reconstructionStatus`, `reconstructionPlan`,
   `reconstructionSources`, `reconstructionSteps`, `reviewStatus`, `transformerVersion` u. a. Auch
   ausgeschlossene, nicht geltende und Review-Fälle erhalten einen Eintrag samt Belegen
   (`data/audits/recht-nrw/lrmb/term-<id>.json`).
-- Review-Queue `data/imports/recht-nrw/review-queue.json`: Fälle verschwinden bei Reimport nicht;
-  Entscheidungen (`resolved`, `accepted`) bleiben erhalten.
-- Coverage `data/audits/recht-nrw/coverage.json` (LRMB: enumeriert, normativ, am Stichtag, direkt,
-  rekonstruiert, Review, ausgeschlossen).
+- Review je Quelle `data/imports/recht-nrw/review/lrmb/term-<id>.json`: Fälle verschwinden bei Reimport nicht
+  (`superseded`), Entscheidungen bleiben erhalten (`docs/RECHT_NRW_IMPORT.md`, Abschnitt 8).
+- Rekonstruktionsqueue `npm run import:recht-nrw:reconstruction-queue -- --write`: alle
+  `reconstruction-required`-Fälle mit Priorisierungshilfe (Typ, Gesetzesbezug, Sachgebiet, Quellenlage,
+  Aufwand); kein automatisches Rezept, keine KI-Schätzung als Rechtsstand.
+- Coverage `data/audits/recht-nrw/coverage.json` + `COVERAGE.md` (LRMB: enumeriert, voraussichtlich normativ,
+  ausgeschlossen, Normativität offen, am Stichtag, nicht geltend, unbestimmt, direkt, rekonstruiert,
+  Rekonstruktion nötig, PDF-only, Anlagen unvollständig, historische Lücke, Dokumentidentität, fehlgeschlagen).
 
 ## 10. Beispielkorpus (15 Dokumente)
 
@@ -203,8 +225,8 @@ Rationale je Eintrag: `data/imports/recht-nrw/lrmb-sample-corpus.json`.
 | Rechtsbehelfsbelehrung bei Bußgeldbescheiden | Runderlass | MBl. NRW. 2018 S. 242, geändert 2021, 2022, 2023 | geltend (ab 2023-11-09, belegt) | direkt | drei Änderungen, Seitenkollision `2021-s535-0`, PDF-Anlage |
 | Verwaltungsvorschriften zum Landeshundegesetz (`vv-lhundg-west`) | VwV | MBl. NRW. 2003 S. 580, geändert 2017, 2020, 2024 | geltend (2020-07-31 – 2024-07-30, hergeleitet) | **rekonstruiert** | undatierter Datensatz, Teile I/II; Änderung vom 16. Juli 2024 (in Kraft 31. Juli 2024) mit sechs Befehlen zurückgenommen |
 | Vergaberichtlinien für Hochschulen | Richtlinie | MBl. NRW. 2022 S. 90 | nicht geltend | – | Portal ohne Ende, Text außer Kraft am 30. Juni 2022 (Review `metadata-conflict`) |
-| Verwaltungsvorschrift Technische Baubestimmungen NRW | VwV | MBl. NRW. 2021 S. 444, geändert 2022–2025 | geltend | Rekonstruktion unsicher | Fassung 2022–2025 enthält spätere Änderungen, eine davon „n. v.“ (Review) |
-| Verwaltungsvorschriften zur Landeshaushaltsordnung | VwV | MBl. NRW. 2022 S. 445 | – | – | Regelungsgehalt nur in 27 PDF-Anlagen (Review `normativity`) |
+| Verwaltungsvorschrift Technische Baubestimmungen NRW | VwV | MBl. NRW. 2021 S. 444, geändert 2022–2025 | geltend | Rekonstruktion unsicher | Fassung 2022–2025 enthält spätere Änderungen, eine davon „n. v.“; die landesrechtlichen Anpassungen stehen in der nicht abgedruckten PDF-Anlage (Review `attachment`, `reconstruction-uncertain`) |
+| Verwaltungsvorschriften zur Landeshaushaltsordnung | VwV | MBl. NRW. 2022 S. 445 | – | – | Regelungsgehalt nur in 27 PDF-Anlagen (Review `attachment`, Normativität erst nach Transkription) |
 | Wohnraumförderungsbestimmungen (WFB) | Richtlinie | MBl. NRW. 2022 S. 242 | nicht geltend (bis 2023-02-14) | – | Tabelle, Inhaltsübersicht, 235 Nummern |
 | Verwaltungsvorschriften zum Landesorganisationsgesetz | VwV | RdErl. v. 12.2.1963 | unbestimmt | – | SMBl-Altdatensatz, Texterkennung, keine Belege (Review `historical-gap`) |
 | Hinweise zur Berücksichtigung des ÖPNV | sonstige | MBl. NRW. 1986 S. 1013 | – | – | Grenzfall „Hinweise“ (Review `normativity`) |
@@ -226,14 +248,25 @@ npm run import:recht-nrw:lrmb:sample [-- --write]             # Beispielkorpus m
 npm run import:recht-nrw:review -- --area lrmb                # offene Review-Fälle
 npm run import:recht-nrw:coverage -- --write                  # Coverage-Report
 npm run import:recht-nrw:audit                                # gemeinsames Audit (LRGV + LRMB)
+npm run import:recht-nrw:enumerate -- --area lrmb [--write]   # vollständige LRMB-Enumeration mit Vorklassifikation
+npm run import:recht-nrw:bulk -- --area lrmb [--limit n]      # Bulk-Runner (Dry-run ohne --write)
 ```
+
+Der Bulk-Runner verarbeitet auch `lrmb/bekanntmachung` und andere Portaltypen; die Vorklassifikation der
+Enumeration (`likely-include | likely-exclude | review | unknown`) steuert nur die Reihenfolge. Ohne
+Seitenabruf ausgeschlossen werden nur eindeutige Titel (`SAFE_TITLE_EXCLUSIONS`).
 
 ## 13. Grenzen und offene Punkte
 
-- PDF-Anlagen werden als Quelle registriert, nicht als Text übernommen (Review `attachment`).
+- PDF-Anlagen werden archiviert und als Quelle registriert, nicht als Text übernommen; liegt der
+  Regelungsgehalt nur im PDF, gilt die PDF-Policy (Review `attachment`, Übernahme erst mit geprüfter
+  strukturierter Transkription). Die Geltung am Stichtag wird trotzdem bestimmt, sofern die Normativität
+  des Kopferlasses eindeutig ist.
 - Legacy-Fassungen (iframe) und HTML-Anlagen im LRMB-Bereich gehen in Review.
 - Änderungsbefehle werden nicht automatisch gedeutet; Rezepte sind Einzelarbeit mit Prüfung.
 - „n. v.“-Änderungen und Einträge ohne HTML-Text im Ministerialblatt verhindern den Textstandsbeleg.
-- Undatierte SMBl-Altdatensätze sind ohne Änderungen nach dem Stichtag nicht belegbar (Review).
-- Die Suche erkennt Strukturadressen „Nr. 2.3“ noch nicht (Volltext und Sprungziele funktionieren).
+- Undatierte SMBl-Altdatensätze ohne Kontinuitätsnachweis (fünf Bedingungen, Abschnitt 4) bleiben
+  `undetermined` (Review `historical-gap`).
+- Die Suche erkennt Nummernadressen („Nr. 4.2.3“, „Nummer 2.1“, „Ziffer 3“), sofern keine §-/Artikeladresse
+  angegeben ist.
 - Die Normativitätsregeln beruhen auf Titel und Erlasskopf; sie sind konservativ und erzeugen Prüffälle.

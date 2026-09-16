@@ -6,7 +6,7 @@
   "sourceIdentity": "term:28930",
   "slug": "schulg-west",
   "baselineDate": "2023-12-01",
-  "transformerVersion": "recht-nrw-transformer/2.0.0",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
   "rules": [
     "jurisdiction-name-genitive",
     "jurisdiction-name-dative",
@@ -14,6 +14,9 @@
     "jurisdiction-name-adjective",
     "jurisdiction-name-adjective-capital",
     "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
     "jurisdiction-abbreviation"
   ],
   "detections": [
@@ -192,16 +195,18 @@
       "replacement": "Landes Westdeutschland"
     },
     {
-      "id": "body[18].children[2].children[1].children[6].text@94:jurisdiction-name-residual",
+      "id": "body[18].children[2].children[1].children[6].text@94:rule:jurisdiction-abbreviation-law-name-sentence-end",
       "path": "body[18].children[2].children[1].children[6].text",
       "start": 94,
       "end": 97,
       "term": "NRW",
       "context": "…t sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.",
       "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "detector": "jurisdiction-name-residual",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
     },
     {
       "id": "body[19].children[4].children[3].text@351:protected:gazette-nrw",
@@ -265,7 +270,12 @@
       "category": "public-body",
       "decision": "manual-review",
       "detector": "public-body-regional",
-      "reason": "Körperschaft oder Anstalt mit regionaler Bezeichnung des Herkunftslandes – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Körperschaft oder Anstalt mit regionaler Bezeichnung des Herkunftslandes – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung koerperschaften (review): Körperschaften und Anstalten mit regionaler Bezeichnung; Entsprechung nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "koerperschaften",
+        "group": "Körperschaften"
+      }
     },
     {
       "id": "body[20].children[2].children[1].children[3].children[5].text@16:rule:jurisdiction-name-bare",
@@ -291,7 +301,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[21].children[0].children[6].text@258:regional-body-association",
@@ -303,7 +318,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[21].children[3].children[1].text@29:regional-body-association",
@@ -315,7 +335,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[22].children[0].children[2].children[0].text@150:protected:gazette-nrw",
@@ -339,7 +364,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-district-government",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
     },
     {
       "id": "body[22].children[3].children[1].text@183:regional-body-association",
@@ -351,7 +381,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[22].children[3].children[3].text@103:authority-district-government",
@@ -363,7 +398,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-district-government",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
     },
     {
       "id": "body[22].children[3].children[3].text@235:authority-district-government",
@@ -375,7 +415,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-district-government",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
     },
     {
       "id": "body[23].children[4].children[4].text@54:rule:jurisdiction-name-bare",
@@ -495,7 +540,12 @@
       "category": "ministry",
       "decision": "manual-review",
       "detector": "ministry-compound",
-      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung."
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
     },
     {
       "id": "body[24].children[1].children[1].children[11].text@173:ministry-compound",
@@ -507,7 +557,12 @@
       "category": "ministry",
       "decision": "manual-review",
       "detector": "ministry-compound",
-      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung."
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
+      "mapping": {
+        "status": "review",
+        "entry": "finanzministerium",
+        "group": "Finanzministerium"
+      }
     },
     {
       "id": "body[24].children[1].children[6].children[1].text@315:authority-state-office",
@@ -519,7 +574,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-office",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
     },
     {
       "id": "body[24].children[1].children[9].children[3].children[0].text@68:authority-district-government",
@@ -531,7 +591,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-district-government",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
     },
     {
       "id": "body[24].children[1].children[9].children[3].children[1].text@86:authority-state-office",
@@ -543,7 +608,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-office",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
     },
     {
       "id": "body[24].children[1].children[10].children[3].text@187:protected:gazette-nrw",
@@ -558,16 +628,18 @@
       "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
     },
     {
-      "id": "body[24].children[2].children[2].children[4].text@348:jurisdiction-name-residual",
+      "id": "body[24].children[2].children[2].children[4].text@341:rule:jurisdiction-abbreviation-known-law-dotted",
       "path": "body[24].children[2].children[2].children[4].text",
-      "start": 348,
-      "end": 351,
-      "term": "NRW",
-      "context": "…Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungs…",
+      "start": 341,
+      "end": 352,
+      "term": "VwVfG. NRW.",
+      "context": "…ichen. Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungss…",
       "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "detector": "jurisdiction-name-residual",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-dotted",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-dotted übergeleitet („VwVfG. NRW.“ → „VwVfG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-dotted",
+      "replacement": "VwVfG West"
     },
     {
       "id": "body[25].children[0].children[0].children[7].text@213:authority-state-office",
@@ -579,7 +651,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-office",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
     },
     {
       "id": "body[25].children[0].children[0].children[8].text@122:authority-state-enterprise",
@@ -591,7 +668,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-enterprise",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
     },
     {
       "id": "body[25].children[0].children[1].children[2].text@571:authority-state-enterprise",
@@ -603,7 +685,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-enterprise",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
     },
     {
       "id": "body[25].children[0].children[1].children[3].text@167:authority-state-enterprise",
@@ -615,7 +702,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-enterprise",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
     },
     {
       "id": "body[25].children[0].children[1].children[3].text@602:authority-state-enterprise",
@@ -627,7 +719,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-enterprise",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesbetriebe",
+        "group": "Landesbetriebe"
+      }
     },
     {
       "id": "body[25].children[0].children[1].children[4].text@98:authority-state-office",
@@ -639,7 +736,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-office",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
     },
     {
       "id": "body[25].children[0].children[2].children[3].text@436:authority-state-office",
@@ -651,7 +753,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-state-office",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "landesaemter",
+        "group": "Landesämter"
+      }
     },
     {
       "id": "body[25].children[1].children[1].children[2].text@50:regional-body-association",
@@ -663,7 +770,12 @@
       "category": "regional-body",
       "decision": "manual-review",
       "detector": "regional-body-association",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung."
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "landschaftsverbaende",
+        "group": "Landschaftsverbände"
+      }
     },
     {
       "id": "body[25].children[1].children[1].children[3].text@692:authority-district-government",
@@ -675,7 +787,12 @@
       "category": "authority",
       "decision": "manual-review",
       "detector": "authority-district-government",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden."
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
+      "mapping": {
+        "status": "review",
+        "entry": "bezirksregierungen",
+        "group": "Bezirksregierungen"
+      }
     },
     {
       "id": "body[25].children[1].children[1].children[3].text@709:municipality",
@@ -687,7 +804,12 @@
       "category": "municipality",
       "decision": "manual-review",
       "detector": "municipality",
-      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation."
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
     },
     {
       "id": "body[25].children[1].children[4].children[0].text@74:rule:jurisdiction-name-bare",
@@ -1005,7 +1127,13 @@
       "category": "institution",
       "decision": "safe-auto-transform",
       "detector": "constitutional-organ-state",
-      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet."
+      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+      "mapping": {
+        "status": "safe-transform",
+        "entry": "landesregierung",
+        "group": "Landesregierung NRW",
+        "target": "Landesregierung Westdeutschland"
+      }
     },
     {
       "id": "body[26].text@20:rule:jurisdiction-name-bare",
@@ -1031,7 +1159,12 @@
       "category": "ministry",
       "decision": "manual-review",
       "detector": "ministry-portfolio",
-      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung."
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
     },
     {
       "id": "body[30].title@75:protected:gazette-nrw",
@@ -1204,16 +1337,18 @@
       "replacement": "West"
     },
     {
-      "id": "body[40].text@541:jurisdiction-name-residual",
+      "id": "body[40].text@541:rule:jurisdiction-abbreviation-law-name-sentence-end",
       "path": "body[40].text",
       "start": 541,
       "end": 544,
       "term": "NRW",
       "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.",
       "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "detector": "jurisdiction-name-residual",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
     },
     {
       "id": "body[40].children[1].title@70:protected:gazette-nrw",
@@ -1268,22 +1403,23 @@
       "replacement": "West"
     },
     {
-      "id": "body[40].children[3].text@481:jurisdiction-name-residual",
+      "id": "body[40].children[3].text@481:rule:jurisdiction-abbreviation-law-name-sentence-end",
       "path": "body[40].children[3].text",
       "start": 481,
       "end": 484,
       "term": "NRW",
       "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.“",
       "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "detector": "jurisdiction-name-residual",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell."
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
     }
   ],
   "decisions": {
     "jurisdiction-name": {
-      "safe-auto-transform": 31,
-      "manual-review": 4
+      "safe-auto-transform": 35
     },
     "source-citation": {
       "protected": 40
@@ -1363,6 +1499,12 @@
       "to": "Landes Westdeutschland"
     },
     {
+      "path": "body[18].children[2].children[1].children[6].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
       "path": "body[20].children[2].children[1].children[3].children[4].text",
       "rule": "jurisdiction-name-bare",
       "from": "Nordrhein-Westfalen",
@@ -1415,6 +1557,12 @@
       "rule": "jurisdiction-name-bare",
       "from": "Nordrhein-Westfalen",
       "to": "Westdeutschland"
+    },
+    {
+      "path": "body[24].children[2].children[2].children[4].text",
+      "rule": "jurisdiction-abbreviation-known-law-dotted",
+      "from": "VwVfG. NRW.",
+      "to": "VwVfG West"
     },
     {
       "path": "body[25].children[1].children[4].children[0].text",
@@ -1483,6 +1631,12 @@
       "to": "West"
     },
     {
+      "path": "body[40].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
       "path": "body[40].children[3].text",
       "rule": "jurisdiction-abbreviation",
       "from": "NRW",
@@ -1491,27 +1645,24 @@
     {
       "path": "body[40].children[3].text",
       "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[40].children[3].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
       "from": "NRW",
       "to": "West"
     }
   ],
   "unresolved": [
     {
-      "path": "body[18].children[2].children[1].children[6].text",
-      "term": "NRW",
-      "context": "…t sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.",
-      "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
-      "manualDecisionRequired": true
-    },
-    {
       "path": "body[20].children[2].children[1].children[3].children[5].text",
       "term": "Unfallkasse Nordrhein-Westfalen",
       "context": "die Unfallkasse Nordrhein-Westfalen,",
       "category": "public-body",
       "decision": "manual-review",
-      "reason": "Körperschaft oder Anstalt mit regionaler Bezeichnung des Herkunftslandes – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Körperschaft oder Anstalt mit regionaler Bezeichnung des Herkunftslandes – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung koerperschaften (review): Körperschaften und Anstalten mit regionaler Bezeichnung; Entsprechung nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1520,7 +1671,7 @@
       "context": "Die Landschaftsverbände sind Träger der Förderschulen mit dem Förderschwerpunkt Hör…",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1529,7 +1680,7 @@
       "context": "…neter Schulbetrieb gewährleistet ist. Gemeinden, Kreise und Landschaftsverbände sind berechtigt, Klinikschulen zu errichten und fortzuführe…",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1538,7 +1689,7 @@
       "context": "Soweit Gemeinden, Kreise und Landschaftsverbände Schulträgeraufgaben nach § 78 zu erfüllen haben, sind sie v…",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1547,7 +1698,7 @@
       "context": "Obere Schulaufsichtsbehörde ist die Bezirksregierung. Sie nimmt in ihrem Gebiet die Schulaufsicht über die Schul…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1556,7 +1707,7 @@
       "context": "… Einrichtungen der erzieherischen Hilfe im Benehmen mit dem Landschaftsverband aus.",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1565,7 +1716,7 @@
       "context": "… Schulaufsicht erforderlich ist, kann das Ministerium einer Bezirksregierung die Ausübung der Schulaufsicht in einem bestimmten Aufgaben…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1574,7 +1725,7 @@
       "context": "…abengebiet auch für den Bereich einer oder mehrerer anderer Bezirksregierungen durch Rechtsverordnung übertragen. Dies gilt insbesondere f…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1583,7 +1734,7 @@
       "context": "…derer Umstände kann das Ministerium im Einvernehmen mit dem Finanzministerium einer längeren Ermäßigung der Eigenleistung zustimmen, wenn…",
       "category": "ministry",
       "decision": "manual-review",
-      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
       "manualDecisionRequired": true
     },
     {
@@ -1592,7 +1743,7 @@
       "context": "…ungen der Absätze 7 und 8 auf Dauer im Einvernehmen mit dem Finanzministerium festlegen. Dies setzt voraus, dass ein besonderes Landesint…",
       "category": "ministry",
       "decision": "manual-review",
-      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung finanzministerium (review): Ressortzuschnitt des Landes Westdeutschland nicht festgelegt; historische Bezeichnung bleibt.",
       "manualDecisionRequired": true
     },
     {
@@ -1601,7 +1752,7 @@
       "context": "…ule werden vom Land ohne Abzug einer Eigenleistung über das Landesamt für Besoldung und Versorgung festgesetzt und zahlbar gemacht.",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1610,7 +1761,7 @@
       "context": "…ilfeangelegenheiten an Ersatzschulen die örtlich zuständige Bezirksregierung,",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1619,16 +1770,7 @@
       "context": "…iten der Planstelleninhaberinnen und Planstelleninhaber das Landesamt für Besoldung und Versorgung, zusätzlich deren Beihilfeangelegenheiten, s…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
-      "manualDecisionRequired": true
-    },
-    {
-      "path": "body[24].children[2].children[2].children[4].text",
-      "term": "NRW",
-      "context": "…Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungs…",
-      "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1637,7 +1779,7 @@
       "context": "…m Landesjugendamt, den Ämtern für Ausbildungsförderung, dem Landesamt für Ausbildungsförderung sowie den Ausbildungsbetrieben der Schülerinnen und Schüler an Berufskollegs nur übermitte…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1646,7 +1788,7 @@
       "context": "…onymisierte Leistungsdaten der Schülerinnen und Schüler dem Landesbetrieb Information und Technik regelmäßig übermittelt werden sowie für Maßnahm…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1655,7 +1797,7 @@
       "context": "…n Studienseminaren an die Schulaufsichtsbehörden und an den Landesbetrieb Information und Technik übermittelt werden. Verhaltensdaten von Lehreri…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1664,7 +1806,7 @@
       "context": "…behörden gespeicherten Daten der Lehrerinnen und Lehrer dem Landesbetrieb Information und Technik regelmäßig übermittelt und zur Erstellung einer…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1673,7 +1815,7 @@
       "context": "…atistische Aufbereitungen übermittelt werden, sind sie beim Landesbetrieb Information und Technik zu löschen, sobald die Überprüfung der Erhebung…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesbetriebe (review): Landesbetrieb ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1682,7 +1824,7 @@
       "context": "…n Daten des im Landesdienst stehenden Schulpersonals an das Landesamt für Besoldung und Versorgung regelmäßig übermittelt und für diesen Zweck …",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1691,7 +1833,7 @@
       "context": "… personenbezogener Daten für Versorgungsempfänger durch das Landesamt für Besoldung und Versorgung des Landes und für die Übertragung der Beihi…",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung landesaemter (review): Landesoberbehörde ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     },
     {
@@ -1700,7 +1842,7 @@
       "context": "Für die Lehrerinnen und Lehrer an den Schulen der Landschaftsverbände, die keine Förderschulen und Klinikschulen sind, gilt Absat…",
       "category": "regional-body",
       "decision": "manual-review",
-      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung.",
+      "reason": "Regionale Körperschaft oder Verwaltungsgliederung des Herkunftslandes – keine automatische Entsprechung. Zuordnung landschaftsverbaende (review): Höhere Kommunalverbände; Entsprechung im Land Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1709,7 +1851,7 @@
       "context": "…tte. Das Nähere regelt die Satzung, die der Genehmigung der Bezirksregierung Arnsberg als oberer Schulaufsichtsbehörde bedarf.",
       "category": "authority",
       "decision": "manual-review",
-      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden.",
+      "reason": "Landesbehörde des Herkunftslandes ohne festgelegte Entsprechung – die Bezeichnung bleibt, die Zuordnung ist manuell zu entscheiden. Zuordnung bezirksregierungen (review): Mittelinstanz; Verwaltungsgliederung des Landes Westdeutschland nicht festgelegt.",
       "manualDecisionRequired": true
     },
     {
@@ -1718,7 +1860,7 @@
       "context": "…egelt die Satzung, die der Genehmigung der Bezirksregierung Arnsberg als oberer Schulaufsichtsbehörde bedarf.",
       "category": "municipality",
       "decision": "manual-review",
-      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation.",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
       "manualDecisionRequired": true
     },
     {
@@ -1727,25 +1869,7 @@
       "context": "Die Ministerin für Schule, Jugend und Kinder",
       "category": "ministry",
       "decision": "manual-review",
-      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung.",
-      "manualDecisionRequired": true
-    },
-    {
-      "path": "body[40].text",
-      "term": "NRW",
-      "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.",
-      "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
-      "manualDecisionRequired": true
-    },
-    {
-      "path": "body[40].children[3].text",
-      "term": "NRW",
-      "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.“",
-      "category": "jurisdiction-name",
-      "decision": "manual-review",
-      "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Abkürzung mit Punkt oder Flexionsform) – bleibt unverändert, Entscheidung manuell.",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
       "manualDecisionRequired": true
     }
   ],
@@ -1776,13 +1900,6 @@
         "term": "NRW",
         "context": "…rstützungsverordnung Westdeutschland vom 15. Juni 2004 (GV. NRW. S. 336) in der jeweils geltenden Fassung.",
         "status": "protected"
-      },
-      {
-        "path": "body[18].children[2].children[1].children[6].text",
-        "term": "NRW",
-        "context": "…t sich nach den Vorschriften des Nichtraucherschutzgesetzes NRW.",
-        "status": "documented",
-        "detectionId": "body[18].children[2].children[1].children[6].text@94:jurisdiction-name-residual"
       },
       {
         "path": "body[19].children[4].children[3].text",
@@ -1819,13 +1936,6 @@
         "term": "NRW",
         "context": "…ulen (Ersatzschulfinanzgesetz - EFG) vom 27. Juni 1961 (GV. NRW. S. 230) in der bis zum 31. Dezember 2005 geltenden Fassung…",
         "status": "protected"
-      },
-      {
-        "path": "body[24].children[2].children[2].children[4].text",
-        "term": "NRW",
-        "context": "…Sie kann mit Nebenbestimmungen versehen werden (§ 36 VwVfG. NRW.). Bei den nach den Absätzen 2 und 3 anerkannten Ergänzungs…",
-        "status": "documented",
-        "detectionId": "body[24].children[2].children[2].children[4].text@348:jurisdiction-name-residual"
       },
       {
         "path": "body[25].children[1].children[4].children[0].text",
@@ -1996,13 +2106,6 @@
         "status": "protected"
       },
       {
-        "path": "body[40].text",
-        "term": "NRW",
-        "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.",
-        "status": "documented",
-        "detectionId": "body[40].text@541:jurisdiction-name-residual"
-      },
-      {
         "path": "body[40].children[1].title",
         "term": "NRW",
         "context": "… 16. Schulrechtsänderungsgesetzes vom 23. Februar 2022 (GV. NRW. S. 250))",
@@ -2013,13 +2116,6 @@
         "term": "NRW",
         "context": "… des 15. Schulrechtsänderungsgesetzes vom 29. Mai 2020 (GV. NRW. S. 358) wird wie folgt gefasst:",
         "status": "protected"
-      },
-      {
-        "path": "body[40].children[3].text",
-        "term": "NRW",
-        "context": "…Zuschüsse nach Maßgabe der §§ 105 bis 115 des Schulgesetzes NRW.“",
-        "status": "documented",
-        "detectionId": "body[40].children[3].text@481:jurisdiction-name-residual"
       }
     ],
     "unappliedTransforms": [],
@@ -2122,7 +2218,7 @@
         {
           "name": "textLength",
           "expected": 276974,
-          "actual": 276913,
+          "actual": 276915,
           "ok": true
         },
         {
@@ -2134,5 +2230,47 @@
       ]
     }
   },
-  "generatedAt": "2026-09-15T18:52:41.354Z"
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "138 §/Artikel-Einheiten"
+      },
+      {
+        "code": "title-consistent",
+        "kind": "identity",
+        "effect": "supports",
+        "message": "Portaltitel und Dokumenttitel stimmen überein (1)"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "138 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": [],
+    "titleSimilarity": 1
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-15T21:41:39.615Z"
 }
