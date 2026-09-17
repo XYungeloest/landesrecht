@@ -163,6 +163,33 @@ export function parseRetryAfter(value: string | null, now: Date): number | undef
 
 const defaultSleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
+function abortError(): Error {
+  return Object.assign(new Error('Abruf abgebrochen'), { name: 'AbortError' });
+}
+
+/**
+ * Liest den Antwortkörper vollständig, aber nur solange das Signal nicht ausgelöst ist. Das Timeout eines
+ * Abrufs deckt damit auch einen Server ab, der Kopfzeilen sendet und dann den Körper endlos offen hält
+ * (`fetch` allein bricht nur die Verbindung ab; ohne diese Schranke hinge ein Fake oder eine Implementierung
+ * ohne Signalkopplung unbegrenzt). Bei Abbruch wird der Strom freigegeben.
+ */
+export async function readBodyWithSignal(response: Response, signal: AbortSignal): Promise<Uint8Array> {
+  if (signal.aborted) throw abortError();
+  let onAbort: (() => void) | undefined;
+  const aborted = new Promise<never>((_resolve, reject) => {
+    onAbort = (): void => reject(abortError());
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+  try {
+    return new Uint8Array(await Promise.race([response.arrayBuffer(), aborted]));
+  } catch (error) {
+    if (signal.aborted) response.body?.cancel().catch(() => undefined);
+    throw error;
+  } finally {
+    if (onAbort) signal.removeEventListener('abort', onAbort);
+  }
+}
+
 export function createRechtNrwFetcher(options: FetcherOptions = {}): RechtNrwFetcher {
   const cacheDir = options.cacheDir ?? join(process.cwd(), '.cache', 'recht-nrw');
   const userAgent = options.userAgent ?? USER_AGENT;
@@ -258,7 +285,8 @@ export function createRechtNrwFetcher(options: FetcherOptions = {}): RechtNrwFet
       const init: RequestInit = { method, headers, redirect: 'follow', signal: controller.signal };
       if (request.body !== undefined) init.body = request.body;
       const response = await fetchImplementation(url, init);
-      const bytes = new Uint8Array(await response.arrayBuffer());
+      // Kopfzeilen und Körper stehen unter demselben Timeout; ein hängender Körper endet als `timeout`.
+      const bytes = await readBodyWithSignal(response, controller.signal);
       stats.bytesDownloaded += bytes.byteLength;
       const retryAfterMs = parseRetryAfter(response.headers.get('retry-after'), now());
       if (response.status === 429) throw new RechtNrwFetchError('rate-limited', url, 'HTTP 429 – Abruf wird nicht erzwungen', 429, retryAfterMs);
@@ -287,7 +315,7 @@ export function createRechtNrwFetcher(options: FetcherOptions = {}): RechtNrwFet
     } catch (error) {
       if (error instanceof RechtNrwFetchError) throw error;
       if (options.signal?.aborted) throw new RechtNrwFetchError('interrupted', url, 'Lauf wurde abgebrochen');
-      if ((error as Error).name === 'AbortError') throw new RechtNrwFetchError('timeout', url, `keine Antwort innerhalb von ${timeoutMs} ms`);
+      if ((error as Error).name === 'AbortError' || (error as Error).name === 'TimeoutError') throw new RechtNrwFetchError('timeout', url, `keine vollständige Antwort innerhalb von ${timeoutMs} ms`);
       throw new RechtNrwFetchError('network', url, (error as Error).message);
     } finally {
       clearTimeout(timer);

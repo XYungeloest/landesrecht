@@ -321,6 +321,7 @@ describe('RECHT.NRW Enumeration: Aufbau und Abgleich', () => {
       unassignedUrls: 0,
       duplicateUrlAssignments: 0,
       termConflicts: 0,
+      duplicateIdentities: 0,
       ok: true,
       problems: [],
       notes: [],

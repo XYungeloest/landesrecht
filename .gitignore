@@ -20,18 +20,28 @@ sources/**
 !sources/README.md
 !sources/recht-nrw/
 !sources/recht-nrw/**
+# Abrufcache und R2-Staging des Bulkimports (.cache/recht-nrw/, .cache/recht-nrw-r2-staging/)
 .cache/
 
-# Logs, Tests, Caches
+# Atomare Schreibvorgänge: halb geschriebene Temp-Dateien (common/atomic.ts, common/persist.ts)
+.tmp-*
+.old-norm-*
+
+# Logs, Tests, Caches (auch R2_API_DEBUG-Diagnosen und npm-Cache der CI)
 *.log
 coverage/
 test-results/
 playwright-report/
+.npm/
 
-# Lokale Umgebungen
+# Lokale Umgebungen und Wrangler-Geheimnisse (nie einchecken; Wranglers OAuth-Anmeldung liegt außerhalb
+# des Repositorys unter ~/.wrangler bzw. dem Konfigurationsordner des Systems)
 .env
 .env.*
 !.env.example
+.dev.vars
+.dev.vars.*
+**/.wrangler/config/
 
 # Editor- und Betriebssystemdateien
 # .claude/launch.json ist lokale Vorschaukonfiguration (Port, Startbefehl) und nicht Teil des Projekts.

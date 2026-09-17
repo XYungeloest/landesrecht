@@ -20,7 +20,8 @@ import { copyFileSync, existsSync, readFileSync, renameSync, writeFileSync } fro
 import { join } from 'node:path';
 
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
-import type { SqlBatchPlan } from '@landesrecht/runtime/sql-batches.ts';
+import { D1_DATABASE_NAMES } from '@landesrecht/runtime/bindings.ts';
+import { applyStateFileName, isKnownD1Database, planApplyBatches, type ApplyState, type ApplyTarget, type SqlBatchPlan } from '@landesrecht/runtime/sql-batches.ts';
 
 function readOption(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -28,7 +29,7 @@ function readOption(name: string): string | undefined {
 }
 
 const database = readOption('database');
-if (!database || !/^landesrecht-(?:west|nsh|ost|baywue)(?:-staging)?$/u.test(database)) {
+if (!database || !isKnownD1Database(database, Object.values(D1_DATABASE_NAMES))) {
   console.error('--database landesrecht-<jur>[-staging] ist Pflicht');
   process.exit(1);
 }
@@ -39,37 +40,13 @@ const root = resolveRepositoryRoot();
 const directory = join(root, 'data', 'runtime', 'd1-batches', database);
 const plan = JSON.parse(readFileSync(join(directory, 'plan.json'), 'utf8')) as SqlBatchPlan & { targetFingerprint?: string };
 // Getrennte Protokolle je Ziel: ein lokal eingespielter Plan darf remote nicht als „bereits eingespielt“ gelten.
-const target = local ? 'local' : 'remote';
-const stateFile = join(directory, local ? 'apply-state.local.json' : 'apply-state.json');
-const applyState = existsSync(stateFile) ? (JSON.parse(readFileSync(stateFile, 'utf8')) as { target: string; applied: Array<{ name: string; sha256: string; appliedAt: string }> }) : { target, applied: [] };
-if (applyState.target !== target) {
-  console.error(`${stateFile}: Protokoll gehört zum Ziel „${applyState.target}“, nicht „${target}“ – Datei umbenennen oder entfernen`);
-  process.exit(1);
-}
-
-for (const file of plan.files) {
-  const digest = createHash('sha256').update(readFileSync(join(directory, file.name), 'utf8')).digest('hex');
-  if (digest !== file.sha256) {
-    console.error(`${file.name}: SHA-256 weicht vom Plan ab – Plan neu erzeugen`);
-    process.exit(1);
-  }
-}
-if (plan.errors.length > 0) {
-  console.error(`Plan enthält Fehler: ${plan.errors.join('; ')}`);
-  process.exit(1);
-}
-const appliedNames = new Set(applyState.applied.map((entry) => entry.name));
-for (const entry of applyState.applied) {
-  const file = plan.files.find((candidate) => candidate.name === entry.name);
-  if (!file || file.sha256 !== entry.sha256) {
-    console.error(`apply-state.json passt nicht zum Plan (${entry.name}); Plan und Protokoll gehören nicht zusammen`);
-    process.exit(1);
-  }
-}
-const pending = plan.files.filter((file) => !appliedNames.has(file.name));
+const target: ApplyTarget = local ? 'local' : 'remote';
+const stateFile = join(directory, applyStateFileName(target));
+const digests = new Map(plan.files.filter((file) => existsSync(join(directory, file.name))).map((file) => [file.name, createHash('sha256').update(readFileSync(join(directory, file.name), 'utf8')).digest('hex')]));
+const { state: applyState, pending, errors } = planApplyBatches({ plan, target, state: existsSync(stateFile) ? (JSON.parse(readFileSync(stateFile, 'utf8')) as ApplyState) : undefined, digests, resume: process.argv.includes('--resume') });
 console.log(`${database}: ${plan.mode}, ${plan.files.length} Dateien, ${Math.round(plan.totals.bytes / 1024)} KiB, bereits eingespielt ${applyState.applied.length}, offen ${pending.length}`);
-if (pending.length > 0 && applyState.applied.length > 0 && !process.argv.includes('--resume')) {
-  console.error('Es wurden bereits Dateien eingespielt – mit --resume fortsetzen.');
+if (errors.length > 0) {
+  for (const error of errors) console.error(error);
   process.exit(1);
 }
 if (!execute) {

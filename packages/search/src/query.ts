@@ -14,6 +14,20 @@ export const SEARCH_SORTS = ['relevance', 'title', 'activity'] as const;
 export type SearchSort = (typeof SEARCH_SORTS)[number];
 export type VersionScope = VersionTemporalKind | 'all';
 
+/**
+ * Verknüpfung der Suchwörter im FTS-Ausdruck:
+ *  - `or-prefix`: großzügiges OR aller Wörter, jedes als Präfix (Kandidaten + bm25-Rang); je Wort zusätzlich eine
+ *    AND-Bedingung auf Normebene (Unterabfragen). Bei häufigen Präfixen („west“*, „das“*) läuft die Kandidatenabfrage
+ *    über nahezu den ganzen Index.
+ *  - `and-first`: alle Wörter müssen in derselben Sucheinheit vorkommen (Titelspalten stehen an jeder Einheit),
+ *    Präfix nur implizit am letzten Wort (Tippvervollständigung) und wo `*` steht; ohne Treffer fällt der Store auf
+ *    den `or-prefix`-Plan zurück (Wörter aus verschiedenen Einheiten, Präfixe auf früheren Wörtern).
+ */
+export const SEARCH_MATCH_MODES = ['or-prefix', 'and-first'] as const;
+export type SearchMatchMode = (typeof SEARCH_MATCH_MODES)[number];
+/** Standard seit der Auswertung des Golden Sets (docs/SEARCH.md): gleiche Qualität, 10–15× schneller. */
+export const DEFAULT_SEARCH_MATCH_MODE: SearchMatchMode = 'and-first';
+
 export interface SearchState {
   q: string;
   scope: SearchScope;
@@ -27,6 +41,8 @@ export interface SearchState {
   sort: SearchSort;
   offset: number;
   limit: number;
+  /** Verknüpfung der Suchwörter; fehlt der Wert, gilt DEFAULT_SEARCH_MATCH_MODE. */
+  matchMode?: SearchMatchMode;
 }
 
 export interface QueryToken {
@@ -48,9 +64,15 @@ export interface SearchQueryPlan {
   references: StructuralIntent[];
   /** Normalisierte Gesamtanfrage (für Identitätstreffer auf Abkürzung/Kurztitel/Titel). */
   identityVariants: string[];
+  /** Gesamtanfrage nur kleingeschrieben (Umlaute erhalten): unterscheidet „LÖG West“ von „LOG West“ unter Identitätstreffern. */
+  identityRaw: string;
+  /** Anfrage ohne Strukturadressen und Phrasen („§ 1 LÖG West“ → „LÖG West“): Schreibvarianten und Rohform für Adresstreffer. */
+  subjectVariants: string[];
+  subjectRaw: string;
   scope: SearchScope;
   sort: SearchSort;
   freeText: boolean;
+  matchMode: SearchMatchMode;
 }
 
 export const DEFAULT_SEARCH_LIMIT = 20;
@@ -83,9 +105,21 @@ export function normalizeSearchTextKeepSharpS(value: string): string {
     .replace(/\s+/g, ' ');
 }
 
-/** Schreibvarianten: normalisiert (ß→ss), mit erhaltenem ß und mit ae/oe/ue-Transliteration. */
+/** Umgekehrte Transliteration („ue“ → „ü“, „ss“ → „ß“) für Eingaben ohne Umlaute; mehrdeutig, daher nur als Zusatzvariante. */
+export function reverseTransliterateGermanUmlauts(value: string): string {
+  return value.replace(/ae/g, 'ä').replace(/oe/g, 'ö').replace(/ue/g, 'ü').replace(/Ae/g, 'Ä').replace(/Oe/g, 'Ö').replace(/Ue/g, 'Ü').replace(/AE/g, 'Ä').replace(/OE/g, 'Ö').replace(/UE/g, 'Ü');
+}
+
+/**
+ * Schreibvarianten: normalisiert (ß→ss), mit erhaltenem ß, mit ae/oe/ue-Transliteration sowie – bei Eingaben mit
+ * ae/oe/ue oder ss – die Rückübersetzung („Buergerentscheid“ → „burgerentscheid“ wie der Index das Wort „Bürger…“
+ * ablegt; „Bussgeld“ → „bußgeld“, weil der FTS5-Tokenizer ß nicht faltet). Überflüssige Varianten treffen nichts.
+ */
 export function buildSearchVariants(value: string): string[] {
-  return [...new Set([normalizeSearchText(value), normalizeSearchTextKeepSharpS(value), normalizeSearchText(transliterateGermanUmlauts(value))].filter(Boolean))];
+  const variants = [normalizeSearchText(value), normalizeSearchTextKeepSharpS(value), normalizeSearchText(transliterateGermanUmlauts(value))];
+  if (/[aou]e/iu.test(value)) variants.push(normalizeSearchText(reverseTransliterateGermanUmlauts(value)));
+  if (/ss/iu.test(value)) variants.push(normalizeSearchTextKeepSharpS(value.replace(/ss/giu, 'ß')));
+  return [...new Set(variants.filter(Boolean))];
 }
 
 const PARAGRAPH_PATTERN = /§{1,2}\s*([0-9]+[a-z]?(?:\s*(?:,|und)\s*[0-9]+[a-z]?)*)(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;
@@ -159,18 +193,52 @@ export function parseQueryTokens(value: string): QueryToken[] {
   return tokens;
 }
 
+/** Kürzeste Wortlänge (normalisiert), ab der das letzte Suchwort im Modus `and-first` implizit als Präfix gilt. */
+export const IMPLICIT_PREFIX_MIN_LENGTH = 4;
+
+/**
+ * Wörter, die im Modus `and-first` nie implizit zum Präfix werden: Funktionswörter (ein Präfix „die“* träfe
+ * „dienst“, „diese“ …) und der Landeszusatz „West“, der in nahezu jeder Abkürzung und über 23 000 Einheiten steht.
+ */
+export const NO_IMPLICIT_PREFIX_TOKENS: ReadonlySet<string> = new Set([
+  'uber', 'ueber', 'fur', 'fuer', 'nach', 'oder', 'sowie', 'vom', 'zum', 'zur', 'des', 'der', 'die', 'das', 'und',
+  'den', 'dem', 'mit', 'von', 'bei', 'aus', 'ohne', 'eine', 'einer', 'eines', 'einem', 'einen', 'durch', 'gegen',
+  'west', 'westdeutschland',
+]);
+
+/** Implizites Präfix nur am letzten Wort und nur, wenn es lang genug, keine Zahl und kein Funktionswort ist. */
+export function qualifiesForImplicitPrefix(token: QueryToken): boolean {
+  return token.normalized.length >= IMPLICIT_PREFIX_MIN_LENGTH && !/^\d+$/u.test(token.normalized) && !NO_IMPLICIT_PREFIX_TOKENS.has(token.normalized);
+}
+
+/** Präfixpolitik des Modus `and-first`: das letzte Wort wird (sofern geeignet) zum Präfix, alle anderen bleiben exakt. */
+export function applyPrefixPolicy(tokens: readonly QueryToken[], matchMode: SearchMatchMode): QueryToken[] {
+  if (matchMode !== 'and-first') return [...tokens];
+  return tokens.map((token, index) => (index === tokens.length - 1 && !token.prefix && qualifiesForImplicitPrefix(token) ? { ...token, prefix: true } : token));
+}
+
+/** Kleingeschrieben, Leerraum gebündelt, Diakritika erhalten (Vergleich der exakten Bezeichnung). */
+export function rawIdentityKey(value: string): string {
+  return value.toLocaleLowerCase('de-DE').replace(/\s+/gu, ' ').trim();
+}
+
 export function buildSearchQueryPlan(state: SearchState): SearchQueryPlan {
+  const matchMode = state.matchMode ?? DEFAULT_SEARCH_MATCH_MODE;
   const { phrases, remaining: withoutPhrases } = removeQuotedPhrases(state.q);
   const { references, remaining } = extractStructuralIntents(withoutPhrases);
-  const tokens = parseQueryTokens(remaining);
+  const tokens = applyPrefixPolicy(parseQueryTokens(remaining), matchMode);
   return {
     tokens,
     phrases,
     references,
     identityVariants: references.length === 0 && phrases.length === 0 ? buildSearchVariants(state.q) : [],
+    identityRaw: rawIdentityKey(state.q),
+    subjectVariants: buildSearchVariants(remaining),
+    subjectRaw: rawIdentityKey(remaining),
     scope: state.scope,
     sort: state.sort,
     freeText: tokens.length > 0 || phrases.length > 0,
+    matchMode,
   };
 }
 
@@ -181,8 +249,14 @@ export function ftsTerm(value: string): string {
   return `"${value.replace(/"/gu, '""')}"`;
 }
 
+/** Wortausdruck des `or-prefix`-Plans: jede Schreibvariante als Präfix. */
 export function ftsTokenExpression(token: QueryToken): string {
   return `(${token.variants.map((variant) => `${ftsTerm(variant)}*`).join(' OR ')})`;
+}
+
+/** Wortausdruck des `and-first`-Plans: Präfix nur, wo die Präfixpolitik oder ein `*` es vorsieht. */
+export function ftsExactTokenExpression(token: QueryToken): string {
+  return `(${token.variants.map((variant) => `${ftsTerm(variant)}${token.prefix ? '*' : ''}`).join(' OR ')})`;
 }
 
 export function ftsPhraseExpression(phrase: string): string {
@@ -206,6 +280,30 @@ export function buildFtsMatch(plan: SearchQueryPlan): string | null {
   return buildFtsColumnMatch(searchScopeColumns(plan.scope), parts.join(' OR '));
 }
 
+/**
+ * Strenger AND-Ausdruck des Modus `and-first`: alle Wörter und Phrasen in derselben Einheit; `null` ohne Freitext.
+ * Für Titelwörter ist das keine Einschränkung (Titel, Kurztitel und Abkürzung stehen an jeder Einheit der Norm).
+ */
+export function buildFtsAndMatch(plan: SearchQueryPlan): string | null {
+  const parts = [...plan.tokens.map(ftsExactTokenExpression), ...plan.phrases.map(ftsPhraseExpression)];
+  if (parts.length === 0) return null;
+  const columns = searchScopeColumns(plan.scope);
+  const expression = parts.join(' AND ');
+  return columns ? `${columns}: (${expression})` : expression;
+}
+
+/**
+ * Titelbeschränkter AND-Ausdruck (Titel, Kurztitel, Abkürzung) im Präfixstil des jeweiligen Plans: liefert die
+ * Fassungen, deren Bezeichnung alle Suchwörter trägt (Titeltreffer), damit sie in der Kandidatenauswahl nicht hinter
+ * Volltexttreffern mit vielen Nennungen verschwinden. `null` ohne Freitext oder wenn der Plan ohnehin titelbeschränkt ist.
+ */
+export function buildFtsTitleMatch(plan: SearchQueryPlan): string | null {
+  if (!plan.freeText || plan.scope === 'title') return null;
+  const tokenExpression = plan.matchMode === 'and-first' ? ftsExactTokenExpression : ftsTokenExpression;
+  const parts = [...plan.tokens.map(tokenExpression), ...plan.phrases.map(ftsPhraseExpression)];
+  return `${searchScopeColumns('title')}: (${parts.join(' AND ')})`;
+}
+
 /** Je Begriff ein Ausdruck; jeder muss in mindestens einer Einheit der Norm vorkommen. */
 export function buildFtsConjuncts(plan: SearchQueryPlan): string[] {
   const columns = searchScopeColumns(plan.scope);
@@ -224,6 +322,7 @@ export function parseSearchState(params: URLSearchParams): SearchState {
   const sort = params.get('sort');
   const versionScope = params.get('versionScope');
   const validOn = params.get('validOn') ?? params.get('geltungstag');
+  const matchMode = params.get('match');
   const state: SearchState = {
     q,
     scope: (SEARCH_SCOPES as readonly string[]).includes(scope ?? '') ? (scope as SearchScope) : 'all',
@@ -239,6 +338,7 @@ export function parseSearchState(params: URLSearchParams): SearchState {
     limit: clampInteger(params.get('limit'), 1, MAX_SEARCH_LIMIT, DEFAULT_SEARCH_LIMIT),
   };
   if (validOn && isIsoCalendarDate(validOn)) state.validOn = validOn;
+  if ((SEARCH_MATCH_MODES as readonly string[]).includes(matchMode ?? '')) state.matchMode = matchMode as SearchMatchMode;
   if (state.jurisdictions.length === 0) state.jurisdictions = [...JURISDICTION_IDS];
   return state;
 }

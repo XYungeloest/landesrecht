@@ -104,12 +104,23 @@ LRMB ≈ 2–6 (Fassungen, Ministerialblatt-Einträge, Anlagen). Bei 1,5 s Absta
 - Unveränderlich: gleicher Schlüssel mit gleichem Hash → `already-present`; anderer Hash → harter Fehler
   (Lauf endet). Nach jedem Upload Rücklesung mit Größen- und Hashprüfung.
 - `--archive staging` (Standard, ohne Zugangsdaten): Ablage unter `.cache/recht-nrw-r2-staging/`, später
-  `npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write [--concurrency n] [--verify readback|etag]` (R2-API mit Wrangler-OAuth-Token, bis 32 Einträge gleichzeitig; `readback` = Byte-Rücklesung je Objekt, `etag` = Listing-/MD5-Prüfung mit 2 % Byte-Stichproben; `wrangler` = Prozesse,
-  höchstens 8 Manifesteinträge gleichzeitig, je Objekt Vorabprüfung → Upload → Rücklesung). `--archive r2`: sofortiger Upload
-  (S3-API mit `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` oder `wrangler`).
+  `npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write [--concurrency n]` (Standardtransport:
+  Wrangler-Prozesse über die Wrangler-Anmeldung, höchstens 8 Manifesteinträge gleichzeitig, je Objekt Vorabprüfung →
+  Upload → Rücklesung). Optional und nur lokal: `--r2-transport wrangler-api [--concurrency 32] [--verify etag]`
+  (R2-API direkt mit dem Token der Wrangler-Anmeldung; `readback` = Byte-Rücklesung je Objekt, `etag` = Listing-/
+  MD5-Prüfung mit 2 % Byte-Stichproben; Einordnung in `docs/DEPLOYMENT.md`). `--archive r2`: sofortiger Upload
+  (S3-API mit `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` oder `--r2-transport wrangler`).
+  Alle Transporte: Zeitlimit je Aufruf, begrenzte Wiederholung, Retry-After; `r2-sync --help` nennt die Optionen.
 - Quellenreferenz der Norm: `{ availability: "r2-archived", bucket: "landesrecht-quellen", objectKey,
   sha256, url, retrievedAt }`; nie ein Pfad unter `sources/`. Der Bulkmodus bricht ab, wenn das Archiv oder
   das Staging in einem versionierten Verzeichnis läge.
+- **Kanonisches Evidenzarchiv ist R2.** Maßgeblich für die Provenienz einer übernommenen Norm sind das
+  archivierte Objekt (`objectKey`) und sein `sha256`, die mit dem Manifest (`rawDocuments`) übereinstimmen
+  müssen (`npm run audit:provenance`). Die `url` dokumentiert nur die Herkunft zum Abrufzeitpunkt
+  (`retrievedAt`): RECHT.NRW ändert Adressen bei Neufassungen und löscht Fassungsseiten; ein heutiger 404,
+  eine Weiterleitung oder ein geänderter Inhalt der Portaladresse macht die Norm nicht ungültig und löst
+  keinen Neuimport aus. Erreichbarkeitsstichproben (`npm run audit:external-urls`, höchstens 30 Abrufe,
+  1,5 s Abstand) dienen nur der Beobachtung.
 
 ## Zustand im Repository
 
@@ -142,6 +153,19 @@ Im Laufe des Bulks entstehen einige Tausend kleine JSON-Dateien; Commits je Phas
 - `npm run import:recht-nrw:search-audit`: Titel, Abkürzung, §/Artikel, Nummernadressen, Typfilter, West
   allein und alle Länder, keine Fixtures, keine Dubletten, FTS-Integrität.
 - `npm run import:recht-nrw:reconstruction-queue -- --write`: Rekonstruktionsbedarf mit Priorisierungshilfe.
+
+### Qualitätsaudits des West-Bestands (`scripts/audit-*.ts`)
+
+Reports (JSON + Markdown, deterministisch, keine Zeitstempel) unter `data/audits/recht-nrw/quality/`;
+Stichprobenlogik steht im jeweiligen Report. Offline (kein Netz): `npm run audit:quality` =
+`audit:provenance` (SourceReferences, Hash ↔ Manifest, Quellenlage; Test `tests/unit/content-provenance.test.ts`),
+`audit:naming` (Abkürzungen, Slugs, Kollisionssuffixe – nur Befunde und Vorschläge, keine Änderung),
+`audit:large-norms` (Top 20 nach Blöcken/Text/Sucheinheiten), `audit:anchors` (Sprungziele, Inhaltsübersicht,
+Fußnoten, Tabellen), `audit:treaty-evidence` (Belege zu Staatsverträgen), `audit:reconstruction` (VV LHundG
+offline in ein temporäres Ausgaberoot erneut erzeugen, Fingerabdrücke gegen Rezept, Manifest und Bestand).
+Mit Netz, budgetiert: `audit:site` (Website-Smoke und Barrierefreiheit, Standard deployte Site,
+`--base-url` für lokal), `audit:large-norms -- --online`, `audit:anchors -- --online` (je ≤ 70 Abrufe) und
+`audit:external-urls` (≤ 30 Abrufe gegen recht.nrw.de, 1,5 s Abstand).
 
 ## D1
 

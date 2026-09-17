@@ -9,13 +9,16 @@ import { createFederalProvider } from '@landesrecht/providers/federal.ts';
 import { createContentProvider } from '@landesrecht/providers/content-provider.ts';
 import { createOstRechtProvider } from '@landesrecht/providers/ostrecht-provider.ts';
 import { createReferenceResolver, type ReferenceResolver } from '@landesrecht/providers/resolver.ts';
-import { createRegistryFromEnv, createStoreRegistry, missingBindings, type StoreRegistry } from '@landesrecht/runtime/registry.ts';
+import { createRegistryFromEnv, createStoreRegistry, type StoreRegistry } from '@landesrecht/runtime/registry.ts';
 import type { NormStore } from '@landesrecht/runtime/store.ts';
+
+import { assertCompleteBindings } from './configuration.ts';
 
 let workerEnvPromise: Promise<Record<string, unknown> | null> | null = null;
 let fileRegistryPromise: Promise<StoreRegistry> | null = null;
 
-async function resolveWorkerEnv(): Promise<Record<string, unknown> | null> {
+/** Worker-Umgebung (`cloudflare:workers`) oder `null` außerhalb des Workers (Prerendering, Tests). */
+export async function resolveWorkerEnv(): Promise<Record<string, unknown> | null> {
   workerEnvPromise ??= (async () => {
     try {
       const module = (await import(/* @vite-ignore */ 'cloudflare:workers')) as { env?: Record<string, unknown> };
@@ -45,10 +48,9 @@ function createFileRegistry(): Promise<StoreRegistry> {
 export async function getStoreRegistry(): Promise<StoreRegistry> {
   const env = await resolveWorkerEnv();
   if (env) {
-    const missing = missingBindings(env);
-    if (missing.length === JURISDICTION_IDS.length) {
-      throw new Error(`Die D1-Bindings fehlen in der Worker-Konfiguration: ${missing.join(', ')}`);
-    }
+    // Fail-closed: Jede fehlende D1-Bindung ist ein Konfigurationsfehler (500 über src/middleware.ts), nie ein
+    // stiller Rückfall auf Dateien oder eine leere Jurisdiktion.
+    assertCompleteBindings(env);
     return createRegistryFromEnv(env);
   }
   return createFileRegistry();

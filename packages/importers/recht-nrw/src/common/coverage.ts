@@ -21,6 +21,12 @@ import { readSlugRegistry, type SlugRegistry } from './slug-registry.ts';
 import { isStaleEntry, regenerationCommand } from './staleness.ts';
 
 export const COVERAGE_SCHEMA = 'recht-nrw-coverage/2' as const;
+
+/**
+ * Normtypen, die der RECHT.NRW-Import im Zielbestand `content/norms/west/` erzeugt (LRGV: Gesetz, Zustimmungsgesetz,
+ * Verordnung; LRMB: Familie der Verwaltungsvorschriften). Jeder andere Typ im importierten Bestand ist ein Auditfehler.
+ */
+export const IMPORTED_NORM_TYPES = ['gesetz', 'verordnung', 'runderlass', 'foerderrichtlinie', 'richtlinie', 'verwaltungsvorschrift', 'allgemeine-verwaltungsvorschrift', 'durchfuehrungserlass', 'zustimmungsgesetz', 'verfassung'] as const;
 export const COVERAGE_PATH = join(AUDIT_DIR, 'coverage.json');
 export const COVERAGE_MARKDOWN_PATH = join(AUDIT_DIR, 'COVERAGE.md');
 export const RUNS_DIR = join(AUDIT_DIR, 'runs');

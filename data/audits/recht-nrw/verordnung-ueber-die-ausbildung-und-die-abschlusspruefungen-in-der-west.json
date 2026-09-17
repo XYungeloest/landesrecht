@@ -1,0 +1,1594 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:30682",
+  "slug": "verordnung-ueber-die-ausbildung-und-die-abschlusspruefungen-in-der-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@116:rule:jurisdiction-abbreviation",
+      "path": "body[2].text",
+      "start": 116,
+      "end": 119,
+      "term": "NRW",
+      "context": "…n Ausbildungs- und Prüfungsordnungen gemäß § 52 Schulgesetz NRW vom 2. November 2012 (GV. NRW. S. 488))",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[2].text@142:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 142,
+      "end": 157,
+      "term": "GV. NRW. S. 488",
+      "context": "…sordnungen gemäß § 52 Schulgesetz NRW vom 2. November 2012 (GV. NRW. S. 488))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@54:rule:jurisdiction-abbreviation",
+      "path": "body[3].text",
+      "start": 54,
+      "end": 57,
+      "term": "NRW",
+      "context": "Auf Grund der §§ 52 und 65 Absatz 3 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102), zuletzt geändert du…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@80:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 80,
+      "end": 95,
+      "term": "GV. NRW. S. 102",
+      "context": "…und 65 Absatz 3 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102), zuletzt geändert durch Artikel 2 des Gesetzes vom 14. Feb…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@166:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 166,
+      "end": 180,
+      "term": "GV. NRW. S. 97",
+      "context": "…geändert durch Artikel 2 des Gesetzes vom 14. Februar 2012 (GV. NRW. S. 97), wird mit Zustimmung des für Schulen zuständigen Landtagsa…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[12].children[0].text@32:rule:jurisdiction-abbreviation",
+      "path": "body[12].children[0].text",
+      "start": 32,
+      "end": 35,
+      "term": "NRW",
+      "context": "§ 45 Besondere Bestimmungen für NRW-Sportschulen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[12].children[1].text@48:municipality",
+      "path": "body[12].children[1].text",
+      "start": 48,
+      "end": 57,
+      "term": "Bielefeld",
+      "context": "§ 46 Besondere Bestimmungen für die Laborschule Bielefeld des Landes Nordrhein-Westfalen, die Schule für Circuskinder…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[12].children[1].text@62:rule:jurisdiction-name-genitive",
+      "path": "body[12].children[1].text",
+      "start": 62,
+      "end": 88,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…46 Besondere Bestimmungen für die Laborschule Bielefeld des Landes Nordrhein-Westfalen, die Schule für Circuskinder in Nordrhein-Westfalen und die…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[12].children[1].text@121:rule:jurisdiction-name-bare",
+      "path": "body[12].children[1].text",
+      "start": 121,
+      "end": 140,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Landes Nordrhein-Westfalen, die Schule für Circuskinder in Nordrhein-Westfalen und die schulische Bildung von Kindern aus Familien berufli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[13].children[0].children[4].children[6].text@531:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[0].children[4].children[6].text",
+      "start": 531,
+      "end": 534,
+      "term": "NRW",
+      "context": "…form nicht besuchen können (§ 46 Absatz 6 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils gelte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[0].children[4].children[6].text@557:protected:gazette-nrw",
+      "path": "body[13].children[0].children[4].children[6].text",
+      "start": 557,
+      "end": 572,
+      "term": "GV. NRW. S. 102",
+      "context": "… (§ 46 Absatz 6 des Schulgesetzes NRW vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils geltenden Fassung).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[13].children[0].children[5].text@150:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[0].children[5].text",
+      "start": 150,
+      "end": 153,
+      "term": "NRW",
+      "context": "…er einen Schuleinzugsbereich nach § 84 Absatz 1 Schulgesetz NRW gebildet, werden im Aufnahmeverfahren zunächst die Kinder b…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[0].children[5].text@328:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[0].children[5].text",
+      "start": 328,
+      "end": 331,
+      "term": "NRW",
+      "context": "…ei denen ein wichtiger Grund nach § 84 Absatz 1 Schulgesetz NRW besteht. § 46 Absatz 5 und 6 Schulgesetz NRW bleibt unberüh…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[0].children[5].text@373:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[0].children[5].text",
+      "start": 373,
+      "end": 376,
+      "term": "NRW",
+      "context": "… 1 Schulgesetz NRW besteht. § 46 Absatz 5 und 6 Schulgesetz NRW bleibt unberührt. Besteht danach auch weiterhin ein Anmelde…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[0].children[6].text@660:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[0].children[6].text",
+      "start": 660,
+      "end": 663,
+      "term": "NRW",
+      "context": "…für die diese Schule gemäß § 19 Absatz 5 Satz 3 Schulgesetz NRW durch die Schulaufsichtsbehörde als ihrer Wohnung nächstgel…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[2].children[7].text@83:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[2].children[7].text",
+      "start": 83,
+      "end": 86,
+      "term": "NRW",
+      "context": "… die Unterrichtsvorgaben des Ministeriums (§ 29 Schulgesetz NRW) sowie die auf dieser Grundlage entwickelten schuleigenen U…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[5].children[1].text@58:rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "path": "body[13].children[5].children[1].text",
+      "start": 58,
+      "end": 61,
+      "term": "NRW",
+      "context": "Die Leistungsbewertung richtet sich nach § 48 Schulgesetz NRW.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[5].children[5].text@67:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[5].children[5].text",
+      "start": 67,
+      "end": 70,
+      "term": "NRW",
+      "context": "…rbrachte Leistungsnachweise gemäß § 48 Absatz 4 Schulgesetz NRW sind nach Entscheidung der Fachlehrerin oder des Fachlehrer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[6].children[1].text@129:rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "path": "body[13].children[6].children[1].text",
+      "start": 129,
+      "end": 132,
+      "term": "NRW",
+      "context": "…d zum Ende des Schuljahres Zeugnisse gemäß § 49 Schulgesetz NRW. Auf Antrag sind die am Ende des Schuljahres erworbenen Abs…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[6].children[2].text@171:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[6].children[2].text",
+      "start": 171,
+      "end": 174,
+      "term": "NRW",
+      "context": "…rdem enthalten sie die nach § 49 Absatz 2 und 3 Schulgesetz NRW erforderlichen Angaben.",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[6].children[4].text@187:rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "path": "body[13].children[6].children[4].text",
+      "start": 187,
+      "end": 190,
+      "term": "NRW",
+      "context": "…ugnis nicht mehr ausreichen, gilt § 50 Absatz 4 Schulgesetz NRW. Die Eltern werden spätestens zehn Wochen vor dem Versetzun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[6].children[5].text@110:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[6].children[5].text",
+      "start": 110,
+      "end": 113,
+      "term": "NRW",
+      "context": "…uelle Lern- und Förderempfehlung (§ 50 Absatz 3 Schulgesetz NRW). Die Schule informiert die Eltern in geeigneter Weise über…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[13].children[8].children[2].text@71:rule:jurisdiction-abbreviation",
+      "path": "body[13].children[8].children[2].text",
+      "start": 71,
+      "end": 74,
+      "term": "NRW",
+      "context": "…r Schule Gemeinsames Lernen gemäß § 20 Absatz 5 Schulgesetz NRW eingerichtet, gelten für die Aufnahme von Schülerinnen und …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[0].children[4].text@116:rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "path": "body[14].children[0].children[4].text",
+      "start": 116,
+      "end": 119,
+      "term": "NRW",
+      "context": "… Erprobungsstufenkonferenzen gilt § 50 Absatz 2 Schulgesetz NRW. Den Vorsitz führt die Schulleiterin oder der Schulleiter o…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[3].children[3].text@176:rule:jurisdiction-abbreviation",
+      "path": "body[14].children[3].children[3].text",
+      "start": 176,
+      "end": 179,
+      "term": "NRW",
+      "context": "…rag der Eltern wechseln; § 47 Absatz 1 Nummer 3 Schulgesetz NRW bleibt unberührt. Bis zum Ende der Klasse 8 können die Elte…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[14].children[3].children[4].text@235:rule:jurisdiction-abbreviation",
+      "path": "body[14].children[3].children[4].text",
+      "start": 235,
+      "end": 238,
+      "term": "NRW",
+      "context": "…chule die Eltern nach Maßgabe des § 46 Absatz 9 Schulgesetz NRW im Hinblick auf einen Wechsel der Schulform. Dies gilt für …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[0].children[1].text@60:rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "path": "body[16].children[0].children[1].text",
+      "start": 60,
+      "end": 63,
+      "term": "NRW",
+      "context": "Das Versetzungsverfahren richtet sich nach § 50 Schulgesetz NRW. Die Schule hat ihren Unterricht so zu gestalten und die Sc…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-law-name-sentence-end",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-law-name-sentence-end übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "replacement": "West"
+    },
+    {
+      "id": "body[16].children[0].children[3].text@202:rule:jurisdiction-abbreviation",
+      "path": "body[16].children[0].children[3].text",
+      "start": 202,
+      "end": 205,
+      "term": "NRW",
+      "context": "…n einrichten. § 6 der Verordnung zu § 93 Abs. 2 Schulgesetz NRW in der jeweils geltenden Fassung bleibt unberührt. Die Schü…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[17].children[0].children[2].text@126:rule:jurisdiction-abbreviation",
+      "path": "body[17].children[0].children[2].text",
+      "start": 126,
+      "end": 129,
+      "term": "NRW",
+      "context": "…der als Ersatzschulen nach § 100 Absatz 4 des Schulgesetzes NRW genehmigten Hauptschulen, Realschulen, Gesamtschulen, Sekun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[17].children[1].children[2].text@151:rule:jurisdiction-abbreviation",
+      "path": "body[17].children[1].children[2].text",
+      "start": 151,
+      "end": 154,
+      "term": "NRW",
+      "context": "…Abschlusskonferenz. Für das Verfahren gilt § 50 Schulgesetz NRW entsprechend, soweit sich für die Prüfungen in den Fächern …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[0].children[1].text@90:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[0].children[1].text",
+      "start": 90,
+      "end": 93,
+      "term": "NRW",
+      "context": "…abe des Ersten Schulabschlusses gilt § 50 des Schulgesetzes NRW entsprechend; ein Abschlussverfahren nach dem Abschnitt 5 d…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[8].children[1].text@214:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[8].children[1].text",
+      "start": 214,
+      "end": 217,
+      "term": "NRW",
+      "context": "…icht berücksichtigt werden (§ 50 Absatz 6 des Schulgesetzes NRW in der für das Schuljahr 2020/2021 geltenden Fassung). Dies…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[8].children[1].text@354:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[8].children[1].text",
+      "start": 354,
+      "end": 357,
+      "term": "NRW",
+      "context": "…eine Benachrichtigung gemäß § 50 Absatz 4 des Schulgesetzes NRW erfolgt ist. Hätte eine Benachrichtigung für mehrere Fächer…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[10].title@27:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[10].title",
+      "start": 27,
+      "end": 30,
+      "term": "NRW",
+      "context": "Besondere Bestimmungen für NRW-Sportschulen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[10].children[1].text@19:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[10].children[1].text",
+      "start": 19,
+      "end": 22,
+      "term": "NRW",
+      "context": "In eine anerkannte NRW-Sportschule, die Leistungssportlerinnen und Leistungssportl…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[10].children[3].text@0:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[10].children[3].text",
+      "start": 0,
+      "end": 3,
+      "term": "NRW",
+      "context": "NRW-Sportschulen sollen den Unterricht in den Klassen mit Leist…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[11].title@43:municipality",
+      "path": "body[18].children[11].title",
+      "start": 43,
+      "end": 52,
+      "term": "Bielefeld",
+      "context": "Besondere Bestimmungen für die Laborschule Bielefeld des Landes Nordrhein-Westfalen, die Schule für Circuskinder…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[18].children[11].title@57:rule:jurisdiction-name-genitive",
+      "path": "body[18].children[11].title",
+      "start": 57,
+      "end": 83,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Besondere Bestimmungen für die Laborschule Bielefeld des Landes Nordrhein-Westfalen, die Schule für Circuskinder in Nordrhein-Westfalen und die…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[11].title@116:rule:jurisdiction-name-bare",
+      "path": "body[18].children[11].title",
+      "start": 116,
+      "end": 135,
+      "term": "Nordrhein-Westfalen",
+      "context": "… Landes Nordrhein-Westfalen, die Schule für Circuskinder in Nordrhein-Westfalen und die schulische Bildung von Kindern aus Familien berufli…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[11].children[1].text@20:municipality",
+      "path": "body[18].children[11].children[1].text",
+      "start": 20,
+      "end": 29,
+      "term": "Bielefeld",
+      "context": "Für die Laborschule Bielefeld des Landes Nordrhein-Westfalen an der Universität Bielefeld…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[18].children[11].children[1].text@34:rule:jurisdiction-name-genitive",
+      "path": "body[18].children[11].children[1].text",
+      "start": 34,
+      "end": 60,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Für die Laborschule Bielefeld des Landes Nordrhein-Westfalen an der Universität Bielefeld kann das Ministerium Abweichun…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[11].children[1].text@80:municipality",
+      "path": "body[18].children[11].children[1].text",
+      "start": 80,
+      "end": 89,
+      "term": "Bielefeld",
+      "context": "…Bielefeld des Landes Nordrhein-Westfalen an der Universität Bielefeld kann das Ministerium Abweichungen von den Regelungen dieser…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "detector": "municipality",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "kommunen",
+        "group": "Kommunen"
+      }
+    },
+    {
+      "id": "body[18].children[11].children[2].text@31:rule:jurisdiction-name-bare",
+      "path": "body[18].children[11].children[2].text",
+      "start": 31,
+      "end": 50,
+      "term": "Nordrhein-Westfalen",
+      "context": "Die Schule für Circuskinder in Nordrhein-Westfalen der Evangelischen Kirche im Rheinland organisiert den Unter…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-bare",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-bare übergeleitet („Nordrhein-Westfalen“ → „Westdeutschland“).",
+      "transformRule": "jurisdiction-name-bare",
+      "replacement": "Westdeutschland"
+    },
+    {
+      "id": "body[18].children[11].children[2].text@79:geography-region",
+      "path": "body[18].children[11].children[2].text",
+      "start": 79,
+      "end": 88,
+      "term": "Rheinland",
+      "context": "…uskinder in Nordrhein-Westfalen der Evangelischen Kirche im Rheinland organisiert den Unterricht so, dass die Schullaufbahn mit d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "detector": "geography-region",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "mapping": {
+        "status": "review",
+        "entry": "geographie",
+        "group": "Geographie"
+      }
+    },
+    {
+      "id": "body[18].children[11].children[3].text@73:rule:jurisdiction-name-dative",
+      "path": "body[18].children[11].children[3].text",
+      "start": 73,
+      "end": 100,
+      "term": "im Land Nordrhein-Westfalen",
+      "context": "…e Bildung von Kindern aus Familien beruflich Reisender wird im Land Nordrhein-Westfalen durch Stammschulen und Stützpunktschulen gestaltet. Eine zu…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-dative",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-dative übergeleitet („im Land Nordrhein-Westfalen“ → „im Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name-dative",
+      "replacement": "im Land Westdeutschland"
+    },
+    {
+      "id": "body[18].children[12].children[1].text@96:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[12].children[1].text",
+      "start": 96,
+      "end": 99,
+      "term": "NRW",
+      "context": "…ulbildungsgang ab Klasse 7 eingerichtet (§ 132c Schulgesetz NRW), kann eine Schülerin oder ein Schüler dieser Schule ihre o…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[12].children[1].children[2].text@102:rule:jurisdiction-abbreviation",
+      "path": "body[18].children[12].children[1].children[2].text",
+      "start": 102,
+      "end": 105,
+      "term": "NRW",
+      "context": "…lasse nicht versetzt wird (§ 50 Absatz 5 Satz 2 Schulgesetz NRW).",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[18].children[13].children[4].text@138:protected:gazette-nrw",
+      "path": "body[18].children[13].children[4].text",
+      "start": 138,
+      "end": 153,
+      "term": "GV. NRW. S. 546",
+      "context": "…gs- und Prüfungsordnung Sekundarstufe I vom 29. April 2005 (GV. NRW. S. 546) außer Kraft.",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[13].children[4].children[0].text@4:ministry-portfolio",
+      "path": "body[18].children[13].children[4].children[0].text",
+      "start": 4,
+      "end": 43,
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[18].children[13].children[4].children[0].text@48:rule:jurisdiction-name-genitive",
+      "path": "body[18].children[13].children[4].children[0].text",
+      "start": 48,
+      "end": 74,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "Die Ministerin für Schule und Weiterbildung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[18].children[13].children[4].children[2].text@44:protected:gazette-nrw",
+      "path": "body[18].children[13].children[4].children[2].text",
+      "start": 44,
+      "end": 59,
+      "term": "GV. NRW. S. 265",
+      "context": "Artikel 2 der Verordnung vom 23. Juni 2019 (GV. NRW. S. 265):",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[18].children[13].children[7].children[1].text@43:protected:gazette-nrw",
+      "path": "body[18].children[13].children[7].children[1].text",
+      "start": 43,
+      "end": 58,
+      "term": "GV. NRW. S. 394",
+      "context": "Artikel 3 der Verordnung vom 28. Mai 2020 (GV. NRW. S. 394):",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "jurisdiction-name": {
+      "safe-auto-transform": 39
+    },
+    "source-citation": {
+      "protected": 7
+    },
+    "municipality": {
+      "manual-review": 4
+    },
+    "geography": {
+      "manual-review": 1
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].children[0].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[12].children[1].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[13].children[0].children[4].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[0].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[0].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[0].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[0].children[6].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[2].children[7].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[5].children[1].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[5].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[6].children[1].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[6].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[6].children[4].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[6].children[5].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[13].children[8].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[14].children[0].children[4].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[14].children[3].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[14].children[3].children[4].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation-law-name-sentence-end",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[16].children[0].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[17].children[0].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[17].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[0].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[8].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[8].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[10].title",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[10].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[10].children[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[11].title",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[18].children[11].title",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[18].children[11].children[1].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    },
+    {
+      "path": "body[18].children[11].children[2].text",
+      "rule": "jurisdiction-name-bare",
+      "from": "Nordrhein-Westfalen",
+      "to": "Westdeutschland"
+    },
+    {
+      "path": "body[18].children[11].children[3].text",
+      "rule": "jurisdiction-name-dative",
+      "from": "im Land Nordrhein-Westfalen",
+      "to": "im Land Westdeutschland"
+    },
+    {
+      "path": "body[18].children[12].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[12].children[1].children[2].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[18].children[13].children[4].children[0].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[12].children[1].text",
+      "term": "Bielefeld",
+      "context": "§ 46 Besondere Bestimmungen für die Laborschule Bielefeld des Landes Nordrhein-Westfalen, die Schule für Circuskinder…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[11].title",
+      "term": "Bielefeld",
+      "context": "Besondere Bestimmungen für die Laborschule Bielefeld des Landes Nordrhein-Westfalen, die Schule für Circuskinder…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[11].children[1].text",
+      "term": "Bielefeld",
+      "context": "Für die Laborschule Bielefeld des Landes Nordrhein-Westfalen an der Universität Bielefeld…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[11].children[1].text",
+      "term": "Bielefeld",
+      "context": "…Bielefeld des Landes Nordrhein-Westfalen an der Universität Bielefeld kann das Ministerium Abweichungen von den Regelungen dieser…",
+      "category": "municipality",
+      "decision": "manual-review",
+      "reason": "Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation. Zuordnung kommunen (review): Kommunen des Herkunftslandes; keine redaktionelle Entscheidung zur Übernahme der Ortsnamen – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[11].children[2].text",
+      "term": "Rheinland",
+      "context": "…uskinder in Nordrhein-Westfalen der Evangelischen Kirche im Rheinland organisiert den Unterricht so, dass die Schullaufbahn mit d…",
+      "category": "geography",
+      "decision": "manual-review",
+      "reason": "Geographische Bezeichnung – keine automatische Entsprechung in der Simulation. Zuordnung geographie (review): Geographische Bezeichnungen des Herkunftslandes; keine redaktionelle Entscheidung – Text bleibt unverändert.",
+      "manualDecisionRequired": true
+    },
+    {
+      "path": "body[18].children[13].children[4].children[0].text",
+      "term": "Ministerin für Schule und Weiterbildung",
+      "context": "Die Ministerin für Schule und Weiterbildung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 634,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…ungen gemäß § 52 Schulgesetz West vom 2. November 2012 (GV. NRW. S. 488))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…5 Absatz 3 des Schulgesetzes West vom 15. Februar 2005 (GV. NRW. S. 102), zuletzt geändert durch Artikel 2 des Gesetzes vom…",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…dert durch Artikel 2 des Gesetzes vom 14. Februar 2012 (GV. NRW. S. 97), wird mit Zustimmung des für Schulen zuständigen La…",
+        "status": "protected"
+      },
+      {
+        "path": "body[13].children[0].children[4].children[6].text",
+        "term": "NRW",
+        "context": "…6 Absatz 6 des Schulgesetzes West vom 15. Februar 2005 (GV. NRW. S. 102) in der jeweils geltenden Fassung).",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[13].children[4].text",
+        "term": "NRW",
+        "context": "…und Prüfungsordnung Sekundarstufe I vom 29. April 2005 (GV. NRW. S. 546) außer Kraft.",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[13].children[4].children[2].text",
+        "term": "NRW",
+        "context": "Artikel 2 der Verordnung vom 23. Juni 2019 (GV. NRW. S. 265):",
+        "status": "protected"
+      },
+      {
+        "path": "body[18].children[13].children[7].children[1].text",
+        "term": "NRW",
+        "context": "Artikel 3 der Verordnung vom 28. Mai 2020 (GV. NRW. S. 394):",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über die Ausbildung und die Abschlussprüfungen in der Sekundarstufe I (Ausbildungs- und Prüfungsordnung Sekundarstufe I – APO-S I) vom 2. November 2012 (In Kraft getreten am 1. August 2013 (GV. NRW. 2012 S.\n488))",
+    "sourceVersion": "Verordnung über die Ausbildung und die Abschlussprüfungen in der Sekundarstufe I (Ausbildungs- und Prüfungsordnung Sekundarstufe I – APO-S I) vom 2. November 2012 (In Kraft getreten am 1. August 2013 (GV. NRW. 2012 S.\n488))",
+    "simulation": "Verordnung über die Ausbildung und die Abschlussprüfungen in der Sekundarstufe I (Ausbildungs- und Prüfungsordnung Sekundarstufe I – APO-S I) in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 53,
+          "actual": 53,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 82522,
+          "actual": 82164,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 53,
+          "actual": 53,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 405,
+          "actual": 405,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 53,
+          "actual": 53,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 82164,
+          "actual": 82163,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "53 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "53 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-with-pdf-attachments",
+    "attachments": [
+      {
+        "label": "Anlage 1 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40981-sgv_223_20121102_1_anlage1.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 1a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40982-sgv_223_20121102_1_anlage1a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40983-sgv_223_20121102_1_anlage2.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 2a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40984-sgv_223_20121102_1_anlage2a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40985-sgv_223_20121102_1_anlage3a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3b (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40986-sgv_223_20121102_1_anlage3b.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3c (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40987-sgv_223_20121102_1_anlage3c.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 3d (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40988-sgv_223_20121102_1_anlage3d.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "review",
+        "pdf": {
+          "pages": 1,
+          "textLayer": false,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40989-sgv_223_20121102_1_anlage4.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 4a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40990-sgv_223_20121102_1_anlage4a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 5 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40991-sgv_223_20121102_1_anlage5.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 6 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40992-sgv_223_20121102_1_anlage6.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 7 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40993-sgv_223_20121102_1_anlage7.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 7a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40994-sgv_223_20121102_1_anlage7a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 8 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40995-sgv_223_20121102_1_anlage8.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 2,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 8a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40996-sgv_223_20121102_1_anlage8a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 9 (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40997-sgv_223_20121102_1_anlage9.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      },
+      {
+        "label": "Anlage 9a (PDF)",
+        "url": "https://recht.nrw.de/system/files/BHA/25865-40998-sgv_223_20121102_1_anlage9a.pdf",
+        "mediaType": "application/pdf",
+        "essential": false,
+        "handling": "archived-source-only",
+        "pdf": {
+          "pages": 1,
+          "textLayer": true,
+          "scanLike": false,
+          "encrypted": false
+        }
+      }
+    ],
+    "findings": [
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 1a (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2 (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 2a (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3a (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3b (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3c (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 3d (PDF)“ liegt nur als PDF vor (Textlayer nicht erkennbar); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 4a (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 5 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 6 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 7 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 7a (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 8 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 8a (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 9 (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "annex-pdf-only",
+        "message": "Anlage „Anlage 9a (PDF)“ liegt nur als PDF vor (Textlayer vorhanden, strukturierte Extraktion vorbereitet); unverändert archiviert und als Quelle referenziert, nicht als Text übernommen"
+      }
+    ],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "pdf-attachment",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T22:03:52.825Z"
+}

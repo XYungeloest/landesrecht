@@ -1,0 +1,449 @@
+{
+  "schemaVersion": "recht-nrw-lrgv-audit/1",
+  "sourceIdentity": "term:26534",
+  "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/10042014-gesetz-zur-bereinigung-des-als-landesrecht-fortgeltenden-ehemaligen",
+  "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/10042014-gesetz-zur-bereinigung-des-als-landesrecht-fortgeltenden-ehemaligen",
+  "importStatus": "needs-review",
+  "generatedAt": "2026-09-16T22:26:32.077Z",
+  "selection": {
+    "status": "selected",
+    "problems": [],
+    "warnings": [],
+    "selected": {
+      "validFrom": "2014-04-10",
+      "available": true,
+      "label": "vom 10.04.2014 (aktuelle Seite)",
+      "url": "https://recht.nrw.de/lrgv/gesetz/10042014-gesetz-zur-bereinigung-des-als-landesrecht-fortgeltenden-ehemaligen",
+      "validTo": null,
+      "validToDerived": false
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "5 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [],
+      "supporting": [
+        "5 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1778,
+          "actual": 1804,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 26,
+          "actual": 26,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 4,
+          "actual": 4,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 5,
+          "actual": 5,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 1804,
+          "actual": 1796,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "transformation": {
+    "schemaVersion": "recht-nrw-transformation-report/2",
+    "source": "Nordrhein-Westfalen",
+    "target": "west",
+    "sourceArea": "lrgv",
+    "sourceIdentity": "term:26534",
+    "slug": "gesetz-zur-bereinigung-des-als-landesrecht-fortgeltenden-ehemaligen-west",
+    "baselineDate": "2023-12-01",
+    "transformerVersion": "recht-nrw-transformer/2.1.0",
+    "rules": [
+      "jurisdiction-name-genitive",
+      "jurisdiction-name-dative",
+      "jurisdiction-name",
+      "jurisdiction-name-adjective",
+      "jurisdiction-name-adjective-capital",
+      "jurisdiction-name-bare",
+      "jurisdiction-abbreviation-law-name-sentence-end",
+      "jurisdiction-abbreviation-known-law-dotted",
+      "jurisdiction-abbreviation-known-law-sentence-end",
+      "jurisdiction-abbreviation"
+    ],
+    "detections": [
+      {
+        "id": "body[1].children[3].text@72:rule:jurisdiction-name-genitive",
+        "path": "body[1].children[3].text",
+        "start": 72,
+        "end": 98,
+        "term": "Landes Nordrhein-Westfalen",
+        "context": "… wird als Sonderband des Gesetz- und Verordnungsblattes des Landes Nordrhein-Westfalen herausgegeben.",
+        "category": "jurisdiction-name",
+        "decision": "safe-auto-transform",
+        "detector": "rule:jurisdiction-name-genitive",
+        "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+        "transformRule": "jurisdiction-name-genitive",
+        "replacement": "Landes Westdeutschland"
+      },
+      {
+        "id": "body[5].children[3].text@142:jurisdiction-name-residual",
+        "path": "body[5].children[3].text",
+        "start": 142,
+        "end": 145,
+        "term": "NRW",
+        "context": "…ls Landesrecht fortgeltenden ehemaligen Reichsrechts - RGS. NRW.-, Sonderband des GV. NRW.), die durch Artikel 4 des Gesetz…",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "detector": "jurisdiction-name-residual",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+      },
+      {
+        "id": "body[5].children[3].text@164:protected:gazette-nrw",
+        "path": "body[5].children[3].text",
+        "start": 164,
+        "end": 172,
+        "term": "GV. NRW.",
+        "context": "…tenden ehemaligen Reichsrechts - RGS. NRW.-, Sonderband des GV. NRW.), die durch Artikel 4 des Gesetzes vom 8. Dezember 2009 (GV…",
+        "category": "source-citation",
+        "decision": "protected",
+        "detector": "protected:gazette-nrw",
+        "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+      },
+      {
+        "id": "body[5].children[3].text@230:protected:gazette-nrw",
+        "path": "body[5].children[3].text",
+        "start": 230,
+        "end": 245,
+        "term": "GV. NRW. S. 765",
+        "context": "…W.), die durch Artikel 4 des Gesetzes vom 8. Dezember 2009 (GV. NRW. S. 765) geändert worden ist, genannt werden, wurden gemäß Gesetz v…",
+        "category": "source-citation",
+        "decision": "protected",
+        "detector": "protected:gazette-nrw",
+        "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+      },
+      {
+        "id": "body[5].children[3].text@323:protected:gazette-nrw",
+        "path": "body[5].children[3].text",
+        "start": 323,
+        "end": 338,
+        "term": "GV. NRW. S. 250",
+        "context": "…ist, genannt werden, wurden gemäß Gesetz vom 1. April 2014 (GV. NRW. S. 250), in Kraft getreten am 10. April 2014, mit folgenden Ausnah…",
+        "category": "source-citation",
+        "decision": "protected",
+        "detector": "protected:gazette-nrw",
+        "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+      },
+      {
+        "id": "body[5].children[5].text@48:jurisdiction-name-residual",
+        "path": "body[5].children[5].text",
+        "start": 48,
+        "end": 51,
+        "term": "NRW",
+        "context": "Reichssiedlungsgesetz vom 11. August 1919 (RGS. NRW. S. 94)",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "detector": "jurisdiction-name-residual",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+      },
+      {
+        "id": "body[5].children[6].text@74:jurisdiction-name-residual",
+        "path": "body[5].children[6].text",
+        "start": 74,
+        "end": 77,
+        "term": "NRW",
+        "context": "…änzung des Reichssiedlungsgesetzes vom 4. Januar 1935 (RGS. NRW. S. 96)",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "detector": "jurisdiction-name-residual",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+      },
+      {
+        "id": "body[5].children[9].text@79:jurisdiction-name-residual",
+        "path": "body[5].children[9].text",
+        "start": 79,
+        "end": 82,
+        "term": "NRW",
+        "context": "…g der landwirtschaftlichen Siedlung vom 31. März 1931 (RGS. NRW. S. 149).",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "detector": "jurisdiction-name-residual",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell."
+      },
+      {
+        "id": "body[6].text@4:constitutional-organ-state",
+        "path": "body[6].text",
+        "start": 4,
+        "end": 50,
+        "term": "Landesregierung des Landes Nordrhein-Westfalen",
+        "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+        "category": "institution",
+        "decision": "safe-auto-transform",
+        "detector": "constitutional-organ-state",
+        "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
+        "mapping": {
+          "status": "safe-transform",
+          "entry": "landesregierung",
+          "group": "Landesregierung NRW",
+          "target": "Landesregierung Westdeutschland"
+        }
+      },
+      {
+        "id": "body[6].text@24:rule:jurisdiction-name-genitive",
+        "path": "body[6].text",
+        "start": 24,
+        "end": 50,
+        "term": "Landes Nordrhein-Westfalen",
+        "context": "Die Landesregierung des Landes Nordrhein-Westfalen",
+        "category": "jurisdiction-name",
+        "decision": "safe-auto-transform",
+        "detector": "rule:jurisdiction-name-genitive",
+        "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+        "transformRule": "jurisdiction-name-genitive",
+        "replacement": "Landes Westdeutschland"
+      }
+    ],
+    "decisions": {
+      "jurisdiction-name": {
+        "safe-auto-transform": 2,
+        "manual-review": 4
+      },
+      "source-citation": {
+        "protected": 3
+      },
+      "institution": {
+        "safe-auto-transform": 1
+      }
+    },
+    "changes": [
+      {
+        "path": "body[1].children[3].text",
+        "rule": "jurisdiction-name-genitive",
+        "from": "Landes Nordrhein-Westfalen",
+        "to": "Landes Westdeutschland"
+      },
+      {
+        "path": "body[6].text",
+        "rule": "jurisdiction-name-genitive",
+        "from": "Landes Nordrhein-Westfalen",
+        "to": "Landes Westdeutschland"
+      }
+    ],
+    "unresolved": [
+      {
+        "path": "body[5].children[3].text",
+        "term": "NRW",
+        "context": "…ls Landesrecht fortgeltenden ehemaligen Reichsrechts - RGS. NRW.-, Sonderband des GV. NRW.), die durch Artikel 4 des Gesetz…",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+        "manualDecisionRequired": true
+      },
+      {
+        "path": "body[5].children[5].text",
+        "term": "NRW",
+        "context": "Reichssiedlungsgesetz vom 11. August 1919 (RGS. NRW. S. 94)",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+        "manualDecisionRequired": true
+      },
+      {
+        "path": "body[5].children[6].text",
+        "term": "NRW",
+        "context": "…änzung des Reichssiedlungsgesetzes vom 4. Januar 1935 (RGS. NRW. S. 96)",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+        "manualDecisionRequired": true
+      },
+      {
+        "path": "body[5].children[9].text",
+        "term": "NRW",
+        "context": "…g der landwirtschaftlichen Siedlung vom 31. März 1931 (RGS. NRW. S. 149).",
+        "category": "jurisdiction-name",
+        "decision": "manual-review",
+        "reason": "Form der Landesbezeichnung ohne sichere Überleitungsregel (z. B. Institutionsname mit „NRW.“ oder unbekannte Abkürzung) – bleibt unverändert, Entscheidung manuell.",
+        "manualDecisionRequired": true
+      }
+    ],
+    "postTransformAudit": {
+      "ok": true,
+      "checkedFields": 30,
+      "residuals": [
+        {
+          "path": "body[5].children[3].text",
+          "term": "NRW",
+          "context": "…ls Landesrecht fortgeltenden ehemaligen Reichsrechts - RGS. NRW.-, Sonderband des GV. NRW.), die durch Artikel 4 des Gesetz…",
+          "status": "documented",
+          "detectionId": "body[5].children[3].text@142:jurisdiction-name-residual"
+        },
+        {
+          "path": "body[5].children[3].text",
+          "term": "NRW",
+          "context": "…en ehemaligen Reichsrechts - RGS. NRW.-, Sonderband des GV. NRW.), die durch Artikel 4 des Gesetzes vom 8. Dezember 2009 (G…",
+          "status": "protected"
+        },
+        {
+          "path": "body[5].children[3].text",
+          "term": "NRW",
+          "context": "… die durch Artikel 4 des Gesetzes vom 8. Dezember 2009 (GV. NRW. S. 765) geändert worden ist, genannt werden, wurden gemäß …",
+          "status": "protected"
+        },
+        {
+          "path": "body[5].children[3].text",
+          "term": "NRW",
+          "context": "… genannt werden, wurden gemäß Gesetz vom 1. April 2014 (GV. NRW. S. 250), in Kraft getreten am 10. April 2014, mit folgende…",
+          "status": "protected"
+        },
+        {
+          "path": "body[5].children[5].text",
+          "term": "NRW",
+          "context": "Reichssiedlungsgesetz vom 11. August 1919 (RGS. NRW. S. 94)",
+          "status": "documented",
+          "detectionId": "body[5].children[5].text@48:jurisdiction-name-residual"
+        },
+        {
+          "path": "body[5].children[6].text",
+          "term": "NRW",
+          "context": "…änzung des Reichssiedlungsgesetzes vom 4. Januar 1935 (RGS. NRW. S. 96)",
+          "status": "documented",
+          "detectionId": "body[5].children[6].text@74:jurisdiction-name-residual"
+        },
+        {
+          "path": "body[5].children[9].text",
+          "term": "NRW",
+          "context": "…g der landwirtschaftlichen Siedlung vom 31. März 1931 (RGS. NRW. S. 149).",
+          "status": "documented",
+          "detectionId": "body[5].children[9].text@79:jurisdiction-name-residual"
+        }
+      ],
+      "unappliedTransforms": [],
+      "unrecordedChanges": []
+    },
+    "organs": {
+      "candidates": [],
+      "conflict": false,
+      "decision": "not-available",
+      "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+    },
+    "citations": {
+      "source": "Gesetz zur Bereinigung des als Landesrecht fortgeltenden ehemaligen Reichsrechts vom 13. Januar 1970",
+      "sourceVersion": "Gesetz zur Bereinigung des als Landesrecht fortgeltenden ehemaligen Reichsrechts vom 13. Januar 1970",
+      "simulation": "Gesetz zur Bereinigung des als Landesrecht fortgeltenden ehemaligen Reichsrechts in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+    },
+    "protectedFields": [
+      "meta.sourceReferences",
+      "meta.sourceCitation",
+      "meta.originEnactingBody",
+      "meta.externalIdentifiers",
+      "version.sourceReferences",
+      "version.sourceNotes",
+      "version.sourceValidFrom",
+      "version.sourceValidTo",
+      "version.sourceCitation",
+      "history.entries[0].note"
+    ]
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "structure-unnumbered-section",
+      "message": "Sektion 7 ohne Nummernfeld enthält Normtext (Quelle ohne §-/Artikel-Kennzeichen): „Hinweis: Alle Gesetze und Verordnungen, die in der Anlage I zu § 1 (Sammlung des“ [term:26534 · https://recht.nrw.de/lrgv/gesetz/10042014-gesetz-zur-bereinigung-des-als-landesrecht-fortgeltenden-ehemaligen · Phase parse-source-format · Quelle sha256 bb295eda6eda47a1]"
+    },
+    {
+      "severity": "warning",
+      "code": "unresolved-source-references",
+      "message": "4 NRW-spezifische Bezeichnung(en) ohne automatische Entsprechung (siehe Transformationsreport)"
+    }
+  ]
+}

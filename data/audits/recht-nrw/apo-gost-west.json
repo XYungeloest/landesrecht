@@ -1,0 +1,562 @@
+{
+  "schemaVersion": "recht-nrw-transformation-report/2",
+  "source": "Nordrhein-Westfalen",
+  "target": "west",
+  "sourceArea": "lrgv",
+  "sourceIdentity": "term:29852",
+  "slug": "apo-gost-west",
+  "baselineDate": "2023-12-01",
+  "transformerVersion": "recht-nrw-transformer/2.1.0",
+  "rules": [
+    "jurisdiction-name-genitive",
+    "jurisdiction-name-dative",
+    "jurisdiction-name",
+    "jurisdiction-name-adjective",
+    "jurisdiction-name-adjective-capital",
+    "jurisdiction-name-bare",
+    "jurisdiction-abbreviation-law-name-sentence-end",
+    "jurisdiction-abbreviation-known-law-dotted",
+    "jurisdiction-abbreviation-known-law-sentence-end",
+    "jurisdiction-abbreviation"
+  ],
+  "detections": [
+    {
+      "id": "body[2].text@146:protected:gazette-nrw",
+      "path": "body[2].text",
+      "start": 146,
+      "end": 161,
+      "term": "GV. NRW. S. 594",
+      "context": "…Abiturprüfung in der gymnasialen Oberstufe vom 5. 10. 1998 (GV. NRW. S. 594))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[3].text@44:rule:jurisdiction-name",
+      "path": "body[3].text",
+      "start": 44,
+      "end": 68,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "Aufgrund des § 52 des Schulgesetzes für das Land Nordrhein-Westfalen (Schulgesetz NRW - SchulG) vom 15. Februar 2005 (GV. NRW. S…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[3].text@82:rule:jurisdiction-abbreviation",
+      "path": "body[3].text",
+      "start": 82,
+      "end": 85,
+      "term": "NRW",
+      "context": "…Schulgesetzes für das Land Nordrhein-Westfalen (Schulgesetz NRW - SchulG) vom 15. Februar 2005 (GV. NRW. S. 102) wird mit Z…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[3].text@118:protected:gazette-nrw",
+      "path": "body[3].text",
+      "start": 118,
+      "end": 133,
+      "term": "GV. NRW. S. 102",
+      "context": "…-Westfalen (Schulgesetz NRW - SchulG) vom 15. Februar 2005 (GV. NRW. S. 102) wird mit Zustimmung des für Schulen zuständigen Landtagsau…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[67].children[12].text@0:rule:jurisdiction-abbreviation",
+      "path": "body[67].children[12].text",
+      "start": 0,
+      "end": 3,
+      "term": "NRW",
+      "context": "NRW-Sportschulen sollen den Unterricht für Leistungssportlerinn…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[82].children[1].text@109:rule:jurisdiction-abbreviation",
+      "path": "body[82].children[1].text",
+      "start": 109,
+      "end": 112,
+      "term": "NRW",
+      "context": "…den als Ersatzschulen nach § 100 Absatz 4 des Schulgesetzes NRW genehmigten Gymnasien und Gesamtschulen mit gymnasialer Obe…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation übergeleitet („NRW“ → „West“).",
+      "transformRule": "jurisdiction-abbreviation",
+      "replacement": "West"
+    },
+    {
+      "id": "body[88].children[5].text@123:rule:jurisdiction-name",
+      "path": "body[88].children[5].text",
+      "start": 123,
+      "end": 147,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…huss auf Grund von § 20 Verwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen (VwVfG. NRW.) ausgeschlossen ist oder bei Besorgnis der Bef…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[88].children[5].text@149:rule:jurisdiction-abbreviation-known-law-dotted",
+      "path": "body[88].children[5].text",
+      "start": 149,
+      "end": 160,
+      "term": "VwVfG. NRW.",
+      "context": "…rwaltungsverfahrensgesetz für das Land Nordrhein-Westfalen (VwVfG. NRW.) ausgeschlossen ist oder bei Besorgnis der Befangenheit (§ …",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-dotted",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-dotted übergeleitet („VwVfG. NRW.“ → „VwVfG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-dotted",
+      "replacement": "VwVfG West"
+    },
+    {
+      "id": "body[88].children[5].text@223:rule:jurisdiction-abbreviation-known-law-dotted",
+      "path": "body[88].children[5].text",
+      "start": 223,
+      "end": 234,
+      "term": "VwVfG. NRW.",
+      "context": "…usgeschlossen ist oder bei Besorgnis der Befangenheit (§ 21 VwVfG. NRW.) entscheidet die oder der Vorsitzende des Zentralen Abitura…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-abbreviation-known-law-dotted",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-abbreviation-known-law-dotted übergeleitet („VwVfG. NRW.“ → „VwVfG West“).",
+      "transformRule": "jurisdiction-abbreviation-known-law-dotted",
+      "replacement": "VwVfG West"
+    },
+    {
+      "id": "body[102].children[5].text@165:rule:jurisdiction-name",
+      "path": "body[102].children[5].text",
+      "start": 165,
+      "end": 189,
+      "term": "Land Nordrhein-Westfalen",
+      "context": "…hulreife der schulische Teil der Fachhochschulreife für das Land Nordrhein-Westfalen zuerkannt werden, wenn sie die Bedingungen des Absatzes 1 o…",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
+      "transformRule": "jurisdiction-name",
+      "replacement": "Land Westdeutschland"
+    },
+    {
+      "id": "body[106].title@183:protected:gazette-nrw",
+      "path": "body[106].title",
+      "start": 183,
+      "end": 198,
+      "term": "GV. NRW. S. 594",
+      "context": "…Abiturprüfung in der gymnasialen Oberstufe vom 5. 10. 1998 (GV. NRW. S. 594))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[108].text@233:protected:gazette-nrw",
+      "path": "body[108].text",
+      "start": 233,
+      "end": 248,
+      "term": "GV. NRW. S. 248",
+      "context": "…en die bisherigen Bestimmungen (APO-GOSt vom 28. März 1979 (GV. NRW. S. 248), zuletzt geändert durch Artikel 4 der Verordnung zur Änder…",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[108].text@388:protected:gazette-nrw",
+      "path": "body[108].text",
+      "start": 388,
+      "end": 403,
+      "term": "GV. NRW. S. 761",
+      "context": "… und Prüfungsordnungen gemäß § 26 b SchVG ) vom 14.12.2000 (GV. NRW. S. 761).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[109].text@533:protected:gazette-nw",
+      "path": "body[109].text",
+      "start": 533,
+      "end": 547,
+      "term": "GV. NW. S. 426",
+      "context": "…tungsgesetzes - Berufskolleggesetz - vom 25. November 1997, GV. NW. S. 426).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nw",
+      "reason": "Historische amtliche Fundstelle (GV. NW.) bleibt unverändert"
+    },
+    {
+      "id": "body[110].text@4:ministry-portfolio",
+      "path": "body[110].text",
+      "start": 4,
+      "end": 71,
+      "term": "Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "detector": "ministry-portfolio",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "mapping": {
+        "status": "review",
+        "entry": "sonstige-ministerien",
+        "group": "Sonstige Ministerien"
+      }
+    },
+    {
+      "id": "body[110].text@76:rule:jurisdiction-name-genitive",
+      "path": "body[110].text",
+      "start": 76,
+      "end": 102,
+      "term": "Landes Nordrhein-Westfalen",
+      "context": "…ür Schule und Weiterbildung, Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+      "category": "jurisdiction-name",
+      "decision": "safe-auto-transform",
+      "detector": "rule:jurisdiction-name-genitive",
+      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name-genitive übergeleitet („Landes Nordrhein-Westfalen“ → „Landes Westdeutschland“).",
+      "transformRule": "jurisdiction-name-genitive",
+      "replacement": "Landes Westdeutschland"
+    },
+    {
+      "id": "body[111].text@54:protected:gazette-nrw",
+      "path": "body[111].text",
+      "start": 54,
+      "end": 69,
+      "term": "GV. NRW. S. 333",
+      "context": "Hinweis: (Artikel 8 der Verordnung vom 9. April 2020 (GV. NRW. S. 333))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[114].text@122:protected:gazette-nrw",
+      "path": "body[114].text",
+      "start": 122,
+      "end": 137,
+      "term": "GV. NRW. S. 112",
+      "context": "…gehoben durch Artikel 2 der Verordnung vom 29. Januar 2021 (GV. NRW. S. 112), in Kraft getreten am 13. Februar 2021).",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    },
+    {
+      "id": "body[115].text@58:protected:gazette-nrw",
+      "path": "body[115].text",
+      "start": 58,
+      "end": 74,
+      "term": "GV. NRW. S. 1239",
+      "context": "Hinweis: (Artikel 4 der Verordnung vom 17. November 2021 (GV. NRW. S. 1239))",
+      "category": "source-citation",
+      "decision": "protected",
+      "detector": "protected:gazette-nrw",
+      "reason": "Amtliche Fundstelle des Herkunftslandes (Verkündungs-/Ministerialblatt) bleibt unverändert"
+    }
+  ],
+  "decisions": {
+    "source-citation": {
+      "protected": 9
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 9
+    },
+    "ministry": {
+      "manual-review": 1
+    }
+  },
+  "changes": [
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[3].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[67].children[12].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[82].children[1].text",
+      "rule": "jurisdiction-abbreviation",
+      "from": "NRW",
+      "to": "West"
+    },
+    {
+      "path": "body[88].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[88].children[5].text",
+      "rule": "jurisdiction-abbreviation-known-law-dotted",
+      "from": "VwVfG. NRW.",
+      "to": "VwVfG West"
+    },
+    {
+      "path": "body[88].children[5].text",
+      "rule": "jurisdiction-abbreviation-known-law-dotted",
+      "from": "VwVfG. NRW.",
+      "to": "VwVfG West"
+    },
+    {
+      "path": "body[102].children[5].text",
+      "rule": "jurisdiction-name",
+      "from": "Land Nordrhein-Westfalen",
+      "to": "Land Westdeutschland"
+    },
+    {
+      "path": "body[110].text",
+      "rule": "jurisdiction-name-genitive",
+      "from": "Landes Nordrhein-Westfalen",
+      "to": "Landes Westdeutschland"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "body[110].text",
+      "term": "Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung",
+      "context": "Die Ministerin für Schule und Weiterbildung, Wissenschaft und Forschung des Landes Nordrhein-Westfalen",
+      "category": "ministry",
+      "decision": "manual-review",
+      "reason": "Ressortbezeichnung des Herkunftslandes; der Zuschnitt im Land Westdeutschland ist nicht festgelegt – die historische Bezeichnung bleibt, eine Überleitung erfolgt nur nach Einzelentscheidung. Zuordnung sonstige-ministerien (review): Ressortbezeichnung des Herkunftslandes ohne festgelegte Entsprechung.",
+      "manualDecisionRequired": true
+    }
+  ],
+  "postTransformAudit": {
+    "ok": true,
+    "checkedFields": 708,
+    "residuals": [
+      {
+        "path": "body[2].text",
+        "term": "NRW",
+        "context": "…urprüfung in der gymnasialen Oberstufe vom 5. 10. 1998 (GV. NRW. S. 594))",
+        "status": "protected"
+      },
+      {
+        "path": "body[3].text",
+        "term": "NRW",
+        "context": "…hland (Schulgesetz West - SchulG) vom 15. Februar 2005 (GV. NRW. S. 102) wird mit Zustimmung des für Schulen zuständigen La…",
+        "status": "protected"
+      },
+      {
+        "path": "body[106].title",
+        "term": "NRW",
+        "context": "…urprüfung in der gymnasialen Oberstufe vom 5. 10. 1998 (GV. NRW. S. 594))",
+        "status": "protected"
+      },
+      {
+        "path": "body[108].text",
+        "term": "NRW",
+        "context": "…ie bisherigen Bestimmungen (APO-GOSt vom 28. März 1979 (GV. NRW. S. 248), zuletzt geändert durch Artikel 4 der Verordnung z…",
+        "status": "protected"
+      },
+      {
+        "path": "body[108].text",
+        "term": "NRW",
+        "context": "… Prüfungsordnungen gemäß § 26 b SchVG ) vom 14.12.2000 (GV. NRW. S. 761).",
+        "status": "protected"
+      },
+      {
+        "path": "body[111].text",
+        "term": "NRW",
+        "context": "Hinweis: (Artikel 8 der Verordnung vom 9. April 2020 (GV. NRW. S. 333))",
+        "status": "protected"
+      },
+      {
+        "path": "body[114].text",
+        "term": "NRW",
+        "context": "…ben durch Artikel 2 der Verordnung vom 29. Januar 2021 (GV. NRW. S. 112), in Kraft getreten am 13. Februar 2021).",
+        "status": "protected"
+      },
+      {
+        "path": "body[115].text",
+        "term": "NRW",
+        "context": "…nweis: (Artikel 4 der Verordnung vom 17. November 2021 (GV. NRW. S. 1239))",
+        "status": "protected"
+      }
+    ],
+    "unappliedTransforms": [],
+    "unrecordedChanges": []
+  },
+  "organs": {
+    "candidates": [],
+    "conflict": false,
+    "decision": "not-available",
+    "reason": "Die Quelle nennt kein Erlassorgan in einer ausdrücklichen Formel; es wird kein Organ angenommen."
+  },
+  "citations": {
+    "source": "Verordnung über den Bildungsgang und die Abiturprüfung in der gymnasialen Oberstufe vom 5. Oktober 1998 (GV. NW. 1998 S. 594)",
+    "sourceVersion": "Verordnung über den Bildungsgang und die Abiturprüfung in der gymnasialen Oberstufe vom 5. Oktober 1998 (GV. NW. 1998 S. 594)",
+    "simulation": "Verordnung über den Bildungsgang und die Abiturprüfung in der gymnasialen Oberstufe in der am 1. Dezember 2023 übernommenen Fassung (Ausgangsrechtsstand West)"
+  },
+  "protectedFields": [
+    "meta.sourceReferences",
+    "meta.sourceCitation",
+    "meta.originEnactingBody",
+    "meta.externalIdentifiers",
+    "version.sourceReferences",
+    "version.sourceNotes",
+    "version.sourceValidFrom",
+    "version.sourceValidTo",
+    "version.sourceCitation",
+    "history.entries[0].note"
+  ],
+  "integrity": {
+    "fetchParse": {
+      "stage": "fetch-parse",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 44,
+          "actual": 44,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 80718,
+          "actual": 80315,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    },
+    "sourceCanonical": {
+      "stage": "source-canonical",
+      "ok": true,
+      "checks": [
+        {
+          "name": "units",
+          "expected": 44,
+          "actual": 44,
+          "ok": true
+        },
+        {
+          "name": "blocks",
+          "expected": 466,
+          "actual": 466,
+          "ok": true
+        },
+        {
+          "name": "tables",
+          "expected": 1,
+          "actual": 1,
+          "ok": true
+        },
+        {
+          "name": "annexes",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "name": "footnotes",
+          "expected": 46,
+          "actual": 46,
+          "ok": true
+        },
+        {
+          "name": "unitLabels",
+          "expected": 44,
+          "actual": 44,
+          "ok": true
+        },
+        {
+          "name": "textLength",
+          "expected": 80315,
+          "actual": 80300,
+          "ok": true
+        },
+        {
+          "name": "duplicateUnits",
+          "expected": 0,
+          "actual": 0,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "documentIdentity": {
+    "status": "consistent",
+    "signals": [
+      {
+        "code": "enactment-strong",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "Erlass-/Eingangsformel „verordnet“"
+      },
+      {
+        "code": "enactment-supporting",
+        "kind": "enactment",
+        "effect": "supports",
+        "message": "44 §/Artikel-Einheiten"
+      }
+    ],
+    "materials": {
+      "structural": false,
+      "headingMarkers": [],
+      "textMarkers": []
+    },
+    "enactment": {
+      "strong": [
+        "Erlass-/Eingangsformel „verordnet“"
+      ],
+      "supporting": [
+        "44 §/Artikel-Einheiten"
+      ]
+    },
+    "findings": []
+  },
+  "textCompleteness": {
+    "completeness": "html-complete",
+    "attachments": [],
+    "findings": [],
+    "blocking": false
+  },
+  "consentLaw": {
+    "detected": false,
+    "partial": false,
+    "treatyTextLocation": "unknown",
+    "evidence": []
+  },
+  "generatedAt": "2026-09-16T22:03:55.244Z"
+}

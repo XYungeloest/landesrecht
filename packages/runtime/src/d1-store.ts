@@ -19,11 +19,14 @@ import {
   type NormVersion,
 } from '@landesrecht/legal-core/lib/schema.ts';
 import {
+  buildFtsAndMatch,
   buildFtsConjuncts,
   buildFtsMatch,
+  buildFtsTitleMatch,
   buildSearchQueryPlan,
   buildSearchVariants,
   compareHits,
+  compareRank,
   evaluateDocument,
   MATCH_LABELS,
   SEARCH_RANK_WEIGHTS,
@@ -89,6 +92,24 @@ const IDENTITY_SCAN_LIMIT = 500;
 /** Normkennungen je Sammelabfrage (D1 erlaubt höchstens 100 gebundene Parameter je Anweisung). */
 const D1_MAX_BIND_CHUNK = 40;
 
+/**
+ * Eine gebundene, aber noch nicht projizierte D1 (kein Schema, z. B. leere Datenbank einer Jurisdiktion ohne
+ * Bestand) ist ein gültiger Leerzustand, kein Serverfehler: Lesepfade liefern dann leere Ergebnisse. Jeder
+ * andere Fehler (Bindung fehlt, SQL-Fehler, beschädigte Zeilen) bleibt ein Fehler.
+ */
+export function isUnprojectedDatabaseError(error: unknown): boolean {
+  return /no such table:\s*law_/iu.test(String((error as Error)?.message ?? error));
+}
+
+async function unlessUnprojected<T>(action: () => Promise<T>, fallback: () => T): Promise<T> {
+  try {
+    return await action();
+  } catch (error) {
+    if (isUnprojectedDatabaseError(error)) return fallback();
+    throw error;
+  }
+}
+
 function toSummary(row: NormRow): NormSummary {
   const summary: NormSummary = {
     jurisdiction: row.jurisdiction as JurisdictionId,
@@ -152,7 +173,11 @@ function referenceConditions(references: readonly StructuralIntent[]): { sql: st
   return { sql: ` AND (v.norm_id, v.version_id) IN (SELECT u.norm_id, u.version_id FROM law_search_units u WHERE ${conditions.join(' AND ')})`, params };
 }
 
-function filterConditions(state: SearchState, plan: SearchQueryPlan): { sql: string; params: unknown[] } {
+/**
+ * Filterbedingungen der Kandidaten- und Zählabfrage. `conjuncts` fügt je Suchwort eine AND-Unterabfrage auf
+ * Normebene hinzu (Plan `or-prefix`); im Plan `and-first` erzwingt bereits der MATCH-Ausdruck alle Wörter.
+ */
+function filterConditions(state: SearchState, plan: SearchQueryPlan, conjuncts = true): { sql: string; params: unknown[] } {
   const clauses: string[] = [];
   const params: unknown[] = [];
   const types = expandNormTypeFilter(state.types);
@@ -175,9 +200,14 @@ function filterConditions(state: SearchState, plan: SearchQueryPlan): { sql: str
     clauses.push('v.temporal_kind = ?');
     params.push(state.versionScope);
   }
-  for (const conjunct of buildFtsConjuncts(plan)) {
-    clauses.push('(v.norm_id, v.version_id) IN (SELECT norm_id, version_id FROM law_search WHERE law_search MATCH ?)');
-    params.push(conjunct);
+  if (conjuncts) {
+    // Über `rowid` statt der UNINDEXED-Spalten des FTS-Index: FTS5 mit externem Inhalt lädt für jede UNINDEXED-Spalte
+    // die vollständige Zeile der Inhaltstabelle (einschließlich `body`); der Umweg über law_search_units liest nur
+    // den Schlüssel (gemessen: 2–3× schneller bei häufigen Präfixen wie „das“*).
+    for (const conjunct of buildFtsConjuncts(plan)) {
+      clauses.push('(v.norm_id, v.version_id) IN (SELECT u2.norm_id, u2.version_id FROM law_search_units u2 WHERE u2.id IN (SELECT rowid FROM law_search WHERE law_search MATCH ?))');
+      params.push(conjunct);
+    }
   }
   const references = referenceConditions(plan.references);
   return { sql: clauses.map((clause) => ` AND ${clause}`).join('') + references.sql, params: [...params, ...references.params] };
@@ -243,9 +273,10 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
       if (unitsMatch) {
         unitQuery = db.prepare(
           `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
-             SELECT s.norm_id, s.version_id, s.unit_index, s.anchor, s.block_type, s.references_json, s.label, s.heading, s.body,
-                    row_number() OVER (PARTITION BY s.norm_id, s.version_id ORDER BY rank) AS position
-             FROM law_search s WHERE law_search MATCH ? AND s.norm_id IN (${placeholders}) AND rank MATCH ?
+             SELECT u.norm_id, u.version_id, u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
+                    row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY s.rank) AS position
+             FROM law_search s JOIN law_search_units u ON u.id = s.rowid
+             WHERE law_search MATCH ? AND u.norm_id IN (${placeholders}) AND rank MATCH ?
            ) WHERE position <= ? ORDER BY norm_id, version_id, unit_index`,
         ).bind(unitsMatch, ...chunk, SEARCH_RANK_WEIGHTS, MAX_UNITS_PER_HIT).all<UnitRow & CandidateRow>().then((result) => result.results);
       } else if (references.length > 0) {
@@ -296,7 +327,7 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     jurisdiction,
 
     async countNormsByType(): Promise<NormTypeCount[]> {
-      const rows = await db.prepare('SELECT n.type AS type, COUNT(*) AS count FROM law_norms n WHERE n.jurisdiction = ? GROUP BY n.type ORDER BY n.type').bind(jurisdiction).all<{ type: string; count: number }>();
+      const rows = await unlessUnprojected(() => db.prepare('SELECT n.type AS type, COUNT(*) AS count FROM law_norms n WHERE n.jurisdiction = ? GROUP BY n.type ORDER BY n.type').bind(jurisdiction).all<{ type: string; count: number }>(), () => ({ results: [] as Array<{ type: string; count: number }> }));
       return rows.results.map((row) => ({ type: row.type as NormType, count: Number(row.count) }));
     },
 
@@ -307,18 +338,18 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
       if (query.status) { clauses.push('n.status = ?'); params.push(query.status); }
       if (query.subject) { clauses.push('EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject = ?)'); params.push(query.subject); }
       const limit = Math.min(Math.max(query.limit ?? 500, 1), 5000);
-      const rows = await db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM law_norms n WHERE ${clauses.join(' AND ')} ORDER BY n.sort_key, n.slug LIMIT ?`).bind(...params, limit).all<NormRow>();
+      const rows = await unlessUnprojected(() => db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM law_norms n WHERE ${clauses.join(' AND ')} ORDER BY n.sort_key, n.slug LIMIT ?`).bind(...params, limit).all<NormRow>(), () => ({ results: [] as NormRow[] }));
       return rows.results.map(toSummary);
     },
 
     async getNormSummary(slug) {
-      const row = await db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM law_norms n WHERE n.id = ?`).bind(normId(jurisdiction, slug)).first<NormRow>();
+      const row = await unlessUnprojected(() => db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM law_norms n WHERE n.id = ?`).bind(normId(jurisdiction, slug)).first<NormRow>(), () => null);
       return row ? toSummary(row) : null;
     },
 
     async getNorm(slug, bodies: BodySelection = 'current') {
       const id = normId(jurisdiction, slug);
-      const normRow = await db.prepare('SELECT meta_json, history_json, current_version_id FROM law_norms WHERE id = ?').bind(id).first<{ meta_json: string; history_json: string; current_version_id: string }>();
+      const normRow = await unlessUnprojected(() => db.prepare('SELECT meta_json, history_json, current_version_id FROM law_norms WHERE id = ?').bind(id).first<{ meta_json: string; history_json: string; current_version_id: string }>(), () => null);
       if (!normRow) return null;
       const versionRows = (await db.prepare('SELECT version_id, version_json FROM law_versions WHERE norm_id = ? ORDER BY simulation_valid_from').bind(id).all<VersionRow>()).results;
       const skeleton: NormVersion[] = versionRows.map((row) => ({ ...(JSON.parse(row.version_json) as Omit<NormVersion, 'body'>), body: [] }));
@@ -339,121 +370,11 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     },
 
     async search(state) {
-      const plan = buildSearchQueryPlan(state);
-      const match = buildFtsMatch(plan);
-      const filters = filterConditions(state, plan);
-      const pageLimit = state.offset + state.limit;
-
-      let candidates: CandidateRow[];
-      let total: number;
-      if (match) {
-        const identityParams = plan.identityVariants.length > 0 ? plan.identityVariants : [''];
-        const identityExpression = plan.identityVariants.length > 0
-          ? `(lower(n.abbr) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.short_title) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.title) IN (${identityParams.map(() => '?').join(', ')}))`
-          : '0';
-        const identityBinds = plan.identityVariants.length > 0 ? [...identityParams, ...identityParams, ...identityParams] : [];
-        const rows = await db.prepare(
-          `SELECT s.norm_id, s.version_id, min(s.rank) AS best,
-                  max(${identityExpression}) AS identity_hit
-           FROM law_search s
-           JOIN law_versions v ON v.norm_id = s.norm_id AND v.version_id = s.version_id
-           JOIN law_norms n ON n.id = s.norm_id
-           WHERE law_search MATCH ? AND rank MATCH ? AND n.jurisdiction = ?${filters.sql}
-           GROUP BY s.norm_id, s.version_id
-           ORDER BY ${orderBy(state.sort, true)} LIMIT ?`,
-        ).bind(...identityBinds, match, SEARCH_RANK_WEIGHTS, jurisdiction, ...filters.params, pageLimit).all<CandidateRow>();
-        candidates = rows.results;
-        const count = await db.prepare(
-          `SELECT count(*) AS total FROM (
-             SELECT DISTINCT s.norm_id, s.version_id FROM law_search s
-             JOIN law_versions v ON v.norm_id = s.norm_id AND v.version_id = s.version_id
-             JOIN law_norms n ON n.id = s.norm_id
-             WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql})`,
-        ).bind(match, jurisdiction, ...filters.params).first<{ total: number }>();
-        total = Number(count?.total ?? 0);
-      } else {
-        const rows = await db.prepare(
-          `SELECT v.norm_id, v.version_id FROM law_versions v JOIN law_norms n ON n.id = v.norm_id
-           WHERE n.jurisdiction = ?${filters.sql} ORDER BY ${orderBy(state.sort, false)} LIMIT ?`,
-        ).bind(jurisdiction, ...filters.params, pageLimit).all<CandidateRow>();
-        candidates = rows.results;
-        const count = await db.prepare(
-          `SELECT count(*) AS total FROM law_versions v JOIN law_norms n ON n.id = v.norm_id WHERE n.jurisdiction = ?${filters.sql}`,
-        ).bind(jurisdiction, ...filters.params).first<{ total: number }>();
-        total = Number(count?.total ?? 0);
-      }
-
-      // Titel mit Strukturangaben: Kandidaten zusätzlich ohne Strukturfilter suchen; übernommen wird nur, was
-      // evaluateDocument als Titeltreffer bestätigt (titleCarriesReferences). Sortiert wie im Dateistore: echte
-      // Adresstreffer vor Titeltreffern.
-      if (match && plan.references.length > 0 && plan.freeText) {
-        const relaxed = filterConditions(state, { ...plan, references: [] });
-        const known = new Set(candidates.map((row) => `${row.norm_id}#${row.version_id}`));
-        const rows = await db.prepare(
-          `SELECT s.norm_id, s.version_id, min(s.rank) AS best, 0 AS identity_hit
-           FROM law_search s
-           JOIN law_versions v ON v.norm_id = s.norm_id AND v.version_id = s.version_id
-           JOIN law_norms n ON n.id = s.norm_id
-           WHERE law_search MATCH ? AND rank MATCH ? AND n.jurisdiction = ?${relaxed.sql}
-           GROUP BY s.norm_id, s.version_id
-           ORDER BY ${orderBy(state.sort, true)} LIMIT ?`,
-        ).bind(match, SEARCH_RANK_WEIGHTS, jurisdiction, ...relaxed.params, pageLimit).all<CandidateRow>();
-        const titleHits: SearchHit[] = [];
-        const unknown = rows.results.filter((candidate) => !known.has(`${candidate.norm_id}#${candidate.version_id}`));
-        for (const document of await loadDocuments(unknown, match, [])) {
-          const hit = document ? evaluateDocument(document, plan) : null;
-          if (hit) titleHits.push(hit);
-        }
-        if (titleHits.length > 0) {
-          const referenceHits: SearchHit[] = [];
-          for (const document of await loadDocuments(candidates, match, plan.references)) {
-            if (document) referenceHits.push(evaluateDocument(document, plan) ?? fallbackHit(document));
-          }
-          const merged = [...referenceHits, ...titleHits].sort((left, right) => compareHits(left, right, state.sort));
-          return { total: total + titleHits.length, offset: state.offset, limit: state.limit, hits: merged.slice(state.offset, state.offset + state.limit) };
-        }
-      }
-
-      const hits: SearchHit[] = [];
-      // Kandidaten der Seite gemeinsam laden (Reihenfolge bleibt die der Kandidatenliste).
-      for (const document of await loadDocuments(candidates.slice(state.offset), match, plan.references)) {
-        if (!document) continue;
-        const hit = evaluateDocument(document, plan) ?? fallbackHit(document);
-        hits.push(hit);
-      }
-
-      // Identitätstreffer (exakter Titel, Kurzbezeichnung, Abkürzung) dürfen nicht an der Kandidatengrenze
-      // scheitern: Der SQL-Vergleich kennt die Normalisierung der Suche nicht (Umlaute, ß), deshalb wird bei
-      // Bedarf einmalig über Bezeichnungen nachgesucht und im Speicher verglichen.
-      if (match && plan.identityVariants.length > 0 && !hits.some((hit) => hit.matchKind === 'identity')) {
-        const rows = await db.prepare(
-          `SELECT DISTINCT s.norm_id, s.version_id, n.title, n.short_title, n.abbr
-           FROM law_search s
-           JOIN law_versions v ON v.norm_id = s.norm_id AND v.version_id = s.version_id
-           JOIN law_norms n ON n.id = s.norm_id
-           WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql} LIMIT ?`,
-        ).bind(match, jurisdiction, ...filters.params, IDENTITY_SCAN_LIMIT).all<{ norm_id: string; version_id: string; title: string; short_title: string | null; abbr: string | null }>();
-        const known = new Set(candidates.map((candidate) => `${candidate.norm_id}#${candidate.version_id}`));
-        const identityHits: SearchHit[] = [];
-        const nameMatches = rows.results.filter((row) => {
-          if (known.has(`${row.norm_id}#${row.version_id}`)) return false;
-          const names = [row.title, row.short_title, row.abbr].filter((value): value is string => Boolean(value));
-          return names.some((name) => buildSearchVariants(name).some((variant) => plan.identityVariants.includes(variant)));
-        });
-        for (const document of await loadDocuments(nameMatches, match, plan.references)) {
-          const hit = document ? evaluateDocument(document, plan) : null;
-          if (hit?.matchKind === 'identity') identityHits.push(hit);
-        }
-        if (identityHits.length > 0) {
-          const merged = [...identityHits, ...hits].sort((left, right) => compareHits(left, right, state.sort));
-          return { total: total + identityHits.length, offset: state.offset, limit: state.limit, hits: merged.slice(0, state.limit) };
-        }
-      }
-      return { total, offset: state.offset, limit: state.limit, hits };
+      return unlessUnprojected(() => searchProjected(state), () => ({ total: 0, offset: state.offset, limit: state.limit, hits: [] }));
     },
 
     async getStats() {
-      const rows = (await db.prepare('SELECT key, value FROM law_runtime_meta').all<{ key: string; value: string }>()).results;
+      const rows = (await unlessUnprojected(() => db.prepare('SELECT key, value FROM law_runtime_meta').all<{ key: string; value: string }>(), () => ({ results: [] as Array<{ key: string; value: string }> }))).results;
       const meta = new Map(rows.map((row) => [row.key, row.value]));
       return {
         normCount: Number(meta.get(RUNTIME_META_KEYS.normCount) ?? 0),
@@ -464,10 +385,169 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     },
 
     async getRuntimeMeta(key) {
-      const row = await db.prepare('SELECT value FROM law_runtime_meta WHERE key = ?').bind(key).first<{ value: string }>();
+      const row = await unlessUnprojected(() => db.prepare('SELECT value FROM law_runtime_meta WHERE key = ?').bind(key).first<{ value: string }>(), () => null);
       return row?.value ?? null;
     },
   };
+
+  async function searchProjected(state: SearchState): Promise<ReturnType<NormStore['search']> extends Promise<infer Page> ? Page : never> {
+    const plan = buildSearchQueryPlan(state);
+    const orMatch = buildFtsMatch(plan);
+    const andMatch = plan.matchMode === 'and-first' ? buildFtsAndMatch(plan) : null;
+    const pageLimit = state.offset + state.limit;
+    const identityParams = plan.identityVariants.length > 0 ? plan.identityVariants : [''];
+    const identityExpression = plan.identityVariants.length > 0
+      ? `(lower(n.abbr) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.short_title) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.title) IN (${identityParams.map(() => '?').join(', ')}))`
+      : '0';
+    const identityBinds = plan.identityVariants.length > 0 ? [...identityParams, ...identityParams, ...identityParams] : [];
+
+    // Kandidatenseite eines MATCH-Ausdrucks. Der Join über `rowid` auf law_search_units vermeidet, dass FTS5 für die
+    // UNINDEXED-Spalten jede Trefferzeile vollständig (mit `body`) aus der Inhaltstabelle lädt.
+    const rankedCandidates = async (match: string, filters: { sql: string; params: unknown[] }, withIdentity: boolean): Promise<CandidateRow[]> => (await db.prepare(
+      `SELECT u.norm_id, u.version_id, min(s.rank) AS best, max(${withIdentity ? identityExpression : '0'}) AS identity_hit
+       FROM law_search s JOIN law_search_units u ON u.id = s.rowid
+       JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
+       JOIN law_norms n ON n.id = u.norm_id
+       WHERE law_search MATCH ? AND rank MATCH ? AND n.jurisdiction = ?${filters.sql}
+       GROUP BY u.norm_id, u.version_id
+       ORDER BY ${orderBy(state.sort, true)} LIMIT ?`,
+    ).bind(...(withIdentity ? identityBinds : []), match, SEARCH_RANK_WEIGHTS, jurisdiction, ...filters.params, pageLimit).all<CandidateRow>()).results;
+    /** Gesamtzahl über den MATCH-Ausdruck (Plan `and-first`: der Ausdruck selbst erzwingt alle Wörter). */
+    const countMatched = async (match: string, filters: { sql: string; params: unknown[] }): Promise<number> => Number((await db.prepare(
+      `SELECT count(*) AS total FROM (
+         SELECT DISTINCT u.norm_id, u.version_id FROM law_search s JOIN law_search_units u ON u.id = s.rowid
+         JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
+         JOIN law_norms n ON n.id = u.norm_id
+         WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql})`,
+    ).bind(match, jurisdiction, ...filters.params).first<{ total: number }>())?.total ?? 0);
+    /**
+     * Gesamtzahl des Plans `or-prefix` ohne treibenden MATCH: Die AND-Unterabfragen je Wort bestimmen die Menge bereits
+     * vollständig (jede Fassung, die alle Wörter enthält, trifft auch das OR); der Lauf über alle OR-Trefferzeilen
+     * entfällt. Ergibt sie 0, wird die Kandidatenabfrage gar nicht erst gestellt.
+     */
+    const countConjunctive = async (filters: { sql: string; params: unknown[] }): Promise<number> => Number((await db.prepare(
+      `SELECT count(*) AS total FROM law_versions v JOIN law_norms n ON n.id = v.norm_id WHERE n.jurisdiction = ?${filters.sql}`,
+    ).bind(jurisdiction, ...filters.params).first<{ total: number }>())?.total ?? 0);
+
+    // Titel mit Strukturangaben („… zu § 74 Absatz 4 …“): Kandidaten ohne Strukturfilter; übernommen wird nur, was
+    // evaluateDocument als Titeltreffer bestätigt (titleCarriesReferences).
+    const wantsRelaxed = plan.references.length > 0 && plan.freeText;
+    const relaxedTitleHits = async (match: string, conjuncts: boolean, known: ReadonlySet<string>): Promise<SearchHit[]> => {
+      const relaxed = filterConditions(state, { ...plan, references: [] }, conjuncts);
+      const rows = await rankedCandidates(match, relaxed, false);
+      const unknown = rows.filter((candidate) => !known.has(`${candidate.norm_id}#${candidate.version_id}`));
+      const titleHits: SearchHit[] = [];
+      for (const document of await loadDocuments(unknown, match, [])) {
+        const hit = document ? evaluateDocument(document, plan) : null;
+        if (hit) titleHits.push(hit);
+      }
+      return titleHits;
+    };
+
+    // Wirksamer MATCH-Ausdruck und wirksame Filter: im Plan `and-first` zuerst der strenge Ausdruck ohne
+    // Unterabfragen (und bei Strukturangaben die entspannte Titelsuche); liefert beides nichts, der großzügige
+    // `or-prefix`-Plan (Wörter aus verschiedenen Einheiten, Präfixe auf früheren Wörtern), sofern er sich unterscheidet.
+    let match = orMatch;
+    let filters = filterConditions(state, plan);
+    let candidates: CandidateRow[] = [];
+    let total = 0;
+    let titleHits: SearchHit[] | null = null;
+    const pairKey = (row: CandidateRow): string => `${row.norm_id}#${row.version_id}`;
+    if (andMatch && orMatch) {
+      match = andMatch;
+      filters = filterConditions(state, plan, false);
+      candidates = await rankedCandidates(andMatch, filters, true);
+      total = candidates.length > 0 ? await countMatched(andMatch, filters) : 0;
+      if (candidates.length === 0 && wantsRelaxed) titleHits = await relaxedTitleHits(andMatch, false, new Set());
+      if (candidates.length === 0 && (titleHits?.length ?? 0) === 0 && andMatch !== orMatch) {
+        match = orMatch;
+        filters = filterConditions(state, plan);
+        titleHits = null;
+        total = await countConjunctive(filters);
+        candidates = total > 0 ? await rankedCandidates(orMatch, filters, true) : [];
+      }
+    } else if (match) {
+      total = await countConjunctive(filters);
+      candidates = total > 0 ? await rankedCandidates(match, filters, true) : [];
+    } else {
+      const rows = await db.prepare(
+        `SELECT v.norm_id, v.version_id FROM law_versions v JOIN law_norms n ON n.id = v.norm_id
+         WHERE n.jurisdiction = ?${filters.sql} ORDER BY ${orderBy(state.sort, false)} LIMIT ?`,
+      ).bind(jurisdiction, ...filters.params, pageLimit).all<CandidateRow>();
+      candidates = rows.results;
+      total = await countConjunctive(filters);
+    }
+
+    // Titeltreffer (alle Suchwörter in Titel, Kurztitel oder Abkürzung) zusätzlich als Kandidaten: bm25 über Einheiten
+    // zieht Normen mit vielen Nennungen im Text vor, die Bewertung im Speicher ordnet Titeltreffer aber vor Volltext.
+    const pageFull = candidates.length >= pageLimit;
+    const titleMatch = match && state.sort === 'relevance' ? buildFtsTitleMatch(plan) : null;
+    if (titleMatch) {
+      const known = new Set(candidates.map(pairKey));
+      candidates = [...candidates, ...(await rankedCandidates(titleMatch, filters, true)).filter((row) => !known.has(pairKey(row)))];
+    }
+
+    // Sortiert wie im Dateistore: echte Adresstreffer vor Titeltreffern.
+    if (match && wantsRelaxed) {
+      titleHits ??= await relaxedTitleHits(match, match === orMatch, new Set(candidates.map(pairKey)));
+      if (titleHits.length > 0) {
+        const referenceHits: SearchHit[] = [];
+        for (const document of await loadDocuments(candidates, match, plan.references)) {
+          if (document) referenceHits.push(evaluateDocument(document, plan) ?? fallbackHit(document));
+        }
+        const merged = [...referenceHits, ...titleHits].sort((left, right) => compareHits(left, right, state.sort));
+        return { total: total + titleHits.length, offset: state.offset, limit: state.limit, hits: merged.slice(state.offset, state.offset + state.limit) };
+      }
+    }
+
+    // Alle Kandidaten gemeinsam laden (Reihenfolge bleibt die der Kandidatenliste), dann bei Relevanzsortierung nach
+    // Trefferart ordnen: Bezeichnung, Adresse und Titel vor Text; innerhalb der Textstufen bleibt die bm25-Reihenfolge.
+    let hits: SearchHit[] = [];
+    for (const document of await loadDocuments(candidates, match, plan.references)) {
+      if (!document) continue;
+      hits.push(evaluateDocument(document, plan) ?? fallbackHit(document));
+    }
+    if (state.sort === 'relevance') hits = sortPageByMatchKind(hits);
+
+    // Identitätstreffer (exakter Titel, Kurzbezeichnung, Abkürzung) dürfen nicht an der Kandidatengrenze
+    // scheitern: Der SQL-Vergleich kennt die Normalisierung der Suche nicht (Umlaute, ß), deshalb wird bei
+    // Bedarf einmalig über Bezeichnungen nachgesucht und im Speicher verglichen. Ist die Kandidatenseite nicht
+    // voll, liegt bereits jede passende Fassung darauf; die Nachsuche entfällt.
+    if (match && plan.identityVariants.length > 0 && pageFull && !hits.some((hit) => hit.matchKind === 'identity')) {
+      const rows = await db.prepare(
+        `SELECT DISTINCT u.norm_id, u.version_id, n.title, n.short_title, n.abbr
+         FROM law_search s JOIN law_search_units u ON u.id = s.rowid
+         JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
+         JOIN law_norms n ON n.id = u.norm_id
+         WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql} LIMIT ?`,
+      ).bind(match, jurisdiction, ...filters.params, IDENTITY_SCAN_LIMIT).all<{ norm_id: string; version_id: string; title: string; short_title: string | null; abbr: string | null }>();
+      const known = new Set(candidates.map(pairKey));
+      const identityHits: SearchHit[] = [];
+      const nameMatches = rows.results.filter((row) => {
+        if (known.has(pairKey(row))) return false;
+        const names = [row.title, row.short_title, row.abbr].filter((value): value is string => Boolean(value));
+        return names.some((name) => buildSearchVariants(name).some((variant) => plan.identityVariants.includes(variant)));
+      });
+      for (const document of await loadDocuments(nameMatches, match, plan.references)) {
+        const hit = document ? evaluateDocument(document, plan) : null;
+        if (hit?.matchKind === 'identity') identityHits.push(hit);
+      }
+      if (identityHits.length > 0) {
+        hits = [...identityHits, ...hits].sort((left, right) => compareHits(left, right, state.sort));
+        total += identityHits.length;
+      }
+    }
+    return { total, offset: state.offset, limit: state.limit, hits: hits.slice(state.offset, state.offset + state.limit) };
+  }
+}
+
+/**
+ * Ordnet eine Trefferseite nach Trefferart: Bezeichnung (0), Adresse (1), Titel (2), Adresse ohne Titel (3) in ihrer
+ * Bewertungsreihenfolge; Treffer im Text (4/5) behalten die bm25-Reihenfolge der Kandidatenabfrage (stabil).
+ */
+export function sortPageByMatchKind(hits: readonly SearchHit[]): SearchHit[] {
+  const tier = (hit: SearchHit): number[] => ((hit.rank[0] ?? 6) <= 3 ? hit.rank : [4]);
+  return hits.map((hit, index) => ({ hit, index })).sort((left, right) => compareRank(tier(left.hit), tier(right.hit)) || left.index - right.index).map((entry) => entry.hit);
 }
 
 /** Fail-safe: Ein Kandidat, den die Bewertung nicht reproduziert, bleibt ein Volltexttreffer. */

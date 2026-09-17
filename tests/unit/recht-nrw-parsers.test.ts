@@ -5,11 +5,13 @@ import { describe, expect, it } from 'vitest';
 
 import { buildAnchorMap, countBlockTypes, getStructuralReference, getStructuralReferenceNumber } from '@landesrecht/legal-core/lib/body.ts';
 import { parseBodyBlocks, type NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
-import { extractFootnoteMarkers, parseDivisionHeading, parseItem, parseSubparagraph, parseUnitHeading, tableBlock } from '@landesrecht/importer-recht-nrw/common/body-common.ts';
-import { bodyMetrics, checkParseIntegrity, rawMetrics } from '@landesrecht/importer-recht-nrw/common/integrity.ts';
-import { parseLegacyDocument, repairLegacyMarkup } from '@landesrecht/importer-recht-nrw/common/legacy-parser.ts';
-import { parseNativeDocument } from '@landesrecht/importer-recht-nrw/common/native-parser.ts';
+import { extractFootnoteMarkers, inferUnitHeading, normalizeEntityArtifacts, parseDivisionHeading, parseItem, parseSubparagraph, parseUnitHeading, parseUnitRangeHeading, tableBlock } from '@landesrecht/importer-recht-nrw/common/body-common.ts';
+import { parseHtmlFragment } from '@landesrecht/importer-recht-nrw/common/html.ts';
+import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity, explainedBodyDelta, rawMetrics } from '@landesrecht/importer-recht-nrw/common/integrity.ts';
+import { classifyDetailHeading, countLegacyUnitHeadings, parseLegacyDocument, repairLegacyMarkup } from '@landesrecht/importer-recht-nrw/common/legacy-parser.ts';
+import { detectInlineArticleScopes, parseNativeDocument } from '@landesrecht/importer-recht-nrw/common/native-parser.ts';
 import { parseVersionPage } from '@landesrecht/importer-recht-nrw/common/version-page.ts';
+import { detectConsentLaw } from '@landesrecht/importer-recht-nrw/lrgv/treaty.ts';
 import { extractStructuralIntents } from '@landesrecht/search/query.ts';
 
 const fixtures = join(process.cwd(), 'tests', 'fixtures', 'recht-nrw');
@@ -170,13 +172,18 @@ describe('Römisch nummerierte Artikel', () => {
     expect(rawMetrics('native', html).units).toBe(result.stats.units);
   });
 
-  it('lässt Artikelspannen („Artikel I bis III“) fail-closed und zählt sie auch im Roh-HTML nicht', () => {
+  it('bildet Artikelspannen („Artikel I bis III“) als Überschrift ohne Einheiten ab und zählt sie auch im Roh-HTML nicht', () => {
     const result = parseNativeDocument(SPAN_SECTION);
-    expect(result.findings).toContainEqual(expect.objectContaining({ severity: 'error', code: 'unparsed-unit-heading', message: 'Einheitennummer nicht erkannt: „Artikel I bis III“' }));
+    expect(result.findings.filter((finding) => finding.severity === 'error')).toEqual([]);
+    expect(result.findings).toContainEqual(expect.objectContaining({ severity: 'info', code: 'unit-range-heading', message: expect.stringContaining('Artikel I bis III') }));
     expect(result.stats.unitLabels).toEqual([]);
-    expect(find(result.blocks, (block) => block.type === 'heading' && block.title === 'Artikel I bis III')).toBeDefined();
+    const heading = find(result.blocks, (block) => block.type === 'heading' && block.title === 'Artikel I bis III')!;
+    expect(heading.children).toEqual([{ type: 'footnote', label: 'Fn 1', text: 'entfällt; sind in die jeweiligen Bestimmungen eingearbeitet worden.' }]);
     expect(rawMetrics('native', SPAN_SECTION).units).toBe(0);
     expect(rawMetrics('native', SPAN_SECTION.replace('Artikel I bis III', 'Artikel III (Fn 1)')).units).toBe(1);
+    // Unlesbare Nummernfelder bleiben ein Fehler mit Struktur und Ausschnitt.
+    const unparsed = parseNativeDocument(SPAN_SECTION.replace('Artikel I bis III', 'Artikel Eins'));
+    expect(unparsed.findings).toContainEqual(expect.objectContaining({ severity: 'error', code: 'unparsed-unit-heading', message: 'Einheitennummer nicht erkannt (Sektion 1, field--field_num): „Artikel Eins“' }));
   });
 
   it('adressiert römische Artikel in Strukturreferenz und Suchanfrage kleingeschrieben, ohne mit arabischen zu kollidieren', () => {
@@ -605,5 +612,284 @@ describe('Doppelte Einheitenkennzeichen in getrennten Zählbereichen', () => {
     const result = parseNativeDocument(treatyLaw('Das Land tritt dem Abkommen bei.', 'Das Abkommen ist beigefügt.'));
     expect(result.blocks.some((block) => block.type === 'annex')).toBe(false);
     expect(bodyMetrics(result.blocks).duplicateLabels).toEqual(['Artikel 1', 'Artikel 2']);
+  });
+});
+
+describe('Parser-Residuen des Bulkimports (Fixture-Bibliothek tests/fixtures/recht-nrw/<kategorie>)', () => {
+  const errors = (result: { findings: Array<{ severity: string }> }) => result.findings.filter((finding) => finding.severity === 'error');
+  const codes = (result: { findings: Array<{ code: string }> }) => result.findings.map((finding) => finding.code);
+  /** Sichtbare Wörter eines Markup-Auszugs, die im Parseergebnis (Normkörper, Kopf, Fußnoten) fehlen (Textverlust). */
+  const lostWords = (markup: string, result: { blocks: NormBodyBlock[]; head?: unknown; footnotes?: unknown }): string[] => {
+    const serialized = JSON.stringify([result.blocks, result.head ?? null, result.footnotes ?? null]);
+    return markup.replace(/<!--[\s\S]*?-->/gu, ' ').replace(/<style[\s\S]*?<\/style>/gu, ' ').replace(/<[^>]+>/gu, ' ').replace(/&nbsp;|&amp;nbsp;/gu, ' ').split(/\s+/u)
+      .map((token) => token.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
+      .filter((word) => word && !serialized.includes(word));
+  };
+  const labelsOf = (blocks: NormBodyBlock[] | undefined): Array<string | undefined> => (blocks ?? []).filter((block) => block.type === 'paragraph' || block.type === 'article').map((block) => block.label);
+
+  it('Bausteine: Spannen, Entity-Artefakte und hergeleitete Zeichen sind eng gefasst', () => {
+    expect(parseUnitRangeHeading('Artikel I bis III')).toEqual({ unitType: 'article', label: 'Artikel I bis III' });
+    expect(parseUnitRangeHeading('Art. XLVIII bis IL')).toEqual({ unitType: 'article', label: 'Art. XLVIII bis IL' });
+    expect(parseUnitRangeHeading('Artikel XXVIII und XXIX')).toEqual({ unitType: 'article', label: 'Artikel XXVIII und XXIX' });
+    expect(parseUnitRangeHeading('§§ 15 bis 16')).toEqual({ unitType: 'paragraph', label: '§§ 15 bis 16' });
+    expect(parseUnitRangeHeading('§ 5 und 6 (weggefallen)')).toEqual({ unitType: 'paragraph', label: '§§ 5 und 6', title: '(weggefallen)' });
+    expect(parseUnitRangeHeading('Artikel 5')).toBeNull();
+    expect(parseUnitRangeHeading('Artikel I bis 3')).toBeNull();
+    expect(parseUnitRangeHeading('Artikel 5 bis zum Inkrafttreten')).toBeNull();
+    expect(normalizeEntityArtifacts('§&nbsp;13')).toEqual({ text: '§ 13', repaired: true });
+    expect(normalizeEntityArtifacts('§ 13')).toEqual({ text: '§ 13', repaired: false });
+    expect(normalizeEntityArtifacts('§&amp;13')).toEqual({ text: '§&amp;13', repaired: false });
+    // Herleitung nur aus der unmittelbar fortlaufenden Zählung der vorigen Einheit.
+    expect(inferUnitHeading('84', { unitType: 'paragraph', label: '§ 83' })).toEqual({ kind: 'unit', unitType: 'paragraph', label: '§ 84' });
+    expect(inferUnitHeading('33e Verpflichtungszusagen', { unitType: 'paragraph', label: '§ 33d' })).toEqual({ kind: 'unit', unitType: 'paragraph', label: '§ 33e', title: 'Verpflichtungszusagen' });
+    expect(inferUnitHeading('12a', { unitType: 'paragraph', label: '§ 12' })).toEqual({ kind: 'unit', unitType: 'paragraph', label: '§ 12a' });
+    expect(inferUnitHeading('15 bis 16', { unitType: 'paragraph', label: '§ 14' })).toEqual({ kind: 'unit-range', unitType: 'paragraph', label: '§§ 15 bis 16' });
+    expect(inferUnitHeading('4', { unitType: 'article', label: 'Artikel 3' })).toEqual({ kind: 'unit', unitType: 'article', label: 'Artikel 4' });
+    expect(inferUnitHeading('86', { unitType: 'paragraph', label: '§ 83' })).toBeNull();
+    expect(inferUnitHeading('83', { unitType: 'paragraph', label: '§ 83' })).toBeNull();
+    expect(inferUnitHeading('12c', { unitType: 'paragraph', label: '§ 12a' })).toBeNull();
+    expect(inferUnitHeading('84 2 Satz 1', { unitType: 'paragraph', label: '§ 83' })).toBeNull();
+    expect(inferUnitHeading('84', undefined)).toBeNull();
+  });
+
+  it('lrdetail-Klassifikation: feste Kette, unlesbare Kennzeichen bleiben fail-closed', () => {
+    expect(classifyDetailHeading('§ 5\nZweck')).toMatchObject({ kind: 'unit', label: '§ 5', title: 'Zweck', inferred: false });
+    expect(classifyDetailHeading('Teil 1\nEinleitende Bestimmungen (Fn 37)')).toMatchObject({ kind: 'division', level: 'part', label: 'Teil 1', title: 'Einleitende Bestimmungen', footnotes: ['37'] });
+    expect(classifyDetailHeading('84 (Fn 3)\n(weggefallen)', { previousUnit: { unitType: 'paragraph', label: '§ 83' } })).toMatchObject({ kind: 'unit', label: '§ 84', title: '(weggefallen)', inferred: true, footnotes: ['3'] });
+    expect(classifyDetailHeading('(1) Die in Abschnitt 4 getroffenen Bestimmungen gelten.')).toMatchObject({ kind: 'subparagraph', label: '(1)' });
+    expect(classifyDetailHeading('datenschutzfreundliche Voreinstellungen', { previousTitle: 'Technikgestaltung und' })).toMatchObject({ kind: 'title-continuation' });
+    expect(classifyDetailHeading('Inkrafttreten, Übergangsbestimmungen\n(Artikel 3 der Verordnung)')).toMatchObject({ kind: 'heading', text: 'Inkrafttreten, Übergangsbestimmungen (Artikel 3 der Verordnung)' });
+    expect(classifyDetailHeading('(Fn 5) (Fn 14)')).toEqual({ kind: 'footnotes-only', footnotes: ['5', '14'] });
+    expect(classifyDetailHeading(' ')).toEqual({ kind: 'empty' });
+    // Fail-closed: bare Nummer ohne fortlaufende Zählung, unlesbares Kennzeichen, Satz statt Überschrift.
+    expect(classifyDetailHeading('86 (Fn 3)', { previousUnit: { unitType: 'paragraph', label: '§ 83' } })).toMatchObject({ kind: 'unparsed' });
+    expect(classifyDetailHeading('Art 5 Gemeinderat')).toMatchObject({ kind: 'unparsed' });
+    expect(classifyDetailHeading('Nr. 5 Gemeinderat')).toMatchObject({ kind: 'unparsed' });
+    expect(classifyDetailHeading('Die Genehmigung ist für jede einzelne Nebentätigkeit zu erteilen.')).toMatchObject({ kind: 'unparsed' });
+    expect(classifyDetailHeading('Übergangsvorschrift', { previousTitle: 'Zweck' })).toMatchObject({ kind: 'heading' });
+  });
+
+  it('range-headings (nativ): Artikelspannen sind Überschriften auf Einheitenebene, keine Kinder des vorigen Artikels', () => {
+    const html = fixture('range-headings/native-article-range.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['Artikel VII', 'Artikel LX']);
+    expect(result.blocks.map((block) => `${block.type} ${block.label ?? block.title ?? block.text}`)).toEqual([
+      'heading Artikel I bis III', 'paragraphText ZWEITER ABSCHNITT', 'heading Änderung von Vorschriften auf dem Gebiete des Rechts der Verwaltung',
+      'article Artikel VII', 'heading Art. VIII bis XI', 'heading Artikel XXVIII und XXIX', 'paragraphText FÜNFTER ABSCHNITT', 'heading Änderung von Vorschriften auf dem Gebiete des Wirtschaftsrechts', 'article Artikel LX',
+    ]);
+    expect(result.blocks[4]!.children).toEqual([{ type: 'footnote', label: 'Fn 3', text: 'entfällt; sind in die jeweiligen Bestimmungen eingearbeitet worden.' }]);
+    expect(codes(result)).toContain('unit-range-heading');
+    const raw = rawMetrics('native', html);
+    expect(raw.units).toBe(2);
+    expect(checkParseIntegrity(raw, bodyMetrics(result.blocks)).ok).toBe(true);
+    expect(() => parseBodyBlocks(result.blocks, 'body')).not.toThrow();
+  });
+
+  it('range-headings (Legacy): „15 bis 16“ nach § 14 wird zur Überschrift „§§ 15 bis 16“ mit Befund, keine Einheiten', () => {
+    const html = fixture('range-headings/legacy-paragraph-range.htm');
+    const result = parseLegacyDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 14', '§ 17']);
+    expect(result.findings).toContainEqual(expect.objectContaining({ severity: 'warning', code: 'unit-marker-inferred', message: expect.stringContaining('„15 bis 16 (Fn 12)“ → §§ 15 bis 16') }));
+    const heading = find(result.blocks, (block) => block.type === 'heading' && block.title === '§§ 15 bis 16')!;
+    expect(heading.children).toEqual([{ type: 'footnote', label: 'Fn 12', text: expect.stringMatching(/^§§ 15 und 16 aufgehoben/u) }]);
+    expect(result.blocks.map((block) => `${block.type} ${block.label ?? ''}`.trim())).toEqual(['paragraph § 14', 'heading', 'paragraphText', 'paragraphText', 'paragraph § 17']);
+    expect(countLegacyUnitHeadings(html)).toBe(2);
+    expect(checkParseIntegrity(rawMetrics('legacy-file', html), bodyMetrics(result.blocks)).ok).toBe(true);
+  });
+
+  it('native-drupal: Gliederungskennzeichen im Nummernfeld („1. Abschnitt“) werden Gliederungsebenen', () => {
+    const html = fixture('native-drupal/division-in-number-field.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 1', '§ 2', '§ 3']);
+    expect(result.blocks.map((block) => `${block.type} ${block.label}`)).toEqual(['paragraph § 1', 'section 1. Abschnitt', 'section 2. Abschnitt']);
+    expect(labelsOf(result.blocks[1]!.children)).toEqual(['§ 2']);
+    expect(labelsOf(result.blocks[2]!.children)).toEqual(['§ 3']);
+    expect(codes(result)).toContain('division-in-number-field');
+    const raw = rawMetrics('native', html);
+    expect(raw.units).toBe(3);
+    expect(checkParseIntegrity(raw, bodyMetrics(result.blocks)).ok).toBe(true);
+    expect([...buildAnchorMap(result.blocks).values()]).toEqual(['paragraph-1', 'abschnitt-1', 'paragraph-2', 'abschnitt-2', 'paragraph-3']);
+  });
+
+  it('broken-html: doppelt kodierte Entity im Nummernfeld wird als Leerzeichen gelesen und gemeldet', () => {
+    const html = fixture('broken-html/native-entity-artifact.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 1', '§ 13']);
+    expect(result.findings).toContainEqual(expect.objectContaining({ severity: 'warning', code: 'entity-artifact-repaired', message: expect.stringContaining('„§&nbsp;1“') }));
+    expect(find(result.blocks, (block) => block.label === '§ 1')!.title).toBe('Anwendungsbereich');
+    const raw = rawMetrics('native', html);
+    expect(raw.units).toBe(2);
+    expect(checkParseIntegrity(raw, bodyMetrics(result.blocks)).ok).toBe(true);
+  });
+
+  it('broken-html: <p> in <ul> gehen nicht verloren (Textverlust -52 % im Bulk)', () => {
+    const html = fixture('broken-html/native-ul-with-paragraphs.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    const unit = find(result.blocks, (block) => block.label === '§ 2')!;
+    expect(unit.children!.map((child) => `${child.type} ${child.label ?? ''}`.trim())).toEqual(['paragraphText', 'item 1.', 'item 2.', 'item 3.', 'item 4.']);
+    expect(codes(result)).toContain('list-with-block-children');
+    expect(checkParseIntegrity(rawMetrics('native', html), bodyMetrics(result.blocks)).ok).toBe(true);
+  });
+
+  it('broken-html: Sektion ohne Nummernfeld mit Normtext ist ein Quelldefekt (fail-closed), Text bleibt erhalten', () => {
+    const html = fixture('broken-html/native-unnumbered-section.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([expect.objectContaining({ code: 'structure-unnumbered-section', message: expect.stringContaining('Sektion 3 ohne Nummernfeld enthält Normtext') })]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 2', '§ 4']);
+    // Die Fußnote der nummernlosen Sektion ist ein Fußnotenblock, kein Fließtext.
+    expect(find(result.blocks, (block) => block.type === 'footnote' && block.label === 'Fn 1')).toBeDefined();
+    expect(find(result.blocks, (block) => block.type === 'paragraphText' && (block.text ?? '').startsWith('Fn 1'))).toBeUndefined();
+    // Die erste Sektion (Vorspann) darf ohne Nummer Text tragen.
+    expect(errors(parseNativeDocument(fixture('footnotes/native-footnotes-without-unit.html')))).toEqual([]);
+  });
+
+  it('footnotes: Fußnoten in Sektionen ohne Einheit werden Fußnotenblöcke, der Textumfang stimmt mit dem Roh-HTML überein', () => {
+    const html = fixture('footnotes/native-footnotes-without-unit.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 1', '§ 2']);
+    expect(result.blocks.map((block) => `${block.type} ${block.label ?? ''}`.trim())).toEqual(['footnote Fn 1', 'paragraphText', 'paragraphText', 'footnote Fn 2', 'paragraph § 1', 'paragraph § 2']);
+    expect(result.issuedLine).toBe('Vom 24. Juni 2008');
+    const raw = rawMetrics('native', html);
+    const report = checkParseIntegrity(raw, bodyMetrics(result.blocks));
+    expect(report.checks.filter((check) => !check.ok)).toEqual([]);
+    expect(() => parseBodyBlocks(result.blocks, 'body')).not.toThrow();
+  });
+
+  it('duplicate-numbering (nativ): Artikel als zentrierte Überschriften eröffnen Zählbereiche, wenn die §-Zählung neu beginnt', () => {
+    const html = fixture('duplicate-numbering/native-inline-article-scopes.html');
+    expect(detectInlineArticleScopes(parseHtmlFragment(html))).toBe(true);
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(codes(result)).toContain('inline-article-scopes');
+    expect(result.stats.unitLabels).toEqual(['Artikel 1', '§ 1', '§ 2', 'Artikel 2', '§ 1', '§ 2', 'Artikel 3', 'Artikel 5', '§ 1', 'Artikel 7', '§ 1']);
+    const metrics = bodyMetrics(result.blocks);
+    expect(metrics.duplicateLabels).toEqual([]);
+    const article3 = find(result.blocks, (block) => block.label === 'Artikel 3')!;
+    expect(article3.children!.map((child) => `${child.type} ${child.label ?? child.title}`)).toEqual(['subparagraph (1)', 'subparagraph (2)', 'heading Anfall des Vermögens eines Vereins oder einer Stiftung']);
+    // Titel vor der Nummer bleibt in Lesereihenfolge eine Überschrift (schließt den Absatz, bleibt im Artikel); Titel nach der Nummer wird Artikeltitel.
+    const article2 = find(result.blocks, (block) => block.label === 'Artikel 2')!;
+    expect(article2.children!.at(-1)).toMatchObject({ type: 'paragraph', label: '§ 2' });
+    expect(article3.children!.at(-1)).toMatchObject({ type: 'heading', title: 'Anfall des Vermögens eines Vereins oder einer Stiftung' });
+    expect(find(result.blocks, (block) => block.label === 'Artikel 7')!.title).toBe('8) Verjährung gewisser Ansprüche');
+    const raw = rawMetrics('native', html);
+    expect(raw.units).toBe(result.stats.units);
+    expect(checkParseIntegrity(raw, metrics).ok).toBe(true);
+    const anchors = [...buildAnchorMap(result.blocks).values()];
+    expect(new Set(anchors).size).toBe(anchors.length);
+    expect(anchors).toContain('artikel-2-paragraph-1');
+    expect(() => parseBodyBlocks(result.blocks, 'body')).not.toThrow();
+    // Ohne wiederholte §-Nummern (z. B. Übergangsartikel am Ende eines Gesetzes) bleiben zentrierte Artikelzeilen Überschriften.
+    let counter = 0;
+    const renumbered = html.replace(/field--field_num">§ \d+</gu, () => `field--field_num">§ ${(counter += 1)}<`);
+    expect(detectInlineArticleScopes(parseHtmlFragment(renumbered))).toBe(false);
+    const plain = parseNativeDocument(renumbered);
+    expect(codes(plain)).not.toContain('inline-article-scopes');
+    expect(plain.stats.unitLabels).toEqual(['§ 1', '§ 2', '§ 3', '§ 4', '§ 5', '§ 6']);
+    expect(rawMetrics('native', renumbered).units).toBe(plain.stats.units);
+  });
+
+  it('duplicate-numbering (Legacy): Inhaltsübersicht mit lrdetail-Einträgen wird als Text übernommen', () => {
+    const html = fixture('duplicate-numbering/legacy-toc-lrdetail.htm');
+    const result = parseLegacyDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.findings).toContainEqual(expect.objectContaining({ severity: 'info', code: 'toc-sections-demoted', message: expect.stringContaining('3 lrdetail-Einheit(en)') }));
+    expect(result.stats.unitLabels).toEqual(['Artikel 1', '§ 1', '§ 2', 'Artikel 2', 'Artikel 3']);
+    expect(bodyMetrics(result.blocks).duplicateLabels).toEqual([]);
+    const firstUnit = result.blocks.findIndex((block) => block.type === 'article');
+    expect(result.blocks.slice(0, firstUnit).filter((block) => block.type === 'paragraphText').map((block) => block.text)).toEqual([
+      'Vom 7. Februar 1990', 'Inhaltsübersicht', 'Artikel 1', 'Erster Teil Allgemeines', '§ 1 Rechtsform, Name, Sitz', 'Zweiter Teil Aufgaben, Unternehmen, Übersichten', '§ 2 Aufgaben des Verbandes', 'Artikel 2 Änderung des Biggetalsperregesetzes', 'Artikel 3 Inkrafttreten',
+    ]);
+    expect(labelsOf(result.blocks.find((block) => block.type === 'part' && block.label === 'Erster Teil')!.children)).toEqual(['§ 1']);
+    expect(countLegacyUnitHeadings(html)).toBe(5);
+    expect(checkParseIntegrity(rawMetrics('legacy-file', html), bodyMetrics(result.blocks)).ok).toBe(true);
+    // Kehrt ein Kennzeichen der Übersicht nicht wieder, bleibt alles unangetastet (Warnung, Duplikat bleibt sichtbar).
+    const unresolved = parseLegacyDocument(html.replace('<p class=lrdetail>Artikel 3<br>\nInkrafttreten</p>', '<p class=lrdetail>Artikel 4<br>\nInkrafttreten</p>'));
+    expect(unresolved.findings).toContainEqual(expect.objectContaining({ severity: 'warning', code: 'toc-region-unresolved', message: expect.stringContaining('Artikel 4') }));
+    expect(bodyMetrics(unresolved.blocks).duplicateLabels).toEqual(['Artikel 1', 'Artikel 2']);
+  });
+
+  it('legacy-word: lrdetail-Varianten (Teil, fehlendes §-Zeichen, Titelfortsetzung, Absatztext, Überschrift) ohne Textverlust', () => {
+    const html = fixture('legacy-word/lrdetail-variants.htm');
+    const result = parseLegacyDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 33d', '§ 33e', '§ 34', '§ 44b', '§ 83', '§ 84', '§ 85']);
+    const part = result.blocks.find((block) => block.type === 'part')!;
+    expect(part).toMatchObject({ label: 'Teil 1', title: 'Einleitende Bestimmungen' });
+    expect(part.children![0]).toMatchObject({ type: 'footnote', label: 'Fn 37' });
+    expect(find(result.blocks, (block) => block.label === '§ 33e')).toMatchObject({ title: 'Verpflichtungszusagen', children: [expect.objectContaining({ type: 'footnote', label: 'Fn 14' }), expect.objectContaining({ type: 'subparagraph', label: '(1)' })] });
+    expect(find(result.blocks, (block) => block.label === '§ 34')!.title).toBe('Schutz der Daten in Akten und Dateien, Technikgestaltung und datenschutzfreundliche Voreinstellungen');
+    expect(find(result.blocks, (block) => block.label === '§ 44b')!.children!.map((child) => `${child.type} ${child.label}`)).toEqual(['footnote Fn 21', 'subparagraph (1)', 'subparagraph (2)']);
+    expect(find(result.blocks, (block) => block.label === '§ 84')).toMatchObject({ title: '(weggefallen)', children: [{ type: 'footnote', label: 'Fn 3', text: expect.stringContaining('§§ 82 bis 86') }] });
+    const heading = find(result.blocks, (block) => block.type === 'heading' && (block.title ?? '').startsWith('Inkrafttreten, Übergangsbestimmungen'))!;
+    expect(heading.title).toBe('Inkrafttreten, Übergangsbestimmungen (Artikel 3 der Verordnung zur Neufassung der Verordnung über den Bildungsgang und die Abiturprüfung in der gymnasialen Oberstufe vom 5. 10. 1998 (GV. NRW. S. 594))');
+    // Die Überschrift schließt § 85; die Fußnoten der reinen Fußnotenzeile hängen am vorigen Absatz, die Nummerierung folgt der Überschrift.
+    const paragraph85 = find(result.blocks, (block) => block.label === '§ 85')!;
+    expect(paragraph85.children!.map((child) => `${child.type} ${child.label ?? ''}`.trim())).toEqual(['footnote Fn 3', 'subparagraph (3)']);
+    expect(paragraph85.children![1]!.children!.map((child) => child.label)).toEqual(['Fn 5', 'Fn 14']);
+    const siblings = part.children!;
+    expect(siblings.slice(siblings.indexOf(paragraph85)).map((block) => `${block.type} ${block.label ?? ''}`.trim())).toEqual(['paragraph § 85', 'heading', 'item 1.', 'item 2.']);
+    const warnings = result.findings.filter((finding) => finding.severity === 'warning').map((finding) => finding.code);
+    expect(warnings).toEqual(expect.arrayContaining(['unit-marker-inferred', 'detail-body-text', 'unit-title-continued', 'detail-heading']));
+    expect(result.findings.find((finding) => finding.code === 'unit-marker-inferred')!.message).toContain('„84 (Fn 3) (weggefallen)“ → § 84');
+    expect(codes(result)).toContain('division-in-detail-heading');
+    expect(countLegacyUnitHeadings(html)).toBe(7);
+    expect(checkParseIntegrity(rawMetrics('legacy-file', html), bodyMetrics(result.blocks)).ok).toBe(true);
+    expect(() => parseBodyBlocks(result.blocks, 'body')).not.toThrow();
+    // Fail-closed: eine bare Nummer mit Lücke bleibt ein Fehler mit Kontext (vorige Einheit, Ausschnitt).
+    const gap = parseLegacyDocument(html.replace('<p class=lrdetail>84 (', '<p class=lrdetail>86 ('));
+    expect(gap.findings).toContainEqual(expect.objectContaining({ severity: 'error', code: 'unparsed-unit-heading', message: 'lrdetail ohne erkennbare Einheit (p.lrdetail nach § 83): „86 (Fn 3) (weggefallen)“' }));
+    expect(countLegacyUnitHeadings(gap.findings.length ? html.replace('<p class=lrdetail>84 (', '<p class=lrdetail>86 (') : html)).toBe(6);
+  });
+
+  it('annexes: Word-Klassen MsoPapDefault und MsoNormal0 sind präsentational', () => {
+    const html = fixture('annexes/msopapdefault.htm');
+    const result = parseLegacyDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.blocks.map((block) => block.text)).toEqual([
+      'Hinweis zur Tarifstelle 2.2.2.4.12: Die Vergütung für eine zugezogene Dolmetscherin oder einen zugezogenen Dolmetscher ist als Auslage nach § 10 GebG NRW zu erheben.',
+      '2.2.3 Sonn- und feiertagsrechtliche Angelegenheiten',
+      '2.2.3.1 Entscheidung über Anträge auf Erteilung von Ausnahmegenehmigungen nach den §§ 3 und 5 des Feiertagsgesetzes NW Gebühr: Euro 20 bis 100',
+      '2.2.4 Fundsachen',
+      '2.2.4.1.1 im Werte von 26 Euro bis 150 Euro Gebühr: Euro 10',
+      '2.2.4.1.2 im Werte von mehr als 150 Euro Gebühr: Euro 20',
+    ]);
+    expect(parseLegacyDocument(html.replace('class=msopapdefault', 'class=msopapother')).findings.map((finding) => finding.code)).toContain('unknown-paragraph-class');
+  });
+
+  it('Zustimmungsformel: Datumsangaben und Abkürzungen im Satz verhindern die Erkennung nicht; Satzgrenzen bleiben wirksam', () => {
+    const detect = (text: string) => detectConsentLaw({ title: 'Gesetz zu dem Staatsvertrag zum Lotteriewesen in Deutschland', blocks: [{ type: 'article', label: 'Artikel 1', children: [{ type: 'paragraphText', text }] }], attachments: [] });
+    expect(detect('Dem zwischen den Ländern der Bundesrepublik Deutschland geschlossenen Staatsvertrag zum Lotteriewesen vom 13.Februar 2004 wird zugestimmt. Der Staatsvertrag wird nachstehend als Anlage veröffentlicht.').detected).toBe(true);
+    expect(detect('Dem in Düsseldorf am 26. März 1984 unterzeichneten Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl sowie dem dazugehörigen Schlußprotokoll vom selben Tage wird zugestimmt.').detected).toBe(true);
+    expect(detect('Dem Staatsvertrag vom 10./27. September 2002 (GV. NRW. S. 154) wird zugestimmt.').detected).toBe(true);
+    expect(detect('Dem Staatsvertag zwischen den Ländern über die Hochschulzulassung vom 4. April 2019 (Staatsvertrag) wird zugestimmt.').detected).toBe(true);
+    // Satzgrenze: Vertragsnomen und Formel in verschiedenen Sätzen.
+    expect(detect('Der Staatsvertrag wird nachstehend veröffentlicht. Dem Antrag wird zugestimmt.').detected).toBe(false);
+    expect(detect('Das Land tritt dem Staatsvertrag bei.').detected).toBe(false);
+  });
+
+  it('Transformationsprüfung: exakt durch protokollierte Ersetzungen erklärte Abweichungen sind auch bei kurzen Normen zulässig', () => {
+    const metrics = (textLength: number) => ({ units: 2, unitLabels: ['§ 1', '§ 2'], duplicateLabels: [], blocks: 4, tables: 0, annexes: 0, footnotes: 0, textLength, fingerprint: '0' });
+    const changes = [{ path: 'body[0].children[0].text', rule: 'state-name', from: 'Nordrhein-Westfalen', to: 'Westdeutschland' }, { path: 'body[1].children[0].text', rule: 'state-name', from: 'Nordrhein-Westfalen', to: 'Westdeutschland' }, { path: 'meta.title', rule: 'state-name', from: 'Nordrhein-Westfalen', to: 'Westdeutschland' }];
+    expect(explainedBodyDelta(changes)).toBe(-8);
+    expect(checkTransformIntegrity(metrics(265), metrics(257)).checks.find((check) => check.name === 'textLength')!.ok).toBe(false);
+    expect(checkTransformIntegrity(metrics(265), metrics(257), explainedBodyDelta(changes)).checks.find((check) => check.name === 'textLength')!.ok).toBe(true);
+    const unexplained = checkTransformIntegrity(metrics(265), metrics(250), explainedBodyDelta(changes)).checks.find((check) => check.name === 'textLength')!;
+    expect(unexplained.ok).toBe(false);
+    expect(unexplained.message).toContain('erklären -8 Zeichen');
   });
 });

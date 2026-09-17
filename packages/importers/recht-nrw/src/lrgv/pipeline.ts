@@ -26,7 +26,7 @@ import { PARSER_VERSION, TARGET_JURISDICTION } from '../common/constants.ts';
 import { checkDocumentIdentityAndBody, type DocumentSanityResult } from '../common/document-sanity.ts';
 import { loadImportEnvironment, slugReservationFor, type ImportEnvironment } from '../common/environment.ts';
 import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
-import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity, rawMetrics, type IntegrityReport } from '../common/integrity.ts';
+import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity, explainedBodyDelta, rawMetrics, type IntegrityReport } from '../common/integrity.ts';
 import { parseLegacyDocument } from '../common/legacy-parser.ts';
 import { AUDIT_DIR, isImportedStatus, readManifest, readManifestEntry, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type RawDocumentRole, type ValidityEvidence } from '../common/manifest.ts';
 import { recordUnresolvedSource } from '../common/unresolved.ts';
@@ -92,8 +92,29 @@ export interface ImportResult {
   versionUrls?: string[];
 }
 
-/** Datenbefunde, die eine Übernahme verhindern, aber keine technischen Fehler sind (→ needs-review). */
-const REVIEW_CLASS_ERRORS = /^(?:selection-|document-identity-|attachment-|annex-not-parsed|existing-versions|post-transform-audit|missing-issue-date)/u;
+/**
+ * Datenbefunde, die eine Übernahme verhindern, aber keine technischen Fehler sind (→ needs-review):
+ * Stichtagsauswahl, Dokumentidentität, Anlagen, Quellstrukturdefekte (Sektion ohne Nummernfeld mit
+ * Normtext, doppelte Einheitenkennzeichen im selben Zählbereich – das Portal führt z. B. einen aus
+ * einer Maßgabe zitierten „§ 5“ als eigene Sektion), Fassungsseiten nur mit PDF.
+ */
+const REVIEW_CLASS_ERRORS = /^(?:selection-|document-identity-|attachment-|annex-not-parsed|existing-versions|post-transform-audit|missing-issue-date|structure-unnumbered-section|integrity-(?:parse|transform)-duplicateUnits|content-pdf-only)/u;
+
+/** Parserbefunde tragen Quellkontext (Term-ID, Adresse, Phase, Quellhash) für die Fehleranalyse. */
+function withSourceContext(finding: ImportFinding, context: { termId: string; url: string; phase: string; sha256: string }): ImportFinding {
+  if (finding.severity === 'info') return finding;
+  return { ...finding, message: `${finding.message} [term:${context.termId} · ${context.url} · Phase ${context.phase} · Quelle sha256 ${context.sha256.slice(0, 16)}]` };
+}
+
+/**
+ * Archivstatus nach dem Ablegen einer Rohquelle: bleibt „verified“, wenn dasselbe Objekt (gleicher
+ * inhaltsadressierter Schlüssel) laut vorherigem Manifesteintrag bereits nach R2 übertragen und geprüft wurde.
+ */
+export function preservedArchiveStatus(stored: ManifestRawDocument['archiveStatus'], objectKey: string | undefined, previous: Pick<ManifestEntry, 'rawDocuments'> | undefined): ManifestRawDocument['archiveStatus'] {
+  if (stored !== 'staged' || !objectKey || !previous) return stored;
+  const before = previous.rawDocuments.find((candidate) => candidate.objectKey === objectKey);
+  return before?.archiveStatus === 'verified' ? 'verified' : stored;
+}
 
 function hasErrors(findings: readonly ImportFinding[]): boolean {
   return findings.some((finding) => finding.severity === 'error');
@@ -274,6 +295,16 @@ async function runLrgvImport(options: ImportOptions & { manifest: ImportManifest
 
   // --- Fetch (Text) + Parse Source Format ------------------------------------------------------
   result.stage = 'parse-source-format';
+  if (page.findings.some((finding) => finding.code === 'missing-content')) {
+    // Fassungsseite ohne Legacy-Datei und ohne natives Dokument: bietet sie nur das PDF an, ist das ein
+    // Datenbefund (PDF-only, Transkriptions-/Review-Pfad), sonst ein technischer Fehler.
+    if (page.pdfUrl) {
+      findings.push({ severity: 'error', code: 'content-pdf-only', message: `Fassungsseite ohne Textinhalt (weder Legacy-Datei noch natives Dokument); der Text liegt nur als PDF vor: ${page.pdfUrl} [term:${termId} · ${page.address.url} · Phase parse-source-format · Quelle sha256 ${pageDocument.sha256.slice(0, 16)}]` });
+      return finish('needs-review');
+    }
+    findings.push(...page.findings.filter((finding) => finding.code === 'missing-content').map((finding) => withSourceContext(finding, { termId, url: page.address.url, phase: 'parse-source-format', sha256: pageDocument.sha256 })));
+    return finish('failed');
+  }
   let textDocument: FetchedDocument | undefined;
   let body: Parameters<typeof normalizeSourceLaw>[0]['body'];
   let rawHtmlForMetrics: string;
@@ -382,7 +413,8 @@ async function runLrgvImport(options: ImportOptions & { manifest: ImportManifest
     findings.push({ severity: 'info', code: 'consent-law-partial', message: `Nur ein Beleg für ein Zustimmungsgesetz (${consentLaw.evidence.join('; ')}); Typ bleibt Gesetz` });
   }
   result.sourceLaw = sourceLaw;
-  findings.push(...sourceLaw.findings.filter((finding) => finding.code !== 'invalid-validity-interval' || effectiveValidTo === (page.validTo ?? null)));
+  const sourceContext = { termId, url: page.address.url, phase: 'parse-source-format', sha256: (textDocument ?? pageDocument).sha256 };
+  findings.push(...sourceLaw.findings.filter((finding) => finding.code !== 'invalid-validity-interval' || effectiveValidTo === (page.validTo ?? null)).map((finding) => withSourceContext(finding, sourceContext)));
 
   // Fetch → Parse wird für das Hauptdokument geprüft; Anlagen sind eigene Dokumente.
   const fetchParse = checkParseIntegrity(rawMetrics(page.content.format, rawHtmlForMetrics), bodyMetrics(body.blocks));
@@ -400,7 +432,7 @@ async function runLrgvImport(options: ImportOptions & { manifest: ImportManifest
   for (const note of slugs.notes) findings.push({ severity: 'info', code: 'slug-stable', message: note });
   result.record = record;
   result.report = report;
-  const sourceCanonical = checkTransformIntegrity(bodyMetrics(sourceLaw.body), bodyMetrics(record.versions[0]!.body));
+  const sourceCanonical = checkTransformIntegrity(bodyMetrics(sourceLaw.body), bodyMetrics(record.versions[0]!.body), explainedBodyDelta(report.changes));
   state.sourceCanonical = sourceCanonical;
   for (const check of sourceCanonical.checks) if (!check.ok) findings.push({ severity: 'error', code: `integrity-transform-${check.name}`, message: `${check.message ?? check.name} (erwartet ${check.expected}, gefunden ${check.actual})` });
   result.integrity = { fetchParse, sourceCanonical };
@@ -535,12 +567,15 @@ async function finishLrgv(input: {
   const writer = new FileWriter(env.root);
   const documents = new Map(input.fetched.map(({ document }) => [document.sha256, document]));
   const storeRawDocuments = async (): Promise<void> => {
+    // Bereits nach R2 übertragene und geprüfte Objekte behalten ihren Status: gleicher Schlüssel = gleicher Inhalt
+    // (inhaltsadressiert), eine Regeneration aus dem Cache darf sie nicht erneut als „staged“ zum Upload anmelden.
+    const previousEntry = options.manifest?.entries.find((entry) => entry.sourceIdentity === `term:${termId}`) ?? (await readManifestEntry(options.root, 'lrgv', `term:${termId}`));
     for (const raw of rawDocuments) {
       const document = documents.get(raw.sha256);
       if (!document) continue;
       const object = env.archive.locate(document, { termId, sourceArea: 'lrgv', role: raw.role });
       const stored = await env.archive.store(document, object);
-      raw.archiveStatus = stored.status;
+      raw.archiveStatus = preservedArchiveStatus(stored.status, object.objectKey, previousEntry);
       if (object.localSource) writer.written.push(object.localSource);
     }
   };

@@ -106,7 +106,7 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     expect(record.meta.sourceReferences.filter((reference) => reference.availability === 'versioned').map((reference) => reference.localSource)).toEqual(rawFiles);
     const manifest = await readManifest(root);
     expect(manifest.entries).toHaveLength(1);
-    expect(manifest.entries[0]).toMatchObject({ sourceIdentity: 'term:424242', targetSlug: 'testg-west', sourceValidFrom: '2020-01-01', sourceValidTo: '2023-12-15', baselineDate: '2023-12-01', importStatus: 'imported-with-warnings', parserVersion: 'recht-nrw-parser/1.1.0', contentFormat: 'legacy-file', selectedVersionUrl: BASELINE_URL });
+    expect(manifest.entries[0]).toMatchObject({ sourceIdentity: 'term:424242', targetSlug: 'testg-west', sourceValidFrom: '2020-01-01', sourceValidTo: '2023-12-15', baselineDate: '2023-12-01', importStatus: 'imported-with-warnings', parserVersion: 'recht-nrw-parser/1.2.0', contentFormat: 'legacy-file', selectedVersionUrl: BASELINE_URL });
     expect(manifest.entries[0]!.versionsConsidered.filter((entry) => entry.selected)).toHaveLength(1);
     const report = JSON.parse(await readFile(join(root, 'data', 'audits', 'recht-nrw', 'testg-west.json'), 'utf8')) as { changes: unknown[]; unresolved: unknown[]; integrity: { fetchParse: { ok: boolean } } };
     expect(report.changes.length).toBeGreaterThan(0);
@@ -232,6 +232,41 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
       expect(outside.unresolvedReport).toBeUndefined();
       expect(outside.writtenFiles.filter((file) => file.includes('/unresolved/'))).toEqual([]);
     } finally {
+      await rm(isolated, { recursive: true, force: true });
+    }
+  });
+
+  it('führt Quellstrukturdefekte als Review-Fälle mit Quellkontext: PDF-only-Fassungsseite und Sektion ohne Nummernfeld', async () => {
+    const isolated = await mkdtemp(join(tmpdir(), 'landesrecht-import-structure-'));
+    try {
+      await mkdir(join(isolated, 'content', 'norms', 'west'), { recursive: true });
+      await writeFile(join(isolated, 'package.json'), '{"name":"tmp"}');
+      const native = await readFile(join(fixtures, 'version-page-native.html'), 'utf8');
+      // Fassungsseite nur mit PDF-Download (Erstes Gesetz zur Befristung des Landesrechts, term 28965): kein iframe, kein natives Dokument.
+      const pdfOnly = native.replace(/<div id="block-rnrw-content">[\s\S]*<\/article><\/div>/u, '<div id="block-rnrw-content"><article><div></div></article></div>');
+      await writeFile(join(fixtures, '.tmp-pdf-only.html'), pdfOnly);
+      const pdf = await importRechtNrwNorm({ url: NATIVE_URL, root: isolated, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-pdf-only.html' }), now });
+      expect(pdf.status).toBe('needs-review');
+      expect(pdf.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toEqual(['content-pdf-only']);
+      expect(pdf.findings[0]!.message).toContain('2018-03-30-testverordnung.pdf');
+      expect(pdf.findings[0]!.message).toContain('term:515151');
+      expect(pdf.reviewItems.map((item) => item.category)).toContain('other');
+
+      // Sektion ohne Nummernfeld mit Normtext (Gerichtsgliederungsgesetz, term 26552): Review statt failed, Befund mit Term, URL, Phase, Quellhash.
+      const unnumbered = (await readFile(join(fixtures, 'broken-html', 'native-unnumbered-section.html'), 'utf8')).replace(/<!--[\s\S]*?-->/u, '');
+      const start = native.indexOf('<div class="field field--field_body">');
+      const end = native.indexOf('<div class="field field--field_conclusions');
+      await writeFile(join(fixtures, '.tmp-unnumbered.html'), `${native.slice(0, start)}${unnumbered}\n${native.slice(end)}`);
+      const structure = await importRechtNrwNorm({ url: NATIVE_URL, root: isolated, fetcher: fakeFetcher({ [NATIVE_URL]: '.tmp-unnumbered.html', [ANNEX_URL]: 'annex.htm', [ANNEX_PDF_URL]: 'annex.pdf' }), now });
+      expect(structure.status).toBe('needs-review');
+      const finding = structure.findings.find((entry) => entry.code === 'structure-unnumbered-section')!;
+      expect(finding.severity).toBe('error');
+      expect(finding.message).toMatch(/Sektion 3 ohne Nummernfeld enthält Normtext .*\[term:515151 · https:\/\/recht\.nrw\.de\/lrgv\/rechtsverordnung\/30032018-testverordnung-nordrhein-westfalen-testvo-nrw · Phase parse-source-format · Quelle sha256 [0-9a-f]{16}\]$/u);
+      expect(structure.reviewItems.map((item) => item.category)).toContain('unknown-structure');
+      expect(structure.integrity?.fetchParse.ok).toBe(true);
+    } finally {
+      await rm(join(fixtures, '.tmp-pdf-only.html'), { force: true });
+      await rm(join(fixtures, '.tmp-unnumbered.html'), { force: true });
       await rm(isolated, { recursive: true, force: true });
     }
   });

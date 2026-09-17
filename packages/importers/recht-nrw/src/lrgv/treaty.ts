@@ -21,7 +21,14 @@ export interface ConsentLawDetection {
 
 const TREATY_NOUN = '(?:Staatsvertrag(?:es|s)?|Staatsverträge[n]?|Abkommen[s]?|Vertrag(?:es|s)?|Verwaltungsabkommen[s]?|Übereinkommen[s]?|Vereinbarung)';
 const TITLE = new RegExp(`^Gesetz\\s+(?:zu\\s+dem|zum|zur|über\\s+die\\s+Zustimmung\\s+(?:zu\\s+dem|zum|zur))\\s+((?:[^(]*?\\s)?${TREATY_NOUN}\\b.*?)(?:\\s*\\(|$)`, 'u');
-const CONSENT = new RegExp(`\\b(?:Dem|Der|Den)\\s+(?:[^.]{0,400}?)${TREATY_NOUN}\\b[^.]{0,400}?\\bwird\\s+(?:hiermit\\s+)?zugestimmt\\b`, 'u');
+/**
+ * Zeichen innerhalb eines Satzes: kein Punkt, außer er gehört zu einer Ordnungszahl oder einem Datum
+ * („vom 13. Februar 2004“, „10./27. September“, „13.Februar“) oder zu einer kurzen Abkürzung
+ * („GV. NRW. S. 154“, „Abs.“, „v.“). Ein Punkt nach einem längeren Wort beendet den Satz. Ohne diese
+ * Ausnahmen bliebe die Zustimmungsformel bei jeder Datumsangabe unerkannt.
+ */
+const IN_SENTENCE = '(?:[^.]|(?<=\\d)\\.|(?<=\\b[A-ZÄÖÜ][a-zäöü]{0,3})\\.|(?<=\\b[A-ZÄÖÜ]{1,4})\\.|(?<=\\b[a-z])\\.)';
+const CONSENT = new RegExp(`\\b(?:Dem|Der|Den)\\s+(?:${IN_SENTENCE}{0,400}?)${TREATY_NOUN}\\b${IN_SENTENCE}{0,400}?\\bwird\\s+(?:hiermit\\s+)?zugestimmt\\b`, 'u');
 
 function texts(blocks: readonly NormBodyBlock[], limit = 40): string[] {
   const output: string[] = [];

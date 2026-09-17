@@ -7,6 +7,7 @@ import { cp, mkdir, stat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
 import { isJurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { isNormType, NORM_TYPES } from '@landesrecht/legal-core/lib/schema.ts';
 
 import type { CliOptions, Io } from './cli.ts';
 import { assertArchiveAllowed, createR2Archive, DEFAULT_R2_STAGING_DIR, maxSyncConcurrency, R2_SOURCES_BUCKET, syncStagedObjects, type RawSourceArchive } from './common/archive.ts';
@@ -19,7 +20,8 @@ import { IMPORT_DATA_DIR, readManifest, RECONSTRUCTIONS_DIR, SOURCE_AREAS, type 
 import { createMemoryR2Transport, createWranglerApiR2Transport, createWranglerR2Transport, missingR2Environment, s3R2TransportFromEnv, type R2Transport } from './common/r2-transport.ts';
 import { evaluateReadiness } from './common/readiness.ts';
 import { readReviewQueue } from './common/review-queue.ts';
-import { runSearchAudit } from './common/search-audit.ts';
+import { runSearchAudit, SEARCH_AUDIT_MODES, type SearchAuditMode, type SearchAuditOptions } from './common/search-audit.ts';
+import { parseSearchMatchMode, runGoldenCommand, runRemoteSampleCommand, writeSearchAuditResult } from './common/search-golden.ts';
 import { SLUG_REGISTRY_PATH } from './common/slug-registry.ts';
 import { buildReconstructionQueue, listRecipes, RECONSTRUCTION_QUEUE_PATH, writeReconstructionQueue } from './lrmb/reconstruction-queue.ts';
 
@@ -35,7 +37,10 @@ function requireArea(options: CliOptions): SourceArea {
 function resolveTransport(options: CliOptions, root: string): R2Transport | undefined {
   if (options.r2Transport === 'wrangler') return createWranglerR2Transport({ bucket: process.env.R2_BUCKET ?? R2_SOURCES_BUCKET, cwd: join(root, 'apps', 'web') });
   if (options.r2Transport === 'wrangler-api') return createWranglerApiR2Transport({ bucket: process.env.R2_BUCKET ?? R2_SOURCES_BUCKET, cwd: join(root, 'apps', 'web') });
-  return s3R2TransportFromEnv(process.env, R2_SOURCES_BUCKET);
+  if (options.r2Transport === 's3') return s3R2TransportFromEnv(process.env, R2_SOURCES_BUCKET);
+  // Ohne Angabe: S3 nur, wenn die Umgebung vollständige Zugangsdaten setzt (CI); sonst der Standardtransport `wrangler`
+  // über die bestehende Anmeldung (docs/DEPLOYMENT.md, „R2-Transporte“).
+  return s3R2TransportFromEnv(process.env, R2_SOURCES_BUCKET) ?? createWranglerR2Transport({ bucket: process.env.R2_BUCKET ?? R2_SOURCES_BUCKET, cwd: join(root, 'apps', 'web') });
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -223,12 +228,39 @@ export async function runReadinessCommand(options: CliOptions, root: string, io:
 export async function runSearchAuditCommand(options: CliOptions, root: string, io: Io): Promise<number> {
   const jurisdiction = options.jurisdiction ?? 'west';
   if (!isJurisdictionId(jurisdiction)) throw new Error(`Unbekannte Jurisdiktion ${jurisdiction}`);
-  const result = await runSearchAudit(root, { jurisdictions: [jurisdiction], ...(options.limit !== undefined ? { limit: options.limit } : {}) });
+  const matchMode = options.match === undefined ? undefined : parseSearchMatchMode(options.match);
+  if (options.remoteSample !== undefined) return runRemoteSampleCommand(options.remoteSample, root, io, { write: options.write, json: options.json, ...(matchMode ? { matchMode } : {}) });
+  if (options.golden) return runGoldenCommand(root, io, { write: options.write, json: options.json, ...(matchMode ? { matchMode } : {}) });
+  const auditOptions: SearchAuditOptions = { jurisdictions: [jurisdiction] };
+  if (options.limit !== undefined) auditOptions.limit = options.limit;
+  if (options.sample !== undefined) auditOptions.sample = options.sample;
+  if (options.seed !== undefined) auditOptions.seed = options.seed;
+  if (options.only.length > 0) auditOptions.only = options.only;
+  if (options.workers !== undefined) auditOptions.workers = options.workers;
+  if (matchMode) auditOptions.matchMode = matchMode;
+  if (options.mode !== undefined) {
+    if (!(SEARCH_AUDIT_MODES as readonly string[]).includes(options.mode)) throw new Error(`--mode erwartet ${SEARCH_AUDIT_MODES.join('|')}`);
+    auditOptions.mode = options.mode as SearchAuditMode;
+  }
+  if (options.category !== undefined) {
+    if (!isNormType(options.category)) throw new Error(`--category erwartet einen Normtyp (${NORM_TYPES.join('|')})`);
+    auditOptions.category = options.category;
+  }
+  const result = await runSearchAudit(root, auditOptions);
   if (options.json) io.print(JSON.stringify(result, null, 2));
   else {
-    io.print(`Suchintegrität ${jurisdiction}: ${result.ok ? 'ok' : 'FEHLER'} (${result.norms} Normen, ${result.searchUnits} Sucheinheiten)`);
+    const profile = result.profile;
+    io.print(`Suchintegrität ${jurisdiction}: ${result.ok ? 'ok' : 'FEHLER'} (${result.norms} Normen geprüft, ${result.searchUnits} Sucheinheiten; Modus ${profile.mode}${profile.sample !== null ? `, Stichprobe ${profile.sample}, Seed ${profile.seed}` : ''}, Match ${profile.matchMode}, ${profile.workers} Worker)`);
     for (const [check, counts] of Object.entries(result.checks)) io.print(`  ${check.padEnd(20)} bestanden ${counts.passed}, fehlgeschlagen ${counts.failed}, entfällt ${counts.skipped}`);
+    io.print(`  Dauer ${(profile.elapsedMs / 1000).toFixed(1)} s (Projektion ${(profile.projectionMs / 1000).toFixed(1)} s, Prüfung ${(profile.auditMs / 1000).toFixed(1)} s Worker-Summe); ${profile.searches} Suchen, ${profile.queries} SQL-Abfragen (${profile.queriesPerNorm} je Norm, ${profile.msPerNorm} ms je Norm)`);
+    for (const [check, entry] of Object.entries(profile.checks)) io.print(`    ${check.padEnd(18)} ${String(entry.queries).padStart(6)} Abfragen ${String(entry.ms).padStart(8)} ms`);
+    io.print(`  Top-1: exakter Titel ${profile.titleTop1.top1}/${profile.titleTop1.unique} eindeutige Titel, Abkürzung ${profile.abbreviationTop1.top1}/${profile.abbreviationTop1.unique} eindeutige Abkürzungen`);
+    for (const entry of profile.slowest.slice(0, 5)) io.print(`    langsam: ${entry.slug} ${entry.ms} ms, ${entry.queries} Abfragen`);
     for (const failure of result.failures.slice(0, 20)) io.print(`  ! ${failure.slug} ${failure.check}: ${failure.detail}`);
+  }
+  if (options.write) {
+    const path = await writeSearchAuditResult(root, result);
+    io.print(`Geschrieben: ${path}`);
   }
   return result.ok ? 0 : 1;
 }

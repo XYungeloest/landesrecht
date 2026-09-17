@@ -21,7 +21,7 @@ import { buildProjectionPlan, corpusFingerprint, deleteNormQueries, normId, PROJ
 import { buildScaleCorpus, buildScaleNorm, mutateScaleCorpus, scaleSlug, SNAPSHOT_TABLES, snapshotDatabase } from '@landesrecht/runtime/scale-corpus.ts';
 import { D1_MAX_STATEMENT_BYTES, DEFAULT_SQL_FILE_BYTES, DEFAULT_SQL_FILE_STATEMENTS, splitPlanIntoSqlFiles } from '@landesrecht/runtime/sql-batches.ts';
 import { checkSearchIndexIntegrity, executePlan, openSqliteD1, type SqliteD1Database } from '@landesrecht/runtime/sqlite-d1.ts';
-import { createSearchState } from '@landesrecht/search/query.ts';
+import { createSearchState, SEARCH_MATCH_MODES, type SearchMatchMode } from '@landesrecht/search/query.ts';
 
 const root = resolveRepositoryRoot();
 const migrationsDir = join(root, 'data', 'd1');
@@ -231,6 +231,25 @@ describe('Skalierung: Vollprojektion von 2 000 synthetischen Normen', () => {
     expect(identity.hits[0]).toMatchObject({ slug: scaleSlug(400), matchKind: 'identity', versionId: '2025-07-01' });
     const paragraph = await store.search(createSearchState({ q: '§ 3 SkT400', jurisdictions: [JURISDICTION] }));
     expect(paragraph.hits.map((hit) => [hit.slug, hit.matchKind, hit.unit?.anchor])).toEqual([[scaleSlug(400), 'reference', 'paragraph-3']]);
+  });
+
+  it('beide Match-Modi finden Abkürzung, exakten Titel und §-Adresse; and-first ist bei mehrwortigen Titeln nicht langsamer', async () => {
+    const store = createD1NormStore(scale.db, JURISDICTION);
+    const record = scale.records.find((entry) => entry.meta.slug === scaleSlug(400))!;
+    const timings: Partial<Record<SearchMatchMode, number>> = {};
+    for (const matchMode of SEARCH_MATCH_MODES) {
+      const identity = await store.search(createSearchState({ q: 'SkT400', jurisdictions: [JURISDICTION], matchMode }));
+      expect(identity.hits[0], matchMode).toMatchObject({ slug: scaleSlug(400), matchKind: 'identity', versionId: '2025-07-01' });
+      const paragraph = await store.search(createSearchState({ q: '§ 3 SkT400', jurisdictions: [JURISDICTION], matchMode }));
+      expect(paragraph.hits.map((hit) => [hit.slug, hit.matchKind, hit.unit?.anchor]), matchMode).toEqual([[scaleSlug(400), 'reference', 'paragraph-3']]);
+      // Alle Titel teilen „Skalierungsprüfung … über … und …“: der OR-Plan liest fast den ganzen Index.
+      const started = performance.now();
+      const title = await store.search(createSearchState({ q: record.meta.title, jurisdictions: [JURISDICTION], matchMode }));
+      timings[matchMode] = performance.now() - started;
+      expect(title.hits[0], matchMode).toMatchObject({ slug: scaleSlug(400), matchKind: 'identity' });
+    }
+    console.info(`[Skalierung] Titelsuche „${record.meta.title}“: or-prefix ${Math.round(timings['or-prefix']!)} ms, and-first ${Math.round(timings['and-first']!)} ms`);
+    expect(timings['and-first']!).toBeLessThanOrEqual(timings['or-prefix']! * 1.5 + 20);
   });
 });
 

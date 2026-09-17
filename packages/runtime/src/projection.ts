@@ -299,7 +299,17 @@ export function renderStatement(query: PlanQuery): string {
   if (index !== query.params.length) throw new Error('Zu viele Parameter für die Anweisung');
   // Genau ein Abschluss-Semikolon: Trigger-Definitionen (`… END;`) bringen ihres mit; `;;` ergäbe eine leere
   // Anweisung, die die Remote-D1 mit „SQL code did not contain a statement“ ablehnt (lokal wird sie übergangen).
-  return `${rendered.replace(/;\s*$/u, '')};`;
+  // Mehrfache Semikolons und abschließende Zeilenkommentare (`-- …`) würden das Semikolon sonst verschlucken.
+  let body = rendered.trimEnd();
+  for (;;) {
+    let stripped = body.replace(/(?:;\s*)+$/u, '').replace(/(?:^|\n)[ \t]*--[^\n]*$/u, '').trimEnd();
+    // Zeilenkommentar hinter der Anweisung – nur außerhalb einer Zeichenkette (gerade Zahl von Apostrophen davor).
+    const inline = /[ \t]+--[^\n']*$/u.exec(stripped);
+    if (inline && (stripped.slice(0, inline.index).match(/'/gu) ?? []).length % 2 === 0) stripped = stripped.slice(0, inline.index).trimEnd();
+    if (stripped === body) break;
+    body = stripped;
+  }
+  return `${body};`;
 }
 
 export function renderPlanSql(plan: ProjectionPlan): string {

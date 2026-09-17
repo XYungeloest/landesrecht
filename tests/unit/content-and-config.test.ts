@@ -1,4 +1,5 @@
-import { readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -77,6 +78,53 @@ describe('Wrangler-Konfiguration', () => {
     expect(config.r2_buckets).toEqual([{ binding: R2_SOURCES_BINDING, bucket_name: R2_SOURCES_BUCKET_NAME }]);
     expect(config.env.staging.r2_buckets[0]!.bucket_name).toBe(`${R2_SOURCES_BUCKET_NAME}-staging`);
     expect(config.env.staging.vars.APP_ENV).toBe('staging');
+  });
+});
+
+describe('Ignorierte lokale Zustände und Geheimnisse', () => {
+  it('.gitignore deckt Cache, Staging, lokale D1, Apply-Protokolle, Temp-Dateien, Wrangler-Geheimnisse und env ab', async () => {
+    const ignore = await readFile(join(root, '.gitignore'), 'utf8');
+    for (const pattern of ['.cache/', 'data/runtime/*.sqlite', 'data/runtime/d1-batches/', 'data/runtime/projection-state-*.json', '.tmp-*', '.old-norm-*', '*.log', '.env', '.env.*', '!.env.example', '.dev.vars', '.dev.vars.*', '.wrangler/', '**/.wrangler/config/']) {
+      expect(ignore.split('\n'), pattern).toContain(pattern);
+    }
+    // git selbst bestätigt die Wirkung für die wichtigsten lokalen Pfade.
+    const probes = ['.cache/recht-nrw/x.bin', '.cache/recht-nrw-r2-staging/west/x.html', 'data/runtime/landesrecht-west.sqlite', 'data/runtime/d1-batches/landesrecht-west/apply-state.json', 'content/norms/west/.tmp-norm-x', 'apps/web/.dev.vars', '.env.local', 'apps/web/.wrangler/config/default.toml', 'r2-api-debug.log'];
+    const output = execFileSync('git', ['check-ignore', ...probes], { cwd: root, encoding: 'utf8' });
+    expect(output.trim().split('\n').sort()).toEqual([...probes].sort());
+  });
+
+  it('enthält keine Zugangsdaten in versionierten Dateien (statischer Secret-Scan)', async () => {
+    const git = (args: string[]): string[] => {
+      try {
+        return execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).split(/\0|\n/u).filter(Boolean);
+      } catch (error) {
+        if ((error as { status?: number }).status === 1) return [];
+        throw error;
+      }
+    };
+    // Kandidaten schnell über git grep (nur Textdateien), dann genaue Prüfung je Zeile. Werte in Meldungen: nur Pfad und Art.
+    const candidates = git(['grep', '-I', '-i', '-l', '-E', '-e', 'api[_-]?token|oauth[_-]?token|refresh[_-]?token|secret[_-]?access[_-]?key|access[_-]?key[_-]?id|Bearer|AKIA[0-9A-Z]{16}|BEGIN (RSA |EC |OPENSSH |PGP )?PRIVATE KEY|^expiration_time', '--', '.', ':!package-lock.json']);
+    const patterns: Array<[string, RegExp]> = [
+      // Zuweisung eines Tokenwerts (in Anführungszeichen beliebig, unquotiert nur ohne Punkt – Bezeichnerpfade wie env.X zählen nicht).
+      ['API-/OAuth-Token-Zuweisung', /(?:^|[^A-Za-z0-9_])(?:api[_-]?token|oauth[_-]?token|refresh[_-]?token|secret[_-]?access[_-]?key|access[_-]?key[_-]?id)\s*[:=]\s*(?:["'][A-Za-z0-9_/+=.~-]{20,}["']|[A-Za-z0-9_/+=~-]{20,}(?![A-Za-z0-9_.]))/iu],
+      ['Bearer-Token', /\bBearer\s+[A-Za-z0-9_.~+/=-]{24,}/u],
+      ['AWS-Zugangsschlüssel', /\bAKIA[0-9A-Z]{16}\b/u],
+      ['privater Schlüssel', /-----BEGIN (?:RSA |EC |OPENSSH |PGP )?PRIVATE KEY-----/u],
+      ['Wrangler-Anmeldedatei', /^expiration_time\s*=\s*"20\d\d-/u],
+    ];
+    // Öffentliche Beispielzugangsdaten der AWS-Dokumentation (SigV4-Testvektor), keine echten Schlüssel.
+    const allowed = /AKIAIOSFODNN7EXAMPLE|EXAMPLEKEY/u;
+    const findings: string[] = [];
+    for (const file of candidates) {
+      if ((await stat(join(root, file))).size > 4 * 1024 * 1024) continue;
+      const lines = (await readFile(join(root, file), 'utf8')).split('\n');
+      for (const [label, pattern] of patterns) {
+        if (lines.some((line) => pattern.test(line) && !allowed.test(line))) findings.push(`${file}: ${label}`);
+      }
+    }
+    const tracked = git(['ls-files', '-z']);
+    expect(tracked.filter((file) => /(^|\/)\.dev\.vars(\.|$)|(^|\/)\.wrangler\/config\/|(^|\/)\.env(\.[^.]+)?$/u.test(file) && !file.endsWith('.env.example'))).toEqual([]);
+    expect(findings).toEqual([]);
   });
 });
 

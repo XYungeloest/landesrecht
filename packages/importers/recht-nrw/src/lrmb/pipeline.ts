@@ -41,7 +41,7 @@ import { readTranscriptions, usableTranscription } from '../common/transcription
 import { selectSourceVersionAtBaseline, type SelectionResult, type SourceVersionCandidate } from '../common/version-selection.ts';
 import { parseVersionPage, type RechtNrwVersionPage } from '../common/version-page.ts';
 import { splitTitle } from '../lrgv/normalize.ts';
-import { assertSourceMetadataProtected, versionUrlsOf } from '../lrgv/pipeline.ts';
+import { assertSourceMetadataProtected, preservedArchiveStatus, versionUrlsOf } from '../lrgv/pipeline.ts';
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
 import { formatBaseline, transformToWest, type TransformationReport } from '../transform/transform.ts';
 import { applyNormativityOverride, assessNormativity, classifyLrmbDocumentType, type DocumentTypeClassification, type NormativityDecision } from './classify.ts';
@@ -674,11 +674,13 @@ async function finishLrmb(input: {
   // Reihenfolge der Checkpoints: Rohquellen → Slug-Registry → Norm → Report; Manifest und Queue danach.
   // Im Bulkmodus auch für gescheiterte Importe (Beleg für die Fehleranalyse), die danach ohne Norm enden.
   const writer = new FileWriter(env.root);
+  // Bereits nach R2 übertragene und geprüfte Objekte (gleicher inhaltsadressierter Schlüssel) behalten „verified“.
+  const previousEntry = options.manifest?.entries.find((candidate) => candidate.sourceIdentity === `term:${termId}`) ?? (await readManifestEntry(options.root, 'lrmb', `term:${termId}`));
   for (const raw of input.rawEntries) {
     const object = input.locate(raw.document, raw.role);
     const stored = await env.archive.store(raw.document, object);
     const manifestRaw = entry.rawDocuments.find((candidate) => candidate.sha256 === raw.document.sha256 && candidate.role === raw.role);
-    if (manifestRaw) manifestRaw.archiveStatus = stored.status;
+    if (manifestRaw) manifestRaw.archiveStatus = preservedArchiveStatus(stored.status, object.objectKey, previousEntry);
     if (object.localSource) writer.written.push(object.localSource);
   }
   if (status === 'failed') return result;

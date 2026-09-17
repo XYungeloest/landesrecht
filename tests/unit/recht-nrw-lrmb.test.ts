@@ -344,7 +344,7 @@ describe('LRMB-Importpfad (Fixtures, ohne Netz)', () => {
     expect(result.report!.postTransformAudit.ok).toBe(true);
 
     const manifest = await readManifest(root);
-    expect(manifest.entries[0]).toMatchObject({ sourceArea: 'lrmb', sourceDocumentType: 'runderlass', sourceIdentity: 'term:700001', baselineStatus: 'active-at-baseline', reconstructionStatus: 'direct', importStatus: 'imported-with-warnings', normativity: { decision: 'include' }, parserVersion: 'recht-nrw-lrmb-parser/1.1.0', transformerVersion: 'recht-nrw-transformer/2.1.0', validityProvenance: 'exact', documentIdentity: { status: 'consistent' }, textCompleteness: 'html-with-pdf-attachments', archive: { mode: 'versioned-sample' } });
+    expect(manifest.entries[0]).toMatchObject({ sourceArea: 'lrmb', sourceDocumentType: 'runderlass', sourceIdentity: 'term:700001', baselineStatus: 'active-at-baseline', reconstructionStatus: 'direct', importStatus: 'imported-with-warnings', normativity: { decision: 'include' }, parserVersion: 'recht-nrw-lrmb-parser/1.2.0', transformerVersion: 'recht-nrw-transformer/2.1.0', validityProvenance: 'exact', documentIdentity: { status: 'consistent' }, textCompleteness: 'html-with-pdf-attachments', archive: { mode: 'versioned-sample' } });
     expect(manifest.entries[0]!.validityEvidence.map((entry) => entry.kind)).toEqual(expect.arrayContaining(['portal-completeness-notice', 'portal-version-interval', 'text-in-force-clause', 'portal-change-history']));
     const pdf = manifest.entries[0]!.rawDocuments.find((entry) => entry.role === 'pdf')!;
     expect(await readFile(join(root, pdf.localSource!), 'utf8')).toBe('%PDF-1.4 Testanlage');

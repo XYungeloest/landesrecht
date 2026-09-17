@@ -88,6 +88,26 @@ inkrementelle Pläne mit Basisprüfung und SQL-Batches (`packages/runtime/src/in
 `sql-batches.ts`). Status: validierte Beispielkorpora (12 LRGV, 15 LRMB), Bulk vorbereitet
 (`docs/RECHT_NRW_BULK_IMPORT.md`, `docs/RECHT_NRW_BULK_READINESS.md`). Umfang: `docs/LEGAL_SCOPE.md`.
 
+## Wiederverwendbare Importkomponenten vs. NRW-spezifisch
+
+Für weitere Jurisdiktionen (NSH, BayWü; Checkliste `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md`) gilt: Was
+heute jurisdiktionsneutral ist, wird wiederverwendet; was am Portal RECHT.NRW hängt, wird je Portal neu
+geschrieben. Abstraktion in Code (`packages/importers/common`) erst bei identischer Semantik, mindestens zwei
+Implementierungen und klarer Vereinfachung – nicht vorsorglich.
+
+| Bereich | Wiederverwendbar (Modul) | NRW-spezifisch (Modul) |
+| --- | --- | --- |
+| Abruf | Fetcher mit Mindestabstand, Timeout über Kopf und Körper, Retry-After, Sperrabbruch, Budgets, Cache (`common/fetcher.ts`) | Adressschema und Bereiche (`common/source-identity.ts`), User-Agent/Konstanten (`common/constants.ts`) |
+| Enumeration | Datei- und Statusmodell, Abgleich zweier Quellen, Invarianten, Fortschritt je Eintrag (`common/enumeration.ts`) | Sitemap-/Suchindex-Abruf und Vorklassifikation für recht.nrw.de (in `enumeration.ts`, zu trennen beim zweiten Portal) |
+| Bulk | Runner mit Auswahl, atomaren Checkpoints, Resume, Dublettenzusammenführung, systemischen Limits, auditierbaren Logzeilen, Laufzusammenfassung (`common/bulk-runner.ts`, `common/atomic.ts`, `common/persist.ts`), Stop-Controller, Readiness (`common/readiness.ts`) | `defaultItemProcessor` (LRGV-/LRMB-Importpfade, Evidenzregistrierung) |
+| Archiv | Beispielkorpus vs. R2, Staging außerhalb von Git, Unveränderlichkeit, Rücklesung, Sync mit `readback`/`etag`, Transporte `wrangler` (Standard), `s3`, `wrangler-api` (`common/archive.ts`, `common/r2-transport.ts`) | Präfixkonstanten `TARGET_JURISDICTION`/`SOURCE_SYSTEM` |
+| Zustand | Manifest je Quelle, Review-Queue mit Entscheidungen, Slug-Registry, Overrides, Unresolved-Datensätze (`common/manifest.ts`, `review-queue.ts`, `slug-registry.ts`, `overrides.ts`, `unresolved.ts`) | Review-Kategorien, die nur LRMB braucht |
+| Parser | Blockmodell und Validierung (`legal-core/schema.ts`), Parserbausteine als Muster (`common/html.ts`, `body-common.ts`, `pdf.ts`, `document-sanity.ts`, `integrity.ts`) | RECHT.NRW-Fassungsseite (`common/version-page.ts`), Native-/Legacy-Parser (`common/native-parser.ts`, `legacy-parser.ts`), LRGV (`lrgv/*`), LRMB (`lrmb/*`: Klassifikation, Erlasskopf, Ministerialblatt, Rekonstruktion) |
+| Geltung | Stichtagsauswahl fail-closed (`common/version-selection.ts`), Provenienzfelder im Schema | NRW-Geltungslogik für undatierte Altdatensätze und Kontinuität (`lrmb/validity.ts`) |
+| Transformation | Reportformat, Post-Transform-Audit, Institutionen-Zuordnung als Datei, Overrides | NRW → West-Regelwerk (`transform/rules.ts`, `detection.ts`, Erlassorgane) |
+| Auswertung | Coverage (`common/coverage.ts`), Suchintegrität (`common/search-audit.ts`), D1-Projektion voll/inkrementell (`packages/runtime`), Inhaltsvalidierung (`scripts/validate-content.ts`, `check-version-immutability.ts`) | Kennzahlen je Portaltyp |
+| Web | Registry je Jurisdiktion, Healthcheck `/health`, Konfigurationsfehler-Modus (`apps/web/src/lib/runtime/*`, `src/middleware.ts`) | – |
+
 ## Provider und Verweise
 
 `LegalProvider` trennt internes Modell und externen Lieferanten. Der Resolver bildet je

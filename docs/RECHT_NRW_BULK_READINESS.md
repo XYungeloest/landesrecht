@@ -220,6 +220,11 @@ Hinweise:
 - Nach `interrupted` (Exit 130) oder `aborted-systemic` (Exit 2): Ursache im Laufbericht
   `data/audits/recht-nrw/runs/` prüfen, beheben, dann `--resume`; nur technisch fehlgeschlagene Normen mit
   `--retry-failed`.
+- Logzeilen des Runners sind auditierbar (kein Token, keine Kopfzeilen): Kopf `Lauf <runId> · <bereich> · write|dry-run
+  · ausgewählt n von m`, je Stammnorm `[i/n] <bereich> <schlüssel> start <titel>` und `[i/n] <bereich> <schlüssel>
+  ergebnis <status> [<sourceIdentity>] [<slug>] [(Review: …)] [FEHLER <code> <meldung>] · <ms>` (bei Abbruch
+  `abbruch <status> (<code>) · <ms>`), Abschluss `Lauf <runId> beendet: <status> · verarbeitet i/n · <s>`. Die
+  Ausgabe gehört nach `.cache/` oder außerhalb des Repositorys (`*.log` ist ignoriert), nicht in Git.
 - Commits je Phase (nach Audit A und Audit B) halten die Diffs prüfbar.
 - Die Beispielkorpus-Normen (versionierte Rohquellen unter `sources/recht-nrw/`) verarbeitet der Bulk nicht; er
   übernimmt ihren Manifeststatus.
@@ -230,9 +235,10 @@ Nicht Teil des Ausgangsimports, jeweils nur mit gesonderter Freigabe:
 
 ```sh
 npm run import:recht-nrw:r2-sync                                      # Dry-run: gestagte Objekte
-npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --limit 25   # kontrollierter Uploadtest über die Wrangler-Anmeldung
-npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag   # vollständiger Sync über die R2-API (Wrangler-OAuth-Token); Listing-/Etag-Prüfung + 2 % Byte-Stichproben, ≈2 Objekte/s
-npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32   # dasselbe mit Byte-Rücklesung je Objekt (6 API-Aufrufe je Objekt, durch das API-Ratenlimit ≈0,6 Objekte/s)
-npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --concurrency 6   # Alternative über Wrangler-Prozesse (gleiches Ratenlimit; höchstens 8 Einträge gleichzeitig)
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --limit 25   # kontrollierter Uploadtest über die Wrangler-Anmeldung (Standardtransport)
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --concurrency 6   # vollständiger Sync über Wrangler-Prozesse (höchstens 8 Einträge gleichzeitig; Byte-Rücklesung je Objekt)
+npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag   # optional, nur lokal (best effort): R2-API direkt mit dem Token der Wrangler-Anmeldung; Listing-/Etag-Prüfung + 2 % Byte-Stichproben, ≈2 Objekte/s (Einordnung: docs/DEPLOYMENT.md)
 npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remote landesrecht-west
 ```
+
+Alle Optionen: `node scripts/import-recht-nrw.ts r2-sync --help` (bzw. `help <befehl>` für jeden Befehl).

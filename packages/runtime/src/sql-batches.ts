@@ -45,6 +45,76 @@ export interface SqlBatchPlan {
   errors: string[];
 }
 
+/* ------------------------------------------------------------------------------------------ */
+/* Einspielprotokoll (scripts/d1-apply-batches.ts): getrennt je Ziel, an die Plan-Hashes gebunden.  */
+
+export type ApplyTarget = 'remote' | 'local';
+export const APPLY_STATE_FILES: Readonly<Record<ApplyTarget, string>> = { remote: 'apply-state.json', local: 'apply-state.local.json' };
+
+export interface ApplyStateEntry {
+  name: string;
+  sha256: string;
+  appliedAt: string;
+}
+
+export interface ApplyState {
+  target: ApplyTarget;
+  applied: ApplyStateEntry[];
+}
+
+export function emptyApplyState(target: ApplyTarget): ApplyState {
+  return { target, applied: [] };
+}
+
+export function applyStateFileName(target: ApplyTarget): string {
+  return APPLY_STATE_FILES[target];
+}
+
+/** Datenbanknamen, gegen die Batches eingespielt werden dürfen: `landesrecht-<jur>` und deren Staging-Variante. */
+export function isKnownD1Database(database: string, names: readonly string[]): boolean {
+  return names.some((name) => database === name || database === `${name}-staging`);
+}
+
+export interface ApplyPlanInput {
+  plan: SqlBatchPlan;
+  target: ApplyTarget;
+  /** Gespeichertes Protokoll des Ziels (fehlt beim ersten Lauf). */
+  state: ApplyState | undefined;
+  /** SHA-256 der vorliegenden SQL-Dateien je Name. */
+  digests: ReadonlyMap<string, string>;
+  resume: boolean;
+}
+
+export interface ApplyPlanResult {
+  state: ApplyState;
+  pending: SqlBatchFileMeta[];
+  errors: string[];
+}
+
+/**
+ * Bestimmt die noch einzuspielenden Dateien eines Plans für ein Ziel. Ein Protokoll zählt nur für sein eigenes Ziel
+ * (ein lokal eingespielter Plan gilt remote nie als eingespielt) und nur, solange seine Hashes zum Plan passen.
+ */
+export function planApplyBatches(input: ApplyPlanInput): ApplyPlanResult {
+  const errors: string[] = [];
+  const state = input.state ?? emptyApplyState(input.target);
+  if (state.target !== input.target) errors.push(`${applyStateFileName(input.target)}: Protokoll gehört zum Ziel „${state.target}“, nicht „${input.target}“ – Datei umbenennen oder entfernen`);
+  for (const file of input.plan.files) {
+    const digest = input.digests.get(file.name);
+    if (digest === undefined) errors.push(`${file.name}: Datei fehlt – Plan neu erzeugen`);
+    else if (digest !== file.sha256) errors.push(`${file.name}: SHA-256 weicht vom Plan ab – Plan neu erzeugen`);
+  }
+  if (input.plan.errors.length > 0) errors.push(`Plan enthält Fehler: ${input.plan.errors.join('; ')}`);
+  for (const entry of state.applied) {
+    const file = input.plan.files.find((candidate) => candidate.name === entry.name);
+    if (!file || file.sha256 !== entry.sha256) errors.push(`${applyStateFileName(input.target)} passt nicht zum Plan (${entry.name}); Plan und Protokoll gehören nicht zusammen`);
+  }
+  const appliedNames = new Set(state.applied.map((entry) => entry.name));
+  const pending = input.plan.files.filter((file) => !appliedNames.has(file.name));
+  if (errors.length === 0 && pending.length > 0 && state.applied.length > 0 && !input.resume) errors.push('Es wurden bereits Dateien eingespielt – mit --resume fortsetzen.');
+  return { state, pending, errors };
+}
+
 const encoder = new TextEncoder();
 
 export function splitPlanIntoSqlFiles(plan: ProjectionPlan, options: { database: string; maxStatements?: number; maxBytes?: number; resumable?: boolean }): { plan: SqlBatchPlan; files: Array<{ name: string; sql: string }> } {

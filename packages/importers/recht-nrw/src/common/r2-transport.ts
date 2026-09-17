@@ -2,11 +2,17 @@
  * Transporte zum R2-Quellenarchiv `landesrecht-quellen`.
  *
  *  - `createMemoryR2Transport`: Fake für Tests und Offline-Simulationen (keine Netzverbindung)
+ *  - `createWranglerR2Transport` (Standard): `wrangler r2 object put/get --remote` über Wranglers eigene
+ *    Anmeldung (`npx wrangler login`); keine Schlüssel, keine eigene Token-Verarbeitung, ein Prozess je Aufruf
  *  - `createS3R2Transport`: S3-kompatible R2-API mit AWS-Signatur V4 (node:crypto, keine Abhängigkeit);
- *    Zugangsdaten nur aus der Umgebung (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`),
- *    nie aus dem Repository
- *  - `createWranglerR2Transport`: `wrangler r2 object put/get --remote` als Alternative ohne API-Schlüssel
+ *    Zugangsdaten nur aus der Umgebung (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`) – CI-Weg
+ *  - `createWranglerApiR2Transport` (optional, nur lokal, best effort): dieselben R2-Objekt-Endpunkte, die
+ *    `wrangler r2 object` nutzt, direkt über HTTP mit dem Token aus Wranglers Anmeldedatei (oder
+ *    `CLOUDFLARE_API_TOKEN`), ohne Prozessstart je Aufruf. Wrangler bietet dafür keine öffentliche API; das
+ *    Dateiformat ist Wrangler-intern und wird fail-closed gelesen (docs/DEPLOYMENT.md, „R2-Transporte“).
  *
+ * Alle Netzpfade: Timeout je Aufruf (Kopfzeilen und Körper), begrenzte Wiederholungen mit wachsendem Abstand,
+ * `Retry-After` (gedeckelt). Zugangsdaten stehen nie in Fehlermeldungen, Logs oder Diagnosedateien.
  * Der Transport kennt keine Fachlogik; Unveränderlichkeit und Rückleseprüfung stehen in `archive.ts`.
  */
 import { execFile } from 'node:child_process';
@@ -16,6 +22,8 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
+
+import { parseRetryAfter, readBodyWithSignal } from './fetcher.ts';
 
 export interface R2ObjectHead {
   size: number;
@@ -51,11 +59,23 @@ export class R2TransportError extends Error {
   readonly status: number | undefined;
 
   constructor(key: string, message: string, status?: number) {
-    super(`R2 ${key}: ${message}`);
+    super(`R2 ${key}: ${redactSecrets(message)}`);
     this.name = 'R2TransportError';
     this.key = key;
     this.status = status;
   }
+}
+
+/**
+ * Entfernt Token-Formen aus Texten, die aus Fehlern oder Antworten stammen könnten (Bearer-Kopfzeilen,
+ * Signaturen). Zweite Schranke; die Transporte fügen Zugangsdaten nie bewusst in Meldungen ein.
+ */
+export function redactSecrets(text: string): string {
+  return text
+    .replace(/Bearer\s+[A-Za-z0-9._~+/=-]{8,}/gu, 'Bearer [entfernt]')
+    .replace(/(oauth_token|api_token|refresh_token|X-Auth-Key|CLOUDFLARE_API_TOKEN|R2_SECRET_ACCESS_KEY)\s*[=:]\s*"?[A-Za-z0-9._~+/=-]{8,}"?/giu, '$1=[entfernt]')
+    .replace(/Credential=[^,\s]+/gu, 'Credential=[entfernt]')
+    .replace(/Signature=[0-9a-f]+/gu, 'Signature=[entfernt]');
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -104,6 +124,107 @@ export function createMemoryR2Transport(options: { bucket?: string; corruptReadb
       return [...objects.entries()].filter(([key]) => key.startsWith(prefix)).map(([key, object]) => ({ key, size: object.bytes.byteLength, md5: createHash('md5').update(object.bytes).digest('hex') }));
     },
   };
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* HTTP-Grundlagen der Netztransporte: Timeout, Wiederholung, Retry-After                       */
+
+/** Zeit je HTTP-Aufruf (Verbindung, Kopfzeilen und Körper zusammen); danach Abbruch und Wiederholung. */
+export const HTTP_TIMEOUT_MS = 15_000;
+export const HTTP_RETRY_ATTEMPTS = 6;
+export const HTTP_RETRY_DELAY_MS = 2_000;
+/** Längeres `Retry-After` wird nicht abgewartet, sondern auf diesen Wert gedeckelt. */
+export const HTTP_MAX_RETRY_AFTER_MS = 60_000;
+
+export interface BoundedResponse {
+  status: number;
+  ok: boolean;
+  headers: Headers;
+  bytes: Uint8Array;
+}
+
+export class HttpRequestError extends Error {
+  readonly kind: 'timeout' | 'network';
+
+  constructor(kind: 'timeout' | 'network', message: string) {
+    super(message);
+    this.name = 'HttpRequestError';
+    this.kind = kind;
+  }
+}
+
+/** Ein HTTP-Aufruf mit hartem Zeitlimit über Kopfzeilen und Körper; Netz- und Zeitfehler als `HttpRequestError`. */
+export async function fetchBounded(fetchImplementation: typeof fetch, url: string, init: RequestInit, timeoutMs: number): Promise<BoundedResponse> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchImplementation(url, { ...init, signal: controller.signal });
+    const bytes = await readBodyWithSignal(response, controller.signal);
+    return { status: response.status, ok: response.ok, headers: response.headers, bytes };
+  } catch (error) {
+    const name = (error as Error).name;
+    if (controller.signal.aborted || name === 'AbortError' || name === 'TimeoutError') throw new HttpRequestError('timeout', `keine vollständige Antwort innerhalb von ${timeoutMs} ms`);
+    throw new HttpRequestError('network', redactSecrets((error as Error).message));
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export interface RetryPolicy {
+  attempts?: number;
+  delayMs?: number;
+  maxRetryAfterMs?: number;
+  sleep?: (ms: number) => Promise<void>;
+  now?: () => Date;
+  /** Diagnose je Versuch (Status oder Fehlerart, Dauer) – ohne Kopfzeilen, ohne Inhalte. */
+  onAttempt?: (info: { attempt: number; status?: number; error?: string; durationMs: number }) => void;
+}
+
+const defaultSleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Wiederholt einen idempotenten Aufruf bei Zeit-/Netzfehlern, 429 und 5xx mit wachsendem Abstand (`Retry-After`
+ * hat Vorrang, gedeckelt). Andere Antworten werden unverändert zurückgegeben; nach der letzten Wiederholung
+ * ist ein Netzfehler ein `R2TransportError`.
+ */
+export async function requestWithRetries(key: string, label: string, attemptRequest: (attempt: number) => Promise<BoundedResponse>, policy: RetryPolicy = {}): Promise<BoundedResponse> {
+  const attempts = policy.attempts ?? HTTP_RETRY_ATTEMPTS;
+  const delayMs = policy.delayMs ?? HTTP_RETRY_DELAY_MS;
+  const maxRetryAfterMs = policy.maxRetryAfterMs ?? HTTP_MAX_RETRY_AFTER_MS;
+  const sleep = policy.sleep ?? defaultSleep;
+  const now = policy.now ?? (() => new Date());
+  for (let attempt = 1; ; attempt += 1) {
+    const startedAt = Date.now();
+    let response: BoundedResponse;
+    try {
+      response = await attemptRequest(attempt);
+    } catch (error) {
+      if (!(error instanceof HttpRequestError)) throw error;
+      policy.onAttempt?.({ attempt, error: error.kind, durationMs: Date.now() - startedAt });
+      if (attempt >= attempts) throw new R2TransportError(key, `${label}: ${error.message} (${attempt} Versuche)`);
+      await sleep(delayMs * attempt);
+      continue;
+    }
+    policy.onAttempt?.({ attempt, status: response.status, durationMs: Date.now() - startedAt });
+    if ((response.status === 429 || response.status >= 500) && attempt < attempts) {
+      const retryAfterMs = parseRetryAfter(response.headers.get('retry-after'), now()) ?? 0;
+      await sleep(Math.min(maxRetryAfterMs, Math.max(retryAfterMs, delayMs * attempt)));
+      continue;
+    }
+    return response;
+  }
+}
+
+/** Fehlertext einer Cloudflare-API-Antwort: nur Codes und Meldungen aus `errors[]`, nie der Rohkörper. */
+export function describeApiFailure(response: BoundedResponse): string {
+  let detail = '';
+  try {
+    const body = JSON.parse(new TextDecoder().decode(response.bytes)) as { errors?: Array<{ code?: number; message?: string }> };
+    detail = (body.errors ?? []).map((entry) => `${entry.code ?? '?'}: ${entry.message ?? ''}`.trim()).join('; ');
+  } catch {
+    detail = '';
+  }
+  return redactSecrets(`HTTP ${response.status}${detail ? ` (${detail.slice(0, 200)})` : ''}`);
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -156,22 +277,29 @@ export interface S3R2Options {
   endpoint?: string;
   fetchImplementation?: typeof fetch;
   now?: () => Date;
+  timeoutMs?: number;
+  retry?: RetryPolicy;
 }
 
 export function createS3R2Transport(options: S3R2Options): R2Transport {
   const endpoint = new URL(options.endpoint ?? `https://${options.accountId}.r2.cloudflarestorage.com`);
   const fetchImplementation = options.fetchImplementation ?? fetch;
   const now = options.now ?? (() => new Date());
+  const timeoutMs = options.timeoutMs ?? HTTP_TIMEOUT_MS;
+  const retry: RetryPolicy = { now, ...(options.retry ?? {}) };
 
-  async function request(method: 'HEAD' | 'GET' | 'PUT', key: string, body?: Uint8Array, extraHeaders: Record<string, string> = {}): Promise<Response> {
+  // Jede Wiederholung signiert neu (frisches x-amz-date); HEAD/GET/PUT desselben Schlüssels sind idempotent.
+  function request(method: 'HEAD' | 'GET' | 'PUT', key: string, body?: Uint8Array, extraHeaders: Record<string, string> = {}): Promise<BoundedResponse> {
     const path = `/${encodeS3PathSegment(options.bucket)}/${key.split('/').map(encodeS3PathSegment).join('/')}`;
-    const amzDate = now().toISOString().replace(/[-:]/gu, '').replace(/\.\d{3}Z$/u, 'Z');
     const payloadHash = sha256Hex(body ?? new Uint8Array());
-    const headers: Record<string, string> = { ...extraHeaders, 'x-amz-content-sha256': payloadHash, 'x-amz-date': amzDate };
-    const signed = signAwsV4({ method, host: endpoint.host, path, headers, payloadHash, accessKeyId: options.accessKeyId, secretAccessKey: options.secretAccessKey, region: 'auto', service: 's3', amzDate });
-    const init: RequestInit = { method, headers: { ...headers, authorization: signed.authorization } };
-    if (body) init.body = Buffer.from(body.buffer, body.byteOffset, body.byteLength) as unknown as BodyInit;
-    return fetchImplementation(new URL(path, endpoint).toString(), init);
+    return requestWithRetries(key, `S3 ${method}`, () => {
+      const amzDate = now().toISOString().replace(/[-:]/gu, '').replace(/\.\d{3}Z$/u, 'Z');
+      const headers: Record<string, string> = { ...extraHeaders, 'x-amz-content-sha256': payloadHash, 'x-amz-date': amzDate };
+      const signed = signAwsV4({ method, host: endpoint.host, path, headers, payloadHash, accessKeyId: options.accessKeyId, secretAccessKey: options.secretAccessKey, region: 'auto', service: 's3', amzDate });
+      const init: RequestInit = { method, headers: { ...headers, authorization: signed.authorization } };
+      if (body) init.body = Buffer.from(body.buffer, body.byteOffset, body.byteLength) as unknown as BodyInit;
+      return fetchBounded(fetchImplementation, new URL(path, endpoint).toString(), init, timeoutMs);
+    }, retry);
   }
 
   return {
@@ -198,7 +326,7 @@ export function createS3R2Transport(options: S3R2Options): R2Transport {
       const response = await request('GET', key);
       if (response.status === 404) return null;
       if (!response.ok) throw new R2TransportError(key, `GET HTTP ${response.status}`, response.status);
-      return new Uint8Array(await response.arrayBuffer());
+      return response.bytes;
     },
   };
 }
@@ -222,139 +350,247 @@ export function missingR2Environment(env: Record<string, string | undefined>): s
 }
 
 /* ------------------------------------------------------------------------------------------ */
+/* Wrangler-Anmeldung (nur für den optionalen Transport `wrangler-api`)                         */
 
-type ExecFile = (file: string, args: string[], options: { cwd?: string; env?: NodeJS.ProcessEnv; maxBuffer?: number }) => Promise<{ stdout: string; stderr: string }>;
-
-/** Wranglers eigene Anmeldedatei (OAuth); Reihenfolge wie bei Wrangler: XDG-Konfiguration, macOS-Preferences, ~/.wrangler. */
+/**
+ * Wranglers eigene Anmeldedatei `.wrangler/config/default.toml` (Wrangler-internes Format, Stand Wrangler 4:
+ * flache TOML-Datei mit `oauth_token`, `expiration_time`, `refresh_token`, `scopes`, optional `api_token`).
+ * Reihenfolge wie bei Wrangler (xdg-app-paths): `XDG_CONFIG_HOME`, sonst der Konfigurationsordner des Systems
+ * (macOS `~/Library/Preferences`, Windows `%APPDATA%`, sonst `~/.config`), dazu das ältere `~/.wrangler`.
+ * Alle Pfade leiten sich aus der Umgebung ab; nichts ist auf einen Benutzer festgelegt.
+ */
 export function wranglerConfigCandidates(env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform): string[] {
   const home = env.HOME ?? env.USERPROFILE ?? '';
-  const candidates: string[] = [];
-  if (env.WRANGLER_HOME) candidates.push(join(env.WRANGLER_HOME, 'config', 'default.toml'));
-  if (env.XDG_CONFIG_HOME) candidates.push(join(env.XDG_CONFIG_HOME, '.wrangler', 'config', 'default.toml'));
-  if (platform === 'darwin') candidates.push(join(home, 'Library', 'Preferences', '.wrangler', 'config', 'default.toml'));
-  candidates.push(join(home, '.config', '.wrangler', 'config', 'default.toml'), join(home, '.wrangler', 'config', 'default.toml'));
-  return candidates;
+  const configDir = env.XDG_CONFIG_HOME ? env.XDG_CONFIG_HOME : platform === 'darwin' ? join(home, 'Library', 'Preferences') : platform === 'win32' ? (env.APPDATA ?? join(home, 'AppData', 'Roaming')) : join(home, '.config');
+  return [...new Set([join(configDir, '.wrangler', 'config', 'default.toml'), join(home, '.wrangler', 'config', 'default.toml')])];
 }
 
-/** Liest Access-Token und Ablauf aus Wranglers Anmeldedatei (nur im Speicher; nichts wird ausgegeben oder kopiert). */
-export function parseWranglerOAuthConfig(toml: string): { oauthToken?: string; expirationTime?: string } {
-  const result: { oauthToken?: string; expirationTime?: string } = {};
-  for (const line of toml.split('\n')) {
-    const match = /^\s*(oauth_token|expiration_time)\s*=\s*"([^"]*)"/u.exec(line);
+export interface WranglerAuthConfig {
+  oauthToken?: string;
+  expirationTime?: string;
+  apiToken?: string;
+}
+
+export type WranglerAuthReason = 'not-found' | 'unreadable' | 'format' | 'missing-token' | 'expired' | 'rejected' | 'accounts';
+
+/** Anmeldeproblem des Transports `wrangler-api` – immer mit Handlungshinweis, nie mit Tokenwerten. */
+export class WranglerAuthError extends R2TransportError {
+  readonly reason: WranglerAuthReason;
+
+  constructor(reason: WranglerAuthReason, message: string, status?: number) {
+    super('', message, status);
+    this.name = 'WranglerAuthError';
+    this.reason = reason;
+  }
+}
+
+const TOKEN_SHAPE = /^[A-Za-z0-9._~+/=-]{16,}$/u;
+const AUTH_FIELDS = new Set(['oauth_token', 'api_token', 'expiration_time']);
+
+/**
+ * Liest Token und Ablauf aus dem Inhalt der Anmeldedatei – nur im Speicher. Fail-closed: Die drei bekannten
+ * Felder müssen einfache, in doppelte Anführungszeichen gesetzte Strings mit Token-Form sein; alles andere
+ * (Tabellen, mehrzeilige Werte, unerwartete Formen) ist ein Formatfehler statt eines geratenen Werts.
+ * Unbekannte Felder (`refresh_token`, `scopes`, …) werden weder gelesen noch zurückgegeben.
+ */
+export function parseWranglerAuthConfig(toml: string): WranglerAuthConfig {
+  const result: WranglerAuthConfig = {};
+  for (const rawLine of toml.split(/\r?\n/u)) {
+    const line = rawLine.trim();
+    if (line === '' || line.startsWith('#')) continue;
+    if (line.startsWith('[')) break; // Tabellen gehören nicht zum Anmeldeformat: Ende der Top-Level-Felder.
+    const match = /^([A-Za-z_]+)\s*=\s*(.*)$/u.exec(line);
     if (!match) continue;
-    if (match[1] === 'oauth_token') result.oauthToken = match[2]!;
-    else result.expirationTime = match[2]!;
+    const [, fieldName, rawValue] = match as unknown as [string, string, string];
+    if (!AUTH_FIELDS.has(fieldName)) continue;
+    const quoted = /^"([^"\\]*)"\s*(?:#.*)?$/u.exec(rawValue);
+    if (!quoted) throw new Error(`Feld ${fieldName} ist kein einfacher String`);
+    const value = quoted[1]!;
+    if (fieldName === 'expiration_time') {
+      result.expirationTime = value;
+      continue;
+    }
+    if (!TOKEN_SHAPE.test(value)) throw new Error(`Feld ${fieldName} hat keine Token-Form`);
+    if (fieldName === 'oauth_token') result.oauthToken = value;
+    else result.apiToken = value;
   }
   return result;
 }
 
+/** Bisheriger Name; liefert dieselben Felder. */
+export const parseWranglerOAuthConfig = parseWranglerAuthConfig;
+
+/** Liest die erste vorhandene Anmeldedatei; jede Abweichung ist ein `WranglerAuthError` mit Hinweis. */
+export async function readWranglerAuthFile(candidates: readonly string[] = wranglerConfigCandidates()): Promise<WranglerAuthConfig> {
+  for (const candidate of candidates) {
+    let text: string;
+    try {
+      text = await readFile(candidate, 'utf8');
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      throw new WranglerAuthError('unreadable', `Wrangler-Anmeldedatei nicht lesbar (${(error as NodeJS.ErrnoException).code ?? 'Fehler'}); Alternative: --r2-transport wrangler`);
+    }
+    if (text.trim() === '') throw new WranglerAuthError('missing-token', 'Wrangler-Anmeldedatei ist leer (nach wrangler logout?) – npx wrangler login');
+    try {
+      return parseWranglerAuthConfig(text);
+    } catch (error) {
+      throw new WranglerAuthError('format', `Wrangler-Anmeldedatei hat ein unerwartetes Format (${(error as Error).message}); Wrangler-Version geändert? Alternative: --r2-transport wrangler`);
+    }
+  }
+  throw new WranglerAuthError('not-found', 'Keine Wrangler-Anmeldung gefunden (.wrangler/config/default.toml unter XDG_CONFIG_HOME, im Konfigurationsordner des Systems oder ~/.wrangler) und CLOUDFLARE_API_TOKEN nicht gesetzt – npx wrangler login; in CI: --r2-transport s3 oder CLOUDFLARE_API_TOKEN');
+}
+
 export interface WranglerApiR2Options {
   bucket: string;
-  /** Konto; ohne Angabe wird das einzige Konto der Anmeldung verwendet (`GET /accounts`). */
+  /** Konto; ohne Angabe wird das einzige Konto der Anmeldung verwendet (`GET /accounts`), bei mehreren Abbruch. */
   accountId?: string;
   cwd?: string;
   fetchImplementation?: typeof fetch;
-  /** Liefert das aktuelle OAuth-Token; Standard: Wranglers Anmeldedatei. */
-  readToken?: () => Promise<{ oauthToken?: string; expirationTime?: string }>;
-  /** Erneuert das Token (Standard: `wrangler whoami`, das Wranglers eigene Erneuerung anstößt). */
+  /** Liefert die Anmeldung; Standard: Wranglers Anmeldedatei. Wirft `WranglerAuthError`, wenn keine vorliegt. */
+  readToken?: () => Promise<WranglerAuthConfig>;
+  /** Erneuert das OAuth-Token (Standard: `wrangler whoami`, das Wranglers eigene Erneuerung anstößt). */
   refreshToken?: () => Promise<void>;
   apiBase?: string;
+  /** Umgebung für `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`/`R2_ACCOUNT_ID`, `R2_API_DEBUG` (Standard: process.env). */
+  env?: Record<string, string | undefined>;
+  timeoutMs?: number;
+  retry?: RetryPolicy;
+  now?: () => number;
+  /** Diagnosezeilen (Methode, Schlüssel, Versuch, Status, Dauer); Standard: Datei aus `R2_API_DEBUG`. */
+  debugLog?: (line: string) => void;
 }
 
 const CLOUDFLARE_API = 'https://api.cloudflare.com/client/v4';
-const API_RETRY_ATTEMPTS = 6;
-const API_TIMEOUT_MS = 15_000;
+/** Token gelten als ablaufend, wenn weniger als diese Spanne verbleibt (Erneuerung vor dem ersten 401). */
+const TOKEN_MARGIN_MS = 60_000;
+
+interface Credential {
+  token: string;
+  kind: 'oauth' | 'api-token';
+  expiresAt: number;
+}
 
 /**
- * Direkter Aufruf der Cloudflare-R2-Objekt-API mit der bestehenden Wrangler-OAuth-Anmeldung (dieselben
- * Endpunkte, die `wrangler r2 object put/get --remote` nutzt), ohne Prozessstart je Aufruf. Prüfungen wie beim
- * Wrangler-Transport: Vorabprüfung über Rücklesen, Upload, Rücklesen mit Hashvergleich (uploadVerified).
+ * Direkter Aufruf der Cloudflare-R2-Objekt-API mit der bestehenden Wrangler-Anmeldung (dieselben Endpunkte,
+ * die `wrangler r2 object put/get --remote` nutzt), ohne Prozessstart je Aufruf.
+ *
+ * Anmeldung: `CLOUDFLARE_API_TOKEN` (wie bei Wrangler vorrangig; ohne Erneuerung) oder Wranglers Anmeldedatei.
+ * Abgelaufenes oder von der API abgewiesenes OAuth-Token: einmal neu lesen (ein anderer Wrangler-Prozess kann
+ * es rotiert haben), sonst genau eine Erneuerung über `wrangler whoami`; bleibt das Token ungültig, endet der
+ * Lauf mit klarer Meldung (`npx wrangler login`), ohne weitere Versuche oder Prozessstarts. Fehlende oder leere
+ * Anmeldedatei (CI, `wrangler logout`) → sofortige Meldung. Mehrere Konten ohne `CLOUDFLARE_ACCOUNT_ID` →
+ * Abbruch, keine stille Auswahl. Erwartete OAuth-Berechtigungen der Wrangler-Anmeldung: `account:read`
+ * (Kontoermittlung) und `workers:write` (R2-Objekt-API; Standardumfang von `wrangler login`).
  */
 export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2Transport {
   const fetchImplementation = options.fetchImplementation ?? fetch;
   const apiBase = options.apiBase ?? CLOUDFLARE_API;
-  const readToken = options.readToken ?? (async () => {
-    for (const candidate of wranglerConfigCandidates()) {
-      if (!existsSync(candidate)) continue;
-      return parseWranglerOAuthConfig(await readFile(candidate, 'utf8'));
-    }
-    throw new R2TransportError('', 'Keine Wrangler-Anmeldung gefunden (npx wrangler login)');
-  });
+  const env = options.env ?? process.env;
+  const now = options.now ?? (() => Date.now());
+  const timeoutMs = options.timeoutMs ?? HTTP_TIMEOUT_MS;
+  const readToken = options.readToken ?? (() => readWranglerAuthFile());
   const refreshToken = options.refreshToken ?? (async () => {
     const command = resolveWranglerCommand(options.cwd);
-    await (promisify(execFile) as unknown as ExecFile)(command.file, [...command.prefix, 'whoami'], { ...(options.cwd ? { cwd: options.cwd } : {}), env: { ...process.env, WRANGLER_SEND_METRICS: 'false' }, maxBuffer: 4 * 1024 * 1024 });
+    await (promisify(execFile) as unknown as ExecFile)(command.file, [...command.prefix, 'whoami'], { ...(options.cwd ? { cwd: options.cwd } : {}), env: { ...process.env, WRANGLER_SEND_METRICS: 'false' }, maxBuffer: 4 * 1024 * 1024, timeout: WRANGLER_CALL_TIMEOUT_MS });
   });
-  let cachedToken: { oauthToken: string; expiresAt: number } | undefined;
-  let accountId = options.accountId ?? process.env.CLOUDFLARE_ACCOUNT_ID ?? process.env.R2_ACCOUNT_ID;
-  // Diagnose je Aufruf (Methode, Status, Dauer) nach R2_API_DEBUG=<datei>; ohne Token, ohne Inhalte.
-  const debugLog = process.env.R2_API_DEBUG ? (line: string): void => { appendFileSync(process.env.R2_API_DEBUG!, `${new Date().toISOString()} ${line}\n`); } : undefined;
+  // Diagnose je Aufruf (Methode, Schlüssel, Versuch, Status, Dauer) – ohne Token, Kopfzeilen oder Inhalte.
+  const debugFile = env.R2_API_DEBUG;
+  const debugLog = options.debugLog ?? (debugFile ? (line: string): void => { appendFileSync(debugFile, `${new Date().toISOString()} ${line}\n`); } : undefined);
+  const envToken = env.CLOUDFLARE_API_TOKEN?.trim() || undefined;
+  let accountId = options.accountId ?? env.CLOUDFLARE_ACCOUNT_ID ?? env.R2_ACCOUNT_ID;
+  let accountLookup: Promise<string> | undefined;
+  let current: Credential | undefined;
+  let inflight: Promise<Credential> | undefined;
+  let terminalFailure: WranglerAuthError | undefined;
 
-  async function token(forceRefresh = false): Promise<string> {
-    if (!forceRefresh && cachedToken && cachedToken.expiresAt - Date.now() > 60_000) return cachedToken.oauthToken;
-    let config = await readToken();
-    const expiresAt = config.expirationTime ? Date.parse(config.expirationTime) : Number.POSITIVE_INFINITY;
-    if (forceRefresh || !config.oauthToken || expiresAt - Date.now() <= 60_000) {
-      await refreshToken();
-      config = await readToken();
+  const fromConfig = (config: WranglerAuthConfig): Credential | undefined => {
+    if (config.apiToken) return { token: config.apiToken, kind: 'api-token', expiresAt: Number.POSITIVE_INFINITY };
+    if (!config.oauthToken) return undefined;
+    const expiresAt = config.expirationTime === undefined ? Number.POSITIVE_INFINITY : Date.parse(config.expirationTime);
+    return { token: config.oauthToken, kind: 'oauth', expiresAt: Number.isNaN(expiresAt) ? 0 : expiresAt };
+  };
+  const usable = (credential: Credential, rejected: string | undefined): boolean => credential.expiresAt - now() > TOKEN_MARGIN_MS && credential.token !== rejected;
+
+  async function acquire(rejected: string | undefined): Promise<Credential> {
+    let candidate = fromConfig(await readToken());
+    if (candidate && usable(candidate, rejected)) return (current = candidate);
+    current = undefined;
+    if (!candidate) throw new WranglerAuthError('missing-token', 'Wrangler-Anmeldedatei ohne Token (nach wrangler logout?) – npx wrangler login');
+    if (candidate.kind === 'api-token') {
+      terminalFailure = new WranglerAuthError('rejected', 'Das API-Token der Wrangler-Anmeldedatei wird abgewiesen; Token und Berechtigungen (R2 Lesen/Schreiben) prüfen', 401);
+      throw terminalFailure;
     }
-    if (!config.oauthToken) throw new R2TransportError('', 'Wrangler-Anmeldung ohne OAuth-Token (npx wrangler login)');
-    cachedToken = { oauthToken: config.oauthToken, expiresAt: config.expirationTime ? Date.parse(config.expirationTime) : Number.POSITIVE_INFINITY };
-    return cachedToken.oauthToken;
+    debugLog?.(`Token ${rejected ? 'abgewiesen' : 'abgelaufen'}: Erneuerung über wrangler whoami`);
+    try {
+      await refreshToken();
+    } catch (error) {
+      terminalFailure = new WranglerAuthError('expired', `Token-Erneuerung über wrangler whoami fehlgeschlagen (${redactSecrets((error as Error).message).split('\n')[0]}); npx wrangler login und denselben Befehl erneut ausführen`);
+      throw terminalFailure;
+    }
+    candidate = fromConfig(await readToken());
+    if (!candidate || !usable(candidate, rejected)) {
+      terminalFailure = new WranglerAuthError('expired', 'Wrangler-Anmeldung abgelaufen oder abgewiesen und nicht erneuerbar – npx wrangler login; danach denselben Befehl erneut ausführen (verarbeitete Objekte stehen im Manifest, der Sync setzt fort)');
+      throw terminalFailure;
+    }
+    debugLog?.('Token erneuert');
+    return (current = candidate);
   }
 
-  async function apiFetch(path: string, init: RequestInit & { headers?: Record<string, string> }, key: string): Promise<Response> {
-    let refreshed = false;
-    for (let attempt = 1; ; attempt += 1) {
-      const bearer = await token();
-      let response: Response;
-      const startedAt = Date.now();
-      try {
-        // Hängende Verbindungen (sonst erst nach Nodes 300-s-Standardtimeout erkannt) werden nach API_TIMEOUT_MS
-        // abgebrochen und wiederholt; jede Wiederholung stellt dieselbe Anfrage erneut (idempotente PUT/GET).
-        response = await fetchImplementation(`${apiBase}${path}`, { ...init, signal: AbortSignal.timeout(API_TIMEOUT_MS), headers: { ...(init.headers ?? {}), authorization: `Bearer ${bearer}` } });
-      } catch (error) {
-        debugLog?.(`${init.method ?? 'GET'} ${key} Versuch ${attempt} FEHLER ${(error as Error).name} nach ${Date.now() - startedAt} ms`);
-        if (attempt >= API_RETRY_ATTEMPTS) throw new R2TransportError(key, `Netzfehler: ${(error as Error).message}`);
-        await new Promise((resolveDelay) => setTimeout(resolveDelay, WRANGLER_RETRY_DELAY_MS * attempt));
-        continue;
-      }
-      debugLog?.(`${init.method ?? 'GET'} ${key} Versuch ${attempt} HTTP ${response.status} nach ${Date.now() - startedAt} ms`);
-      if (response.status === 401 && !refreshed) {
-        // Token gerade abgelaufen oder von einem anderen Wrangler-Prozess erneuert: einmal neu lesen.
-        refreshed = true;
-        cachedToken = undefined;
-        await token(true);
-        continue;
-      }
-      if ((response.status === 429 || response.status >= 500) && attempt < API_RETRY_ATTEMPTS) {
-        const retryAfter = Number(response.headers.get('retry-after') ?? '0');
-        await new Promise((resolveDelay) => setTimeout(resolveDelay, Math.max(retryAfter * 1000, WRANGLER_RETRY_DELAY_MS * attempt)));
+  /** Gültige Anmeldung; `rejected` ist ein soeben mit 401 abgewiesenes Token, das nicht erneut verwendet wird. */
+  function credential(rejected?: string): Promise<Credential> {
+    if (envToken) {
+      if (rejected === envToken) return Promise.reject(new WranglerAuthError('rejected', 'CLOUDFLARE_API_TOKEN wird von der Cloudflare-API abgewiesen (401); Token und Berechtigungen (R2 Lesen/Schreiben) prüfen', 401));
+      return Promise.resolve({ token: envToken, kind: 'api-token', expiresAt: Number.POSITIVE_INFINITY });
+    }
+    if (current && usable(current, rejected)) return Promise.resolve(current);
+    if (terminalFailure) return Promise.reject(terminalFailure);
+    // Gleichzeitige Aufrufer teilen sich eine Erneuerung (kein Prozessstart je Worker).
+    inflight ??= acquire(rejected).finally(() => { inflight = undefined; });
+    return inflight;
+  }
+
+  async function apiFetch(path: string, init: RequestInit & { headers?: Record<string, string> }, key: string, label: string): Promise<BoundedResponse> {
+    let rejected: string | undefined;
+    for (let round = 1; ; round += 1) {
+      let used = '';
+      const response = await requestWithRetries(key, label, async () => {
+        const auth = await credential(rejected);
+        used = auth.token;
+        return fetchBounded(fetchImplementation, `${apiBase}${path}`, { ...init, headers: { ...(init.headers ?? {}), authorization: `Bearer ${auth.token}` } }, timeoutMs);
+      }, { now: () => new Date(now()), ...(options.retry ?? {}), onAttempt: (info) => debugLog?.(`${label} ${key} Versuch ${info.attempt} ${info.status !== undefined ? `HTTP ${info.status}` : `FEHLER ${info.error}`} ${info.durationMs} ms`) });
+      if (response.status === 401 && round === 1) {
+        // Einmalig: Token neu lesen (Rotation durch einen anderen Wrangler-Prozess) bzw. erneuern; ein zweites 401 ist endgültig.
+        rejected = used;
+        if (current?.token === used) current = undefined;
         continue;
       }
       return response;
     }
   }
 
-  async function resolveAccountId(): Promise<string> {
-    if (accountId) return accountId;
-    const response = await apiFetch('/accounts?per_page=50', { method: 'GET' }, '');
-    if (!response.ok) throw new R2TransportError('', `Konten nicht lesbar: HTTP ${response.status}`, response.status);
-    const body = (await response.json()) as { result?: Array<{ id: string; name: string }> };
-    const accounts = body.result ?? [];
-    if (accounts.length !== 1) throw new R2TransportError('', `Anmeldung sieht ${accounts.length} Konten; CLOUDFLARE_ACCOUNT_ID setzen`);
-    accountId = accounts[0]!.id;
-    return accountId;
+  function resolveAccountId(): Promise<string> {
+    if (accountId) return Promise.resolve(accountId);
+    accountLookup ??= (async () => {
+      const response = await apiFetch('/accounts?per_page=50', { method: 'GET' }, '', 'GET accounts');
+      if (!response.ok) throw new WranglerAuthError('accounts', `Konten nicht lesbar: ${describeApiFailure(response)} (Berechtigung account:read?)`, response.status);
+      const body = JSON.parse(new TextDecoder().decode(response.bytes)) as { result?: Array<{ id: string; name: string }> };
+      const accounts = body.result ?? [];
+      if (accounts.length === 0) throw new WranglerAuthError('accounts', 'Die Anmeldung sieht kein Cloudflare-Konto; CLOUDFLARE_ACCOUNT_ID setzen oder Berechtigung account:read prüfen');
+      if (accounts.length > 1) throw new WranglerAuthError('accounts', `Die Anmeldung sieht ${accounts.length} Cloudflare-Konten; CLOUDFLARE_ACCOUNT_ID muss das Zielkonto benennen (keine stille Auswahl)`);
+      accountId = accounts[0]!.id;
+      return accountId;
+    })();
+    return accountLookup;
   }
 
-  async function objectRequest(method: 'GET' | 'PUT', key: string, body?: Uint8Array, headers: Record<string, string> = {}): Promise<Response> {
+  async function objectRequest(method: 'GET' | 'PUT', key: string, body?: Uint8Array, headers: Record<string, string> = {}): Promise<BoundedResponse> {
     const path = `/accounts/${await resolveAccountId()}/r2/buckets/${encodeS3PathSegment(options.bucket)}/objects/${key.split('/').map(encodeS3PathSegment).join('/')}`;
-    const init: RequestInit & { headers?: Record<string, string>; duplex?: string } = { method, headers };
-    if (body) {
-      init.body = Buffer.from(body.buffer, body.byteOffset, body.byteLength) as unknown as BodyInit;
-      init.duplex = 'half';
-    }
-    return apiFetch(path, init, key);
+    const init: RequestInit & { headers?: Record<string, string> } = { method, headers };
+    if (body) init.body = Buffer.from(body.buffer, body.byteOffset, body.byteLength) as unknown as BodyInit;
+    return apiFetch(path, init, key, method);
   }
+
+  const failure = (key: string, label: string, response: BoundedResponse): R2TransportError => new R2TransportError(key, `${label} ${describeApiFailure(response)}${response.status === 401 ? ' – Anmeldung abgewiesen; npx wrangler login' : response.status === 403 ? ' – fehlende Berechtigung (R2 Lesen/Schreiben, Konto?)' : ''}`, response.status);
 
   return {
     name: 'wrangler-api',
@@ -365,13 +601,13 @@ export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2T
     },
     async put(key, bytes, putOptions) {
       const response = await objectRequest('PUT', key, bytes, { 'content-type': putOptions.contentType });
-      if (!response.ok) throw new R2TransportError(key, `PUT HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`, response.status);
+      if (!response.ok) throw failure(key, 'PUT', response);
     },
     async get(key) {
       const response = await objectRequest('GET', key);
       if (response.status === 404) return null;
-      if (!response.ok) throw new R2TransportError(key, `GET HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`, response.status);
-      return new Uint8Array(await response.arrayBuffer());
+      if (!response.ok) throw failure(key, 'GET', response);
+      return response.bytes;
     },
     async list(prefix) {
       // Bucket-Listing der R2-API: 1000 Objekte je Seite, Fortsetzung über `cursor`; Etag = MD5 bei einfachem Upload.
@@ -379,9 +615,9 @@ export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2T
       let cursor: string | undefined;
       for (let page = 1; ; page += 1) {
         const query = new URLSearchParams({ prefix, per_page: '1000', ...(cursor ? { cursor } : {}) });
-        const response = await apiFetch(`/accounts/${await resolveAccountId()}/r2/buckets/${encodeS3PathSegment(options.bucket)}/objects?${query}`, { method: 'GET' }, prefix);
-        if (!response.ok) throw new R2TransportError(prefix, `Listing HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`, response.status);
-        const body = (await response.json()) as { result?: Array<{ key: string; size: number; etag?: string }>; result_info?: { cursor?: string; is_truncated?: boolean } };
+        const response = await apiFetch(`/accounts/${await resolveAccountId()}/r2/buckets/${encodeS3PathSegment(options.bucket)}/objects?${query}`, { method: 'GET' }, prefix, 'LIST');
+        if (!response.ok) throw failure(prefix, 'Listing', response);
+        const body = JSON.parse(new TextDecoder().decode(response.bytes)) as { result?: Array<{ key: string; size: number; etag?: string }>; result_info?: { cursor?: string; is_truncated?: boolean } };
         for (const object of body.result ?? []) {
           const entry: R2ListedObject = { key: object.key, size: Number(object.size) };
           const etag = object.etag?.replace(/"/gu, '');
@@ -397,8 +633,15 @@ export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2T
   };
 }
 
+/* ------------------------------------------------------------------------------------------ */
+/* Standardtransport: Wrangler-Prozesse                                                          */
+
+type ExecFile = (file: string, args: string[], options: { cwd?: string; env?: NodeJS.ProcessEnv; maxBuffer?: number; timeout?: number }) => Promise<{ stdout: string; stderr: string }>;
+
 const WRANGLER_RETRY_ATTEMPTS = 4;
 const WRANGLER_RETRY_DELAY_MS = 2_000;
+/** Zeit je Wrangler-Prozess (Start, Anmeldung, Übertragung eines Objekts); danach wird er beendet und wiederholt. */
+export const WRANGLER_CALL_TIMEOUT_MS = 300_000;
 const WRANGLER_TRANSIENT = /401: Unauthorized|Authentication error|code: 10000|ECONNRESET|ETIMEDOUT|fetch failed|network|timeout|\b5\d\d\b|Internal Server Error|Service Unavailable|Too Many Requests|\b429\b/iu;
 
 /** Lokal installiertes Wrangler direkt starten (spart den npx-Auflösungsschritt je Aufruf); sonst `npx wrangler`. */
@@ -410,21 +653,30 @@ export function resolveWranglerCommand(cwd: string | undefined): { file: string;
   return { file: 'npx', prefix: ['wrangler'] };
 }
 
-/** Wrangler-Transport (`wrangler r2 object put/get --remote`); Metadaten werden über Rücklesen geprüft. */
-export function createWranglerR2Transport(options: { bucket: string; cwd?: string; exec?: ExecFile }): R2Transport {
+/**
+ * Wrangler-Transport (`wrangler r2 object put/get --remote`); Metadaten werden über Rücklesen geprüft. Wrangler
+ * verwaltet die Anmeldung selbst (Token-Erneuerung, `wrangler login`); dieser Code liest keine Zugangsdaten.
+ */
+export function createWranglerR2Transport(options: { bucket: string; cwd?: string; exec?: ExecFile; sleep?: (ms: number) => Promise<void>; timeoutMs?: number }): R2Transport {
   const exec: ExecFile = options.exec ?? (promisify(execFile) as unknown as ExecFile);
+  const sleep = options.sleep ?? defaultSleep;
+  const timeoutMs = options.timeoutMs ?? WRANGLER_CALL_TIMEOUT_MS;
   const command = resolveWranglerCommand(options.cwd);
   const env = { ...process.env, WRANGLER_SEND_METRICS: 'false' };
-  // Vorübergehende Fehler (Netz, 5xx, und ein 401 während Wrangler das OAuth-Token gerade erneuert – bei
-  // mehreren gleichzeitigen Prozessen möglich) werden mit Abstand wiederholt; die Prüfungen selbst ändern sich nicht.
+  // Vorübergehende Fehler (Netz, 5xx, ein hängender Prozess nach dem Zeitlimit und ein 401 während Wrangler das
+  // OAuth-Token gerade erneuert – bei mehreren gleichzeitigen Prozessen möglich) werden mit Abstand wiederholt;
+  // die Prüfungen selbst ändern sich nicht.
   const run: ExecFile = async (file, args, execOptions) => {
     for (let attempt = 1; ; attempt += 1) {
       try {
-        return await exec(file, args, execOptions);
+        return await exec(file, args, { ...execOptions, timeout: timeoutMs });
       } catch (error) {
+        const timedOut = (error as { killed?: boolean }).killed === true;
         const detail = `${(error as { stderr?: string }).stderr ?? ''}\n${(error as Error).message}`;
-        if (attempt >= WRANGLER_RETRY_ATTEMPTS || !WRANGLER_TRANSIENT.test(detail) || /does not exist|not found|NoSuchKey/iu.test(detail)) throw error;
-        await new Promise((resolveDelay) => setTimeout(resolveDelay, WRANGLER_RETRY_DELAY_MS * attempt));
+        const normalized = timedOut ? Object.assign(new Error(`Zeitüberschreitung: Wrangler-Prozess nach ${Math.round(timeoutMs / 1000)} s beendet`), { stderr: '' }) : error;
+        if (/does not exist|not found|NoSuchKey/iu.test(detail)) throw error;
+        if (attempt >= WRANGLER_RETRY_ATTEMPTS || !(timedOut || WRANGLER_TRANSIENT.test(detail))) throw normalized;
+        await sleep(WRANGLER_RETRY_DELAY_MS * attempt);
       }
     }
   };

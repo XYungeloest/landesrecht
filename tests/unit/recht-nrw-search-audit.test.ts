@@ -15,14 +15,15 @@ import { getStructuralReference } from '@landesrecht/legal-core/lib/body.ts';
 import { loadAllNorms, loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { ADMINISTRATIVE_REGULATION_TYPES, isSyntheticFixtureNorm, previousDay, type NormBodyBlock, type NormRecord, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
-import { isSyntheticFixture, runSearchAudit, SEARCH_AUDIT_CHECKS } from '@landesrecht/importer-recht-nrw/common/search-audit.ts';
+import { DEFAULT_AUDIT_SEED, DEFAULT_FAST_SAMPLE, isSyntheticFixture, mergeSlices, normAuditFeatures, partitionSlugs, runSearchAudit, runSearchAuditSlice, SEARCH_AUDIT_CHECKS, SEARCH_AUDIT_NORM_CHECKS, seededHash, selectAuditNorms, selectStratifiedSample, type NormAuditFeatures, type SearchAuditSlice } from '@landesrecht/importer-recht-nrw/common/search-audit.ts';
+import { computeGoldenMetrics, evaluateGoldenLocally, generateGoldenQueries, judgeOutcome, renderGoldenMarkdown, selectRemoteSample, type GoldenQuery } from '@landesrecht/importer-recht-nrw/common/search-golden.ts';
 import { createD1NormStore } from '@landesrecht/runtime/d1-store.ts';
 import { createFileNormStore } from '@landesrecht/runtime/file-store.ts';
 import { buildProjectionPlan } from '@landesrecht/runtime/projection.ts';
 import { createStoreRegistry, type StoreRegistry } from '@landesrecht/runtime/registry.ts';
 import { checkSearchIndexIntegrity, executePlan, openSqliteD1, type SqliteD1Database } from '@landesrecht/runtime/sqlite-d1.ts';
 import type { NormStore } from '@landesrecht/runtime/store.ts';
-import { buildSearchQueryPlan, createSearchState, extractStructuralIntents, type SearchState } from '@landesrecht/search/query.ts';
+import { buildSearchQueryPlan, createSearchState, extractStructuralIntents, SEARCH_MATCH_MODES, type SearchState } from '@landesrecht/search/query.ts';
 import type { SearchHit, SearchResultPage } from '@landesrecht/search/ranking.ts';
 import { buildSearchDocument } from '@landesrecht/search/units.ts';
 
@@ -608,5 +609,178 @@ describe('Suchintegrität: Verwaltungsvorschrift mit §-Angabe im Titel (Regress
   it('runSearchAudit meldet für diesen Bestand keine Fehler', async () => {
     const audit = await runSearchAudit(root);
     expect(audit.failures).toEqual([]);
+  });
+});
+
+/* ------------------------------------------------------------------------------------------ */
+/* Skalierung des Audits: deterministische Stichprobe, Auswahloptionen, Worker-Aufteilung, Profil, Golden Set. */
+
+describe('Suchintegrität: deterministische Auswahl und Profil', () => {
+  let root: string;
+  let records: NormRecord[];
+
+  beforeAll(async () => {
+    root = await createRoot('auswahl', PRODUCTION);
+    records = await loadJurisdictionNorms('west', root);
+  });
+
+  it('seededHash ist plattformstabil und seedabhängig', () => {
+    expect(seededHash('landesrecht', 'schulg-west')).toBe(1109466146);
+    expect(seededHash('anders', 'schulg-west')).toBe(2491492838);
+    expect(seededHash('landesrecht', 'loeg-west')).toBe(3122649613);
+  });
+
+  it('die geschichtete Stichprobe ist deterministisch, deckt alle Normtypen und Merkmale ab und hat keine Dubletten', () => {
+    const types: NormType[] = ['gesetz', 'verordnung', 'runderlass', 'verwaltungsvorschrift', 'richtlinie'];
+    const features: NormAuditFeatures[] = Array.from({ length: 120 }, (_, index) => ({
+      slug: `norm-${index}`, type: types[index % types.length]!, hasAbbr: index % 3 === 0, special: index % 7 === 0, hasParagraph: index % 2 === 0, hasArticle: index % 11 === 0,
+      hasNumber: index % 2 === 1, units: index % 13 === 0 ? 400 : index % 5 === 0 ? 2 : 30, titleLength: index % 17 === 0 ? 160 : 60,
+    }));
+    const first = selectStratifiedSample(features, 30, 'seed-a');
+    const second = selectStratifiedSample(features, 30, 'seed-a');
+    expect(first).toEqual(second);
+    expect(first).toHaveLength(30);
+    expect(new Set(first.map((entry) => entry.slug)).size).toBe(30);
+    for (const type of types) expect(first.some((entry) => entry.type === type), type).toBe(true);
+    for (const feature of ['hasAbbr', 'special', 'hasParagraph', 'hasArticle', 'hasNumber'] as const) expect(first.some((entry) => entry[feature]), feature).toBe(true);
+    expect(first.some((entry) => entry.units >= 400)).toBe(true);
+    expect(first.some((entry) => entry.units <= 3)).toBe(true);
+    expect(first.some((entry) => entry.titleLength >= 120)).toBe(true);
+    const other = selectStratifiedSample(features, 30, 'seed-b');
+    expect(other.map((entry) => entry.slug)).not.toEqual(first.map((entry) => entry.slug));
+    // Ein neuer Bestand verschiebt die Auswahl nur um die neuen Slugs: gemeinsame Normen bleiben weitgehend gleich.
+    const grown = selectStratifiedSample([...features, { slug: 'neu-1', type: 'gesetz', hasAbbr: true, special: false, hasParagraph: true, hasArticle: false, hasNumber: false, units: 30, titleLength: 60 }], 30, 'seed-a');
+    expect(grown.filter((entry) => first.some((chosen) => chosen.slug === entry.slug)).length).toBeGreaterThanOrEqual(25);
+    expect(selectStratifiedSample(features, 500, 'seed-a')).toHaveLength(120);
+  });
+
+  it('selectAuditNorms wendet only, category, sample und limit an und lässt Fixtures aus', () => {
+    const fixture = { ...records[0]!, meta: { ...records[0]!.meta, slug: 'testfixture-x-west' } } as NormRecord;
+    const all = selectAuditNorms([...records, fixture], {});
+    expect(all.map((norm) => norm.meta.slug)).toEqual(records.map((norm) => norm.meta.slug));
+    expect(selectAuditNorms(records, { only: ['schulg-west', 'unbekannt'] }).map((norm) => norm.meta.slug)).toEqual(['schulg-west']);
+    expect(selectAuditNorms(records, { category: 'verwaltungsvorschrift' }).map((norm) => norm.meta.slug).sort()).toEqual(['kampfmittelbeseitigung-west', 'vv-lhundg-west']);
+    expect(selectAuditNorms(records, { category: 'gesetz' }).map((norm) => norm.meta.slug)).toEqual(['schulg-west']);
+    expect(selectAuditNorms(records, { mode: 'fast' })).toHaveLength(records.length);
+    expect(selectAuditNorms(records, { sample: 2 })).toHaveLength(2);
+    expect(selectAuditNorms(records, { sample: 2, seed: 'x' })).toEqual(selectAuditNorms(records, { sample: 2, seed: 'x' }));
+    expect(selectAuditNorms(records, { limit: 1 })).toHaveLength(1);
+    expect(selectAuditNorms(records, { limit: 0 })).toHaveLength(0);
+    const features = records.map(normAuditFeatures);
+    expect(features.find((entry) => entry.slug === 'schulg-west')).toMatchObject({ type: 'gesetz', hasAbbr: true, hasParagraph: true, hasNumber: false, special: true });
+    expect(features.find((entry) => entry.slug === 'vv-lhundg-west')).toMatchObject({ hasNumber: true, hasParagraph: false });
+  });
+
+  it('partitionSlugs verteilt reihum, mergeSlices summiert', () => {
+    expect(partitionSlugs(['a', 'b', 'c', 'd', 'e'], 2)).toEqual([['a', 'c', 'e'], ['b', 'd']]);
+    expect(partitionSlugs(['a'], 3)).toEqual([['a']]);
+    const slice = (norms: number, failed: string[]): SearchAuditSlice => ({
+      norms, checks: Object.fromEntries(SEARCH_AUDIT_CHECKS.map((check) => [check, { passed: check === 'title' ? norms - failed.length : 0, failed: check === 'title' ? failed.length : 0, skipped: 0 }])) as SearchAuditSlice['checks'],
+      failures: failed.map((slug) => ({ slug, check: 'title', detail: 'x' })), auditMs: 10, queries: 5 * norms, searches: 2 * norms,
+      checkProfile: Object.fromEntries(SEARCH_AUDIT_NORM_CHECKS.map((check) => [check, { ms: 1, queries: 1 }])) as SearchAuditSlice['checkProfile'],
+      slowest: [{ slug: `s${norms}`, ms: norms, queries: 1 }], titleTop1: { unique: norms, top1: norms - 1 }, abbreviationTop1: { unique: 0, top1: 0 },
+    });
+    const merged = mergeSlices([slice(3, ['b']), slice(2, [])]);
+    expect(merged.norms).toBe(5);
+    expect(merged.checks.title).toEqual({ passed: 4, failed: 1, skipped: 0 });
+    expect(merged.failures).toEqual([{ slug: 'b', check: 'title', detail: 'x' }]);
+    expect(merged.queries).toBe(25);
+    expect(merged.searches).toBe(10);
+    expect(merged.slowest.map((entry) => entry.slug)).toEqual(['s3', 's2']);
+    expect(merged.titleTop1).toEqual({ unique: 5, top1: 3 });
+  });
+
+  it('runSearchAudit liefert in beiden Match-Modi und im Modus fast dasselbe Ergebnis samt Profil', async () => {
+    for (const matchMode of SEARCH_MATCH_MODES) {
+      const result = await runSearchAudit(root, { mode: 'fast', matchMode, workers: 4 });
+      expect(result.ok, matchMode).toBe(true);
+      expect(result.norms, matchMode).toBe(4);
+      expect(result.profile).toMatchObject({ mode: 'fast', matchMode, sample: DEFAULT_FAST_SAMPLE, seed: DEFAULT_AUDIT_SEED, workers: 1 });
+      expect(result.profile.searches, matchMode).toBeGreaterThan(0);
+      expect(result.profile.queries, matchMode).toBeGreaterThan(result.profile.searches);
+      expect(result.profile.queriesPerNorm, matchMode).toBeGreaterThan(0);
+      expect(Object.keys(result.profile.checks), matchMode).toEqual([...SEARCH_AUDIT_NORM_CHECKS]);
+      expect(result.profile.titleTop1, matchMode).toEqual({ unique: 4, top1: 4 });
+      expect(result.profile.abbreviationTop1, matchMode).toEqual({ unique: 3, top1: 3 });
+      expect(result.profile.slowest.length, matchMode).toBeGreaterThan(0);
+    }
+    const only = await runSearchAudit(root, { only: ['schulg-west'], matchMode: 'and-first' });
+    expect(only.norms).toBe(1);
+    expect(only.checks.structure).toEqual({ passed: 1, failed: 0, skipped: 0 });
+    const family = await runSearchAudit(root, { category: 'verwaltungsvorschrift' });
+    expect(family.norms).toBe(2);
+    expect(family.checks.number).toEqual({ passed: 2, failed: 0, skipped: 0 });
+  });
+
+  it('runSearchAuditSlice (Worker-Einstieg) prüft nur die zugewiesenen Slugs mit eigener Projektion', async () => {
+    const slice = await runSearchAuditSlice(root, 'west', ['dvo-kibiz-west', 'unbekannt'], 'and-first');
+    expect(slice.norms).toBe(1);
+    expect(slice.checks.title).toEqual({ passed: 1, failed: 0, skipped: 0 });
+    expect(slice.checks.abbreviation).toEqual({ passed: 1, failed: 0, skipped: 0 });
+    expect(slice.queries).toBeGreaterThan(0);
+  });
+});
+
+describe('Suchintegrität: Golden Query Set', () => {
+  let root: string;
+  let records: NormRecord[];
+
+  beforeAll(async () => {
+    root = await createRoot('golden', PRODUCTION);
+    records = await loadJurisdictionNorms('west', root);
+  });
+
+  it('erzeugt deterministisch Anfragen mit eindeutigen Kennungen aus dem Bestand', () => {
+    const set = generateGoldenQueries(records, 'test');
+    expect(set).toEqual(generateGoldenQueries(records, 'test'));
+    expect(new Set(set.queries.map((query) => query.id)).size).toBe(set.queries.length);
+    const categories = new Set(set.queries.map((query) => query.category));
+    for (const category of ['exact-title', 'abbreviation', 'abbreviation-lowercase', 'paragraph-address', 'lrmb-number', 'common-word', 'null-result', 'typo', 'verordnung-title', 'vwv-title', 'federal-reference'] as const) expect(categories.has(category), category).toBe(true);
+    expect(set.queries.find((query) => query.category === 'paragraph-address')).toMatchObject({ expectedAnchor: expect.stringMatching(/^paragraph-/u) });
+    expect(set.queries.find((query) => query.category === 'lrmb-number')).toMatchObject({ query: expect.stringMatching(/^Nr\. \d/u), expectedAnchor: expect.stringMatching(/^(?:abschnitt|unterabschnitt)-/u) });
+    expect(set.queries.filter((query) => query.category === 'null-result').every((query) => query.expectTotal === 0)).toBe(true);
+    expect(set.queries.filter((query) => query.category === 'typo').every((query) => query.niceToHave)).toBe(true);
+    for (const query of set.queries) for (const slug of [...query.expectedTop, ...query.acceptable]) expect(records.some((record) => record.meta.slug === slug), `${query.id} → ${slug}`).toBe(true);
+  });
+
+  it('bewertet Treffer (Rang, Top-1, Sprungziel, Nulltreffer) und berechnet Recall@10, MRR und Latenzen', () => {
+    const page = (slugs: string[], anchor?: string) => ({ total: slugs.length, hits: slugs.map((slug) => ({ slug, ...(anchor ? { unit: { anchor } } : {}) })) });
+    const exact: GoldenQuery = { id: 'a', category: 'exact-title', query: 'x', expectedTop: ['s1'], acceptable: [] };
+    expect(judgeOutcome(exact, page(['s1', 's2']), 3)).toMatchObject({ rank: 1, top1: true, recall: true, failed: false, ms: 3 });
+    expect(judgeOutcome(exact, page(['s2', 's1']), 3)).toMatchObject({ rank: 2, top1: false, failed: true });
+    expect(judgeOutcome({ ...exact, niceToHave: true }, page(['s2']), 3)).toMatchObject({ rank: null, recall: false, failed: false });
+    expect(judgeOutcome({ id: 'b', category: 'paragraph-address', query: '§ 1 x', expectedTop: ['s1'], acceptable: [], expectedAnchor: 'paragraph-1' }, page(['s1'], 'paragraph-2'), 1)).toMatchObject({ anchorOk: false, failed: true });
+    expect(judgeOutcome({ id: 'c', category: 'null-result', query: 'zzz', expectedTop: [], acceptable: [], expectTotal: 0 }, page([]), 1)).toMatchObject({ totalOk: true, recall: null, top1: null, failed: false });
+    expect(judgeOutcome({ id: 'd', category: 'common-word', query: 'West', expectedTop: [], acceptable: [], expectHits: true }, page([]), 1)).toMatchObject({ hitsOk: false, failed: true });
+    const metrics = computeGoldenMetrics([
+      judgeOutcome(exact, page(['s1']), 10), judgeOutcome(exact, page(['s2', 's1']), 20), judgeOutcome(exact, page(['s3']), 30),
+      judgeOutcome({ id: 'c', category: 'null-result', query: 'zzz', expectedTop: [], acceptable: [], expectTotal: 0 }, page([]), 1),
+    ]);
+    expect(metrics).toMatchObject({ queries: 4, recallAt10: 0.667, mrr: 0.5, top1: 0.333, nullOk: 1, failed: 2, latencyMs: { p50: 10, p95: 30, max: 30 } });
+  });
+
+  it('wertet gegen die lokale Projektion aus, wählt eine Remote-Stichprobe und rendert Markdown', async () => {
+    const set = generateGoldenQueries(records, 'test');
+    const evaluations = await evaluateGoldenLocally(root, set, [...SEARCH_MATCH_MODES]);
+    expect(evaluations.map((evaluation) => evaluation.matchMode)).toEqual([...SEARCH_MATCH_MODES]);
+    for (const evaluation of evaluations) {
+      expect(evaluation.outcomes).toHaveLength(set.queries.length);
+      // Häufige Wörter („West“, „Grundgesetz“) erwarten nur irgendeinen Treffer; im Miniaturbestand gibt es keinen.
+      expect(evaluation.outcomes.filter((outcome) => outcome.failed && outcome.hitsOk !== false), evaluation.matchMode).toEqual([]);
+      expect(evaluation.overall.top1, evaluation.matchMode).toBe(1);
+      expect(evaluation.overall.anchorOk, evaluation.matchMode).toBe(1);
+      expect(evaluation.overall.nullOk, evaluation.matchMode).toBe(1);
+    }
+    const sample = selectRemoteSample(set, 8);
+    expect(sample.length).toBeGreaterThanOrEqual(8);
+    expect(new Set(sample.map((query) => query.id)).size).toBe(sample.length);
+    expect(new Set(sample.map((query) => query.category)).size).toBeGreaterThanOrEqual(8);
+    expect(selectRemoteSample(set, 8)).toEqual(sample);
+    const markdown = renderGoldenMarkdown(set, evaluations);
+    expect(markdown).toContain('| Modus | Recall@10 | MRR | Top-1 |');
+    expect(markdown).toContain('| or-prefix |');
+    expect(markdown).toContain('| and-first |');
+    expect(markdown).toContain('## Verletzte Erwartungen');
+    expect(markdown).toContain('## Unterschiede zwischen den Modi');
   });
 });

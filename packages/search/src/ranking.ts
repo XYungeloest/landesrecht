@@ -7,7 +7,7 @@
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { expandNormTypeFilter, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import type { VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
-import { buildSearchVariants, extractStructuralIntents, normalizeSearchText, type QueryToken, type SearchQueryPlan, type SearchSort, type SearchState, type StructuralIntent } from './query.ts';
+import { buildSearchVariants, extractStructuralIntents, normalizeSearchText, rawIdentityKey, type QueryToken, type SearchQueryPlan, type SearchSort, type SearchState, type StructuralIntent } from './query.ts';
 import { isSyntheticUnit, type SearchDocument, type SearchUnit } from './units.ts';
 
 export type MatchKind = 'identity' | 'title' | 'reference' | 'unit' | 'body' | 'browse';
@@ -127,10 +127,16 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
   let rank: number[];
   if (identityMatch) {
     matchKind = 'identity';
-    rank = [0, document.abbr && plan.identityVariants.includes(normalizeSearchText(document.abbr)) ? 0 : 1];
+    // Exakte Schreibung (Umlaute erhalten) vor normalisierter Gleichheit („LÖG West“ vor „LOG West“), Abkürzung vor Titel.
+    const exact = identityValues.some((value) => rawIdentityKey(value) === plan.identityRaw);
+    rank = [0, exact ? 0 : 1, document.abbr && plan.identityVariants.includes(normalizeSearchText(document.abbr)) ? 0 : 1];
   } else if (referenceUnit && (titleMatch || !plan.freeText)) {
     matchKind = 'reference';
-    rank = [1, titleMatch ? 0 : 1];
+    // Bezeichnung der Anfrage ohne Adresse („§ 1 LÖG West“ → „LÖG West“): exakte Schreibung vor normalisierter
+    // Gleichheit vor bloßem Titeltreffer, damit „LÖG West“ vor „LOG West“ steht.
+    const subjectExact = plan.subjectRaw !== '' && identityValues.some((value) => rawIdentityKey(value) === plan.subjectRaw);
+    const subjectMatch = subjectExact || identityValues.some((value) => buildSearchVariants(value).some((variant) => plan.subjectVariants.includes(variant)));
+    rank = [1, titleMatch ? 0 : 1, subjectExact ? 0 : subjectMatch ? 1 : 2];
   } else if (titleMatch) {
     matchKind = 'title';
     rank = [2];

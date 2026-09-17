@@ -1,6 +1,8 @@
 # Deployment
 
-Noch nicht deployt. Dieses Dokument beschreibt die vorbereitete Struktur.
+Stand: Der Worker `landesrecht` läuft unter workers.dev (West: D1 `landesrecht-west` befüllt, R2
+`landesrecht-quellen` privat mit den Rohquellen). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
+manuelle, einzeln freigegebene Schritte; Wrangler-Anmeldung nur per OAuth (`npx wrangler login`).
 
 ## GitLab-CI (`.gitlab-ci.yml`)
 
@@ -83,8 +85,25 @@ npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remo
 Deployment: `npm run deploy` (`wrangler deploy --config dist/server/wrangler.json --env ""`),
 Staging: `wrangler deploy --config apps/web/dist/server/wrangler.json --env staging`.
 
-Der Worker liest nur D1; fehlen alle Bindings, wirft `getStoreRegistry()` einen Fehler statt auf
-Dateien zurückzufallen. R2 wird von Normseiten nie gelesen.
+Der Worker liest nur D1; R2 wird von Normseiten nie gelesen. Nach jeder Änderung unter `apps/web/` ist ein
+Redeploy nötig (`npm run build && npm run deploy`).
+
+### Healthcheck und Fehlermodus
+
+- `GET /health` (nicht cachebar): `{ status: ok|error, worker: ok, storage: d1|file, d1: { LANDESRECHT_WEST: ok|missing|error|timeout, … }, checkedAt }`
+  – je D1-Binding ein `SELECT 1` mit 3-s-Frist; HTTP 200 bei `ok`, sonst 503. Kein R2-Zugriff, keine Bestands-
+  zahlen, keine Umgebungswerte (`apps/web/src/lib/runtime/health.ts`, Test `tests/unit/web-runtime-health.test.ts`).
+  Für Monitoring: 200 + `status: ok` erwarten.
+- Konfigurationsfehler: Fehlt im Worker ein D1-Binding (oder ist es keine D1-Datenbank), wirft `getStoreRegistry()`
+  einen `RuntimeConfigurationError` (fail-closed, keine Teilkonfiguration, kein Rückfall auf Dateien). Die
+  Middleware `apps/web/src/middleware.ts` beantwortet ihn mit HTTP 500 `text/plain`, `cache-control: no-store` und
+  interner Meldung (Binding-Namen, Hinweis auf `wrangler.jsonc`/`--env`) und schreibt eine Zeile ins Worker-Log –
+  nie eine stille leere Website (`apps/web/src/lib/runtime/configuration.ts`, Test
+  `tests/unit/web-runtime-configuration.test.ts`).
+- Bundle: `apps/web/dist/server` ≈ 0,9 MB (Astro-Runtime, Seiten, Runtime-Pakete); Inhalte kommen ausschließlich aus
+  D1, Rohquellen und `content/` sind nicht im Bundle (der Dateiloader `node:fs` wird nur außerhalb des Workers
+  dynamisch geladen). Nach dem Build prüfen: `du -sh apps/web/dist/server` und `grep -rl "recht.nrw.de/lrgv"
+  apps/web/dist/server` (leer).
 
 ## Lokaler Worker
 
@@ -92,20 +111,62 @@ Dateien zurückzufallen. R2 wird von Normseiten nie gelesen.
 `wrangler d1 execute --local` in die Miniflare-D1 unter `apps/web/.wrangler/state` ein; `astro dev`
 und `wrangler dev` lesen daraus. Ein Remote-Zugriff findet dabei nicht statt.
 
+## R2-Transporte für den Upload der Rohquellen
+
+`npm run import:recht-nrw:r2-sync -- --write --r2-transport <transport> [--concurrency n] [--verify readback|etag]`
+(wiederholbar; vorhandene Objekte mit gleichem Inhalt zählen als `already-present`, anderer Inhalt ist ein harter
+Fehler; `--help` zeigt alle Optionen). Entscheidung: **`wrangler` ist der Standardtransport**, `wrangler-api` ist
+optional, lokal und best effort, `s3` der CI-Weg.
+
+| Transport | Anmeldung | Einsatz | Grenzen |
+| --- | --- | --- | --- |
+| `wrangler` (Standard) | Wranglers eigene OAuth-Anmeldung (`npx wrangler login`); der Importer liest keine Tokens, Wrangler erneuert selbst | lokal, nachvollziehbar, dieselbe Anmeldung wie `wrangler deploy` | ein Prozess je Aufruf (≈6 Aufrufe je Objekt), höchstens 8 Einträge gleichzeitig; Zeitlimit 300 s je Prozess, dann Wiederholung |
+| `s3` | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` (R2-API-Token mit Objekt-Lesen/Schreiben) | CI und nichtinteraktive Läufe | Schlüssel müssen angelegt und rotiert werden (`.env.example`) |
+| `wrangler-api` | Token aus Wranglers Anmeldedatei oder `CLOUDFLARE_API_TOKEN` (vorrangig, wie bei Wrangler) | lokal, wenn viele kleine Objekte schnell übertragen werden sollen (`--concurrency 32 --verify etag`, ≈2 Objekte/s im API-Ratenlimit) | siehe Einordnung unten |
+
+Prüfregime (`archive.ts`): `readback` = Vorabprüfung, Upload, Byte-Rücklesung mit SHA-256 je Objekt und Umschlag
+(6 Aufrufe je Objekt, ≈0,6 Objekte/s im API-Ratenlimit); `etag` = Bucket-Listing je 1000 Objekte für Vorab- und
+Nachprüfung über Größe und Etag (von R2 berechneter MD5), dazu 2 % zufällige Byte-Rücklesungen; Manifest je Charge
+erst nach der Nachprüfung (braucht ein Listing: `s3` oder `wrangler-api`).
+
+Alle Netzpfade (`fetcher.ts` für recht.nrw.de, `s3`, `wrangler-api`) haben ein hartes Zeitlimit je Aufruf über
+Kopfzeilen **und** Körper (Fetcher 20 s, R2-HTTP 15 s), begrenzte Wiederholungen mit wachsendem Abstand und
+`Retry-After` (gedeckelt: Fetcher bricht bei > 120 s kontrolliert ab, R2-Transporte warten höchstens 60 s);
+Wrangler-Prozesse werden nach 300 s beendet und wiederholt. Ein Lauf hängt nie unbegrenzt; nach einem Abbruch
+setzt `r2-sync` bzw. `bulk --resume` am Manifest-/Enumerationsstand fort.
+
+### Einordnung `wrangler-api` (kritisch)
+
+- **Keine öffentliche API.** Das Paket `wrangler` (4.x) exportiert keine Funktion für die OAuth-Anmeldung
+  (Exporte: `getPlatformProxy`, `unstable_dev`, `unstable_readConfig`, `startRemoteProxySession`, …). Der Weg über
+  `getPlatformProxy` mit experimentellen Remote-Bindings wäre ein halböffentlicher Ersatz, ist aber als
+  `experimental` markiert und startet einen Proxy-Worker; er wird nicht verwendet. `wrangler-api` liest deshalb
+  Wranglers **interne** Anmeldedatei `.wrangler/config/default.toml` (flache TOML-Datei mit `oauth_token`,
+  `expiration_time`, `refresh_token`, `scopes`, optional `api_token`). Das Format kann sich mit einer
+  Wrangler-Version ändern; dann endet der Transport mit „unerwartetes Format“ und der Hinweis lautet
+  `--r2-transport wrangler`. Er ist deshalb ein lokaler Spezialpfad, kein Standard.
+- **Wo gelesen wird:** `XDG_CONFIG_HOME`, sonst der Konfigurationsordner des Systems (macOS
+  `~/Library/Preferences`, Windows `%APPDATA%`, sonst `~/.config`), dazu `~/.wrangler` – alles aus der Umgebung
+  abgeleitet, nichts benutzerspezifisch fest. `CLOUDFLARE_API_TOKEN` hat Vorrang (dann keine Datei).
+- **Fail-closed:** Nur die drei bekannten Felder werden gelesen, ausschließlich als einfache Strings mit Token-Form;
+  Tabellen, mehrzeilige Werte oder andere Formen sind Formatfehler. `refresh_token` wird nie gelesen.
+- **Tokenwerte** stehen nie in Logs, Fehlermeldungen (`R2TransportError` nutzt `redactSecrets` als zweite
+  Schranke) oder der Diagnosedatei `R2_API_DEBUG=<datei>` (nur Methode, Schlüssel, Versuch, Status, Dauer).
+- **Ablauf/Rotation:** Läuft das Token in < 60 s ab oder antwortet die API mit 401, wird die Datei einmal neu
+  gelesen (ein anderer Wrangler-Prozess kann rotiert haben); sonst genau eine Erneuerung über `wrangler whoami`
+  (gleichzeitige Worker teilen sie). Bleibt das Token ungültig, endet der Lauf mit `npx wrangler login`-Hinweis;
+  Folgeaufrufe scheitern sofort (keine Endlosschleife, kein weiterer Prozessstart).
+- **`wrangler logout` / CI:** fehlende oder leere Datei → sofortige Meldung mit Alternativen (`wrangler login`,
+  `CLOUDFLARE_API_TOKEN`, `--r2-transport s3`).
+- **Mehrere Konten:** ohne `CLOUDFLARE_ACCOUNT_ID` (oder `R2_ACCOUNT_ID`) bricht der Transport bei ≠ 1 Konto ab –
+  keine stille Auswahl.
+- **Erwartete Berechtigungen** der Wrangler-Anmeldung: `account:read` (Kontoermittlung) und `workers:write`
+  (R2-Objekt-API `/accounts/{id}/r2/buckets/{bucket}/objects`); beides im Standardumfang von `wrangler login`.
+  Für `CLOUDFLARE_API_TOKEN`: Workers R2 Storage – Bearbeiten.
+- **Tests** (`tests/unit/recht-nrw-r2-wrangler-api.test.ts`, `…-http.test.ts`) decken alle Fälle mit Fake-Fetch
+  und Fake-Dateien ab; keine echten Tokens.
+
 ## Offen
 
 - Playwright-Smokes gegen den lokalen Worker (Muster: OstRecht `serve-law-worker`).
-- R2-Upload der gestagten RECHT.NRW-Rohquellen über die bestehende Wrangler-Anmeldung (`npx wrangler login`),
-  ohne zusätzliche API-Tokens oder S3-Schlüssel:
-  `npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag`
-  (wiederholbar; bereits vorhandene Objekte mit gleichem Inhalt zählen als `already-present`, anderer Inhalt ist
-  ein harter Fehler). `wrangler-api` liest das OAuth-Token aus Wranglers eigener Anmeldedatei (nur im Speicher;
-  Erneuerung über `wrangler whoami`) und ruft dieselben R2-Endpunkte direkt auf, die `wrangler r2 object` nutzt.
-  Das Cloudflare-API-Ratenlimit (≈4 Aufrufe/s im Mittel, 429 bei Bursts) begrenzt den Durchsatz, deshalb zwei
-  Prüfregime: `--verify readback` (Standard: Vorabprüfung, Upload, Byte-Rücklesung mit SHA-256 je Objekt und
-  Umschlag = 6 Aufrufe je Objekt, ≈0,6 Objekte/s) und `--verify etag` (Bucket-Listing je 1000 Objekte für
-  Vorab- und Nachprüfung über Größe und Etag = von R2 berechneter MD5 der gespeicherten Bytes, dazu 2 % zufällige
-  Byte-Rücklesungen mit SHA-256 = 2 Aufrufe je Objekt, ≈2 Objekte/s; Manifest wird je Charge erst nach der
-  Nachprüfung geschrieben). `--r2-transport wrangler` (Wrangler-Prozesse, höchstens 8 gleichzeitig) bleibt als
-  Alternative; der S3-Weg (`.env.example`) bleibt für CI dokumentiert.
 - Domain/Routes in `wrangler.jsonc` nach Festlegung der öffentlichen Site-URL.

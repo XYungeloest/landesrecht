@@ -528,11 +528,10 @@ describe('R2-Zugang: AWS-Signatur V4 und Zugangsdaten aus der Umgebung', () => {
     const responses = [new Response(null, { status: 404 }), new Response(null, { status: 200 }), new Response('Rohquelle', { status: 200 }), new Response('Fehler', { status: 500 })];
     const fetchStub = (async (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
       requests.push({ url: String(input), method: init?.method ?? 'GET', headers: { ...(init?.headers as Record<string, string>) } });
-      const next = responses.shift();
-      if (!next) throw new Error('unerwartete Anfrage');
-      return next;
+      // Nach der Liste weiterhin 500: der Transport wiederholt 5xx begrenzt und meldet danach den Status.
+      return responses.shift() ?? new Response('Fehler', { status: 500 });
     }) as typeof fetch;
-    const transport = createS3R2Transport({ accountId: 'account123', accessKeyId: 'AKIDTEST', secretAccessKey: 'geheimer-schluessel', bucket: R2_SOURCES_BUCKET, fetchImplementation: fetchStub, now: () => new Date(RETRIEVED_AT) });
+    const transport = createS3R2Transport({ accountId: 'account123', accessKeyId: 'AKIDTEST', secretAccessKey: 'geheimer-schluessel', bucket: R2_SOURCES_BUCKET, fetchImplementation: fetchStub, now: () => new Date(RETRIEVED_AT), retry: { sleep: async () => undefined } });
 
     expect(await transport.head(LHUNDG_KEY)).toBeNull();
     expect(requests[0]).toMatchObject({ url: `https://account123.r2.cloudflarestorage.com/landesrecht-quellen/${LHUNDG_KEY}`, method: 'HEAD' });

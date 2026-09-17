@@ -38,35 +38,6 @@
       }
     },
     {
-      "id": "body[0].text@10:constitutional-organ-state",
-      "path": "body[0].text",
-      "start": 10,
-      "end": 65,
-      "term": "Verfassungsgerichtshof für das Land Nordrhein-Westfalen",
-      "context": "Fn 1: Der Verfassungsgerichtshof für das Land Nordrhein-Westfalen hat durch Entscheidung vom 18. Dezember 1970 - VGH 11/70 - …",
-      "category": "institution",
-      "decision": "safe-auto-transform",
-      "detector": "constitutional-organ-state",
-      "reason": "Verfassungsorgan des Landes; nur die Landesbezeichnung wird nach den Regeln für Landesnamen übergeleitet.",
-      "mapping": {
-        "status": "review"
-      }
-    },
-    {
-      "id": "body[0].text@41:rule:jurisdiction-name",
-      "path": "body[0].text",
-      "start": 41,
-      "end": 65,
-      "term": "Land Nordrhein-Westfalen",
-      "context": "Fn 1: Der Verfassungsgerichtshof für das Land Nordrhein-Westfalen hat durch Entscheidung vom 18. Dezember 1970 - VGH 11/70 - …",
-      "category": "jurisdiction-name",
-      "decision": "safe-auto-transform",
-      "detector": "rule:jurisdiction-name",
-      "reason": "Landesbezeichnung wird nach Regel jurisdiction-name übergeleitet („Land Nordrhein-Westfalen“ → „Land Westdeutschland“).",
-      "transformRule": "jurisdiction-name",
-      "replacement": "Land Westdeutschland"
-    },
-    {
       "id": "body[2].children[3].children[0].text@18:geography-region",
       "path": "body[2].children[3].children[0].text",
       "start": 18,
@@ -1328,26 +1299,20 @@
     "geography": {
       "manual-review": 38
     },
-    "institution": {
-      "safe-auto-transform": 2
-    },
-    "jurisdiction-name": {
-      "safe-auto-transform": 6
-    },
     "municipality": {
       "manual-review": 29
     },
     "ministry": {
       "manual-review": 3
+    },
+    "jurisdiction-name": {
+      "safe-auto-transform": 5
+    },
+    "institution": {
+      "safe-auto-transform": 1
     }
   },
   "changes": [
-    {
-      "path": "body[0].text",
-      "rule": "jurisdiction-name",
-      "from": "Land Nordrhein-Westfalen",
-      "to": "Land Westdeutschland"
-    },
     {
       "path": "body[3].children[1].children[2].children[1].text",
       "rule": "jurisdiction-name-genitive",
@@ -2013,7 +1978,7 @@
   ],
   "postTransformAudit": {
     "ok": true,
-    "checkedFields": 375,
+    "checkedFields": 374,
     "residuals": [],
     "unappliedTransforms": [],
     "unrecordedChanges": []
@@ -2061,7 +2026,7 @@
         {
           "name": "textLength",
           "expected": 33575,
-          "actual": 33930,
+          "actual": 33699,
           "ok": true
         },
         {
@@ -2102,8 +2067,8 @@
         },
         {
           "name": "footnotes",
-          "expected": 4,
-          "actual": 4,
+          "expected": 5,
+          "actual": 5,
           "ok": true
         },
         {
@@ -2114,8 +2079,8 @@
         },
         {
           "name": "textLength",
-          "expected": 33930,
-          "actual": 33906,
+          "expected": 33699,
+          "actual": 33679,
           "ok": true
         },
         {
@@ -2162,5 +2127,5 @@
     "treatyTextLocation": "unknown",
     "evidence": []
   },
-  "generatedAt": "2026-09-16T04:26:40.683Z"
+  "generatedAt": "2026-09-16T22:27:56.953Z"
 }

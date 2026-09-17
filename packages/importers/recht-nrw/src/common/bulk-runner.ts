@@ -301,6 +301,10 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
     return false;
   });
   const queue = options.limit !== undefined ? selected.slice(0, options.limit) : selected;
+  // Auditierbare Zeilen: Kopf mit Lauf-ID, je Stammnorm Bereich, Schlüssel (Term-ID), Phase, Ergebnis und Dauer.
+  const mode = options.write ? 'write' : 'dry-run';
+  log(`Lauf ${runId} · ${options.area} · ${mode} · ausgewählt ${queue.length} von ${selected.length} (Enumeration ${enumeration.items.length})`);
+  const itemTag = (index: number, item: EnumerationItem): string => `[${index}/${queue.length}] ${options.area} ${item.key}`;
 
   const outcomes: RunSummary['outcomes'] = { imported: 0, importedWithWarnings: 0, dryRun: 0, review: 0, failed: 0, excluded: 0, notAtBaseline: 0, reconstructed: 0, merged: 0, split: 0 };
   const failures: RunSummary['failures'] = [];
@@ -337,13 +341,15 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
       touch(item);
       outcomes.merged += 1;
       await checkpoint();
+      log(`${itemTag(processed + 1, item)} zusammengeführt → ${item.sourceIdentity} (in diesem Lauf bereits verarbeitet)`);
       continue;
     }
     const previousStatus = item.status;
     item.status = 'processing';
     touch(item);
     await checkpoint();
-    log(`[${processed + 1}/${queue.length}] ${item.key} ${item.title.slice(0, 80)}`);
+    const itemStartedAt = clock();
+    log(`${itemTag(processed + 1, item)} start ${item.title.slice(0, 80)}`);
     const identity = item.sourceIdentity;
     const context: ProcessorContext = {
       area: options.area,
@@ -371,6 +377,7 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
         else if (error instanceof RechtNrwFetchError && error.kind === 'interrupted') runStatus = 'interrupted';
         else runStatus = 'aborted-systemic';
         stopReason = (error as Error).message;
+        log(`${itemTag(processed + 1, item)} abbruch ${runStatus} (${item.lastError.code}) · ${Math.max(0, clock() - itemStartedAt)} ms · Eintrag bleibt ${item.status}`);
         break;
       }
       // Abruffehler behalten ihre Art (z. B. fetch-forbidden), damit gehäufte gleiche Ursachen als systemisch erkannt werden.
@@ -402,14 +409,28 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
       delete item.lastError;
     }
 
-    // Zusammenführung (Slugänderungen) und Abtrennung fremder Adressen über die Fassungsliste.
+    // Zusammenführung (Slugänderungen) und Abtrennung fremder Adressen über die Fassungsliste. Ein anderer Eintrag
+    // derselben Quellidentität wird immer zusammengeführt – auch ohne gemeinsame Adresse in der Fassungsliste dieser
+    // Einstiegsseite (Fassungslisten verschiedener Einstiegsseiten derselben Stammnorm sind nicht deckungsgleich);
+    // sonst blieben zwei aktive Einträge derselben Stammnorm zurück.
     if (outcome.sourceIdentity && outcome.versionUrls?.length) {
       const versionUrls = new Set(outcome.versionUrls);
       for (const other of enumeration.items) {
         if (other === item || other.mergedInto || other.status === 'processing') continue;
-        if (!other.urls.some((url) => versionUrls.has(url))) continue;
-        if (other.sourceIdentity && other.sourceIdentity !== outcome.sourceIdentity) continue;
-        if (other.status === 'pending' || other.status === 'failed' || other.sourceIdentity === outcome.sourceIdentity) {
+        const sameIdentity = other.sourceIdentity === outcome.sourceIdentity;
+        if (!sameIdentity && !other.urls.some((url) => versionUrls.has(url))) continue;
+        if (other.sourceIdentity && !sameIdentity) continue;
+        if (sameIdentity && outcome.status === 'failed' && other.status !== 'pending' && other.status !== 'failed') {
+          // Die Stammnorm ist über eine andere Einstiegsadresse bereits verarbeitet; der gescheiterte Versuch wird
+          // ihr Stub (der Fehler bleibt in lastError und der Laufzusammenfassung sichtbar) statt sie zu überdecken.
+          item.mergedInto = outcome.sourceIdentity;
+          item.status = 'done';
+          other.urls = [...new Set([...other.urls, ...item.urls])].sort();
+          touch(other);
+          outcomes.merged += 1;
+          break;
+        }
+        if (other.status === 'pending' || other.status === 'failed' || sameIdentity) {
           other.mergedInto = outcome.sourceIdentity;
           other.status = 'done';
           touch(other);
@@ -417,7 +438,7 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
           outcomes.merged += 1;
         }
       }
-      const foreign = item.urls.filter((url) => !versionUrls.has(url) && parseVersionUrl(url)?.section === options.area);
+      const foreign = item.mergedInto ? [] : item.urls.filter((url) => !versionUrls.has(url) && parseVersionUrl(url)?.section === options.area);
       if (foreign.length > 0 && foreign.length < item.urls.length) {
         const dates = foreign.map((url) => parseVersionUrl(url)?.pathDate ?? '').sort();
         // Stabiler Schlüssel: Basis ohne früher angehängtes Datum. Sonst trägt jede Wiederholung ein weiteres
@@ -447,7 +468,7 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
     if (outcome.status === 'failed') outcomes.failed += 1;
     if (outcome.status === 'excluded') outcomes.excluded += 1;
     if (outcome.reconstructed) outcomes.reconstructed += 1;
-    log(`    → ${outcome.importStatus}${outcome.targetSlug ? ` ${outcome.targetSlug}` : ''}${outcome.reviewCategories?.length ? ` (Review: ${outcome.reviewCategories.join(', ')})` : ''}${outcome.status === 'failed' ? ` FEHLER ${outcome.message ?? ''}` : ''}`);
+    log(`${itemTag(processed, item)} ergebnis ${outcome.importStatus}${outcome.sourceIdentity && outcome.sourceIdentity !== item.key ? ` ${outcome.sourceIdentity}` : ''}${outcome.targetSlug ? ` ${outcome.targetSlug}` : ''}${outcome.reviewCategories?.length ? ` (Review: ${outcome.reviewCategories.join(', ')})` : ''}${outcome.status === 'failed' ? ` FEHLER ${outcome.errorCodes?.[0] ?? ''} ${outcome.message ?? ''}`.trimEnd() : ''} · ${Math.max(0, clock() - itemStartedAt)} ms`);
 
     // Systemische Fehlerbilder: viele Fehler in Folge oder gehäuft derselbe Fehlercode. Wiederholungen bereits
     // fehlgeschlagener Stammnormen (--retry-failed) zählen nicht mit: dort besteht die Auswahl per Definition aus
@@ -472,6 +493,7 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
     }
   }
   if (runStatus === 'completed' && options.limit !== undefined && selected.length > queue.length) runStatus = 'limit-reached';
+  log(`Lauf ${runId} beendet: ${runStatus}${stopReason ? ` – ${stopReason}` : ''} · verarbeitet ${processed}/${queue.length} · ${Math.round(Math.max(0, clock() - startedClock) / 1000)} s`);
 
   const endedAt = now();
   const stats = options.fetcher.stats;

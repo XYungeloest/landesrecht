@@ -15,9 +15,11 @@ interface Props {
   headingLevel?: number;
   quoted?: boolean;
   unitAnchor?: string;
+  /** Pfad der umgebenden Einheit (Paragraph/Artikel/Anlage), zu der `unitAnchor` gehört. */
+  unitPath?: number[];
 }
 
-const { blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor } = Astro.props;
+const { blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath } = Astro.props;
 const headingTag = `h${Math.min(Math.max(headingLevel + 1, 3), 6)}` as 'h3' | 'h4' | 'h5' | 'h6';
 const nextLevel = Number.parseInt(headingTag.slice(1), 10);
 
@@ -49,9 +51,31 @@ function anchorFor(index: number): string | undefined {
   return anchors.get([...path, index].join('.'));
 }
 
+/** Absatzkennzeichen, die auf dieser Ebene mehrfach vorkommen (z. B. „(1)“ mehrerer zitierter oder unstrukturierter Vorschriften). */
+const repeatedLabels = new Set<string>();
+{
+  const seen = new Set<string>();
+  for (const block of blocks) {
+    if (!block.label || (block.type !== 'subparagraph' && block.type !== 'paragraphText')) continue;
+    const key = anchorSlug(block.label);
+    if (seen.has(key)) repeatedLabels.add(key);
+    seen.add(key);
+  }
+}
+
+/**
+ * Eindeutige id eines Absatzes: `paragraph-3-abs-2` für direkte Absätze der Einheit mit eindeutigem
+ * Kennzeichen; sonst wird der Pfad relativ zur Einheit angehängt (zitierte Vorschriften, verschachtelte
+ * oder wiederholte Kennzeichen), damit ids auf der Seite nie doppelt vorkommen.
+ */
 function subparagraphId(label: string | undefined, index: number): string {
   const base = unitAnchor ?? `block-${[...path].join('-')}`;
-  return `${base}-abs-${label ? anchorSlug(label) || index + 1 : index + 1}`;
+  const key = label ? anchorSlug(label) : '';
+  const isDirectChild = unitAnchor !== undefined && unitPath !== undefined && path.length === unitPath.length;
+  if (isDirectChild && !quoted && key && !repeatedLabels.has(key)) return `${base}-abs-${key}`;
+  if (unitAnchor === undefined) return `${base}-abs-${key || index + 1}`;
+  const relative = [...path.slice(unitPath?.length ?? path.length), index].join('-');
+  return `${base}-abs-${key ? `${key}-` : ''}${quoted ? 'zitat-' : ''}${relative}`;
 }
 
 const HeadingTag = headingTag;
@@ -66,7 +90,7 @@ const HeadingTag = headingTag;
             <div class="norm-item__content">
               {block.text && <p class="norm-text">{block.text}</p>}
               {block.children && block.children.length > 0 && (
-                <Astro.self blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+                <Astro.self blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
               )}
             </div>
           </li>
@@ -96,10 +120,11 @@ const HeadingTag = headingTag;
       <section id={anchor} class={`norm-division norm-division--${block.type}`} aria-labelledby={anchor ? `${anchor}-heading` : undefined}>
         <HeadingTag id={anchor ? `${anchor}-heading` : undefined}>
           {block.label && <span class="norm-label">{block.label}</span>}
+          {block.label && block.title && ' '}
           {block.title && <span class="norm-title">{block.title}</span>}
         </HeadingTag>
         {block.text && <p class="norm-text">{block.text}</p>}
-        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} />
+        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
       </section>
     );
   }
@@ -110,13 +135,14 @@ const HeadingTag = headingTag;
         <div class="norm-unit__head">
           <HeadingTag id={anchor ? `${anchor}-heading` : undefined}>
             {block.label && <span class="norm-label">{block.label}</span>}
+            {block.label && block.title && ' '}
             {block.title && <span class="norm-title">{block.title}</span>}
           </HeadingTag>
-          {!quoted && anchor && <a class="norm-unit__link" href={`#${anchor}`}>Link</a>}
+          {!quoted && anchor && <a class="norm-unit__link" href={`#${anchor}`} aria-label={`Link zu ${block.label ?? block.title ?? anchor}`}>Link</a>}
         </div>
         <div class="norm-unit__body">
           {block.text && <p class="norm-text">{block.text}</p>}
-          <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} />
+          <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} />
         </div>
       </section>
     );
@@ -125,7 +151,7 @@ const HeadingTag = headingTag;
   if (block.type === 'quotedProvision') {
     return (
       <blockquote class="norm-quoted">
-        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} />
+        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} unitPath={unitPath} />
       </blockquote>
     );
   }
@@ -138,7 +164,7 @@ const HeadingTag = headingTag;
         <div class="norm-abs__body">
           {block.text && <p class="norm-text">{block.text}</p>}
           {block.children && block.children.length > 0 && (
-            <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+            <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
           )}
         </div>
       </div>
@@ -150,14 +176,22 @@ const HeadingTag = headingTag;
       <>
         <p class="norm-text">{block.text}</p>
         {block.children && block.children.length > 0 && (
-          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
         )}
       </>
     );
   }
 
   if (block.type === 'heading') {
-    return <p class="norm-heading"><strong>{block.title ?? block.text}</strong></p>;
+    // Freistehende Überschriften können Fußnoten als Kinder tragen (Legacy-Word-HTML); sie werden direkt darunter gerendert.
+    return (
+      <>
+        <p class="norm-heading"><strong>{block.title ?? block.text}</strong></p>
+        {block.children && block.children.length > 0 && (
+          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
+        )}
+      </>
+    );
   }
 
   if (block.type === 'footnote') {
@@ -176,7 +210,7 @@ const HeadingTag = headingTag;
                   ? <th scope={cell.scope} rowspan={cell.rowspan} colspan={cell.colspan}>{cell.text}</th>
                   : <td rowspan={cell.rowspan} colspan={cell.colspan}>
                       {cell.children && cell.children.length > 0
-                        ? <Astro.self blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} />
+                        ? <Astro.self blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
                         : cell.text}
                     </td>)}
               </tr>

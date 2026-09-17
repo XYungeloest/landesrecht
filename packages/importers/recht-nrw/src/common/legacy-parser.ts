@@ -5,10 +5,17 @@
  * mit „(1)“-Kennzeichen, eingerückten Nummerierungen (`margin-left`) und einer Fußnotentabelle
  * am Ende (`<a name=FNn>`). Word-Hilfselemente (`<o:p>`, `<u5:p>`, `span.SpellE`) werden
  * ignoriert. Jedes unbekannte Element und jede unbekannte Absatzklasse ist ein Befund.
+ *
+ * `lrdetail` trägt im Portal nicht nur Einheitenüberschriften. Die Klassifikation ist eine feste
+ * Kette (`classifyDetailHeading`): Einheit → Einheitenspanne („§§ 15 bis 16“) → Gliederung
+ * („Teil 1“) → Anlage → Einheit mit hergeleitetem Zeichen („84“ nach „§ 83“, Befund) → Absatztext
+ * („(1) …“, Befund) → Fortsetzung des Einheitentitels → reine Überschrift (Befund); alles andere
+ * bleibt ein Fehler. Inhaltsübersichten, die Einheiten als `lrdetail` wiederholen, werden wie im
+ * nativen Format als Text übernommen (`detectLegacyToc`).
  */
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
-import { buildBody, extractFootnoteMarkers, hasConsentEvidence, parseAnnexHeading, parseDivisionHeading, parseItem, parseSubparagraph, parseTreatyHeading, parseUnitHeading, tableBlock, type ParsedBody, type SourceFootnote, type SourceLine } from './body-common.ts';
+import { buildBody, demoteToTocText, extractFootnoteMarkers, hasConsentEvidence, inferUnitHeading, parseAnnexHeading, parseDivisionHeading, parseItem, parseSubparagraph, parseTreatyHeading, parseUnitHeading, parseUnitRangeHeading, tableBlock, type DivisionLevel, type ParsedBody, type SourceFootnote, type SourceLine } from './body-common.ts';
 import { attr, children, classes, describeElement, elementChildren, findFirst, hasClass, isElement, isLayoutTable, isTextNode, normalizeWhitespace, parseHtml, tableCells, tableRows, textOf, type HtmlElement, type HtmlNode } from './html.ts';
 
 export interface LegacyDocumentHead {
@@ -36,9 +43,11 @@ const TOC_TITLE_CLASS = 'verzeichnistitelstammdokument';
 const KNOWN_PARAGRAPH_CLASSES = new Set(['lrueberschrift', 'lrdetail', 'lrfundstelle', 'msonormal', 'feldinhalt', 'feldinhalt0', 'betreff', 'msobodytext', 'msolistparagraph', 'msolistparagraphcxspmiddle', 'msolistparagraphcxspfirst', 'msolistparagraphcxsplast', 'msotoc1', 'msotoc2', 'msotoc3', 'msotitle', 'default', 'juristischerabsatznummeriert', TOC_TITLE_CLASS]);
 /**
  * Word-Formatvorlagen ohne eigene Struktursemantik (die Struktur trägt der Text: „(1)“, „1.“):
- * `e0`/`e1`, `1-1text`, `MsoToc9`, `MsoBodyText2`, `NummerierungStufe1` (Stufe → Einrückungsebene).
+ * `e0`/`e1`, `1-1text`, `MsoToc9`, `MsoBodyText2`, `NummerierungStufe1` (Stufe → Einrückungsebene),
+ * `MsoNormal0` (Variante der Standardvorlage), `MsoPapDefault` (Absatz-Standardeigenschaften, die
+ * Word als eigene Klasse exportiert, z. B. Tarifstellen-Anlagen der AVwGebO).
  */
-const KNOWN_PARAGRAPH_CLASS_PATTERNS = [/^e\d+$/u, /^\d+-\d+text$/u, /^msotoc\d$/u, /^msobodytext\d*$/u, /^nummerierungstufe\d$/u];
+const KNOWN_PARAGRAPH_CLASS_PATTERNS = [/^e\d+$/u, /^\d+-\d+text$/u, /^msotoc\d$/u, /^msobodytext\d*$/u, /^nummerierungstufe\d$/u, /^msonormal\d+$/u, /^msopapdefault$/u];
 /** Einrückung je `<dir>`-Ebene in Punkt: Word exportiert eine Listenebene (36pt) als `<dir><dir>`. */
 const DIR_INDENT_POINTS = 18;
 /**
@@ -47,6 +56,11 @@ const DIR_INDENT_POINTS = 18;
  * Element, das den gesamten Restinhalt verschluckt.
  */
 const MALFORMED_TAG_PATTERN = /<(p|a)(class|style|align|href)=/giu;
+/** Text, der wie ein (nicht lesbares) Einheitenkennzeichen beginnt: bleibt fail-closed ein Fehler. */
+const UNIT_LIKE_START = /^(?:§|Art\b|Artikel\b|Paragraph\b|Nr\.?\s*\d|\d)/u;
+/** Überschrift ohne Einheitenkennzeichen: kurz und ohne Satzende. */
+const MAX_HEADING_LENGTH = 200;
+const TOC_HEADING = /^Inhalts(?:übersicht|verzeichnis)$/u;
 
 function isIgnorable(node: HtmlElement): boolean {
   const name = node.tagName.toLowerCase();
@@ -184,23 +198,198 @@ function parseTable(table: HtmlElement, findings: ImportFinding[]): { footnotes:
   return { block: tableBlock(parsedRows, findings) };
 }
 
+/** Dokumentcontainer: `div.Section1`/`div.WordSection1`, sonst der ganze Body. */
+function documentContainer(html: string): HtmlElement {
+  const document = parseHtml(html);
+  const body = findFirst(document, (element) => element.tagName === 'body');
+  if (!body) throw new Error('Legacy-Dokument ohne <body>');
+  // Manche Dateien enthalten vor dem eigentlichen Dokument einen Kopf mit Gliederungsnummer und
+  // ein zweites <html>; parse5 fasst alles in einen Body zusammen.
+  const section = findFirst(body, (element) => element.tagName === 'div' && classes(element).some((name) => /section1/iu.test(name)));
+  return section ?? body;
+}
+
+interface TopLevel {
+  nodes: HtmlElement[];
+  /** Zahl der umschließenden `<dir>`-Ebenen (Einrückung) je Blockelement. */
+  dirDepth: Map<HtmlElement, number>;
+  /** `<center>` vererbt Zentrierung. */
+  centeredByWrapper: Set<HtmlElement>;
+}
+
+/** Blockelemente des Dokuments in Lesereihenfolge; Hüllelemente (div, dir, center, Hülltabellen) werden aufgelöst. */
+function collectTopLevel(container: HtmlElement): TopLevel {
+  const result: TopLevel = { nodes: [], dirDepth: new Map(), centeredByWrapper: new Set() };
+  const collect = (parent: HtmlElement, depth = 0, centered = false): void => {
+    for (const node of elementChildren(parent)) {
+      const name = node.tagName.toLowerCase();
+      if (name === 'div' || name === 'dir' || name === 'center' || (isIgnorable(node) && name !== 'style' && name !== 'head')) collect(node, depth + (name === 'dir' ? 1 : 0), centered || name === 'center');
+      // Einzeilige Word-Hülltabelle um eine Tabelle: Zellinhalte (Absätze, innere Tabelle) auf Dokumentebene heben.
+      else if (name === 'table' && isLayoutTable(node)) for (const cell of tableRows(node).flatMap(tableCells)) collect(cell, depth, centered);
+      else {
+        result.nodes.push(node);
+        if (depth > 0) result.dirDepth.set(node, depth);
+        if (centered) result.centeredByWrapper.add(node);
+      }
+    }
+  };
+  collect(container);
+  return result;
+}
+
+export interface UnitContext {
+  unitType: 'paragraph' | 'article';
+  label: string;
+}
+
+export type DetailClassification =
+  | { kind: 'unit'; unitType: 'paragraph' | 'article'; label: string; title?: string; footnotes: string[]; inferred: boolean }
+  | { kind: 'unit-range'; unitType: 'paragraph' | 'article'; label: string; title?: string; footnotes: string[]; inferred: boolean }
+  | { kind: 'division'; level: DivisionLevel; label: string; title?: string; footnotes: string[] }
+  | { kind: 'annex'; label: string; title?: string; footnotes: string[] }
+  | { kind: 'subparagraph'; label: string; text: string; footnotes: string[] }
+  | { kind: 'title-continuation'; text: string; footnotes: string[] }
+  | { kind: 'heading'; text: string; footnotes: string[] }
+  | { kind: 'footnotes-only'; footnotes: string[] }
+  | { kind: 'empty' }
+  | { kind: 'unparsed'; text: string; footnotes: string[] };
+
+/**
+ * Klassifiziert den Text einer `lrdetail`-Überschrift (Zeilen durch `\n`). `previousUnit` ist die
+ * zuletzt gelesene Einheit (für hergeleitete Zeichen), `previousTitle` der Titel der unmittelbar
+ * vorangehenden Einheitenzeile (für Titelfortsetzungen). Parser und Integritätszählung nutzen
+ * dieselbe Kette.
+ */
+export function classifyDetailHeading(rawText: string, context: { previousUnit?: UnitContext; previousTitle?: string } = {}): DetailClassification {
+  const [first = '', ...rest] = rawText.split('\n');
+  const marker = extractFootnoteMarkers(first);
+  const restText = extractFootnoteMarkers(rest.join(' ')).text;
+  const all = extractFootnoteMarkers(rawText.replace(/\n/gu, ' '));
+  const footnotes = all.footnotes;
+  const joinTitle = (own: string | undefined): string | undefined => [own, restText].filter(Boolean).join(' ').trim() || undefined;
+  const withTitle = <T extends DetailClassification>(base: T, own: string | undefined): T => {
+    const title = joinTitle(own);
+    return title ? { ...base, title } : base;
+  };
+
+  const unit = parseUnitHeading(marker.text);
+  if (unit) return withTitle({ kind: 'unit', unitType: unit.unitType, label: unit.label, footnotes, inferred: false }, unit.title);
+  const range = parseUnitRangeHeading(marker.text);
+  if (range) return withTitle({ kind: 'unit-range', unitType: range.unitType, label: range.label, footnotes, inferred: false }, range.title);
+  const division = parseDivisionHeading(marker.text);
+  if (division) return withTitle({ kind: 'division', level: division.level, label: division.label, footnotes }, division.title);
+  const annex = parseAnnexHeading(marker.text);
+  if (annex) return withTitle({ kind: 'annex', label: annex.label, footnotes }, annex.title);
+  if (!all.text) return footnotes.length > 0 ? { kind: 'footnotes-only', footnotes } : { kind: 'empty' };
+  const inferred = inferUnitHeading(marker.text, context.previousUnit);
+  if (inferred) return withTitle({ kind: inferred.kind, unitType: inferred.unitType, label: inferred.label, footnotes, inferred: true }, inferred.title);
+  const subparagraph = parseSubparagraph(all.text);
+  if (subparagraph) return { kind: 'subparagraph', label: subparagraph.label, text: subparagraph.text, footnotes };
+  if (UNIT_LIKE_START.test(all.text)) return { kind: 'unparsed', text: all.text, footnotes };
+  const continuation = context.previousTitle !== undefined && (/^\p{Ll}/u.test(all.text) || /(?:\bund|\boder|\bsowie|,|-|–)$/u.test(context.previousTitle));
+  if (continuation) return { kind: 'title-continuation', text: all.text, footnotes };
+  if (all.text.length <= MAX_HEADING_LENGTH && !/[.;]$/u.test(all.text)) return { kind: 'heading', text: all.text, footnotes };
+  return { kind: 'unparsed', text: all.text, footnotes };
+}
+
+export interface LegacyTocDetection {
+  /** Blockelemente der Inhaltsübersicht (Einheiten- und Gliederungszeilen), die als Text zu lesen sind. */
+  region: Set<HtmlElement>;
+  /** Anzahl der `lrdetail`-Einheiten in der Region. */
+  units: number;
+  reason?: string;
+}
+
+/**
+ * Inhaltsübersicht, die Einheiten als `lrdetail` wiederholt (z. B. Ruhrverbandsgesetz: „Artikel 1“,
+ * „Artikel 2 …“ zwischen der Überschrift „Inhaltsübersicht“ und dem Textbeginn). Die Region beginnt
+ * beim ersten `lrdetail`-Einheitenkennzeichen nach der Überschrift und endet, wo dasselbe Kennzeichen
+ * erneut als `lrdetail` erscheint. Sie gilt nur als Inhaltsübersicht, wenn sie ausschließlich
+ * Überschriftenzeilen enthält (Einheiten- oder Gliederungskennzeichen, keine Absätze, Nummerierungen
+ * oder Tabellen) und jedes Kennzeichen später wiederkehrt; sonst bleibt sie unangetastet und wird
+ * gemeldet. Parser und Integritätszählung (`countLegacyUnitHeadings`) nutzen dieselbe Entscheidung.
+ */
+export function detectLegacyToc(nodes: readonly HtmlElement[]): LegacyTocDetection {
+  const none: LegacyTocDetection = { region: new Set(), units: 0 };
+  const plainText = (node: HtmlElement): string => extractFootnoteMarkers(textOf(node)).text;
+  const tocIndex = nodes.findIndex((node) => node.tagName === 'p' && TOC_HEADING.test(plainText(node)));
+  if (tocIndex < 0) return none;
+  const detailLabel = (node: HtmlElement): string | undefined => {
+    if (node.tagName !== 'p' || !hasClass(node, 'lrdetail')) return undefined;
+    const classification = classifyDetailHeading(textOf(node, { breaks: true }));
+    return classification.kind === 'unit' ? classification.label : undefined;
+  };
+  let first = -1;
+  let firstLabel: string | undefined;
+  let restart = -1;
+  for (let index = tocIndex + 1; index < nodes.length; index += 1) {
+    const label = detailLabel(nodes[index]!);
+    if (!label) continue;
+    if (first < 0) {
+      first = index;
+      firstLabel = label;
+    } else if (label === firstLabel) {
+      restart = index;
+      break;
+    }
+  }
+  if (first < 0 || restart < 0) return none;
+  const region = nodes.slice(first, restart);
+  for (const node of region) {
+    if (node.tagName !== 'p') return { ...none, reason: `Blockelement ${describeElement(node)} in der Inhaltsübersicht` };
+    const text = plainText(node);
+    if (!text) continue;
+    if (hasClass(node, 'lrdetail')) {
+      const kind = classifyDetailHeading(textOf(node, { breaks: true })).kind;
+      if (kind !== 'unit' && kind !== 'division' && kind !== 'annex') return { ...none, reason: `Zeile „${text.slice(0, 60)}“ ist kein Kennzeichen` };
+      continue;
+    }
+    if (!parseUnitHeading(text) && !parseDivisionHeading(text)) return { ...none, reason: `Zeile „${text.slice(0, 60)}“ ist keine Überschriftenzeile` };
+  }
+  const later = new Set(nodes.slice(restart).map(detailLabel).filter((label): label is string => Boolean(label)));
+  const tocLabels = region.map(detailLabel).filter((label): label is string => Boolean(label));
+  const missing = tocLabels.filter((label) => !later.has(label));
+  if (missing.length > 0) return { ...none, reason: `Kennzeichen ${missing.join(', ')} der Inhaltsübersicht kehren im Text nicht wieder` };
+  return { region: new Set(region), units: tocLabels.length };
+}
+
+/**
+ * Zahl der `lrdetail`-Einheiten, die der Parser als Einheit liest (einschließlich hergeleiteter
+ * Zeichen, ohne Inhaltsübersicht) – parserunabhängige Zählung für die Integritätsprüfung über
+ * dieselbe Klassifikationskette.
+ */
+export function countLegacyUnitHeadings(html: string): number {
+  const topLevel = collectTopLevel(documentContainer(repairLegacyMarkup(html).html));
+  const toc = detectLegacyToc(topLevel.nodes);
+  let previousUnit: UnitContext | undefined;
+  let count = 0;
+  for (const node of topLevel.nodes) {
+    if (node.tagName !== 'p' || !hasClass(node, 'lrdetail') || toc.region.has(node)) continue;
+    const classification = classifyDetailHeading(textOf(node, { breaks: true }), previousUnit ? { previousUnit } : {});
+    if (classification.kind === 'unit') {
+      count += 1;
+      previousUnit = { unitType: classification.unitType, label: classification.label };
+    }
+  }
+  return count;
+}
+
 export function parseLegacyDocument(html: string): LegacyParseResult {
   const findings: ImportFinding[] = [];
   const repair = repairLegacyMarkup(html);
   if (repair.repaired > 0) findings.push({ severity: 'warning', code: 'malformed-tag-repaired', message: `${repair.repaired} Tag(s) ohne Leerzeichen vor dem Attribut (z. B. <pclass=…>) im Quellmarkup repariert` });
-  const document = parseHtml(repair.html);
-  const body = findFirst(document, (element) => element.tagName === 'body');
-  if (!body) throw new Error('Legacy-Dokument ohne <body>');
-  // Manche Dateien enthalten vor dem eigentlichen Dokument einen Kopf mit Gliederungsnummer und
-  // ein zweites <html>; parse5 fasst alles in einen Body zusammen. Das Dokument beginnt mit
-  // `div.Section1`/`div.WordSection1`, sonst wird der ganze Body gelesen.
-  const section = findFirst(body, (element) => element.tagName === 'div' && classes(element).some((name) => /section1/iu.test(name)));
-  const container = section ?? body;
+  const container = documentContainer(repair.html);
 
   const head: LegacyDocumentHead = { titleLines: [] };
   const footnotes: SourceFootnote[] = [];
   const lines: SourceLine[] = [];
   let sawFirstUnit = false;
+  let previousUnit: UnitContext | undefined;
+  const inferredMarkers: string[] = [];
+  const detailHeadings: string[] = [];
+  const detailBodyTexts: string[] = [];
+  const titleContinuations: string[] = [];
+  const detailDivisions: string[] = [];
 
   const pushText = (text: string, centered: boolean, bold: boolean, footnoteLabels: string[]): void => {
     if (!text) return;
@@ -213,28 +402,15 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
     lines.push({ kind: 'text', text, centered, bold, footnotes: footnoteLabels });
   };
 
-  const topLevel: HtmlElement[] = [];
-  /** Zahl der umschließenden `<dir>`-Ebenen (Einrückung) je Blockelement; `<center>` vererbt Zentrierung. */
-  const dirDepth = new Map<HtmlElement, number>();
-  const centeredByWrapper = new Set<HtmlElement>();
-  const collect = (parent: HtmlElement, depth = 0, centered = false): void => {
-    for (const node of elementChildren(parent)) {
-      const name = node.tagName.toLowerCase();
-      if (name === 'div' || name === 'dir' || name === 'center' || (isIgnorable(node) && name !== 'style' && name !== 'head')) collect(node, depth + (name === 'dir' ? 1 : 0), centered || name === 'center');
-      // Einzeilige Word-Hülltabelle um eine Tabelle: Zellinhalte (Absätze, innere Tabelle) auf Dokumentebene heben.
-      else if (name === 'table' && isLayoutTable(node)) for (const cell of tableRows(node).flatMap(tableCells)) collect(cell, depth, centered);
-      else {
-        topLevel.push(node);
-        if (depth > 0) dirDepth.set(node, depth);
-        if (centered) centeredByWrapper.add(node);
-      }
-    }
-  };
-  collect(container);
+  const { nodes: topLevel, dirDepth, centeredByWrapper } = collectTopLevel(container);
+  const toc = detectLegacyToc(topLevel);
+  if (toc.reason) findings.push({ severity: 'warning', code: 'toc-region-unresolved', message: `Inhaltsübersicht mit lrdetail-Einträgen erkannt, aber nicht auflösbar (Zeilen bleiben Einheiten): ${toc.reason}` });
+  else if (toc.units > 0) findings.push({ severity: 'info', code: 'toc-sections-demoted', message: `Inhaltsübersicht: ${toc.units} lrdetail-Einheit(en) als Text übernommen (keine Einheiten)` });
 
   for (const node of topLevel) {
     const name = node.tagName.toLowerCase();
     if (isIgnorable(node)) continue;
+    const linesBefore = lines.length;
     if (name === 'table') {
       const result = parseTable(node, findings);
       if ('footnotes' in result) {
@@ -255,12 +431,12 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
     // Word-Überschriften (<h2>Anlage</h2>) entsprechen zentrierten fetten Absätzen.
     const isHeadingElement = /^h[1-6]$/u.test(name);
     if (name !== 'p' && !isHeadingElement) {
-      findings.push({ severity: 'error', code: 'unknown-block-element', message: `Unbekanntes Blockelement ${describeElement(node)} auf Dokumentebene` });
+      findings.push({ severity: 'error', code: 'unknown-block-element', message: `Unbekanntes Blockelement ${describeElement(node)} auf Dokumentebene: „${textOf(node).slice(0, 80)}“` });
       continue;
     }
     const classNames = classes(node).map((entry) => entry.toLowerCase());
     for (const className of classNames) {
-      if (!isKnownParagraphClass(className)) findings.push({ severity: 'error', code: 'unknown-paragraph-class', message: `Unbekannte Absatzklasse „${className}“: ${textOf(node).slice(0, 80)}` });
+      if (!isKnownParagraphClass(className)) findings.push({ severity: 'error', code: 'unknown-paragraph-class', message: `Unbekannte Absatzklasse „${className}“ (p.${className}): „${textOf(node).slice(0, 80)}“` });
     }
     const rawText = paragraphText(node, findings, `p.${classNames[0] ?? 'default'}`);
     if (!rawText) continue;
@@ -276,34 +452,71 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
       continue;
     }
     if (hasClass(node, 'lrdetail')) {
-      const [first, ...rest] = rawText.split('\n');
-      const marker = extractFootnoteMarkers(first ?? '');
-      const unit = parseUnitHeading(marker.text);
-      const title = extractFootnoteMarkers(rest.join(' ')).text;
-      if (unit) {
-        sawFirstUnit = true;
-        const line: SourceLine = { kind: 'unit', unitType: unit.unitType, label: unit.label, footnotes: marker.footnotes };
-        const unitTitle = [unit.title, title].filter(Boolean).join(' ').trim();
-        if (unitTitle) line.title = unitTitle;
-        lines.push(line);
-        continue;
+      const previous = lines[lines.length - 1];
+      const context: { previousUnit?: UnitContext; previousTitle?: string } = {};
+      if (previousUnit && !toc.region.has(node)) context.previousUnit = previousUnit;
+      if (previous?.kind === 'unit' && previous.title) context.previousTitle = previous.title;
+      const detail = classifyDetailHeading(rawText, context);
+      const snippet = rawText.replace(/\s+/gu, ' ').slice(0, 80);
+      switch (detail.kind) {
+        case 'unit': {
+          if (!toc.region.has(node)) {
+            sawFirstUnit = true;
+            previousUnit = { unitType: detail.unitType, label: detail.label };
+          }
+          if (detail.inferred) inferredMarkers.push(`„${snippet}“ → ${detail.label}`);
+          const line: SourceLine = { kind: 'unit', unitType: detail.unitType, label: detail.label, footnotes: detail.footnotes };
+          if (detail.title) line.title = detail.title;
+          lines.push(line);
+          break;
+        }
+        case 'unit-range': {
+          if (detail.inferred) inferredMarkers.push(`„${snippet}“ → ${detail.label}`);
+          const line: SourceLine = { kind: 'unit-range', unitType: detail.unitType, label: detail.label, footnotes: detail.footnotes };
+          if (detail.title) line.title = detail.title;
+          lines.push(line);
+          break;
+        }
+        case 'division': {
+          detailDivisions.push(detail.label);
+          const line: SourceLine = { kind: 'division', level: detail.level, label: detail.label, footnotes: detail.footnotes };
+          if (detail.title) line.title = detail.title;
+          lines.push(line);
+          break;
+        }
+        case 'annex': {
+          const line: SourceLine = { kind: 'annex', label: detail.label, footnotes: detail.footnotes };
+          if (detail.title) line.title = detail.title;
+          lines.push(line);
+          break;
+        }
+        case 'subparagraph':
+          detailBodyTexts.push(snippet);
+          lines.push({ kind: 'subparagraph', label: detail.label, text: detail.text, footnotes: detail.footnotes });
+          break;
+        case 'title-continuation': {
+          // Nur erreichbar, wenn die vorangehende Zeile eine Einheit mit Titel ist (siehe `classifyDetailHeading`).
+          const unitLine = previous as Extract<SourceLine, { kind: 'unit' }>;
+          titleContinuations.push(`${unitLine.label}: „${detail.text.slice(0, 60)}“`);
+          unitLine.title = `${unitLine.title ?? ''} ${detail.text}`.trim();
+          unitLine.footnotes.push(...detail.footnotes);
+          break;
+        }
+        case 'heading':
+          detailHeadings.push(snippet);
+          lines.push({ kind: 'heading', text: detail.text, footnotes: detail.footnotes });
+          break;
+        case 'footnotes-only':
+          if (previous && 'footnotes' in previous) previous.footnotes.push(...detail.footnotes);
+          break;
+        case 'empty':
+          break;
+        default:
+          findings.push({ severity: 'error', code: 'unparsed-unit-heading', message: `lrdetail ohne erkennbare Einheit (p.lrdetail nach ${previousUnit?.label ?? 'Dokumentanfang'}): „${snippet}“` });
+          lines.push({ kind: 'heading', text: detail.text, footnotes: detail.footnotes });
+          break;
       }
-      const annex = parseAnnexHeading(marker.text);
-      if (annex) {
-        const line: SourceLine = { kind: 'annex', label: annex.label, footnotes: marker.footnotes };
-        const annexTitle = [annex.title, title].filter(Boolean).join(' ').trim();
-        if (annexTitle) line.title = annexTitle;
-        lines.push(line);
-        continue;
-      }
-      const headingText = extractFootnoteMarkers(rawText.replace(/\n/gu, ' ')).text;
-      if (headingText) {
-        findings.push({ severity: 'error', code: 'unparsed-unit-heading', message: `lrdetail ohne erkennbare Einheit: „${rawText.slice(0, 80)}“` });
-        lines.push({ kind: 'heading', text: headingText, footnotes: marker.footnotes });
-      } else if (marker.footnotes.length > 0) {
-        const previous = lines[lines.length - 1];
-        if (previous && 'footnotes' in previous) previous.footnotes.push(...marker.footnotes);
-      }
+      if (toc.region.has(node)) for (let index = linesBefore; index < lines.length; index += 1) lines[index] = demoteToTocText(lines[index]!);
       continue;
     }
     if (hasClass(node, 'lrfundstelle')) {
@@ -323,40 +536,33 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
         const line: SourceLine = { kind: 'division', level: division.level, label: division.label, footnotes: footnoteLabels };
         if (division.title) line.title = division.title;
         lines.push(line);
-        continue;
+      } else {
+        const annex = bold ? parseAnnexHeading(text) : null;
+        // Nachstehend veröffentlichter Vertragstext eines Zustimmungsgesetzes: eigener Container mit
+        // eigener Artikelzählung (nur nach Zustimmungsformel/Veröffentlichungsvermerk im Gesetzestext).
+        const treaty = bold && sawFirstUnit ? parseTreatyHeading(text) : null;
+        const previous = lines[lines.length - 1];
+        if (annex && /^Anlage/u.test(text)) {
+          const line: SourceLine = { kind: 'annex', label: annex.label, footnotes: footnoteLabels };
+          if (annex.title) line.title = annex.title;
+          lines.push(line);
+        } else if (treaty && hasConsentEvidence(lines)) {
+          const line: SourceLine = { kind: 'annex', label: treaty.label, footnotes: footnoteLabels };
+          if (treaty.title) line.title = treaty.title;
+          lines.push(line);
+        } else if (bold && previous && previous.kind === 'division' && !previous.title) {
+          // Zweite Zeile einer Gliederungsüberschrift („Mitgliedschaft und Beruf“ nach „Erster Teil“)
+          previous.title = text;
+          previous.footnotes.push(...footnoteLabels);
+        } else if (bold && previous && previous.kind === 'annex' && !previous.title) {
+          previous.title = text;
+        } else if (/^(Die Landesregierung|Der Ministerpräsident|Die Ministerpräsidentin|Für die Landesregierung)/u.test(text) && sawFirstUnit) {
+          lines.push({ kind: 'signature', text });
+        } else {
+          pushText(text, true, bold, footnoteLabels);
+        }
       }
-      const annex = bold ? parseAnnexHeading(text) : null;
-      if (annex && /^Anlage/u.test(text)) {
-        const line: SourceLine = { kind: 'annex', label: annex.label, footnotes: footnoteLabels };
-        if (annex.title) line.title = annex.title;
-        lines.push(line);
-        continue;
-      }
-      // Nachstehend veröffentlichter Vertragstext eines Zustimmungsgesetzes: eigener Container mit
-      // eigener Artikelzählung (nur nach Zustimmungsformel/Veröffentlichungsvermerk im Gesetzestext).
-      const treaty = bold && sawFirstUnit ? parseTreatyHeading(text) : null;
-      if (treaty && hasConsentEvidence(lines)) {
-        const line: SourceLine = { kind: 'annex', label: treaty.label, footnotes: footnoteLabels };
-        if (treaty.title) line.title = treaty.title;
-        lines.push(line);
-        continue;
-      }
-      // Zweite Zeile einer Gliederungsüberschrift („Mitgliedschaft und Beruf“ nach „Erster Teil“)
-      const previous = lines[lines.length - 1];
-      if (bold && previous && previous.kind === 'division' && !previous.title) {
-        previous.title = text;
-        previous.footnotes.push(...footnoteLabels);
-        continue;
-      }
-      if (bold && previous && previous.kind === 'annex' && !previous.title) {
-        previous.title = text;
-        continue;
-      }
-      if (/^(Die Landesregierung|Der Ministerpräsident|Die Ministerpräsidentin|Für die Landesregierung)/u.test(text) && sawFirstUnit) {
-        lines.push({ kind: 'signature', text });
-        continue;
-      }
-      pushText(text, true, bold, footnoteLabels);
+      if (toc.region.has(node)) for (let index = linesBefore; index < lines.length; index += 1) lines[index] = demoteToTocText(lines[index]!);
       continue;
     }
 
@@ -377,6 +583,12 @@ export function parseLegacyDocument(html: string): LegacyParseResult {
     }
     pushText(text, false, bold, footnoteLabels);
   }
+
+  if (inferredMarkers.length > 0) findings.push({ severity: 'warning', code: 'unit-marker-inferred', message: `${inferredMarkers.length} lrdetail-Überschrift(en) ohne Einheitenzeichen; Zeichen aus der fortlaufenden Zählung hergeleitet: ${inferredMarkers.join('; ')}` });
+  if (detailDivisions.length > 0) findings.push({ severity: 'info', code: 'division-in-detail-heading', message: `${detailDivisions.length} lrdetail-Überschrift(en) mit Gliederungskennzeichen als Gliederungsebene übernommen: ${detailDivisions.join(', ')}` });
+  if (detailBodyTexts.length > 0) findings.push({ severity: 'warning', code: 'detail-body-text', message: `${detailBodyTexts.length} lrdetail-Absatz/-Absätze mit Absatztext „(n) …“ als Absatz übernommen: ${detailBodyTexts.map((entry) => `„${entry}“`).join('; ')}` });
+  if (titleContinuations.length > 0) findings.push({ severity: 'warning', code: 'unit-title-continued', message: `${titleContinuations.length} lrdetail-Zeile(n) als Fortsetzung des Einheitentitels übernommen: ${titleContinuations.join('; ')}` });
+  if (detailHeadings.length > 0) findings.push({ severity: 'warning', code: 'detail-heading', message: `${detailHeadings.length} lrdetail-Überschrift(en) ohne Einheitenkennzeichen als Überschrift übernommen: ${detailHeadings.map((entry) => `„${entry}“`).join('; ')}` });
 
   const { blocks, stats } = buildBody(lines, footnotes, findings);
   return { head, blocks, footnotes, findings, stats };

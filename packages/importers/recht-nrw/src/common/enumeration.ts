@@ -26,7 +26,7 @@ import { parseTreatyInForceNotice } from '../lrgv/treaty.ts';
 import { readJsonFile, writeFileAtomic } from './atomic.ts';
 import { BASE_URL } from './constants.ts';
 import { decodeHtml, type RechtNrwFetcher } from './fetcher.ts';
-import { compareSourceIdentity, IMPORT_DATA_DIR, type ImportManifest, type SourceArea } from './manifest.ts';
+import { compareSourceIdentity, IMPORT_DATA_DIR, isImportedStatus, type ImportManifest, type ImportStatus, type ManifestEntry, type SourceArea } from './manifest.ts';
 import { normalizeVersionUrl, parseVersionUrl } from './source-identity.ts';
 import { stableStringify } from './stable-json.ts';
 
@@ -109,6 +109,8 @@ export interface EnumerationCrosscheck {
   unassignedUrls: number;
   duplicateUrlAssignments: number;
   termConflicts: number;
+  /** Quellidentitäten mit mehr als einem aktiven (nicht zusammengeführten) Eintrag – immer ein Abgleichsproblem. */
+  duplicateIdentities?: number;
   ok: boolean;
   problems: string[];
   /** Fachlich erklärbare Quellbefunde (z. B. Fassungslisten mit Adressen mehrerer Stammnormen); kein Fehler. */
@@ -307,6 +309,60 @@ function compareKeys(left: string, right: string): number {
 
 export const ENUMERATION_ITEM_RUNTIME_FIELDS = ['updatedAt', 'lastRunId'] as const;
 
+/** Enumerationsstatus zu einem Manifest-Importstatus (dieselbe Zuordnung wie der Bulk-Runner). */
+export function statusForImportStatus(importStatus: ImportStatus | string): EnumerationStatus {
+  if (importStatus === 'needs-review') return 'review';
+  if (importStatus === 'excluded') return 'excluded';
+  if (importStatus === 'failed') return 'failed';
+  if (isImportedStatus(importStatus as ImportStatus) || importStatus === 'not-at-baseline' || importStatus === 'dry-run') return 'done';
+  return 'failed';
+}
+
+function outcomeFromManifest(entry: ManifestEntry): NonNullable<EnumerationItem['outcome']> {
+  return { importStatus: entry.importStatus, ...(entry.targetSlug ? { targetSlug: entry.targetSlug } : {}), parserVersion: entry.parserVersion, transformerVersion: entry.transformerVersion };
+}
+
+/** Quellidentitäten, die mehr als ein aktiver Eintrag trägt (Dublette: doppelte Zählung, doppelte Verarbeitung). */
+export function findDuplicateIdentities(file: Pick<EnumerationFile, 'items'>): Array<{ sourceIdentity: string; keys: string[] }> {
+  const byIdentity = new Map<string, string[]>();
+  for (const item of file.items) {
+    if (item.mergedInto || !item.sourceIdentity) continue;
+    byIdentity.set(item.sourceIdentity, [...(byIdentity.get(item.sourceIdentity) ?? []), item.key]);
+  }
+  return [...byIdentity.entries()].filter(([, keys]) => keys.length > 1).map(([sourceIdentity, keys]) => ({ sourceIdentity, keys })).sort((left, right) => compareSourceIdentity(left.sourceIdentity, right.sourceIdentity));
+}
+
+/**
+ * Strukturelle Invarianten einer Enumeration (Audit, Coverage):
+ *   - jede Quellidentität hat höchstens einen aktiven Eintrag
+ *   - jeder zusammengeführte Eintrag zeigt auf eine aktive Quellidentität (oder, sofern bekannt, einen Manifesteintrag)
+ *   - Statuszählung: aktive Einträge = Summe aller Status; Einträge = aktive + zusammengeführte
+ *   - abgetrennte Einträge tragen höchstens ein „@datum“ (keine rekursiv wachsenden Schlüssel)
+ *   - jede Adresse gehört zu genau einem Eintrag (Ausnahme: aus dem Manifest geführte Terme teilen sich Adressen mit ihrem Slug-Stamm)
+ */
+export function checkEnumerationInvariants(file: Pick<EnumerationFile, 'items'>, options: { manifestIdentities?: ReadonlySet<string> } = {}): string[] {
+  const problems: string[] = [];
+  const active = file.items.filter((item) => !item.mergedInto);
+  const merged = file.items.filter((item) => item.mergedInto);
+  for (const duplicate of findDuplicateIdentities(file)) problems.push(`${duplicate.sourceIdentity}: ${duplicate.keys.length} aktive Einträge (${duplicate.keys.join(', ')})`);
+  const activeIdentities = new Set(active.map((item) => item.sourceIdentity).filter((value): value is string => Boolean(value)));
+  for (const item of merged) {
+    if (activeIdentities.has(item.mergedInto!)) continue;
+    if (options.manifestIdentities?.has(item.mergedInto!)) continue;
+    problems.push(`${item.key}: zusammengeführt in ${item.mergedInto}, aber kein aktiver Eintrag${options.manifestIdentities ? ' und kein Manifesteintrag' : ''} mit dieser Quellidentität`);
+  }
+  const counts = enumerationStatusCounts(file as EnumerationFile);
+  const sum = Object.values(counts).reduce((total, value) => total + value, 0);
+  if (sum !== active.length) problems.push(`Statussumme ${sum} ≠ aktive Einträge ${active.length}`);
+  if (active.length + merged.length !== file.items.length) problems.push(`aktive ${active.length} + zusammengeführte ${merged.length} ≠ Einträge ${file.items.length}`);
+  for (const item of file.items) {
+    if ((item.key.match(/@/gu) ?? []).length > 1) problems.push(`${item.key}: rekursiv gewachsener Abtrennungsschlüssel`);
+    if (!(ENUMERATION_STATUSES as readonly string[]).includes(item.status)) problems.push(`${item.key}: unbekannter Status ${item.status}`);
+    if (item.mergedInto && item.sourceIdentity && item.sourceIdentity !== item.mergedInto) problems.push(`${item.key}: Quellidentität ${item.sourceIdentity} widerspricht der Zusammenführung in ${item.mergedInto}`);
+  }
+  return problems;
+}
+
 export function enumerationFingerprint(file: Pick<EnumerationFile, 'sourceArea' | 'baselineDate' | 'items' | 'sources' | 'crosscheck'>): string {
   const items = file.items.map((item) => {
     const copy: Record<string, unknown> = { ...item };
@@ -385,18 +441,38 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     set.add(term);
     termOfUrl.set(address.url, set);
   };
+  const manifestByIdentity = new Map<string, ManifestEntry>();
   for (const entry of input.manifest?.entries ?? []) {
     if (entry.sourceArea !== area || !/^term:\d+$/u.test(entry.sourceIdentity)) continue;
+    manifestByIdentity.set(entry.sourceIdentity, entry);
     for (const url of [entry.sourceUrl, entry.selectedVersionUrl, entry.sourceVersion?.url, ...entry.versionsConsidered.map((version) => version.url)]) noteTerm(url, entry.sourceIdentity);
   }
   const previousByKey = new Map((input.previous?.items ?? []).map((item) => [item.key, item]));
+  // Aktive (nicht zusammengeführte) Einträge je Quellidentität: Sie tragen den maßgeblichen Bearbeitungsstand.
+  // Ein zusammengeführter Eintrag mit demselben Schlüssel (Stub) darf ihn nie überdecken.
+  const previousActive = new Map<string, EnumerationItem[]>();
+  for (const item of input.previous?.items ?? []) {
+    if (item.sourceIdentity && !item.mergedInto && /^term:\d+$/u.test(item.sourceIdentity)) previousActive.set(item.sourceIdentity, [...(previousActive.get(item.sourceIdentity) ?? []), item]);
+  }
   const previousByIdentity = new Map<string, EnumerationItem>();
+  for (const [identity, candidates] of previousActive) {
+    // Trägt eine Quellidentität (fehlerhaft) mehrere aktive Einträge, zählt der zum Manifest passende; sonst der erste.
+    const manifestStatus = manifestByIdentity.get(identity)?.importStatus;
+    previousByIdentity.set(identity, candidates.find((candidate) => manifestStatus !== undefined && candidate.outcome?.importStatus === manifestStatus) ?? candidates[0]!);
+  }
   for (const item of input.previous?.items ?? []) {
     const identity = item.sourceIdentity ?? item.mergedInto;
-    if (identity && /^term:\d+$/u.test(identity)) {
-      for (const url of item.urls) noteTerm(url, identity);
-      if (item.sourceIdentity && !item.mergedInto) previousByIdentity.set(item.sourceIdentity, item);
+    if (!identity || !/^term:\d+$/u.test(identity)) continue;
+    const duplicates = (previousActive.get(identity)?.length ?? 0) > 1;
+    if (duplicates && !item.mergedInto) {
+      // Dublette im Eingang: Nur die Adressen des maßgeblichen Eintrags zählen, und nur soweit das Manifest
+      // (Fassungsliste der verarbeiteten Seite) sie bestätigt. Alles andere fällt zum Slug-Stamm zurück.
+      if (previousByIdentity.get(identity) !== item) continue;
+      const manifestUrls = manifestByIdentity.has(identity) ? new Set([...termOfUrl.entries()].filter(([, terms]) => terms.has(identity)).map(([url]) => url)) : undefined;
+      for (const url of item.urls) if (!manifestUrls || manifestUrls.has(parseVersionUrl(url)?.url ?? url)) noteTerm(url, identity);
+      continue;
     }
+    for (const url of item.urls) noteTerm(url, identity);
   }
 
   // 4. Einträge bilden: Adressen mit bekannter Term-ID zur Stammnorm, übrige zum Slug-Stamm.
@@ -428,22 +504,46 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
   }
 
   // 5. Einträge mit Vorklassifikation und übernommenem Status.
+  //
+  // Bearbeitungsstand je Eintrag:
+  //   term:<id>   der aktive frühere Eintrag dieser Quellidentität (gleich, unter welchem Schlüssel er lief); fehlt er,
+  //               der Manifesteintrag; erst dann ein zusammengeführter Stub gleichen Schlüssels
+  //   stem:…      der frühere Eintrag gleichen Schlüssels – außer seine Quellidentität ist jetzt ein eigener
+  //               term:-Eintrag: Dann sind die verbliebenen Adressen Restadressen außerhalb der Fassungsliste dieser
+  //               Stammnorm (vom Bulk-Lauf abgetrennt) und beginnen offen. Sonst entstünden zwei aktive Einträge
+  //               derselben Quellidentität (doppelte Zählung, doppelte Verarbeitung; Regression term:32801).
+  const claimedIdentities = new Set([...drafts.keys()].filter((key) => key.startsWith('term:')));
   const items: EnumerationItem[] = [];
   for (const draft of drafts.values()) {
     const urls = [...draft.urls].sort();
-    const previous = previousByKey.get(draft.key) ?? (draft.sourceIdentity ? previousByIdentity.get(draft.sourceIdentity) : undefined);
+    let previous: EnumerationItem | undefined;
+    let manifestEntry: ManifestEntry | undefined;
+    if (draft.sourceIdentity) {
+      const active = previousByIdentity.get(draft.sourceIdentity);
+      const stub = previousByKey.get(draft.key);
+      previous = active ?? stub;
+      if (!active) manifestEntry = manifestByIdentity.get(draft.sourceIdentity);
+    } else {
+      previous = previousByKey.get(draft.key);
+      if (previous?.sourceIdentity && !previous.mergedInto && claimedIdentities.has(previous.sourceIdentity)) {
+        notes.push(`${draft.key}: ${urls.length} Restadresse(n) außerhalb der Fassungsliste von ${previous.sourceIdentity}; Eintrag beginnt erneut offen`);
+        previous = undefined;
+      }
+    }
     const datedUrls = urls.map((url) => ({ url, date: parseVersionUrl(url)?.pathDate ?? '' })).sort((left, right) => (left.date < right.date ? 1 : left.date > right.date ? -1 : left.url < right.url ? -1 : 1));
     const entryUrl = draft.search?.url ?? previous?.entryUrl ?? datedUrls[0]!.url;
     const title = draft.search?.title || previous?.title || humanizeSlug(draft.slug);
     const titleSource: EnumerationItem['titleSource'] = draft.search?.title ? 'search-index' : previous?.titleSource ?? 'slug';
     const pre = preclassify(area, draft.portalType, title);
+    // Stand aus dem Manifest, wenn kein aktiver Eintrag den Stand trägt (Manifest ist Quelle der Wahrheit der Verarbeitung).
+    const fromManifest = manifestEntry && (!previous || previous.mergedInto);
     const item: EnumerationItem = {
       key: draft.key,
       entryUrl: urls.includes(entryUrl) ? entryUrl : datedUrls[0]!.url,
       portalType: draft.portalType,
       title,
       titleSource,
-      status: previous?.status ?? (pre.safeExclusion ? 'excluded' : 'pending'),
+      status: fromManifest ? statusForImportStatus(manifestEntry!.importStatus) : previous?.status ?? (pre.safeExclusion ? 'excluded' : 'pending'),
       urls,
       signals: { sitemap: draft.sitemap, search: Boolean(draft.search) },
       preclassification: { decision: pre.decision, reasons: pre.reasons },
@@ -458,17 +558,34 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     }
     if (pre.evidence) item.evidence = pre.evidence;
     if (previous?.mergedInto && !draft.sourceIdentity) item.mergedInto = previous.mergedInto;
-    if (previous?.lastError) item.lastError = previous.lastError;
-    if (previous?.outcome) item.outcome = previous.outcome;
+    if (fromManifest) item.outcome = outcomeFromManifest(manifestEntry!);
+    else {
+      if (previous?.lastError) item.lastError = previous.lastError;
+      if (previous?.outcome) item.outcome = previous.outcome;
+    }
     if (previous?.updatedAt) item.updatedAt = previous.updatedAt;
     if (previous?.lastRunId) item.lastRunId = previous.lastRunId;
     if (item.status === 'processing') item.status = 'pending';
     items.push(item);
   }
 
-  // Verarbeitete Stammnormen dürfen nie aus der Enumeration fallen: Terme des Manifests, deren Fassungsadressen
-  // sämtlich mehreren Stammnormen zugeordnet sind, erhalten einen eigenen Eintrag aus den Manifestdaten.
-  const covered = new Set(items.flatMap((item) => [item.sourceIdentity, item.mergedInto].filter((value): value is string => Boolean(value))));
+  // Zusammengeführte Stubs, deren Zielidentität weder ein aktiver Eintrag noch ein Manifesteintrag trägt, decken
+  // ihre Adressen durch nichts mehr ab: Sie werden wieder geöffnet (kein stilles Verschwinden).
+  const activeIdentities = new Set(items.filter((item) => !item.mergedInto && item.sourceIdentity).map((item) => item.sourceIdentity!));
+  for (const item of items) {
+    if (!item.mergedInto || activeIdentities.has(item.mergedInto) || manifestByIdentity.has(item.mergedInto)) continue;
+    notes.push(`${item.key}: Zusammenführung in ${item.mergedInto} ohne aktiven Eintrag und ohne Manifesteintrag; Eintrag beginnt erneut offen`);
+    delete item.mergedInto;
+    delete item.outcome;
+    delete item.lastError;
+    item.status = 'pending';
+    item.attempts = 0;
+  }
+
+  // Verarbeitete Stammnormen dürfen nie aus der Enumeration fallen: Terme des Manifests ohne aktiven Eintrag (alle
+  // Fassungsadressen mehreren Stammnormen zugeordnet oder nur noch als Ziel einer Zusammenführung bekannt) erhalten
+  // einen eigenen Eintrag aus den Manifestdaten.
+  const covered = new Set(items.filter((item) => !item.mergedInto).map((item) => item.sourceIdentity).filter((value): value is string => Boolean(value)));
   const manifestOnlyKeys = new Set<string>();
   for (const entry of input.manifest?.entries ?? []) {
     if (entry.sourceArea !== area || !/^term:\d+$/u.test(entry.sourceIdentity) || covered.has(entry.sourceIdentity)) continue;
@@ -478,8 +595,10 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
       .map((address) => address!.url))].sort();
     if (urls.length === 0) continue;
     const address = parseVersionUrl(urls.at(-1)!)!;
-    const previous = previousByKey.get(entry.sourceIdentity) ?? previousByIdentity.get(entry.sourceIdentity);
+    const previous = previousByIdentity.get(entry.sourceIdentity) ?? previousByKey.get(entry.sourceIdentity);
     const pre = preclassify(area, address.documentType, entry.sourceTitle);
+    // Ein früherer Stub (zusammengeführt) trägt keinen belastbaren Stand; dann gilt das Manifest.
+    const fromPrevious = previous && !previous.mergedInto;
     const item: EnumerationItem = {
       key: entry.sourceIdentity,
       sourceIdentity: entry.sourceIdentity,
@@ -487,7 +606,7 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
       portalType: address.documentType,
       title: entry.sourceTitle,
       titleSource: 'manifest',
-      status: previous?.status ?? (entry.importStatus === 'needs-review' ? 'review' : entry.importStatus === 'excluded' ? 'excluded' : entry.importStatus === 'failed' ? 'failed' : 'done'),
+      status: fromPrevious ? previous.status : statusForImportStatus(entry.importStatus),
       urls,
       signals: { sitemap: urls.some((url) => sitemapUrls.has(url)), search: false },
       preclassification: { decision: pre.decision, reasons: pre.reasons },
@@ -495,11 +614,14 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
       attempts: previous?.attempts ?? 0,
     };
     if (pre.evidence) item.evidence = pre.evidence;
-    if (previous?.outcome) item.outcome = previous.outcome;
-    if (previous?.lastError) item.lastError = previous.lastError;
+    if (fromPrevious) {
+      if (previous.outcome) item.outcome = previous.outcome;
+      if (previous.lastError) item.lastError = previous.lastError;
+    } else item.outcome = outcomeFromManifest(entry);
     if (previous?.updatedAt) item.updatedAt = previous.updatedAt;
     if (previous?.lastRunId) item.lastRunId = previous.lastRunId;
-    notes.push(`${entry.sourceIdentity} wird aus dem Manifest geführt (alle Fassungsadressen mehreren Stammnormen zugeordnet)`);
+    if (item.status === 'processing') item.status = 'pending';
+    notes.push(`${entry.sourceIdentity} wird aus dem Manifest geführt (alle Fassungsadressen mehreren Stammnormen zugeordnet oder nur als Ziel einer Zusammenführung bekannt)`);
     manifestOnlyKeys.add(item.key);
     items.push(item);
   }
@@ -517,8 +639,10 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
   const duplicateUrlAssignments = [...assigned.values()].filter((count) => count > 1).length;
   const unmappedHits = [...hitsByUrl.keys()].filter((url) => !assigned.has(url)).length;
   const union = intersection + onlySitemap + onlySearch;
+  const duplicateIdentities = findDuplicateIdentities({ items });
   if (unassignedUrls > 0) problems.push(`${unassignedUrls} Sitemap-Adressen ohne Eintrag`);
   if (duplicateUrlAssignments > 0) problems.push(`${duplicateUrlAssignments} Adressen mehreren Einträgen zugeordnet`);
+  if (duplicateIdentities.length > 0) problems.push(`${duplicateIdentities.length} Quellidentitäten mit mehreren aktiven Einträgen (${duplicateIdentities.slice(0, 5).map((entry) => `${entry.sourceIdentity}: ${entry.keys.join(' + ')}`).join('; ')})`);
   if (unmappedHits > 0) problems.push(`${unmappedHits} Suchtreffer ohne Eintrag`);
   if (union !== stems.size) problems.push(`Vereinigung ${union} ≠ Slug-Stämme ${stems.size}`);
   if (sitemapUrls.size === 0) problems.push('Sitemap enthält keine Adressen des Bereichs');
@@ -542,6 +666,7 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     unassignedUrls,
     duplicateUrlAssignments,
     termConflicts,
+    duplicateIdentities: duplicateIdentities.length,
     ok: problems.length === 0,
     problems,
     notes,

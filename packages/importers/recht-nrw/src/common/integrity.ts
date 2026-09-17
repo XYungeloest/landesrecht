@@ -10,9 +10,10 @@
 import { countBlockTypes } from '@landesrecht/legal-core/lib/body.ts';
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
-import { bodyTextLength } from './body-common.ts';
-import { parseHtml, allByClass, byClass, findFirst, textOf, allByTag, attr, classes, isLayoutTable, type HtmlElement } from './html.ts';
-import { detectTocSections } from './native-parser.ts';
+import { bodyTextLength, extractFootnoteMarkers, normalizeEntityArtifacts } from './body-common.ts';
+import { parseHtml, allByClass, byClass, findFirst, textOf, allByTag, attr, classes, hasClass, isLayoutTable, type HtmlElement } from './html.ts';
+import { countLegacyUnitHeadings } from './legacy-parser.ts';
+import { classifyInlineArticleLines, detectInlineArticleScopes, detectTocSections, isBoldParagraph } from './native-parser.ts';
 
 export interface IntegrityCheck {
   name: string;
@@ -113,10 +114,12 @@ export interface RawMetrics {
 /**
  * Nummernfeld des nativen Formats, das der Parser als Einheit zählt: „§ 5“, „Artikel 12“ oder
  * ein einzelner wohlgeformter römischer Artikel („Artikel I“, ggf. mit Fußnotenmarke). Spannen
- * („Artikel I bis III“) zählen wie im Parser nicht.
+ * („Artikel I bis III“) und Gliederungen („1. Abschnitt“) zählen wie im Parser nicht; doppelt
+ * kodierte Entities („§&nbsp;1“) werden wie im Parser als Leerzeichen gelesen.
  */
 const ROMAN_ARTICLE_NUMBER = /^(?:Art\.|Artikel)\s+(?=[IVXLCDM])M{0,3}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})$/u;
-function isNativeUnitNumber(text: string): boolean {
+function isNativeUnitNumber(raw: string): boolean {
+  const text = normalizeEntityArtifacts(raw).text;
   if (/^(§{1,2}|Art\.|Artikel)\s*\d/u.test(text)) return true;
   return ROMAN_ARTICLE_NUMBER.test(text.replace(/\(\s*Fn[^)]*\)/gu, ' ').replace(/\s+/gu, ' ').trim());
 }
@@ -125,7 +128,8 @@ function isNativeUnitNumber(text: string): boolean {
 export function rawMetrics(format: 'legacy-file' | 'native', html: string): RawMetrics {
   const document = parseHtml(html);
   if (format === 'legacy-file') {
-    const headings = allByClass(document, 'lrdetail').filter((element) => /^(§{1,2}|Art\.|Artikel)\s*\d/u.test(textOf(element)));
+    // Einheiten über dieselbe Klassifikationskette wie der Parser (hergeleitete Zeichen, Inhaltsübersicht).
+    const units = countLegacyUnitHeadings(html);
     // Fußnotenanker sind uneinheitlich geschrieben („FN1“, „Fn2“); einzeilige Hülltabellen löst der Parser auf.
     const isFootnoteTable = (table: HtmlElement): boolean => Boolean(findFirst(table, (element) => element.tagName === 'a' && /^FN\d+/iu.test(attr(element, 'name') ?? '')));
     const tables = allByTag(document, 'table').filter((table) => !isFootnoteTable(table) && !isLayoutTable(table));
@@ -135,18 +139,40 @@ export function rawMetrics(format: 'legacy-file' | 'native', html: string): RawM
     const visible = textOf(body);
     const footnoteTables = allByTag(document, 'table').filter(isFootnoteTable);
     const footnoteText = footnoteTables.map((table) => textOf(table)).join(' ');
-    return { units: headings.length, tables: bodyTables.length, textLength: Math.max(0, visible.length - footnoteText.length) };
+    return { units, tables: bodyTables.length, textLength: Math.max(0, visible.length - footnoteText.length) };
   }
   // Eine als Einheitensektionen angelegte Inhaltsübersicht liest der Parser als Text; ihre
   // Nummernfelder werden hier mit derselben Strukturregel ausgenommen (keine Parserheuristik).
-  const tocNums = new Set([...detectTocSections(document).sections].map((section) => byClass(section, 'field--field_num')).filter((element): element is HtmlElement => Boolean(element)));
+  const tocSections = detectTocSections(document).sections;
+  const tocNums = new Set([...tocSections].map((section) => byClass(section, 'field--field_num')).filter((element): element is HtmlElement => Boolean(element)));
   const nums = allByClass(document, 'field--field_num').filter((element) => !tocNums.has(element) && isNativeUnitNumber(textOf(element)));
   const texts = allByClass(document, 'field--field_text').filter((element) => !findFirst(element, (child) => classes(child).includes('field--field_text')));
   // Der Parser liest Tabellen aus allen Textfeldern (Vorspann mit Inhaltsübersicht, Einheiten,
   // Schlussformel) und löst einzeilige Hülltabellen auf – gezählt wird exakt dasselbe.
   const tables = texts.flatMap((element) => allByTag(element, 'table')).filter((table) => !isLayoutTable(table));
   const textLength = texts.reduce((sum, element) => sum + textOf(element).length, 0);
-  return { units: nums.length, tables: tables.length, textLength };
+  // Artikel als zentrierte Überschriften mit neu beginnender §-Zählung: dieselbe dokumentweite
+  // Entscheidung und dieselbe Zeilenklassifikation wie im Parser.
+  let inlineArticles = 0;
+  if (detectInlineArticleScopes(document)) {
+    const tocTexts = new Set([...tocSections].map((section) => byClass(section, 'field--field_text')).filter((element): element is HtmlElement => Boolean(element)));
+    for (const field of texts) {
+      if (tocTexts.has(field)) continue;
+      // Absätze in echten Tabellen liest der Parser als Zellen, nicht als Überschriften.
+      const inTable = new Set(allByTag(field, 'table').filter((table) => !isLayoutTable(table)).flatMap((table) => allByTag(table, 'p')));
+      for (const paragraph of allByTag(field, 'p')) {
+        if (inTable.has(paragraph) || !hasClass(paragraph, 'text-align-center') || !isBoldParagraph(paragraph)) continue;
+        const lines = classifyInlineArticleLines(textOf(paragraph, { breaks: true }));
+        if (lines) inlineArticles += lines.filter((line) => line.kind === 'unit').length;
+      }
+    }
+  }
+  return { units: nums.length + inlineArticles, tables: tables.length, textLength };
+}
+
+/** Zeichenumfang, den die protokollierten Ersetzungen im Normkörper erklären (`body[…]`-Pfade). */
+export function explainedBodyDelta(changes: ReadonlyArray<{ path: string; from: string; to: string }>): number {
+  return changes.filter((change) => change.path.startsWith('body')).reduce((sum, change) => sum + change.to.length - change.from.length, 0);
 }
 
 const TEXT_TOLERANCE = 0.12;
@@ -168,7 +194,13 @@ export function checkParseIntegrity(raw: RawMetrics, parsed: BodyMetrics): Integ
   return { stage: 'fetch-parse', ok: checks.every((check) => check.ok), checks };
 }
 
-export function checkTransformIntegrity(source: BodyMetrics, canonical: BodyMetrics): IntegrityReport {
+/**
+ * Source-Normalized → Canonical. `explainedDelta` ist der Zeichenumfang, den die protokollierten
+ * Ersetzungen im Normkörper erklären (`explainedBodyDelta`): stimmt der kanonische Umfang exakt mit
+ * Quelle + Delta überein, ist die Abweichung vollständig belegt – unabhängig davon, wie klein die Norm
+ * ist (bei kurzen Normen überschreiten wenige Ersetzungen die relative Toleranz).
+ */
+export function checkTransformIntegrity(source: BodyMetrics, canonical: BodyMetrics, explainedDelta?: number): IntegrityReport {
   const checks: IntegrityCheck[] = [];
   const same = (name: string, expected: number, actual: number, message: string): void => {
     checks.push({ name, expected, actual, ok: expected === actual, message: expected === actual ? undefined : message });
@@ -181,8 +213,9 @@ export function checkTransformIntegrity(source: BodyMetrics, canonical: BodyMetr
   const labelsOk = source.unitLabels.join('\0') === canonical.unitLabels.join('\0');
   checks.push({ name: 'unitLabels', expected: source.unitLabels.length, actual: canonical.unitLabels.length, ok: labelsOk, message: labelsOk ? undefined : 'Reihenfolge oder Kennzeichen der Einheiten weichen ab' });
   const ratio = source.textLength === 0 ? 1 : canonical.textLength / source.textLength;
-  const textOk = ratio >= 0.97 && ratio <= 1.03;
-  checks.push({ name: 'textLength', expected: source.textLength, actual: canonical.textLength, ok: textOk, message: textOk ? undefined : `Textumfang weicht um ${Math.round((ratio - 1) * 100)} % ab` });
+  const explained = explainedDelta !== undefined && canonical.textLength === source.textLength + explainedDelta;
+  const textOk = explained || (ratio >= 0.97 && ratio <= 1.03);
+  checks.push({ name: 'textLength', expected: source.textLength, actual: canonical.textLength, ok: textOk, message: textOk ? undefined : `Textumfang weicht um ${Math.round((ratio - 1) * 100)} % ab${explainedDelta !== undefined ? ` (protokollierte Ersetzungen erklären ${explainedDelta >= 0 ? '+' : ''}${explainedDelta} Zeichen)` : ''}` });
   checks.push({ name: 'duplicateUnits', expected: 0, actual: canonical.duplicateLabels.length, ok: canonical.duplicateLabels.length === 0 });
   return { stage: 'source-canonical', ok: checks.every((check) => check.ok), checks };
 }

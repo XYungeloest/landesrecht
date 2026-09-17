@@ -1,25 +1,7 @@
 /**
  * CLI des RECHT.NRW-Imports (Aufruf über scripts/import-recht-nrw.ts). Dry-run ist überall Standard.
- *
- *   inspect  --url <url>                      Seite analysieren (LRGV oder LRMB, aus der Adresse)
- *   import   --url <url> [--write]            Importpfad LRGV oder LRMB (Einzelimport, Beispielarchiv)
- *   sample   [--area lrgv|lrmb] [--write]     Validierungskorpus eines Bereichs (Standard: lrgv)
- *   enumerate --area lrgv|lrmb [--write]      Vollständige Enumeration (Sitemaps + Suchindex) mit Abgleich
- *   bulk     --area lrgv|lrmb [--write] [--resume] [--limit n] [--only a,b] [--retry-failed] [--retry-review]
- *            [--regenerate-stale] [--refresh] [--offline] [--max-requests n] [--max-runtime 8h]
- *            [--max-bytes n] [--min-delay ms] [--archive staging|r2] [--r2-transport s3|wrangler]
- *            [--staging-dir dir] [--output-root dir]
- *   r2-sync  [--write] [--limit n] [--concurrency n] [--r2-transport s3|wrangler|wrangler-api] [--verify readback|etag]   gestagte Rohquellen nach R2
- *   coverage [--write]                        Coverage-Report (JSON + COVERAGE.md)
- *   review   [--area lrgv|lrmb] [--decide <id> --status <s> --reason <text> [--by <name>] [--override <id>] --write]
- *   reconstruction-queue [--write]            Rekonstruktionsqueue mit Priorisierungshilfe
- *   search-audit [--jurisdiction west] [--limit n]   Suchintegrität
- *   readiness [--json]                        READY / NOT READY mit Blockern
- *   audit                                     Manifest, Rohquellen, Inhalte, Reports, Rekonstruktionen, Queue,
- *                                             Slug-Registry, Enumeration und Coverage prüfen
- *
- * Gemeinsame Optionen: --offline (nur Cache), --refresh (kontrolliert neu abrufen), --cache-dir <pfad>,
- * --baseline <datum>, --json.
+ * Vollständige Hilfe: `node scripts/import-recht-nrw.ts help [befehl]` bzw. `<befehl> --help` (Texte unten in
+ * COMMAND_HELP; Details in docs/RECHT_NRW_BULK_IMPORT.md und docs/RECHT_NRW_BULK_READINESS.md).
  */
 import { createHash } from 'node:crypto';
 import { readdir, readFile, stat } from 'node:fs/promises';
@@ -30,9 +12,10 @@ import { loadNorm } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 
 import { runBulkCommand, runCoverageCommand, runEnumerateCommand, runR2SyncCommand, runReadinessCommand, runReconstructionQueueCommand, runSearchAuditCommand } from './cli-bulk.ts';
+import { runReviewReportCommand } from './common/review-report.ts';
 import { TARGET_JURISDICTION } from './common/constants.ts';
-import { collectCoverageInput, computeCoverage, coverageComparable, COVERAGE_PATH, type CoverageReport } from './common/coverage.ts';
-import { readEnumeration } from './common/enumeration.ts';
+import { collectCoverageInput, computeCoverage, coverageComparable, COVERAGE_PATH, IMPORTED_NORM_TYPES, type CoverageReport } from './common/coverage.ts';
+import { checkEnumerationInvariants, readEnumeration } from './common/enumeration.ts';
 import { loadImportEnvironment } from './common/environment.ts';
 import { createRechtNrwFetcher, decodeHtml, DEFAULT_MIN_DELAY_MS, type RechtNrwFetcher } from './common/fetcher.ts';
 import { isImportedStatus, RAW_ARCHIVE_DIR, readLrmbSampleCorpus, readManifest, readSampleCorpus, SOURCE_AREAS, type ManifestEntry, type SourceArea } from './common/manifest.ts';
@@ -50,6 +33,8 @@ import { parseChangeNote, parseDecreeFromTitle, parseValidityClauses } from './l
 
 export interface CliOptions {
   command: string;
+  /** `--help`/`-h` hinter einem Befehl: Hilfe des Befehls ausgeben, nichts ausführen. */
+  help: boolean;
   url?: string;
   area?: SourceArea;
   write: boolean;
@@ -80,6 +65,17 @@ export interface CliOptions {
   by?: string;
   override?: string;
   jurisdiction?: string;
+  /** search-audit: Stichprobe, Seed, Normtyp, Modus, Worker, Match-Modus, Golden-Set, Remote-Stichprobe. */
+  sample?: number;
+  seed?: string;
+  category?: string;
+  mode?: string;
+  workers?: number;
+  match?: string;
+  golden: boolean;
+  remoteSample?: string;
+  /** review-report: keinen Quellcache lesen (nur Manifest, Queue, Enumeration). */
+  noSources?: boolean;
 }
 
 /** „90s“, „15m“, „8h“, „2d“ oder Sekunden → Millisekunden. */
@@ -99,7 +95,7 @@ function positiveInteger(value: string | undefined, option: string): number {
 
 export function parseCliArguments(argv: readonly string[]): CliOptions {
   const [command = 'help', ...rest] = argv;
-  const options: CliOptions = { command, write: false, offline: false, refresh: false, baseline: SIMULATION_BASELINE_DATE, json: false, resume: false, only: [], retryFailed: false, retryReview: false, regenerateStale: false };
+  const options: CliOptions = { command, help: false, write: false, offline: false, refresh: false, baseline: SIMULATION_BASELINE_DATE, json: false, resume: false, only: [], retryFailed: false, retryReview: false, regenerateStale: false, golden: false };
   const value = (index: number, name: string): string => {
     const next = rest[index];
     if (next === undefined || next.startsWith('--')) throw new Error(`${name} erwartet einen Wert`);
@@ -110,6 +106,7 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
     const [flag, inline] = argument.includes('=') && argument.startsWith('--') ? [argument.slice(0, argument.indexOf('=')), argument.slice(argument.indexOf('=') + 1)] : [argument, undefined];
     const take = (): string => inline ?? value(++index, flag);
     switch (flag) {
+      case '--help': case '-h': options.help = true; break;
       case '--write': options.write = true; break;
       case '--dry-run': options.write = false; break;
       case '--offline': options.offline = true; break;
@@ -119,6 +116,7 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--retry-failed': options.retryFailed = true; break;
       case '--retry-review': options.retryReview = true; break;
       case '--regenerate-stale': options.regenerateStale = true; break;
+      case '--no-sources': options.noSources = true; break;
       case '--url': options.url = take(); break;
       case '--cache-dir': options.cacheDir = take(); break;
       case '--baseline': options.baseline = take(); break;
@@ -143,6 +141,14 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--by': options.by = take(); break;
       case '--override': options.override = take(); break;
       case '--jurisdiction': options.jurisdiction = take(); break;
+      case '--sample': options.sample = positiveInteger(take(), '--sample'); break;
+      case '--seed': options.seed = take(); break;
+      case '--category': options.category = take(); break;
+      case '--mode': options.mode = take(); break;
+      case '--workers': options.workers = positiveInteger(take(), '--workers'); break;
+      case '--match': options.match = take(); break;
+      case '--golden': options.golden = true; break;
+      case '--remote-sample': options.remoteSample = take(); break;
       case '--archive': {
         const archive = take();
         if (archive !== 'staging' && archive !== 'r2') throw new Error('--archive erwartet staging|r2');
@@ -170,6 +176,143 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
 }
 
 export type Io = { print: (line: string) => void; error: (line: string) => void };
+
+const COMMON_OPTIONS = `Gemeinsame Optionen (alle Befehle mit Netzabruf):
+  --offline            nur den lokalen Cache (.cache/recht-nrw/) lesen; jeder Netzabruf ist ein Fehler
+  --refresh            Cache nicht lesen, sondern kontrolliert neu abrufen (Ergebnis ersetzt den Cacheeintrag)
+  --cache-dir <pfad>   Cacheverzeichnis (Standard .cache/recht-nrw)
+  --baseline <datum>   Stichtag der Quellfassung (Standard ${SIMULATION_BASELINE_DATE})
+  --json               maschinenlesbare Ausgabe, wo vorhanden
+  --write              schreiben; ohne --write ist jeder Befehl ein Dry-run
+  --help, -h           diese Hilfe`;
+
+/** Hilfetexte je Befehl; Optionen mit Standardwerten. Die Parser-Regeln stehen in parseCliArguments. */
+export const COMMAND_HELP: Readonly<Record<string, string>> = {
+  inspect: `inspect --url <url>
+  Analysiert eine RECHT.NRW-Seite (LRGV oder LRMB nach Adresse): Stammnorm, Fassungen, Stichtagsauswahl,
+  Anlagen, bei LRMB Dokumenttyp, Normativität, Erlasskopf und Geltungsklauseln. Schreibt nichts.`,
+  import: `import --url <url> [--write]
+  Einzelimport über den Importpfad LRGV oder LRMB (Beispielarchiv unter sources/recht-nrw/). Mit --write
+  werden Rohquellen, Norm, Report, Manifest und Review-Queue geschrieben. Exit 1 bei Status failed.`,
+  sample: `sample [--area lrgv|lrmb] [--write]
+  Verarbeitet den Validierungskorpus eines Bereichs (Standard lrgv) und vergleicht mit den Erwartungen
+  (data/imports/recht-nrw/sample-corpus*.json). Exit 1 bei Fehlschlägen oder Abweichungen.`,
+  enumerate: `enumerate --area lrgv|lrmb [--write] [--max-requests n] [--max-runtime <dauer>] [--max-bytes n] [--min-delay ms]
+  Vollständige Enumeration des Bereichs aus Sitemaps und Suchindex mit Abgleich; Fortschritt vorhandener
+  Einträge bleibt erhalten. Standardbudget 250 Abrufe, 1 h. Exit 1 bei Abweichungen im Abgleich.
+  Ziel: data/imports/recht-nrw/enumeration-<bereich>.json`,
+  bulk: `bulk --area lrgv|lrmb [--write] [--resume] [Auswahl] [Budget] [Archiv]
+  Bulk-Lauf über die Enumeration: je Stammnorm Auflösung, Import, atomarer Checkpoint; Normfehler → Review/
+  failed und weiter; systemische Fehler → kontrollierter Abbruch (Exit 2), Abbruchsignal (Exit 130).
+  Laufzusammenfassung: data/audits/recht-nrw/runs/<runId>.json. Logzeilen: Lauf-ID im Kopf, je Stammnorm
+  "[i/n] <bereich> <schlüssel> start|ergebnis|abbruch … · <ms>".
+  Auswahl:
+    --resume             vorhandenen Fortschritt fortsetzen (Pflicht, sobald die Enumeration Fortschritt enthält)
+    --limit <n>          höchstens n Stammnormen in diesem Lauf
+    --only <a,b,…>       nur diese Einträge (Schlüssel, term:<id>, Term-ID oder Adresse); mehrfach erlaubt
+    --retry-failed       fehlgeschlagene Einträge erneut verarbeiten
+    --retry-review       Review-Einträge erneut verarbeiten (nach Override/Entscheidung)
+    --regenerate-stale   Einträge mit veralteter Parser-/Transformerversion neu erzeugen (meist mit --offline)
+  Budget (Lauf endet mit budget-exhausted, kein Fehler; danach --resume):
+    --max-requests <n>   Netzabrufe je Lauf (Standard 3000)
+    --max-runtime <d>    Laufzeit, z. B. 90s, 15m, 8h (Standard 8h)
+    --max-bytes <n>      Datenvolumen in Bytes
+    --min-delay <ms>     Mindestabstand zwischen Netzabrufen (Standard ${DEFAULT_MIN_DELAY_MS})
+  Archiv:
+    --archive staging|r2 Rohquellen ins lokale Staging (Standard, ohne Zugangsdaten) oder sofort nach R2 mit Rücklesung
+    --r2-transport s3|wrangler|wrangler-api   Transport für --archive r2 (siehe r2-sync --help)
+    --staging-dir <dir>  Staging (Standard .cache/recht-nrw-r2-staging; muss außerhalb versionierter Pfade liegen)
+    --output-root <dir>  getrenntes Ausgaberoot für Testläufe (Steuerdateien werden hineinkopiert)`,
+  'r2-sync': `r2-sync [--write] [--limit n] [--concurrency n] [--r2-transport wrangler|s3|wrangler-api] [--verify readback|etag] [--staging-dir dir]
+  Überträgt gestagte Rohquellen (Manifeststatus staged) nach R2 und markiert sie als verified; wiederaufnehmbar,
+  vorhandene Objekte mit gleichem Inhalt zählen als bereits vorhanden, anderer Inhalt ist ein harter Fehler.
+  Ohne --write nur Zählung. Exit 1, wenn Staging-Dateien fehlen.
+    --limit <n>          höchstens n Manifesteinträge
+    --concurrency <n>    Einträge gleichzeitig (Standard 1; höchstens 8 bei wrangler, 32 bei s3/wrangler-api)
+    --verify readback    je Objekt Vorabprüfung, Upload, Byte-Rücklesung mit SHA-256 (Standard, 6 Aufrufe je Objekt)
+    --verify etag        Listing-/Etag-Prüfung je Charge (Größe + MD5) mit 2 % Byte-Stichproben (2 Aufrufe je Objekt;
+                         braucht ein Listing: s3 oder wrangler-api)
+    --r2-transport wrangler      Standard und empfohlen: wrangler r2 object put/get --remote über die Wrangler-Anmeldung
+                                 (npx wrangler login); Wrangler verwaltet die Anmeldung, dieser Code liest keine Tokens
+    --r2-transport s3            S3-API mit R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY[, R2_BUCKET] (CI)
+    --r2-transport wrangler-api  optional, nur lokal, best effort: R2-Objekt-API direkt mit dem Token aus Wranglers
+                                 Anmeldedatei oder CLOUDFLARE_API_TOKEN (kein Prozessstart je Aufruf; bei mehreren Konten
+                                 CLOUDFLARE_ACCOUNT_ID setzen; Diagnose R2_API_DEBUG=<datei>, ohne Tokens)
+  Ohne --r2-transport wird der S3-Transport aus der Umgebung verwendet; fehlen die Variablen, endet der Befehl
+  mit Hinweis (Exit 1). Alle Transporte: Timeout je Aufruf, Wiederholung mit Abstand, Retry-After.`,
+  coverage: `coverage [--write] [--json]
+  Coverage-Report aus Manifest, Review-Queue, Enumeration, Slug-Registry und Inhalten
+  (data/audits/recht-nrw/coverage.json + COVERAGE.md). Ohne --write nur Ausgabe.`,
+  review: `review [--area lrgv|lrmb] [--json]
+review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>] [--write]
+  Ohne --decide: offene Review-Fälle (optional je Bereich). Mit --decide: Entscheidung zu einem Fall
+  (Status ${REVIEW_ITEM_STATUSES.filter((status) => status !== 'open').join('|')}); --reason ist Pflicht, --override verweist auf
+  data/imports/recht-nrw/overrides.json. Gespeichert nur mit --write.`,
+  'reconstruction-queue': `reconstruction-queue [--write] [--json]
+  Rekonstruktionsqueue der LRMB-Fälle reconstruction-required mit Priorisierungshilfe und Status
+  (queued | recipe-draft | imported | blocked-uncertain). Ziel: data/imports/recht-nrw/reconstruction-queue.json`,
+  'review-report': `review-report [--write] [--json] [--limit n] [--no-sources] [--cache-dir <pfad>]
+  Lesende Auswertung der Review-Queue: Statistik (Kategorien, Stammnormen, Kombinationen, Gruppen),
+  reproduzierbarer Prioritätsscore je Stammnorm, Arbeitslisten (Top n je Kategorie, Standard 100),
+  PDF-Fälle mit Transkriptionspriorität, historische LRMB-Lücken (Belegklassen, Nachfolgebelege) und
+  Gruppierung der Rekonstruktionsqueue. Netzfrei: Quellen nur aus Cache/Beispielkorpus (--no-sources
+  überspringt den Cache-Scan). Ziele: data/audits/recht-nrw/review/**, REVIEW_SUMMARY.md,
+  lrmb/PDF_FAELLE.{json,md}, lrmb/historical-gap.json, lrmb/HISTORICAL_GAP_STATISTIK.md. Nur mit --write.`,
+  'search-audit': `search-audit [--jurisdiction west] [--mode fast|full] [--sample n] [--seed s] [--limit n] [--only a,b]
+             [--category <normtyp>] [--workers n] [--match or-prefix|and-first] [--json] [--write]
+search-audit --golden [--match or-prefix|and-first] [--write]
+search-audit --remote-sample <url> [--write]
+  Suchintegrität der projizierten Normen (Sucheinheiten, Strukturadressen, Treffer je Norm). Exit 1 bei Fehlern.
+    --jurisdiction <id>  Jurisdiktion (Standard west)
+    --mode fast|full     fast: deterministische, geschichtete Stichprobe (Standard 150 Normen, wenige Minuten);
+                         full: alle Normen (Standard)
+    --sample <n>         Stichprobengröße (überschreibt den Modus-Standard)
+    --seed <s>           Seed der Stichprobe (Standard „landesrecht“; gleicher Seed + Bestand = gleiche Auswahl)
+    --limit <n>          höchstens n Normen prüfen (nach Auswahl, Titelreihenfolge)
+    --only <a,b>         nur diese Slugs
+    --category <typ>     nur Normen dieses Normtyps (verwaltungsvorschrift = gesamte Familie)
+    --workers <n>        parallele Worker mit eigener In-Memory-Projektion (1–8; Standard 1)
+    --match <modus>      Verknüpfung der Suchwörter (Standard: Produktionsstandard)
+    --write              Ergebnis als JSON nach data/audits/recht-nrw/search/ schreiben
+    --golden             Golden-Query-Set (data/audits/recht-nrw/search/golden-queries.json) mit Recall@10, MRR, Top-1
+                         für beide Match-Modi auswerten (--match: nur einen); --write schreibt JSON + Markdown
+    --remote-sample <url>  ≥ 50 deterministische Fälle gegen <url>/api/v1/search (nur auf ausdrücklichen Wunsch,
+                         nie automatisch); --write schreibt das Ergebnis
+  Details: docs/SEARCH.md`,
+  readiness: `readiness [--json]
+  Maschinelle Bereitschaftsprüfung: erste Zeile READY oder NOT READY (Exit 0/1), danach Prüfungen und Blocker
+  (docs/RECHT_NRW_BULK_READINESS.md).`,
+  audit: `audit
+  Prüft Manifest, Rohquellen-Hashes, kanonische Dateien, Reports, Rekonstruktionen, Review-Status, Slug-Registry,
+  Enumeration und Coverage auf Konsistenz. Exit 1 bei Abweichungen.`,
+};
+
+export function renderHelp(command?: string): string {
+  if (command && COMMAND_HELP[command]) return `${COMMAND_HELP[command]}\n\n${COMMON_OPTIONS}`;
+  const overview = [
+    'RECHT.NRW-Importer (Nordrhein-Westfalen → Land Westdeutschland). Dry-run ist überall Standard.',
+    'Aufruf: node scripts/import-recht-nrw.ts <befehl> [optionen]   (npm run import:recht-nrw:<befehl> -- [optionen])',
+    '',
+    'Befehle:',
+    '  inspect                Seite analysieren (--url)',
+    '  import                 Einzelimport (--url, --write)',
+    '  sample                 Validierungskorpus je Bereich',
+    '  enumerate              Enumeration eines Bereichs (Sitemaps + Suchindex)',
+    '  bulk                   Bulk-Lauf über die Enumeration (Resume, Budgets, Checkpoints)',
+    '  r2-sync                gestagte Rohquellen nach R2 (Transporte wrangler | s3 | wrangler-api)',
+    '  coverage               Coverage-Report',
+    '  review                 Review-Fälle anzeigen und entscheiden',
+    '  reconstruction-queue   Rekonstruktionsqueue',
+    '  review-report          Review-Statistik, Prioritäten, Arbeitslisten, PDF-Fälle, historische Lücken',
+    '  search-audit           Suchintegrität',
+    '  readiness              READY / NOT READY',
+    '  audit                  Konsistenzprüfung des Bestands',
+    '',
+    'Hilfe je Befehl: help <befehl> oder <befehl> --help',
+    ...(command ? ['', `Unbekannter Befehl: ${command}`] : []),
+  ];
+  return `${overview.join('\n')}\n\n${COMMON_OPTIONS}`;
+}
 
 function createFetcher(options: CliOptions, root: string): RechtNrwFetcher {
   return createRechtNrwFetcher({ cacheDir: options.cacheDir ?? join(root, '.cache', 'recht-nrw'), offline: options.offline, refresh: options.refresh, minDelayMs: options.minDelayMs ?? DEFAULT_MIN_DELAY_MS });
@@ -224,14 +367,20 @@ function areaOf(options: CliOptions): SourceArea {
 }
 
 export async function runCli(argv: readonly string[], io: Io = { print: console.log, error: console.error }): Promise<number> {
+  const [first, second] = argv;
+  if (first === undefined || first === 'help' || first === '--help' || first === '-h') {
+    io.print(renderHelp(second));
+    return second === undefined || COMMAND_HELP[second] ? 0 : 1;
+  }
+  if (argv.includes('--help') || argv.includes('-h')) {
+    // Hilfe vor jeder Ausführung und vor der Prüfung weiterer Optionen.
+    io.print(renderHelp(first));
+    return COMMAND_HELP[first] ? 0 : 1;
+  }
   const options = parseCliArguments(argv);
   const root = resolveRepositoryRoot();
 
   switch (options.command) {
-    case 'help':
-    case '--help':
-      io.print('Befehle: inspect | import | sample | enumerate | bulk | r2-sync | coverage | review | reconstruction-queue | search-audit | readiness | audit (Details: packages/importers/recht-nrw/src/cli.ts, docs/RECHT_NRW_BULK_READINESS.md)');
-      return 0;
     case 'enumerate':
       return runEnumerateCommand(options, root, io);
     case 'bulk':
@@ -246,6 +395,8 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
       return runSearchAuditCommand(options, root, io);
     case 'reconstruction-queue':
       return runReconstructionQueueCommand(options, root, io);
+    case 'review-report':
+      return runReviewReportCommand(options, root, io);
     default:
       break;
   }
@@ -429,6 +580,10 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
       const missing = manifest.entries.filter((entry) => entry.sourceArea === area && !known.has(entry.sourceIdentity));
       if (missing.length > 0) problems.push(`${area}: ${missing.length} Manifesteinträge ohne Enumerationseintrag (${missing.slice(0, 5).map((entry) => entry.sourceIdentity).join(', ')})`);
       if (!enumeration.crosscheck.ok) problems.push(`${area}: Enumerationsabgleich mit Abweichungen (${enumeration.crosscheck.problems.join('; ')})`);
+      // Dubletten (mehrere aktive Einträge derselben Quellidentität) zählen doppelt und werden doppelt verarbeitet:
+      // nie stillschweigend, Reparatur über den Rebuild (enumerate --write).
+      const invariants = checkEnumerationInvariants(enumeration, { manifestIdentities: new Set(manifest.entries.filter((entry) => entry.sourceArea === area).map((entry) => entry.sourceIdentity)) });
+      if (invariants.length > 0) problems.push(`${area}: Enumerationsinvarianten verletzt (${invariants.slice(0, 5).join('; ')}${invariants.length > 5 ? `; … ${invariants.length} insgesamt` : ''}) – Reparatur: npm run import:recht-nrw:enumerate -- --area ${area} --write`);
     }
     try {
       const sampleDirs = (await readdir(join(root, RAW_ARCHIVE_DIR))).filter((name) => name.startsWith('term-'));
@@ -461,7 +616,8 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
     return 0;
   }
 
-  throw new Error(`Unbekannter Befehl: ${options.command}`);
+  io.error(renderHelp(options.command));
+  return 1;
 }
 
 async function verifyHash(root: string, localSource: string, sha256: string, problems: string[]): Promise<void> {
@@ -505,6 +661,8 @@ async function auditEntry(root: string, entry: ManifestEntry, queue: ReviewQueue
       if (archived.some((reference) => reference.availability !== expectedAvailability)) problems.push(`${entry.targetSlug}: Quellenreferenzen passen nicht zum Archivmodus ${entry.archive?.mode ?? 'versioned-sample'}`);
     }
     if (!record.meta.externalIdentifiers.some((identifier) => identifier.system === 'recht-nrw' && identifier.value === entry.sourceIdentity)) problems.push(`${entry.targetSlug}: externe Kennung ${entry.sourceIdentity} fehlt`);
+    if (!(IMPORTED_NORM_TYPES as readonly string[]).includes(record.meta.type)) problems.push(`${entry.targetSlug}: Normtyp ${record.meta.type} gehört nicht zu den Typen des RECHT.NRW-Imports (${IMPORTED_NORM_TYPES.join(', ')})`);
+    if (record.meta.jurisdiction !== TARGET_JURISDICTION) problems.push(`${entry.targetSlug}: Jurisdiktion ${record.meta.jurisdiction} statt ${TARGET_JURISDICTION}`);
   } catch (error) {
     problems.push(`${entry.targetSlug}: ${(error as Error).message}`);
   }

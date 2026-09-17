@@ -11,12 +11,20 @@ import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 export type SourceLine =
   | { kind: 'division'; level: DivisionLevel; label: string; title?: string; footnotes: string[] }
   | { kind: 'unit'; unitType: 'paragraph' | 'article'; label: string; title?: string; footnotes: string[] }
+  /**
+   * Spanne oder Aufzählung von Einheiten („Artikel I bis III“, „§§ 15 bis 16“): eine Überschrift auf
+   * Einheitenebene (schließt die vorangehende Einheit), aber keine Einheit – die einzelnen Artikel
+   * werden nicht erfunden (Änderungs-/Aufhebungsbereich in Mantel- und Anpassungsgesetzen).
+   */
+  | { kind: 'unit-range'; unitType: 'paragraph' | 'article'; label: string; title?: string; footnotes: string[] }
   | { kind: 'annex'; label: string; title?: string; footnotes: string[] }
   | { kind: 'subparagraph'; label: string; text: string; footnotes: string[] }
   | { kind: 'item'; label?: string; text: string; level: number; footnotes: string[] }
   | { kind: 'text'; text: string; centered: boolean; bold: boolean; footnotes: string[] }
   | { kind: 'heading'; text: string; footnotes: string[] }
   | { kind: 'table'; block: NormBodyBlock; footnotes: string[] }
+  /** Fußnoten ohne Einheit (Vorspann, nummernlose Sektion): eigene Fußnotenblöcke, kein Fließtext. */
+  | { kind: 'footnotes'; labels: string[] }
   | { kind: 'signature'; text: string };
 
 export type DivisionLevel = 'book' | 'part' | 'chapter' | 'section' | 'subsection';
@@ -107,6 +115,105 @@ export function parseUnitHeading(text: string, options: UnitHeadingOptions = {})
   const label = unitType === 'paragraph' ? `§ ${number}` : `${marker === 'Art.' ? 'Art.' : 'Artikel'} ${number}`;
   const title = match[3]!.replace(/^[\s:–—-]+/u, '').trim();
   return title ? { unitType, label, title } : { unitType, label };
+}
+
+/**
+ * Spanne oder Aufzählung von Einheiten: „Artikel I bis III“, „Art. XXVIII und XXIX“, „§§ 15 bis 16“,
+ * „§ 5 und 6“, „Artikel 3 bis 5“. Römische Zahlen werden hier nur formal geprüft (Buchstabenklasse),
+ * weil keine Einheit entsteht – die Spanne bleibt eine Überschrift auf Einheitenebene.
+ */
+const UNIT_RANGE_PATTERN = /^(§{1,2}|Art\.|Artikel)\s*(\d+\s?[a-z]?|[IVXLCDM]+)\s+(bis|und|,)\s*(\d+\s?[a-z]?|[IVXLCDM]+)\b\s*(.*)$/u;
+
+export function parseUnitRangeHeading(text: string): { unitType: 'paragraph' | 'article'; label: string; title?: string } | null {
+  const cleaned = text.replace(/\s+/gu, ' ').trim();
+  const match = UNIT_RANGE_PATTERN.exec(cleaned);
+  if (!match) return null;
+  const marker = match[1]!;
+  const from = match[2]!.replace(/\s+/gu, '');
+  const to = match[4]!.replace(/\s+/gu, '');
+  const roman = (value: string): boolean => /^[IVXLCDM]+$/u.test(value);
+  if (roman(from) !== roman(to)) return null;
+  const connector = match[3] === ',' ? ', ' : ` ${match[3]} `;
+  const unitType = marker.startsWith('§') ? 'paragraph' : 'article';
+  const label = unitType === 'paragraph' ? `§§ ${from}${connector}${to}` : `${marker === 'Art.' ? 'Art.' : 'Artikel'} ${from}${connector}${to}`;
+  const title = match[5]!.replace(/^[\s:–—-]+/u, '').trim();
+  return title ? { unitType, label, title } : { unitType, label };
+}
+
+/**
+ * Doppelt kodierte Entities im Portalmarkup („§&amp;nbsp;1“ wird als Text „§&nbsp;1“ ausgeliefert):
+ * nur das beobachtete Muster `&nbsp;` wird als Leerzeichen gelesen; alles andere bleibt unverändert
+ * und läuft in die Strukturerkennung (fail-closed).
+ */
+export function normalizeEntityArtifacts(text: string): { text: string; repaired: boolean } {
+  const repaired = /&nbsp;/u.test(text);
+  return { text: repaired ? text.replace(/&nbsp;/gu, ' ') : text, repaired };
+}
+
+interface UnitOrder { number: number; suffix: string }
+
+function unitOrderOf(label: string): UnitOrder | null {
+  const match = /(\d+)([a-z]?)$/u.exec(label.replace(/\s+/gu, ''));
+  return match ? { number: Number.parseInt(match[1]!, 10), suffix: match[2] ?? '' } : null;
+}
+
+/** „§ 33d“ → „33e“ oder „§ 83“ → „84“ / „84a“: die Nummer setzt die Zählung unmittelbar fort. */
+function continuesCount(previous: UnitOrder, next: UnitOrder): boolean {
+  if (next.number === previous.number) return next.suffix.length === 1 && (previous.suffix === '' ? next.suffix === 'a' : next.suffix.charCodeAt(0) === previous.suffix.charCodeAt(0) + 1);
+  return next.number === previous.number + 1 && next.suffix === '';
+}
+
+export interface InferredUnitHeading {
+  kind: 'unit' | 'unit-range';
+  unitType: 'paragraph' | 'article';
+  label: string;
+  title?: string;
+}
+
+/**
+ * Legacy-Überschrift ohne Einheitenzeichen („84 (Fn 3)“ zwischen „§ 83“ und „§ 85“, „15 bis 16“ nach
+ * „§ 14“, „33e“ nach „§ 33d“): das Zeichen wird ausschließlich aus der unmittelbar vorhergehenden
+ * Einheit hergeleitet und nur, wenn die Nummer deren Zählung lückenlos fortsetzt. Alles andere bleibt
+ * unerkannt (fail-closed). Die Herleitung ist als Befund zu protokollieren.
+ */
+export function inferUnitHeading(text: string, previous: { unitType: 'paragraph' | 'article'; label: string } | undefined): InferredUnitHeading | null {
+  if (!previous) return null;
+  const cleaned = text.replace(/\s+/gu, ' ').trim();
+  const previousOrder = unitOrderOf(previous.label);
+  if (!previousOrder) return null;
+  const marker = previous.unitType === 'paragraph' ? '§' : previous.label.startsWith('Art.') ? 'Art.' : 'Artikel';
+  const range = /^(\d+[a-z]?)\s+(bis|und)\s+(\d+[a-z]?)\b\s*(.*)$/u.exec(cleaned);
+  if (range) {
+    const from = unitOrderOf(range[1]!);
+    if (!from || !continuesCount(previousOrder, from)) return null;
+    const parsed = parseUnitRangeHeading(`${marker === '§' ? '§§' : marker} ${range[1]} ${range[2]} ${range[3]} ${range[4] ?? ''}`);
+    return parsed ? { kind: 'unit-range', ...parsed } : null;
+  }
+  const single = /^(\d+[a-z]?)\b\s*(.*)$/u.exec(cleaned);
+  if (!single) return null;
+  const next = unitOrderOf(single[1]!);
+  if (!next || !continuesCount(previousOrder, next)) return null;
+  // Eine folgende Zahl („84 2 Satz 1“) wäre kein Einheitenkennzeichen.
+  if (/^\d/u.test(single[2] ?? '')) return null;
+  const parsed = parseUnitHeading(`${marker} ${single[1]} ${single[2] ?? ''}`);
+  return parsed ? { kind: 'unit', ...parsed } : null;
+}
+
+/** Zeile einer Inhaltsübersicht: Einheiten und Gliederungen werden zu schlichtem Text (kein Sprungziel, keine Einheit). */
+export function demoteToTocText(line: SourceLine): SourceLine {
+  switch (line.kind) {
+    case 'division':
+    case 'unit':
+    case 'unit-range':
+    case 'annex':
+      return { kind: 'text', text: [line.label, line.title].filter(Boolean).join(' '), centered: false, bold: false, footnotes: line.footnotes };
+    case 'heading':
+      return { kind: 'text', text: line.text, centered: false, bold: false, footnotes: line.footnotes };
+    case 'text':
+      return { ...line, centered: false, bold: false };
+    default:
+      return line;
+  }
 }
 
 export function parseAnnexHeading(text: string): { label: string; title?: string } | null {
@@ -309,6 +416,27 @@ export function buildBody(lines: readonly SourceLine[], footnotes: readonly Sour
       case 'unit':
         openUnit(line);
         break;
+      case 'unit-range': {
+        // Überschrift auf Einheitenebene: schließt wie eine Einheit die vorangehende, öffnet aber keinen
+        // Container (die Spanne hat keinen eigenen Normtext außer Fußnoten/Vermerken).
+        popTo(line.unitType === 'article' ? 9 : 10);
+        const block: NormBodyBlock = { type: 'heading', title: line.label };
+        if (line.title) block.text = line.title;
+        stats.textLength += line.label.length + (line.title?.length ?? 0);
+        pushLeaf(block, line.footnotes);
+        break;
+      }
+      case 'footnotes': {
+        for (const label of line.labels) {
+          const text = footnoteText.get(label);
+          if (!text) {
+            findings.push({ severity: 'warning', code: 'dangling-footnote', message: `Fußnote ${label} wird referenziert, aber nicht gefunden` });
+            continue;
+          }
+          container().push({ type: 'footnote', label: `Fn ${label}`, text });
+        }
+        break;
+      }
       case 'subparagraph': {
         popTo(20);
         const block: NormBodyBlock = { type: 'subparagraph', label: line.label, text: line.text, children: [] };
@@ -329,6 +457,8 @@ export function buildBody(lines: readonly SourceLine[], footnotes: readonly Sour
         break;
       }
       case 'heading':
+        // Freistehende Überschrift: schließt Absatz und Einheit (bleibt in Artikel/Gliederung/Anlage).
+        popTo(10);
         stats.textLength += line.text.length;
         pushLeaf({ type: 'heading', title: line.text }, line.footnotes);
         break;

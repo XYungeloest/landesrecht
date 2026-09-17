@@ -1,0 +1,1263 @@
+{
+  "schemaVersion": "recht-nrw-parser-residuals/1",
+  "generatedAt": "2026-09-16T22:04:46.270Z",
+  "baselineDate": "2023-12-01",
+  "parserVersionBefore": "recht-nrw-parser/1.1.0",
+  "parserVersionAfter": "recht-nrw-parser/1.2.0",
+  "summary": {
+    "total": 22,
+    "byResolution": {
+      "geloest": 17,
+      "review": 5,
+      "bleibt-failed": 0
+    },
+    "byAssessment": {
+      "parser-unvollstaendig": 12,
+      "quelle-defekt": 8,
+      "beides": 2
+    },
+    "byBeforeCode": {
+      "structure-unnumbered-section": 2,
+      "integrity-parse-duplicateUnits": 1,
+      "integrity-transform-duplicateUnits": 1,
+      "content-pdf-only": 1
+    }
+  },
+  "cases": [
+    {
+      "term": "term:26524",
+      "title": "Gesetz über das öffentliche Flaggen",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/11102014-gesetz-ueber-das-oeffentliche-flaggen",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/11102014-gesetz-ueber-das-oeffentliche-flaggen",
+      "contentFormat": "native",
+      "sourceSha256": "cb953915d94a1f35f2b3b6d47238e73574f8e51248ef916f050d057b65bb60cc",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-textLength",
+      "structure": "Native Fassungsseite mit 3 legaldoc-article-Sektionen ohne jedes Nummernfeld (§ 1/§ 2 fehlen im Portal); Fußnoten hängen an nummernlosen Sektionen",
+      "parserPhase": "parse-source-format → fetch-parse-Integrität",
+      "affectedUnits": "Einziger Paragraph (§ 1) und § 2 (aufgehoben): keine Einheiten im Portal",
+      "textLossRisk": "keiner",
+      "textLossNote": "Abweichung +87 %: Fußnotentexte wurden als Fließtext („Fn 1: …“) gezählt (Parser), Rohzählung ohne Fußnoten. Sichtbarer Text vollständig.",
+      "assessment": "beides",
+      "fix": "native-parser: Zeilenart footnotes; kein Fließtext aus Fußnoten",
+      "resolution": "review",
+      "resolutionNote": "Fußnoten ohne Einheit sind jetzt Fußnotenblöcke (Integrität ok). Bleibt ohne §-Einheiten: Dokumentidentität „no-legal-units“ → Review-Fall bei Übernahme (imported-with-warnings + Review-Item); §-Kennzeichen werden nicht erfunden.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "gesetz-ueber-das-oeffentliche-flaggen-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "document-identity-review"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "gesetz-ueber-das-oeffentliche-flaggen-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "document-identity-review"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:26552",
+      "title": "Gesetz über die Gliederung und die Bezirke der ordentlichen Gerichte",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/01092005-gesetz-ueber-die-gliederung-und-die-bezirke-der-ordentlichen-gerichte",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01092005-gesetz-ueber-die-gliederung-und-die-bezirke-der-ordentlichen-gerichte",
+      "contentFormat": "native",
+      "sourceSha256": "8bffbed5b73ff652cedc36e7d28f360b055a24b705d512726e4e0e31533b2720",
+      "before": {
+        "importStatus": "needs-review",
+        "errorCodes": [
+          "structure-unnumbered-section"
+        ],
+        "errorCount": 1,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-textLength",
+      "structure": "Sektion des § 3 (Amtsgerichte) ohne Nummernfeld, 50 Fußnoten an dieser nummernlosen Sektion",
+      "parserPhase": "parse-source-format → fetch-parse-Integrität",
+      "affectedUnits": "§ 3 (fehlt als Einheit; Text würde § 2 zugeschlagen)",
+      "textLossRisk": "keiner",
+      "textLossNote": "Abweichung +105 %: 50 Fußnotentexte als Fließtext gezählt. Sichtbarer Text vollständig, aber falsch zugeordnet.",
+      "assessment": "quelle-defekt",
+      "fix": "native-parser: structure-unnumbered-section (fail-closed), footnotes-Zeilen",
+      "resolution": "review",
+      "resolutionNote": "Neuer Befund structure-unnumbered-section (Review-Klasse): nummernlose Sektion mit Normtext nach § 2. Portal ohne Kennzeichen „§ 3“; Herleitung wäre unbelegter Inhalt.",
+      "after": {
+        "dryRunStatus": "needs-review",
+        "expectedWriteStatus": "needs-review",
+        "targetSlug": "gesetz-ueber-die-gliederung-und-die-bezirke-der-ordentlichen-gerichte-west",
+        "errorCodes": [
+          "structure-unnumbered-section"
+        ],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "needs-review",
+        "targetSlug": null,
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [
+          "structure-unnumbered-section"
+        ],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:26676",
+      "title": "Gesetz zur Anpassung landesrechtlicher Straf- und Bußgeldvorschriften an das Bundesrecht (Anpassungsgesetz -AnpG. NW.)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/27022014-gesetz-zur-anpassung-landesrechtlicher-straf-und-bussgeldvorschriften-das",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/27022014-gesetz-zur-anpassung-landesrechtlicher-straf-und-bussgeldvorschriften-das",
+      "contentFormat": "native",
+      "sourceSha256": "4dde3de4200c8328a33e45080bb295f1a645e847eb826b9737ae73dcbbc8e28d",
+      "before": {
+        "importStatus": "imported",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading ×10",
+      "structure": "Nummernfelder mit Artikelspannen („Artikel I bis III“, „Art. VIII bis XI“, „Artikel XXVIII und XXIX“, „Artikel XLVIII bis IL“) für eingearbeitete/aufgehobene Artikel",
+      "parserPhase": "parse-source-format (field--field_num)",
+      "affectedUnits": "10 Spannen; Einzelartikel VII, XII, XIX, XLIII, XLVII, L–LX bleiben Einheiten",
+      "textLossRisk": "keiner",
+      "textLossNote": "Spannen tragen nur Fußnoten und die folgende Abschnittsüberschrift.",
+      "assessment": "parser-unvollstaendig",
+      "fix": "body-common: parseUnitRangeHeading, Zeilenart unit-range",
+      "resolution": "geloest",
+      "resolutionNote": "Spanne = Überschrift auf Einheitenebene (schließt vorigen Artikel, kein Container, keine künstlichen Artikel); Info-Befund unit-range-heading.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported",
+        "targetSlug": "anpassungsgesetz-anpg-nw-west",
+        "errorCodes": [],
+        "warningCodes": [],
+        "infoCodes": [
+          "unit-range-heading"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported",
+        "targetSlug": "anpassungsgesetz-anpg-nw-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:26683",
+      "title": "Zweites Gesetz zur Anpassung landesrechtlicher Straf- und Bußgeldvorschriften an das Bundesrecht (Zweites Anpassungsgesetz - 2. AnpG. NW.)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/27022014-zweites-gesetz-zur-anpassung-landesrechtlicher-straf-und-bussgeldvorschriften",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/27022014-zweites-gesetz-zur-anpassung-landesrechtlicher-straf-und-bussgeldvorschriften",
+      "contentFormat": "native",
+      "sourceSha256": "193e49f921fcdddce4cb48802441a85549b195d33670b6db1d82f77fb34c3057",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading ×4",
+      "structure": "Nummernfelder mit Artikelspannen („Art. VII bis XXV“ …)",
+      "parserPhase": "parse-source-format (field--field_num)",
+      "affectedUnits": "4 Spannen; Artikel I–VI, XXXII, XL–XLVIII bleiben Einheiten",
+      "textLossRisk": "keiner",
+      "textLossNote": "wie term:26676",
+      "assessment": "parser-unvollstaendig",
+      "fix": "body-common: parseUnitRangeHeading",
+      "resolution": "geloest",
+      "resolutionNote": "wie term:26676",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "zweites-gesetz-zur-anpassung-landesrechtlicher-straf-und-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "unit-range-heading"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "zweites-gesetz-zur-anpassung-landesrechtlicher-straf-und-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:26714",
+      "title": "Kommunalabgabengesetz für das Land Nordrhein-Westfalen (KAG)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/28042005-kommunalabgabengesetz-fuer-das-land-nordrhein-westfalen-kag",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/15122022-kommunalabgabengesetz-fuer-das-land-nordrhein-westfalen-kag",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "a7d2263966b5b62a67ed20a5df79187fe6569790bc50ebae43cd761deef362f8",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading (legacy)",
+      "structure": "lrdetail „15 bis 16 (Fn 12)“ ohne §§-Zeichen nach § 14 (aufgehobene §§)",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "§§ 15 bis 16 (weggefallen)",
+      "textLossRisk": "keiner",
+      "textLossNote": "Nur Fußnotenverweis.",
+      "assessment": "quelle-defekt",
+      "fix": "body-common: inferUnitHeading (nur lückenlose Fortsetzung); legacy-parser: classifyDetailHeading",
+      "resolution": "geloest",
+      "resolutionNote": "Zeichen aus der fortlaufenden Zählung hergeleitet (§ 14 → §§ 15 bis 16), als Überschrift ohne Einheiten; Warnung unit-marker-inferred.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "kag-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unit-marker-inferred",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "kag-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unit-marker-inferred",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:26909",
+      "title": "Gesetz über den Ruhrverband (Ruhrverbandsgesetz - RuhrVG -)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/29122007-gesetz-ueber-den-ruhrverband-ruhrverbandsgesetz-ruhrvg",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/19022022-gesetz-ueber-den-ruhrverband-ruhrverbandsgesetz-ruhrvg",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "7f3cd0f31958dae603e7fb9bba4138dc5f8b33591077b8c3a018a0cf387f8253",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-duplicateUnits",
+      "structure": "Inhaltsübersicht wiederholt „Artikel 1“, „Artikel 2“, „Artikel 3“ als lrdetail vor dem Text",
+      "parserPhase": "parse-source-format → fetch-parse-Integrität",
+      "affectedUnits": "Artikel 1–3 (Übersicht) vs. Artikel 1–3 (Text)",
+      "textLossRisk": "keiner",
+      "textLossNote": "Übersichtszeilen bleiben als Text erhalten.",
+      "assessment": "parser-unvollstaendig",
+      "fix": "legacy-parser: detectLegacyToc, countLegacyUnitHeadings; integrity: rawMetrics",
+      "resolution": "geloest",
+      "resolutionNote": "detectLegacyToc: Region zwischen „Inhaltsübersicht“ und Wiederbeginn wird als Text übernommen (wie native Inhaltsübersichten); Rohzählung nutzt dieselbe Regel. Verbleibende Warnung dangling-footnote (Fn 14 in der Quelle ohne Fußnotentext).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "gesetz-ueber-den-ruhrverband-ruhrverbandsgesetz-ruhrvg-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "dangling-footnote",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "toc-sections-demoted"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "gesetz-ueber-den-ruhrverband-ruhrverbandsgesetz-ruhrvg-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "dangling-footnote",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:27179",
+      "title": "Gesetz über den Zusammenschluß der Gemeinden Velen-Dorf, Waldvelen und Nordvelen, Landkreis Borken",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-ueber-den-zusammenschluss-der-gemeinden-velen-dorf-waldvelen-und",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-ueber-den-zusammenschluss-der-gemeinden-velen-dorf-waldvelen-und",
+      "contentFormat": "native",
+      "sourceSha256": "b8893a93bbdd98856969d278144bd187d0476f7c2ecc75baecdd969ac6464205",
+      "before": {
+        "importStatus": "imported",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-textLength (−52 %)",
+      "structure": "<ul> mit <p>-Kindern statt <li> (Maßgaben zum Gebietsänderungsvertrag)",
+      "parserPhase": "parse-source-format (Listen)",
+      "affectedUnits": "§ 2 Nummern 1–4",
+      "textLossRisk": "hoch",
+      "textLossNote": "Echter Textverlust: die 4 Maßgaben wurden vom Parser verworfen (nur <li> gelesen). Integritätsprüfung hat den Verlust erkannt (fail-closed).",
+      "assessment": "parser-unvollstaendig",
+      "fix": "native-parser: parseBlockNode für Listenkinder",
+      "resolution": "geloest",
+      "resolutionNote": "Blockkinder von <ul>/<ol> werden wie Absätze gelesen (Info list-with-block-children); Text vollständig.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported",
+        "targetSlug": "gesetz-ueber-den-zusammenschluss-der-gemeinden-velen-dorf-waldvelen-und-west",
+        "errorCodes": [],
+        "warningCodes": [],
+        "infoCodes": [
+          "list-with-block-children"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported",
+        "targetSlug": "gesetz-ueber-den-zusammenschluss-der-gemeinden-velen-dorf-waldvelen-und-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:27219",
+      "title": "Gesetz zur Neugliederung der Gemeinden und Kreise des Neugliederungsraumes Sauerland/Paderborn (Sauerland/Paderborn-Gesetz)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-zur-neugliederung-der-gemeinden-und-kreise-des-neugliederungsraumes-6",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-zur-neugliederung-der-gemeinden-und-kreise-des-neugliederungsraumes-6",
+      "contentFormat": "native",
+      "sourceSha256": "2247a11357f89d550ba28c9e1631ac4c10b79d00c36f160d3c0a2d7940f1382f",
+      "before": {
+        "importStatus": "needs-review",
+        "errorCodes": [
+          "integrity-parse-duplicateUnits",
+          "integrity-transform-duplicateUnits"
+        ],
+        "errorCount": 2,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-duplicateUnits",
+      "structure": "Portal führt den in § 45 (Maßgaben zu Gebietsänderungsverträgen) zitierten „§ 5“ als eigene Sektion zwischen § 45 und § 46",
+      "parserPhase": "parse-source-format → fetch-parse-Integrität",
+      "affectedUnits": "§ 5 (zweimal); der zweite ist Zitat aus einer Anlage-Maßgabe",
+      "textLossRisk": "keiner",
+      "textLossNote": "Text vollständig, Zuordnung im Portal falsch.",
+      "assessment": "quelle-defekt",
+      "fix": "pipeline: REVIEW_CLASS_ERRORS um integrity-*-duplicateUnits erweitert",
+      "resolution": "review",
+      "resolutionNote": "Portal-Segmentierungsfehler; Zählbereiche greifen nicht (kein Artikel/keine Anlage). Duplikate sind jetzt Review-Klasse (needs-review statt failed).",
+      "after": {
+        "dryRunStatus": "needs-review",
+        "expectedWriteStatus": "needs-review",
+        "targetSlug": "sauerland-paderborn-gesetz-west",
+        "errorCodes": [
+          "integrity-parse-duplicateUnits",
+          "integrity-transform-duplicateUnits"
+        ],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": false,
+          "sourceCanonical": false
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "needs-review",
+        "targetSlug": null,
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [
+          "integrity-parse-duplicateUnits",
+          "integrity-transform-duplicateUnits"
+        ],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": false,
+          "sourceCanonical": false
+        }
+      }
+    },
+    {
+      "term": "term:27493",
+      "title": "Gesetz über die Verleihung der Rechte einer Körperschaft des öffentlichen Rechts an die Neuapostolische Kirche im Lande Nordrhein-Westfalen",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-oeffentlichen-0",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-oeffentlichen-0",
+      "contentFormat": "native",
+      "sourceSha256": "e3386d5ca7c698d3836ede084d2b551d77482b93241732eefd6977587c571fab",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-transform-textLength (−3 %)",
+      "structure": "Sehr kurze Norm (265 Zeichen); zwei Ersetzungen „Nordrhein-Westfalen“ → „Westdeutschland“ (−8 Zeichen) überschreiten die relative 3-%-Toleranz",
+      "parserPhase": "transform-into-simulation-jurisdiction → source-canonical-Integrität",
+      "affectedUnits": "§ 1, § 2",
+      "textLossRisk": "keiner",
+      "textLossNote": "Abweichung exakt durch protokollierte Ersetzungen erklärt.",
+      "assessment": "parser-unvollstaendig",
+      "fix": "integrity: explainedBodyDelta; pipeline übergibt report.changes",
+      "resolution": "geloest",
+      "resolutionNote": "checkTransformIntegrity akzeptiert eine Abweichung, die exakt der Summe der protokollierten body-Ersetzungen entspricht (kein größerer Schwellenwert).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27493",
+        "errorCodes": [],
+        "warningCodes": [
+          "slug-collision"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27493",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "slug-collision"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:27945",
+      "title": "Kreislaufwirtschaftsgesetz für das Land Nordrhein-Westfalen (Landeskreislaufwirtschaftsgesetz – LKrWG)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/31122007-kreislaufwirtschaftsgesetz-fuer-das-land-nordrhein-westfalen",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/13072023-kreislaufwirtschaftsgesetz-fuer-das-land-nordrhein-westfalen",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "bda7803bad55fce65ad6807afd2f303d5ac2965b0795cf96ff3422cc54abe157",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading (legacy)",
+      "structure": "lrdetail „Teil 1 / Einleitende Bestimmungen (Fn 37)“ (Gliederung in lrdetail)",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "Teil 1",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "parser-unvollstaendig",
+      "fix": "legacy-parser: classifyDetailHeading",
+      "resolution": "geloest",
+      "resolutionNote": "Gliederungskennzeichen in lrdetail → Gliederungsebene (Info division-in-detail-heading); Fußnote der Titelzeile bleibt erhalten.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "lkrwg-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "division-in-detail-heading"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "lkrwg-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:28223",
+      "title": "Landesmediengesetz Nordrhein-Westfalen (LMG NRW)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/15032003-landesmediengesetz-nordrhein-westfalen-lmg-nrw",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01062022-landesmediengesetz-nordrhein-westfalen-lmg-nrw",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "40d53a0074b8547d101ffff14098ad5fe9e753d8250716f0193bc4e789d9e518",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading (legacy)",
+      "structure": "lrdetail „33e (Fn 14) / Verpflichtungszusagen“ ohne §-Zeichen zwischen § 33d und § 34",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "§ 33e",
+      "textLossRisk": "keiner",
+      "textLossNote": "Text war als Überschrift erhalten, aber § 33e fehlte als Einheit.",
+      "assessment": "quelle-defekt",
+      "fix": "body-common: inferUnitHeading",
+      "resolution": "geloest",
+      "resolutionNote": "Zeichen hergeleitet (§ 33d → § 33e), Warnung unit-marker-inferred; Rohzählung nutzt dieselbe Kette.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "lmg-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unit-marker-inferred",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "lmg-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unit-marker-inferred",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:28965",
+      "title": "Erstes Gesetz zur Befristung des Landesrechts Nordrhein-Westfalen",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/04062004-erstes-gesetz-zur-befristung-des-landesrechts-nordrhein-westfalen",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/04062004-erstes-gesetz-zur-befristung-des-landesrechts-nordrhein-westfalen",
+      "contentFormat": "native",
+      "sourceSha256": "996e26712faf61891127367d5333abf5fd3492c625c65dd2faf8bbbd28da3e61",
+      "before": {
+        "importStatus": "needs-review",
+        "errorCodes": [
+          "content-pdf-only"
+        ],
+        "errorCount": 1,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "missing-content + no-sections",
+      "structure": "Fassungsseite ohne iframe und ohne legaldoc-Inhalt; nur PDF-Download („Dokument herunterladen“), kein Redirect, kein JS-Rendering",
+      "parserPhase": "parse-source-format (Fassungsseite)",
+      "affectedUnits": "gesamte Norm",
+      "textLossRisk": "hoch",
+      "textLossNote": "Text liegt nur als PDF vor; kein HTML-Fallback vorhanden.",
+      "assessment": "quelle-defekt",
+      "fix": "pipeline: content-pdf-only",
+      "resolution": "review",
+      "resolutionNote": "Neuer Review-Befund content-pdf-only mit PDF-URL (Transkriptions-/Attachment-Pfad); needs-review statt failed.",
+      "after": {
+        "dryRunStatus": "needs-review",
+        "expectedWriteStatus": "needs-review",
+        "targetSlug": "",
+        "errorCodes": [
+          "content-pdf-only"
+        ],
+        "warningCodes": [],
+        "infoCodes": [],
+        "integrity": null,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "needs-review",
+        "targetSlug": null,
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [
+          "content-pdf-only"
+        ],
+        "warningCodes": [],
+        "integrity": {
+          "fetchParse": false,
+          "sourceCanonical": false
+        }
+      }
+    },
+    {
+      "term": "term:29177",
+      "title": "Verordnung über die Gewährung von Leistungsbezügen an Professorinnen und Professoren der Fachhochschule für Rechtspflege Nordrhein-Westfalen (FHR-Leistungsbezügeverordnung – FHRLeistBVO)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/08092026-hsjustiz-leistungsbezuegeverordnung-hsjustiz-leistbvo",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/19022022-verordnung-ueber-die-gewaehrung-von-leistungsbezuegen-0",
+      "contentFormat": "native",
+      "sourceSha256": "df9ec672a545bee58647ad2fe0d084803d8f8dc4b7c7fc1756a70a744887dfe3",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading ×3",
+      "structure": "Nummernfelder „1. Abschnitt“, „2. Abschnitt“, „3. Abschnitt“ als eigene Sektionen ohne Überschrift/Text",
+      "parserPhase": "parse-source-format (field--field_num)",
+      "affectedUnits": "3 Abschnitte; §§ 1–10 bleiben Einheiten",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "parser-unvollstaendig",
+      "fix": "native-parser: parseDivisionHeading auf Nummernfeld",
+      "resolution": "geloest",
+      "resolutionNote": "Gliederungskennzeichen im Nummernfeld → Gliederungsebene (Info division-in-number-field).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "fhrleistbvo-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "division-in-number-field"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "fhrleistbvo-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:29214",
+      "title": "Ausführungsgesetz zum Bürgerlichen Gesetzbuch",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-ausfuehrungsgesetz-zum-buergerlichen-gesetzbuch-0",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01012000-ausfuehrungsgesetz-zum-buergerlichen-gesetzbuch-0",
+      "contentFormat": "native",
+      "sourceSha256": "24b49cdd3f8bb067a260a07cd98ad8de5b29aa961ab057b60f7af8d4335a3e4d",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-duplicateUnits (§ 1–§ 11)",
+      "structure": "Artikel 1–33 nur als zentrierte fette Absätze im Text; §-Zählung beginnt je Artikel neu; Artikeltitel teils vor, teils nach der Nummer (mehrzeilige Absätze)",
+      "parserPhase": "parse-source-format → fetch-parse-Integrität",
+      "affectedUnits": "78 §§ in 33 Artikeln",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "parser-unvollstaendig",
+      "fix": "native-parser: detectInlineArticleScopes, classifyInlineArticleLines; integrity: rawMetrics",
+      "resolution": "geloest",
+      "resolutionNote": "Dokumentweite Regel (kein Artikel-Nummernfeld, wiederholte §-Nummern, zentrierte reine Artikelzeilen) eröffnet Artikel-Zählbereiche; 141 Einheiten, keine Duplikate; Rohzählung identisch. Titel vor der Nummer bleibt in Lesereihenfolge eine Überschrift.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "ausfuehrungsgesetz-zum-buergerlichen-gesetzbuch-west-29214",
+        "errorCodes": [],
+        "warningCodes": [
+          "slug-collision",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "inline-article-scopes"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "ausfuehrungsgesetz-zum-buergerlichen-gesetzbuch-west-29214",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "slug-collision",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:29679",
+      "title": "Verordnung über Zahlungen in Zwangsversteigerungsverfahren (Fn 2)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/01082013-verordnung-ueber-zahlungen-zwangsversteigerungsverfahren-fn-2",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/01082013-verordnung-ueber-zahlungen-zwangsversteigerungsverfahren-fn-2",
+      "contentFormat": "native",
+      "sourceSha256": "000e816ee01ce5f6953f67f28ac0f1dff8e65509fd067e2d0ff1e78303b0bcc7",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "integrity-parse-textLength (+75 %)",
+      "structure": "Fußnoten in Sektionen ohne Nummernfeld (Vorspann, Fußnotensektion vor § 1)",
+      "parserPhase": "parse-source-format → fetch-parse-Integrität",
+      "affectedUnits": "Vorspann; § 1, § 2 unverändert",
+      "textLossRisk": "keiner",
+      "textLossNote": "Fußnoten als Fließtext gezählt.",
+      "assessment": "parser-unvollstaendig",
+      "fix": "native-parser: footnotes-Zeilen",
+      "resolution": "geloest",
+      "resolutionNote": "Fußnotenblöcke statt Fließtext; Integrität ok.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "verordnung-ueber-zahlungen-in-zwangsversteigerungsverfahren-fn-2-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "verordnung-ueber-zahlungen-in-zwangsversteigerungsverfahren-fn-2-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:29852",
+      "title": "Verordnung über den Bildungsgang und die Abiturprüfung in der gymnasialen Oberstufe (APO-GOSt)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/15112008-verordnung-ueber-den-bildungsgang-und-die-abiturpruefung-der",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/01082023-verordnung-ueber-den-bildungsgang-und-die-abiturpruefung-der",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "3bbc5795cc5a76c9f7f9c5d6c1e9bd4c046260d56ba63ecce777c586629c3ec9",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading (legacy)",
+      "structure": "lrdetail „Inkrafttreten, Übergangsbestimmungen / (Artikel 3 der Verordnung zur Neufassung …)“: Überschrift ohne Einheitenkennzeichen für angehängte Übergangsvorschriften",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "Überschrift nach § 43 (Nummern 1–3 folgen)",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "parser-unvollstaendig",
+      "fix": "legacy-parser: classifyDetailHeading (heading), body-common: heading schließt Einheit",
+      "resolution": "geloest",
+      "resolutionNote": "Reine Überschrift (kurz, kein Satzende, kein kennzeichenartiger Anfang) → heading mit Warnung detail-heading; schließt § 43.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "apo-gost-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "detail-heading",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "apo-gost-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "detail-heading",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:30034",
+      "title": "Gesetz über die Justiz im Land Nordrhein-Westfalen (Justizgesetz Nordrhein-Westfalen - JustG NRW)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/19102013-gesetz-ueber-die-justiz-im-land-nordrhein-westfalen-justizgesetz-nordrhein",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/01012023-gesetz-ueber-die-justiz-im-land-nordrhein-westfalen-justizgesetz-nordrhein",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "292566a8569967b0a71f07bb0affefd1b15ac50368ca26b0bb898a890062881a",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading (legacy)",
+      "structure": "lrdetail „84 (Fn 3) / (weggefallen)“ ohne §-Zeichen zwischen § 83 und § 85",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "§ 84 (weggefallen)",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "quelle-defekt",
+      "fix": "body-common: inferUnitHeading",
+      "resolution": "geloest",
+      "resolutionNote": "Zeichen hergeleitet (§ 83 → § 84), Warnung unit-marker-inferred. Anlagen zu §§ 21/124 bleiben PDF-only (bestehender Befund annex-pdf-only).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "justg-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "unit-marker-inferred",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "justg-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "unit-marker-inferred",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:30682",
+      "title": "Verordnung über die Ausbildung und die Abschlussprüfungen in der Sekundarstufe I (Ausbildungs- und Prüfungsordnung Sekundarstufe I – APO-S I)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/01082026-ausbildungs-und-pruefungsordnung-sekundarstufe-i-apo-s-i",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/07122022-verordnung-ueber-die-ausbildung-und-die-abschlusspruefungen-der",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "a14a5606af3a4350fed4336dca8609e67fe5bf097ed0de85b6987ef2e12c522d",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading ×5 (legacy)",
+      "structure": "Absätze „(1) …“, „(2) …“ der §§ 44b/44c mit Klasse lrdetail (align=left, font-weight:normal)",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "§ 44b Abs. 1–2, § 44c Abs. 1–3",
+      "textLossRisk": "keiner",
+      "textLossNote": "Text war als Überschrift erhalten, Absatzstruktur fehlte.",
+      "assessment": "quelle-defekt",
+      "fix": "legacy-parser: classifyDetailHeading (subparagraph)",
+      "resolution": "geloest",
+      "resolutionNote": "lrdetail mit Absatzkennzeichen → Absatz der aktuellen Einheit, Warnung detail-body-text. 18 Anlagen bleiben PDF-only (bestehender Befund).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "verordnung-ueber-die-ausbildung-und-die-abschlusspruefungen-in-der-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "detail-body-text",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "verordnung-ueber-die-ausbildung-und-die-abschlusspruefungen-in-der-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "detail-body-text",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:32258",
+      "title": "Gesetz zum Schutz personenbezogener Daten im Justizvollzug in Nordrhein-Westfalen (Justizvollzugsdatenschutzgesetz Nordrhein-Westfalen – JVollzDSG NRW)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/gesetz/01042026-justizvollzugsdatenschutzgesetz-nordrhein-westfalen-jvollzdsg-nrw",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/gesetz/28042022-gesetz-zum-schutz-personenbezogener-daten-im-justizvollzug-nordrhein-westfalen",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "4cc151e55dbbdf8a37b09814f0e567b521db507384934a507dac5fb2f600c161",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading (legacy)",
+      "structure": "Einheitentitel des § 34 über zwei lrdetail-Absätze („… Technikgestaltung und “ / „datenschutzfreundliche Voreinstellungen“)",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "§ 34",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "quelle-defekt",
+      "fix": "legacy-parser: classifyDetailHeading (title-continuation)",
+      "resolution": "geloest",
+      "resolutionNote": "Titelfortsetzung (Kleinschreibung am Anfang bzw. Konjunktion am Ende des vorigen Titels) → Titel des § 34, Warnung unit-title-continued.",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "jvollzdsg-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "unit-title-continued",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "jvollzdsg-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "unit-title-continued",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:32405",
+      "title": "Zweite Verordnung über besoldungsrechtliche Übergangsregelungen nach Herstellung der Einheit Deutschlands (Zweite Besoldungs-Übergangsverordnung)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/01062013-zweite-verordnung-ueber-besoldungsrechtliche-uebergangsregelungen",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/01062013-zweite-verordnung-ueber-besoldungsrechtliche-uebergangsregelungen",
+      "contentFormat": "native",
+      "sourceSha256": "3b39c0d935ce34f0e426b47aaf8a87c256c4dce20bcb3f4d131dbb53e2aa9e18",
+      "before": {
+        "importStatus": "needs-review",
+        "errorCodes": [
+          "structure-unnumbered-section"
+        ],
+        "errorCount": 10,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading ×2 → structure-unnumbered-section ×10",
+      "structure": "Nummernfelder „§&nbsp;1“/„§&nbsp;13“ als doppelt kodierte Entity (Text „§&nbsp;1“); §§ 2–12 und Schlussvorschrift im Portal ohne jedes Nummernfeld",
+      "parserPhase": "parse-source-format (field--field_num, Sektionen)",
+      "affectedUnits": "§ 1, § 13 erkannt; §§ 2–12 ohne Kennzeichen",
+      "textLossRisk": "keiner",
+      "textLossNote": "Text vollständig, aber ohne Einheitenzuordnung.",
+      "assessment": "beides",
+      "fix": "body-common: normalizeEntityArtifacts; native-parser: structure-unnumbered-section",
+      "resolution": "review",
+      "resolutionNote": "Entity-Artefakt deterministisch repariert (Warnung entity-artifact-repaired); die 10 nummernlosen Sektionen mit Normtext sind ein Quelldefekt → structure-unnumbered-section (Review-Klasse).",
+      "after": {
+        "dryRunStatus": "needs-review",
+        "expectedWriteStatus": "needs-review",
+        "targetSlug": "zweite-besoldungs-uebergangsverordnung-west",
+        "errorCodes": [
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section",
+          "structure-unnumbered-section"
+        ],
+        "warningCodes": [
+          "entity-artifact-repaired",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "section-continuation"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "needs-review",
+        "targetSlug": null,
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [
+          "structure-unnumbered-section"
+        ],
+        "warningCodes": [
+          "entity-artifact-repaired",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:33113",
+      "title": "Verordnung über die Ausbildung und Prüfung für die Laufbahn des vermessungstechnischen Dienstes im Land Nordrhein-Westfalen, Ämtergruppe des ersten Einstiegsamtes der Laufbahngruppe 2 (Ausbildungs- und Prüfungsverordnung Vermessung LG 2.1 - VAPV 2.1)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/28052021-verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-laufbahn-des",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/25062022-verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-laufbahn-des",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "7e105ab7a66f01e41e0e5792544dec9d4455880e3879169bfd62098c0ad19adf",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unparsed-unit-heading ×4 (legacy)",
+      "structure": "lrdetail „Teil 1 / Einstellung“, „Teil 2 / Ausbildung“, „Teil 3 / Laufbahnprüfung“, „Teil 5 / Übergangs- und Schlussvorschriften (Fn 19)“",
+      "parserPhase": "parse-source-format (p.lrdetail)",
+      "affectedUnits": "Teile 1, 2, 3, 5",
+      "textLossRisk": "keiner",
+      "textLossNote": "",
+      "assessment": "parser-unvollstaendig",
+      "fix": "legacy-parser: classifyDetailHeading (division)",
+      "resolution": "geloest",
+      "resolutionNote": "wie term:27945. 7 Anlagen bleiben PDF-only (bestehender Befund).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-laufbahn-des-west-33113",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "enacting-body-mapping-required",
+          "slug-collision",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [
+          "division-in-detail-heading"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "verordnung-ueber-die-ausbildung-und-pruefung-fuer-die-laufbahn-des-west-33113",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "enacting-body-mapping-required",
+          "slug-collision",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    },
+    {
+      "term": "term:33844",
+      "title": "Allgemeine Verwaltungsgebührenordnung für das Land Nordrhein-Westfalen (Allgemeine Verwaltungsgebührenordnung NRW – AVwGebO NRW)",
+      "sourceUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/25042026-allgemeine-verwaltungsgebuehrenordnung-nrw-avwgebo-nrw",
+      "selectedVersionUrl": "https://recht.nrw.de/lrgv/rechtsverordnung/28092023-allgemeine-verwaltungsgebuehrenordnung-fuer-das-land-nordrhein",
+      "contentFormat": "legacy-file",
+      "sourceSha256": "15a5b212d59c8d8464202e11e051b80aad78c3cc09e97135585b1d8d343bf37f",
+      "before": {
+        "importStatus": "imported-with-warnings",
+        "errorCodes": [],
+        "errorCount": 0,
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "category": "unknown-paragraph-class ×30 (Anlage)",
+      "structure": "Anlage „Tarifstellen 1 bis 14“ (HTM) und „Anhang 5“ mit Word-Klasse MsoPapDefault (Absatz-Standardeigenschaften, rein präsentational)",
+      "parserPhase": "attachments (Anlage, p.msopapdefault)",
+      "affectedUnits": "Tarifstellen 2.2.3 ff.",
+      "textLossRisk": "keiner",
+      "textLossNote": "Text wurde gelesen, Klasse nur gemeldet.",
+      "assessment": "parser-unvollstaendig",
+      "fix": "legacy-parser: KNOWN_PARAGRAPH_CLASS_PATTERNS",
+      "resolution": "geloest",
+      "resolutionNote": "MsoPapDefault und MsoNormalN als bekannte präsentationale Klassen; Regressionstest. 7 Anlagen bleiben PDF-only (bestehender Befund).",
+      "after": {
+        "dryRunStatus": "dry-run",
+        "expectedWriteStatus": "imported-with-warnings",
+        "targetSlug": "avwgebo-west",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "unresolved-source-references"
+        ],
+        "infoCodes": [],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        },
+        "parserVersion": "recht-nrw-parser/1.2.0"
+      },
+      "writeRun": {
+        "runId": "recht-nrw-2023-12-01-lrgv-20260916T220350Z",
+        "importStatus": "imported-with-warnings",
+        "targetSlug": "avwgebo-west",
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "errorCodes": [],
+        "warningCodes": [
+          "annex-pdf-only",
+          "unresolved-source-references"
+        ],
+        "integrity": {
+          "fetchParse": true,
+          "sourceCanonical": true
+        }
+      }
+    }
+  ]
+}
