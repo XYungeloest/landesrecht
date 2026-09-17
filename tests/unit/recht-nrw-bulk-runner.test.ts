@@ -256,23 +256,28 @@ describe('Bulk-Runner: Abtrennung fremder Adressen (Regression)', () => {
     await writeEnumeration(root, seeded);
 
     const onlyFirstUrl = (item: EnumerationItem): string[] => [item.urls[0]!];
+    // Abgetrennte Einträge werden noch im selben Lauf verarbeitet (interne Warteschlange): je Stammnorm eine Abtrennung,
+    // die auf dieselbe Stammnorm auflöst und zusammengeführt wird; die Kette endet im ersten Lauf ohne offene Einträge.
     const first = await runBulkImport(runOptions(root, { processor: stubProcessor({ versionUrls: onlyFirstUrl }).processor, runId: 'split-1' }));
-    expect(first.summary.outcomes.split).toBe(3);
+    expect(first.summary).toMatchObject({ runStatus: 'completed', selected: 6, processed: 6 });
+    expect(first.summary.outcomes).toMatchObject({ split: 3, merged: 3 });
     const afterFirst = await enumerationOnDisk(root);
     expect(afterFirst.items).toHaveLength(6);
-    expect(statusCounts(afterFirst)).toMatchObject({ pending: 3 });
+    expect(statusCounts(afterFirst)).toEqual({ done: 3 });
+    expect(afterFirst.items.every((item) => (item.key.match(/@/gu) ?? []).length <= 1)).toBe(true);
+    // Keine Adresse geht verloren: jede Adresse der Sitemap hängt an einem aktiven Eintrag.
+    const activeUrls = new Set(afterFirst.items.filter((item) => !item.mergedInto).flatMap((item) => item.urls));
+    for (const item of seeded.items) for (const url of item.urls) expect(activeUrls.has(url)).toBe(true);
 
+    // Zweiter und dritter Lauf: nichts mehr offen, keine weiteren Einträge – die Kette terminiert.
     const second = await runBulkImport(runOptions(root, { processor: stubProcessor({ versionUrls: onlyFirstUrl }).processor, resume: true, runId: 'split-2' }));
-    expect(second.summary.runStatus).toBe('completed');
+    expect(second.summary.runStatus).toBe('nothing-to-do');
+    expect(second.summary.outcomes.split).toBe(0);
     const afterSecond = await enumerationOnDisk(root);
-    expect(afterSecond.items.every((item) => (item.key.match(/@/gu) ?? []).length <= 1)).toBe(true);
-
-    // Dritter Lauf: nichts mehr offen, keine weiteren Einträge – die Kette terminiert.
+    expect(afterSecond.items.map((item) => [item.key, item.status, item.mergedInto ?? null])).toEqual(afterFirst.items.map((item) => [item.key, item.status, item.mergedInto ?? null]));
     const third = await runBulkImport(runOptions(root, { processor: stubProcessor({ versionUrls: onlyFirstUrl }).processor, resume: true, runId: 'split-3' }));
     expect(third.summary.outcomes.split).toBe(0);
-    const afterThird = await enumerationOnDisk(root);
-    expect(afterThird.items).toHaveLength(afterSecond.items.length);
-    expect(statusCounts(afterThird).pending).toBeUndefined();
+    expect((await enumerationOnDisk(root)).items).toHaveLength(afterSecond.items.length);
   });
 
   /**

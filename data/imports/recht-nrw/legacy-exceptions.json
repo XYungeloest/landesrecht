@@ -1,0 +1,759 @@
+{
+  "schemaVersion": "recht-nrw-legacy-exceptions/1",
+  "description": "Dokumentierte Legacy-Ausnahmen für Normen, deren Reimport mit dem aktuellen Parser keinen Import mehr ergibt (import-regression). deliver-legacy: gespeicherte Fassung bleibt ausgeliefert (Textintegrität nachgewiesen); depublish: Fassung wird kontrolliert entfernt. Schema und Prüfung: packages/importers/recht-nrw/src/common/legacy-exceptions.ts; Analyse: data/audits/recht-nrw/lrgv/IMPORT_REGRESSION_FAELLE.md. Textintegrität: sichtbarer Text der kanonischen Fassung (Kennzeichen, Titel, Text je Block, ohne Fußnotenblöcke; Parser 1.1.0 führte Fußnoten des Vorspanns als Fließtextzeilen „Fn n: …“, diese Zeilen sind ausgenommen und in note vermerkt) gegen den transformierten Dry-run-Output des aktuellen Parsers, zeilenweise, SHA-256.",
+  "entries": [
+    {
+      "id": "legacy-27211",
+      "sourceIdentity": "term:27211",
+      "sourceArea": "lrgv",
+      "targetSlug": "aachen-gesetz-west",
+      "disposition": "deliver-legacy",
+      "source": {
+        "url": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-zur-neugliederung-der-gemeinden-und-kreise-des-neugliederungsraumes",
+        "sha256": "2fe36069b4fe2bb88d1583de379a150cb75008d1b0ec44c8b0d6dcdc61d8e185"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-parser/1.1.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "findings": [
+          "structure-unnumbered-section"
+        ]
+      },
+      "textIntegrity": {
+        "method": "sichtbarer Text der kanonischen Fassung vs. transformierter Dry-run-Output Parser 1.2.0, zeilenweise (Kennzeichen, Titel, Text; ohne Fußnotenblöcke), SHA-256",
+        "legacySha256": "4c610d8f7bd547eed8d3bbae45029faf54c29d2b87296769e1b1566c40257656",
+        "currentSha256": "4c610d8f7bd547eed8d3bbae45029faf54c29d2b87296769e1b1566c40257656",
+        "legacyChars": 56457,
+        "currentChars": 56457,
+        "identical": true
+      },
+      "structuralDefect": "Sektion 34 des Portals hat kein Nummernfeld; sie ist nach Zählung (§ 32 → § 34) und Querverweisen (§ 32: „in den §§ 31 und 33 genannten Flurstücke“; § 34: „in § 33 genannten Flurstücke“) der § 33 (Eingliederungen in die Gemeinde Wegberg). Die gespeicherte Fassung führt seine Absätze (1) und (2) als weitere Absätze (1)/(2) am Ende von § 32; Einheit § 33 fehlt (48 statt 49 Einheiten). Kein Textverlust, keine Textänderung.",
+      "reason": "Legacy-safe: Text vollständig und mit dem aktuellen Parseroutput identisch (SHA-256), alle 48 vorhandenen Einheiten korrekt; nur zwei Absätze stehen unter § 32 statt unter einem fehlenden § 33. Ein Kennzeichen wird nicht erfunden (fail-closed, Parser 1.2.0); Depublikation würde ein vollständiges Gebietsänderungsgesetz wegen einer Portallücke entziehen. Der Review-Fall unknown-structure bleibt offen.",
+      "followUp": "Dokumentiertes Override des fehlenden Kennzeichens (Vorschlag: Feld unitLabel { section: 34, label: \"§ 33\" } mit Beleg Zählungslücke/Querverweise) und Reimport mit --only term:27211 --offline --write; danach Ausnahme entfernen.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "recht-nrw-staleness-agent (Analyse IMPORT_REGRESSION_FAELLE.md; redaktionelle Bestätigung durch den Koordinator ausstehend)"
+    },
+    {
+      "id": "legacy-27217",
+      "sourceIdentity": "term:27217",
+      "sourceArea": "lrgv",
+      "targetSlug": "duesseldorf-gesetz-west",
+      "disposition": "deliver-legacy",
+      "source": {
+        "url": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-zur-neugliederung-der-gemeinden-und-kreise-des-neugliederungsraumes-4",
+        "sha256": "1e2fb5d237a83cb68b25c8db9bd58315571bf916803ef760d27fe32257e6ae22"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-parser/1.1.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "findings": [
+          "structure-unnumbered-section"
+        ]
+      },
+      "textIntegrity": {
+        "method": "sichtbarer Text der kanonischen Fassung vs. transformierter Dry-run-Output Parser 1.2.0, zeilenweise (Kennzeichen, Titel, Text; ohne Fußnotenblöcke), SHA-256",
+        "legacySha256": "577bedb9b6f96298b44d16c5fc7e376daf067356d79605a957bf1daba4f19f2f",
+        "currentSha256": "577bedb9b6f96298b44d16c5fc7e376daf067356d79605a957bf1daba4f19f2f",
+        "legacyChars": 42108,
+        "currentChars": 42108,
+        "identical": true,
+        "note": "Die gespeicherte Fassung enthält zusätzlich eine Fußnote des Vorspanns als Fließtextzeile „Fn 1: …“ (Parser 1.1.0, 114 Zeichen); Parser 1.2.0 führt sie als Fußnotenblock. Diese Zeile ist im Vergleich ausgenommen; sie ist zusätzlicher, kein fehlender Text."
+      },
+      "structuralDefect": "Sektion 24 des Portals hat kein Nummernfeld; nach Zählung (§ 22 → § 24) ist sie der § 23 (Eingliederung der Stadt Neuss in den Kreis Grevenbroich, Umbenennung in Kreis Neuss). Die gespeicherte Fassung führt seine Absätze (1)–(3) als weitere Absätze am Ende von § 22; Einheit § 23 fehlt (30 statt 31 Einheiten). Kein Textverlust, keine Textänderung.",
+      "reason": "Legacy-safe: Text vollständig und mit dem aktuellen Parseroutput identisch (SHA-256, ohne die alte Fußnoten-Fließtextzeile), 30 Einheiten korrekt; drei Absätze stehen unter § 22 statt unter einem fehlenden § 23. Kein Kennzeichen wird erfunden; Depublikation eines vollständigen Gebietsänderungsgesetzes wäre unverhältnismäßig. Review-Fall unknown-structure bleibt offen.",
+      "followUp": "Dokumentiertes Override des fehlenden Kennzeichens (Vorschlag: unitLabel { section: 24, label: \"§ 23\" }, Beleg Zählungslücke) und Reimport mit --only term:27217 --offline --write; danach Ausnahme entfernen.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "recht-nrw-staleness-agent (Analyse IMPORT_REGRESSION_FAELLE.md; redaktionelle Bestätigung durch den Koordinator ausstehend)"
+    },
+    {
+      "id": "legacy-27514",
+      "sourceIdentity": "term:27514",
+      "sourceArea": "lrgv",
+      "targetSlug": "gesetz-zu-dem-vertrag-zwischen-dem-land-westdeutschland-und-dem-heiligen-west",
+      "disposition": "deliver-legacy",
+      "source": {
+        "url": "https://recht.nrw.de/lrgv/gesetz/01012000-gesetz-zu-dem-vertrag-zwischen-dem-land-nordrhein-westfalen-und-dem-heiligen",
+        "sha256": "286ecafc1125c54a8e9c946c01d6c68c07e567ac8444501e22c4e8f7250d56bf"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-parser/1.1.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "findings": [
+          "structure-unnumbered-section"
+        ]
+      },
+      "textIntegrity": {
+        "method": "sichtbarer Text der kanonischen Fassung vs. transformierter Dry-run-Output Parser 1.2.0, zeilenweise (Kennzeichen, Titel, Text; ohne Fußnotenblöcke), SHA-256",
+        "legacySha256": "a413267dc15b4651ccf1630920ede5d6c56d1d6103c3812a1b3e14a0071e5352",
+        "currentSha256": "a413267dc15b4651ccf1630920ede5d6c56d1d6103c3812a1b3e14a0071e5352",
+        "legacyChars": 22142,
+        "currentChars": 22142,
+        "identical": true
+      },
+      "structuralDefect": "Sektionen 15–25 des Portals (11 Sektionen ohne Nummernfeld) sind der italienische Vertragstext (Articolo I–XI samt Protocollo finale), der dem deutschen Text (Artikel I–XI mit Schlussprotokoll, alle mit Nummernfeld) folgt. Die gespeicherte Fassung hängt den gesamten italienischen Text als Absätze an Artikel XI an; die deutschen Einheiten Artikel 1–2 und I–XI sind vollständig und korrekt. Kein Textverlust, keine Textänderung.",
+      "reason": "Legacy-safe: Text vollständig und mit dem aktuellen Parseroutput identisch (SHA-256); die normative deutsche Fassung ist korrekt strukturiert, nur der gleichrangige italienische Paralleltext steht ohne eigene Artikelkennzeichen am Ende von Artikel XI. Kennzeichen „Articolo I–XI“ werden nicht erfunden. Review-Fall unknown-structure bleibt offen.",
+      "followUp": "Redaktionelle Entscheidung, ob der italienische Paralleltext als eigener Anlage-Container (z. B. Override unitLabel je Sektion 15–25 oder Container-Override „Testo italiano“) geführt wird; bis dahin Ausnahme. Reimport mit --only term:27514 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "recht-nrw-staleness-agent (Analyse IMPORT_REGRESSION_FAELLE.md; redaktionelle Bestätigung durch den Koordinator ausstehend)"
+    },
+    {
+      "id": "legacy-28146",
+      "sourceIdentity": "term:28146",
+      "sourceArea": "lrgv",
+      "targetSlug": "eig-wo-west",
+      "disposition": "deliver-legacy",
+      "source": {
+        "url": "https://recht.nrw.de/lrgv/rechtsverordnung/30082012-verordnung-ueber-das-wahlverfahren-zur-benennung-der-beschaeftigten",
+        "sha256": "9aaa1928cf517053b8a8229d3220d80cec37e794247d7d069992a6ccad0025ac"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-parser/1.1.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "findings": [
+          "structure-unnumbered-section"
+        ]
+      },
+      "textIntegrity": {
+        "method": "sichtbarer Text der kanonischen Fassung vs. transformierter Dry-run-Output Parser 1.2.0, zeilenweise (Kennzeichen, Titel, Text; ohne Fußnotenblöcke), SHA-256",
+        "legacySha256": "2a256234d807169f2d09b9f1ea19e2612b79f813a7cff27a74e989811cffc910",
+        "currentSha256": "2a256234d807169f2d09b9f1ea19e2612b79f813a7cff27a74e989811cffc910",
+        "legacyChars": 12533,
+        "currentChars": 12533,
+        "identical": true,
+        "note": "Die gespeicherte Fassung enthält zusätzlich drei Fußnoten des Vorspanns als Fließtextzeilen „Fn 1–3: …“ (Parser 1.1.0, 314 Zeichen); Parser 1.2.0 führt sie als Fußnotenblöcke. Diese Zeilen sind im Vergleich ausgenommen; sie sind zusätzlicher, kein fehlender Text."
+      },
+      "structuralDefect": "Sektion 14 des Portals hat kein Nummernfeld; ihre eigene Fußnote lautet „§ 12 a eingefügt durch Artikel 3 der VO vom 13. August 2012“ – die Sektion ist der § 12a (Fristenberechnung, §§ 186–193 BGB). Die gespeicherte Fassung führt den Satz als weiteren Absatz am Ende von § 12 (Anfechtung der Wahl); Einheit § 12a fehlt (13 statt 14 Einheiten). Kein Textverlust, keine Textänderung.",
+      "reason": "Legacy-safe: Text vollständig und mit dem aktuellen Parseroutput identisch (SHA-256, ohne die alten Fußnoten-Fließtextzeilen), 13 Einheiten korrekt; ein Satz steht unter § 12 statt unter einem fehlenden § 12a. Kennzeichen wird nicht aus der Fußnote erfunden (fail-closed). Review-Fall unknown-structure bleibt offen.",
+      "followUp": "Dokumentiertes Override des fehlenden Kennzeichens (Vorschlag: unitLabel { section: 14, label: \"§ 12a\" }, Beleg: Fußnote der Sektion „§ 12 a eingefügt …“) und Reimport mit --only term:28146 --offline --write; danach Ausnahme entfernen.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "recht-nrw-staleness-agent (Analyse IMPORT_REGRESSION_FAELLE.md; redaktionelle Bestätigung durch den Koordinator ausstehend)"
+    },
+    {
+      "id": "legacy-29969",
+      "sourceIdentity": "term:29969",
+      "sourceArea": "lrgv",
+      "targetSlug": "vo-mrvg-west",
+      "disposition": "deliver-legacy",
+      "source": {
+        "url": "https://recht.nrw.de/lrgv/rechtsverordnung/01012021-verordnung-zur-umsetzung-des-massregelvollzugsgesetzes-vo-mrvg",
+        "sha256": "32e8c1ac987d5482a5453f7045b0251d106362059e8a70b51bfab27ea5ba967a"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-parser/1.1.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-parser/1.2.0",
+        "findings": [
+          "structure-unnumbered-section"
+        ]
+      },
+      "textIntegrity": {
+        "method": "sichtbarer Text der kanonischen Fassung vs. transformierter Dry-run-Output Parser 1.2.0, zeilenweise (Kennzeichen, Titel, Text; ohne Fußnotenblöcke), SHA-256",
+        "legacySha256": "9d33f834267bfeb4bad3074763f98e8f0dee59026419662c349b389e50e7f4c7",
+        "currentSha256": "9d33f834267bfeb4bad3074763f98e8f0dee59026419662c349b389e50e7f4c7",
+        "legacyChars": 13305,
+        "currentChars": 13305,
+        "identical": true
+      },
+      "structuralDefect": "Sektion 2 des Portals hat kein Nummernfeld; sie folgt dem Vorspann (Ausfertigung, Ermächtigung, Gliederung „Teil 1 Regelung von Zuständigkeiten“) und geht dem § 2 (Aufsicht) voraus – nach Zählung der § 1 (Zuständigkeit des Gesundheitsministeriums für Auswahl Dritter, Standards, Standortentscheidungen). Die gespeicherte Fassung führt den Satz als Absatz unter der Gliederung Teil 1 vor § 2; Einheit § 1 fehlt (16 statt 17 Einheiten). Kein Textverlust, keine Textänderung.",
+      "reason": "Legacy-safe: Text vollständig und mit dem aktuellen Parseroutput identisch (SHA-256), 16 Einheiten korrekt; ein Satz steht als Absatz unter Teil 1 statt unter einem fehlenden § 1 – keiner anderen Einheit zugeschlagen. Kennzeichen wird nicht erfunden. Review-Fall unknown-structure bleibt offen.",
+      "followUp": "Dokumentiertes Override des fehlenden Kennzeichens (Vorschlag: unitLabel { section: 2, label: \"§ 1\" }, Beleg Zählungsbeginn bei § 2) und Reimport mit --only term:29969 --offline --write; danach Ausnahme entfernen.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "recht-nrw-staleness-agent (Analyse IMPORT_REGRESSION_FAELLE.md; redaktionelle Bestätigung durch den Koordinator ausstehend)"
+    },
+    {
+      "id": "legacy-30782",
+      "sourceIdentity": "term:30782",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01012013-richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-0",
+        "sha256": "35aa274d207939d66fe8eceaafbf591c1094783c011294477e7046835fe67ae5"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "35aa274d207939d66fe8eceaafbf591c1094783c011294477e7046835fe67ae5",
+        "currentSha256": "35aa274d207939d66fe8eceaafbf591c1094783c011294477e7046835fe67ae5",
+        "legacyChars": 43476,
+        "currentChars": 43476,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2013-12-31 außer Kraft („zum 31. Dezember 2013“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:30782 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-30825",
+      "sourceIdentity": "term:30825",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-zur-beruecksichtigung-von-buergerschaftlichem-engagement-bei-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01042013-richtlinie-zur-beruecksichtigung-von-buergerschaftlichem",
+        "sha256": "74058a0ff1e5d0f8890f260ce7ae4a1e40eec98b24d52b2eb4f831f5a477b5d0"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "74058a0ff1e5d0f8890f260ce7ae4a1e40eec98b24d52b2eb4f831f5a477b5d0",
+        "currentSha256": "74058a0ff1e5d0f8890f260ce7ae4a1e40eec98b24d52b2eb4f831f5a477b5d0",
+        "legacyChars": 26479,
+        "currentChars": 26479,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2017-12-31 außer Kraft („bis zum 31. Dezember 2017“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:30825 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-30978",
+      "sourceIdentity": "term:30978",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-die-umruestung-von-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01012014-richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-die",
+        "sha256": "5a2d5feb4e6c973fcc2368752fafd726b9619d39dd82baa0c132f227b9b1010a"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "5a2d5feb4e6c973fcc2368752fafd726b9619d39dd82baa0c132f227b9b1010a",
+        "currentSha256": "5a2d5feb4e6c973fcc2368752fafd726b9619d39dd82baa0c132f227b9b1010a",
+        "legacyChars": 36392,
+        "currentChars": 36392,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2014-12-31 außer Kraft („bis zum 31.12.2014“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:30978 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31080",
+      "sourceIdentity": "term:31080",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinien-fuer-die-dienstliche-beurteilung-der-beschaeftigten-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/13062014-richtlinien-fuer-die-dienstliche-beurteilung-der-beschaeftigten",
+        "sha256": "c3be80ea1a6fff1ad63e6937dde9efd2eb2bce144e95dd9d2f193b27d222917c"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-successor-contradicted"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "c3be80ea1a6fff1ad63e6937dde9efd2eb2bce144e95dd9d2f193b27d222917c",
+        "currentSha256": "c3be80ea1a6fff1ad63e6937dde9efd2eb2bce144e95dd9d2f193b27d222917c",
+        "legacyChars": 69873,
+        "currentChars": 69873,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-successor-contradicted): Aufhebung/Ablösung durch Richtlinien für die dienstliche Beurteilung der Beamtinnen und Beamten im Geschäftsbereich des Minis (wirksam 2017-06-01) widerspricht anderen Belegen: Portalintervall der gew.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31080 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31221",
+      "sourceIdentity": "term:31221",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinien-ueber-die-gewaehrung-von-zuwendungen-an-freie-traeger-fuer-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/09012015-richtlinien-ueber-die-gewaehrung-von-zuwendungen-freie-traeger",
+        "sha256": "3fb6181bce3d9f7731e2d028f4d44d5e56b13cda105787b917509ad1176a61b5"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "3fb6181bce3d9f7731e2d028f4d44d5e56b13cda105787b917509ad1176a61b5",
+        "currentSha256": "3fb6181bce3d9f7731e2d028f4d44d5e56b13cda105787b917509ad1176a61b5",
+        "legacyChars": 41643,
+        "currentChars": 41643,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2018-12-31 außer Kraft („bis zum 31. Dezember 2018“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31221 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31313",
+      "sourceIdentity": "term:31313",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-31313",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/28052015-richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem",
+        "sha256": "07940976e9aaa6d63d36b93be9ae42e6e07ca38fcf356d985d522d5b27d69be5"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "07940976e9aaa6d63d36b93be9ae42e6e07ca38fcf356d985d522d5b27d69be5",
+        "currentSha256": "07940976e9aaa6d63d36b93be9ae42e6e07ca38fcf356d985d522d5b27d69be5",
+        "legacyChars": 55514,
+        "currentChars": 55514,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2020-12-31 außer Kraft („mit Ablauf des 31. Dezember 2020“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31313 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31390",
+      "sourceIdentity": "term:31390",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-ueber-die-gewaehrung-von-zuwendungen-zu-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/21072015-richtlinie-ueber-die-gewaehrung-von-zuwendungen-zu",
+        "sha256": "00c429ae83286643cd0b9f37820e1299ce61c668be8a31a36cd759ff67cd2788"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expiry-contradicted"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "00c429ae83286643cd0b9f37820e1299ce61c668be8a31a36cd759ff67cd2788",
+        "currentSha256": "00c429ae83286643cd0b9f37820e1299ce61c668be8a31a36cd759ff67cd2788",
+        "legacyChars": 44665,
+        "currentChars": 44665,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-expiry-contradicted): widersprüchliche Geltungsevidenz.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31390 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31771",
+      "sourceIdentity": "term:31771",
+      "sourceArea": "lrmb",
+      "targetSlug": "verwaltungsvorschrift-ueber-die-legitimations-und-kennzeichnungspflicht-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01032017-verwaltungsvorschrift-ueber-die-legitimations-und",
+        "sha256": "9bcba54b466dddf97078dbbe15e9ba6e39ef05b6666fcb6498db4b3b09a5337e"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "9bcba54b466dddf97078dbbe15e9ba6e39ef05b6666fcb6498db4b3b09a5337e",
+        "currentSha256": "9bcba54b466dddf97078dbbe15e9ba6e39ef05b6666fcb6498db4b3b09a5337e",
+        "legacyChars": 31800,
+        "currentChars": 31800,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2022-12-31 außer Kraft („am 31. Dezember 2022“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31771 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31791",
+      "sourceIdentity": "term:31791",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-schaffung-erhaltung-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/14032017-richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-schaffung",
+        "sha256": "5bd1aa39da324732b20b65a5698680deca4bd8406bd9bd2f3659fa8001175021"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-successor-contradicted"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "5bd1aa39da324732b20b65a5698680deca4bd8406bd9bd2f3659fa8001175021",
+        "currentSha256": "5bd1aa39da324732b20b65a5698680deca4bd8406bd9bd2f3659fa8001175021",
+        "legacyChars": 44603,
+        "currentChars": 44603,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-successor-contradicted): Aufhebung/Ablösung durch Richtlinien über die Gewährung von Zuwendung zur Schaffung, Erhaltung, Wiederherstellung und Verbess (wirksam 2023-07-28) widerspricht anderen Belegen: Portalintervall der gew.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31791 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31908",
+      "sourceIdentity": "term:31908",
+      "sourceArea": "lrmb",
+      "targetSlug": "vv-tb-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/28062017-verwaltungsvorschrift-technische-baubestimmungen-vv-tb",
+        "sha256": "38c6b67414ee65640c9bbfcd878048d136d7a4961d9c670ac71253e34eae1a33"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "38c6b67414ee65640c9bbfcd878048d136d7a4961d9c670ac71253e34eae1a33",
+        "currentSha256": "38c6b67414ee65640c9bbfcd878048d136d7a4961d9c670ac71253e34eae1a33",
+        "legacyChars": 27595,
+        "currentChars": 27595,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2022-06-27 außer Kraft („am 27. Juni 2022“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31908 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-31967",
+      "sourceIdentity": "term:31967",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-ueber-die-gewaehrung-von-zuwendungen-an-betreiber-von-faehren-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01012017-richtlinie-ueber-die-gewaehrung-von-zuwendungen-betreiber-von",
+        "sha256": "654683f106a9eedf007acc09822699ead803b4199cf23d59b4f31f7e53b01047"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "654683f106a9eedf007acc09822699ead803b4199cf23d59b4f31f7e53b01047",
+        "currentSha256": "654683f106a9eedf007acc09822699ead803b4199cf23d59b4f31f7e53b01047",
+        "legacyChars": 33570,
+        "currentChars": 33570,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2019-12-31 außer Kraft („zum 31.12.2019“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:31967 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-32104",
+      "sourceIdentity": "term:32104",
+      "sourceArea": "lrmb",
+      "targetSlug": "shr-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01012018-richtlinie-ueber-die-gewaehrung-von-soforthilfen-bei-durch",
+        "sha256": "31f310b9bced2ef388e596d3d547fea4141b9f774dc42baed15af80bd5d6938a"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expired-before-baseline"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "31f310b9bced2ef388e596d3d547fea4141b9f774dc42baed15af80bd5d6938a",
+        "currentSha256": "31f310b9bced2ef388e596d3d547fea4141b9f774dc42baed15af80bd5d6938a",
+        "legacyChars": 70542,
+        "currentChars": 70542,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt not-at-baseline (validity-expired-before-baseline): Der Text tritt am 2022-12-31 außer Kraft („am 31. Dezember 2022“) – vor dem Stichtag 2023-12-01; das Portal weist kein Ende aus (Widerspruch zur Fassungsseite).",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: Außerkrafttreten vor dem Stichtag laut eigenem Text – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (not-at-baseline).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:32104 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-32422",
+      "sourceIdentity": "term:32422",
+      "sourceArea": "lrmb",
+      "targetSlug": "foeri-mm-west-32422",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01062019-richtlinien-zur-foerderung-der-vernetzten-mobilitaet-und-des",
+        "sha256": "e6ebfbed70a09e261893f14ac845338635968121f68c358c8975f0fda89a98bd"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-successor-contradicted"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "e6ebfbed70a09e261893f14ac845338635968121f68c358c8975f0fda89a98bd",
+        "currentSha256": "e6ebfbed70a09e261893f14ac845338635968121f68c358c8975f0fda89a98bd",
+        "legacyChars": 69515,
+        "currentChars": 69515,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-successor-contradicted): Aufhebung/Ablösung durch Richtlinien zur Förderung der Vernetzten Mobilität und des Mobilitätsmanagements (Förderrichtlinie M (wirksam 2022-07-01) widerspricht anderen Belegen: Portalintervall der gew.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:32422 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-32424",
+      "sourceIdentity": "term:32424",
+      "sourceArea": "lrmb",
+      "targetSlug": "schulbaur-west-32424",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/08062019-richtlinie-ueber-bauaufsichtliche-anforderungen-schulen",
+        "sha256": "02214f846309b5f82027cb4c5b8dae54bb648816fde720a02aef15d49d4846ca"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-successor-contradicted"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "02214f846309b5f82027cb4c5b8dae54bb648816fde720a02aef15d49d4846ca",
+        "currentSha256": "02214f846309b5f82027cb4c5b8dae54bb648816fde720a02aef15d49d4846ca",
+        "legacyChars": 35296,
+        "currentChars": 35296,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-successor-contradicted): Aufhebung/Ablösung durch Richtlinie über bauaufsichtliche Anforderungen an Schulen (Schulbaurichtlinie – SchulBauR) Runderlas (wirksam 2020-12-11) widerspricht anderen Belegen: Portalintervall der gew.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:32424 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-33461",
+      "sourceIdentity": "term:33461",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-massnahmen-gemaess-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/01042022-richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-massnahmen",
+        "sha256": "e25bc3facb61d8ceca7bb1d31e290f3fc0dd8bcde0f264e5420191608fffc021"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-expiry-ambiguous"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "e25bc3facb61d8ceca7bb1d31e290f3fc0dd8bcde0f264e5420191608fffc021",
+        "currentSha256": "e25bc3facb61d8ceca7bb1d31e290f3fc0dd8bcde0f264e5420191608fffc021",
+        "legacyChars": 43304,
+        "currentChars": 43304,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-expiry-ambiguous): widersprüchliche Geltungsevidenz.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:33461 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    },
+    {
+      "id": "legacy-33495",
+      "sourceIdentity": "term:33495",
+      "sourceArea": "lrmb",
+      "targetSlug": "richtlinie-zur-foerderung-der-modernisierung-von-wohnraum-in-west",
+      "disposition": "depublish",
+      "source": {
+        "url": "https://recht.nrw.de/lrmb/verwaltungsvorschrift/14022022-richtlinie-zur-foerderung-der-modernisierung-von-wohnraum",
+        "sha256": "8b81b0e6ec4bedf81b021dc182d597feb785022af6a3fc817960fe388d14146e"
+      },
+      "legacy": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.2.0",
+        "transformerVersion": "recht-nrw-transformer/2.1.0",
+        "importStatus": "imported-with-warnings"
+      },
+      "current": {
+        "parserVersion": "recht-nrw-lrmb-parser/1.3.0",
+        "findings": [
+          "validity-successor-contradicted"
+        ]
+      },
+      "textIntegrity": {
+        "method": "Kein Textvergleich: Quellhash der Fassungsseite (Manifest-Rohdokument) unverändert; die Depublikation erfolgt aus Geltungsgründen (Evidence Pass Parser 1.3.0), nicht wegen einer Textabweichung",
+        "legacySha256": "8b81b0e6ec4bedf81b021dc182d597feb785022af6a3fc817960fe388d14146e",
+        "currentSha256": "8b81b0e6ec4bedf81b021dc182d597feb785022af6a3fc817960fe388d14146e",
+        "legacyChars": 98877,
+        "currentChars": 98877,
+        "identical": true,
+        "note": "Werte sind Bytes der Fassungsseite, kein Normtextvergleich"
+      },
+      "structuralDefect": "Keine strukturelle Abweichung. Der Bewerter 1.3.0 ergibt needs-review (validity-successor-contradicted): Aufhebung/Ablösung durch Richtlinie zur Förderung der Modernisierung von Wohnraum im Land Nordrhein-Westfalen (Modernisierung (wirksam 2023-02-15) widerspricht anderen Belegen: Portalintervall der gew.",
+      "reason": "Im Zweifel Review statt unbelegter Übernahme: widersprüchliche Geltungsevidenz – die mit Parser 1.2.0 übernommene Fassung wird nicht weiter ausgeliefert, sondern kontrolliert depubliziert; Manifest trägt den aktuellen Befund (needs-review).",
+      "followUp": "Geltungsbeleg redaktionell prüfen (Review-Fall metadata-conflict/historical-gap); bei Bestätigung der Stichtagsgeltung Override und Reimport mit --only term:33495 --offline --write.",
+      "approvedAt": "2026-09-17",
+      "approvedBy": "Koordinator (Claude), redaktionelle Bestätigung durch den Nutzer ausstehend"
+    }
+  ]
+}

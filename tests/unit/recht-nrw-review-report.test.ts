@@ -183,7 +183,7 @@ describe('Historische Lücken: Gründe, SMBl-Nummer, Belegklassen', () => {
     expect(classifyEvidence({ ...none, inForceClause: true }, BASELINE)).toBe('in-force-clause-only');
     expect(classifyEvidence({ ...none, changeNote: { amendments: 2, identified: 0, complete: true, latestAfterBaseline: false } }, BASELINE)).toBe('amendment-chain-unidentified');
     expect(classifyEvidence({ ...none, changeNote: { amendments: 2, identified: 1, complete: true, latestAfterBaseline: false } }, BASELINE)).toBe('amendment-chain-identified');
-    const weak = { citingUrl: `${VV}/y`, kind: 'repealed' as const, level: 'weak' as const, matched: ['date' as const], text: 'x' };
+    const weak = { citingUrl: `${VV}/y`, kind: 'repealed' as const, level: 'weak' as const, matched: ['date' as const], text: 'x', effectiveDerivation: 'ohne Zeitangabe', strength: 'insufficient' as const };
     expect(classifyEvidence({ ...none, successorEvidence: [weak] }, BASELINE)).toBe('successor-weak');
     expect(classifyEvidence({ ...none, successorEvidence: [{ ...weak, level: 'strong', matched: ['date', 'smbl-number'] }] }, BASELINE)).toBe('successor-strong');
     expect(classifyEvidence({ ...none, selfStatements: [{ kind: 'expired', text: 'Sie treten mit Ablauf des Haushaltsjahres 2016 außer Kraft.', effective: { kind: 'end-of-year', date: '2016-12-31', text: 'mit Ablauf des Haushaltsjahres 2016' } }] }, BASELINE)).toBe('self-expiry-before-baseline');
@@ -259,7 +259,7 @@ describe('Review-Report: Arbeitslisten, Zusammenfassung, Nachfolgebelege aus Que
 });
 
 describe('Rekonstruktionsqueue: Gruppierung', () => {
-  const item = (sourceIdentity: string, overrides: Partial<ReconstructionQueueItem>): ReconstructionQueueItem => ({ sourceIdentity, title: sourceIdentity, sourceDocumentType: 'runderlass', category: 'reconstruction-required', status: 'queued', priority: { score: 0, factors: [] }, amendments: 1, recipePath: '', recipeExists: false, blockers: [], ...overrides });
+  const item = (sourceIdentity: string, overrides: Partial<ReconstructionQueueItem>): ReconstructionQueueItem => ({ sourceIdentity, title: sourceIdentity, sourceDocumentType: 'runderlass', category: 'reconstruction-required', status: 'queued', group: 'source-incomplete', groupReasons: [], priority: { score: 0, factors: [] }, amendments: 1, recipePath: '', recipeExists: false, blockers: [], otherBlockingCategories: [], ...overrides });
 
   it('gruppiert nach Richtung, Änderungen, Quellenlage und Unsicherheitsmuster', () => {
     const groups = groupReconstructionQueue([

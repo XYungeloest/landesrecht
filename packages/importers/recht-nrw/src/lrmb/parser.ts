@@ -27,8 +27,14 @@ import { bodyTextLength, parseDivisionHeading, parseItem, tableBlock, type Sourc
 import { allByClass, attr, children, describeElement, elementChildren, hasClass, isElement, isTextNode, normalizeWhitespace, parseHtmlFragment, textOf, type HtmlElement, type HtmlNode } from '../common/html.ts';
 import { parseLrmbHead, type LrmbHead } from './text-metadata.ts';
 
-/** 1.1.0: gemeinsame Parserbausteine geändert (Tabellenraster, Zählbereiche, Legacy-Wrapper); 1.2.0: gemeinsame Bausteine erneut (Spannen-/Gliederungsüberschriften, Fußnoten ohne Einheit als Fußnotenblöcke, Entity-Artefakte, Listenabsätze, Fehlermeldungen mit Quellkontext) – Bestand wird aus dem Cache regeneriert. */
-export const LRMB_PARSER_VERSION = 'recht-nrw-lrmb-parser/1.2.0';
+/**
+ * 1.1.0: gemeinsame Parserbausteine geändert (Tabellenraster, Zählbereiche, Legacy-Wrapper); 1.2.0: gemeinsame Bausteine
+ * erneut (Spannen-/Gliederungsüberschriften, Fußnoten ohne Einheit als Fußnotenblöcke, Entity-Artefakte, Listenabsätze,
+ * Fehlermeldungen mit Quellkontext); 1.3.0: Evidence Pass – eigene Außerkrafttretensformeln (P1), Nachfolgebelege (P2),
+ * Stammfundstelle als Beginn-Beleg (P4), Beweisklassen mit Widerspruchsprüfung (`lrmb/validity.ts`) – Bestand wird aus dem
+ * Cache regeneriert (`bulk --area lrmb --write --regenerate-stale`).
+ */
+export const LRMB_PARSER_VERSION = 'recht-nrw-lrmb-parser/1.3.0';
 
 interface Line {
   text: string;

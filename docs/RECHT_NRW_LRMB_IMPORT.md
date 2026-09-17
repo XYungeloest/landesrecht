@@ -106,8 +106,13 @@ Regeln (`lrmb/validity.ts`):
    Belegstärken im Manifest (`validityEvidence[].strength`): `strong` (Ministerialblatt-Eintrag, Klausel,
    Änderungsbefehl, Kette), `supporting` (Inkrafttretensklausel ohne Datum, Fehlen widersprechender Hinweise,
    redaktioneller Portalhinweis), `insufficient` (Suchindex `field_historically`, `field_outforce_date`,
-   `field_effective_from` – werden genannt, entscheiden aber nie allein). Policy und Strategie für den
-   Altbestand: `docs/RECHT_NRW_BULK_READINESS.md`, Abschnitt „Undatierte LRMB-Altdatensätze“.
+   `field_effective_from` – werden genannt, entscheiden aber nie allein), `contradictory` (zwei starke Belege
+   widersprechen einander → Review). Seit Parser 1.3.0 (Evidence Pass) zählen zusätzlich eigene
+   Außerkrafttretensformeln („gilt bis …“, „mit Ablauf des Haushaltsjahres … außer Kraft“; P1), Aufhebungen durch
+   benannte Nachfolgevorschriften mit Datum, Fundstelle und belegter Wirksamkeit (P2, Nachfolgebeleg-Index) und die
+   Stammfundstelle als Beginn-Beleg (P4, `supporting`; `strong` nur zusammen mit der Klausel „am Tag nach der
+   Veröffentlichung“). Entscheidungsregeln A/B/C, Belegschema und Reihenfolge der Befehle: `docs/RECHT_NRW_BULK_READINESS.md`,
+   Abschnitt „Evidence Pass“. Policy und Strategie für den Altbestand: ebenda, Abschnitt „Undatierte LRMB-Altdatensätze“.
 3. **Textstand:** Der Fundstellenverlauf der gewählten Seite nennt die eingearbeiteten Änderungen. Jede
    Änderung braucht ein belegtes Inkrafttreten: Ministerialblatt-Eintrag, der die Vorschrift mit
    Ausfertigungsdatum und Fundstelle nennt (Seitenkollisionen `-0/-1` werden so aufgelöst), plus

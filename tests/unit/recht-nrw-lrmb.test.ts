@@ -223,7 +223,7 @@ describe('Stichtagsprüfung (LRMB-Zeitmodell)', () => {
   });
 
   it('direkt mit belegtem Textstand: eingearbeitete Änderung vor dem Stichtag', () => {
-    const result = assessLrmbValidity({ baseline: BASELINE, ...dated('2014-08-23'), clauses: { unparsed: [], expiry: { date: '2027-12-31', text: 'x' } }, amendments: [amendment('2018-05-07', '2018-05-26', true), amendment('2023-11-06', '2023-11-17', true, { predecessor: { latest: false, date: '2018-05-07' } })], versionStarts: ['2014-08-23'] });
+    const result = assessLrmbValidity({ baseline: BASELINE, ...dated('2014-08-23'), clauses: { unparsed: [], expiry: { date: '2027-12-31', text: 'x', via: 'clause' } }, amendments: [amendment('2018-05-07', '2018-05-26', true), amendment('2023-11-06', '2023-11-17', true, { predecessor: { latest: false, date: '2018-05-07' } })], versionStarts: ['2014-08-23'] });
     expect(result).toMatchObject({ textStatus: 'direct', sourceValidity: 'verified-active-at-baseline', sourceValidFrom: '2023-11-17' });
     expect(result.sourceValidTo).toBeUndefined();
     expect(result.evidence.map((entry) => entry.kind)).toEqual(expect.arrayContaining(['portal-version-interval', 'text-expiry-clause', 'gazette-amendment', 'gazette-amendment-chain']));
@@ -250,7 +250,7 @@ describe('Stichtagsprüfung (LRMB-Zeitmodell)', () => {
   });
 
   it('Außerkrafttretensklausel vor dem Stichtag widerlegt die Portalangabe', () => {
-    const result = assessLrmbValidity({ baseline: BASELINE, ...dated('2022-02-26'), clauses: { unparsed: [], expiry: { date: '2022-06-30', text: 'am 30. Juni 2022 außer Kraft' } }, amendments: [], versionStarts: ['2022-02-26'] });
+    const result = assessLrmbValidity({ baseline: BASELINE, ...dated('2022-02-26'), clauses: { unparsed: [], expiry: { date: '2022-06-30', text: 'am 30. Juni 2022 außer Kraft', via: 'clause' } }, amendments: [], versionStarts: ['2022-02-26'] });
     expect(result.baselineStatus).toBe('not-active-at-baseline');
     expect(result.findings.map((finding) => finding.code)).toEqual(['validity-expired-before-baseline']);
   });
@@ -344,7 +344,7 @@ describe('LRMB-Importpfad (Fixtures, ohne Netz)', () => {
     expect(result.report!.postTransformAudit.ok).toBe(true);
 
     const manifest = await readManifest(root);
-    expect(manifest.entries[0]).toMatchObject({ sourceArea: 'lrmb', sourceDocumentType: 'runderlass', sourceIdentity: 'term:700001', baselineStatus: 'active-at-baseline', reconstructionStatus: 'direct', importStatus: 'imported-with-warnings', normativity: { decision: 'include' }, parserVersion: 'recht-nrw-lrmb-parser/1.2.0', transformerVersion: 'recht-nrw-transformer/2.1.0', validityProvenance: 'exact', documentIdentity: { status: 'consistent' }, textCompleteness: 'html-with-pdf-attachments', archive: { mode: 'versioned-sample' } });
+    expect(manifest.entries[0]).toMatchObject({ sourceArea: 'lrmb', sourceDocumentType: 'runderlass', sourceIdentity: 'term:700001', baselineStatus: 'active-at-baseline', reconstructionStatus: 'direct', importStatus: 'imported-with-warnings', normativity: { decision: 'include' }, parserVersion: 'recht-nrw-lrmb-parser/1.3.0', transformerVersion: 'recht-nrw-transformer/2.1.0', validityProvenance: 'exact', documentIdentity: { status: 'consistent' }, textCompleteness: 'html-with-pdf-attachments', archive: { mode: 'versioned-sample' } });
     expect(manifest.entries[0]!.validityEvidence.map((entry) => entry.kind)).toEqual(expect.arrayContaining(['portal-completeness-notice', 'portal-version-interval', 'text-in-force-clause', 'portal-change-history']));
     const pdf = manifest.entries[0]!.rawDocuments.find((entry) => entry.role === 'pdf')!;
     expect(await readFile(join(root, pdf.localSource!), 'utf8')).toBe('%PDF-1.4 Testanlage');

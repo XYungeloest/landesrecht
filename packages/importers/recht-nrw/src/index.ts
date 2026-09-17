@@ -33,6 +33,8 @@ export * from './common/transcription.ts';
 export * from './common/enumeration.ts';
 export * from './common/environment.ts';
 export * from './common/staleness.ts';
+export * from './common/legacy-exceptions.ts';
+export * from './common/version-report.ts';
 export * from './common/coverage.ts';
 export * from './common/persist.ts';
 export * from './lrgv/pipeline.ts';

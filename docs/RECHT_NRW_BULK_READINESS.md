@@ -31,6 +31,21 @@ Dieses Dokument ist die verbindliche Grundlage für den Auftrag:
 | VV-LHundG-Regression | echte Quelle → `consistent`, Import `imported-with-warnings`, rekonstruiert |
 | Policies | dieses Dokument mit den Abschnitten unten |
 | Fixtures | keine synthetischen Normen unter `content/` |
+| Enumerations-Fixpoint | Offline-Rebuild aus dem Abrufcache (Sitemap, Suchindex, gespeicherte Enumeration als Vorgänger, Manifest) liefert denselben fachlichen Fingerabdruck; Abweichung = Blocker (neu schreiben), Eingaben nicht im Cache = Hinweis |
+| Veraltete Einträge je Status | Versionsreport (`common/version-report.ts`): kein Eintrag mit älterem Parser-/Transformerstand ohne dokumentierte Legacy-Ausnahme (`data/imports/recht-nrw/legacy-exceptions.json`) – für alle Status (imported, review, excluded, not-at-baseline, failed); begründete/gegenstandslose Ausnahmen nur Hinweis |
+| Parserstände | aktuell (ok) oder nur dokumentierte Altstände (Hinweis); Meldung mit Verteilung der älteren Stände |
+| Review-Queue konsistent | `needs-review` nur mit offenem blockierenden Fall, `reviewStatus` ↔ offene Fälle, Ziel-Slugs stimmen; Fälle ohne Manifesteintrag (Abbruch vor der Term-Auflösung), übernommene Einträge mit Blocker und nicht reproduzierte Fälle nur Hinweis |
+| R2-Audit | `data/audits/recht-nrw/r2/R2_AUDIT.json`: 0 relevante Abweichungen (manifestOnly, size/hash, unerwartete Objekte, Stichprobe, Umschläge), `endedAt` ≥ Manifest-Wasserzeichen, Zählwerte (Einträge, Rohobjekte) wie heute |
+| D1-Audit lokal ↔ remote | `data/audits/recht-nrw/d1/D1_REMOTE_CHECK.json`: 0 Abweichungen, `checkedAt` ≥ Manifest-Wasserzeichen, `law_norms` = Normen im Bestand |
+| Such-Vollaudit | `data/audits/recht-nrw/search/search-audit-full.json`: Modus full, `ok`, 0 Fehler, `writtenAt` ≥ Manifest-Wasserzeichen, geprüfte Normen = Bestand |
+| Golden Set | `golden-results.json`: 0 Fehlschläge je Match-Modus (Blocker); älter als das Wasserzeichen nur Hinweis |
+| Secret-Scan | Testfall „statischer Secret-Scan“ im JUnit-Ergebnis vorhanden und grün |
+| Referenzbaseline | `docs/WEST_REFERENCE_BASELINE.md` mit den Abschnitten Referenzstichtag, Kennzahlen, Auditstatus, Einschränkungen; offene Platzhalter `<…>` nur Hinweis |
+
+**Aktualität ist deterministisch:** Das Manifest-Wasserzeichen ist der jüngste `importedAt` aller Manifesteinträge
+(ändert sich nur mit dem fachlichen Inhalt; Inhalte unter `content/` entstehen ausschließlich aus solchen Läufen). Ein
+Audit-Report gilt als aktuell, wenn sein Schreibzeitpunkt nicht vor dem Wasserzeichen liegt und seine Zählwerte dem
+heutigen Bestand entsprechen – nie über die Uhrzeit des Aufrufs.
 
 Normlokale Review-Fälle (Normativität, Institutionen, PDF, historische Lücken, Rekonstruktion) sind **keine**
 Blocker: Der Bulk erfasst sie vollständig und weist sie in Coverage und Review-Queue aus.
@@ -88,6 +103,55 @@ Strategie zur Aufklärung des Altbestands (Reihenfolge der Belegquellen):
 | SMBl-Gliederungsnummer, Register/Index des Ministerialblatts (Jahresausgaben) | `supporting` | Zuordnung, Querprüfung auf übersehene Änderungen |
 | Suchindex `field_historically`, `field_outforce_date`, `field_effective_from` | `insufficient` | nur Hinweis und Priorisierung, nie allein entscheidend |
 
+### Evidence Pass (LRMB-Parser 1.3.0): Beweisklassen und Entscheidungsregeln
+
+Belege im Manifest (`validityEvidence[]`, Schema `common/manifest.ts`, `validateValidityEvidence`) tragen Belegart
+(`kind`), Aussage (`supports`), Beweisklasse (`strength`), Wortlaut (`statement`, `excerpt`), Datum, Quell-URL,
+SHA-256 und Fundstelle (`citation`); Nachfolgebelege zusätzlich den strukturierten Datensatz `successor`
+(`predecessorIdentity`, `successorTitle`, `successorIdentity`, `statementKind`, `effectiveDate`, `effectiveDerivation`,
+`citation`, `matched`, `sourceUrl`, `sha256`, `evidenceStrength`). Es gibt keine `successor`-Relation im kanonischen
+Normmodell.
+
+| Beweisklasse | Bedeutung | Beispiele |
+| --- | --- | --- |
+| `strong` | amtlicher Beleg mit eindeutiger Identität und Datum; trägt allein eine Statusentscheidung | Portalintervall, Ministerialblatt-Änderung mit Stammfundstelle, eigene Außerkrafttretensformel mit Datum (P1), Aufhebung durch benannten Nachfolger mit Datum + Fundstelle/SMBl-Nummer/Az. und belegter Wirksamkeit (P2), Kontinuität nach den fünf Bedingungen (P3), Inkrafttreten „am Tag nach der Veröffentlichung“ plus Veröffentlichungsdatum der Stammfundstelle (P4) |
+| `supporting` | amtlicher Beleg ohne Datum oder ohne eindeutige Identität; entscheidet nie allein | Fundstellenverlauf, Klausel ohne Datum, Stammfundstelle ohne Veröffentlichungsdatum (P4), Nachfolgebeleg ohne datierbare Wirksamkeit oder mit Seitenkollision (gleiches Datum + Fundstelle bei einer anderen Seite des Bestands), Formeln „gegenstandslos“/„nicht mehr anzuwenden“/„neu gefasst“ |
+| `insufficient` | nur Hinweis | Suchindex (`field_historically`, `field_outforce_date`), Datumsgleichheit ohne Fundstelle, Titelähnlichkeit |
+| `contradictory` | zwei starke Belege widersprechen einander | Außerkrafttreten vor einer zugeordneten späteren Änderung; Aufhebung vor dem Stichtag gegen ein Portalintervall über den Stichtag; mehrere eigene Außerkrafttretensformeln mit verschiedenen Daten |
+
+Regeln (`lrmb/validity.ts`, `decisionRule` im Audit):
+
+- **A – Ende:** `strong` Ende vor dem Stichtag (P1 `validity-expired-before-baseline`, P2 `validity-repealed-before-baseline`)
+  ohne widersprechenden starken Beleg → `not-active-at-baseline`. P1 liest neben der klassischen Klausel „gilt/gelten bis
+  (zum) …“, „ist befristet bis …“, „mit Ablauf des (Haushalts-)Jahres … außer Kraft“, „tritt zum … außer Kraft“ – nur
+  mit strenger Selbstbezeichnung (Demonstrativum oder bestimmter Artikel + Vorschriftennoun, Pronomen nur nach eigener
+  Inkrafttretensformel). P2 verlangt Zuordnung `strong` (Datum + MBl-Fundstelle, SMBl-Nummer oder Aktenzeichen), eine
+  aufhebende/ersetzende Formel und eine belegte Wirksamkeit (Datum in der Formel, Inkrafttretensklausel, Tag nach der
+  Veröffentlichung, „Gültig ab“ der Nachfolgefassung); eigene Änderungen und Fassungswechsel derselben Stammnorm sind
+  keine Nachfolger.
+- **B – Geltung:** `strong` Beginn vor dem Stichtag (Klausel mit Datum, P4-Ableitung, eingearbeitete datierte Änderung)
+  **und** `strong` Fortbestand (P3 Fünf-Bedingungen-Kontinuität oder P2-Aufhebung nach dem Stichtag ohne Gegenhinweis
+  vor der Aufhebung) → `active-at-baseline`; Textstand `direct` = `verified-active-at-baseline`, sonst
+  `reconstruction-required` (nur mit geprüftem Rezept). Ein Nachfolger nach dem Stichtag begrenzt `sourceValidTo`.
+- **C – Review:** nur `supporting`/`insufficient` Belege oder ein `contradictory`-Befund (`validity-expiry-contradicted`,
+  `validity-expiry-ambiguous`, `validity-successor-contradicted`) → `undetermined`, Review. Geltung ≠ Normativität:
+  belegte Geltung führt nie zur Aufnahme, wenn die Normativität offen ist.
+
+Nachfolgebeleg-Index (`data/audits/recht-nrw/lrmb/successor-index.json`, `lrmb/successor-index.ts`): alle Aufhebungs-,
+Außerkrafttretens- und Ablösungsaussagen des netzfreien Bestands mit Metadaten der zitierenden Quelle. Der Review-Report
+erzeugt ihn; die Pipeline liest ihn nur (fehlt er, gibt es keine Nachfolgebelege). Der Evidence Pass
+(`data/audits/recht-nrw/lrmb/EVIDENCE_PASS.{json,md}`, `lrmb/evidence-pass.ts`) simuliert die Geltungsentscheidung
+offline über den ganzen LRMB-Bestand (vorher/nachher, je Regel, Fälle ohne Beleg).
+
+Reihenfolge nach einer Änderung der Geltungsregeln (Parserversion erhöht):
+
+```text
+npm run import:recht-nrw:review-report -- --write            # Nachfolgebeleg-Index, Evidence Pass, Teilreports
+npm run import:recht-nrw:bulk -- --area lrmb --write --resume --regenerate-stale   # Regeneration (Koordinator)
+npm run import:recht-nrw:review-report -- --write            # Reports auf dem neuen Stand
+npm run import:recht-nrw:reconstruction-queue -- --write     # Queue mit Gruppen
+```
+
 Nachträgliche Aufklärung einzelner Fälle: Beleg recherchieren → `data/imports/recht-nrw/overrides.json`
 (`sourceValidFrom`/`sourceValidTo` mit Beleg, Prüfdatum, Prüfer) oder Rezept → Review-Fall mit
 `npm run import:recht-nrw:review -- --decide <id> --status resolved --reason … --override <id> --write` →
@@ -120,8 +184,12 @@ bestandener Integrität und passendem Quell-Hash; die Quellenreferenz lautet `st
 
 - **Rekonstruktionsqueue** (`npm run import:recht-nrw:reconstruction-queue -- --write`): alle Fälle
   `reconstruction-required` mit Priorisierungshilfe (Dokumenttyp, Gesetzesbezug, Sachgebiet, Quellenlage,
-  geschätzter Aufwand) und Status `queued | recipe-draft | imported | blocked-uncertain`. Keine automatischen
-  Rezepte, keine KI-Schätzung als Rechtsstand.
+  geschätzter Aufwand), Status `queued | recipe-draft | imported | blocked-uncertain` und Gruppe
+  `recipe-ready` (alle Quellen zugeordnet, Befehle erkennbar, eine Richtung, keine weiteren Blocker) |
+  `likely-reconstructable` (Quellen vollständig, aber Neufassung, gemischte Richtung oder > 25 Befehle) |
+  `source-incomplete` (Quelle oder Inkrafttreten fehlt) | `uncertain` (Befunde `reconstruction-uncertain`) |
+  `blocked` (weitere blockierende Befunde) | `imported`. Keine automatischen Rezepte, keine KI-Schätzung als
+  Rechtsstand.
 - **Institutionen** (`data/imports/recht-nrw/institution-mapping.json`): `preserve | safe-transform | map |
   review | historical-source-only`; Standard `review`, nicht blockierend, messbar in der Coverage. Gerichte
   werden nicht pauschal umbenannt.

@@ -753,6 +753,36 @@ describe('Parser-Residuen des Bulkimports (Fixture-Bibliothek tests/fixtures/rec
     expect(errors(parseNativeDocument(fixture('footnotes/native-footnotes-without-unit.html')))).toEqual([]);
   });
 
+  it('native-drupal: redaktioneller „Hinweis“ nach der letzten Einheit ist keine fehlende Einheit – Text auf Dokumentebene, letzte Einheit geschlossen (term 26534)', () => {
+    const html = fixture('native-drupal/trailing-editorial-notice.html');
+    const result = parseNativeDocument(html);
+    expect(errors(result)).toEqual([]);
+    expect(codes(result)).toContain('editorial-notice-section');
+    expect(lostWords(html, result)).toEqual([]);
+    expect(result.stats.unitLabels).toEqual(['§ 4', '§ 5']);
+    // Der Hinweis hängt nicht mehr still an § 5 (Parser 1.1.0), sondern folgt ihm auf Dokumentebene.
+    const section5 = result.blocks.find((block) => block.type === 'paragraph' && block.label === '§ 5')!;
+    expect(section5.children?.map((block) => block.type)).toEqual(['footnote', 'paragraphText']);
+    expect(result.blocks.map((block) => block.type)).toEqual(['paragraphText', 'paragraph', 'paragraph', 'paragraphText', 'subitem', 'paragraphText', 'paragraphText', 'paragraphText', 'subitem', 'paragraphText', 'signature']);
+    expect(result.blocks[3]!.text).toMatch(/^Hinweis: Alle Gesetze und Verordnungen/u);
+    const report = checkParseIntegrity(rawMetrics('native', html), bodyMetrics(result.blocks));
+    expect(report.checks.filter((check) => !check.ok)).toEqual([]);
+    expect(() => parseBodyBlocks(result.blocks, 'body')).not.toThrow();
+    // Nur nach der letzten Einheit: derselbe Hinweis zwischen zwei Einheiten bleibt ein Quelldefekt (fail-closed).
+    const afterNotice = html.lastIndexOf('</section>') + '</section>'.length;
+    const between = `${html.slice(0, afterNotice)}\n<section class="legaldoc-article"><div class="paragraph paragraph--type--article paragraph--view-mode--full"><div class="paragraph-header article-header"><h2><span class="field field--field_num">§ 6</span></h2></div><div class="field field--field_text"><div class="tex2jax_process"><p>Dieses Gesetz tritt am Tag nach der Verkündung in Kraft.</p></div></div></div></section>${html.slice(afterNotice)}`;
+    const strict = parseNativeDocument(between);
+    expect(strict.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toEqual(['structure-unnumbered-section']);
+    expect(strict.stats.unitLabels).toEqual(['§ 4', '§ 5', '§ 6']);
+    // Ein Paragraph, dessen Text mit „Hinweis“ beginnt, ist eine Nummernfeld-Sektion und bleibt eine Einheit.
+    const numbered = html.replace('<div class="paragraph-header article-header"></div>\n<div class="field field--field_text"><div class="tex2jax_process"><p>Hinweis:', '<div class="paragraph-header article-header"><h2><span class="field field--field_num">§ 6</span></h2></div>\n<div class="field field--field_text"><div class="tex2jax_process"><p>Hinweis:');
+    expect(numbered).not.toBe(html);
+    const unit = parseNativeDocument(numbered);
+    expect(errors(unit)).toEqual([]);
+    expect(codes(unit)).not.toContain('editorial-notice-section');
+    expect(unit.stats.unitLabels).toEqual(['§ 4', '§ 5', '§ 6']);
+  });
+
   it('footnotes: Fußnoten in Sektionen ohne Einheit werden Fußnotenblöcke, der Textumfang stimmt mit dem Roh-HTML überein', () => {
     const html = fixture('footnotes/native-footnotes-without-unit.html');
     const result = parseNativeDocument(html);

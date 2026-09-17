@@ -34,7 +34,7 @@ deterministisch, kein Diff bei Wiederholung):
 
 | Feld | Inhalt |
 | --- | --- |
-| `key`, `sourceIdentity` | `term:<id>` oder `stem:<typ>/<slug>` |
+| `key`, `sourceIdentity` | `term:<id>` oder `stem:<typ>/<slug>`; vom Bulk-Lauf abgetrennte Adressgruppen `stem:<typ>/<slug>@<datum>` (höchstens ein `@`; nach dem nächsten Rebuild wieder `term:`/`stem:`) |
 | `entryUrl`, `urls`, `portalType`, `title`, `titleSource` | Einstieg, alle Fassungsadressen des Stamms, Portaltyp, Titel (Suchindex vor Slug) |
 | `status` | `pending | processing | done | review | failed | excluded` |
 | `signals`, `search` | Sitemap/Suchindex, `field_historically`, Außerkrafttreten, Gültig ab (nur Hinweise) |
@@ -51,6 +51,48 @@ Stand der committeten Enumeration (15./16. September 2026):
 
 Die Enumeration wird vor dem Lauf nicht erneuert; `--write` einer neuen Enumeration übernimmt Status und
 Fortschritt vorhandener Einträge.
+
+### Rebuild bis zum Fixpunkt, Abtrennung im Lauf
+
+Weder Sitemap noch Suchindex nennen die Term-ID; Portal-Stämme wie
+`stem:verwaltungsvorschrift/richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung` (53 Adressen,
+Dutzende Förderrichtlinien) enthalten viele Stammnormen unter einem Slug. Erst die Fassungsliste der abgerufenen
+Seite belegt, welche Adressen zu einer Stammnorm gehören. Regeln (`buildEnumeration`, `runBulkImport`):
+
+- **Adresszuordnung in fester Rangfolge:** (1) Fassungslisten des Manifests (`versionsConsidered`, `sourceUrl`,
+  `selectedVersionUrl`; eindeutig → Term, mehrere Terme → Slug-Stamm mit Hinweis), (2) sonst Zuordnungen der
+  früheren Enumeration (Term-Einträge, Stubs), (3) sonst Restadresse des Slug-Stamms. Restadressen ohne bekannte
+  Term-ID bilden **genau einen** offenen Eintrag `stem:<typ>/<slug>` je Stamm – gleicher Schlüssel bei jedem
+  Rebuild. Ein abgetrennter Eintrag ohne Identität (offen, fehlgeschlagen) gibt Status, Versuche und Fehler an
+  diesen Stammeintrag weiter; abgetrennte Einträge mit Identität werden `term:`-Einträge mit ihrem Ergebnis.
+- **Kein Verlust bekannter Terme:** Ein Term ohne eigenen Eintrag (alle Adressen anderen Stammnormen zugeordnet
+  oder nur als Ziel einer Zusammenführung bekannt) wird aus dem Manifest, sonst aus dem aktiven früheren Eintrag
+  weitergeführt (Hinweis „wird aus dem Manifest/der früheren Enumeration geführt“; geteilte Adressen zählen nicht
+  als Mehrfachzuordnung).
+- **Interner Fixpunkt:** Der Rebuild wiederholt den Durchlauf mit seinem eigenen Ergebnis als Vorgänger, bis ein
+  weiterer Durchlauf nichts mehr ändert (gleicher Fingerabdruck). Einmalige Übergänge („Restadressen beginnen
+  erneut offen“, „Stub ohne Ziel wieder geöffnet“, „übernimmt den Stand des abgetrennten Eintrags“) stehen im
+  Protokoll des Befehls, nicht in der Datei; deshalb ist ein zweiter Rebuild aus denselben Eingaben byteidentisch.
+  Kein Fixpunkt nach `ENUMERATION_MAX_PASSES` (8) Durchläufen → harter Fehler `EnumerationFixpointError`, keine
+  stille Teillösung.
+- **Abtrennung im Lauf:** Nach Auflösung einer Einstiegsseite werden alle Adressen des Eintrags außerhalb der
+  Fassungsliste je Slug-Stamm als `stem:<typ>/<slug>@<jüngstes Pfaddatum der Gruppe>` abgetrennt (ist der
+  Schlüssel durch eine frühere Abtrennung vergeben, das nächstjüngere Datum; nie ein zweites `@`). Bei
+  Statusauswahl (ohne `--only`) landet der neue Eintrag in der Warteschlange desselben Laufs; `--limit` deckelt
+  auch diese Einträge (`limit-reached`). Adressen eines Stubs, der dieselbe Stammnorm über seine eigene Seite
+  belegt hatte, gelten als eigene Adressen; Adressen anderer aktiver Einträge werden nur entfernt. Ohne freien
+  Schlüssel bleiben Adressen am Eintrag (Protokollzeile) – nie stilles Verschwinden.
+- **Readiness/Audit:** `checkEnumerationFixpoint(file, { area, sitemap, search, manifest })` bzw.
+  `enumerationIsFixpoint(root, area, { fetcher, manifest? })` (Fetcher offline aus dem Cache) prüfen, ob ein
+  erneuter Rebuild aus denselben Eingaben den Stand fachlich unverändert ließe; `differences` nennt betroffene
+  Schlüssel. Ein Nicht-Fixpunkt heißt: `enumerate --area <bereich> --write` steht aus.
+
+Reihenfolge für einen Bereich: `enumerate --write` (Rebuild bis zum Fixpunkt) → `bulk --write --resume` (löst offene
+Stammeinträge samt Abtrennungen in einem Lauf) → `enumerate --write` (schlüsselt aufgelöste Einträge als `term:`
+um; danach unverändert wiederholbar). Historie: Vor dieser Regelung konvergierte der Förderrichtlinien-Stamm erst
+nach rund 15 Zyklen „Rebuild → 1–2 Einträge pending → Resume → Rebuild“, weil die zweite Abtrennung eines Laufs
+mit dem Schlüssel der ersten kollidierte (`@ältestes Datum`), die Adressen still aus der Enumeration fielen und der
+Rebuild sie als einen Stammeintrag wieder öffnete – ein Term je Zyklus.
 
 ## Bulk-Runner (`common/bulk-runner.ts`, `cli-bulk.ts`)
 

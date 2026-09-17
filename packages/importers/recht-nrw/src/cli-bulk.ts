@@ -87,7 +87,7 @@ export async function runEnumerateCommand(options: CliOptions, root: string, io:
     hits.push(...result.hits);
     total += result.total;
   }
-  const file = buildEnumeration({ area, sitemap: { pages: sitemap.pages.length, urls: sitemap.urls }, search: { total, hits }, previous: await readEnumeration(root, area), manifest: await readManifest(root), now: new Date().toISOString() });
+  const file = buildEnumeration({ area, sitemap: { pages: sitemap.pages.length, urls: sitemap.urls }, search: { total, hits }, previous: await readEnumeration(root, area), manifest: await readManifest(root), now: new Date().toISOString(), log });
   const cross = file.crosscheck;
   if (options.json) io.print(JSON.stringify({ sources: file.sources, crosscheck: cross, status: enumerationStatusCounts(file) }, null, 2));
   else {

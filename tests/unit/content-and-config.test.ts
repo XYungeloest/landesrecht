@@ -125,7 +125,7 @@ describe('Ignorierte lokale Zustände und Geheimnisse', () => {
     const tracked = git(['ls-files', '-z']);
     expect(tracked.filter((file) => /(^|\/)\.dev\.vars(\.|$)|(^|\/)\.wrangler\/config\/|(^|\/)\.env(\.[^.]+)?$/u.test(file) && !file.endsWith('.env.example'))).toEqual([]);
     expect(findings).toEqual([]);
-  });
+  }, 120_000); // Der Scan liest alle versionierten Dateien (≈1 500 Normen); unter paralleler Testlast dauerte er > 30 s.
 });
 
 describe('GitLab-CI', () => {

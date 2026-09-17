@@ -134,7 +134,7 @@ describe('Undatierte LRMB-Altdatensätze: belegter Fortbestand der VV LHundG NRW
     expect(continuityEvidence.slice(0, 4).every((entry) => entry.sourceUrl === MBL_2024 && /^[a-f0-9]{64}$/u.test(entry.sha256 ?? ''))).toBe(true);
     const active = result.evidence.find((entry) => entry.supports === 'active-at-baseline');
     expect(active).toMatchObject({ kind: 'gazette-amendment', strength: 'strong', sourceUrl: MBL_2024 });
-    expect(active?.statement).toContain('Undatierter Datensatz: vor dem Stichtag in Kraft (Änderung in Kraft 2017-08-05)');
+    expect(active?.statement).toContain('Undatierter Datensatz: vor dem Stichtag in Kraft (Änderung in Kraft 2017-08-05;');
   });
 
   it('spätere Änderung nicht eingearbeitet → direkt übernehmbar mit Provenienz verified-active-at-baseline', async () => {
@@ -238,8 +238,15 @@ describe('Undatierte LRMB-Altdatensätze: nicht belegter Fortbestand → undeter
 
   it('Außerkrafttretensklausel vor dem Stichtag widerlegt die Geltung trotz späterer Änderung', async () => {
     const input = await realUndatedInput();
-    const result = assessLrmbValidity({ ...input, clauses: { unparsed: [], expiry: { date: '2019-12-31', text: 'Dieser Runderlass tritt mit Ablauf des 31. Dezember 2019 außer Kraft.' } } });
-    expect(result).toMatchObject({ baselineStatus: 'not-active-at-baseline', textStatus: 'not-applicable', provenance: 'exact' });
+    // Evidence Pass (Parser 1.3.0): Eine Außerkrafttretensklausel vor dem Stichtag entscheidet nur ohne widersprechenden
+    // starken Beleg. Die zugeordnete Änderung von 2024 widerspricht dem Ende 2019 → contradictory, Review (kein Status).
+    const contradicted = assessLrmbValidity({ ...input, clauses: { unparsed: [], expiry: { date: '2019-12-31', text: 'Dieser Runderlass tritt mit Ablauf des 31. Dezember 2019 außer Kraft.', via: 'clause' } } });
+    expect(contradicted).toMatchObject({ baselineStatus: 'undetermined', textStatus: 'not-applicable', provenance: 'undetermined', decisionRule: 'contradictory' });
+    expect(contradicted.findings.map((finding) => finding.code)).toEqual(['validity-expiry-contradicted']);
+    expect(contradicted.evidence.find((entry) => entry.kind === 'text-expiry-clause')).toMatchObject({ supports: 'contradiction', strength: 'contradictory' });
+    // Ohne spätere Änderung trägt die Klausel die Entscheidung allein (Regel A).
+    const result = assessLrmbValidity({ ...input, amendments: input.amendments.filter((amendment) => (amendment.inForce ?? '') <= '2019-12-31'), clauses: { unparsed: [], expiry: { date: '2019-12-31', text: 'Dieser Runderlass tritt mit Ablauf des 31. Dezember 2019 außer Kraft.', via: 'clause' } } });
+    expect(result).toMatchObject({ baselineStatus: 'not-active-at-baseline', textStatus: 'not-applicable', provenance: 'exact', decisionRule: 'P1-self-expiry' });
     expect(result.findings.map((finding) => finding.code)).toEqual(['validity-expired-before-baseline']);
     expect(result.evidence.find((entry) => entry.kind === 'text-expiry-clause')).toMatchObject({ supports: 'contradiction', strength: 'strong' });
   });
@@ -267,7 +274,7 @@ describe('Undatierte LRMB-Altdatensätze: Suchindex-Signale und Beweiswert der B
     const input = await realUndatedInput();
     const result = assessLrmbValidity({
       ...input,
-      clauses: { unparsed: [], inForce: { kind: 'date', date: '2003-06-01', text: 'Dieser Runderlass tritt am 1. Juni 2003 in Kraft.' }, expiry: { date: '2028-12-31', text: 'Er tritt mit Ablauf des 31. Dezember 2028 außer Kraft.' } },
+      clauses: { unparsed: [], inForce: { kind: 'date', date: '2003-06-01', text: 'Dieser Runderlass tritt am 1. Juni 2003 in Kraft.' }, expiry: { date: '2028-12-31', text: 'Er tritt mit Ablauf des 31. Dezember 2028 außer Kraft.', via: 'clause' } },
       completenessNotice: { text: 'Fassungen von Verwaltungsvorschriften liegen erst ab Oktober 2025 vollständig vor.', url: PAGE_URL, sha256: input.page.sha256 },
       indexSignals: { historically: false, effectiveFrom: '2003-05-02' },
     });
@@ -276,7 +283,7 @@ describe('Undatierte LRMB-Altdatensätze: Suchindex-Signale und Beweiswert der B
     expect(strengthOf('portal-completeness-notice', 'completeness')).toBe('supporting');
     expect(strengthOf('search-index-signal', 'active-at-baseline')).toBe('insufficient');
     expect(strengthOf('text-expiry-clause', 'valid-to')).toBe('strong');
-    expect(strengthOf('text-in-force-clause', 'valid-from')).toBe('supporting');
+    expect(strengthOf('text-in-force-clause', 'valid-from')).toBe('strong');
     expect(strengthOf('gazette-amendment', 'active-at-baseline')).toBe('strong');
     expect(strengthOf('portal-change-history', 'text-state')).toBe('supporting');
     expect(strengthOf('gazette-amendment', 'text-state')).toBe('strong');

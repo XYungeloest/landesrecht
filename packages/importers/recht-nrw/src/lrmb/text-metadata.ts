@@ -10,6 +10,7 @@
  * sind zusätzliche Felder. Nicht erkannte Formen werden nicht geraten, sondern als unvollständig markiert.
  */
 import { parseGermanDate, parseGermanLongDate } from '../common/source-identity.ts';
+import { detectRepealStatements, normalizeRepealText, selfStatements } from './repeal-patterns.ts';
 
 export interface HeadLine {
   text: string;
@@ -279,9 +280,20 @@ export interface ValidityClause {
   text: string;
 }
 
+export interface ExpiryClause {
+  date: string;
+  text: string;
+  /** clause: klassische Formel „am/mit Ablauf des <Datum> außer Kraft“; repeal-pattern: eigene Außerkrafttretensformel (`repeal-patterns.ts`). */
+  via: 'clause' | 'repeal-pattern';
+  /** Wörtliche Zeitangabe der Formel („mit Ablauf des Haushaltsjahres 2016“). */
+  phrase?: string;
+}
+
 export interface ValidityClauses {
   inForce?: ValidityClause;
-  expiry?: { date: string; text: string };
+  expiry?: ExpiryClause;
+  /** Mehrere eigene Außerkrafttretensformeln mit verschiedenen Daten: kein Ende bestimmbar (Review). */
+  expiryConflicts?: ExpiryClause[];
   /** Sätze mit Geltungsformeln, die nicht eindeutig verstanden wurden. */
   unparsed: string[];
 }
@@ -293,6 +305,22 @@ function isoOf(text: string): string | undefined {
   const cleaned = text.replace(/(\p{L})\.(\s+\d{4})/u, '$1$2');
   return parseGermanLongDate(cleaned) ?? parseGermanDate(cleaned.replace(/\s/gu, ''));
 }
+
+/**
+ * Strenge Selbstbezeichnung einer eigenen Außerkrafttretensformel (P1, Evidence Pass): Determinativ + Vorschriftennoun
+ * (+ Abkürzung in Klammern) unmittelbar vor dem Verb – „Diese Richtlinien gelten bis …“, „Die Verwaltungsvorschrift
+ * tritt … außer Kraft“. Genitivzusätze („Die Regelungen der Nummer 3 gelten bis …“) und Pronomen ohne vorangehende
+ * eigene Inkrafttretensformel bleiben ausgeschlossen (kein Beleg).
+ */
+/** Vorschriftennomen, die auch mit bestimmtem Artikel („Die Richtlinien gelten bis …“) eindeutig den ganzen Text meinen. */
+const SELF_HEAD_NOUN_STRONG = '(?:Runderlass|RdErl\\.|Erlass|Gem\\.\\s*RdErl\\.|Verwaltungsvorschrift(?:en)?|Allgemeine\\s+Verwaltungsvorschrift(?:en)?|Richtlinien?|Förderrichtlinien?|Rahmenrichtlinien?|Durchführungserlass|Leitlinien|Dienstanweisung(?:en)?|Bekanntmachung|Verwaltungsverordnung|Allgemeinverfügung)';
+/** Nomen, die nur mit Demonstrativum („Diese Bestimmungen treten …“) als Selbstbezeichnung gelten; „Die Regelungen gelten bis …“ kann einen Teil meinen. */
+const SELF_HEAD_NOUN_DEMONSTRATIVE = '(?:Bestimmungen|Vorschriften|Durchführungsbestimmungen|Ausführungsbestimmungen|Grundsätze|Anordnung|Regelung(?:en)?)';
+const SELF_HEAD_PREFIX = '^(?:(?:\\d+(?:\\.\\d+)*\\.?|[IVX]+\\.|[a-z]\\))\\s+)*(?:(?:In-?[Kk]raft-?[Tt]reten|Inkrafttreten|Außerkrafttreten|Geltungsdauer|Befristung|Schlussbestimmung(?:en)?|Schlussvorschriften?|Übergangs-\\s+und\\s+Schlussbestimmungen)\\s*[,/]?\\s+)*';
+const SELF_HEAD_ADJECTIVE = '(?:(?:vorstehende[rn]?|vorliegende[rn]?|nachstehende[rn]?|gemeinsame[rn]?)\\s+)?';
+const SELF_HEAD_VERB = '(?:\\s+\\([^)]{1,60}\\))?\\s+(?:tritt|treten|gilt|gelten|ist|sind|verliert|verlieren)\\b';
+const SELF_HEAD_RE = new RegExp(`${SELF_HEAD_PREFIX}(?:(?:Dieser|Diese|Dieses)\\s+${SELF_HEAD_ADJECTIVE}(?:${SELF_HEAD_NOUN_STRONG}|${SELF_HEAD_NOUN_DEMONSTRATIVE})|(?:Der|Die|Das)\\s+${SELF_HEAD_ADJECTIVE}${SELF_HEAD_NOUN_STRONG})${SELF_HEAD_VERB}`, 'u');
+const SELF_PRONOUN_RE = new RegExp(`${SELF_HEAD_PREFIX}(?:Er|Sie|Es)\\s+(?:tritt|treten|gilt|gelten|ist|sind|verliert|verlieren)\\b`, 'u');
 
 /** Liest Inkraft- und Außerkrafttreten dieser Vorschrift (nicht anderer, mit aufgehobener Vorschriften). */
 export function parseValidityClauses(texts: readonly string[]): ValidityClauses {
@@ -310,9 +338,41 @@ export function parseValidityClauses(texts: readonly string[]): ValidityClauses 
     const expiry = new RegExp(`(?:mit\\s+Ablauf\\s+des|am)\\s+${DATE}\\s+außer\\s+Kraft`, 'u').exec(sentence);
     if (expiry && !result.expiry && (subject[0] !== '' || inForce)) {
       const date = isoOf(expiry[1]!);
-      if (date) result.expiry = { date, text: sentence };
+      if (date) result.expiry = { date, text: sentence, via: 'clause', phrase: expiry[0].replace(/\s+außer\s+Kraft$/u, '') };
     }
     if (!inForce && !expiry && /in\s+Kraft|außer\s+Kraft/u.test(sentence)) result.unparsed.push(sentence);
   }
+
+  // Eigene Außerkrafttretensformeln jenseits der klassischen Klausel („gilt bis zum …“, „mit Ablauf des
+  // Haushaltsjahres … außer Kraft“, „tritt zum … außer Kraft“, „ist befristet bis …“): nur mit strenger
+  // Selbstbezeichnung und eindeutigem Datum. Mehrere verschiedene Daten sind ein Konflikt, kein Beleg.
+  const normalized = normalizeRepealText(texts.map((part) => part.trim()).filter(Boolean).map((part) => (/[.;:!?]$/u.test(part) ? part : `${part}.`)).join(' '));
+  const own: ExpiryClause[] = [];
+  for (const statement of selfStatements(detectRepealStatements(normalized))) {
+    if ((statement.kind !== 'expired' && statement.kind !== 'repealed') || !statement.effective?.date) continue;
+    if (statement.effective.kind !== 'date' && statement.effective.kind !== 'end-of-year') continue;
+    const strict = SELF_HEAD_RE.test(statement.text) || (SELF_PRONOUN_RE.test(statement.text) && precededByOwnInForceClause(normalized, statement.offset));
+    if (!strict) {
+      if (!result.unparsed.includes(statement.text)) result.unparsed.push(statement.text);
+      continue;
+    }
+    own.push({ date: statement.effective.date, text: statement.text, via: 'repeal-pattern', phrase: statement.effective.text });
+    result.unparsed = result.unparsed.filter((sentence) => sentence !== statement.text);
+  }
+  const distinct = new Set([...(result.expiry ? [result.expiry.date] : []), ...own.map((clause) => clause.date)]);
+  if (distinct.size > 1) {
+    const conflicts = [...(result.expiry ? [result.expiry] : []), ...own.filter((clause) => clause.date !== result.expiry?.date)];
+    result.expiryConflicts = conflicts.filter((clause, index) => conflicts.findIndex((other) => other.date === clause.date) === index);
+    delete result.expiry;
+  } else if (!result.expiry && own.length > 0) {
+    result.expiry = own[0]!;
+  }
   return result;
+}
+
+/** Ob der Satz vor `offset` eine eigene Inkrafttretensformel ist („Dieser Runderlass tritt … in Kraft.“) – Bezug des Pronomens. */
+function precededByOwnInForceClause(text: string, offset: number): boolean {
+  const before = text.slice(0, offset).trim();
+  const previous = before.split(/(?<=[\p{Ll})\]]\.)\s+(?=[A-ZÄÖÜ\d])/u).pop() ?? '';
+  return SELF_SUBJECT.test(previous) && /in\s+Kraft/u.test(previous);
 }

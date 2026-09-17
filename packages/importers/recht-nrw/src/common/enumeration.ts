@@ -9,9 +9,11 @@
  *
  * Weder Sitemap noch Suchindex nennen die Taxonomie-Term-ID. Die Enumeration gruppiert deshalb Fassungsadressen
  * über den Slug-Stamm (`<typ>/<slug>`), verknüpft Suchtreffer über ihre Adresse und übernimmt bekannte Term-IDs
- * aus Manifest und früherer Enumeration. Autoritativ ist erst die Fassungsliste der abgerufenen Seite: Der
- * Bulk-Lauf ordnet jedem Eintrag die Term-ID zu, führt Einträge derselben Stammnorm zusammen (Slugänderungen
- * zwischen Fassungen) und trennt fremde Adressen ab.
+ * aus Manifest (Fassungslisten, vorrangig) und früherer Enumeration. Autoritativ ist erst die Fassungsliste der
+ * abgerufenen Seite: Der Bulk-Lauf ordnet jedem Eintrag die Term-ID zu, führt Einträge derselben Stammnorm zusammen
+ * (Slugänderungen zwischen Fassungen) und trennt fremde Adressen als `stem:<typ>/<slug>@<datum>` ab; abgetrennte
+ * Einträge werden noch im selben Lauf weiterverarbeitet. Der Rebuild läuft bis zum Fixpunkt (`buildEnumeration`):
+ * Restadressen ohne bekannte Term-ID bilden genau einen offenen Eintrag je Slug-Stamm.
  *
  * Status: pending | processing | done | review | failed | excluded. `processing` markiert die gerade bearbeitete
  * Stammnorm (Checkpoint vor der Arbeit); nach einem harten Abbruch gilt sie beim Resume als offen.
@@ -26,7 +28,7 @@ import { parseTreatyInForceNotice } from '../lrgv/treaty.ts';
 import { readJsonFile, writeFileAtomic } from './atomic.ts';
 import { BASE_URL } from './constants.ts';
 import { decodeHtml, type RechtNrwFetcher } from './fetcher.ts';
-import { compareSourceIdentity, IMPORT_DATA_DIR, isImportedStatus, type ImportManifest, type ImportStatus, type ManifestEntry, type SourceArea } from './manifest.ts';
+import { compareSourceIdentity, IMPORT_DATA_DIR, isImportedStatus, readManifest, type ImportManifest, type ImportStatus, type ManifestEntry, type SourceArea } from './manifest.ts';
 import { normalizeVersionUrl, parseVersionUrl } from './source-identity.ts';
 import { stableStringify } from './stable-json.ts';
 
@@ -379,12 +381,74 @@ export interface BuildEnumerationInput {
   previous?: EnumerationFile;
   manifest?: ImportManifest;
   now: string;
+  /** Einmalige Übergänge des Rebuilds (Restadressen erneut geöffnet, Stubs wieder geöffnet, Durchläufe); nicht Teil der Datei. */
+  log?: (line: string) => void;
 }
 
-export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile {
+/** Obergrenze der Durchläufe bis zum Fixpunkt; ein Überschreiten ist ein Fehler im Rebuild, kein Quellbefund. */
+export const ENUMERATION_MAX_PASSES = 8;
+
+export class EnumerationFixpointError extends Error {
+  readonly passes: number;
+  readonly differences: string[];
+
+  constructor(area: SourceArea, passes: number, differences: string[]) {
+    super(`Enumeration ${area}: kein Fixpunkt nach ${passes} Durchläufen – der Rebuild ändert sich weiter (${differences.slice(0, 5).join('; ')}${differences.length > 5 ? `; … ${differences.length} insgesamt` : ''}); keine stille Teillösung, Rebuild-Logik prüfen`);
+    this.name = 'EnumerationFixpointError';
+    this.passes = passes;
+    this.differences = differences;
+  }
+}
+
+/** Sortierschlüssel „jüngstes Pfaddatum zuerst, bei Gleichstand kleinste Adresse“. */
+export function newestFirst(urls: readonly string[]): string[] {
+  return urls.map((url) => ({ url, date: parseVersionUrl(url)?.pathDate ?? '' })).sort((left, right) => (left.date < right.date ? 1 : left.date > right.date ? -1 : left.url < right.url ? -1 : 1)).map((entry) => entry.url);
+}
+
+const TERM_KEY = /^term:\d+$/u;
+
+/** Basis eines Stammschlüssels ohne Abtrennungsdatum: `stem:<typ>/<slug>@<datum>` → `stem:<typ>/<slug>`. */
+export function stemBaseKey(key: string): string {
+  return key.split('@')[0]!;
+}
+
+/** Fachliche Unterschiede zweier Enumerationen (Schlüssel entfernt/neu/geändert), ohne Laufmetadaten. */
+export function enumerationItemDifferences(before: Pick<EnumerationFile, 'items'>, after: Pick<EnumerationFile, 'items'>, limit = 20): string[] {
+  const strip = (item: EnumerationItem): string => {
+    const copy: Record<string, unknown> = { ...item };
+    for (const field of ENUMERATION_ITEM_RUNTIME_FIELDS) delete copy[field];
+    return stableStringify(copy);
+  };
+  const left = new Map(before.items.map((item) => [item.key, strip(item)]));
+  const right = new Map(after.items.map((item) => [item.key, strip(item)]));
+  const differences: string[] = [];
+  for (const key of left.keys()) if (!right.has(key)) differences.push(`${key} entfernt`);
+  for (const [key, value] of right) {
+    if (!left.has(key)) differences.push(`${key} neu`);
+    else if (left.get(key) !== value) differences.push(`${key} geändert`);
+  }
+  return differences.slice(0, limit);
+}
+
+interface PassResult {
+  file: EnumerationFile;
+  /** Einmalige Übergänge (im nächsten Durchlauf nicht mehr vorhanden). */
+  transitions: string[];
+}
+
+/**
+ * Ein Durchlauf des Rebuilds. Adresszuordnung in fester Rangfolge:
+ *   1. Fassungslisten des Manifests (Seite der verarbeiteten Stammnorm; autoritativ) – eindeutig → Term, mehrere Terme → Slug-Stamm
+ *   2. sonst Zuordnungen der früheren Enumeration (Term-Einträge, Stubs) – eindeutig → Term, mehrere → Slug-Stamm
+ *   3. sonst Restadresse des Slug-Stamms (`stem:<typ>/<slug>`, genau ein offener Eintrag je Stamm)
+ * Ein Durchlauf ist kein Fixpunkt, wenn er einmalige Übergänge auslöst (Restadressen erneut geöffnet, Stubs ohne
+ * Ziel wieder geöffnet, Dubletten aufgelöst): `buildEnumeration` wiederholt ihn, bis sich nichts mehr ändert.
+ */
+function buildEnumerationPass(input: BuildEnumerationInput): PassResult {
   const { area } = input;
   const problems: string[] = [];
   const notes: string[] = [];
+  const transitions: string[] = [];
 
   // 1. Sitemap-Adressen des Bereichs nach Slug-Stamm gruppieren.
   const stems = new Map<string, { portalType: string; slug: string; urls: Set<string>; sitemap: boolean }>();
@@ -431,28 +495,34 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
   const intersection = [...searchStemKeys].filter((key) => stems.get(key)?.sitemap).length;
   const onlySitemap = [...stems.entries()].filter(([key, stem]) => stem.sitemap && !searchStemKeys.has(key)).length;
 
-  // 3. Bekannte Term-IDs (Manifest, frühere Enumeration) je Adresse.
-  const termOfUrl = new Map<string, Set<string>>();
-  const noteTerm = (url: string | undefined, term: string): void => {
+  // 3. Bekannte Term-IDs je Adresse: Fassungslisten des Manifests vor Zuordnungen der früheren Enumeration.
+  const manifestTermsOfUrl = new Map<string, Set<string>>();
+  const enumerationTermsOfUrl = new Map<string, Set<string>>();
+  const noteTerm = (map: Map<string, Set<string>>, url: string | undefined, term: string): void => {
     if (!url) return;
     const address = parseVersionUrl(url);
     if (!address || address.section !== area) return;
-    const set = termOfUrl.get(address.url) ?? new Set<string>();
+    const set = map.get(address.url) ?? new Set<string>();
     set.add(term);
-    termOfUrl.set(address.url, set);
+    map.set(address.url, set);
   };
+  const manifestUrlsOf = (entry: ManifestEntry): string[] => [...new Set([entry.sourceUrl, entry.selectedVersionUrl, entry.sourceVersion?.url, ...entry.versionsConsidered.map((version) => version.url)]
+    .map((url) => (url ? parseVersionUrl(url) : undefined))
+    .filter((address) => address?.section === area)
+    .map((address) => address!.url))].sort();
   const manifestByIdentity = new Map<string, ManifestEntry>();
   for (const entry of input.manifest?.entries ?? []) {
-    if (entry.sourceArea !== area || !/^term:\d+$/u.test(entry.sourceIdentity)) continue;
+    if (entry.sourceArea !== area || !TERM_KEY.test(entry.sourceIdentity)) continue;
     manifestByIdentity.set(entry.sourceIdentity, entry);
-    for (const url of [entry.sourceUrl, entry.selectedVersionUrl, entry.sourceVersion?.url, ...entry.versionsConsidered.map((version) => version.url)]) noteTerm(url, entry.sourceIdentity);
+    for (const url of manifestUrlsOf(entry)) noteTerm(manifestTermsOfUrl, url, entry.sourceIdentity);
   }
-  const previousByKey = new Map((input.previous?.items ?? []).map((item) => [item.key, item]));
+  const previousItems = input.previous?.items ?? [];
+  const previousByKey = new Map(previousItems.map((item) => [item.key, item]));
   // Aktive (nicht zusammengeführte) Einträge je Quellidentität: Sie tragen den maßgeblichen Bearbeitungsstand.
   // Ein zusammengeführter Eintrag mit demselben Schlüssel (Stub) darf ihn nie überdecken.
   const previousActive = new Map<string, EnumerationItem[]>();
-  for (const item of input.previous?.items ?? []) {
-    if (item.sourceIdentity && !item.mergedInto && /^term:\d+$/u.test(item.sourceIdentity)) previousActive.set(item.sourceIdentity, [...(previousActive.get(item.sourceIdentity) ?? []), item]);
+  for (const item of previousItems) {
+    if (item.sourceIdentity && !item.mergedInto && TERM_KEY.test(item.sourceIdentity)) previousActive.set(item.sourceIdentity, [...(previousActive.get(item.sourceIdentity) ?? []), item]);
   }
   const previousByIdentity = new Map<string, EnumerationItem>();
   for (const [identity, candidates] of previousActive) {
@@ -460,20 +530,22 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     const manifestStatus = manifestByIdentity.get(identity)?.importStatus;
     previousByIdentity.set(identity, candidates.find((candidate) => manifestStatus !== undefined && candidate.outcome?.importStatus === manifestStatus) ?? candidates[0]!);
   }
-  for (const item of input.previous?.items ?? []) {
+  for (const item of previousItems) {
     const identity = item.sourceIdentity ?? item.mergedInto;
-    if (!identity || !/^term:\d+$/u.test(identity)) continue;
+    if (!identity || !TERM_KEY.test(identity)) continue;
     const duplicates = (previousActive.get(identity)?.length ?? 0) > 1;
     if (duplicates && !item.mergedInto) {
       // Dublette im Eingang: Nur die Adressen des maßgeblichen Eintrags zählen, und nur soweit das Manifest
       // (Fassungsliste der verarbeiteten Seite) sie bestätigt. Alles andere fällt zum Slug-Stamm zurück.
       if (previousByIdentity.get(identity) !== item) continue;
-      const manifestUrls = manifestByIdentity.has(identity) ? new Set([...termOfUrl.entries()].filter(([, terms]) => terms.has(identity)).map(([url]) => url)) : undefined;
-      for (const url of item.urls) if (!manifestUrls || manifestUrls.has(parseVersionUrl(url)?.url ?? url)) noteTerm(url, identity);
+      const manifestEntry = manifestByIdentity.get(identity);
+      const manifestUrls = manifestEntry ? new Set(manifestUrlsOf(manifestEntry)) : undefined;
+      for (const url of item.urls) if (!manifestUrls || manifestUrls.has(parseVersionUrl(url)?.url ?? url)) noteTerm(enumerationTermsOfUrl, url, identity);
       continue;
     }
-    for (const url of item.urls) noteTerm(url, identity);
+    for (const url of item.urls) noteTerm(enumerationTermsOfUrl, url, identity);
   }
+  const termsOfUrl = (url: string): Set<string> | undefined => manifestTermsOfUrl.get(url) ?? enumerationTermsOfUrl.get(url);
 
   // 4. Einträge bilden: Adressen mit bekannter Term-ID zur Stammnorm, übrige zum Slug-Stamm.
   interface Draft { key: string; sourceIdentity?: string; portalType: string; slug: string; urls: Set<string>; sitemap: boolean; search?: SearchHit }
@@ -481,14 +553,14 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
   let termConflicts = 0;
   for (const [stemKey, stem] of stems) {
     for (const url of stem.urls) {
-      const terms = termOfUrl.get(url);
+      const terms = termsOfUrl(url);
       let key = `stem:${stemKey}`;
       let sourceIdentity: string | undefined;
       if (terms && terms.size > 1) {
         // Quelleigenheit: Fassungslisten des Portals führen auch Adressen benachbarter Stammnormen
         // (Vorgänger, Nachfolger, Verordnungsserien). Das ist ein Befund, kein Enumerationsfehler.
         termConflicts += 1;
-        notes.push(`${url} ist mehreren Stammnormen zugeordnet (${[...terms].join(', ')})`);
+        notes.push(`${url} ist mehreren Stammnormen zugeordnet (${[...terms].sort(compareSourceIdentity).join(', ')})`);
       } else if (terms && terms.size === 1) {
         sourceIdentity = [...terms][0]!;
         key = sourceIdentity;
@@ -508,11 +580,18 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
   // Bearbeitungsstand je Eintrag:
   //   term:<id>   der aktive frühere Eintrag dieser Quellidentität (gleich, unter welchem Schlüssel er lief); fehlt er,
   //               der Manifesteintrag; erst dann ein zusammengeführter Stub gleichen Schlüssels
-  //   stem:…      der frühere Eintrag gleichen Schlüssels – außer seine Quellidentität ist jetzt ein eigener
-  //               term:-Eintrag: Dann sind die verbliebenen Adressen Restadressen außerhalb der Fassungsliste dieser
-  //               Stammnorm (vom Bulk-Lauf abgetrennt) und beginnen offen. Sonst entstünden zwei aktive Einträge
-  //               derselben Quellidentität (doppelte Zählung, doppelte Verarbeitung; Regression term:32801).
-  const claimedIdentities = new Set([...drafts.keys()].filter((key) => key.startsWith('term:')));
+  //   stem:…      Restadressen des Stamms ohne bekannte Term-ID. Den Stand trägt der frühere Eintrag ohne Quellidentität
+  //               aus derselben Schlüsselfamilie (`stem:…` oder abgetrennt `stem:…@<datum>`) – z. B. ein fehlgeschlagener
+  //               abgetrennter Eintrag. Ein früherer Eintrag mit Quellidentität ist immer ein eigener term:-Eintrag; seine
+  //               verbliebenen Adressen sind Restadressen außerhalb seiner Fassungsliste und beginnen offen. Sonst
+  //               entstünden zwei aktive Einträge derselben Quellidentität (Regression term:32801).
+  const previousStemFamilies = new Map<string, EnumerationItem[]>();
+  for (const item of previousItems) {
+    if (item.key.startsWith('term:') || item.mergedInto || item.sourceIdentity) continue;
+    const base = stemBaseKey(item.key);
+    previousStemFamilies.set(base, [...(previousStemFamilies.get(base) ?? []), item]);
+  }
+  const stateRank = (item: EnumerationItem): number => (item.status === 'pending' || item.status === 'processing' ? 0 : 1);
   const items: EnumerationItem[] = [];
   for (const draft of drafts.values()) {
     const urls = [...draft.urls].sort();
@@ -524,14 +603,22 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
       previous = active ?? stub;
       if (!active) manifestEntry = manifestByIdentity.get(draft.sourceIdentity);
     } else {
-      previous = previousByKey.get(draft.key);
-      if (previous?.sourceIdentity && !previous.mergedInto && claimedIdentities.has(previous.sourceIdentity)) {
-        notes.push(`${draft.key}: ${urls.length} Restadresse(n) außerhalb der Fassungsliste von ${previous.sourceIdentity}; Eintrag beginnt erneut offen`);
-        previous = undefined;
+      const sameKey = previousByKey.get(draft.key);
+      if (sameKey?.sourceIdentity && !sameKey.mergedInto) {
+        transitions.push(`${draft.key}: ${urls.length} Restadresse(n) außerhalb der Fassungsliste von ${sameKey.sourceIdentity}; Eintrag beginnt erneut offen`);
+      } else if (sameKey?.mergedInto) {
+        previous = sameKey;
+      }
+      if (!previous) {
+        // Stand aus der Schlüsselfamilie: höchste Versuchszahl, dann bearbeiteter vor offenem Stand, dann kleinster Schlüssel.
+        const family = [...(previousStemFamilies.get(draft.key) ?? [])].sort((left, right) => right.attempts - left.attempts || stateRank(right) - stateRank(left) || (left.key < right.key ? -1 : left.key > right.key ? 1 : 0));
+        previous = family[0];
+        if (previous && previous.key !== draft.key) transitions.push(`${draft.key}: übernimmt den Stand des abgetrennten Eintrags ${previous.key} (${previous.status}, ${previous.attempts} Versuche)`);
+        for (const other of family.slice(1)) transitions.push(`${draft.key}: abgetrennter Eintrag ${other.key} (${other.status}) geht in den Stammeintrag auf`);
       }
     }
-    const datedUrls = urls.map((url) => ({ url, date: parseVersionUrl(url)?.pathDate ?? '' })).sort((left, right) => (left.date < right.date ? 1 : left.date > right.date ? -1 : left.url < right.url ? -1 : 1));
-    const entryUrl = draft.search?.url ?? previous?.entryUrl ?? datedUrls[0]!.url;
+    const datedUrls = newestFirst(urls);
+    const entryUrl = draft.search?.url ?? previous?.entryUrl ?? datedUrls[0]!;
     const title = draft.search?.title || previous?.title || humanizeSlug(draft.slug);
     const titleSource: EnumerationItem['titleSource'] = draft.search?.title ? 'search-index' : previous?.titleSource ?? 'slug';
     const pre = preclassify(area, draft.portalType, title);
@@ -539,7 +626,7 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     const fromManifest = manifestEntry && (!previous || previous.mergedInto);
     const item: EnumerationItem = {
       key: draft.key,
-      entryUrl: urls.includes(entryUrl) ? entryUrl : datedUrls[0]!.url,
+      entryUrl: urls.includes(entryUrl) ? entryUrl : datedUrls[0]!,
       portalType: draft.portalType,
       title,
       titleSource,
@@ -569,44 +656,32 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     items.push(item);
   }
 
-  // Zusammengeführte Stubs, deren Zielidentität weder ein aktiver Eintrag noch ein Manifesteintrag trägt, decken
-  // ihre Adressen durch nichts mehr ab: Sie werden wieder geöffnet (kein stilles Verschwinden).
-  const activeIdentities = new Set(items.filter((item) => !item.mergedInto && item.sourceIdentity).map((item) => item.sourceIdentity!));
-  for (const item of items) {
-    if (!item.mergedInto || activeIdentities.has(item.mergedInto) || manifestByIdentity.has(item.mergedInto)) continue;
-    notes.push(`${item.key}: Zusammenführung in ${item.mergedInto} ohne aktiven Eintrag und ohne Manifesteintrag; Eintrag beginnt erneut offen`);
-    delete item.mergedInto;
-    delete item.outcome;
-    delete item.lastError;
-    item.status = 'pending';
-    item.attempts = 0;
-  }
-
-  // Verarbeitete Stammnormen dürfen nie aus der Enumeration fallen: Terme des Manifests ohne aktiven Eintrag (alle
-  // Fassungsadressen mehreren Stammnormen zugeordnet oder nur noch als Ziel einer Zusammenführung bekannt) erhalten
-  // einen eigenen Eintrag aus den Manifestdaten.
+  // Verarbeitete Stammnormen dürfen nie aus der Enumeration fallen. Terme ohne eigenen Eintrag (alle Fassungsadressen
+  // anderen Stammnormen zugeordnet oder nur noch als Ziel einer Zusammenführung bekannt) werden weitergeführt: aus dem
+  // Manifest, sonst aus dem aktiven früheren Eintrag (z. B. Evidenzquellen ohne Manifesteintrag). Sie teilen sich ihre
+  // Adressen mit dem jeweiligen Eintrag; das ist gewollt und zählt nicht als Mehrfachzuordnung.
   const covered = new Set(items.filter((item) => !item.mergedInto).map((item) => item.sourceIdentity).filter((value): value is string => Boolean(value)));
-  const manifestOnlyKeys = new Set<string>();
-  for (const entry of input.manifest?.entries ?? []) {
-    if (entry.sourceArea !== area || !/^term:\d+$/u.test(entry.sourceIdentity) || covered.has(entry.sourceIdentity)) continue;
-    const urls = [...new Set([entry.sourceUrl, entry.selectedVersionUrl, entry.sourceVersion?.url, ...entry.versionsConsidered.map((version) => version.url)]
-      .map((url) => (url ? parseVersionUrl(url) : undefined))
-      .filter((address) => address?.section === area)
-      .map((address) => address!.url))].sort();
+  const sharedKeys = new Set<string>();
+  const carryIdentities = [...new Set([...manifestByIdentity.keys(), ...previousByIdentity.keys()])].filter((identity) => !covered.has(identity)).sort(compareSourceIdentity);
+  for (const identity of carryIdentities) {
+    const entry = manifestByIdentity.get(identity);
+    const previous = previousByIdentity.get(identity) ?? previousByKey.get(identity);
+    const urls = entry ? manifestUrlsOf(entry) : [...new Set((previous?.urls ?? []).map((url) => parseVersionUrl(url)).filter((address) => address?.section === area).map((address) => address!.url))].sort();
     if (urls.length === 0) continue;
-    const address = parseVersionUrl(urls.at(-1)!)!;
-    const previous = previousByIdentity.get(entry.sourceIdentity) ?? previousByKey.get(entry.sourceIdentity);
-    const pre = preclassify(area, address.documentType, entry.sourceTitle);
+    const datedUrls = newestFirst(urls);
+    const address = parseVersionUrl(datedUrls[0]!)!;
     // Ein früherer Stub (zusammengeführt) trägt keinen belastbaren Stand; dann gilt das Manifest.
     const fromPrevious = previous && !previous.mergedInto;
+    const title = entry?.sourceTitle ?? previous!.title;
+    const pre = preclassify(area, address.documentType, title);
     const item: EnumerationItem = {
-      key: entry.sourceIdentity,
-      sourceIdentity: entry.sourceIdentity,
-      entryUrl: urls.at(-1)!,
+      key: identity,
+      sourceIdentity: identity,
+      entryUrl: fromPrevious && urls.includes(previous.entryUrl) ? previous.entryUrl : datedUrls[0]!,
       portalType: address.documentType,
-      title: entry.sourceTitle,
-      titleSource: 'manifest',
-      status: fromPrevious ? previous.status : statusForImportStatus(entry.importStatus),
+      title,
+      titleSource: entry ? 'manifest' : previous!.titleSource,
+      status: fromPrevious ? previous.status : statusForImportStatus(entry!.importStatus),
       urls,
       signals: { sitemap: urls.some((url) => sitemapUrls.has(url)), search: false },
       preclassification: { decision: pre.decision, reasons: pre.reasons },
@@ -615,24 +690,39 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     };
     if (pre.evidence) item.evidence = pre.evidence;
     if (fromPrevious) {
+      if (previous.search) item.search = previous.search;
       if (previous.outcome) item.outcome = previous.outcome;
       if (previous.lastError) item.lastError = previous.lastError;
-    } else item.outcome = outcomeFromManifest(entry);
+    } else item.outcome = outcomeFromManifest(entry!);
     if (previous?.updatedAt) item.updatedAt = previous.updatedAt;
     if (previous?.lastRunId) item.lastRunId = previous.lastRunId;
     if (item.status === 'processing') item.status = 'pending';
-    notes.push(`${entry.sourceIdentity} wird aus dem Manifest geführt (alle Fassungsadressen mehreren Stammnormen zugeordnet oder nur als Ziel einer Zusammenführung bekannt)`);
-    manifestOnlyKeys.add(item.key);
+    notes.push(entry
+      ? `${identity} wird aus dem Manifest geführt (alle Fassungsadressen mehreren Stammnormen zugeordnet oder nur als Ziel einer Zusammenführung bekannt)`
+      : `${identity} wird aus der früheren Enumeration geführt (kein Manifesteintrag; alle Fassungsadressen anderen Stammnormen zugeordnet)`);
+    sharedKeys.add(item.key);
+    covered.add(identity);
     items.push(item);
+  }
+
+  // Zusammengeführte Stubs, deren Zielidentität weder ein aktiver Eintrag noch ein Manifesteintrag trägt, decken
+  // ihre Adressen durch nichts mehr ab: Sie werden wieder geöffnet (kein stilles Verschwinden).
+  for (const item of items) {
+    if (!item.mergedInto || covered.has(item.mergedInto)) continue;
+    transitions.push(`${item.key}: Zusammenführung in ${item.mergedInto} ohne aktiven Eintrag und ohne Manifesteintrag; Eintrag beginnt erneut offen`);
+    delete item.mergedInto;
+    delete item.sourceIdentity;
+    delete item.outcome;
+    delete item.lastError;
+    item.status = 'pending';
+    item.attempts = 0;
   }
   items.sort((left, right) => compareKeys(left.key, right.key));
 
   // 6. Abgleich.
   const assigned = new Map<string, number>();
-  // Aus dem Manifest ergänzte Terme teilen sich die Adressen mit ihrem Slug-Stamm; das ist gewollt und zählt
-  // nicht als Mehrfachzuordnung (echte Dubletten regulärer Einträge bleiben ein Abgleichsproblem).
   for (const item of items) {
-    if (manifestOnlyKeys.has(item.key)) continue;
+    if (sharedKeys.has(item.key)) continue;
     for (const url of item.urls) assigned.set(url, (assigned.get(url) ?? 0) + 1);
   }
   const unassignedUrls = [...sitemapUrls].filter((url) => !assigned.has(url)).length;
@@ -685,8 +775,78 @@ export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile 
     items,
   };
   file.contentFingerprint = enumerationFingerprint(file);
+  return { file, transitions };
+}
+
+/**
+ * Vollständiger Rebuild bis zum Fixpunkt: Der Durchlauf wird mit seinem eigenen Ergebnis als Vorgänger wiederholt,
+ * bis ein weiterer Durchlauf nichts Fachliches mehr ändert (gleicher Fingerabdruck). Damit löst EIN Rebuild alle aus
+ * Manifest und früherer Enumeration erkennbaren Restadressen auf; ein zweiter Rebuild aus denselben Eingaben ist
+ * byteidentisch. Einmalige Übergänge gehen an `input.log`, nicht in die Datei. Ohne Fixpunkt innerhalb von
+ * `ENUMERATION_MAX_PASSES` Durchläufen: harter Fehler (`EnumerationFixpointError`), keine stille Teillösung.
+ */
+export function buildEnumeration(input: BuildEnumerationInput): EnumerationFile {
+  const log = input.log ?? ((): void => undefined);
+  let current = buildEnumerationPass(input);
+  let passes = 1;
+  for (const line of current.transitions) log(line);
+  for (;;) {
+    const next = buildEnumerationPass({ ...input, previous: current.file });
+    passes += 1;
+    if (next.file.contentFingerprint === current.file.contentFingerprint) break;
+    const differences = enumerationItemDifferences(current.file, next.file);
+    if (passes >= ENUMERATION_MAX_PASSES) throw new EnumerationFixpointError(input.area, passes, differences);
+    log(`Durchlauf ${passes}: ${differences.length} weitere Änderung(en) (${differences.slice(0, 3).join('; ')})`);
+    for (const line of next.transitions) log(line);
+    current = next;
+  }
+  const file = current.file;
+  file.generatedAt = input.now;
   if (input.previous && input.previous.contentFingerprint === file.contentFingerprint) file.generatedAt = input.previous.generatedAt;
+  log(`Fixpunkt nach ${passes - 1} Durchlauf/Durchläufen (Prüfdurchlauf ${passes} unverändert)`);
   return file;
+}
+
+export interface EnumerationFixpointResult {
+  fixpoint: boolean;
+  /** Fachliche Unterschiede eines erneuten Rebuilds gegenüber dem Stand (leer bei Fixpunkt). */
+  differences: string[];
+  transitions: string[];
+  fingerprint: string;
+  rebuiltFingerprint: string;
+}
+
+/**
+ * Prüft ohne Netz, ob ein erneuter Rebuild aus denselben Eingaben (Sitemap, Suchindex, Manifest) den Stand fachlich
+ * unverändert ließe. Für Readiness/Audit; ein Nicht-Fixpunkt bedeutet: Rebuild ausstehend (`enumerate --write`).
+ */
+export function checkEnumerationFixpoint(file: EnumerationFile, input: Omit<BuildEnumerationInput, 'previous' | 'now' | 'log'>): EnumerationFixpointResult {
+  const pass = buildEnumerationPass({ ...input, previous: file, now: file.generatedAt });
+  const fingerprint = enumerationFingerprint(file);
+  const rebuiltFingerprint = pass.file.contentFingerprint;
+  const differences = fingerprint === rebuiltFingerprint ? [] : enumerationItemDifferences(file, pass.file);
+  if (fingerprint !== rebuiltFingerprint && differences.length === 0) differences.push('Kopf- oder Abgleichsdaten geändert (Quellen, Abgleich, Hinweise)');
+  return { fixpoint: fingerprint === rebuiltFingerprint, differences, transitions: pass.transitions, fingerprint, rebuiltFingerprint };
+}
+
+/**
+ * Readiness-Prüfung: Enumeration des Bereichs lesen, Sitemap und Suchindex über den übergebenen Fetcher (für Readiness
+ * offline aus dem Cache), Manifest lesen (sofern nicht übergeben) und den Fixpunkt prüfen. Fehlt die Enumeration, ist
+ * das Ergebnis `undefined`.
+ */
+export async function enumerationIsFixpoint(root: string, area: SourceArea, options: { fetcher: RechtNrwFetcher; manifest?: ImportManifest; log?: (line: string) => void }): Promise<EnumerationFixpointResult | undefined> {
+  const file = await readEnumeration(root, area);
+  if (!file) return undefined;
+  const sitemap = await fetchSitemapUrls(options.fetcher, options.log);
+  const hits: SearchHit[] = [];
+  let total = 0;
+  for (const indexType of SEARCH_INDEX_TYPES[area]) {
+    const result = await fetchSearchHits(options.fetcher, indexType, options.log);
+    hits.push(...result.hits);
+    total += result.total;
+  }
+  const manifest = options.manifest ?? (await readManifest(root));
+  return checkEnumerationFixpoint(file, { area, sitemap: { pages: sitemap.pages.length, urls: sitemap.urls }, search: { total, hits }, manifest });
 }
 
 export async function readEnumeration(root: string, area: SourceArea): Promise<EnumerationFile | undefined> {

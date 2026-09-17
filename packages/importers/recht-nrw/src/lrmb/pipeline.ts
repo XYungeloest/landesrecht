@@ -26,6 +26,7 @@ import { buildProjectionPlan, type ProjectionPlan } from '@landesrecht/runtime/p
 import { SOURCE_SYSTEM, TARGET_JURISDICTION } from '../common/constants.ts';
 import { checkDocumentIdentityAndBody, type DocumentSanityResult } from '../common/document-sanity.ts';
 import { loadImportEnvironment, slugReservationFor, type ImportEnvironment } from '../common/environment.ts';
+import { resolveImportRegression } from '../common/import-regression.ts';
 import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
 import { bodyMetrics, checkTransformIntegrity, type IntegrityCheck, type IntegrityReport } from '../common/integrity.ts';
 import { AUDIT_DIR, isImportedStatus, readManifest, readManifestEntry, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type ReconstructionPlan } from '../common/manifest.ts';
@@ -48,8 +49,9 @@ import { applyNormativityOverride, assessNormativity, classifyLrmbDocumentType, 
 import { gazetteEntryUrlCandidates, identifiesBaseDocument, parseGazetteEntry, resolveInForceDate, type GazetteEntry } from './gazette.ts';
 import { LRMB_PARSER_VERSION, lrmbRawMetrics, parseLrmbDocument, type LrmbParseResult } from './parser.ts';
 import { applyReconstruction, readReconstructionRecipe, type GazetteDocument, type ReconstructionRecipe, type ReconstructionResult } from './reconstruction.ts';
-import { parseChangeNote, parseDecreeFromTitle, parsePublicationHistoryItem, parseValidityClauses, type ChangeNote, type ChangeNoteAmendment } from './text-metadata.ts';
-import { assessLrmbValidity, type AmendmentEvidence, type LrmbValidityAssessment } from './validity.ts';
+import { loadSuccessorIndex, matchSuccessors, type SuccessorTarget } from './successor-index.ts';
+import { parseChangeNote, parseDecreeFromTitle, parsePublicationHistoryItem, parseValidityClauses, type ChangeNote, type ChangeNoteAmendment, type GazetteCitation } from './text-metadata.ts';
+import { assessLrmbValidity, type AmendmentEvidence, type BasePublicationEvidence, type LrmbValidityAssessment } from './validity.ts';
 
 export const LRMB_AUDIT_DIR = join(AUDIT_DIR, 'lrmb');
 
@@ -121,18 +123,20 @@ export async function importRechtNrwLrmbDocument(options: LrmbImportOptions): Pr
     ? manifest.entries.find((entry) => entry.sourceIdentity === result.manifestEntry!.sourceIdentity) ?? (await readManifestEntry(options.root, 'lrmb', result.manifestEntry.sourceIdentity))
     : undefined;
   const regression = Boolean(previous && isImportedStatus(previous.importStatus) && result.manifestEntry && !isImportedStatus(result.status) && result.status !== 'dry-run');
-  if (regression) result.findings.push({ severity: 'error', code: 'import-regression', message: `Bereits übernommene Vorschrift ${previous!.targetSlug} ergibt jetzt ${result.status}; Manifest und Inhalt bleiben beim zuletzt übernommenen Stand (manuelle Prüfung)` });
+  // Regressionsschutz wie im LRGV-Pfad (common/import-regression.ts): ohne dokumentierte Legacy-Ausnahme bleibt der alte
+  // Stand (Fehler import-regression); deliver-legacy hält ihn mit Warnung, depublish entfernt Inhalt und Report.
+  const keepPrevious = regression ? await resolveImportRegression({ root: options.root, write: Boolean(options.write), previous: previous!, result, baseline: options.baselineDate ?? SIMULATION_BASELINE_DATE, label: 'Vorschrift' }) : false;
   result.reviewItems = deriveReviewItems(result.findings, result.report);
   const sourceIdentity = result.manifestEntry?.sourceIdentity ?? (result.page?.stemTermId ? `term:${result.page.stemTermId}` : `url:${parseVersionUrl(options.url)?.url ?? options.url}`);
   const run: Parameters<typeof persistReview>[0]['run'] = { sourceArea: 'lrmb', sourceIdentity, sourceUrl: options.url, now: now().toISOString() };
   if (result.record) run.targetSlug = result.record.meta.slug;
   const persistOptions: Parameters<typeof persistReview>[0] = { root: options.root, write: Boolean(options.write), manifest, reviewQueue, run, items: result.reviewItems };
-  if (result.manifestEntry && !regression) persistOptions.entry = result.manifestEntry;
+  if (result.manifestEntry && !keepPrevious) persistOptions.entry = result.manifestEntry;
   const persisted = await persistReview(persistOptions);
   result.writtenFiles.push(...persisted.written);
   result.manifest = persisted.manifest;
   result.reviewQueue = persisted.reviewQueue;
-  if (regression) result.manifestEntry = previous!;
+  if (keepPrevious) result.manifestEntry = previous!;
   return result;
 }
 
@@ -205,18 +209,7 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   result.stage = 'select-source-version-at-baseline';
   let selection: SelectionResult | undefined;
   if (!undated) {
-    const entryPage = page;
-    const candidates: SourceVersionCandidate[] = entryPage.versions.map((entry) => {
-      const candidate: SourceVersionCandidate = { validFrom: entry.validFrom, available: !entry.notRenderable, label: entry.label };
-      if (entry.url) candidate.url = entry.url;
-      if (entry.isCurrentPage) {
-        candidate.url = entryPage.address.url;
-        if (entryPage.validTo) candidate.validTo = entryPage.validTo;
-        else if (entryPage.validFrom) candidate.validTo = entryPage.versions.some((other) => other.validFrom > entry.validFrom) ? undefined : null;
-      }
-      return candidate;
-    });
-    selection = selectSourceVersionAtBaseline(candidates, baseline);
+    selection = selectSourceVersionAtBaseline(sourceVersionCandidates(page), baseline);
     result.selection = selection;
     for (const finding of selection.findings) if (finding.severity === 'warning') findings.push({ severity: 'warning', code: `version-${finding.code}`, message: finding.message });
     const selectedUrl = selection.status === 'selected' ? selection.selected?.url : undefined;
@@ -364,60 +357,19 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
   const latestChangeNote = latestParse?.changeNoteText ? parseChangeNote(latestParse.changeNoteText) : undefined;
   const publicationItems = latestPage.changeHistoryItems.map((item) => parsePublicationHistoryItem(item)).filter((item): item is ChangeNoteAmendment => item !== undefined);
   const completenessText = latestPage.changeHistoryItems.find((item) => /Redaktioneller Hinweis/u.test(item));
-  const amendments = new Map<string, AmendmentEvidence>();
-  const keyOf = (note: ChangeNoteAmendment): string => note.decreeDate ?? note.decreeDateText;
-  for (const note of changeNote?.amendments ?? []) amendments.set(keyOf(note), { note, incorporated: true, inForceDerivation: 'nicht bestimmt' });
-  for (const note of latestChangeNote?.amendments ?? []) if (!amendments.has(keyOf(note))) amendments.set(keyOf(note), { note, incorporated: false, inForceDerivation: 'nicht bestimmt' });
-  for (const note of publicationItems) {
-    if (amendments.has(keyOf(note))) continue;
-    const evidence: AmendmentEvidence = { note, incorporated: false, inForceDerivation: note.inForce ? 'Veröffentlichungsvermerk des Portals („in Kraft getreten am …“)' : 'Veröffentlichungsvermerk ohne Inkrafttreten' };
-    if (note.inForce) evidence.inForce = note.inForce;
-    amendments.set(keyOf(note), evidence);
-  }
   const baseCitation = changeNote?.base ?? latestChangeNote?.base;
-  const gazettes = new Map<string, { entry: GazetteEntry; document: FetchedDocument }>();
-  for (const amendment of amendments.values()) {
-    const citation = amendment.note.citation;
-    if (!citation || citation.gazette !== 'MBl. NRW.') {
-      if (!amendment.inForce) amendment.inForceDerivation = amendment.note.unpublished ? 'nicht veröffentlicht (n. v.) – Inkrafttreten nicht belegbar' : `Fundstelle ${citation?.text ?? '–'} ohne abrufbaren Ministerialblatt-Eintrag`;
-      continue;
+  const fetchGazette = async (url: string): Promise<FetchedDocument | undefined> => {
+    try {
+      log(`Abruf Ministerialblatt ${url}`);
+      return await options.fetcher.fetch(url);
+    } catch (error) {
+      if (error instanceof RechtNrwFetchError && RUN_STOPPING_FETCH_ERRORS.includes(error.kind)) throw error;
+      throw new GazetteUnavailableError((error as Error).message);
     }
-    const attempts: string[] = [];
-    for (const candidate of gazetteEntryUrlCandidates(citation)) {
-      let document: FetchedDocument;
-      try {
-        log(`Abruf Ministerialblatt ${candidate}`);
-        document = await options.fetcher.fetch(candidate);
-      } catch (error) {
-        if (error instanceof RechtNrwFetchError && RUN_STOPPING_FETCH_ERRORS.includes(error.kind)) throw error;
-        attempts.push(`${candidate}: ${(error as Error).message}`);
-        continue;
-      }
-      const entry = parseGazetteEntry(decodeHtml(document), candidate);
-      const identification = identifiesBaseDocument(entry, { ...(issuedOn ? { issuedOn } : {}), ...(baseCitation ? { citation: baseCitation } : {}) });
-      if (!identification.ok) {
-        attempts.push(`${candidate}: ${identification.reason}`);
-        continue;
-      }
-      rawEntries.push({ role: 'gazette-amendment', document, label: `Ministerialblatt ${citation.text}: ${entry.title}` });
-      gazettes.set(candidate, { entry, document });
-      const inForce = resolveInForceDate(entry);
-      amendment.gazetteUrl = candidate;
-      amendment.gazetteSha256 = document.sha256;
-      amendment.gazetteTitle = entry.title;
-      amendment.gazetteText = entry.text;
-      if (entry.publishedOn) amendment.publishedOn = entry.publishedOn;
-      amendment.identification = identification;
-      if (inForce.date) amendment.inForce = inForce.date;
-      amendment.inForceDerivation = inForce.derivation;
-      if (entry.predecessor) amendment.predecessor = { latest: entry.predecessor.latest, ...(entry.predecessor.date ? { date: entry.predecessor.date } : {}) };
-      break;
-    }
-    if (!amendment.gazetteUrl) {
-      amendment.identification = { ok: false, reason: attempts.join('; ') || 'keine Kandidatenadresse' };
-      if (!amendment.inForce) amendment.inForceDerivation = 'Ministerialblatt-Eintrag nicht zugeordnet';
-    }
-  }
+  };
+  const resolved = await resolveAmendmentEvidence({ ...(changeNote ? { changeNote } : {}), ...(latestChangeNote ? { latestChangeNote } : {}), publicationItems, ...(issuedOn ? { issuedOn } : {}), ...(baseCitation ? { baseCitation } : {}), fetchGazette });
+  for (const { url, entry, document } of resolved.gazettes.values()) rawEntries.push({ role: 'gazette-amendment', document, label: `Ministerialblatt ${[...resolved.amendments.values()].find((amendment) => amendment.gazetteUrl === url)?.note.citation?.text ?? url}: ${entry.title}` });
+  const { amendments, gazettes } = resolved;
   result.amendments = [...amendments.values()].sort((left, right) => (left.note.decreeDate ?? '').localeCompare(right.note.decreeDate ?? ''));
 
   // --- Assess Validity ----------------------------------------------------------------------------
@@ -431,6 +383,20 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
     versionStarts: page.versions.map((entry) => entry.validFrom),
     contraryTexts: [...new Set([...page.changeHistoryItems, ...latestPage.changeHistoryItems])].filter((item) => !/Redaktioneller Hinweis/u.test(item)),
   };
+  // P2: Nachfolgebelege aus dem Index (Audit-Artefakt des Review-Reports); fehlt er, gibt es keine Nachfolgebelege.
+  const successorIndex = await loadSuccessorIndex(options.root);
+  if (successorIndex) {
+    const target = successorTargetFor({ termId, pageUrl: page.address.url, title, ...(issuedOn ? { issuedOn } : {}), ...(baseCitation ? { baseCitation } : {}), fileReference: parse.head.fileReference ?? titleDecree?.fileReference, smblNumber: smblNumberFor(page.attachments.map((attachment) => attachment.url), parse.classificationNumber) });
+    const successors = matchSuccessors(successorIndex, target);
+    if (successors.length > 0) validityInput.successors = successors;
+  }
+  // P4: Ministerialblatt-Eintrag der Stammfundstelle – abgerufen nur, wenn er den Beginn tragen kann (Klausel „am Tag
+  // nach der Veröffentlichung“); sonst zählt die Stammfundstelle nur als unterstützender Beleg der Veröffentlichung.
+  if (undated && baseCitation) {
+    const publication = await resolveBasePublication({ citation: baseCitation, ...(issuedOn ? { issuedOn } : {}), fetch: clauses.inForce?.kind === 'day-after-publication' ? fetchGazette : undefined });
+    if (publication.document && publication.entry) rawEntries.push({ role: 'gazette-amendment', document: publication.document, label: `Ministerialblatt (Stammfundstelle) ${baseCitation.text}: ${publication.entry.title}` });
+    validityInput.basePublication = publication.evidence;
+  }
   if (page.validFrom) validityInput.page.validFrom = page.validFrom;
   if (page.validTo) validityInput.page.validTo = page.validTo;
   if (selection) validityInput.selection = selection;
@@ -554,7 +520,8 @@ async function runLrmbImport(options: LrmbImportOptions & { manifest: ImportMani
       sourceReferences.push(referenceOf(entry, 'official-snapshot', 'Weitere Fassungsseite der Stammnorm (Fundstellenverlauf, Veröffentlichungsvermerke)'));
     } else if (entry.role === 'gazette-amendment') {
       const amendment = [...amendments.values()].find((candidate) => candidate.gazetteSha256 === entry.document.sha256);
-      sourceReferences.push(referenceOf(entry, 'amendment-evidence', amendment ? `Inkrafttreten ${amendment.inForce ?? 'unbekannt'} (${amendment.inForceDerivation}); ${amendment.identification?.reason ?? ''}${validity.postBaselineAmendments.includes(amendment) ? '; nach dem Stichtag – für die Stichtagsfassung zurückgenommen' : ''}` : undefined));
+      const stemPublication = entry.label.startsWith('Ministerialblatt (Stammfundstelle)');
+      sourceReferences.push(referenceOf(entry, 'amendment-evidence', amendment ? `Inkrafttreten ${amendment.inForce ?? 'unbekannt'} (${amendment.inForceDerivation}); ${amendment.identification?.reason ?? ''}${validity.postBaselineAmendments.includes(amendment) ? '; nach dem Stichtag – für die Stichtagsfassung zurückgenommen' : ''}` : stemPublication ? `Veröffentlichung der Stammfassung (${validityInput.basePublication?.reason ?? ''})` : undefined));
     } else if (entry.role === 'pdf' || entry.role === 'annex') {
       const transcribed = attachmentInputs.find((input) => input.url === entry.document.url)?.transcription;
       sourceReferences.push(referenceOf(entry, 'structure-bearing', transcribed ? 'Anlage nur als PDF; Text aus geprüfter strukturierter Transkription' : 'Anlage nur als PDF; nicht als Text übernommen'));
@@ -701,6 +668,165 @@ async function finishLrmb(input: {
   await writer.jsonStable(entry.transformation.reportPath!, auditReport(result, entry, input.now()));
   result.writtenFiles.push(...writer.written);
   return result;
+}
+
+/** Kandidaten der lokalen Stichtagsauswahl aus der Fassungsliste einer datierten Stammnorm. */
+export function sourceVersionCandidates(page: RechtNrwVersionPage): SourceVersionCandidate[] {
+  return page.versions.map((entry) => {
+    const candidate: SourceVersionCandidate = { validFrom: entry.validFrom, available: !entry.notRenderable, label: entry.label };
+    if (entry.url) candidate.url = entry.url;
+    if (entry.isCurrentPage) {
+      candidate.url = page.address.url;
+      if (page.validTo) candidate.validTo = page.validTo;
+      else if (page.validFrom) candidate.validTo = page.versions.some((other) => other.validFrom > entry.validFrom) ? undefined : null;
+    }
+    return candidate;
+  });
+}
+
+/** Ministerialblatt-Eintrag nicht abrufbar (404, Netzfehler, Offline-Cache ohne Eintrag) – kein laufstoppender Fehler. */
+export class GazetteUnavailableError extends Error {}
+
+export interface AmendmentResolutionInput {
+  changeNote?: ChangeNote;
+  latestChangeNote?: ChangeNote;
+  publicationItems: ChangeNoteAmendment[];
+  issuedOn?: string;
+  baseCitation?: GazetteCitation;
+  /** Liefert den Eintrag oder wirft `GazetteUnavailableError`; laufstoppende Fehler werden durchgereicht. */
+  fetchGazette: (url: string) => Promise<FetchedDocument | undefined>;
+}
+
+export interface AmendmentResolution {
+  amendments: Map<string, AmendmentEvidence>;
+  gazettes: Map<string, { url: string; entry: GazetteEntry; document: FetchedDocument }>;
+}
+
+/**
+ * Löst die Änderungen des Fundstellenverlaufs über das Ministerialblatt auf (Zuordnung nur über Ausfertigungsdatum
+ * und Stammfundstelle, Inkrafttreten nur aus Klausel und Veröffentlichungsdatum). Gemeinsam für Pipeline (Fetcher)
+ * und Offline-Simulation (Quellcache); deterministisch.
+ */
+export async function resolveAmendmentEvidence(input: AmendmentResolutionInput): Promise<AmendmentResolution> {
+  const amendments = new Map<string, AmendmentEvidence>();
+  const keyOf = (note: ChangeNoteAmendment): string => note.decreeDate ?? note.decreeDateText;
+  for (const note of input.changeNote?.amendments ?? []) amendments.set(keyOf(note), { note, incorporated: true, inForceDerivation: 'nicht bestimmt' });
+  for (const note of input.latestChangeNote?.amendments ?? []) if (!amendments.has(keyOf(note))) amendments.set(keyOf(note), { note, incorporated: false, inForceDerivation: 'nicht bestimmt' });
+  for (const note of input.publicationItems) {
+    if (amendments.has(keyOf(note))) continue;
+    const evidence: AmendmentEvidence = { note, incorporated: false, inForceDerivation: note.inForce ? 'Veröffentlichungsvermerk des Portals („in Kraft getreten am …“)' : 'Veröffentlichungsvermerk ohne Inkrafttreten' };
+    if (note.inForce) evidence.inForce = note.inForce;
+    amendments.set(keyOf(note), evidence);
+  }
+  const gazettes: AmendmentResolution['gazettes'] = new Map();
+  for (const amendment of amendments.values()) {
+    const citation = amendment.note.citation;
+    if (!citation || citation.gazette !== 'MBl. NRW.') {
+      if (!amendment.inForce) amendment.inForceDerivation = amendment.note.unpublished ? 'nicht veröffentlicht (n. v.) – Inkrafttreten nicht belegbar' : `Fundstelle ${citation?.text ?? '–'} ohne abrufbaren Ministerialblatt-Eintrag`;
+      continue;
+    }
+    const attempts: string[] = [];
+    for (const candidate of gazetteEntryUrlCandidates(citation)) {
+      let document: FetchedDocument | undefined;
+      try {
+        document = await input.fetchGazette(candidate);
+      } catch (error) {
+        if (error instanceof GazetteUnavailableError) {
+          attempts.push(`${candidate}: ${error.message}`);
+          continue;
+        }
+        throw error;
+      }
+      if (!document) {
+        attempts.push(`${candidate}: nicht verfügbar`);
+        continue;
+      }
+      const entry = parseGazetteEntry(decodeHtml(document), candidate);
+      const identification = identifiesBaseDocument(entry, { ...(input.issuedOn ? { issuedOn: input.issuedOn } : {}), ...(input.baseCitation ? { citation: input.baseCitation } : {}) });
+      if (!identification.ok) {
+        attempts.push(`${candidate}: ${identification.reason}`);
+        continue;
+      }
+      gazettes.set(candidate, { url: candidate, entry, document });
+      const inForce = resolveInForceDate(entry);
+      amendment.gazetteUrl = candidate;
+      amendment.gazetteSha256 = document.sha256;
+      amendment.gazetteTitle = entry.title;
+      amendment.gazetteText = entry.text;
+      if (entry.publishedOn) amendment.publishedOn = entry.publishedOn;
+      amendment.identification = identification;
+      if (inForce.date) amendment.inForce = inForce.date;
+      amendment.inForceDerivation = inForce.derivation;
+      if (entry.predecessor) amendment.predecessor = { latest: entry.predecessor.latest, ...(entry.predecessor.date ? { date: entry.predecessor.date } : {}) };
+      break;
+    }
+    if (!amendment.gazetteUrl) {
+      amendment.identification = { ok: false, reason: attempts.join('; ') || 'keine Kandidatenadresse' };
+      if (!amendment.inForce) amendment.inForceDerivation = 'Ministerialblatt-Eintrag nicht zugeordnet';
+    }
+  }
+  return { amendments, gazettes };
+}
+
+/** SMBl-Gliederungsnummer aus Anlagenadressen (`smbl_<nr>_…`) oder der Gliederungsnummer der Seite. */
+export function smblNumberFor(urls: readonly string[], classificationNumber?: string): string | undefined {
+  for (const url of urls) {
+    const match = /smbl_(\d{2,7})_/u.exec(url);
+    if (match) return match[1];
+  }
+  return classificationNumber;
+}
+
+/** Zielvorschrift für die Zuordnung von Nachfolgebelegen (P2): Datum Pflicht, Fundstelle/Nummer/Az. für `strong`. */
+export function successorTargetFor(input: { termId: string; pageUrl: string; title: string; issuedOn?: string; baseCitation?: GazetteCitation; fileReference?: string; smblNumber?: string }): SuccessorTarget {
+  const target: SuccessorTarget = { identity: `term:${input.termId}`, url: input.pageUrl, title: input.title };
+  if (input.issuedOn) target.issuedOn = input.issuedOn;
+  if (input.smblNumber) target.smblNumber = input.smblNumber;
+  if (input.baseCitation?.page && input.baseCitation.gazette === 'MBl. NRW.') {
+    target.gazettePage = input.baseCitation.page;
+    target.gazetteYear = input.baseCitation.year;
+  }
+  if (input.fileReference) target.fileReference = input.fileReference;
+  return target;
+}
+
+/**
+ * P4: Ministerialblatt-Eintrag der Stammfundstelle. Ohne `fetch` (kein Bedarf oder offline) bleibt es beim
+ * unterstützenden Beleg der Fundstelle; mit Abruf gilt der Eintrag nur dann als die Stammvorschrift, wenn sein
+ * Erlasskopf dasselbe Ausfertigungsdatum trägt – nie über den Titel.
+ */
+export async function resolveBasePublication(input: { citation: GazetteCitation; issuedOn?: string; fetch?: ((url: string) => Promise<FetchedDocument | undefined>) | undefined }): Promise<{ evidence: BasePublicationEvidence; entry?: GazetteEntry; document?: FetchedDocument }> {
+  const citation = input.citation.text;
+  if (!input.fetch) return { evidence: { citation, identified: false, reason: input.issuedOn ? 'Eintrag der Stammfundstelle nicht abgerufen (Inkrafttreten hängt nicht vom Veröffentlichungsdatum ab)' : 'Ausfertigungsdatum unbekannt; Zuordnung des Eintrags wäre geraten' } };
+  if (!input.issuedOn) return { evidence: { citation, identified: false, reason: 'Ausfertigungsdatum unbekannt; Zuordnung des Eintrags wäre geraten' } };
+  const attempts: string[] = [];
+  for (const candidate of gazetteEntryUrlCandidates(input.citation)) {
+    let document: FetchedDocument | undefined;
+    try {
+      document = await input.fetch(candidate);
+    } catch (error) {
+      if (error instanceof GazetteUnavailableError) {
+        attempts.push(`${candidate}: ${error.message}`);
+        continue;
+      }
+      throw error;
+    }
+    if (!document) {
+      attempts.push(`${candidate}: nicht verfügbar`);
+      continue;
+    }
+    const entry = parseGazetteEntry(decodeHtml(document), candidate);
+    const headIssuedOn = entry.parse.head.issuedOn ?? parseDecreeFromTitle(entry.title)?.issuedOn;
+    if (headIssuedOn !== input.issuedOn) {
+      attempts.push(`${candidate}: Erlasskopf nennt ${headIssuedOn ?? 'kein Ausfertigungsdatum'}, erwartet ${input.issuedOn}`);
+      continue;
+    }
+    const evidence: BasePublicationEvidence = { citation, identified: true, reason: `Eintrag ${candidate} trägt den Erlasskopf vom ${input.issuedOn}`, url: candidate, sha256: document.sha256 };
+    if (entry.publishedOn) evidence.publishedOn = entry.publishedOn;
+    else evidence.reason += '; Veröffentlichungsdatum fehlt';
+    return { evidence, entry, document };
+  }
+  return { evidence: { citation, identified: false, reason: `Eintrag der Stammfundstelle nicht zugeordnet (${attempts.join('; ') || 'keine Kandidatenadresse'})` } };
 }
 
 const INSTRUCTION = /\b(?:eingefügt|ersetzt|gestrichen|aufgehoben|angefügt|gefasst|neu\s+gefasst)\b/gu;

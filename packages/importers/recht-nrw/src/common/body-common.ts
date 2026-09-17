@@ -25,6 +25,12 @@ export type SourceLine =
   | { kind: 'table'; block: NormBodyBlock; footnotes: string[] }
   /** Fußnoten ohne Einheit (Vorspann, nummernlose Sektion): eigene Fußnotenblöcke, kein Fließtext. */
   | { kind: 'footnotes'; labels: string[] }
+  /**
+   * Schließt die offene Einheit (und ihre Absätze), ohne einen Block zu erzeugen: nachfolgende Zeilen gehören
+   * zur umgebenden Ebene (Gliederung oder Dokument), z. B. der redaktionelle Hinweis des Portals nach der
+   * letzten Einheit. Es entsteht kein Text und keine Einheit.
+   */
+  | { kind: 'close-unit' }
   | { kind: 'signature'; text: string };
 
 export type DivisionLevel = 'book' | 'part' | 'chapter' | 'section' | 'subsection';
@@ -466,6 +472,9 @@ export function buildBody(lines: readonly SourceLine[], footnotes: readonly Sour
         stats.tables += 1;
         stats.textLength += JSON.stringify(line.block).length / 4;
         pushLeaf(line.block, line.footnotes);
+        break;
+      case 'close-unit':
+        popTo(10);
         break;
       case 'signature':
         popTo(1);

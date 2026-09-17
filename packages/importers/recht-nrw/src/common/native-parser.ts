@@ -14,6 +14,9 @@
  *  - Sektion ohne Nummer mit Normtext nach einer Einheit: Quelldefekt (fehlendes Kennzeichen), Befund
  *    (fail-closed) – außer als Fortsetzung einer Nummernfeld-Sektion ohne Text („geteilte Sektion“);
  *    vor der ersten Einheit ist nummernloser Text Vorspann/Präambel.
+ *  - Sektion ohne Nummer nach der letzten Einheit, deren Text mit „Hinweis“ beginnt: redaktioneller
+ *    Hinweis des Portals (z. B. zu aufgehobenen Anlagen), kein Normtext einer fehlenden Einheit – Text auf
+ *    Dokumentebene, die letzte Einheit wird geschlossen (kein Kennzeichen wird erfunden).
  *  - `<ul>`/`<ol>` mit `<p>`-Kindern statt `<li>`: Absätze werden wie Absätze gelesen (kein Textverlust).
  *  - Artikel nur als zentrierte fette Absätze mit je Artikel neu beginnender §-Zählung (altes
  *    Ausführungsrecht): die Artikel eröffnen Zählbereiche – nur wenn das Dokument keine Artikel-
@@ -343,6 +346,19 @@ function isBodyContentLine(line: SourceLine | undefined): boolean {
   return line.kind === 'subparagraph' || line.kind === 'item' || line.kind === 'table' || (line.kind === 'text' && !line.centered);
 }
 
+/**
+ * Redaktioneller Hinweis des Portals („Hinweis: Alle Gesetze und Verordnungen, die in der Anlage I …
+ * genannt werden, wurden … aufgehoben“): eine nicht zentrierte Textzeile, die mit dem Wort „Hinweis“
+ * beginnt. Nur als erste Zeile einer nummernlosen Sektion nach der letzten Einheit (keine Nummernfeld-
+ * Sektion folgt) gilt sie als Hinweis; ein Paragraph, dessen Text mit „Hinweis“ beginnt, bliebe eine
+ * Nummernfeld-Sektion und ist davon nicht betroffen.
+ */
+const EDITORIAL_NOTICE_LINE = /^Hinweis(?::|\s+\p{Lu})/u;
+
+export function isEditorialNoticeLine(line: SourceLine | undefined): boolean {
+  return Boolean(line && line.kind === 'text' && !line.centered && EDITORIAL_NOTICE_LINE.test(line.text));
+}
+
 export function parseNativeDocument(bodyHtml: string): NativeParseResult {
   const findings: ImportFinding[] = [];
   const fragment = parseHtmlFragment(bodyHtml);
@@ -359,6 +375,9 @@ export function parseNativeDocument(bodyHtml: string): NativeParseResult {
 
   const sections = allByClass(fragment, 'legaldoc-article');
   if (sections.length === 0) findings.push({ severity: 'error', code: 'no-sections', message: 'Natives Dokument ohne legaldoc-article-Sektionen' });
+  /** Index der letzten Sektion mit Nummernfeld: nummernlose Sektionen danach sind Schlussbereich des Dokuments. */
+  const lastNumberedSection = sections.reduce((last, section, index) => (textOf(byClass(section, 'field--field_num')) ? index : last), -1);
+  const noticeSections: string[] = [];
   if (state.inlineArticleScopes) findings.push({ severity: 'info', code: 'inline-article-scopes', message: 'Artikel stehen nur als zentrierte Überschriften im Text; die §-Zählung beginnt je Artikel neu – Artikel eröffnen Zählbereiche' });
 
   const toc = detectTocSections(fragment);
@@ -448,6 +467,11 @@ export function parseNativeDocument(bodyHtml: string): NativeParseResult {
       // Portalvariante „geteilte Sektion“: Nummernfeld-Sektion ohne Text, der Text folgt in einer
       // nummernlosen Sektion und gehört zur vorigen Einheit.
       continuedSections.push(String(sectionIndex + 1));
+    } else if (bodyContent && state.sawUnit && sectionIndex > lastNumberedSection && isEditorialNoticeLine(lines[before])) {
+      // Redaktioneller Hinweis nach der letzten Einheit: kein Normtext einer fehlenden Einheit. Die letzte
+      // Einheit wird geschlossen, der Hinweis steht auf Dokumentebene (Text unverändert, keine Einheit).
+      lines.splice(before, 0, { kind: 'close-unit' });
+      noticeSections.push(String(sectionIndex + 1));
     } else if (bodyContent && (state.sawUnit || lineBefore?.kind === 'division')) {
       // Nummernlose Sektion mit Normtext nach einer Einheit mit Text oder direkt nach einer
       // Gliederungsüberschrift: fehlendes §-/Artikel-Kennzeichen in der Quelle. Ihr Text würde sonst
@@ -471,6 +495,7 @@ export function parseNativeDocument(bodyHtml: string): NativeParseResult {
   if (rangeHeadings.length > 0) findings.push({ severity: 'info', code: 'unit-range-heading', message: `${rangeHeadings.length} Nummernfeld(er) mit Einheitenspanne als Überschrift übernommen (keine Einheiten): ${rangeHeadings.join(', ')}` });
   if (divisionNumbers.length > 0) findings.push({ severity: 'info', code: 'division-in-number-field', message: `${divisionNumbers.length} Nummernfeld(er) mit Gliederungskennzeichen als Gliederungsebene übernommen: ${divisionNumbers.join(', ')}` });
   if (continuedSections.length > 0) findings.push({ severity: 'info', code: 'section-continuation', message: `${continuedSections.length} nummernlose Sektion(en) setzen den Text der vorigen Nummernfeld-Sektion ohne Text fort (Sektion ${continuedSections.join(', ')})` });
+  if (noticeSections.length > 0) findings.push({ severity: 'info', code: 'editorial-notice-section', message: `${noticeSections.length} nummernlose Sektion(en) nach der letzten Einheit mit redaktionellem Hinweis („Hinweis: …“) als Text auf Dokumentebene übernommen (Sektion ${noticeSections.join(', ')}; keine Einheit)` });
 
   // Schlussformel (field--field_conclusions): Unterschriften
   const conclusions = byClass(fragment, 'field--field_conclusions');

@@ -24,6 +24,7 @@ import { readSlugRegistry } from './common/slug-registry.ts';
 import { parseVersionUrl } from './common/source-identity.ts';
 import { selectSourceVersionAtBaseline, type SourceVersionCandidate } from './common/version-selection.ts';
 import { parseVersionPage } from './common/version-page.ts';
+import { collectVersionReport, renderVersionReportLines } from './common/version-report.ts';
 import { importRechtNrwNorm, type ImportResult } from './lrgv/pipeline.ts';
 import { assessNormativity, classifyLrmbDocumentType } from './lrmb/classify.ts';
 import { parseLrmbDocument } from './lrmb/parser.ts';
@@ -281,7 +282,10 @@ search-audit --remote-sample <url> [--write]
   Details: docs/SEARCH.md`,
   readiness: `readiness [--json]
   Maschinelle Bereitschaftsprüfung: erste Zeile READY oder NOT READY (Exit 0/1), danach Prüfungen und Blocker
-  (docs/RECHT_NRW_BULK_READINESS.md).`,
+  (docs/RECHT_NRW_BULK_READINESS.md). Prüft u. a. Enumeration mit Abgleich und Fixpoint (Offline-Rebuild aus dem
+  Abrufcache), veraltete Einträge je Status (Legacy-Ausnahmen aus data/imports/recht-nrw/legacy-exceptions.json),
+  Review-Queue ↔ Manifest, Coverage, R2-/D1-/Such-Audits (aktuell = nicht älter als das Manifest-Wasserzeichen und
+  mit passenden Zählwerten), Golden Set, Secret-Scan, Fixtures und die Referenzbaseline (docs/WEST_REFERENCE_BASELINE.md).`,
   audit: `audit
   Prüft Manifest, Rohquellen-Hashes, kanonische Dateien, Reports, Rekonstruktionen, Review-Status, Slug-Registry,
   Enumeration und Coverage auf Konsistenz. Exit 1 bei Abweichungen.`,
@@ -607,6 +611,13 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
       if (entries.length <= 60) for (const entry of entries) io.print(`  ${entry.sourceIdentity.padEnd(12)} ${(entry.targetSlug || '–').padEnd(48).slice(0, 48)} ${entry.importStatus.padEnd(22)} ${entry.baselineStatus.padEnd(22)} ${entry.reconstructionStatus.padEnd(24)} review ${entry.reviewStatus}`);
     }
     io.print(`Review-Queue: ${queue.items.length} Fälle, offen ${queue.items.filter((item) => item.status === 'open').length}; Slug-Registry: ${registry.entries.length} Einträge`);
+    // Parser-/Transformer-Versionsstände je Status; unbegründete Altstände sind Audit-Probleme (Regeneration oder
+    // dokumentierte Legacy-Ausnahme), begründete Ausnahmen Hinweise.
+    const versions = await collectVersionReport(root, { manifest });
+    io.print('Versionsreport (Parser/Transformer je Status):');
+    for (const line of renderVersionReportLines({ ...versions, blockers: [], notices: [] })) io.print(`  ${line}`);
+    notes.push(...versions.notices);
+    problems.push(...versions.blockers);
     for (const note of notes) io.print(`  Hinweis: ${note}`);
     if (problems.length > 0) {
       for (const problem of problems) io.error(`  ! ${problem}`);

@@ -14,6 +14,12 @@ Grundsatz        Der Fünf-Bedingungen-Kontinuitätsnachweis (docs/RECHT_NRW_LRM
                  Arbeitshilfen, Nachfolgebelege sind Prüfhinweise, keine Relationen.
 ```
 
+> **Stand nach dem Evidence Pass (17. September 2026, LRMB-Parser 1.3.0):** Die Vorschläge P1, P2 und P4 sind in die
+> Geltungsentscheidung übernommen (`lrmb/validity.ts`, Beweisklassen und Regeln in `docs/RECHT_NRW_BULK_READINESS.md`,
+> Abschnitt „Evidence Pass“); P3 bleibt der Fünf-Bedingungen-Nachweis. Die Offline-Simulation über den ganzen Bestand
+> (`EVIDENCE_PASS.md`/`.json`) weist die Wirkung je Regel und die Fälle ohne Beleg aus; verbindlich wird sie erst mit
+> der Regeneration des Bestands. Die Zahlen unten beschreiben den Stand vor dem Evidence Pass.
+
 ## 1. Woran die Fälle scheitern
 
 Alle 2 396 Fälle sind undatierte SMBl-Altdatensätze (keine Fassungsliste, kein „Gültig ab“, keine

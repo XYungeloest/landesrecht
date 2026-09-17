@@ -27,6 +27,7 @@ import { checkDocumentIdentityAndBody, type DocumentSanityResult } from '../comm
 import { loadImportEnvironment, slugReservationFor, type ImportEnvironment } from '../common/environment.ts';
 import { decodeHtml, RechtNrwFetchError, RUN_STOPPING_FETCH_ERRORS, type FetchedDocument, type RechtNrwFetcher } from '../common/fetcher.ts';
 import { bodyMetrics, checkParseIntegrity, checkTransformIntegrity, explainedBodyDelta, rawMetrics, type IntegrityReport } from '../common/integrity.ts';
+import { resolveImportRegression } from '../common/import-regression.ts';
 import { parseLegacyDocument } from '../common/legacy-parser.ts';
 import { AUDIT_DIR, isImportedStatus, readManifest, readManifestEntry, type ImportManifest, type ManifestEntry, type ManifestOverride, type ManifestRawDocument, type RawDocumentRole, type ValidityEvidence } from '../common/manifest.ts';
 import { recordUnresolvedSource } from '../common/unresolved.ts';
@@ -150,18 +151,18 @@ export async function importRechtNrwNorm(options: ImportOptions): Promise<Import
     ? manifest.entries.find((entry) => entry.sourceIdentity === result.manifestEntry!.sourceIdentity) ?? (await readManifestEntry(options.root, 'lrgv', result.manifestEntry.sourceIdentity))
     : undefined;
   const regression = Boolean(previous && isImportedStatus(previous.importStatus) && result.manifestEntry && !isImportedStatus(result.status) && result.status !== 'dry-run');
-  if (regression) result.findings.push({ severity: 'error', code: 'import-regression', message: `Bereits übernommene Norm ${previous!.targetSlug} ergibt jetzt ${result.status}; Manifest und Inhalt bleiben beim zuletzt übernommenen Stand (manuelle Prüfung)` });
+  const keepPrevious = regression ? await resolveImportRegression({ root: options.root, write: Boolean(options.write), previous: previous!, result, baseline: options.baselineDate ?? SIMULATION_BASELINE_DATE }) : false;
   result.reviewItems = deriveReviewItems(result.findings, result.report);
   const sourceIdentity = result.manifestEntry?.sourceIdentity ?? (result.page?.stemTermId ? `term:${result.page.stemTermId}` : `url:${parseVersionUrl(options.url)?.url ?? options.url}`);
   const run: Parameters<typeof persistReview>[0]['run'] = { sourceArea: 'lrgv', sourceIdentity, sourceUrl: result.manifestEntry?.sourceUrl ?? options.url, now: now().toISOString() };
   if (result.record) run.targetSlug = result.record.meta.slug;
   const persistOptions: Parameters<typeof persistReview>[0] = { root: options.root, write: Boolean(options.write), manifest, reviewQueue, run, items: result.reviewItems };
-  if (result.manifestEntry && !regression) persistOptions.entry = result.manifestEntry;
+  if (result.manifestEntry && !keepPrevious) persistOptions.entry = result.manifestEntry;
   const persisted = await persistReview(persistOptions);
   result.writtenFiles.push(...persisted.written);
   result.manifest = persisted.manifest;
   result.reviewQueue = persisted.reviewQueue;
-  if (regression) result.manifestEntry = previous!;
+  if (keepPrevious) result.manifestEntry = previous!;
   return result;
 }
 

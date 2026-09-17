@@ -6,7 +6,7 @@ Die Dateien im Wurzelverzeichnis sind die Fixtures des Importpfads (Fassungsseit
 | Verzeichnis | Struktur | Quelle (term) |
 | --- | --- | --- |
 | `range-headings/` | Einheitenspannen als Überschrift: nativ `Artikel I bis III` im Nummernfeld, Legacy `15 bis 16` (§§) in `lrdetail` | 26676, 26714 |
-| `native-drupal/` | Gliederungskennzeichen im Nummernfeld (`1. Abschnitt`) | 29177 |
+| `native-drupal/` | Gliederungskennzeichen im Nummernfeld (`1. Abschnitt`); redaktioneller „Hinweis“ als nummernlose Sektion nach der letzten Einheit | 29177, 26534 |
 | `broken-html/` | Doppelt kodierte Entity im Nummernfeld (`§&amp;nbsp;1`), `<p>` in `<ul>`, Sektion ohne Nummernfeld mit Normtext | 32405, 27179, 26552 |
 | `footnotes/` | Fußnoten in Sektionen ohne Einheit (Vorspann, Fußnotensektion) | 29679 |
 | `duplicate-numbering/` | Artikel als zentrierte Überschriften mit je Artikel neu beginnender §-Zählung; Legacy-Inhaltsübersicht mit `lrdetail`-Einträgen | 29214, 26909 |

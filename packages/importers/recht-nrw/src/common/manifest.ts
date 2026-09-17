@@ -73,22 +73,101 @@ export const VALIDITY_EVIDENCE_KINDS = [
   'gazette-publication',
   'gazette-amendment',
   'gazette-amendment-chain',
+  'successor-repeal',
   'search-index-signal',
   'reconstruction',
   'override',
 ] as const;
 export type ValidityEvidenceKind = (typeof VALIDITY_EVIDENCE_KINDS)[number];
 
+/**
+ * Beweisklassen (docs/RECHT_NRW_LRMB_IMPORT.md, Abschnitt 4; Entscheidungsregeln in `lrmb/validity.ts`):
+ *   strong         amtlicher Beleg mit eindeutiger Identität und Datum – trägt allein eine Statusentscheidung
+ *   supporting     amtlicher Beleg ohne Datum oder ohne eindeutige Identität – stützt, entscheidet nie allein
+ *   insufficient   Suchindex, Titelähnlichkeit, bloßes Vorhandensein – nur Hinweis
+ *   contradictory  zwei starke Belege widersprechen einander (oder ein starker Beleg widerspricht der
+ *                  Änderungshistorie) – keine automatische Entscheidung, Review
+ */
+export const EVIDENCE_STRENGTHS = ['strong', 'supporting', 'insufficient', 'contradictory'] as const;
+export type EvidenceStrength = (typeof EVIDENCE_STRENGTHS)[number];
+
+export const EVIDENCE_SUPPORTS = ['valid-from', 'valid-to', 'active-at-baseline', 'text-state', 'completeness', 'contradiction', 'continuity'] as const;
+export type EvidenceSupports = (typeof EVIDENCE_SUPPORTS)[number];
+
+export const SUCCESSOR_STATEMENT_KINDS = ['repealed', 'expired', 'replaced', 'obsolete', 'not-applicable', 'new-version'] as const;
+
+/**
+ * Nachfolgebeleg: eine andere amtliche Vorschrift (RECHT.NRW-Seite oder Ministerialblatt-Eintrag) hebt die
+ * Vorschrift auf, setzt sie außer Kraft oder ersetzt sie. Prüfhinweis mit Beleg – nie eine `successor`-Relation
+ * im kanonischen Normmodell.
+ */
+export interface SuccessorEvidenceRecord {
+  /** Vorgängeridentität, wie die Nachfolgevorschrift sie nennt (Ausfertigungsdatum + Fundstelle/Nummer/Az.). */
+  predecessorIdentity: string;
+  successorTitle: string;
+  /** Quellidentität der Nachfolgevorschrift im Manifest (`term:<id>`), falls bekannt. */
+  successorIdentity?: string;
+  statementKind: (typeof SUCCESSOR_STATEMENT_KINDS)[number];
+  /** Wirksamkeitsdatum der Aufhebung/Ablösung (ISO), nur wenn amtlich belegt. */
+  effectiveDate?: string;
+  effectiveDerivation: string;
+  /** Fundstelle(n) der Vorgängervorschrift im Wortlaut der Aufhebungsformel. */
+  citation: string;
+  /** Übereinstimmende Merkmale der Zuordnung (date, gazette-page, smbl-number, file-reference, title-keyword). */
+  matched: string[];
+  sourceUrl: string;
+  sha256: string;
+  evidenceStrength: EvidenceStrength;
+}
+
 export interface ValidityEvidence {
   kind: ValidityEvidenceKind;
   /** Was der Beleg stützt oder widerlegt. */
-  supports: 'valid-from' | 'valid-to' | 'active-at-baseline' | 'text-state' | 'completeness' | 'contradiction' | 'continuity';
-  /** Beweiswert (docs/RECHT_NRW_LRMB_IMPORT.md): strong | supporting | insufficient. */
-  strength?: 'strong' | 'supporting' | 'insufficient';
+  supports: EvidenceSupports;
+  /** Beweisklasse (siehe `EVIDENCE_STRENGTHS`). */
+  strength?: EvidenceStrength;
   statement: string;
   date?: string;
   sourceUrl?: string;
   sha256?: string;
+  /** Fundstelle (Ministerialblatt), auf die sich der Beleg stützt. */
+  citation?: string;
+  /** Wörtlicher Textausschnitt der Quelle (Leerraum normalisiert, gekürzt). */
+  excerpt?: string;
+  /** Nur `successor-repeal`: strukturierter Nachfolgebeleg. */
+  successor?: SuccessorEvidenceRecord;
+}
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
+const SHA256 = /^[0-9a-f]{64}$/u;
+
+/** Schemaprüfung eines Belegs (additiv, fail-closed): Liste der Probleme, leer bei gültigem Beleg. */
+export function validateValidityEvidence(value: unknown): string[] {
+  const problems: string[] = [];
+  if (!value || typeof value !== 'object') return ['Beleg ist kein Objekt'];
+  const evidence = value as Record<string, unknown>;
+  if (!(VALIDITY_EVIDENCE_KINDS as readonly string[]).includes(String(evidence.kind))) problems.push(`unbekannte Belegart ${String(evidence.kind)}`);
+  if (!(EVIDENCE_SUPPORTS as readonly string[]).includes(String(evidence.supports))) problems.push(`unbekannte Aussage ${String(evidence.supports)}`);
+  if (evidence.strength !== undefined && !(EVIDENCE_STRENGTHS as readonly string[]).includes(String(evidence.strength))) problems.push(`unbekannte Beweisklasse ${String(evidence.strength)}`);
+  if (typeof evidence.statement !== 'string' || evidence.statement.trim() === '') problems.push('statement fehlt');
+  for (const field of ['date'] as const) if (evidence[field] !== undefined && (typeof evidence[field] !== 'string' || !ISO_DATE.test(evidence[field] as string))) problems.push(`${field} ist kein ISO-Datum`);
+  if (evidence.sha256 !== undefined && (typeof evidence.sha256 !== 'string' || evidence.sha256 === '')) problems.push('sha256 ungültig');
+  for (const field of ['sourceUrl', 'citation', 'excerpt'] as const) if (evidence[field] !== undefined && typeof evidence[field] !== 'string') problems.push(`${field} ist keine Zeichenkette`);
+  if (evidence.kind === 'successor-repeal' && evidence.successor === undefined) problems.push('successor-repeal ohne strukturierten Nachfolgebeleg');
+  if (evidence.successor !== undefined) {
+    const successor = evidence.successor as Record<string, unknown>;
+    if (!successor || typeof successor !== 'object') problems.push('successor ist kein Objekt');
+    else {
+      for (const field of ['predecessorIdentity', 'successorTitle', 'effectiveDerivation', 'citation', 'sourceUrl'] as const) if (typeof successor[field] !== 'string' || (successor[field] as string).trim() === '') problems.push(`successor.${field} fehlt`);
+      if (!(SUCCESSOR_STATEMENT_KINDS as readonly string[]).includes(String(successor.statementKind))) problems.push(`successor.statementKind unbekannt (${String(successor.statementKind)})`);
+      if (successor.effectiveDate !== undefined && (typeof successor.effectiveDate !== 'string' || !ISO_DATE.test(successor.effectiveDate))) problems.push('successor.effectiveDate ist kein ISO-Datum');
+      if (typeof successor.sha256 !== 'string' || !SHA256.test(successor.sha256)) problems.push('successor.sha256 ungültig');
+      if (!Array.isArray(successor.matched) || successor.matched.some((item) => typeof item !== 'string')) problems.push('successor.matched fehlt');
+      if (!(EVIDENCE_STRENGTHS as readonly string[]).includes(String(successor.evidenceStrength))) problems.push(`successor.evidenceStrength unbekannt (${String(successor.evidenceStrength)})`);
+      if (successor.evidenceStrength === 'strong' && successor.effectiveDate === undefined) problems.push('starker Nachfolgebeleg ohne Wirksamkeitsdatum');
+    }
+  }
+  return problems;
 }
 
 export const RAW_DOCUMENT_ROLES = ['version-page', 'legacy-text', 'annex', 'pdf', 'stem-page', 'gazette-amendment'] as const;

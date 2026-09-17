@@ -27,7 +27,7 @@ import { TRANSFORMER_VERSION } from '../transform/rules.ts';
 import { ArchiveError } from './archive.ts';
 import { CorruptStateError, removeStaleTempFiles, writeJsonAtomic } from './atomic.ts';
 import { RUNS_DIR } from './coverage.ts';
-import { enumerationStatusCounts, readEnumeration, writeEnumeration, type EnumerationFile, type EnumerationItem } from './enumeration.ts';
+import { enumerationStatusCounts, humanizeSlug, newestFirst, preclassify, readEnumeration, writeEnumeration, type EnumerationFile, type EnumerationItem } from './enumeration.ts';
 import type { ImportEnvironment } from './environment.ts';
 import { decodeHtml, RechtNrwFetchError, type RechtNrwFetcher } from './fetcher.ts';
 import { AUDIT_DIR, compareSourceIdentity, IMPORT_DATA_DIR, identityFileName, isImportedStatus, type ImportManifest, type ManifestEntry, type SourceArea } from './manifest.ts';
@@ -35,7 +35,7 @@ import { recoverInterruptedNormWrites } from './persist.ts';
 import { emptyReviewQueue, type ReviewItem, type ReviewQueue } from './review-queue.ts';
 import { parseVersionUrl } from './source-identity.ts';
 import { stableStringify } from './stable-json.ts';
-import { currentParserVersion, isStaleEntry } from './staleness.ts';
+import { currentParserVersion, isRegenerableEnumerationStatus, isStaleEntry } from './staleness.ts';
 import { recordUnresolvedSource } from './unresolved.ts';
 import { parseVersionPage } from './version-page.ts';
 
@@ -297,10 +297,15 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
     if (item.status === 'pending' || item.status === 'processing') return true;
     if (item.status === 'failed' && options.retryFailed) return true;
     if (item.status === 'review' && options.retryReview) return true;
-    if (options.regenerateStale && (item.status === 'done' || item.status === 'review') && isStale(item)) return true;
+    // Veraltete Bewertungen jedes abgeschlossenen Status (done, review, failed, excluded): neu bewerten, Status
+    // ergibt sich aus dem Lauf (ein weiterhin ausgeschlossener Eintrag bleibt excluded – mit aktueller Version).
+    if (options.regenerateStale && isRegenerableEnumerationStatus(item.status) && isStale(item)) return true;
     return false;
   });
-  const queue = options.limit !== undefined ? selected.slice(0, options.limit) : selected;
+  // Warteschlange des Laufs: wächst um abgetrennte Einträge (siehe Abtrennung unten), sofern die Auswahl es erlaubt.
+  const queue: EnumerationItem[] = options.limit !== undefined ? selected.slice(0, options.limit) : [...selected];
+  const truncated = options.limit !== undefined && selected.length > options.limit;
+  let deferredSplits = 0;
   // Auditierbare Zeilen: Kopf mit Lauf-ID, je Stammnorm Bereich, Schlüssel (Term-ID), Phase, Ergebnis und Dauer.
   const mode = options.write ? 'write' : 'dry-run';
   log(`Lauf ${runId} · ${options.area} · ${mode} · ausgewählt ${queue.length} von ${selected.length} (Enumeration ${enumeration.items.length})`);
@@ -438,24 +443,77 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
           outcomes.merged += 1;
         }
       }
-      const foreign = item.mergedInto ? [] : item.urls.filter((url) => !versionUrls.has(url) && parseVersionUrl(url)?.section === options.area);
+      // Abtrennung: Adressen außerhalb der Fassungsliste gehören anderen Stammnormen (Portal-Stämme mit gleichem Slug für
+      // viele Vorschriften, z. B. Förderrichtlinien). Je Slug-Stamm entsteht genau ein neuer offener Eintrag
+      // `stem:<typ>/<slug>@<jüngstes Pfaddatum der Gruppe>` (höchstens ein „@“, nie rekursiv); ist der Schlüssel durch eine
+      // frühere Abtrennung vergeben, gilt das nächstjüngere Datum. Der neue Eintrag wird bei Statusauswahl (ohne --only)
+      // noch in diesem Lauf verarbeitet, sodass der Stamm ohne Rebuild-Zyklen konvergiert. Adressen eines Stubs, der
+      // diese Stammnorm über seine eigene Seite belegt hatte (Quellidentität = Zusammenführungsziel), sind eigene
+      // Adressen aus dessen Fassungsliste, keine fremden; ein nur wegen Adressüberschneidung zusammengeführter
+      // Stammeintrag belegt nichts. Adressen, die ein anderer aktiver Eintrag führt, werden nur entfernt (dort
+      // abgedeckt). Adressen dürfen nie stillschweigend verschwinden: Ohne freien Schlüssel bleiben sie am Eintrag
+      // und der Rebuild öffnet sie als Restadressen.
+      const ownElsewhere = new Set<string>();
+      const activeElsewhere = new Set<string>();
+      for (const other of enumeration.items) {
+        if (other === item) continue;
+        if (other.mergedInto === outcome.sourceIdentity && other.sourceIdentity === outcome.sourceIdentity) for (const url of other.urls) ownElsewhere.add(url);
+        else if (!other.mergedInto) for (const url of other.urls) activeElsewhere.add(url);
+      }
+      const foreign = item.mergedInto ? [] : item.urls.filter((url) => !versionUrls.has(url) && !ownElsewhere.has(url) && parseVersionUrl(url)?.section === options.area);
       if (foreign.length > 0 && foreign.length < item.urls.length) {
-        const dates = foreign.map((url) => parseVersionUrl(url)?.pathDate ?? '').sort();
-        // Stabiler Schlüssel: Basis ohne früher angehängtes Datum. Sonst trägt jede Wiederholung ein weiteres
-        // „@datum“ an, die Dublettenprüfung greift nie und die Enumeration wächst unbegrenzt.
-        const base = item.key.split('@')[0]!;
-        const key = `${item.key.startsWith('term:') ? `stem:${item.portalType}/${parseVersionUrl(foreign[0]!)?.slug ?? 'split'}` : base}@${dates[0] || 'undatiert'}`;
-        const alreadyKnown = enumeration.items.some((candidate) => candidate.key === key || (candidate !== item && candidate.urls.some((url) => foreign.includes(url))));
-        if (!alreadyKnown) {
-          enumeration.items.push({ ...item, key, urls: foreign.sort(), entryUrl: foreign.sort().at(-1)!, status: 'pending', attempts: 0, signals: { ...item.signals, search: false }, titleSource: 'slug', ...(item.lastRunId ? { lastRunId: item.lastRunId } : {}) });
-          const added = enumeration.items.at(-1)!;
-          delete added.sourceIdentity;
-          delete added.outcome;
-          delete added.search;
-          delete added.lastError;
-          outcomes.split += 1;
+        const removed = new Set<string>();
+        const groups = new Map<string, string[]>();
+        for (const url of foreign) {
+          if (activeElsewhere.has(url)) {
+            removed.add(url);
+            continue;
+          }
+          const address = parseVersionUrl(url)!;
+          const stem = `stem:${address.documentType}/${address.slug}`;
+          groups.set(stem, [...(groups.get(stem) ?? []), url]);
         }
-        item.urls = item.urls.filter((url) => versionUrls.has(url) || !foreign.includes(url));
+        const taken = new Set(enumeration.items.map((candidate) => candidate.key));
+        for (const [stem, urls] of [...groups.entries()].sort(([left], [right]) => (left < right ? -1 : 1))) {
+          const ordered = newestFirst(urls);
+          const key = ordered.map((url) => `${stem}@${parseVersionUrl(url)?.pathDate ?? 'undatiert'}`).find((candidate) => !taken.has(candidate));
+          if (!key) {
+            log(`${itemTag(processed, item)} abtrennung ${stem}: kein freier Schlüssel für ${urls.length} Adresse(n) – bleiben am Eintrag (Rebuild öffnet sie als Restadressen)`);
+            continue;
+          }
+          const address = parseVersionUrl(ordered[0]!)!;
+          const title = humanizeSlug(address.slug);
+          const pre = preclassify(options.area, address.documentType, title);
+          const split: EnumerationItem = {
+            key,
+            entryUrl: ordered[0]!,
+            portalType: address.documentType,
+            title,
+            titleSource: 'slug',
+            status: pre.safeExclusion ? 'excluded' : 'pending',
+            urls: [...urls].sort(),
+            signals: { sitemap: item.signals.sitemap, search: false },
+            preclassification: { decision: pre.decision, reasons: pre.reasons },
+            role: pre.role,
+            attempts: 0,
+          };
+          if (pre.evidence) split.evidence = pre.evidence;
+          touch(split);
+          enumeration.items.push(split);
+          taken.add(key);
+          for (const url of urls) removed.add(url);
+          outcomes.split += 1;
+          let queued = false;
+          if (split.status === 'pending' && !options.only?.length) {
+            if (options.limit !== undefined && queue.length >= options.limit) deferredSplits += 1;
+            else {
+              queue.push(split);
+              queued = true;
+            }
+          }
+          log(`${itemTag(processed, item)} abgetrennt → ${key} (${urls.length} Adresse(n)${queued ? ', in diesem Lauf' : split.status === 'pending' ? ', bleibt offen' : `, ${split.status}`})`);
+        }
+        item.urls = item.urls.filter((url) => !removed.has(url));
       }
     }
     await checkpoint();
@@ -492,7 +550,7 @@ export async function runBulkImport(options: BulkRunOptions): Promise<{ summary:
       break;
     }
   }
-  if (runStatus === 'completed' && options.limit !== undefined && selected.length > queue.length) runStatus = 'limit-reached';
+  if (runStatus === 'completed' && (truncated || deferredSplits > 0)) runStatus = 'limit-reached';
   log(`Lauf ${runId} beendet: ${runStatus}${stopReason ? ` – ${stopReason}` : ''} · verarbeitet ${processed}/${queue.length} · ${Math.round(Math.max(0, clock() - startedClock) / 1000)} s`);
 
   const endedAt = now();

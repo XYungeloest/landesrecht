@@ -33,6 +33,26 @@ Importkomponenten“). Verbindliche Regeln für alle Importer: `docs/IMPORT_ARCH
 3. Schritt 13 erst nach `readiness` = READY und GO/No-Go-Checkliste (Muster `docs/RECHT_NRW_BULK_READINESS.md`).
 4. Schritte 14–17 (Remote-D1, R2-Upload, Deployment) nur mit gesonderter Freigabe; nie aus einem Bulk-Lauf heraus.
 
+## Erfahrungen aus dem West-Import (allgemeine Muster)
+
+Muster, die sich im ersten Bulkimport bewährt haben. Sie sind jurisdiktionsneutral formuliert; die NRW-Belege
+(`docs/RECHT_NRW_BULK_READINESS.md`, `data/audits/recht-nrw/`) dienen nur als Beispiel, nicht als Pflicht.
+
+| Muster | Warum | Wie (Bezug zum Schritt) |
+| --- | --- | --- |
+| **Fixpoint-Enumeration** | Eine Enumeration ist erst belastbar, wenn ein erneuter Rebuild aus denselben Eingaben (gecachte Sitemap/Indexantworten, gespeicherte Enumeration als Vorgänger, Manifest) fachlich nichts ändert. Ändert er etwas, war der gespeicherte Stand nicht der Fixpoint der Eingaben. | Schritt 4: Enumeration offline aus dem Abrufcache neu bauen, Fingerabdruck ohne Laufmetadaten vergleichen (`readiness`: „Enumerations-Fixpoint“, Schnittstelle `checkEnumerationFixpoint(root, area)`); Eingaben-Fingerabdrücke in der Enumerationsdatei ablegen, damit „dieselben Eingaben“ prüfbar bleibt. |
+| **Regeneration veralteter Bewertungen (stale)** | Jeder Manifesteintrag ist die Bewertung eines Parser-/Transformerstands – auch `excluded`, `needs-review`, `failed`, `not-at-baseline`. Steigt eine Version, sind sie neu zu bewerten, nicht nur die Importe. | Schritt 7/13: `--regenerate-stale` aus dem Cache, je Status zählen (Versionsreport); Altstände nur mit dokumentierter Legacy-Ausnahme (`legacy-exceptions.json`, Begründung, Freigabe, Textintegritätsnachweis). |
+| **import-regression** | Ein Reimport mit neuerem Parser kann eine früher übernommene Norm verlieren. Das darf nie stillschweigend passieren. | Reimport ohne Import = eigener Befund (`import-regression`, blockierend); Entscheidung `deliver-legacy` (gespeicherte Fassung bleibt, Textintegrität belegt) oder `depublish` – beides dokumentiert. |
+| **Parser-Residual-Report** | Nach der Transformation bleiben Reste der Quell-Landesbezeichnung (Fundstellen, amtliche Abkürzungen, Eigennamen) – teils gewollt, teils Regelwerkslücke. | Schritt 9: Reste nach Kontext klassifizieren (geschütztes Zitat, amtliche Abkürzung, Institution, Parserfehler, unklar); nur eindeutige Regeln ergänzen, nie pauschal ersetzen (Muster `scripts/audit-residuals.ts`). |
+| **Evidenzstufen** | Geltung am Stichtag wird aus Belegen abgeleitet; nicht jeder Beleg trägt eine Entscheidung. | Schritt 8: Beweisklassen `strong` / `supporting` / `insufficient` / `contradictory`; nur starke Belege entscheiden allein, Widersprüche gehen in die Review. |
+| **R2-Immutable-Archiv** | Rohquellen sind der Beweis; sie werden geschrieben, nie verändert. | Schritt 6/15: Objektschlüssel mit Hash, Umschlag je Objekt, `verified` erst nach Rücklesung; R2-Audit (Manifest ↔ Staging ↔ Listing, Byte-Stichprobe) als Readiness-Bedingung, „aktuell“ = nicht älter als das Manifest-Wasserzeichen. |
+| **D1 Apply-State** | Große Projektionen laufen in Batches; ein Abbruch darf keinen halben Zustand hinterlassen. | Schritt 14: Batches mit Basisprüfung und persistentem Apply-State (fortsetzbar), lokal vor remote, Lokal↔Remote-Check mit Zählern und Stichproben-Fingerabdrücken. |
+| **Search Golden Set** | Suchqualität ist nur mit festen Sollanfragen messbar. | Schritt 16: kuratierte Anfragen mit erwartetem Treffer (Recall@10, MRR, Top-1) je Match-Modus; Fehlschläge blockieren, ein älterer Stand ist ein Hinweis. |
+| **Full-/Fast-Audit** | Ein vollständiges Suchaudit dauert Minuten; für Zwischenstände genügt eine deterministische Stichprobe. | `--mode fast` (Seed, Stichprobe) im Alltag, `--mode full --write` vor der Freigabe; Readiness akzeptiert nur den Full-Report mit `writtenAt` ≥ Manifest-Wasserzeichen. |
+| **Review-Prioritäten und Arbeitslisten** | Tausende Befunde sind nicht Tausende Normen; gezählt und gruppiert wird, entschieden nie automatisch. | Schritt 12: Auswertung je Stammnorm (Blocker vs. nichtblockierend), Gruppierung nach Kategorie/Muster, priorisierte Arbeitslisten; Readiness prüft nur die Konsistenz Manifest ↔ Queue, nie den Bestand offener Fälle. |
+| **Deterministische Aktualität** | „Aktuell“ darf nicht von der Uhrzeit des Aufrufs abhängen. | Alle Audit-Reports tragen Zeitstempel und Zählfingerabdrücke; Readiness vergleicht gegen das Manifest-Wasserzeichen (jüngster `importedAt`) und die Bestandszahlen. |
+| **Referenzbaseline** | Vor der Freigabe wird ein Stand eingefroren und beschrieben (Versionen, Kennzahlen, Auditstatus, Einschränkungen). | Vorlage `docs/WEST_REFERENCE_BASELINE.md`; Readiness verlangt die Datei mit Kennzahlen-Abschnitt und meldet offene Platzhalter. |
+
 ## Was nicht vorschnell abstrahiert wird
 
 Code wird erst dann in `packages/importers/common` gehoben, wenn (a) die Semantik identisch ist, (b) mindestens zwei

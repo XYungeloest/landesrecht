@@ -24,12 +24,13 @@ import { join } from 'node:path';
 
 import type { EnumerationFile, SearchSignals } from '../common/enumeration.ts';
 import { decodeHtml } from '../common/fetcher.ts';
-import { compareSourceIdentity, type ImportManifest, type ManifestEntry } from '../common/manifest.ts';
+import { compareSourceIdentity, type EvidenceStrength, type ImportManifest, type ManifestEntry } from '../common/manifest.ts';
 import type { ReviewPriority } from '../common/review-priority.ts';
 import { plainTextOf, type OfflineSourceReader } from '../common/review-sources.ts';
 import { parseVersionPage } from '../common/version-page.ts';
 import { parseLrmbDocument } from './parser.ts';
-import { detectRepealStatements, matchRepealStatements, otherStatements, selfStatements, type RepealMatch, type RepealStatement } from './repeal-patterns.ts';
+import { detectRepealStatements, selfStatements, type RepealMatch, type RepealStatement } from './repeal-patterns.ts';
+import { buildSuccessorIndex, matchSuccessors, type SuccessorIndex, type SuccessorIndexScan } from './successor-index.ts';
 import { parseDecreeFromTitle, parseGazetteCitation } from './text-metadata.ts';
 
 export const HISTORICAL_GAP_SCHEMA = 'recht-nrw-historical-gap-analysis/1' as const;
@@ -56,6 +57,10 @@ export interface SuccessorEvidence {
   matched: RepealMatch['matched'];
   text: string;
   effective?: RepealStatement['effective'];
+  /** Belegte Wirksamkeit (P2) und Beweisklasse der Zuordnung (`lrmb/successor-index.ts`). */
+  effectiveDate?: string;
+  effectiveDerivation: string;
+  strength: EvidenceStrength;
 }
 
 export interface HistoricalGapCase {
@@ -85,7 +90,7 @@ export interface HistoricalGapAnalysis {
   generatedAt: string;
   baselineDate: string;
   note: string;
-  scanned: { lrmbPages: number; gazetteEntries: number; statementsOther: number; statementsSelf: number };
+  scanned: SuccessorIndexScan;
   summary: {
     cases: number;
     byReason: Record<string, number>;
@@ -116,17 +121,12 @@ export interface HistoricalGapInput {
   enumeration?: EnumerationFile;
   priorities: Map<string, ReviewPriority>;
   reader?: OfflineSourceReader;
+  /** Vorab gebauter Nachfolgebeleg-Index (Review-Report); sonst wird er aus dem Cache gebaut. */
+  successorIndex?: SuccessorIndex;
   root: string;
   baselineDate: string;
   now: string;
   log?: (message: string) => void;
-}
-
-interface IndexedStatement {
-  statement: RepealStatement;
-  citingUrl: string;
-  citingIdentity?: string;
-  citingTitle?: string;
 }
 
 export function gapReasonOf(message: string): GapReason {
@@ -161,56 +161,11 @@ export function classifyEvidence(gapCase: Pick<HistoricalGapCase, 'selfStatement
   return 'no-signal';
 }
 
-/**
- * Index aller Aufhebungs-/Ablösungsaussagen über andere Vorschriften im netzfreien Bestand (LRMB-Seiten
- * des Manifests und alle Ministerialblatt-Einträge des Caches). Schlüssel: genanntes Ausfertigungsdatum.
- */
-export async function buildSuccessorIndex(input: Pick<HistoricalGapInput, 'manifest' | 'reader' | 'log'> & { gazetteUrls?: readonly string[] }): Promise<{ byDate: Map<string, IndexedStatement[]>; scanned: { lrmbPages: number; gazetteEntries: number; statementsOther: number; statementsSelf: number } }> {
-  const byDate = new Map<string, IndexedStatement[]>();
-  const scanned = { lrmbPages: 0, gazetteEntries: 0, statementsOther: 0, statementsSelf: 0 };
-  if (!input.reader) return { byDate, scanned };
-  const sources: Array<{ url: string; identity?: string; title?: string; localSource?: string; gazette: boolean }> = [];
-  for (const entry of input.manifest.entries.filter((candidate) => candidate.sourceArea === 'lrmb')) {
-    const page = entry.rawDocuments.find((raw) => raw.role === 'version-page');
-    sources.push({ url: page?.url ?? entry.sourceUrl, identity: entry.sourceIdentity, title: entry.sourceTitle, gazette: false, ...(page?.localSource ? { localSource: page.localSource } : {}) });
-    for (const raw of entry.rawDocuments.filter((candidate) => candidate.role === 'gazette-amendment')) sources.push({ url: raw.url, identity: entry.sourceIdentity, title: `Ministerialblatt-Eintrag zu ${entry.sourceTitle.slice(0, 80)}`, gazette: true, ...(raw.localSource ? { localSource: raw.localSource } : {}) });
-  }
-  for (const url of input.gazetteUrls ?? []) if (!sources.some((source) => source.url === url)) sources.push({ url, gazette: true });
-  const seenUrls = new Set<string>();
-  for (const [index, source] of sources.entries()) {
-    if (seenUrls.has(source.url)) continue;
-    seenUrls.add(source.url);
-    if (input.log && index % 500 === 0) input.log(`Nachfolgebelege ${index + 1}/${sources.length}`);
-    const document = await input.reader.read(source.url, source.localSource);
-    if (!document || !/html/iu.test(document.contentType)) continue;
-    const text = plainTextOf(decodeHtml(document));
-    if (!text) continue;
-    if (source.gazette) scanned.gazetteEntries += 1;
-    else scanned.lrmbPages += 1;
-    const statements = detectRepealStatements(text);
-    scanned.statementsSelf += selfStatements(statements).length;
-    for (const statement of otherStatements(statements)) {
-      scanned.statementsOther += 1;
-      for (const reference of statement.references) {
-        if (!reference.date) continue;
-        const list = byDate.get(reference.date) ?? [];
-        const indexed: IndexedStatement = { statement, citingUrl: source.url };
-        if (source.identity) indexed.citingIdentity = source.identity;
-        if (source.title) indexed.citingTitle = source.title;
-        if (!list.some((existing) => existing.citingUrl === indexed.citingUrl && existing.statement.offset === statement.offset)) list.push(indexed);
-        byDate.set(reference.date, list);
-      }
-    }
-  }
-  return { byDate, scanned };
-}
-
 export async function analyzeHistoricalGaps(input: HistoricalGapInput): Promise<HistoricalGapAnalysis> {
   const gaps = input.manifest.entries.filter((entry) => entry.sourceArea === 'lrmb' && entry.findings.some((finding) => finding.code === 'validity-undetermined')).sort((left, right) => compareSourceIdentity(left.sourceIdentity, right.sourceIdentity));
   const signalsByIdentity = new Map<string, SearchSignals>();
   for (const item of input.enumeration?.items ?? []) if (item.sourceIdentity && item.search) signalsByIdentity.set(item.sourceIdentity, item.search);
-  const gazetteUrls = input.manifest.entries.flatMap((entry) => entry.rawDocuments.filter((raw) => raw.role === 'gazette-amendment').map((raw) => raw.url));
-  const successors = await buildSuccessorIndex({ manifest: input.manifest, gazetteUrls, ...(input.reader ? { reader: input.reader } : {}), ...(input.log ? { log: input.log } : {}) });
+  const successors = input.successorIndex ?? (await buildSuccessorIndex({ manifest: input.manifest, now: input.now, ...(input.reader ? { reader: input.reader } : {}), ...(input.log ? { log: input.log } : {}) }));
 
   const cases: HistoricalGapCase[] = [];
   for (const [index, entry] of gaps.entries()) {
@@ -250,19 +205,15 @@ export async function analyzeHistoricalGaps(input: HistoricalGapInput): Promise<
     const baseCitation = audit?.changeNote?.base?.text ?? (footerCitation ? parseGazetteCitation(footerCitation)?.text : undefined);
     const baseParsed = baseCitation ? parseGazetteCitation(baseCitation) : undefined;
     const smblNumber = smblNumberOf(entry, classificationNumber);
-    const target = { ...(issuedOn ? { issuedOn } : {}), ...(smblNumber ? { smblNumber } : {}), ...(baseParsed?.page ? { gazettePage: baseParsed.page, gazetteYear: baseParsed.year } : {}), ...(audit?.head?.fileReference ? { fileReference: audit.head.fileReference } : {}), title: titleDecree?.title ?? entry.sourceTitle };
-    const successorEvidence: SuccessorEvidence[] = [];
-    for (const indexed of issuedOn ? successors.byDate.get(issuedOn) ?? [] : []) {
-      if (indexed.citingIdentity === entry.sourceIdentity) continue;
-      for (const match of matchRepealStatements([indexed.statement], target)) {
-        const evidence: SuccessorEvidence = { citingUrl: indexed.citingUrl, kind: match.statement.kind, level: match.level, matched: match.matched, text: match.statement.text.slice(0, 400) };
-        if (indexed.citingIdentity) evidence.citingIdentity = indexed.citingIdentity;
-        if (indexed.citingTitle) evidence.citingTitle = indexed.citingTitle;
-        if (match.statement.effective) evidence.effective = match.statement.effective;
-        successorEvidence.push(evidence);
-      }
-    }
-    successorEvidence.sort((left, right) => (left.level === right.level ? left.citingUrl.localeCompare(right.citingUrl) : left.level === 'strong' ? -1 : 1));
+    const target = { identity: entry.sourceIdentity, url: entry.sourceUrl, ...(issuedOn ? { issuedOn } : {}), ...(smblNumber ? { smblNumber } : {}), ...(baseParsed?.page ? { gazettePage: baseParsed.page, gazetteYear: baseParsed.year } : {}), ...(audit?.head?.fileReference ? { fileReference: audit.head.fileReference } : {}), title: titleDecree?.title ?? entry.sourceTitle };
+    const successorEvidence: SuccessorEvidence[] = matchSuccessors(successors, target).map((match) => {
+      const evidence: SuccessorEvidence = { citingUrl: match.source.url, kind: match.statement.kind, level: match.level, matched: match.matched, text: match.statement.text.slice(0, 400), effectiveDerivation: match.effective.derivation, strength: match.strength };
+      if (match.source.identity) evidence.citingIdentity = match.source.identity;
+      if (match.source.title) evidence.citingTitle = match.source.title;
+      if (match.statement.effective) evidence.effective = match.statement.effective;
+      if (match.effective.date) evidence.effectiveDate = match.effective.date;
+      return evidence;
+    });
 
     const amendments = audit?.amendments ?? [];
     const decreeDates = amendments.map((amendment) => amendment.note.decreeDate).filter((date): date is string => Boolean(date)).sort();

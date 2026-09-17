@@ -6,11 +6,11 @@ Gruppen gesamt: 312; gezeigt: 100.
 
 | Rang | Gruppe | Stammnormen | Vorkommen | blockierend | Beispiele |
 | --- | --- | --- | --- | --- | --- |
-| 1 | lrmb unknown-inline-element:Unbekanntes Inline-Element <p> im LRMB-Text | 287 | 287 | 287 | term:23386, term:23397, term:23470, term:23508, term:23509 |
-| 2 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → # | 185 | 185 | 0 | term:23284, term:23315, term:23368, term:23413, term:23414 |
-| 3 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → # | 120 | 120 | 0 | term:23406, term:23428, term:23439, term:23463, term:23500 |
+| 1 | lrmb unknown-inline-element:Unbekanntes Inline-Element <p> im LRMB-Text | 288 | 288 | 288 | term:23386, term:23397, term:23470, term:23508, term:23509 |
+| 2 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → # | 186 | 186 | 0 | term:23284, term:23315, term:23368, term:23413, term:23414 |
+| 3 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → # | 121 | 121 | 0 | term:23406, term:23428, term:23439, term:23463, term:23500 |
 | 4 | lrmb structure-duplicate-number:Doppelte Nummern im selben Gliederungsraum: # | 67 | 67 | 67 | term:23300, term:23404, term:23428, term:23439, term:23455 |
-| 5 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 41 | 41 | 0 | term:23300, term:23360, term:23560, term:23601, term:23603 |
+| 5 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 42 | 42 | 0 | term:23300, term:23360, term:23560, term:23601, term:23603 |
 | 6 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → # | 37 | 37 | 0 | term:23525, term:23628, term:23639, term:23798, term:24076 |
 | 7 | lrmb structure-duplicate-number:Doppelte Nummern im selben Gliederungsraum: #, # | 34 | 34 | 34 | term:23491, term:23508, term:23829, term:23867, term:23902 |
 | 8 | lrmb structure-duplicate-number:Doppelte Nummern im selben Gliederungsraum: #, #, # | 29 | 29 | 29 | term:23405, term:23406, term:23515, term:23545, term:23602 |
@@ -33,30 +33,30 @@ Gruppen gesamt: 312; gezeigt: 100.
 | 25 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # | 9 | 9 | 0 | term:23405, term:23462, term:23510, term:23914, term:24199 |
 | 26 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 9 | 9 | 0 | term:23457, term:24133, term:24907, term:25101, term:25362 |
 | 27 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 9 | 9 | 0 | term:24053, term:24334, term:24608, term:24656, term:24967 |
-| 28 | lrmb integrity-parse-textLength | 8 | 8 | 8 | term:30965, term:31255, term:31632, term:32167, term:32321 |
+| 28 | lrmb text-dangling-footnote | 9 | 9 | 9 | term:23624, term:24664, term:25094, term:25238, term:25861 |
 | 29 | lrmb structure-duplicate-number:Doppelte Nummern im selben Gliederungsraum: #, #, #, #, # | 8 | 8 | 8 | term:24053, term:24330, term:24859, term:25046, term:25343 |
 | 30 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → #; Nummernfolge (Beginn) → #; Nummernfolge (Beginn) → # | 8 | 8 | 0 | term:23499, term:25241, term:26069, term:29837, term:29921 |
-| 31 | lrmb text-dangling-footnote | 8 | 8 | 8 | term:23624, term:24664, term:25094, term:25238, term:25861 |
-| 32 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 7 | 7 | 0 | term:24529, term:25778, term:28944, term:30026, term:32455 |
-| 33 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummernfolge (Beginn) → #; Nummernfolge (Be | 7 | 7 | 0 | term:23860, term:24211, term:24257, term:24686, term:24913 |
-| 34 | lrmb integrity-parse-duplicateUnits | 6 | 6 | 6 | term:25014, term:29520, term:31288, term:33008, term:33614 |
-| 35 | lrmb integrity-parse-numberedUnits | 6 | 6 | 6 | term:29520, term:31255, term:31303, term:32100, term:32779 |
-| 36 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer # | 6 | 6 | 0 | term:24544, term:25041, term:25264, term:25368, term:26162 |
-| 37 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23528, term:25326, term:25921, term:30027, term:33160 |
-| 38 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23512, term:23627, term:29074, term:31978, term:32721 |
-| 39 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:24150, term:28843, term:28941, term:29160, term:31915 |
-| 40 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23763, term:24684, term:25984, term:26443, term:26444 |
-| 41 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23617, term:24207, term:24464, term:25165, term:26314 |
-| 42 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummernfolge (Beginn) → #; Nummer # ohne üb | 6 | 6 | 0 | term:24515, term:24633, term:25210, term:25543, term:25784 |
-| 43 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → #; Nummernfolge (Beginn) → #; Nummernfolge (Beginn) → #;  | 6 | 6 | 0 | term:24385, term:25105, term:25254, term:32251, term:32423 |
-| 44 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # | 6 | 6 | 0 | term:23404, term:23913, term:24289, term:24294, term:24910 |
-| 45 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:25389, term:25566, term:26324, term:26451, term:28771 |
-| 46 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:25173, term:25263, term:25556, term:31887, term:33827 |
-| 47 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:23408, term:24205, term:26318, term:26334, term:33167 |
-| 48 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:25019, term:30191, term:30943, term:32685, term:33260 |
-| 49 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 5 | 5 | 0 | term:23278, term:24262, term:25058, term:28999, term:29464 |
-| 50 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 5 | 5 | 0 | term:23317, term:24048, term:24420, term:24632, term:24932 |
-| 51 | lrmb text-unreferenced-footnote | 5 | 5 | 0 | term:29520, term:29840, term:29873, term:31286, term:32138 |
+| 31 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 7 | 7 | 0 | term:24529, term:25778, term:28944, term:30026, term:32455 |
+| 32 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummernfolge (Beginn) → #; Nummernfolge (Be | 7 | 7 | 0 | term:23860, term:24211, term:24257, term:24686, term:24913 |
+| 33 | lrmb integrity-parse-duplicateUnits | 6 | 6 | 6 | term:25014, term:29520, term:31288, term:33008, term:33614 |
+| 34 | lrmb integrity-parse-textLength | 6 | 6 | 6 | term:30965, term:31632, term:32167, term:32473, term:32597 |
+| 35 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer # | 6 | 6 | 0 | term:24544, term:25041, term:25264, term:25368, term:26162 |
+| 36 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23528, term:25326, term:25921, term:30027, term:33160 |
+| 37 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23512, term:23627, term:29074, term:31978, term:32721 |
+| 38 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:24150, term:28843, term:28941, term:29160, term:31915 |
+| 39 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23763, term:24684, term:25984, term:26443, term:26444 |
+| 40 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 6 | 6 | 0 | term:23617, term:24207, term:24464, term:25165, term:26314 |
+| 41 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummernfolge (Beginn) → #; Nummer # ohne üb | 6 | 6 | 0 | term:24515, term:24633, term:25210, term:25543, term:25784 |
+| 42 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → #; Nummernfolge (Beginn) → #; Nummernfolge (Beginn) → #;  | 6 | 6 | 0 | term:24385, term:25105, term:25254, term:32251, term:32423 |
+| 43 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge (Beginn) → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # | 6 | 6 | 0 | term:23404, term:23913, term:24289, term:24294, term:24910 |
+| 44 | lrmb text-unreferenced-footnote | 6 | 6 | 0 | term:29520, term:29840, term:29873, term:30991, term:31286 |
+| 45 | lrmb integrity-parse-numberedUnits | 5 | 5 | 5 | term:29520, term:31303, term:32100, term:32779, term:33676 |
+| 46 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:25389, term:25566, term:26324, term:26451, term:28771 |
+| 47 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:25173, term:25263, term:25556, term:31887, term:33827 |
+| 48 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:23408, term:24205, term:26318, term:26334, term:33167 |
+| 49 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer #; Numme | 5 | 5 | 0 | term:25019, term:30191, term:30943, term:32685, term:33260 |
+| 50 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 5 | 5 | 0 | term:23278, term:24262, term:25058, term:28999, term:29464 |
+| 51 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; Nummernfolge # → #; N | 5 | 5 | 0 | term:23317, term:24048, term:24420, term:24632, term:24932 |
 | 52 | lrmb structure-duplicate-number:Doppelte Nummern im selben Gliederungsraum: #, #, #, #, #, #, #, #, # | 4 | 4 | 4 | term:23512, term:25155, term:25581, term:29140 |
 | 53 | lrmb structure-duplicate-number:Doppelte Nummern im selben Gliederungsraum: #, #, #, #, #, #, #, #, #, #, # | 4 | 4 | 4 | term:24506, term:24619, term:24936, term:29317 |
 | 54 | lrmb structure-numbering:Auffälligkeiten der Nummernfolge: Nummer # ohne übergeordnete Nummer #; Nummer # ohne übergeordnete Nummer # | 4 | 4 | 0 | term:24413, term:24422, term:31966, term:32585 |

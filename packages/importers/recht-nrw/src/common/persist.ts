@@ -95,6 +95,29 @@ export async function writeInitialNorm(writer: FileWriter, record: NormRecord, b
   return null;
 }
 
+/**
+ * Kontrollierte Depublikation einer Ausgangsfassung (dokumentierte Legacy-Ausnahme `depublish`): entfernt das
+ * Normverzeichnis atomar (Umbenennung in ein Sicherungsverzeichnis, dann Löschung; ein Abbruch dazwischen wird
+ * von `recoverInterruptedNormWrites` bereinigt). Wie der Initialimport rührt sie fremde Fassungen nie an:
+ * liegen weitere Fassungen als `versions/<Stichtag>.json` vor, geschieht nichts (Befund).
+ */
+export async function depublishInitialNorm(writer: FileWriter, slug: string, baseline: string): Promise<ImportFinding | null> {
+  const directory = normsDirectory(writer.root);
+  const normDir = join(directory, slug);
+  const existingVersions = await readdir(join(normDir, 'versions')).catch(() => [] as string[]);
+  const foreignVersions = existingVersions.filter((file) => file !== `${baseline}.json`);
+  if (foreignVersions.length > 0) return { severity: 'error', code: 'existing-versions', message: `Für ${slug} liegen weitere Fassungen vor (${foreignVersions.join(', ')}); die Depublikation der Ausgangsfassung entfernt nichts` };
+  const exists = await readdir(normDir).then(() => true, () => false);
+  if (!exists) return null;
+  const token = `${process.pid}-${randomBytes(4).toString('hex')}`;
+  const backup = join(directory, `${NORM_BACKUP_PREFIX}${slug}-${token}`);
+  await rename(normDir, backup);
+  await rm(backup, { recursive: true, force: true });
+  const relative = ['content', 'norms', TARGET_JURISDICTION, slug].join('/');
+  writer.written.push(`${relative}/ (entfernt)`);
+  return null;
+}
+
 /** Stellt nach einem harten Abbruch einen konsistenten Normbestand her (Temp weg, Sicherung zurück). */
 export async function recoverInterruptedNormWrites(root: string): Promise<string[]> {
   const directory = normsDirectory(root);

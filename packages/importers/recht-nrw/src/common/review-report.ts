@@ -1,30 +1,38 @@
 /**
  * Review-Report des RECHT.NRW-Imports (`review-report`): Statistik der Review-Queue, reproduzierbare
- * Prioritäten, Arbeitslisten (Markdown + JSON), PDF-Fälle, historische LRMB-Lücken und die Gruppierung
- * der Rekonstruktionsqueue.
+ * Prioritäten, Arbeitslisten (Markdown + JSON), PDF-Fälle, historische LRMB-Lücken, Nachfolgebeleg-Index,
+ * Evidence Pass (Offline-Simulation der Geltungsentscheidung) und die Gruppierung der Rekonstruktionsqueue.
  *
- * Ausgaben (mit `--write`):
- *   data/audits/recht-nrw/review/review-analysis.json         Statistik (Kategorien, Kombinationen, Gruppen)
+ * Ausgaben (mit `--write`), deterministische Teilreports statt einer monolithischen Analyse:
+ *   data/audits/recht-nrw/review/summary.json                 Kennzahlen, Kategorien, Kombinationen, Dateiverzeichnis
+ *   data/audits/recht-nrw/review/by-category/<bereich>-<kategorie>.json, groups-*.json
+ *   data/audits/recht-nrw/review/by-source/<bereich>/<importstatus>/<dokumenttyp>.json
  *   data/audits/recht-nrw/review/priorities.json              Score je Stammnorm mit Faktoren
  *   data/audits/recht-nrw/review/work-lists/<liste>.{json,md} Top-Listen (historische Lücken, PDF-only,
  *                                                             Rekonstruktionen, Normativität, Institutionen, Parser)
  *   data/audits/recht-nrw/REVIEW_SUMMARY.md                   kompakte Zusammenfassung
  *   data/audits/recht-nrw/lrmb/PDF_FAELLE.{json,md}           PDF-Fälle mit Transkriptionspriorität
  *   data/audits/recht-nrw/lrmb/historical-gap.json + HISTORICAL_GAP_STATISTIK.md
+ *   data/audits/recht-nrw/lrmb/successor-index.json           Nachfolgebeleg-Index (liest die Pipeline, P2)
+ *   data/audits/recht-nrw/lrmb/EVIDENCE_PASS.{json,md}        Vorher/Nachher der Geltungsentscheidung (Simulation)
  *
  * Alles ist lesend und netzfrei (Quellcache im Offline-Modus). Es wird keine Entscheidung getroffen, kein
  * Review-Fall verändert und kein Belegstandard abgesenkt.
  */
+import { rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import type { CliOptions, Io } from '../cli.ts';
+import { EVIDENCE_PASS_MARKDOWN_PATH, EVIDENCE_PASS_PATH, renderEvidencePassMarkdown, runEvidencePass, type EvidencePassReport } from '../lrmb/evidence-pass.ts';
 import { analyzeHistoricalGaps, renderHistoricalGapMarkdown, type HistoricalGapAnalysis, type HistoricalGapCase } from '../lrmb/historical-gap.ts';
+import { LRMB_PARSER_VERSION } from '../lrmb/parser.ts';
 import { buildPdfCasesReport, renderPdfCasesMarkdown, type PdfCasesReport } from '../lrmb/pdf-cases.ts';
 import { buildReconstructionQueue, listRecipes, type ReconstructionQueue } from '../lrmb/reconstruction-queue.ts';
+import { buildSuccessorIndex, SUCCESSOR_INDEX_PATH, type SuccessorIndex } from '../lrmb/successor-index.ts';
 import { writeFileAtomic, writeJsonAtomic } from './atomic.ts';
 import { readEnumeration, type EnumerationFile, type SearchSignals } from './enumeration.ts';
 import { AUDIT_DIR, compareSourceIdentity, readManifest, SOURCE_AREAS, type ImportManifest, type SourceArea } from './manifest.ts';
-import { analyzeReviewQueue, type IdentitySummary, type ReviewAnalysis } from './review-analysis.ts';
+import { analyzeReviewQueue, splitReviewAnalysis, type IdentitySummary, type ReviewAnalysis } from './review-analysis.ts';
 import { buildReferenceCounts, reviewPriority, type PriorityBand, type ReviewPriority } from './review-priority.ts';
 import { readReviewQueue, type ReviewCategory, type ReviewItem, type ReviewQueue } from './review-queue.ts';
 import { createOfflineSourceReader, type OfflineSourceReader } from './review-sources.ts';
@@ -85,6 +93,10 @@ export interface ReviewReport {
   pdfCases: PdfCasesReport;
   historicalGaps: HistoricalGapAnalysis;
   reconstructionQueue: ReconstructionQueue;
+  /** Nachfolgebeleg-Index (P2), aus dem netzfreien Bestand; leer ohne Quellzugriff. */
+  successorIndex: SuccessorIndex;
+  /** Offline-Simulation der Geltungsentscheidung (nur mit Quellzugriff). */
+  evidencePass?: EvidencePassReport;
 }
 
 export interface ReviewReportInput {
@@ -151,8 +163,15 @@ export async function buildReviewReport(input: ReviewReportInput): Promise<Revie
 
   log('PDF-Fälle');
   const pdfCases = await buildPdfCasesReport({ manifest: input.manifest, priorities, now: input.now, ...(input.reader ? { reader: input.reader } : {}), log });
+  log('Nachfolgebeleg-Index');
+  const successorIndex = await buildSuccessorIndex({ manifest: input.manifest, now: input.now, ...(input.reader ? { reader: input.reader } : {}), log });
   log('Historische LRMB-Lücken');
-  const historicalGaps = await analyzeHistoricalGaps({ manifest: input.manifest, priorities, root: input.root, baselineDate: input.baselineDate, now: input.now, ...(input.enumerations.lrmb ? { enumeration: input.enumerations.lrmb } : {}), ...(input.reader ? { reader: input.reader } : {}), log });
+  const historicalGaps = await analyzeHistoricalGaps({ manifest: input.manifest, priorities, root: input.root, baselineDate: input.baselineDate, now: input.now, successorIndex, ...(input.enumerations.lrmb ? { enumeration: input.enumerations.lrmb } : {}), ...(input.reader ? { reader: input.reader } : {}), log });
+  let evidencePass: EvidencePassReport | undefined;
+  if (input.reader) {
+    log('Evidence Pass (Offline-Simulation der Geltungsentscheidung)');
+    evidencePass = await runEvidencePass({ manifest: input.manifest, reader: input.reader, successorIndex, baselineDate: input.baselineDate, parserVersion: LRMB_PARSER_VERSION, now: input.now, ...(input.enumerations.lrmb ? { enumeration: input.enumerations.lrmb } : {}), log });
+  }
   const gapByIdentity = new Map(historicalGaps.cases.map((gapCase) => [gapCase.sourceIdentity, gapCase]));
   const reconstructionQueue = buildReconstructionQueue(input.manifest, input.queue, input.recipes);
   const queueByIdentity = new Map(reconstructionQueue.items.map((item) => [item.sourceIdentity, item]));
@@ -192,7 +211,9 @@ export async function buildReviewReport(input: ReviewReportInput): Promise<Revie
 
   const priorityRows = [...priorities.entries()].filter(([identity]) => openIdentities.has(identity)).map(([sourceIdentity, priority]) => ({ sourceIdentity, sourceArea: (entries.get(sourceIdentity)?.sourceArea ?? analysis.identities.find((summary) => summary.sourceIdentity === sourceIdentity)?.sourceArea ?? 'lrmb') as SourceArea, ...priority })).sort((left, right) => right.score - left.score || compareSourceIdentity(left.sourceIdentity, right.sourceIdentity));
 
-  return { schemaVersion: REVIEW_REPORT_SCHEMA, generatedAt: input.now, baselineDate: input.baselineDate, analysis, priorities: priorityRows, bandDistribution, workLists, groupedLists, pdfCases, historicalGaps, reconstructionQueue };
+  const report: ReviewReport = { schemaVersion: REVIEW_REPORT_SCHEMA, generatedAt: input.now, baselineDate: input.baselineDate, analysis, priorities: priorityRows, bandDistribution, workLists, groupedLists, pdfCases, historicalGaps, reconstructionQueue, successorIndex };
+  if (evidencePass) report.evidencePass = evidencePass;
+  return report;
 }
 
 // --- Markdown ------------------------------------------------------------------------------------
@@ -264,7 +285,12 @@ export function renderReviewSummary(report: ReviewReport): string {
   lines.push(`- Historische Lücken (Statistik \`lrmb/HISTORICAL_GAP_STATISTIK.md\`, Analyse und Vorschläge \`lrmb/HISTORICAL_GAP_ANALYSE.md\`): ${gaps.cases} Fälle – Gründe ${Object.entries(gaps.byReason).map(([key, value]) => `${key} ${value}`).join(', ')}; Belegklassen ${Object.entries(gaps.byEvidenceClass).map(([key, value]) => `${key} ${value}`).join(', ')}`);
   lines.push(`- PDF-Fälle (\`lrmb/PDF_FAELLE.md\`): ${report.pdfCases.summary.cases} Stammnormen, ${report.pdfCases.summary.documents} PDF-Dateien, ${report.pdfCases.summary.pagesKnown} bekannte Seiten (Textlayer ${report.pdfCases.summary.textLayerDocuments}, Scan ${report.pdfCases.summary.scanDocuments}); Regelungsgehalt ${Object.entries(report.pdfCases.summary.byMainText).map(([key, value]) => `${key} ${value}`).join(', ')}`);
   const queue = report.reconstructionQueue;
-  lines.push(`- Rekonstruktionsqueue: ${queue.summary.total} (offen ${queue.summary.queued}, Rezeptentwurf ${queue.summary.recipeDraft}, unsicher ${queue.summary.blockedUncertain}, übernommen ${queue.summary.imported})${queue.groups ? `; Richtung ${Object.entries(queue.groups.byDirection).map(([key, value]) => `${key} ${value}`).join(', ')}; Änderungen ${Object.entries(queue.groups.byAmendments).map(([key, value]) => `${key}: ${value}`).join(', ')}; Quellen ${Object.entries(queue.groups.bySourceCompleteness).map(([key, value]) => `${key} ${value}`).join(', ')}` : ''}`);
+  lines.push(`- Rekonstruktionsqueue: ${queue.summary.total} (offen ${queue.summary.queued}, Rezeptentwurf ${queue.summary.recipeDraft}, unsicher ${queue.summary.blockedUncertain}, übernommen ${queue.summary.imported}); Gruppen ${Object.entries(queue.summary.byGroup).map(([key, value]) => `${key} ${value}`).join(', ')}${queue.groups ? `; Richtung ${Object.entries(queue.groups.byDirection).map(([key, value]) => `${key} ${value}`).join(', ')}; Änderungen ${Object.entries(queue.groups.byAmendments).map(([key, value]) => `${key}: ${value}`).join(', ')}; Quellen ${Object.entries(queue.groups.bySourceCompleteness).map(([key, value]) => `${key} ${value}`).join(', ')}` : ''}`);
+  lines.push(`- Nachfolgebeleg-Index (\`lrmb/successor-index.json\`): ${report.successorIndex.sources.length} zitierende Quellen, ${report.successorIndex.statements.length} Aussagen über andere Vorschriften (gescannt: ${report.successorIndex.scanned.lrmbPages} LRMB-Seiten, ${report.successorIndex.scanned.gazetteEntries} Ministerialblatt-Einträge)`);
+  if (report.evidencePass) {
+    const pass = report.evidencePass.summary;
+    lines.push(`- Evidence Pass (\`lrmb/EVIDENCE_PASS.md\`, Simulation ${report.evidencePass.parserVersion}): ${pass.simulated}/${pass.entries} simuliert; historische Lücken ${pass.historicalGap.before} → automatisch not-at-baseline ${pass.historicalGap.after.notAtBaseline}, verified-active-at-baseline ${pass.historicalGap.after.verifiedActive}, reconstruction-required ${pass.historicalGap.after.reconstructionRequired}, contradictory ${pass.historicalGap.after.contradictory}, weiterhin undetermined ${pass.historicalGap.after.undetermined}; Regeln P1 ${pass.rules.p1.decided}, P2 ${pass.rules.p2.decidedBefore + pass.rules.p2.decidedContinuity}, P3 ${pass.rules.p3.continuitySupported}, P4 ${pass.rules.p4.derivedInForce}`);
+  }
   lines.push('', '## Nächste fachliche Schritte', '');
   const steps: string[] = [];
   const parserTop = analysis.groups.parserFindings[0];
@@ -296,13 +322,13 @@ export async function runReviewReportCommand(options: CliOptions, root: string, 
   const reader = options.noSources ? undefined : createOfflineSourceReader(root, options.cacheDir ? { cacheDir: options.cacheDir } : {});
   const report = await buildReviewReport({ root, manifest, queue, enumerations, recipes: await listRecipes(root), baselineDate: options.baseline, now: new Date().toISOString(), limit: options.limit ?? 100, ...(reader ? { reader } : {}), log: (message) => io.print(`  … ${message}`) });
   if (options.json) {
-    io.print(JSON.stringify({ ...report, analysis: { ...report.analysis, identities: report.analysis.identities.length }, pdfCases: report.pdfCases.summary, historicalGaps: report.historicalGaps.summary }, null, 2));
+    io.print(JSON.stringify({ ...report, analysis: { ...report.analysis, identities: report.analysis.identities.length }, pdfCases: report.pdfCases.summary, historicalGaps: report.historicalGaps.summary, successorIndex: { generatedAt: report.successorIndex.generatedAt, scanned: report.successorIndex.scanned, sources: report.successorIndex.sources.length, statements: report.successorIndex.statements.length }, ...(report.evidencePass ? { evidencePass: report.evidencePass.summary } : {}) }, null, 2));
   } else {
     io.print(renderReviewSummary(report));
   }
   if (reader) io.print(`Quellen: ${reader.stats.local} versioniert, ${reader.stats.cache} aus dem Cache, ${reader.stats.missing} nicht verfügbar (kein Netzabruf).`);
   if (!options.write) {
-    io.print('Dry-run: nichts geschrieben (mit --write werden Analyse, Prioritäten, Arbeitslisten, REVIEW_SUMMARY.md, PDF-Fälle und Lückenanalyse geschrieben).');
+    io.print('Dry-run: nichts geschrieben (mit --write werden Teilreports, Prioritäten, Arbeitslisten, REVIEW_SUMMARY.md, PDF-Fälle, Lückenanalyse, Nachfolgebeleg-Index und Evidence Pass geschrieben).');
     return 0;
   }
   const written: string[] = [];
@@ -314,7 +340,11 @@ export async function runReviewReportCommand(options: CliOptions, root: string, 
     await writeFileAtomic(join(root, path), value);
     written.push(path);
   };
-  await writeJson(join(REVIEW_REPORT_DIR, 'review-analysis.json'), report.analysis);
+  const split = splitReviewAnalysis(report.analysis);
+  await writeJson(join(REVIEW_REPORT_DIR, 'summary.json'), split.summary);
+  for (const [file, value] of [...split.parts.entries()].sort(([left], [right]) => left.localeCompare(right))) await writeJson(join(REVIEW_REPORT_DIR, file), value);
+  // Frühere monolithische Analyse (9,8 MB) – ersetzt durch die Teilreports.
+  await rm(join(root, REVIEW_REPORT_DIR, 'review-analysis.json'), { force: true });
   await writeJson(join(REVIEW_REPORT_DIR, 'priorities.json'), { schemaVersion: 'recht-nrw-review-priorities/1', generatedAt: report.generatedAt, baselineDate: report.baselineDate, model: PRIORITY_MODEL, bandDistribution: report.bandDistribution, items: report.priorities });
   for (const list of report.workLists) {
     await writeJson(join(REVIEW_WORK_LIST_DIR, `${list.name}.json`), { schemaVersion: 'recht-nrw-review-work-list/1', generatedAt: report.generatedAt, ...list });
@@ -329,6 +359,11 @@ export async function runReviewReportCommand(options: CliOptions, root: string, 
   await writeText(PDF_CASES_MARKDOWN_PATH, renderPdfCasesMarkdown(report.pdfCases));
   await writeJson(HISTORICAL_GAP_PATH, report.historicalGaps);
   await writeText(HISTORICAL_GAP_MARKDOWN_PATH, renderHistoricalGapMarkdown(report.historicalGaps));
+  if (reader) await writeJson(SUCCESSOR_INDEX_PATH, report.successorIndex);
+  if (report.evidencePass) {
+    await writeJson(EVIDENCE_PASS_PATH, report.evidencePass);
+    await writeText(EVIDENCE_PASS_MARKDOWN_PATH, renderEvidencePassMarkdown(report.evidencePass));
+  }
   for (const path of written) io.print(`Geschrieben: ${path.replace(/\\/gu, '/')}`);
   return 0;
 }

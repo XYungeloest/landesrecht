@@ -107,6 +107,64 @@ export interface ReviewAnalysis {
   identities: IdentitySummary[];
 }
 
+export const REVIEW_ANALYSIS_SUMMARY_SCHEMA = 'recht-nrw-review-analysis-summary/1' as const;
+export const REVIEW_ANALYSIS_PART_SCHEMA = 'recht-nrw-review-analysis-part/1' as const;
+
+/**
+ * Deterministische Teilreports statt einer monolithischen `review-analysis.json` (ohne Informationsverlust):
+ *   summary.json                         Kennzahlen, Status, Bereiche, Kategorien (ohne Schlüsselmuster), Kombinationen,
+ *                                        Verteilung, Dateiverzeichnis
+ *   by-category/<bereich>-<kategorie>.json  Kategorieanalyse mit Schlüsselmustern und allen betroffenen Stammnormen
+ *   by-category/groups-*.json            gruppierte Sichten (Institutionen, Parserbefunde, Anlagen)
+ *   by-source/<bereich>/<importstatus>/<dokumenttyp>.json  Stammnormen-Zusammenfassungen je Bereich, Importstatus, Dokumenttyp
+ */
+export interface ReviewAnalysisParts {
+  summary: {
+    schemaVersion: typeof REVIEW_ANALYSIS_SUMMARY_SCHEMA;
+    generatedAt: string;
+    totals: ReviewAnalysis['totals'];
+    byStatus: ReviewAnalysis['byStatus'];
+    byArea: ReviewAnalysis['byArea'];
+    byCategory: Array<Omit<CategoryAnalysis, 'keys'> & { file: string; keyPatterns: number }>;
+    combinations: ReviewAnalysis['combinations'];
+    findingsPerIdentity: ReviewAnalysis['findingsPerIdentity'];
+    groups: { institutionTerms: number; parserFindings: number; attachments: number };
+    files: string[];
+  };
+  /** Relativer Pfad (unter dem Reportverzeichnis) → Inhalt. */
+  parts: Map<string, unknown>;
+}
+
+const fileSafe = (value: string): string => value.replace(/[^a-z0-9-]+/giu, '-').toLowerCase();
+
+export function splitReviewAnalysis(analysis: ReviewAnalysis): ReviewAnalysisParts {
+  const parts = new Map<string, unknown>();
+  const byCategory: ReviewAnalysisParts['summary']['byCategory'] = [];
+  for (const category of analysis.byCategory) {
+    const file = `by-category/${fileSafe(category.sourceArea)}-${fileSafe(category.category)}.json`;
+    const { keys, ...rest } = category;
+    const identities = analysis.identities.filter((summary) => summary.sourceArea === category.sourceArea && summary.categories[category.category]).map((summary) => ({ sourceIdentity: summary.sourceIdentity, open: summary.categories[category.category]!.open, blocking: summary.categories[category.category]!.blocking, soleBlocker: summary.blockingCategories.length === 1 && summary.blockingCategories[0] === category.category, ...(summary.title ? { title: summary.title } : {}), ...(summary.importStatus ? { importStatus: summary.importStatus } : {}) }));
+    parts.set(file, { schemaVersion: REVIEW_ANALYSIS_PART_SCHEMA, generatedAt: analysis.generatedAt, part: 'category', ...rest, keys, identities });
+    byCategory.push({ ...rest, file, keyPatterns: keys.length });
+  }
+  parts.set('by-category/groups-institution-terms.json', { schemaVersion: REVIEW_ANALYSIS_PART_SCHEMA, generatedAt: analysis.generatedAt, part: 'groups', name: 'institutionTerms', groups: analysis.groups.institutionTerms });
+  parts.set('by-category/groups-parser-findings.json', { schemaVersion: REVIEW_ANALYSIS_PART_SCHEMA, generatedAt: analysis.generatedAt, part: 'groups', name: 'parserFindings', groups: analysis.groups.parserFindings });
+  parts.set('by-category/groups-attachments.json', { schemaVersion: REVIEW_ANALYSIS_PART_SCHEMA, generatedAt: analysis.generatedAt, part: 'groups', name: 'attachments', groups: analysis.groups.attachments });
+  const bySource = new Map<string, IdentitySummary[]>();
+  for (const summary of analysis.identities) {
+    const file = `by-source/${fileSafe(summary.sourceArea)}/${fileSafe(summary.importStatus ?? 'ohne-manifesteintrag')}/${fileSafe(summary.sourceDocumentType ?? 'ohne-dokumenttyp')}.json`;
+    bySource.set(file, [...(bySource.get(file) ?? []), summary]);
+  }
+  for (const [file, identities] of [...bySource.entries()].sort(([left], [right]) => left.localeCompare(right))) {
+    parts.set(file, { schemaVersion: REVIEW_ANALYSIS_PART_SCHEMA, generatedAt: analysis.generatedAt, part: 'identities', sourceArea: identities[0]!.sourceArea, importStatus: identities[0]!.importStatus ?? null, sourceDocumentType: identities[0]!.sourceDocumentType ?? null, identities: identities.sort((left, right) => compareSourceIdentity(left.sourceIdentity, right.sourceIdentity)) });
+  }
+  const files = ['summary.json', ...[...parts.keys()].sort()];
+  return {
+    summary: { schemaVersion: REVIEW_ANALYSIS_SUMMARY_SCHEMA, generatedAt: analysis.generatedAt, totals: analysis.totals, byStatus: analysis.byStatus, byArea: analysis.byArea, byCategory, combinations: analysis.combinations, findingsPerIdentity: analysis.findingsPerIdentity, groups: { institutionTerms: analysis.groups.institutionTerms.length, parserFindings: analysis.groups.parserFindings.length, attachments: analysis.groups.attachments.length }, files },
+    parts,
+  };
+}
+
 /** Meldungen ohne Einzelwerte, damit gleichartige Befunde zusammenfallen (nur Darstellung). */
 export function generalizeKey(key: string): string {
   return key

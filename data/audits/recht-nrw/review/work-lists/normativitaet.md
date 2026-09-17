@@ -2,7 +2,7 @@
 
 Dokumente, deren Normativität manuell zu entscheiden ist, geordnet nach Review-Priorität; Gründe aus dem Manifest.
 
-Gesamt: 2364 Stammnormen; gezeigt: 100. Score = Arbeitspriorität (kein Rechtsstatus), Bänder A ≥ 60, B ≥ 40, C ≥ 20, D darunter.
+Gesamt: 2365 Stammnormen; gezeigt: 100. Score = Arbeitspriorität (kein Rechtsstatus), Bänder A ≥ 60, B ≥ 40, C ≥ 20, D darunter.
 
 | Rang | Term | Bereich | Titel | Score | Blocker | weitere Befunde | Status | portaltyp | dokumenttyp | gruende | stichtag | Beispiel | Faktoren |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

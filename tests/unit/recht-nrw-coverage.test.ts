@@ -413,7 +413,7 @@ describe('RECHT.NRW Coverage: Rekonstruktionsqueue', () => {
       ['term:13', 15, 'blocked-uncertain', 'reconstruction-uncertain'],
       ['term:15', -10, 'queued', 'reconstruction-required'],
     ]);
-    expect(queue.summary).toEqual({ total: 6, queued: 2, recipeDraft: 1, imported: 1, blockedUncertain: 2 });
+    expect(queue.summary).toEqual({ total: 6, queued: 2, recipeDraft: 1, imported: 1, blockedUncertain: 2, byGroup: { 'recipe-ready': 0, 'likely-reconstructable': 0, 'source-incomplete': 3, uncertain: 2, blocked: 0, imported: 1 } });
     expect(queue.schemaVersion).toBe('recht-nrw-reconstruction-queue/1');
     expect(queue.note).toMatch(/keine rechtliche Bewertung/u);
 
@@ -421,7 +421,8 @@ describe('RECHT.NRW Coverage: Rekonstruktionsqueue', () => {
     expect(byId.get('term:10')).toEqual({
       sourceIdentity: 'term:10', title: 'Allgemeine Verwaltungsvorschrift zum Beamtenversorgungsgesetz', sourceDocumentType: 'allgemeine-verwaltungsvorschrift', category: 'reconstruction-required', status: 'queued',
       priority: priorityFor(entries()[0]!), amendments: 2, sourceCompleteness: 1, direction: 'reverse', estimatedSteps: 12,
-      recipePath: 'data/imports/recht-nrw/reconstructions/term-10.json', recipeExists: false, blockers: [],
+      recipePath: 'data/imports/recht-nrw/reconstructions/term-10.json', recipeExists: false, blockers: [], otherBlockingCategories: [],
+      group: 'source-incomplete', groupReasons: ['2 Änderung(en) ohne zugeordneten Ministerialblatt-Eintrag', '2 Änderung(en) ohne belegtes Inkrafttreten'],
     });
     expect(byId.get('term:11')).toMatchObject({ amendments: 2, recipeExists: true, recipePath: 'data/imports/recht-nrw/reconstructions/term-11.json' });
     expect(byId.get('term:11')!.sourceCompleteness).toBeUndefined();
@@ -434,7 +435,7 @@ describe('RECHT.NRW Coverage: Rekonstruktionsqueue', () => {
   it('liefert für einen Bestand ohne Rekonstruktionsfälle eine leere Queue', () => {
     const queue = buildReconstructionQueue(manifestOf([manifestEntry('lrmb', 'term:1')]), emptyReviewQueue(), new Set(['term:1']));
     expect(queue.items).toEqual([]);
-    expect(queue.summary).toEqual({ total: 0, queued: 0, recipeDraft: 0, imported: 0, blockedUncertain: 0 });
+    expect(queue.summary).toEqual({ total: 0, queued: 0, recipeDraft: 0, imported: 0, blockedUncertain: 0, byGroup: { 'recipe-ready': 0, 'likely-reconstructable': 0, 'source-incomplete': 0, uncertain: 0, blocked: 0, imported: 0 } });
   });
 });
 

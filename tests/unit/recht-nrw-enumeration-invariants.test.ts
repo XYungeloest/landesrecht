@@ -15,6 +15,7 @@ import { describe, expect, it } from 'vitest';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import {
   buildEnumeration,
+  checkEnumerationFixpoint,
   checkEnumerationInvariants,
   enumerationJsonText,
   enumerationStatusCounts,
@@ -100,7 +101,8 @@ describe('Enumeration: Regression term:32801 (eine Term-ID, ein aktiver Eintrag)
   it('führt nach dem Bulk genau einen aktiven Eintrag term:32801 mit dem Stand des aktiven Vorgängers; Restadressen beginnen erneut offen', () => {
     const previous = bulkStateAfterSeries();
     expect(findDuplicateIdentities(previous)).toEqual([]);
-    const rebuilt = buildEnumeration(input({ previous, manifest, now: NOW_B }));
+    const log: string[] = [];
+    const rebuilt = buildEnumeration(input({ previous, manifest, now: NOW_B, log: (line) => log.push(line) }));
 
     expect(rebuilt.crosscheck.ok).toBe(true);
     expect(rebuilt.crosscheck.duplicateIdentities).toBe(0);
@@ -113,13 +115,19 @@ describe('Enumeration: Regression term:32801 (eine Term-ID, ein aktiver Eintrag)
     expect(term).toMatchObject({ sourceIdentity: 'term:32801', status: 'done', attempts: 2, urls: [EINR_1, EINR_2], entryUrl: EINR_2, title: 'Coronaeinreiseverordnung', outcome: { importStatus: 'not-at-baseline' }, lastRunId: 'lauf-2' });
     expect(term.mergedInto).toBeUndefined();
 
-    // Restadressen außerhalb der Fassungsliste von term:32801: kein geerbter Stand, keine geerbte Identität.
+    // Restadressen außerhalb der Fassungsliste von term:32801: kein geerbter Stand vom Termeintrag, keine geerbte
+    // Identität; den (offenen) Stand trägt der abgetrennte Eintrag `…@2021-01-30` – samt seinem Laufmetadatum.
     const rest = byKey(rebuilt, 'stem:rechtsverordnung/verordnung-serie-0');
     expect(rest).toMatchObject({ status: 'pending', attempts: 0, urls: [SERIE_B, SERIE_A, SERIE_C].sort(), entryUrl: SERIE_A, title: 'Coronaschutzverordnung' });
     expect(rest.sourceIdentity).toBeUndefined();
     expect(rest.outcome).toBeUndefined();
-    expect(rest.lastRunId).toBeUndefined();
-    expect(rebuilt.crosscheck.notes).toContain('stem:rechtsverordnung/verordnung-serie-0: 3 Restadresse(n) außerhalb der Fassungsliste von term:32801; Eintrag beginnt erneut offen');
+    expect(rest.lastRunId).toBe('lauf-2');
+    expect(rebuilt.items.some((item) => item.key.includes('@'))).toBe(false);
+    // Einmalige Übergänge stehen im Protokoll, nicht in der Datei (sonst wäre kein zweiter Rebuild byteidentisch).
+    expect(log).toContain('stem:rechtsverordnung/verordnung-serie-0: 3 Restadresse(n) außerhalb der Fassungsliste von term:32801; Eintrag beginnt erneut offen');
+    expect(log).toContain('stem:rechtsverordnung/verordnung-serie-0: übernimmt den Stand des abgetrennten Eintrags stem:rechtsverordnung/verordnung-serie-0@2021-01-30 (pending, 0 Versuche)');
+    expect(log.at(-1)).toBe('Fixpunkt nach 1 Durchlauf/Durchläufen (Prüfdurchlauf 2 unverändert)');
+    expect(rebuilt.crosscheck.notes.filter((note) => note.includes('Restadresse'))).toEqual([]);
     expect(enumerationStatusCounts(rebuilt)).toEqual({ pending: 1, processing: 0, done: 1, review: 0, failed: 0, excluded: 0 });
   });
 
@@ -154,6 +162,33 @@ describe('Enumeration: Regression term:32801 (eine Term-ID, ein aktiver Eintrag)
     expect(byKey(repaired, 'stem:rechtsverordnung/verordnung-serie-0').sourceIdentity).toBeUndefined();
     expect(checkEnumerationInvariants(repaired, { manifestIdentities: new Set(['term:32801']) })).toEqual([]);
     expect(repaired.crosscheck.ok).toBe(true);
+  });
+
+  it('nach dem Fixpunkt und der Auflösung der Restadressen (term:32802) entsteht keine stille Dublette; der Rebuild bleibt byteidentisch', () => {
+    const first = buildEnumeration(input({ previous: bulkStateAfterSeries(), manifest, now: NOW_B }));
+    // Bulk-Lauf über die Restadressen (wie bulk-runner.ts): Einstiegsseite SERIE_A belegt term:32802 mit allen drei Adressen.
+    const rest = byKey(first, 'stem:rechtsverordnung/verordnung-serie-0');
+    Object.assign(rest, { sourceIdentity: 'term:32802', status: 'done', attempts: 1, outcome: { importStatus: 'not-at-baseline', parserVersion: 'recht-nrw-parser/1.1.0', transformerVersion: 'recht-nrw-transformer/2.1.0' }, updatedAt: NOW_B, lastRunId: 'lauf-3' });
+    const fullManifest = manifestOf([...manifest.entries, entry('term:32802', [SERIE_A, SERIE_B, SERIE_C])]);
+    const inputs = { manifest: fullManifest };
+    const log: string[] = [];
+    const rebuilt = buildEnumeration(input({ previous: first, ...inputs, now: '2026-09-17T00:00:00.000Z', log: (line) => log.push(line) }));
+    expect(rebuilt.items.map((item) => [item.key, item.status, item.mergedInto ?? null, item.urls])).toEqual([
+      ['term:32801', 'done', null, [EINR_1, EINR_2]],
+      ['term:32802', 'done', null, [SERIE_B, SERIE_A, SERIE_C].sort()],
+    ]);
+    expect(active(rebuilt, 'term:32801')).toHaveLength(1);
+    expect(active(rebuilt, 'term:32802')).toHaveLength(1);
+    expect(byKey(rebuilt, 'term:32802')).toMatchObject({ attempts: 1, title: 'Coronaschutzverordnung', outcome: { importStatus: 'not-at-baseline' }, lastRunId: 'lauf-3' });
+    expect(findDuplicateIdentities(rebuilt)).toEqual([]);
+    expect(checkEnumerationInvariants(rebuilt, { manifestIdentities: new Set(['term:32801', 'term:32802']) })).toEqual([]);
+    expect(rebuilt.items.some((item) => item.key.includes('@'))).toBe(false);
+    expect(enumerationStatusCounts(rebuilt)).toEqual({ pending: 0, processing: 0, done: 2, review: 0, failed: 0, excluded: 0 });
+    expect(log.filter((line) => line.includes('Restadresse'))).toEqual([]);
+    expect(log.at(-1)).toBe('Fixpunkt nach 1 Durchlauf/Durchläufen (Prüfdurchlauf 2 unverändert)');
+    expect(checkEnumerationFixpoint(rebuilt, input(inputs))).toMatchObject({ fixpoint: true, differences: [], transitions: [] });
+    const again = buildEnumeration(input({ previous: rebuilt, ...inputs, now: '2026-09-18T00:00:00.000Z' }));
+    expect(enumerationJsonText(again)).toBe(enumerationJsonText(rebuilt));
   });
 
   it('ohne Manifest gilt der erste aktive Eintrag; der Stub wird nie bevorzugt', () => {
@@ -226,10 +261,11 @@ describe('Enumeration: Invarianten des Rebuilds', () => {
     Object.assign(byKey(previous, 'stem:rechtsverordnung/alpha-verordnung'), { mergedInto: 'term:77', status: 'done', attempts: 1 });
     // Beide Adressen sind zusätzlich zwei fremden Termen zugeordnet (Konflikt) – sie bleiben beim Slug-Stamm.
     const manifest = manifestOf([entry('term:1', [A, B]), entry('term:2', [A, B])]);
-    const rebuilt = buildEnumeration(input({ sitemap: { pages: 1, urls: [A, B] }, search: { total: 0, hits: [] }, manifest, previous, now: NOW_B }));
+    const log: string[] = [];
+    const rebuilt = buildEnumeration(input({ sitemap: { pages: 1, urls: [A, B] }, search: { total: 0, hits: [] }, manifest, previous, now: NOW_B, log: (line) => log.push(line) }));
     expect(byKey(rebuilt, 'stem:rechtsverordnung/alpha-verordnung')).toMatchObject({ status: 'pending', attempts: 0, urls: [A, B] });
     expect(byKey(rebuilt, 'stem:rechtsverordnung/alpha-verordnung').mergedInto).toBeUndefined();
-    expect(rebuilt.crosscheck.notes).toContain('stem:rechtsverordnung/alpha-verordnung: Zusammenführung in term:77 ohne aktiven Eintrag und ohne Manifesteintrag; Eintrag beginnt erneut offen');
+    expect(log).toContain('stem:rechtsverordnung/alpha-verordnung: Zusammenführung in term:77 ohne aktiven Eintrag und ohne Manifesteintrag; Eintrag beginnt erneut offen');
     expect(checkEnumerationInvariants(rebuilt, { manifestIdentities: new Set(['term:1', 'term:2']) })).toEqual([]);
     // Ist das Ziel im Manifest, bleibt der Stub bestehen und das Ziel wird aus dem Manifest geführt.
     const withTarget = buildEnumeration(input({ sitemap: { pages: 1, urls: [A, B] }, search: { total: 0, hits: [] }, manifest: manifestOf([...manifest.entries, entry('term:77', [A])]), previous, now: NOW_B }));
