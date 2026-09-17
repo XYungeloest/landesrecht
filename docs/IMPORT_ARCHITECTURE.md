@@ -82,3 +82,59 @@ Analog: Schleswig-Holstein → NSH, Bayern → BayWü, Sachsen/OstRecht → Ost.
    Fälle verschwinden bei Reimport nicht.
 9. Slugvergabe über `TransformContext.reserveSlug` (eindeutig je Jurisdiktion, Kollision → Review).
 10. Nach dem Schreiben: `npm run content:check`, `npm run d1:schema:check`, `npm run test`, Importaudit.
+
+## Gemeinsame Infrastruktur der Adapter — bekannte Schuld (Stand 2026-09-17)
+
+Die Adapter `juris-sh` und `bayernrecht` beziehen generische Infrastruktur nicht aus
+`@landesrecht/importer-common`, sondern aus dem West-Adapter:
+
+| Bezogen | Aus | Genutzt von |
+| --- | --- | --- |
+| `common/atomic.ts` (atomares Schreiben, Zustandsfehler) | `@landesrecht/importer-recht-nrw` | `juris-sh` 6 Module, `bayernrecht` 5 Module |
+| `common/fetcher.ts` (schonender Abruf, Cache, Höflichkeitsregime) | `@landesrecht/importer-recht-nrw` | beide, über einen Wrapper |
+
+Das ist die falsche Richtung. `recht-nrw` ist ein **Quelladapter**, kein Infrastrukturpaket; beide
+Bausteine sind portalunabhängig und gehören nach `importer-common`. In der jetzigen Form hängt jeder
+neue Adapter am eingefrorenen West-Paket, und eine Änderung dort wirkt auf Länder, die mit
+Nordrhein-Westfalen nichts zu tun haben.
+
+**Warum es trotzdem so steht:** Der Umzug würde die Importe in `packages/importers/recht-nrw/`
+ändern. West ist eingefroren; während des NSH-/BayWü-Laufs war jede Änderung daran ausgeschlossen.
+Eine Kopie der Bausteine in jeden Adapter zu legen wäre die schlechtere Lösung gewesen — drei
+Fassungen desselben Codes, die auseinanderlaufen.
+
+**Auflösung:** eigener Schritt, außerhalb eines Länderlaufs, als Pipeline-Upgrade nach Kategorie 4
+der Freeze-Regeln (`docs/WEST_REFERENCE_BASELINE.md`): `atomic.ts` und `fetcher.ts` nach
+`importer-common` verschieben, die Importe in allen drei Adaptern nachziehen, Testlauf, und die
+Fingerabdrücke des West-Bestands vorher und nachher vergleichen — der Bestand selbst darf sich dabei
+nicht ändern.
+
+Gemessen am 2026-09-17: **13 Module** mit einer tatsächlichen `import`-Anweisung auf das West-Paket
+(`juris-sh` 7, `bayernrecht` 6; darin je ein `fetcher`-Wrapper). Die übrigen Fundstellen im Quelltext
+sind Verweise in Kommentaren und zählen nicht.
+
+## Die Naht zwischen den Bausteinen (Stand 2026-09-18)
+
+Der BayWü-Aufbau hat dieselbe Lehre zweimal erteilt, und sie gilt für jeden weiteren Adapter:
+
+**Ein Baustein, der für sich geprüft ist, ist nicht geprüft.** Parser und Beispielkorpus entstanden
+getrennt. Der Parser bestand 50 eigene Prüfungen gegen vier Exportinstanzen; beim ersten gemeinsamen
+Lauf scheiterten **18 von 28** Korpuspaketen an elf Strukturen, die die vier Instanzen nicht zeigten.
+Danach liefen alle 28 durch den Parser – und scheiterten geschlossen an der Schemaprüfung, weil der
+Abrufzeitstempel (`2026-09-17T08:50:40.682Z`) unverändert in `SourceReference.retrievedAt`
+durchgereicht wurde, wo `legal-core` ein Tagesdatum verlangt. Auch das sah keiner der 64 Parsertests:
+Sie prüften die **Gestalt** der Quellenreferenz, nie ihre **Gültigkeit** nach dem Schema.
+
+Daraus zwei verbindliche Regeln:
+
+1. **Jeder Adapter braucht eine Prüfung über den ganzen Weg** – Rohpaket → Parser → Überleitung →
+   `validateNormRecord` – über den vollständigen Beispielkorpus, nicht über ausgewählte Fixtures.
+   Sie gehört in die Testsuite, nicht in ein Prüfskript nebenher
+   (`tests/unit/bayernrecht-transform.test.ts`, „Der ganze Weg").
+2. **Wer eine Struktur aus `legal-core` erzeugt, prüft sie gegen `legal-core`** – `parseSourceReference`,
+   `parseNormMeta`, `validateNormRecord` –, statt nur ihre Felder zu vergleichen.
+
+Die Umwandlung des Abrufzeitpunkts steht seitdem als `retrievalDate()` in
+`@landesrecht/importer-common/pipeline.ts`, damit sie kein Adapter erneut übersieht. Sie bricht bei
+einem Wert ab, der weder Zeitstempel noch Tagesdatum ist – blindes `slice(0, 10)` machte daraus ein
+stilles Falschdatum.

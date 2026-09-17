@@ -86,6 +86,10 @@ npm run import:recht-nrw:enumerate -- --area lrgv|lrmb [--write]   # vollständi
 npm run import:recht-nrw:bulk -- --area lrgv|lrmb [--limit n]      # Bulk-Runner (Dry-run ohne --write)
 npm run import:recht-nrw:readiness                # READY / NOT READY für den Bulkimport
 npm run import:recht-nrw:search-audit             # Suchintegrität des West-Bestands
+npm run import:bayernrecht:enumerate -- --area landesrecht|vwv [--offline] # BayWü: Enumeration (Fixpunkt)
+npm run import:bayernrecht:sample [-- --write]    # BayWü: Beispielkorpus (28 Normen)
+npm run import:juris-sh:events [-- --write]        # NSH: Ereignisregister nach dem Stichtag (nur Cache, kein Netz)
+npm run import:juris-sh:review                    # NSH: offene Review-Fälle
 npm run d1:plan -- --jurisdiction west            # SQL-Batches für Remote-D1 (kein Remote-Zugriff)
 npm run d1:scale-test                             # D1-Skalierungstest mit synthetischem Bestand
 ```
@@ -128,9 +132,27 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/RECHT_NRW_BULK_READINESS.md` | Bereitschaft: Policies (undatierte LRMB-Datensätze, PDF), GO/No-Go-Checkliste, Befehle und Reihenfolge des Bulk-Laufs |
 | `docs/WEST_REFERENCE_BASELINE.md` | Eingefrorener West-Referenzstand: Kennzahlen, Auditstände, Human Approval, Freeze-Regeln |
 | `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md` | Wiederverwendbare Checkliste für den Import einer weiteren Jurisdiktion |
+| `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` | Warum das konsolidierte SH-Landesrecht nicht abgerufen wird (robots.txt), geprüfte Alternativen |
+| `docs/SCHLESWIG_HOLSTEIN_SOURCE_DISCOVERY.md` | juris SH: Dokumentmodell, Identität, Fassungen, Enumerationspfade (Befund, nicht Bauplan) |
+| `docs/SCHLESWIG_HOLSTEIN_PUBLICATION_DISCOVERY.md` | GVOBl./Amtsbl. Schl.-H.: Adressschemata, Formatwechsel 2024/2025, PDF-Befunde |
+| `docs/SCHLESWIG_HOLSTEIN_TRANSFORMATION.md` | Überleitung Schleswig-Holstein → Niedersachsen-Holstein: Regelwerk, Schutzmuster, fail-closed-Prüfung |
+| `docs/SCHLESWIG_HOLSTEIN_EVENT_LEDGER.md` | Ereignisregister nach dem Stichtag aus den amtlichen Registern und Verkündungsblättern |
+| `docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md` | Bereitschaft des NSH-Ausgangsimports: NOT READY, sperrender Punkt, GO/No-Go |
+| `docs/BAYERN_SOURCE_DISCOVERY.md` | BAYERN.RECHT: XML-Export (zwei DTDs), Enumeration, fehlende Fassungshistorie, Lizenz, Verkündungsorgane |
+| `docs/BAYERN_PARSER.md` | BayWü-Parser: Abdeckung beider DTDs, Annahmen, Abbruchbedingungen, Befundcodes |
+| `docs/BAYERN_TRANSFORMATION.md` | Überleitung Bayern → Bayern-Württemberg: konstruierte Idempotenz, Adjektiv- und Abkürzungsentscheidung |
+| `docs/BAYERN_BULK_READINESS.md` | Bereitschaft des BayWü-Ausgangsimports: NOT READY, offene Punkte, GO/No-Go |
 | `docs/SEARCH.md` | Suchplan (and-first), Golden Set, Fast-/Full-Audit |
 | `docs/DEPLOYMENT.md` | GitLab-CI, Cloudflare-Ressourcen, D1-Projektion, Variablen |
 
-Stand der Quelladapter: **West / NRW – Referenzbestand eingefroren** (`docs/WEST_REFERENCE_BASELINE.md`,
-Stichtag 2023-12-01, 1 482 Normen, Human Approval abgeschlossen). **Nächster Quelladapter:
-Niedersachsen-Holstein (`nsh`).** Ost bleibt lesend (OstRecht ist externe Source of Truth).
+## Stand der Quelladapter
+
+| Land | Quelle | Stand |
+| --- | --- | --- |
+| West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
+| NSH | juris Schleswig-Holstein | **kein Normbestand – Quelle gesperrt.** Überleitung, Zustandsschicht und Ereignisregister stehen; das konsolidierte Portal untersagt automatisierten Zugriff (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
+| Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
+| BayWü | BAYERN.RECHT | **Vorbereitung, lokal.** Quelle zugänglich (`Allow: /`), XML-Export je Norm; Enumeration 2 413 Dokumente (Fixpunkt), Beispielkorpus 28 Normen, Parser für beide DTDs. Kein Bestand, keine Cloudflare-Ressourcen (`docs/BAYERN_SOURCE_DISCOVERY.md`) |
+
+Der NSH-Befund ist kein offener Arbeitsrest, sondern ein Ergebnis: Ohne freigegebene Quelle entsteht
+kein Normtext, und die Sperre wird nicht umgangen.

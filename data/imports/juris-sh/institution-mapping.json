@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "juris-sh-institution-mapping/1",
+  "description": "Zentrale Zuordnung von Institutionen Schleswig-Holsteins für die Rechtsüberleitung nach Niedersachsen-Holstein (docs/SCHLESWIG_HOLSTEIN_TRANSFORMATION.md, Abschnitt Institutionen). Eingetragen sind ausschließlich Verfassungsorgane, deren Entsprechung unstrittig ist. Ministerien, Behörden, Körperschaften, kommunale Landesverbände, Kommunen und geographische Bezeichnungen sind bewusst nicht eingetragen: ihr Zuschnitt im Land Niedersachsen-Holstein ist nicht festgelegt. Sie laufen über die Standardwerte der Kategorie in den Status review – nicht bulk-blockierend (imported-with-warnings), messbar, mit unverändertem Normtext und erhaltenem Quellorgan (originEnactingBody). Es werden keine Behörden erfunden.",
+  "defaults": {
+    "legislature": "safe-transform",
+    "institution": "review",
+    "ministry": "review",
+    "authority": "review",
+    "public-body": "review",
+    "regional-body": "review",
+    "municipality": "review",
+    "geography": "review"
+  },
+  "entries": [
+    {
+      "id": "landtag",
+      "group": "Landtag",
+      "category": "legislature",
+      "match": [
+        "Schleswig-Holsteinischer Landtag",
+        "Schleswig-Holsteinische Landtag",
+        "Schleswig-Holsteinischen Landtag",
+        "Landtag Schleswig-Holstein",
+        "Landtag von Schleswig-Holstein",
+        "Landtag des Landes Schleswig-Holstein",
+        "Landtag"
+      ],
+      "status": "safe-transform",
+      "target": "Niedersachsen-Holsteinischer Landtag",
+      "reason": "Verfassungsorgan, das in jedem Land besteht; nur die Landesbezeichnung wird übergeleitet (transform/organs.ts, Regel jurisdiction-name-adjective).",
+      "reviewedAt": "2026-09-17"
+    },
+    {
+      "id": "landesregierung",
+      "group": "Landesregierung",
+      "category": "institution",
+      "match": [
+        "Landesregierung",
+        "Landesregierung Schleswig-Holstein",
+        "Landesregierung des Landes Schleswig-Holstein",
+        "Landesregierung von Schleswig-Holstein",
+        "Schleswig-Holsteinische Landesregierung",
+        "Schleswig-Holsteinischen Landesregierung"
+      ],
+      "status": "safe-transform",
+      "target": "Landesregierung des Landes Niedersachsen-Holstein",
+      "reason": "Verfassungsorgan; nur die Landesbezeichnung wird übergeleitet, der Organbegriff bleibt.",
+      "reviewedAt": "2026-09-17"
+    },
+    {
+      "id": "ministerpraesident",
+      "group": "Landesregierung",
+      "category": "institution",
+      "pattern": "^Ministerpräsident(?:in|en)?(?:\\s+(?:des\\s+Landes\\s+|von\\s+)?Schleswig[-\\u2010-\\u2015\\u2212\\s]Holstein)?$",
+      "status": "safe-transform",
+      "target": "Ministerpräsident des Landes Niedersachsen-Holstein",
+      "reason": "Verfassungsorgan; nur die Landesbezeichnung wird übergeleitet. Die geschlechtsbezogene Form der Quelle bleibt im Normtext erhalten.",
+      "reviewedAt": "2026-09-17"
+    }
+  ]
+}

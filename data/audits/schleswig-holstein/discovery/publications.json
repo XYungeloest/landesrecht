@@ -1,0 +1,3733 @@
+{
+  "schema": 1,
+  "jurisdiction": "schleswig-holstein",
+  "purpose": "Quellen-Discovery der amtlichen Verkündungs- und Veröffentlichungsorgane; Stichtag des Rechtsbestands 2023-12-01",
+  "generatedAt": "2026-09-17T07:52:03.578628Z",
+  "cacheRoot": ".cache/schleswig-holstein",
+  "requestBudget": {
+    "gets": 36,
+    "heads": 11,
+    "total": 47,
+    "limit": 100,
+    "politeness": ">= 8 s zwischen Abrufen, 20–25 s vor PDFs, 45 s auf www.schleswig-holstein.de; robots.txt aller drei Hosts vorab ausgewertet"
+  },
+  "robotsFindings": [
+    {
+      "host": "verkuendungsportal.schleswig-holstein.de",
+      "crawlDelay": 180,
+      "disallowed": [
+        "*/SiteGlobals/",
+        "*/EN/servicemeta",
+        "*/SiteGlobals/Forms/Suche"
+      ],
+      "consequence": "Portalsuche (GVOBl_Formular, Amtsblattsuche_Formular) und die im Sitemap-Index genannten Sitemap-Teildateien liegen unter gesperrten Pfaden und wurden nicht abgerufen. Damit existiert derzeit kein robots-konformer maschineller Gesamtindex der Einzelveröffentlichungen ab 2025."
+    },
+    {
+      "host": "www.schleswig-holstein.de",
+      "crawlDelay": 180,
+      "disallowed": [
+        "/SiteGlobals/",
+        "/_doc/",
+        "/SiteGlobals/Forms/Suche/",
+        "/DE/justiz/themen/service/justizministerialblatt/Teil_B/_documents/"
+      ],
+      "allowed": [
+        "/SiteGlobals/Functions/Sitemap/"
+      ],
+      "consequence": "Justizministerialblatt Teil B ist für Crawler gesperrt; die Sitemap-Funktion ist hier ausdrücklich erlaubt."
+    },
+    {
+      "host": "transparenz.schleswig-holstein.de",
+      "crawlDelay": 10,
+      "disallowed": [
+        "/api/",
+        "/dataset/rate/",
+        "/revision/",
+        "/dataset/*/history"
+      ],
+      "consequence": "Die CKAN-API darf nicht genutzt werden; nur die HTML-Datensatzseiten sind zulässig."
+    }
+  ],
+  "entries": [
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/robots.txt",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/robots.txt",
+      "status": "200",
+      "contentType": "text/plain;charset=utf-8",
+      "byteLength": 451,
+      "sha256": "669c966bbbebd0a82db6d621c0880b7356a84aa6ec0d60b562d8530db9b4bc07",
+      "retrievedAt": "2026-09-17T07:25:46.801501Z",
+      "type": "index",
+      "year": null,
+      "note": "robots.txt Verkündungsportal: Disallow */SiteGlobals/ (damit auch die Sitemap-Teildateien und die Portalsuche), Crawl-delay 180"
+    },
+    {
+      "url": "https://www.schleswig-holstein.de/robots.txt",
+      "finalUrl": "https://www.schleswig-holstein.de/robots.txt",
+      "status": "200",
+      "contentType": "text/plain;charset=utf-8",
+      "byteLength": 4255,
+      "sha256": "fec5a21227cffba8692c940abf52131673192e917584c0a0f692086a7fb99ae1",
+      "retrievedAt": "2026-09-17T07:25:05.835555Z",
+      "type": "index",
+      "year": null,
+      "note": "robots.txt Landesportal: /SiteGlobals/Functions/Sitemap/ erlaubt, /_doc/ und Justizministerialblatt Teil B/_documents/ gesperrt, Crawl-delay 180"
+    },
+    {
+      "url": "https://transparenz.schleswig-holstein.de/robots.txt",
+      "finalUrl": "https://transparenz.schleswig-holstein.de/robots.txt",
+      "status": "200",
+      "contentType": "text/plain; charset=utf-8",
+      "byteLength": 122,
+      "sha256": "064150d0466e18193f572f16ffe8573cf2dc7ff94ed06bbb9ff7f23019360dca",
+      "retrievedAt": "2026-09-17T07:49:08.427060Z",
+      "type": "index",
+      "year": null,
+      "note": "robots.txt Transparenzportal: /api/ gesperrt (CKAN-API nicht nutzbar), Crawl-Delay 10"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/Sitemap_Index.xml",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/Sitemap_Index.xml",
+      "status": "200",
+      "contentType": "application/rss+xml;charset=UTF-8",
+      "byteLength": 677,
+      "sha256": "9875a92e698fb38e00fe55e4fb58c8865e453b6dd2f6943a28caf6c006e33e69",
+      "retrievedAt": "2026-09-17T07:26:17.757481Z",
+      "type": "index",
+      "year": null,
+      "note": "Sitemap-Index verweist auf /SiteGlobals/Functions/Sitemap/*.xml – diese Pfade sind für User-agent * gesperrt und wurden NICHT abgerufen"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 53926,
+      "sha256": "dda2c945e38a04389c44692fd756bf4e3a2682f05a18f86367ac32f20cea6481",
+      "retrievedAt": "2026-09-17T07:26:42.913719Z",
+      "type": "index",
+      "year": null,
+      "note": "Startseite Verkündungsportal"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/servicemeta/sitemap",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/servicemeta/sitemap",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 46040,
+      "sha256": "11759881372198d982d6e225a88231d52e96dba3718797c49f1fb49b5bf2e9d1",
+      "retrievedAt": "2026-09-17T07:30:20.062583Z",
+      "type": "index",
+      "year": null,
+      "note": "HTML-Sitemap: nur Navigationsebene, keine Veröffentlichungsliste"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 73029,
+      "sha256": "c8728170feeac55593af31322ee665303f7076b8ed656e002a5882d6e7b27063",
+      "retrievedAt": "2026-09-17T07:26:58.219603Z",
+      "type": "gvobl",
+      "year": null,
+      "note": "GVOBl-Startseite: 10 neueste Verkündungen, FAQ, Fundstellensystematik ab 2025"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-archiv/archiv-gvobl_node",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-archiv/archiv-gvobl_node",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 86835,
+      "sha256": "10c9a67eab54cfe433f2f05782b3de7438acdbb7bf05ee0596b4fd402e855fe5",
+      "retrievedAt": "2026-09-17T07:27:13.619799Z",
+      "type": "index",
+      "year": null,
+      "note": "GVOBl-Archiv: Jahrgangs-PDFs 1947–2024 (1972 fehlt, \"in Arbeit\"); Stand 20.12.2024"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-service/serviceseite-gvobl_node",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-service/serviceseite-gvobl_node",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 54436,
+      "sha256": "ff29d59ce1326848d2c223487f0c734a6cdfa86d0fad96b3f239ef98c8e3f26b",
+      "retrievedAt": "2026-09-17T07:31:31.719246Z",
+      "type": "index",
+      "year": null,
+      "note": "GVOBl-Service: Fundstellennachweis (ab 2025) und Systematische Übersicht (bis 2024)"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-fundstellennnachweis/fundstellennnachweis-gvobl",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-fundstellennnachweis/fundstellennnachweis-gvobl",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 48868,
+      "sha256": "f3f164bacfbcdc6031fc62d8899cf343cbffa31efefddf638c98c761ab93a521",
+      "retrievedAt": "2026-09-17T07:31:01.013637Z",
+      "type": "index",
+      "year": null,
+      "note": "Fundstellennachweis GVOBl ist laut Portal \"noch nicht verfügbar\" (Stand 16.12.2024, am 2026-09-17 unverändert)"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2026/2026_08/2026-66_august31",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2026/2026_08/2026-66_august31",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 62637,
+      "sha256": "3d14358d3078fe87c10a16142a81b71ef4012dd0cce32a444a1eca2be1af9676",
+      "retrievedAt": "2026-09-17T07:29:49.377985Z",
+      "type": "gvobl",
+      "year": 2026,
+      "note": "Beispiel Einzelverkündung, Metadatenblock Thema/Fundstelle/Typ/Ausfertigungsdatum/Veröffentlichungsdatum/Sachgebiet"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 53926,
+      "sha256": "dda2c945e38a04389c44692fd756bf4e3a2682f05a18f86367ac32f20cea6481",
+      "retrievedAt": "2026-09-17T07:28:37.586690Z",
+      "type": "index",
+      "year": null,
+      "note": "Ordnerpfad /home/gvobl/veroeffentlichungen ist keine Seite – 302 auf /home; kein durchblätterbarer Index"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2026/2026_08",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 53926,
+      "sha256": "dda2c945e38a04389c44692fd756bf4e3a2682f05a18f86367ac32f20cea6481",
+      "retrievedAt": "2026-09-17T07:28:52.937502Z",
+      "type": "index",
+      "year": 2026,
+      "note": "Monatsordner /home/gvobl/veroeffentlichungen/2026/2026_08 ist keine Seite – 302 auf /home"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2025/2025_04/2025-51",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2025/2025_04/2025-51",
+      "status": "404",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 43927,
+      "sha256": "bf5025c916075b2ad21e06a00a24ebacd0242fdb1be2dbf0b895e8b1dcd3ea27",
+      "retrievedAt": "2026-09-17T07:44:28.134614Z",
+      "type": "gvobl",
+      "year": 2025,
+      "note": "404 – GVOBl-URL nicht allein aus der Fundstelle ableitbar"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2025/2025_04/2025-51_april14",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2025/2025_04/2025-51_april14",
+      "status": "404",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 43927,
+      "sha256": "3526e5e46b1067c4dd1f8eaecfcf9c091b094df19a0c8f9a25742bd7d55fef95",
+      "retrievedAt": "2026-09-17T07:44:40.461513Z",
+      "type": "gvobl",
+      "year": 2025,
+      "note": "404 – auch mit vermutetem Datums-Suffix nicht ableitbar; Ordner-/Slug-Schema wechselt je Zeitraum"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 41136181,
+      "sha256": "8a971d7662c94980ba51637fc3785c363d623bd2cb8580f6d76300adb44cc2f0",
+      "retrievedAt": "2026-09-17T07:37:01.840695Z",
+      "type": "gvobl",
+      "year": 2023,
+      "pageCount": 691,
+      "textLayer": true,
+      "note": "Jahrgangs-PDF 2023, 17 Ausgaben, gedruckte Seiten 1–648; Textlayer vorhanden, 75 % der Inhaltsseiten direkt lesbar, 21 % nur über konstanten Zeichenversatz +29, 4 % unbrauchbar; alle 17 Ausgaben-Deckblätter direkt lesbar"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_Jahresinhaltsverzeichnis_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_Jahresinhaltsverzeichnis_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 505447,
+      "sha256": "90aed1dfe6593dfc8be3781e7a6e4b99c5a5cba4a90fbb9ebf267f44aff5e64f",
+      "retrievedAt": "2026-09-17T07:34:28.686460Z",
+      "type": "index",
+      "year": 2023,
+      "pageCount": 23,
+      "textLayer": true,
+      "note": "Jahresinhaltsverzeichnis GVOBl 2023: Zeitliche Übersicht (Ausfertigungsdatum, Titel, Nummer, Seite, Gl.Nr., \"Ändert …\") + Sachverzeichnis"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2024/I_Jahresinhaltsverzeichnis_2024.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2024/I_Jahresinhaltsverzeichnis_2024.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 341662,
+      "sha256": "889946ce5469141ad8b01f52d0015a1a59181a01cae9691a5c6bf5b3812e3411",
+      "retrievedAt": "2026-09-17T07:34:49.086141Z",
+      "type": "index",
+      "year": 2024,
+      "pageCount": 23,
+      "textLayer": true,
+      "note": "Jahresinhaltsverzeichnis GVOBl 2024 (Jahrgang S. 1–966); erstellt 08.12.2025"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-service/_documents/gvobl_service_systematische_uebersicht.pdf?__blob=publicationFile&v=2",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-service/_documents/gvobl_service_systematische_uebersicht.pdf?__blob=publicationFile&v=2",
+      "status": "200",
+      "contentType": "application/pdf;charset=UTF-8",
+      "byteLength": 3165990,
+      "sha256": "2e75c53a82c2b98752fabc2d4491ea1cc44c891a678d84f7b720987881dc406e",
+      "retrievedAt": "2026-09-17T07:33:17.793681Z",
+      "type": "index",
+      "year": 2024,
+      "pageCount": 283,
+      "textLayer": true,
+      "note": "Systematische Übersicht der Gesetze/Verordnungen, Stand Jahresende 2024: Gl.Nr., Titel, Ausfertigung, Fundstelle, vollständige Änderungshistorie, \"außer Kraft <Datum>\" (158) und \"aufgehoben <Datum>\" (12); 98 dieser Ereignisse mit Datum ab 2023-12-02"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2026/2026_08/2026-66_august31.pdf?__blob=publicationFile&v=1",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/veroeffentlichungen/2026/2026_08/2026-66_august31.pdf?__blob=publicationFile&v=1",
+      "status": "200",
+      "contentType": "application/pdf;charset=UTF-8",
+      "byteLength": 257527,
+      "sha256": "182f850cefad46410e8fc366213577109003267299837b508d64c1a5b7213875",
+      "retrievedAt": "2026-09-17T07:43:35.275315Z",
+      "type": "gvobl",
+      "year": 2026,
+      "pageCount": 7,
+      "textLayer": true,
+      "note": "Einzelverkündung als gesiegeltes PDF, sauberer Textlayer (LibreOffice), Kopf \"Nummer 2026/66 / Kiel, 31. August 2026\", interne Verkündungsnummer 2090/2026"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_startseite_node",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_startseite_node",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 65422,
+      "sha256": "cd6b40cbd21283c523342749d476ebe87f9c3cfa0c773b8069b36115e6f4bfea",
+      "retrievedAt": "2026-09-17T07:28:06.925386Z",
+      "type": "amtsblatt",
+      "year": null,
+      "note": "Amtsblatt-Startseite: neueste Bekanntmachungen, Fundstellensystematik ab 01.10.2024"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_archiv",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_archiv",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 157260,
+      "sha256": "2975ec2f94524b4dbcb4373c05b552f2203589d4d8c3c551ee928eeb79d245a0",
+      "retrievedAt": "2026-09-17T07:28:22.265108Z",
+      "type": "index",
+      "year": null,
+      "note": "Amtsblatt-Archiv: Jahrgangs-PDFs 1946–2024 mit Jahresinhaltsverzeichnissen; zusätzlich \"Amtlicher Anzeiger\", \"Statistische Beilage\", \"Beilage\"; Stand 01.10.2024; Größenangaben teils veraltet"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 54319,
+      "sha256": "f66af30583783dc90510f0107d94db84815fa1a955b3987cdc3c742af22d497b",
+      "retrievedAt": "2026-09-17T07:31:47.075478Z",
+      "type": "index",
+      "year": null,
+      "note": "Amtsblatt-Service: Erlassverzeichnis und Systematische Übersicht der Gliederungsnummern"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_service_erlassverzeichnis",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_service_erlassverzeichnis",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 49067,
+      "sha256": "b24d9c9dae02bf074530923c567782e59203287832d77957871c9b7f85af6bfd",
+      "retrievedAt": "2026-09-17T07:31:16.344344Z",
+      "type": "erlassverzeichnis",
+      "year": null,
+      "note": "Downloadseite Erlassverzeichnis, Stand 18.10.2024"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2026/09_2026/2026-310",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2026/09_2026/2026-310",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 63935,
+      "sha256": "bfbbd2aa9c88a1447bc14d9235d3a6626a98f79996cdb3d4a7be8d1f38afdcfb",
+      "retrievedAt": "2026-09-17T07:30:04.723225Z",
+      "type": "amtsblatt",
+      "year": 2026,
+      "note": "Beispiel Einzelveröffentlichung Typ Verwaltungsvorschrift mit Entscheidungsdatum und Sachgebiet"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2025/10_2025/2025-384",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2025/10_2025/2025-384",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 63351,
+      "sha256": "8e6a824d61c8f7555c385a5318d0387e1c511e04d19b0964509946dcdc3e6861",
+      "retrievedAt": "2026-09-17T07:44:52.798528Z",
+      "type": "amtsblatt",
+      "year": 2025,
+      "note": "Veröffentlichungs- und Verkündungsgrundsätze; belegt ableitbares URL-Schema {YYYY}/{MM}_{YYYY}/{YYYY}-{NNN}"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 115671650,
+      "sha256": "756f2747e27c10c181f7e9b1d8b4282cab28b329cd0ba1650ca85f3f5068496d",
+      "retrievedAt": "2026-09-17T07:42:08.612769Z",
+      "type": "amtsblatt",
+      "year": 2023,
+      "pageCount": 3204,
+      "textLayer": true,
+      "note": "Jahrgangs-PDF 2023, 50 Ausgaben (Nr. 1–52, Doppelnummern 3/4 und 49/50), gedruckte Seiten 1–3112; Textlayer: 39 % direkt lesbar, 59 % nur über Zeichenversatz +29, 2 % unbrauchbar; alle 50 Ausgaben-Deckblätter direkt lesbar"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/I_Jahresinhaltsverzeichnis_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/I_Jahresinhaltsverzeichnis_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 520751,
+      "sha256": "c7894bb2b65468f0970233f5d467fb1854e22a44c1cd2b9fc94a11185c0664e7",
+      "retrievedAt": "2026-09-17T07:35:09.533921Z",
+      "type": "index",
+      "year": 2023,
+      "pageCount": 36,
+      "textLayer": true,
+      "note": "Jahresinhaltsverzeichnis Amtsblatt 2023: Zeitliche Übersicht (Datum, Titel, Nr. des Amtsblattes, Seite, Gl.Nr., \"Ändert Bek. vom …\") + Sachverzeichnis"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_service_erlassverzeichnis.pdf?__blob=publicationFile&v=6",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_service_erlassverzeichnis.pdf?__blob=publicationFile&v=6",
+      "status": "200",
+      "contentType": "application/pdf;charset=UTF-8",
+      "byteLength": 1396058,
+      "sha256": "4915b4712db5d3b317d092ef56e0d286beb4c55d2cf91662e6cb73288938e510",
+      "retrievedAt": "2026-09-17T07:32:36.257099Z",
+      "type": "erlassverzeichnis",
+      "year": 2024,
+      "pageCount": 109,
+      "textLayer": true,
+      "note": "Erlassverzeichnis der gültigen Verwaltungsvorschriften, Stand 30.09.2024: 845 Gliederungsnummern mit Titel, \"Bek./Erl. vom <Datum>\", Fundstelle (Seite bzw. Jahr/Seite), 186 Änderungszeilen, Einträge \"Verlängerung der Geltungsdauer bis zum …\" und \"aufgeh.\""
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_systematische_%C3%BCbersicht.pdf?__blob=publicationFile&v=1",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_systematische_%C3%BCbersicht.pdf?__blob=publicationFile&v=1",
+      "status": "200",
+      "contentType": "application/pdf;charset=UTF-8",
+      "byteLength": 440054,
+      "sha256": "5c5c2f075412c021c5202920a19ff6bc8960c677a6565aae1ac359ef7b29912a",
+      "retrievedAt": "2026-09-17T07:32:56.668256Z",
+      "type": "erlassverzeichnis",
+      "year": 2024,
+      "pageCount": 9,
+      "textLayer": true,
+      "note": "Systematische Übersicht der Gliederungsnummern des Erlassverzeichnisses (nur Gliederungsbaum, keine Einzelnormen)"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2025/10_2025/2025-384.pdf?__blob=publicationFile&v=1",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2025/10_2025/2025-384.pdf?__blob=publicationFile&v=1",
+      "status": "200",
+      "contentType": "application/pdf;charset=UTF-8",
+      "byteLength": 429943,
+      "sha256": "fd81c2ec475c5920032980992429cf08629a7484ae8f153b8f8f8d4a115ba559",
+      "retrievedAt": "2026-09-17T07:46:04.115024Z",
+      "type": "amtsblatt",
+      "year": 2025,
+      "pageCount": 11,
+      "textLayer": true,
+      "note": "Veröffentlichungs- und Verkündungsgrundsätze vom 21.10.2025 (Gl.Nr. 1141.7); Rechtsgrundlage: Verkündungs- und Bekanntmachungsgesetz SH vom 26.11.2024, GVOBl. Schl.-H. S. 811"
+    },
+    {
+      "url": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2026/09_2026/2026-310.pdf?__blob=publicationFile&v=2",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_veroeffentlichungen/2026/09_2026/2026-310.pdf?__blob=publicationFile&v=2",
+      "status": "200",
+      "contentType": "application/pdf;charset=UTF-8",
+      "byteLength": 289944,
+      "sha256": "163302293c42c89a2e7a4f4fb94867820aa41e2075e9976f304d92cef455aa34",
+      "retrievedAt": "2026-09-17T07:43:49.648744Z",
+      "type": "amtsblatt",
+      "year": 2026,
+      "pageCount": 7,
+      "textLayer": true,
+      "note": "Einzelveröffentlichung als gesiegeltes PDF, sauberer Textlayer"
+    },
+    {
+      "type": "gvobl",
+      "year": 2022,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2022/GVOBl_2022.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2022/GVOBl_2022.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 16662342,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:39:17.039221Z",
+      "method": "HEAD",
+      "lastModified": "Tue, 15 Jul 2025 07:14:46 GMT",
+      "note": "Jahrgangs-PDF, 15,9 MiB → digital erzeugt"
+    },
+    {
+      "type": "gvobl",
+      "year": 2018,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2018/GVOBl_2018.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2018/GVOBl_2018.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 16275648,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:39:25.254456Z",
+      "method": "HEAD",
+      "lastModified": "Mon, 14 Jul 2025 07:37:41 GMT",
+      "note": "Jahrgangs-PDF, 15,5 MiB → digital erzeugt"
+    },
+    {
+      "type": "gvobl",
+      "year": 2017,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2017/GVOBl_2017.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2017/GVOBl_2017.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 10865437,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:39:33.472108Z",
+      "method": "HEAD",
+      "lastModified": "Mon, 14 Jul 2025 09:26:42 GMT",
+      "note": "Jahrgangs-PDF, 10,4 MiB → digital erzeugt; erster digitaler Jahrgang"
+    },
+    {
+      "type": "gvobl",
+      "year": 2016,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2016/GVOBl_2016.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2016/GVOBl_2016.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 889371860,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:39:41.694934Z",
+      "method": "HEAD",
+      "lastModified": "Fri, 16 May 2025 07:34:32 GMT",
+      "note": "Jahrgangs-PDF, 848 MiB → Faksimile-Scan; letzter Scan-Jahrgang"
+    },
+    {
+      "type": "gvobl",
+      "year": 2024,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2024/II_GVOBl_Jahrgang_2024",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2024/II_GVOBl_Jahrgang_2024",
+      "status": "200",
+      "contentType": "?",
+      "byteLength": 113756792,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:41:06.659795Z",
+      "method": "HEAD",
+      "lastModified": "Mon, 19 Jan 2026 07:38:29 GMT",
+      "note": "Jahrgangs-PDF 2024 ohne Dateiendung (II_GVOBl_Jahrgang_2024), 108 MiB, erst am 19.01.2026 eingestellt"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2024,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2024/II_Amtsblatt_2024.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2024/II_Amtsblatt_2024.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 21016101,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:39:49.921848Z",
+      "method": "HEAD",
+      "lastModified": "Tue, 22 Apr 2025 08:59:14 GMT",
+      "note": "Jahrgangs-PDF, 20 MiB; deckt nur die gedruckten Ausgaben bis 30.09.2024 ab"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2023,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 115671650,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:39:58.141703Z",
+      "method": "HEAD",
+      "lastModified": "Tue, 22 Apr 2025 10:02:09 GMT",
+      "note": "Jahrgangs-PDF, 110 MiB → digital erzeugt"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2018,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2018/II_Amtsblatt_2018.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2018/II_Amtsblatt_2018.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 16345976,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:40:06.361720Z",
+      "method": "HEAD",
+      "lastModified": "Wed, 23 Apr 2025 07:35:05 GMT",
+      "note": "Jahrgangs-PDF, 15,6 MiB → digital erzeugt"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2017,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2017/II_Amtsblatt_2017.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2017/II_Amtsblatt_2017.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 24266513,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:40:14.588273Z",
+      "method": "HEAD",
+      "lastModified": "Wed, 23 Apr 2025 07:34:07 GMT",
+      "note": "Jahrgangs-PDF tatsächlich 23,1 MiB (Archivseite nennt veraltet 509 MB); Datei am 23.04.2025 ersetzt"
+    },
+    {
+      "type": "index",
+      "year": 2017,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2017/I_Jahresinhaltsverzeichnis_2017.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2017/I_Jahresinhaltsverzeichnis_2017.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 521833,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:40:50.219579Z",
+      "method": "HEAD",
+      "lastModified": "Wed, 23 Apr 2025 07:33:31 GMT",
+      "note": "Jahresinhaltsverzeichnis tatsächlich 510 KiB (Archivseite nennt veraltet 23 MB)"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2016,
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/II_Amtsblatt_2016_Seiten_1-634.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/II_Amtsblatt_2016_Seiten_1-634.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 530863789,
+      "sha256": null,
+      "retrievedAt": "2026-09-17T07:40:58.432708Z",
+      "method": "HEAD",
+      "lastModified": "Fri, 04 Apr 2025 06:53:35 GMT",
+      "note": "Teil-PDF Seiten 1–634, 506 MiB → Faksimile-Scan"
+    },
+    {
+      "url": "https://www.schleswig-holstein.de/DE/landesregierung/ministerien-behoerden/IV/Service/GVOBl/gvobl_node.html",
+      "finalUrl": "https://www.schleswig-holstein.de/DE/landesregierung/ministerien-behoerden/IV/Service/GVOBl/gvobl_node.html",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 199458,
+      "sha256": "9baf5378bacf8d6a9c180537cab2c939332927ec4fc801a5429f3b21695d2f0f",
+      "retrievedAt": "2026-09-17T07:47:39.777458Z",
+      "type": "index",
+      "year": null,
+      "note": "Landesportal-Seite \"Verkündungsportal des Landes Schleswig-Holstein\" – reine Weiterleitungsseite auf das Verkündungsportal"
+    },
+    {
+      "url": "https://www.schleswig-holstein.de/DE/fachinhalte/S/schulverwaltung/nachrichtenblatt",
+      "finalUrl": "https://www.schleswig-holstein.de/DE/fachinhalte/S/schulverwaltung/nachrichtenblatt",
+      "status": "200",
+      "contentType": "text/html;charset=UTF-8",
+      "byteLength": 209455,
+      "sha256": "e7601767bb25c6c337d1f7cf28bc3805422782c9c077c5cf96c554eec969446d",
+      "retrievedAt": "2026-09-17T07:48:25.351049Z",
+      "type": "index",
+      "year": null,
+      "note": "Nachrichtenblatt Schule (drittes Verkündungsorgan, Schul-Landesverordnungen): nur 7 Ausgaben 2025/2026 online, ältere nur im Transparenzportal"
+    },
+    {
+      "url": "https://transparenz.schleswig-holstein.de/dataset/nachrichtenblatt-schule",
+      "finalUrl": "https://transparenz.schleswig-holstein.de/dataset/nachrichtenblatt-schule",
+      "status": "200",
+      "contentType": "text/html; charset=utf-8",
+      "byteLength": 96036,
+      "sha256": "559f00d387dd064520b7b5ecf5a0db5b1d963cf3b42a89d1663894d6ace5b960",
+      "retrievedAt": "2026-09-17T07:49:32.426487Z",
+      "type": "index",
+      "year": null,
+      "note": "Transparenzportal, Dokumentensammlung \"Nachrichtenblatt Schule\" – enthält die Jahrgänge 2023/2024"
+    },
+    {
+      "url": "https://transparenz.schleswig-holstein.de/dataset?q=Verwaltungsvorschrift",
+      "finalUrl": "https://transparenz.schleswig-holstein.de/dataset?q=Verwaltungsvorschrift",
+      "status": "200",
+      "contentType": "text/html; charset=utf-8",
+      "byteLength": 84205,
+      "sha256": "1c04f0fc987a13ad856225d4f0d0023f09b55a236a1c8dfd6bcd88eb8a273d4f",
+      "retrievedAt": "2026-09-17T07:49:45.040230Z",
+      "type": "index",
+      "year": null,
+      "note": "Transparenzportal, Facette Informationsgegenstand \"Verwaltungsvorschrift\": 136 Datensätze – deutlich weniger als die 845 Einträge des Erlassverzeichnisses"
+    },
+    {
+      "type": "gvobl",
+      "year": 2023,
+      "issue": "Nr. 16",
+      "issueDate": "2023-12-07",
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 41136181,
+      "sha256": "8a971d7662c94980ba51637fc3785c363d623bd2cb8580f6d76300adb44cc2f0",
+      "retrievedAt": "2026-09-17T07:37:01.840695Z",
+      "textLayer": true,
+      "note": "Nach dem Stichtag 2023-12-01 erschienene Ausgabe; GVOBl. Schl.-H. 2023, Ausgabe Nr. 16, Kiel 7. Dezember 2023, gedruckte S. 539–632"
+    },
+    {
+      "type": "gvobl",
+      "year": 2023,
+      "issue": "Nr. 17",
+      "issueDate": "2023-12-28",
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 41136181,
+      "sha256": "8a971d7662c94980ba51637fc3785c363d623bd2cb8580f6d76300adb44cc2f0",
+      "retrievedAt": "2026-09-17T07:37:01.840695Z",
+      "textLayer": true,
+      "note": "Nach dem Stichtag 2023-12-01 erschienene Ausgabe; GVOBl. Schl.-H. 2023, Ausgabe Nr. 17, Kiel 28. Dezember 2023, gedruckte S. 633–648"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2023,
+      "issue": "Nr. 49/50",
+      "issueDate": "2023-12-11",
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 115671650,
+      "sha256": "756f2747e27c10c181f7e9b1d8b4282cab28b329cd0ba1650ca85f3f5068496d",
+      "retrievedAt": "2026-09-17T07:42:08.612769Z",
+      "textLayer": true,
+      "note": "Nach dem Stichtag 2023-12-01 erschienene Ausgabe; Amtsbl. Schl.-H. 2023, Ausgabe Nr. 49/50, Kiel 11. Dezember 2023, gedruckte S. 2692–2936"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2023,
+      "issue": "Nr. 51",
+      "issueDate": "2023-12-18",
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 115671650,
+      "sha256": "756f2747e27c10c181f7e9b1d8b4282cab28b329cd0ba1650ca85f3f5068496d",
+      "retrievedAt": "2026-09-17T07:42:08.612769Z",
+      "textLayer": true,
+      "note": "Nach dem Stichtag 2023-12-01 erschienene Ausgabe; Amtsbl. Schl.-H. 2023, Ausgabe Nr. 51, Kiel 18. Dezember 2023, gedruckte S. 2938–2978"
+    },
+    {
+      "type": "amtsblatt",
+      "year": 2023,
+      "issue": "Nr. 52",
+      "issueDate": "2023-12-27",
+      "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "finalUrl": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+      "status": "200",
+      "contentType": "application/pdf",
+      "byteLength": 115671650,
+      "sha256": "756f2747e27c10c181f7e9b1d8b4282cab28b329cd0ba1650ca85f3f5068496d",
+      "retrievedAt": "2026-09-17T07:42:08.612769Z",
+      "textLayer": true,
+      "note": "Nach dem Stichtag 2023-12-01 erschienene Ausgabe; Amtsbl. Schl.-H. 2023, Ausgabe Nr. 52, Kiel 27. Dezember 2023, gedruckte S. 2980–3111"
+    }
+  ],
+  "archiveInventory": {
+    "gvobl": {
+      "source": "https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-archiv/archiv-gvobl_node",
+      "pageState": "Letzte Aktualisierung 20.12.2024",
+      "files": 78,
+      "yearsFrom": 1947,
+      "yearsTo": 2024,
+      "missingYears": [
+        1972
+      ],
+      "note": "Beschriftete Größenangaben sind MiB und teils veraltet; 1972 auf der Seite als „in Arbeit“ ohne Datei",
+      "entries": [
+        {
+          "type": "gvobl",
+          "year": 2024,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2024 - Jahresinhaltsverzeichnis",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2024/I_Jahresinhaltsverzeichnis_2024.pdf",
+          "labelledSize": null
+        },
+        {
+          "type": "gvobl",
+          "year": 2024,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein - Jahrgang 2024",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2024/II_GVOBl_Jahrgang_2024",
+          "labelledSize": null
+        },
+        {
+          "type": "gvobl",
+          "year": 2023,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2023 (39MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2023/GVOBl_2023.pdf",
+          "labelledSize": "39MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2022,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2022",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2022/GVOBl_2022.pdf",
+          "labelledSize": null
+        },
+        {
+          "type": "gvobl",
+          "year": 2021,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2021 (24MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2021/GVOBl_2021.pdf",
+          "labelledSize": "24MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2020,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2020 (10MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2020/GVOBl_2020.pdf",
+          "labelledSize": "10MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2019,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2019 (12MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2019/GVOBl_2019.pdf",
+          "labelledSize": "12MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2018,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2018 (15MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2018/GVOBl_2018.pdf",
+          "labelledSize": "15MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2017,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2017",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2017/GVOBl_2017.pdf",
+          "labelledSize": null
+        },
+        {
+          "type": "gvobl",
+          "year": 2016,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2016 (848MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2016/GVOBl_2016.pdf",
+          "labelledSize": "848MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2015,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2015 (407MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2015/GVOBl_2015.pdf",
+          "labelledSize": "407MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2014,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2014 (427MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2014/GVOBl_2014.pdf",
+          "labelledSize": "427MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2013,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2013 (488MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2013/GVOBl_2013.pdf",
+          "labelledSize": "488MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2012,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2012 (766MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2012/GVOBl_2012.pdf",
+          "labelledSize": "766MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2011,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2011 (388MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2011/GVOBl_2011.pdf",
+          "labelledSize": "388MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2010,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2010 (816MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2010/GVOBl_2010.pdf",
+          "labelledSize": "816MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2009,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2009 (881MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2009/GVOBl_2009.pdf",
+          "labelledSize": "881MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2008,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2008 (799MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2008/GVOBl_2008.pdf",
+          "labelledSize": "799MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2007,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2007 (637MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2007/GVOBl_2007.pdf",
+          "labelledSize": "637MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2006,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2006 (330MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2006/GVOBl_2006.pdf",
+          "labelledSize": "330MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2005,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2005 (520MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2005/GVOBl_2005.pdf",
+          "labelledSize": "520MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2004,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2004 (483MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2004/GVOBl_2004.pdf",
+          "labelledSize": "483MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2003,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2003 (650MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2003/GVOBl_2003.pdf",
+          "labelledSize": "650MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2002,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2002 (277MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2002/GVOBl_2002.pdf",
+          "labelledSize": "277MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2001,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2001 (360MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2001/GVOBl_2001.pdf",
+          "labelledSize": "360MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 2000,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 2000 (606MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_2000/GVOBl_2000.pdf",
+          "labelledSize": "606MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1999,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1999 (498MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1999/GVOBl_1999.pdf",
+          "labelledSize": "498MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1998,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1998 (504MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1998/GVOBl_1998.pdf",
+          "labelledSize": "504MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1997,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1997 (471MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1997/GVOBl_1997.pdf",
+          "labelledSize": "471MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1996,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1996 (673MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1996/GVOBL_1996.pdf",
+          "labelledSize": "673MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1995,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1995 (470MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1995/GVOBl_1995.pdf",
+          "labelledSize": "470MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1994,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1994 (484MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1994/GVOBl_1994.pdf",
+          "labelledSize": "484MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1993,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1993 (533MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1993/GVOBl_1993.pdf",
+          "labelledSize": "533MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1992,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1992 (495MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1992/GVOBl_1992.pdf",
+          "labelledSize": "495MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1991,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1991 (618MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1991/GVOBl_1991.pdf",
+          "labelledSize": "618MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1990,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1990 (597MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1990/GVOBl_1990.pdf",
+          "labelledSize": "597MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1989,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1989 (206MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1989/GVOBl_1989.pdf",
+          "labelledSize": "206MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1988,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1988 (180MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1988/GVOBl_1988.pdf",
+          "labelledSize": "180MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1987,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1987 (306MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1987/GVOBl_1987.pdf",
+          "labelledSize": "306MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1986,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1986 (270MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1986/GVOBl_1986.pdf",
+          "labelledSize": "270MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1985,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1985 (374MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1985/GVOBl_1985.pdf",
+          "labelledSize": "374MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1984,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1984 (252MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1984/GVOBl_1984.pdf",
+          "labelledSize": "252MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1983,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1983 (403MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1983/GVOBl_1983.pdf",
+          "labelledSize": "403MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1982,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1982 (302MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1982/GVOBl_1982.pdf",
+          "labelledSize": "302MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1981,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1981 (305MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1981/GVOBl_1981.pdf",
+          "labelledSize": "305MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1980,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1980 (314MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1980/GVOBl_1980.pdf",
+          "labelledSize": "314MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1979,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1979 (494MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1979/GVOBl_1979.pdf",
+          "labelledSize": "494MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1978,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1978 (349MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1978/GVOBl_1978.pdf",
+          "labelledSize": "349MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1977,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1977 (494MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1977/GVOBl_1977.pdf",
+          "labelledSize": "494MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1976,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1976 (295MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1976/GVOBl_1976.pdf",
+          "labelledSize": "295MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1975,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1975 (344MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1975/GVOBl_1975.pdf",
+          "labelledSize": "344MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1974,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1974 (469MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1974/GVOBl_1974.pdf",
+          "labelledSize": "469MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1973,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1973 (471MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1973/GVOBl_1973.pdf",
+          "labelledSize": "471MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1971,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1971 (575MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1971/GVOBl_1971.pdf",
+          "labelledSize": "575MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1970,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1970 (354MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1970/GVOBl_1970.pdf",
+          "labelledSize": "354MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1969,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1969 (336MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1969/GVOBl_1969.pdf",
+          "labelledSize": "336MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1968,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1968 (389MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1968/GVOBl_1968.pdf",
+          "labelledSize": "389MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1967,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1967 (317MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1967/GVOBl_1967.pdf",
+          "labelledSize": "317MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1966,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1966 (270MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1966/GVOBl_1966.pdf",
+          "labelledSize": "270MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1965,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1965 (212MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1965/GVOBl_1965.pdf",
+          "labelledSize": "212MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1964,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1964 (274MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1964/GVOBl_1964.pdf",
+          "labelledSize": "274MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1963,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1963 (161MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1963/GVOBl_1963.pdf",
+          "labelledSize": "161MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1962,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1962 (429MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1962/GVOBl_1962.pdf",
+          "labelledSize": "429MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1961,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1961 (199MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1961/GVOBl_1961.pdf",
+          "labelledSize": "199MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1960,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1960 (209MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1960/GVOBl_1960.pdf",
+          "labelledSize": "209MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1959,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1959 (220MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1959/GVOBl_1959.pdf",
+          "labelledSize": "220MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1958,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1958 (301MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1958/GVOBl_1958.pdf",
+          "labelledSize": "301MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1957,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1957 (174MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1957/GVOBl_1957.pdf",
+          "labelledSize": "174MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1956,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1956 (221MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1956/GVOBl_1956.pdf",
+          "labelledSize": "221MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1955,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1955 (171MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1955/GVOBl_1955.pdf",
+          "labelledSize": "171MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1954,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1954 (186MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1954/GVOBl_1954.pdf",
+          "labelledSize": "186MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1953,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1953 (193MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1953/GVOBl_1953.pdf",
+          "labelledSize": "193MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1952,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1952 (189MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1952/GVOBl_1952.pdf",
+          "labelledSize": "189MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1951,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1951 (216MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1951/GVOBl_1951.pdf",
+          "labelledSize": "216MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1950,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1950 (322MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1950/GVOBl_1950.pdf",
+          "labelledSize": "322MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1949,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1949 (245MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1949/GVOBl_1949.pdf",
+          "labelledSize": "245MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1948,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1948 (244MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1948/GVOBl_1948.pdf",
+          "labelledSize": "244MB"
+        },
+        {
+          "type": "gvobl",
+          "year": 1947,
+          "label": "Gesetz- und Verordnungsblatt für Schleswig-Holstein 1947 (71MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/gvobl_jahrgang_1947/GVOBl_1947.pdf",
+          "labelledSize": "71MB"
+        }
+      ]
+    },
+    "amtsblatt": {
+      "source": "https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_archiv",
+      "pageState": "Letzte Aktualisierung 01.10.2024",
+      "files": 336,
+      "yearsFrom": 1946,
+      "yearsTo": 2024,
+      "missingYears": [],
+      "note": "Enthält zusätzlich Amtlicher Anzeiger, Statistische Beilage und Beilagen; große Jahrgänge in Teil-PDFs",
+      "entries": [
+        {
+          "type": "amtsblatt",
+          "year": 2024,
+          "label": "Amtsblatt 2024 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2024/II_Amtsblatt_2024.pdf",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2023,
+          "label": "Jahresinhaltsverzeichnis 2023 (508KB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/I_Jahresinhaltsverzeichnis_2023.pdf",
+          "labelledSize": "508KB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2023,
+          "label": "Amtsblatt 2023 (110MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2023/II_Amtsblatt_2023.pdf",
+          "labelledSize": "110MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2022,
+          "label": "Jahresinhaltsverzeichnis 2022 (493KB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2022/I_Jahresinhaltsverzeichnis_2022.pdf",
+          "labelledSize": "493KB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2022,
+          "label": "Amtsblatt 2022 (69MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2022/II_Amtsblatt_2022.pdf",
+          "labelledSize": "69MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2021,
+          "label": "Jahresinhaltsverzeichnis 2021 (1MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2021/I_Jahresinhaltsverzeichnis_2021.pdf",
+          "labelledSize": "1MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2021,
+          "label": "Amtsblatt 2021 (33MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2021/II_Amtsblatt_2021.pdf",
+          "labelledSize": "33MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2020,
+          "label": "Jahresinhaltsverzeichnis 2020 (1MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2020/I_Jahresinhaltsverzeichnis_2020.pdf",
+          "labelledSize": "1MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2020,
+          "label": "Amtsblatt 2020 (23MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2020/II_Amtsblatt_2020.pdf",
+          "labelledSize": "23MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2019,
+          "label": "Jahresinhaltsverzeichnis 2019 (911KB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2019/I_Jahresinhaltsverzeichnis_2019.pdf",
+          "labelledSize": "911KB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2019,
+          "label": "Amtsblatt 2019 (31MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2019/II_Amtsblatt_2019.pdf",
+          "labelledSize": "31MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2018,
+          "label": "Jahresinhaltsverzeichnis 2018 (1017KB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2018/I_Jahresinhaltsverzeichnis_2018.pdf",
+          "labelledSize": "1017KB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2018,
+          "label": "Amtsblatt 2018",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2018/II_Amtsblatt_2018.pdf",
+          "labelledSize": null
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2017,
+          "label": "Jahresinhaltsverzeichnis 2017 (23MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2017/I_Jahresinhaltsverzeichnis_2017.pdf",
+          "labelledSize": "23MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2017,
+          "label": "Amtsblatt 2017 (509MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2017/II_Amtsblatt_2017.pdf",
+          "labelledSize": "509MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2016,
+          "label": "Jahresinhaltsverzeichnis 2016 (14MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/I_Jahresinhaltsverzeichnis_2016.pdf",
+          "labelledSize": "14MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2016,
+          "label": "Amtsblatt 2016 Seiten 1-634 (506MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/II_Amtsblatt_2016_Seiten_1-634.pdf",
+          "labelledSize": "506MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2016,
+          "label": "Amtsblatt 2016 Seiten 635-1032 (217MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/II_Amtsblatt_2016_Seiten_635-1032.pdf",
+          "labelledSize": "217MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2016,
+          "label": "Amtsblatt 2016 Seiten 1033-1694 (453MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/II_Amtsblatt_2016_Seiten_1033-1694.pdf",
+          "labelledSize": "453MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2016,
+          "label": "Amtsblatt 2016 Seiten 1695-1862 (131MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2016/II_Amtsblatt_2016_Seiten_1695_1862.pdf",
+          "labelledSize": "131MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2015,
+          "label": "Jahresinhaltsverzeichnis 2015 (15MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2015/I_Jahresinhaltsverzeichnis_2015.pdf",
+          "labelledSize": "15MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2015,
+          "label": "Amtsblatt 2015 Seiten 1-822 (570MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2015/II_Amtsblatt_2015_Seiten_1-822.pdf",
+          "labelledSize": "570MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2015,
+          "label": "Amtsblatt 2015 Seiten 823-1522 (471MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2015/II_Amtsblatt_2015_Seiten_823-1522.pdf",
+          "labelledSize": "471MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2014,
+          "label": "Jahresinhaltsverzeichnis 2014 (13MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2014/I_Jahresinhaltsverzeichnis_2014.pdf",
+          "labelledSize": "13MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2014,
+          "label": "Amtsblatt 2014 Seiten 1-432 (329MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2014/II_Amtsblatt_2014_Seiten_1-432.pdf",
+          "labelledSize": "329MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2014,
+          "label": "Amtsblatt 2014 Seiten 433-967 (379MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2014/II_Amtsblatt_2014_Seiten_433-976.pdf",
+          "labelledSize": "379MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2013,
+          "label": "Jahresinhaltsverzeichnis 2013 (15MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2013/I_Jahresinhaltsverzeichnis_2013.pdf",
+          "labelledSize": "15MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2013,
+          "label": "Amtsblatt 2013 Seiten 1-714 (519MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2013/II_Amtsblatt_2013_Seiten_1-714.pdf",
+          "labelledSize": "519MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2013,
+          "label": "Amtsblatt 2013 Seiten 715-1192 (329MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2013/II_Amtsblatt_2013_Seiten_715-1192.pdf",
+          "labelledSize": "329MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Jahresinhaltsverzeichnis 2012 (16MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/I_Jahresinhaltsverzeichnis_2012.PDF",
+          "labelledSize": "16MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Amtsblatt 2012 Seiten 1-456 (368MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/II_Amtsblatt_2012_Seiten_1-456.PDF",
+          "labelledSize": "368MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Amtsblatt 2012 Seiten 457-1053 (467MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/II_Amtsblatt_2012_Seiten_457-1053.PDF",
+          "labelledSize": "467MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Amtsblatt 2012 Seiten 1053-1420 (308MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/II_Amtsblatt_2012_Seiten_1053-1420.PDF",
+          "labelledSize": "308MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Beilage 2012 (12MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/III_Beilage_1_2012.pdf",
+          "labelledSize": "12MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Beilage 2012 (8MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/III_Beilage_2_2012.pdf",
+          "labelledSize": "8MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Beilage 2012 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/III_Beilage_3_2012.pdf",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Beilage 2012 (6MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/III_Beilage_4_2012.pdf",
+          "labelledSize": "6MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2012,
+          "label": "Beilage 2012 (13MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2012/III_Beilage_5_2012.pdf",
+          "labelledSize": "13MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2011,
+          "label": "Jahresinhaltsverzeichnis 2011 (13MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2011/I_Jahresinhaltsverzeichnis_2011.PDF",
+          "labelledSize": "13MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2011,
+          "label": "Amtsblatt 2011 Seiten 1-532 (504MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2011/II_Amtsblatt_2011_Seiten_1-532.PDF",
+          "labelledSize": "504MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2011,
+          "label": "Amtsblatt 2011 Seiten 533-988 (388MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2011/II_Amtsblatt_2011_Seiten_533-988.PDF",
+          "labelledSize": "388MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2010,
+          "label": "Jahresinhaltsverzeichnis 2010 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2010/I_Jahresinhaltsverzeichnis_2010.PDF",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2010,
+          "label": "Amtsblatt 2010 Seiten 1-706 (619MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2010/II_Amtsblatt_2010_Seiten_1-706.PDF",
+          "labelledSize": "619MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2010,
+          "label": "Amtsblatt 2010 Seiten 707-1182 (436MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2010/II_Amtsblatt_2010_Seiten_707-1182.PDF",
+          "labelledSize": "436MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2010,
+          "label": "Beilage 2010 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2010/III_Beilage_2010.pdf",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2009,
+          "label": "Jahresinhaltsverzeichnis 2009 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2009/I_Jahresinhaltsverzeichnis_2009.PDF",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2009,
+          "label": "Amtsblatt 2009 Seiten 1-588 (514MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2009/II_Amtsblatt_2009_1-588.PDF",
+          "labelledSize": "514MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2009,
+          "label": "Amtsblatt 2009 Seiten 589-1090 (377MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2009/II_Amtsblatt_2009_589-1090.PDF",
+          "labelledSize": "377MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2009,
+          "label": "Amtsblatt 2009 Seiten 1091-1464 (296MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2009/II_Amtsblatt_2009_Seiten_1091-1464.PDF",
+          "labelledSize": "296MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2008,
+          "label": "Jahresinhaltsverzeichnis 2008 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2008/I_Jahresinhaltsverzeichnis_2008.PDF",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2008,
+          "label": "Amtsblatt 2008 Seiten 1-666 (452MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2008/II_Amtsblatt_2008_Seiten_1-666.PDF",
+          "labelledSize": "452MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2008,
+          "label": "Amtsblatt 2008 Seiten 667-1186 (554MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2008/II_Amtsblatt_2008_Seiten_667-1186.PDF",
+          "labelledSize": "554MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2007,
+          "label": "Jahresinhaltsverzeichnis 2007 (16MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2007/I_Jahresinhaltsverzeichnis_2007.PDF",
+          "labelledSize": "16MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2007,
+          "label": "Amtsblatt 2007 Seiten 1-542 (423MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2007/II_Amtsblatt_2007_Seiten_1-542.PDF",
+          "labelledSize": "423MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2007,
+          "label": "Amtsblatt 2007 Seiten 543-1376",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2007/II_Amtsblatt_2007_Seiten_543-1376.PDF",
+          "labelledSize": null
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2006,
+          "label": "Jahresinhaltsverzeichnis 2006 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2006/I_Jahresinhaltsverzeichnis_2006.pdf",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2006,
+          "label": "Amtsblatt 2006 Seiten 1-450 (454MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2006/II_Amtsblatt_2006_Seiten_1-450.pdf",
+          "labelledSize": "454MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2006,
+          "label": "Amtsblatt 2006 Seiten 451-882 (476MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2006/II_Amtsblatt_2006_Seiten_451-882.pdf",
+          "labelledSize": "476MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2006,
+          "label": "Amtsblatt 2006 Seiten 883-1604 (700MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2006/II_Amtsblatt_2006_Seiten_883-1604.pdf",
+          "labelledSize": "700MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2006,
+          "label": "Beilage 2006 (21MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2006/IV_Beilage_1_2006.pdf",
+          "labelledSize": "21MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2006,
+          "label": "Beilage 2006 (24MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2006/IV_Beilage_2_2006.pdf",
+          "labelledSize": "24MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2005,
+          "label": "Jahresinhaltsverzeichnis 2005 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2005/I_Jahresinhaltsverzeichnis_2005.pdf",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2005,
+          "label": "Amtsblatt 2005 Seiten 1-502 (523MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2005/II_Amtsblatt_2005_Seiten_1-502.pdf",
+          "labelledSize": "523MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2005,
+          "label": "Amtsblatt 2005 Seiten 503-1174 (681MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2005/II_Amtsblatt_2005_Seiten_503-1174.pdf",
+          "labelledSize": "681MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2005,
+          "label": "Beilage 2005 (24MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2005/IV_Beilage_1_2005.pdf",
+          "labelledSize": "24MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2004,
+          "label": "Jahresinhaltsverzeichnis 2004 (24MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2004/I_Jahresinhaltsverzeichnis_2004.pdf",
+          "labelledSize": "24MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2004,
+          "label": "Amtsblatt 2004 Seiten 1-540 (602MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2004/II_Amtsblatt_2004_Seiten_1-540.pdf",
+          "labelledSize": "602MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2004,
+          "label": "Amtsblatt 2004 Seiten 541-1170 (694MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2004/II_Amtsblatt_2004_Seiten_541_1170.pdf",
+          "labelledSize": "694MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2004,
+          "label": "Beilage 2004 (21MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2004/IV_Beilage_1_2004.pdf",
+          "labelledSize": "21MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2003,
+          "label": "Jahresinhaltsverzeichnis 2003 (17MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2003/I_Jahresinhaltsverzeichnis_2003.pdf",
+          "labelledSize": "17MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2003,
+          "label": "Amtsblatt 2003 Seiten 1-486 (450MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2003/II_Amtsblatt_2003_Seiten_1-486.pdf",
+          "labelledSize": "450MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2003,
+          "label": "Amtsblatt 2003 Seiten 487-1058 (561MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2003/II_amtsblatt_2003_Seiten_487-1058.pdf",
+          "labelledSize": "561MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2003,
+          "label": "Amtlicher Anzeiger 2003 (431MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2003/III_Amtlicher_Anzeiger_2003.pdf",
+          "labelledSize": "431MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2002,
+          "label": "Jahresinhaltsverzeichnis 2002 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2002/I_Jahresinhaltsverzeichnis_2002.pdf",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2002,
+          "label": "Amtsblatt 2002 Seiten 1-494 (501MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2002/II_Amtsblatt_2002_Seiten_1-494.pdf",
+          "labelledSize": "501MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2002,
+          "label": "Amtsblatt 2002 Seiten 495-932 (470MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2002/II_Amtsblatt_2002_Seiten_495-932.pdf",
+          "labelledSize": "470MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2002,
+          "label": "Amtlicher Anzeiger 2002 (515MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2002/III_Amtlicher_Anzeiger_2002.pdf",
+          "labelledSize": "515MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2002,
+          "label": "Beilage 2002 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2002/IV_Beilage_1_2002.pdf",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2002,
+          "label": "Beilage 2002 (43MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2002/IV_Beilage_2_2002.pdf",
+          "labelledSize": "43MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2001,
+          "label": "Jahresinhaltsverzeichnis 2001 (21MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2001/I_Jahresinhaltsverzeichnis_2001.pdf",
+          "labelledSize": "21MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2001,
+          "label": "Amtsblatt 2001 (734MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2001/II_Amtsblatt_2001.pdf",
+          "labelledSize": "734MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2001,
+          "label": "Amtlicher Anzeiger 2001 (507MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2001/III_Amtlicher_Anzeiger_2001.pdf",
+          "labelledSize": "507MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2001,
+          "label": "Beilage 2001 (14MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2001/IV_Beilage_2001.pdf",
+          "labelledSize": "14MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2000,
+          "label": "Jahresinhaltsverzeichnis 2000 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2000/I_Jahresinhaltsverzeichnis_2000.pdf",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2000,
+          "label": "Amtsblatt 2000 Seiten 1-352 (323MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2000/II_Amtsblatt_2000_Seiten_1-352.pdf",
+          "labelledSize": "323MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2000,
+          "label": "Amtsblatt 2000 Seiten 353-776 (437MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2000/II_Amtsblatt_2000_Seiten_353-776.pdf",
+          "labelledSize": "437MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 2000,
+          "label": "Amtlicher Anzeiger 2000 (411MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_2000/III_Amtlicher_Anzeiger_2000.pdf",
+          "labelledSize": "411MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1999,
+          "label": "Jahresinhaltsverzeichnis 1999 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1999/I_Jahresinhaltsverzeichnis_1999.PDF",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1999,
+          "label": "Amtsblatt 1999 Seiten 1-426 (427MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1999/II_Amtsblatt_1999_Seiten_1-426.PDF",
+          "labelledSize": "427MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1999,
+          "label": "Amtsblatt 1999 Seiten 427-724 (293MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1999/II_Amtsblatt_1999_Seiten_427-724.PDF",
+          "labelledSize": "293MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1999,
+          "label": "Amtlicher Anzeiger 1999 (441MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1999/III_Amtlicher_Anzeiger_1999.PDF",
+          "labelledSize": "441MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1999,
+          "label": "Beilage 1999 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1999/IV_Beilage_1999.pdf",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1998,
+          "label": "Jahresinhaltsverzeichnis 1998 (26MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1998/I_Jahresinhaltsverzeichnis_1998.pdf",
+          "labelledSize": "26MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1998,
+          "label": "Amtsblatt 1998 Seiten 1-492 (496MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1998/II_Amtsblatt_1998_Seiten_1-492.pdf",
+          "labelledSize": "496MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1998,
+          "label": "Amtsblatt 1998 Seiten 493-1072 (658MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1998/II_Amtsblatt_1998_Seiten_493-1072.pdf",
+          "labelledSize": "658MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1998,
+          "label": "Amtlicher Anzeiger 1998 (463MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1998/III_Amtlicher_Anzeiger_1998.pdf",
+          "labelledSize": "463MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1997,
+          "label": "Jahresinhaltsverzeichnis 1997 (21MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1997/I_Jahresinhaltsverzeichnis_1997.pdf",
+          "labelledSize": "21MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1997,
+          "label": "Amtsblatt 1997 (509MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1997/II_Amtsblatt_1997.pdf",
+          "labelledSize": "509MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1997,
+          "label": "Amtlicher Anzeiger 1997 (554MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1997/III_Amtlicher_Anzeiger_1997.pdf",
+          "labelledSize": "554MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1997,
+          "label": "Beilage 1997 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1997/IV_Beilage_1997_1.pdf",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1997,
+          "label": "Beilage 1997 (10MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1997/IV_Beilage_1997_2.pdf",
+          "labelledSize": "10MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1997,
+          "label": "Beilage 1997 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1997/IV_Beilage_1997_3.pdf",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1996,
+          "label": "Jahresinhaltsverzeichnis 1996 (16MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1996/I_Jahresinhaltsverzeichnis_1996.pdf",
+          "labelledSize": "16MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1996,
+          "label": "Amtsblatt 1996 Seiten 1-452 (403MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1996/II_Amtsblatt_1996_Seiten_1-452.pdf",
+          "labelledSize": "403MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1996,
+          "label": "Amtsblatt 1996 Seiten 453-860 (369MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1996/II_Amtsblatt_1996_Seiten_453-860.pdf",
+          "labelledSize": "369MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1996,
+          "label": "Amtlicher Anzeiger 1996 (371MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1996/III_Amtlicher_Anzeiger_1996.pdf",
+          "labelledSize": "371MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1995,
+          "label": "Jahresinhaltsverzeichnis 1995 (16MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1995/I_Jahresinhaltsverzeichnis_1995.pdf",
+          "labelledSize": "16MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1995,
+          "label": "Amtsblatt 1995 Seiten 1-566 (501MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1995/II_Amtsblatt_1995_Seiten_1-566.pdf",
+          "labelledSize": "501MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1995,
+          "label": "Amtsblatt 1995 Seiten 567-910 (290MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1995/II_Amtsblatt_1995_Seiten_567-910.pdf",
+          "labelledSize": "290MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1995,
+          "label": "Amtlicher Anzeiger 1995 (289MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1995/III_Amtlicher_Anzeiger_1995.pdf",
+          "labelledSize": "289MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1994,
+          "label": "Jahresinhaltsverzeichnis 1994 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1994/I_Jahresinhaltsverzeichnis_1994.pdf",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1994,
+          "label": "Amtsblatt 1994 (592MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1994/II_Amtsblatt_1994.pdf",
+          "labelledSize": "592MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1994,
+          "label": "Amtlicher Anzeiger 1994 (390MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1994/III_Amtlicher_Anzeiger_1994.pdf",
+          "labelledSize": "390MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1993,
+          "label": "Jahresinhaltsverzeichnis 1993 (15MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1993/I_Jahresinhaltsverzeichnis_1993.pdf",
+          "labelledSize": "15MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1993,
+          "label": "Amtsblatt 1993 Seiten 1-436 (382MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1993/II_Amtsblatt_1993_Seiten_1-436.pdf",
+          "labelledSize": "382MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1993,
+          "label": "Amtsblatt 1993 Seiten 437-890 (413MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1993/II_Amtsblatt_1993_Seiten_437-890.pdf",
+          "labelledSize": "413MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1993,
+          "label": "Amtlicher Anzeiger 1993 (385MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1993/III_Amtlicher_Anzeiger_1993.pdf",
+          "labelledSize": "385MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1992,
+          "label": "Jahresinhaltsverzeichnis 1992 (13MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1992/I_Jahresinhaltsverzeichnis_1992.pdf",
+          "labelledSize": "13MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1992,
+          "label": "Amtsblatt 1992 Seiten 1-470 (370MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1992/II_Amtsblatt_1992_Seiten_1-470.pdf",
+          "labelledSize": "370MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1992,
+          "label": "Amtsblatt 1992 Seiten 471-876 (345MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1992/II_Amtsblatt_1992_Seiten_471-876.pdf",
+          "labelledSize": "345MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1992,
+          "label": "Amtlicher Anzeiger 1992 (241MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1992/III_Amtlicher_Anzeiger_1992.pdf",
+          "labelledSize": "241MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1991,
+          "label": "Jahresinhaltsverzeichnis 1991 (11MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1991/I_Jahresinhaltsverzeichnis_1991.pdf",
+          "labelledSize": "11MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1991,
+          "label": "Amtsblatt 1991 Seiten 1-424 (357MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1991/II_Amtsblatt_1991_Seiten_1-424.pdf",
+          "labelledSize": "357MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1991,
+          "label": "Amtsblatt 1991 Seiten 425-772 (299MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1991/II_Amtsblatt_1991_Seiten_425-772.pdf",
+          "labelledSize": "299MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1991,
+          "label": "Amtlicher Anzeiger 1991 (311MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1991/III_Amtlicher_Anzeiger_1991.pdf",
+          "labelledSize": "311MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1991,
+          "label": "Beilage 1991 (40MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1991/IV_Beilage_1991.pdf",
+          "labelledSize": "40MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1990,
+          "label": "Jahresinhaltsverzeichnis 1990 (10MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1990/I_Jahresinhaltsverzeichnis_1990.pdf",
+          "labelledSize": "10MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1990,
+          "label": "Amtsblatt 1990 (629MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1990/II_Amtsblatt_1990.pdf",
+          "labelledSize": "629MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1990,
+          "label": "Amtlicher Anzeiger 1990 (243MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1990/III_Amtlicher_Anzeiger_1990.pdf",
+          "labelledSize": "243MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1990,
+          "label": "Beilage 1990 (67MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1990/IV_Beilage_1990.pdf",
+          "labelledSize": "67MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1989,
+          "label": "Jahresinhaltsverzeichnis 1989 (12MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1989/I_Jahresinhaltsverzeichnis_1989.pdf",
+          "labelledSize": "12MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1989,
+          "label": "Amtsblatt 1989 (482MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1989/II_Amtsblatt_1989.pdf",
+          "labelledSize": "482MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1989,
+          "label": "Amtlicher Anzeiger 1989 (307MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1989/III_Amtlicher_Anzeiger_1989.pdf",
+          "labelledSize": "307MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1989,
+          "label": "Beilage 1989 (43MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1989/IV_Beilage_1989",
+          "labelledSize": "43MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1988,
+          "label": "Jahresinhaltsverzeichnis 1988 (11MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1988/I_Jahresinhaltsverzeichnis_1988.PDF",
+          "labelledSize": "11MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1988,
+          "label": "Amtsblatt 1988 (410MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1988/II_Amtsblatt_1988.PDF",
+          "labelledSize": "410MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1988,
+          "label": "Amtlicher Anzeiger 1988 (250MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1988/III_Amtlicher_Anzeiger_1988.PDF",
+          "labelledSize": "250MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1988,
+          "label": "Beilage 1988 (77MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1988/IV_Beilage_1988.PDF",
+          "labelledSize": "77MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1987,
+          "label": "Jahresinhaltsverzeichnis 1987 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1987/I_Jahresinhaltsverzeichnis_1987.pdf",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1987,
+          "label": "Amtsblatt 1987 Seiten 1-260 (215MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1987/II_Amtsblatt_1987_Seiten_1-260.PDF",
+          "labelledSize": "215MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1987,
+          "label": "Amtsblatt 1987 Seiten 261-584 (267MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1987/II_Amtsblatt_1987_Seiten_261-584.pdf",
+          "labelledSize": "267MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1987,
+          "label": "Amtlicher Anzeiger 1987 (204MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1987/III_Amtlicher_Anzeiger_1987.PDF",
+          "labelledSize": "204MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1987,
+          "label": "Beilage 1987 (63MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1987/IV_Beilage_1987_1.PDF",
+          "labelledSize": "63MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1987,
+          "label": "Beilage 1987 (32MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1987/IV_Beilage_1987_2.pdf",
+          "labelledSize": "32MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1986,
+          "label": "Jahresinhaltsverzeichnis 1986 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1986/I_Inhaltsverzeichnis_1986.PDF",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1986,
+          "label": "Amtsblatt 1986 (414MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1986/II_Amtsblatt_1986.PDF",
+          "labelledSize": "414MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1986,
+          "label": "Amtlicher Anzeiger 1986 (240MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1986/III_Amtlicher_Anzeiger.PDF",
+          "labelledSize": "240MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1986,
+          "label": "Beilage 1986 (64MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1986/IV_Beilage_1986_1.PDF",
+          "labelledSize": "64MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1986,
+          "label": "Beilage 1986 (35MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1986/IV_Beilage_1986_2.pdf",
+          "labelledSize": "35MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1985,
+          "label": "Jahresinhaltsverzeichnis 1985 (10MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1985/I_Jahresinhaltsverzeichnis_1985.pdf",
+          "labelledSize": "10MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1985,
+          "label": "Amtsblatt 1985 (350MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1985/II_Amtsblatt_1985.pdf",
+          "labelledSize": "350MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1985,
+          "label": "Amtlicher Anzeiger 1985 (220MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1985/III_Amtlicher_Anzeiger_1985.pdf",
+          "labelledSize": "220MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1985,
+          "label": "Beilage 1985 (54MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1985/IV_Beilage_1985.pdf",
+          "labelledSize": "54MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1984,
+          "label": "Jahresinhaltsverzeichnis 1984 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1984/I_Jahresinhaltsverzeichnis_1984.PDF",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1984,
+          "label": "Amtsblatt 1984 (431MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1984/II_Amtsblatt_1984.PDF",
+          "labelledSize": "431MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1984,
+          "label": "Amtlicher Anzeiger 1984 (211MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1984/III_Amtlicher_Anzeiger_1984.PDF",
+          "labelledSize": "211MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1984,
+          "label": "Beilage 1984 (45MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1984/IV_Beilage_1984.PDF",
+          "labelledSize": "45MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1983,
+          "label": "Jahresinhaltsverzeichnis 1983 (10MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1983/I_Jahresinhaltsverzeichnis_1983.PDF",
+          "labelledSize": "10MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1983,
+          "label": "Amtsblatt 1983 (411MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1983/II_Amtsblatt_1983.PDF",
+          "labelledSize": "411MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1983,
+          "label": "Amtlicher Anzeiger 1983 (255MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1983/III_Amtlicher_Anzeiger_1983.PDF",
+          "labelledSize": "255MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1983,
+          "label": "Beilage 1983 (52MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1983/IV_Beilage_1983.PDF",
+          "labelledSize": "52MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1982,
+          "label": "Jahresinhaltsverzeichnis 1982 (11MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1982/I_Jahresinhaltsverzeichnis_1982.PDF",
+          "labelledSize": "11MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1982,
+          "label": "Amtsblatt 1982 (437MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1982/II_Amtsblatt_1982.PDF",
+          "labelledSize": "437MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1982,
+          "label": "Amtlicher Anzeiger 1982 (456MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1982/III_Amtlicher_Anzeiger_1982.PDF",
+          "labelledSize": "456MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1982,
+          "label": "Beilage 1982 (90MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1982/IV_Beilage_1982.PDF",
+          "labelledSize": "90MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1981,
+          "label": "Jahresinhaltsverzeichnis 1981 (11MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1981/I_Jahresinhaltsverzeichnis_1981.PDF",
+          "labelledSize": "11MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1981,
+          "label": "Amtsblatt 1981 (501MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1981/II_Amtsblatt_1981.PDF",
+          "labelledSize": "501MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1981,
+          "label": "Amtlicher Anzeiger 1981 Seiten 1-442 (111MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1981/III_Amtlicher_Anzeiger_1981_Seiten_1-442.PDF",
+          "labelledSize": "111MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1981,
+          "label": "Amtlicher Anzeiger 1981 Seiten 443-720 (218MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1981/III_Amtlicher_Anzeiger_1981_Seiten_443-720.PDF",
+          "labelledSize": "218MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1981,
+          "label": "Beilage 1981 (69MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1981/IV_Beilage_1981.PDF",
+          "labelledSize": "69MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1980,
+          "label": "Jahresinhaltsverzeichnis 1980 (8MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1980/I_Jahresinhaltsverzeichnis_1980.PDF",
+          "labelledSize": "8MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1980,
+          "label": "Amtsblatt 1980 Seiten 1-388 (374MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1980/II_Amtsblatt_1980_Seiten_1-388.PDF",
+          "labelledSize": "374MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1980,
+          "label": "Amtsblatt 1980 Seiten 389-766 (340MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1980/II_Amtsblatt_1980_Seiten_389-766.PDF",
+          "labelledSize": "340MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1980,
+          "label": "Amtlicher Anzeiger 1980 (364MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1980/III_Amtlicher_Anzeiger_1980.PDF",
+          "labelledSize": "364MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1980,
+          "label": "Beilage 1980 (139MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1980/IV_Beilage_1980.PDF",
+          "labelledSize": "139MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Jahresinhaltsverzeichnis 1979 (14MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/I_Jahresinhaltsverzeichnis_1979.PDF",
+          "labelledSize": "14MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Amtsblatt 1979 Seiten 1-344 (316MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/II_Amtsblatt_1979_Seiten_1-344.PDF",
+          "labelledSize": "316MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Amtsblatt 1979 Seiten 345-798 (397MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/II_Amtsblatt_1979_Seiten_345-798.PDF",
+          "labelledSize": "397MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Amtlicher Anzeiger 1979 Seiten 1-320 (280MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/III_Amtlicher_Anzeiger_1979_Seiten_1-320.PDF",
+          "labelledSize": "280MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Amtlicher Anzeiger 1979 Seiten 321-694 (321MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/III_Amtlicher_Anzeiger_1979_Seiten_321-694.PDF",
+          "labelledSize": "321MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Beilage 1979 (249MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/IV_Beilage_1_1979.PDF",
+          "labelledSize": "249MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1979,
+          "label": "Beilage 1979 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1979/IV_Beilage_2_1979.pdf",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1978,
+          "label": "Jahresinhaltsverzeichnis 1978 (16MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1978/I_Jahresinhaltsverzeichnis_1978.PDF",
+          "labelledSize": "16MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1978,
+          "label": "Amtsblatt 1978 Seiten 1-318 (276MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1978/II_Amtsblatt_1978_Seiten_1-318.PDF",
+          "labelledSize": "276MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1978,
+          "label": "Amtsblatt 1978 Seiten 319-734 (369MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1978/II_Amtsblatt_1978_Seiten_319-734.PDF",
+          "labelledSize": "369MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1978,
+          "label": "Amtlicher Anzeiger 1978 (417MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1978/III_Amtlicher_Anzeiger_1978.PDF",
+          "labelledSize": "417MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1977,
+          "label": "Jahresinhaltsverzeichnis 1977 (15MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1977/I_Jahresinhaltsverzeichnis_1977.PDF",
+          "labelledSize": "15MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1977,
+          "label": "Amtsblatt 1977 Seiten 1-534 (489MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1977/II_Amtsblatt_1977_Seiten_1-534.PDF",
+          "labelledSize": "489MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1977,
+          "label": "Amtsblatt 1977 Seiten 535-836 (259MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1977/II_Amtsblatt_1977_Seiten_535-836.PDF",
+          "labelledSize": "259MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1977,
+          "label": "Amtlicher Anzeiger 1977 (386MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1977/III_Amtlicher_Anzeiger_1977.PDF",
+          "labelledSize": "386MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1976,
+          "label": "Jahresinhaltsverzeichnis 1976 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1976/I_Jahresinhaltsverzeichnis_1976.PDF",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1976,
+          "label": "Amtsblatt 1976 Seiten 1-344 (348MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1976/II_Amtsblatt_1976_Seiten_1-344.PDF",
+          "labelledSize": "348MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1976,
+          "label": "Amtsblatt 1976 Seiten 345-710 (372MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1976/II_Amtsblatt_1976_Seiten_345-710.PDF",
+          "labelledSize": "372MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1976,
+          "label": "Amtlicher Anzeiger 1976 (509MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1976/III_Amtlicher_Anzeiger_1976.PDF",
+          "labelledSize": "509MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1976,
+          "label": "Beilage 1976 (17MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1976/IV_Beilage_1_1976.pdf",
+          "labelledSize": "17MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1976,
+          "label": "Beilage 1976 (14MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1976/IV_Beilage_2_1976.pdf",
+          "labelledSize": "14MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1975,
+          "label": "Jahresinhaltsverzeichnis 1975 (25MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1975/I_Jahresinhaltsverzeichnis_1975.PDF",
+          "labelledSize": "25MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1975,
+          "label": "Amtsblatt 1975 Seiten 1-408 (412MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1975/II_Amtsblatt_1975_Seiten_1-408.PDF",
+          "labelledSize": "412MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1975,
+          "label": "Amtsblatt 1975 Seiten 409-814 (423MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1975/II_Amtsblatt_1975_Seiten_409-814.PDF",
+          "labelledSize": "423MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1975,
+          "label": "Amtsblatt 1975 Seiten 815-1268 (492MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1975/II_Amtsblatt_1975_Seiten_815-1268.PDF",
+          "labelledSize": "492MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1975,
+          "label": "Amtlicher Anzeiger 1975 (555MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1975/III_Amtlicher_Anzeiger_1975.PDF",
+          "labelledSize": "555MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1974,
+          "label": "Jahresinhaltsverzeichnis 1974 (26MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1974/I_Jahresinhaltsverzeichnis_1974.PDF",
+          "labelledSize": "26MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1974,
+          "label": "Amtsblatt 1974 Seiten 1-536 (583MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1974/II_Amtsblatt_1974_Seiten_1-536.PDF",
+          "labelledSize": "583MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1974,
+          "label": "Amtsblatt 1974 Seiten 537-1012 (507MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1974/II_Amtsblatt_1974_Seiten_537-1012.PDF",
+          "labelledSize": "507MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1974,
+          "label": "Amtlicher Anzeiger 1974 (429MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1974/III_Amtlicher_Anzeiger_1974.PDF",
+          "labelledSize": "429MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1974,
+          "label": "Beilage 1974 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1974/IV_Beilage_1_1974.pdf",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1974,
+          "label": "Beilage 1974 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1974/IV_Beilage_2_1974.pdf",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1973,
+          "label": "Jahresinhaltsverzeichnis 1973 (24MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1973/I_Jahresinhaltsverzeichnis_1973.PDF",
+          "labelledSize": "24MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1973,
+          "label": "Amtsblatt 1973 Seiten 1-540 (588MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1973/II_Amtsblatt_1973_Seiten_1-540.PDF",
+          "labelledSize": "588MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1973,
+          "label": "Amtsblatt 1973 Seiten 541-1142 (677MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1973/II_Amtsblatt_1973_Seiten_541-1142.PDF",
+          "labelledSize": "677MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1973,
+          "label": "Amtlicher Anzeiger 1973 (418MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1973/III_Amtlicher_Anzeiger_1973.PDF",
+          "labelledSize": "418MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1973,
+          "label": "Beilage 1973 (24MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1973/IV_Beilage_1973.pdf",
+          "labelledSize": "24MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1972,
+          "label": "Jahresinhaltsverzeichnis 1972 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1972/I_Jahresinhaltsverzeichnis_1972.PDF",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1972,
+          "label": "Amtsblatt 1972 Seiten 1-384 (448MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1972/II_Amtsblatt_1972_Seiten_1-384.PDF",
+          "labelledSize": "448MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1972,
+          "label": "Amtsblatt 1972 Seiten 385-830 (495MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1972/II_Amtsblatt_1972_Seiten_385-830.PDF",
+          "labelledSize": "495MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1972,
+          "label": "Amtlicher Anzeiger 1972 Seiten 161-362 (204MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1972/III_Amtlicher_Anzeiger_1972_Seiten_161-362.PDF",
+          "labelledSize": "204MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1971,
+          "label": "Jahresinhaltsverzeichnis 1971 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1971/I_Jahresinhaltsverzeichnis_1971.PDF",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1971,
+          "label": "Amtsblatt 1971 Seiten 1-336 (379MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1971/II_Amtsblatt_1971_Seiten_1-336.PDF",
+          "labelledSize": "379MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1971,
+          "label": "Amtsblatt 1971 Seiten 337-764 (496MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1971/II_Amtsblatt_1971_Seiten_337-764.PDF",
+          "labelledSize": "496MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1971,
+          "label": "Amtlicher Anzeiger 1971 (409MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1971/III_Amtlicher_Anzeiger_1971",
+          "labelledSize": "409MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Jahresinhaltsverzeichnis 1970 (26MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/I_Jahresinhaltsverzeichnis_1970.PDF",
+          "labelledSize": "26MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Amtsblatt 1970 Seiten 1-364 (417MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/II_Amtsblatt_1970_Seiten_1-364.PDF",
+          "labelledSize": "417MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Amtsblatt 1970 Seiten 365-774 (473MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/II_Amtsblatt_1970_Seiten_365-774.PDF",
+          "labelledSize": "473MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Amtlicher Anzeiger 1970 (329MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/III_Amtlicher_Anzeiger_1970.PDF",
+          "labelledSize": "329MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Beilage 1970 (7MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/IV_Beilage_1_1970.pdf",
+          "labelledSize": "7MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Beilage 1970 (8MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/IV_Beilage_2_1970.pdf",
+          "labelledSize": "8MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Beilage 1970 (7MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/IV_Beilage_3_1970.pdf",
+          "labelledSize": "7MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1970,
+          "label": "Beilage 1970 (7MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1970/IV_Beilage_4_1970.pdf",
+          "labelledSize": "7MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1969,
+          "label": "Jahresinhaltsverzeichnis 1969 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1969/I_Jahresinhaltsverzeichnis_1969.PDF",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1969,
+          "label": "Amtsblatt 1969 Seiten 1-364 (351MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1969/II_Amtsblatt_1969_Seiten_1-364.PDF",
+          "labelledSize": "351MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1969,
+          "label": "Amtsblatt 1969 Seiten 365-716 (344MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1969/II_Amtsblatt_1969_Seiten_365-716.PDF",
+          "labelledSize": "344MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1969,
+          "label": "Amtlicher Anzeiger 1969 (251MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1969/III_Amtlicher_Anzeiger_1969.PDF",
+          "labelledSize": "251MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1969,
+          "label": "Beilage 1969 (4MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1969/IV_Beilage_1969.PDF",
+          "labelledSize": "4MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1968,
+          "label": "Jahresinhaltsverzeichnis 1968 (21MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1968/I_Jahresinhaltsverzeichnis_1968.PDF",
+          "labelledSize": "21MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1968,
+          "label": "Amtsblatt 1968 Seiten 1-314 (329MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1968/II_Amtsblatt_1968_Seiten_1-314.PDF",
+          "labelledSize": "329MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1968,
+          "label": "Amtsblatt 1968 Seiten 315-632 (343MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1968/II_Amtsblatt_1968_Seiten_315-632.PDF",
+          "labelledSize": "343MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1968,
+          "label": "Amtlicher Anzeiger 1968 (307MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1968/III_Amtlicher_Anzeiger_1968.PDF",
+          "labelledSize": "307MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1967,
+          "label": "Jahresinhaltsverzeichnis 1967 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1967/I_Jahresinhaltsverzeichnis_1967.PDF",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1967,
+          "label": "Amtsblatt 1967 Seiten 1-268 (267MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1967/II_Amtsblatt_1967_Seiten_1-268.PDF",
+          "labelledSize": "267MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1967,
+          "label": "Amtsblatt 1967 Seiten 269-592 (341MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1967/II_Amtsblatt_1967_Seiten_269-592.PDF",
+          "labelledSize": "341MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1967,
+          "label": "Amtlicher Anzeiger 1967 (258MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1967/III_Amtlicher_Anzeiger_1967.PDF",
+          "labelledSize": "258MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1967,
+          "label": "Beilage 1967 (6MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1967/IV_Beilage_1_1967.PDF",
+          "labelledSize": "6MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1967,
+          "label": "Beilage 1967 (3MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1967/IV_Beilage_2_1967.pdf",
+          "labelledSize": "3MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1966,
+          "label": "Jahresinhaltsverzeichnis 1966 (21MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1966/I_Jahresinhaltsverzeichnis_1966.PDF",
+          "labelledSize": "21MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1966,
+          "label": "Amtsblatt 1966 Seiten 1-358 (413MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1966/II_Amtsblatt_1966_Seiten_1-358.PDF",
+          "labelledSize": "413MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1966,
+          "label": "Amtsblatt 1966 Seiten 359-672 (351MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1966/II_Amtsblatt_1966_Seiten_359-672.PDF",
+          "labelledSize": "351MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1966,
+          "label": "Amtlicher Anzeiger 1966 (249MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1966/III_Amtlicher_Anzeiger_1966.PDF",
+          "labelledSize": "249MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Jahresinhaltsverzeichnis 1965 (23MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/I_Jahresinhaltsverzeichnis_1965.PDF",
+          "labelledSize": "23MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Amtsblatt 1965 Seiten 1-352 (406MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/II_Amtsblatt_1965_Seiten_1-352.PDF",
+          "labelledSize": "406MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Amtsblatt 1965 Seiten 353-670 (356MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/II_Amtsblatt_1965_Seiten_353-670.PDF",
+          "labelledSize": "356MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Amtlicher Anzeiger 1965 (305MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/III_Amtlicher_Anzeiger_1965.PDF",
+          "labelledSize": "305MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Beilage 1965 (6MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/IV_Beilage_1_1965.PDF",
+          "labelledSize": "6MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Beilage 1965 (3MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/IV_Beilage_2_1965.PDF",
+          "labelledSize": "3MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1965,
+          "label": "Beilage 1965 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1965/IV_Beilage_3_1965.pdf",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1964,
+          "label": "Jahresinhaltsverzeichnis 1964 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1964/I_Jahresinhaltsverzeichnis_1964.PDF",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1964,
+          "label": "Amtsblatt 1964 Seiten 1-326 (363MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1964/II_Amtsblatt_1964_Seiten_1-326.PDF",
+          "labelledSize": "363MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1964,
+          "label": "Amtsblatt 1964 Seiten 327-654 (371MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1964/II_Amtsblatt_1964_Seiten_327-654.PDF",
+          "labelledSize": "371MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1964,
+          "label": "Amtlicher Anzeiger 1964 (230MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1964/III_Amtlicher_Anzeiger_1964.PDF",
+          "labelledSize": "230MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1963,
+          "label": "Jahresinhaltsverzeichnis 1963 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1963/I_Jahresinhaltsverzeichnis_1963.PDF",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1963,
+          "label": "Amtsblatt 1963 Seiten 1-362 (428MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1963/II_Amtsblatt_1963_Seiten_1-362.PDF",
+          "labelledSize": "428MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1963,
+          "label": "Amtsblatt 1963 Seiten 363-640 (312MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1963/II_Amtsblatt_1963_Seiten_363-640.PDF",
+          "labelledSize": "312MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1963,
+          "label": "Amtlicher Anzeiger 1963 (313MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1963/III_Amtlicher_Anzeiger_1963.PDF",
+          "labelledSize": "313MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1963,
+          "label": "Beilage 1963 (1MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1963/IV_Beilage_1963.PDF",
+          "labelledSize": "1MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1962,
+          "label": "Jahresinhaltsverzeichnis 1962 (41MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1962/I_Jahresinhaltsverzeichnis_1962.PDF",
+          "labelledSize": "41MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1962,
+          "label": "Amtsblatt 1962 Seiten 1-266 (302MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1962/II_Amtsblatt_1962_Seiten_1-266.PDF",
+          "labelledSize": "302MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1962,
+          "label": "Amtsblatt 1962 Seiten 267-606 (404MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1962/II_Amtsblatt_1962_Seiten_267-606.PDF",
+          "labelledSize": "404MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1962,
+          "label": "Amtlicher Anzeiger 1962 (299MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1962/III_Amtlicher_Anzeiger_1962.PDF",
+          "labelledSize": "299MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1962,
+          "label": "Beilage 1962 (9MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1962/IV_Beilage_1_1962.PDF",
+          "labelledSize": "9MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1961,
+          "label": "Jahresinhaltsverzeichnis 1961 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1961/I_Jahresinhaltsverzeichnis_1961.PDF",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1961,
+          "label": "Amtsblatt 1961 Seiten 1-466 (495MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1961/II_Amtsblatt_1961_Seiten_1-466.PDF",
+          "labelledSize": "495MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1961,
+          "label": "Amtsblatt 1961 Seiten 467-744 (289MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1961/II_Amtsblatt_1961_Seiten_467-744.PDF",
+          "labelledSize": "289MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1961,
+          "label": "Beilage 1961 (401MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1961/IV_Beilage_1961.PDF",
+          "labelledSize": "401MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1960,
+          "label": "Jahresinhaltsverzeichnis 1960 (54MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1960/I_Jahresinhaltsverzeichnis_1960.PDF",
+          "labelledSize": "54MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1960,
+          "label": "Amtsblatt 1960 Seiten 1-408 (440MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1960/II_Amtsblatt_1960_Seiten_1-408.PDF",
+          "labelledSize": "440MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1960,
+          "label": "Amtsblatt 1960 Seiten 409-644 (274MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1960/II_Amtsblatt_1960_Seiten_409-644.PDF",
+          "labelledSize": "274MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1960,
+          "label": "Amtlicher Anzeiger 1960 (322MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1960/III_Amtlicher_Anzeiger_1960.PDF",
+          "labelledSize": "322MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1960,
+          "label": "Beilage 1960 (139MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1960/IV_Beilage_1960.PDF",
+          "labelledSize": "139MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1959,
+          "label": "Jahresinhaltsverzeichnis 1959 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1959/I_Jahresinhaltsverzeichnis_1959.PDF",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1959,
+          "label": "Amtsblatt 1959 Seiten 1-308 (323MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1959/II_Amtsblatt_1959_Seiten_1-308.PDF",
+          "labelledSize": "323MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1959,
+          "label": "Amtsblatt 1959 Seiten 308-602 (321MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1959/II_Amtsblatt_1959_Seiten_308-602.PDF",
+          "labelledSize": "321MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1959,
+          "label": "Amtlicher Anzeiger 1959 (328MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1959/III_Amtlicher_Anzeiger_1959.PDF",
+          "labelledSize": "328MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1959,
+          "label": "Beilage 1959 (14MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1959/IV_Beilage_1959.PDF",
+          "labelledSize": "14MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1958,
+          "label": "Jahresinhaltsverzeichnis 1958 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1958/I_Jahresinhaltsverzeichnis_1958.PDF",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1958,
+          "label": "Amtsblatt 1958 Seiten 1-344 (388MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1958/II_Amtsblatt_1958_Seiten_1-344.PDF",
+          "labelledSize": "388MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1958,
+          "label": "Amtsblatt 1958 Seiten 345-626 (296MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1958/II_Amtsblatt_1958_Seiten_345-626.PDF",
+          "labelledSize": "296MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1958,
+          "label": "Amtlicher Anzeiger 1958 (345MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1958/III_Amtlicher_Anzeiger_1958.PDF",
+          "labelledSize": "345MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1958,
+          "label": "Beilage 1958 (25MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1958/IV_Beilage_1958.PDF",
+          "labelledSize": "25MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1957,
+          "label": "Jahresinhaltsverzeichnis 1957 (23MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1957/I_Jahresinhaltsverzeichnis_1957.PDF",
+          "labelledSize": "23MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1957,
+          "label": "Amtsblatt 1957 Seiten 1-254 (286MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1957/II_Amtsblatt_1957_Seiten_1-254.PDF",
+          "labelledSize": "286MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1957,
+          "label": "Amtsblatt 1957 Seiten 255-510 (286MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1957/II_Amtsblatt_1957_Seiten_255-510.PDF",
+          "labelledSize": "286MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1957,
+          "label": "Amtlicher Anzeiger 1957 (322MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1957/III_Amtlicher_Anzeiger_1957.PDF",
+          "labelledSize": "322MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1957,
+          "label": "Beilage 1957 (8MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1957/IV_Beilage_1957.PDF",
+          "labelledSize": "8MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1956,
+          "label": "Jahresinhaltsverzeichnis 1956 (27MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1956/I_Jahresinhaltsverzeichnis_1956.PDF",
+          "labelledSize": "27MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1956,
+          "label": "Amtsblatt 1956 (614MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1956/II_Amtsblatt_1956.pdf",
+          "labelledSize": "614MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1956,
+          "label": "Amtlicher Anzeiger 1956 (296MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1956/III_Amtlicher_Anzeiger_1956.PDF",
+          "labelledSize": "296MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1956,
+          "label": "Beilage 1956 (28MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1956/IV_Beilage_1956.PDF",
+          "labelledSize": "28MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1955,
+          "label": "Jahresinhaltsverzeichnis 1955 (28MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1955/I_Jahresinhaltsverzeichnis_1955.PDF",
+          "labelledSize": "28MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1955,
+          "label": "Amtsblatt 1955 (519MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1955/II_Amtsblatt_1955.PDF",
+          "labelledSize": "519MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1955,
+          "label": "Amtlicher Anzeiger 1955 (333MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1955/III_Amtlicher_Anzeiger_1955.PDF",
+          "labelledSize": "333MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1955,
+          "label": "Beilage 1955 (37MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1955/IV_Beilage_1955.PDF",
+          "labelledSize": "37MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1954,
+          "label": "Jahresinhaltsverzeichnis 1954 (29MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1954/I_Jahresinhaltsverzeichnis_1954.PDF",
+          "labelledSize": "29MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1954,
+          "label": "Amtsblatt 1954 (580MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1954/II_Amtsblatt_1954.PDF",
+          "labelledSize": "580MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1954,
+          "label": "Amtlicher Anzeiger 1954 (390MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1954/III_Amtlicher_Anzeiger_1954.PDF",
+          "labelledSize": "390MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1954,
+          "label": "Beilage 1954 (12MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1954/IV_Beilage_1954.PDF",
+          "labelledSize": "12MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1953,
+          "label": "Jahresinhaltsverzeichnis 1953 (35MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1953/I_Jahresinhaltsverzeichnis_1953.PDF",
+          "labelledSize": "35MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1953,
+          "label": "Amtsblatt 1953 (645MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1953/II_Amtsblatt_1953.PDF",
+          "labelledSize": "645MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1953,
+          "label": "Amtlicher Anzeiger 1953 (438MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1953/III_Amtlicher_Anzeiger_1953.PDF",
+          "labelledSize": "438MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1952,
+          "label": "Jahresinhaltsverzeichnis 1952 (34MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1952/I_Jahresinhaltsverzeichnis_1952.PDF",
+          "labelledSize": "34MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1952,
+          "label": "Amtsblatt 1952 (574MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1952/II_Amtsblatt_1952.PDF",
+          "labelledSize": "574MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1952,
+          "label": "Amtlicher Anzeiger 1952 (361MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1952/III_Amtlicher_Anzeiger_1952.PDF",
+          "labelledSize": "361MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1952,
+          "label": "Beilage 1952 (18MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1952/IV_Beilage_1952.PDF",
+          "labelledSize": "18MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1951,
+          "label": "Amtsblatt 1951 Seiten 1-248 (279MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1951/II_Amtsblatt_1951_Seiten_1-248.PDF",
+          "labelledSize": "279MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1951,
+          "label": "Amtsblatt 1951 Seiten 249-548 (326MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1951/II_Amtsblatt_1951_Seiten_249-548.PDF",
+          "labelledSize": "326MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1951,
+          "label": "Amtlicher Anzeiger 1951 (233MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1951/III_Amtlicher_Anzeiger_1951.PDF",
+          "labelledSize": "233MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1951,
+          "label": "Statistische Beilage 1951 (31MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1951/IV_Statistische_Beilage_1951.PDF",
+          "labelledSize": "31MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1950,
+          "label": "Jahresinhaltsverzeichnis 1950 (35MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1950/I_Jahresinhaltsverzeichnis_1950.PDF",
+          "labelledSize": "35MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1950,
+          "label": "Amtsblatt 1950 (563MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1950/II_Amtsblatt_1950.PDF",
+          "labelledSize": "563MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1950,
+          "label": "Amtlicher Anzeiger 1950 (226MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1950/III_Amtlicher_Anzeiger_1950.PDF",
+          "labelledSize": "226MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1950,
+          "label": "Statistische Beilage 1950 (75MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1950/IV_Statistische_Beilage_1950.PDF",
+          "labelledSize": "75MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1949,
+          "label": "Jahresinhaltsverzeichnis 1949 (34MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1949/I_Jahresinhaltsverzeichnis_1949.PDF",
+          "labelledSize": "34MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1949,
+          "label": "Amtsblatt 1949 Seiten 1-242 (283MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1949/II_Amtsblatt_1949_Seiten_1-242.PDF",
+          "labelledSize": "283MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1949,
+          "label": "Amtsblatt 1949 Seiten 243-490 (274MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1949/II_Amtsblatt_1949_Seiten_243-490.pdf",
+          "labelledSize": "274MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1949,
+          "label": "Amtlicher Anzeiger 1949 (98MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1949/III_Amtlicher_Anzeiger_1949.PDF",
+          "labelledSize": "98MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1949,
+          "label": "Statistische Beilage 1949 (44MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1949/IV_Statistische_Beilage_1949.PDF",
+          "labelledSize": "44MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1948,
+          "label": "Jahresinhaltsverzeichnis 1948 (37MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1948/I_Jahresinhaltsverzeichnis_1948.PDF",
+          "labelledSize": "37MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1948,
+          "label": "Amtsblatt 1948 Seiten 1-254 (267MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1948/II_Amtsblatt_1948_Seiten_1-254.PDF",
+          "labelledSize": "267MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1948,
+          "label": "Amtsblatt 1948 Seiten 255-494 (268MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1948/II_Amtsblatt_1948_Seiten_255-494.PDF",
+          "labelledSize": "268MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1948,
+          "label": "Amtlicher Anzeiger 1948 (103MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1948/III_Amtlicher_Anzeiger_1948.PDF",
+          "labelledSize": "103MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1948,
+          "label": "Beilage 1948 (15MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1948/IV_Beilage_1948.PDF",
+          "labelledSize": "15MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1948,
+          "label": "Statistische Beilage 1948 (20MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1948/V_Statistische_Beilage_1948.PDF",
+          "labelledSize": "20MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1947,
+          "label": "Jahresinhaltsverzeichnis 1947 (31MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1947/I_Jahresinhaltsverzeichnis_1947.pdf",
+          "labelledSize": "31MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1947,
+          "label": "Amtsblatt 1947 (315MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1947/II_Amtsblatt_1947.PDF",
+          "labelledSize": "315MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1947,
+          "label": "Amtlicher Anzeiger 1947 (101MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1947/III_Amtlicher_Anzeiger_1947.pdf",
+          "labelledSize": "101MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1947,
+          "label": "Statistische Beilage 1947 (22MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1947/IV_Statistische_Beilage_1947.pdf",
+          "labelledSize": "22MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1946,
+          "label": "Jahresinhaltsverzeichnis 1946 (19MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1946/I_Jahresinhaltsverzeichnis_1946.PDF",
+          "labelledSize": "19MB"
+        },
+        {
+          "type": "amtsblatt",
+          "year": 1946,
+          "label": "Amtsblatt 1946 (264MB)",
+          "url": "https://verkuendungsportal.schleswig-holstein.de/mm/ab_jahrgang_1946/II_Amtsblatt_1946.PDF",
+          "labelledSize": "264MB"
+        }
+      ]
+    }
+  },
+  "keyFindings": {
+    "gvoblIssues2023": 17,
+    "amtsblattIssues2023": 50,
+    "issuesAfterBaseline2023-12-01": {
+      "gvobl": [
+        "Nr. 16 (2023-12-07)",
+        "Nr. 17 (2023-12-28)"
+      ],
+      "amtsblatt": [
+        "Nr. 49/50 (2023-12-11)",
+        "Nr. 51 (2023-12-18)",
+        "Nr. 52 (2023-12-27)"
+      ]
+    },
+    "textLayer": {
+      "GVOBl_2023.pdf": {
+        "contentPages": 482,
+        "clean": 360,
+        "shift29Recoverable": 102,
+        "unusable": 20,
+        "coverPagesClean": "17/17"
+      },
+      "II_Amtsblatt_2023.pdf": {
+        "contentPages": 2775,
+        "clean": 1088,
+        "shift29Recoverable": 1645,
+        "unusable": 42,
+        "coverPagesClean": "50/50"
+      }
+    },
+    "provenanceBoundary": {
+      "gvobl": {
+        "facsimileUpTo": 2016,
+        "digitalFrom": 2017
+      },
+      "amtsblatt": {
+        "facsimileUpTo": 2016,
+        "digitalFrom": 2017
+      },
+      "officialElectronicFrom": {
+        "amtsblatt": "2024-10-01",
+        "gvobl": "2025-01-01"
+      }
+    },
+    "registers": {
+      "gvoblSystematischeUebersicht": {
+        "asOf": "2024 (Jahresende)",
+        "pages": 283,
+        "ausserKraftEntries": 158,
+        "aufgehobenEntries": 12,
+        "eventsAfterBaseline": 98
+      },
+      "erlassverzeichnis": {
+        "asOf": "2024-09-30",
+        "pages": 109,
+        "entries": 845,
+        "changeLines": 186
+      },
+      "fundstellennachweisGvobl": "noch nicht verfügbar (Stand 16.12.2024, am 2026-09-17 unverändert)"
+    },
+    "urlSchemes": {
+      "amtsblattElectronic": "/home/amtsblatt/ab_veroeffentlichungen/{JJJJ}/{MM}_{JJJJ}/{JJJJ}-{NNN} – deterministisch",
+      "gvoblElectronic": "/home/gvobl/veroeffentlichungen/{JJJJ}[/{Monatsordner}]/{JJJJ}-{NN}_{monat}{tag} – NICHT deterministisch (Ordner- und Slug-Schema wechselt)",
+      "pdfSuffix": "<Seiten-URL>.pdf?__blob=publicationFile&v=<n>",
+      "archive": "/mm/gvobl_jahrgang_{JJJJ}/GVOBl_{JJJJ}.pdf bzw. /mm/ab_jahrgang_{JJJJ}/{I_Jahresinhaltsverzeichnis|II_Amtsblatt}_{JJJJ}.pdf"
+    },
+    "otherOrgans": [
+      "Nachrichtenblatt Schule (Landesverordnungen der Schulverwaltung)",
+      "Hochschul-Nachrichtenblatt",
+      "Justizministerialblatt Teil B (robots-gesperrt)",
+      "Transparenzportal (136 VV-Datensätze, CKAN-API robots-gesperrt)"
+    ]
+  }
+}

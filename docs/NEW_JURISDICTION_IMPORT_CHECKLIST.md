@@ -7,7 +7,30 @@ Importkomponenten“). Verbindliche Regeln für alle Importer: `docs/IMPORT_ARCH
 `docs/LEGAL_SCOPE.md`. Ost bleibt lesend (OstRecht ist externe Source of Truth).
 
 Stand 2026-09-17: **West/NRW ist als Referenzbestand eingefroren** (`docs/WEST_REFERENCE_BASELINE.md`,
-Human Approval abgeschlossen). **Nächster Quelladapter: Niedersachsen-Holstein (`nsh`, juris SH).**
+Human Approval abgeschlossen). Für **NSH** und **BayWü** ist Schritt 0 durchlaufen, mit
+unterschiedlichem Ergebnis (siehe unten).
+
+## Schritt 0: die vier Fragen vor der ersten Zeile Code
+
+Die Erkundungen für Niedersachsen-Holstein und Bayern-Württemberg haben gezeigt, dass vier Fragen den
+gesamten Adapter bestimmen. Sie stehen hier vorweg, weil eine falsche Antwort nicht teuer, sondern
+tödlich ist: Für NSH war nach Frage 1 klar, dass kein Normbestand entstehen kann – nach dem Bau von
+Zustandsschicht, Überleitung und Ereignisregister. In der umgekehrten Reihenfolge wäre das eine Stunde
+Arbeit gewesen statt eines Tages.
+
+| # | Frage | Wie zu beantworten | Wenn „nein" |
+| --- | --- | --- | --- |
+| 0.1 | **Ist automatisierter Zugriff auf das konsolidierte Portal erlaubt?** | `robots.txt` des Zielhosts **wörtlich** lesen und im Dossier zitieren. Nicht die Startseite, nicht eine Unterseite – der Host, der die Normtexte führt. | **Abbruch.** Kein Parser, kein Bulk. Die Sperre wird nicht umgangen (keine anderen User-Agents, keine Suchmaschinen-Caches, keine Browserautomation). Befund dokumentieren, alternative amtliche Quelle suchen, sonst Land zurückstellen. Muster: `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`. |
+| 0.2 | **Führt das Portal historische Fassungen?** | Fassungsauswahl in der Oberfläche suchen, Portalhilfe zitieren, und – falls es einen Export gibt – prüfen, ob er mehr als eine Zeitschicht trägt. | Der Stichtag ist nur durch **Rückrechnung** erreichbar: heutiger Stand plus Änderungsverlauf, und nur für die tatsächlich geänderten Normen. Für den unveränderten Teil ist der heutige Text zugleich der Stichtagstext – das ist ein Beleg, keine Annahme. Muster: `docs/BAYERN_SOURCE_DISCOVERY.md`, Abschnitt 11.3. |
+| 0.3 | **Gibt es einen maschinenlesbaren Export?** | Vor jedem HTML-Parser prüfen: XML, ZIP, JSON, CSV, offene Schnittstelle. | HTML-Parser bauen – aber erst, nachdem 0.3 wirklich verneint ist. Bayern bietet je Norm ein ZIP mit XML; wer das übersieht, baut einen Parser gegen Layout statt gegen Struktur. |
+| 0.4 | **Ist die elektronische Fassung des Verkündungsblatts amtlich?** | Nutzungshinweise der Verkündungsplattform wörtlich zitieren. | Die elektronische Ausgabe ist Beleg, aber nicht die amtliche Fassung. Das gehört in die Evidenzklasse, nicht in eine Fußnote. In Bayern gilt das für das GVBl. (nichtamtlich elektronisch), **nicht** für das BayMBl. (amtlich elektronisch) – zwei Blätter desselben Landes, zwei Evidenzlagen. |
+
+Ergebnis der beiden bisherigen Durchläufe:
+
+| Land | 0.1 Zugriff | 0.2 Historie | 0.3 Export | 0.4 Amtlichkeit elektronisch |
+| --- | --- | --- | --- | --- |
+| NSH (juris SH) | **nein** – `Disallow: /` | nicht prüfbar | nicht prüfbar | GVOBl./Amtsbl. zugänglich, Verkündungstexte |
+| BayWü (BAYERN.RECHT) | ja – `Allow: /` | **nein** – nur aktuelle Fassung | **ja** – ZIP/XML je Norm, zwei DTDs | GVBl. nichtamtlich, BayMBl. amtlich |
 
 | # | Schritt | Ergebnis / Nachweis | Wiederverwendbar | Neu je Jurisdiktion |
 | --- | --- | --- | --- | --- |

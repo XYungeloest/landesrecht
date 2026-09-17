@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-09-17",
+  "question": "Bietet BAYERN.RECHT Fassungen zu einem früheren Stichtag (Projektstichtag 2023-12-01)?",
+  "answer": "Nein.",
+  "status": "belegt (negativ)",
+  "primaryEvidence": {
+    "url": "https://www.gesetze-bayern.de/Content/Document/Hilfe",
+    "fetch": {
+      "url": "https://www.gesetze-bayern.de/Content/Document/Hilfe",
+      "finalUrl": "https://www.gesetze-bayern.de/Content/Document/Hilfe",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "byteLength": 19258,
+      "sha256": "4c0f73d812e7fe8fefc3acd5c672422bc8ab3885f6ad3f095ec8ae72c75f65a1",
+      "retrievedAt": "2026-09-17T07:52:15.888Z",
+      "cacheKey": "fcce1d32d9d56ff4877aca817b983920cc393e07"
+    },
+    "quote": "Bitte beachten Sie, dass über die Datenbank BAYERN.RECHT die bayerischen Gesetze, Verordnungen und veröffentlichten Verwaltungsvorschriften in aktueller Fassung recherchieren lassen. Bereits außer Kraft getretene bayerische Vorschriften werden nicht bereitgestellt.",
+    "note": "Satzbau wörtlich wie im Original (fehlendes 'Sie' im Nebensatz)."
+  },
+  "secondaryEvidence": [
+    {
+      "url": "https://www.gesetze-bayern.de/Content/Document/Nutzungshinweise",
+      "quote": "Über den Bürgerservice BAYERN.RECHT steht das konsolidierte bayerische Landesrecht – in der aktuell geltenden Fassung – der Allgemeinheit zur kostenlosen Nutzung zur Verfügung."
+    },
+    {
+      "observation": "Die Dokumentkopfleiste enthält KEINE Fassungsauswahl. Sie zeigt nur zwei statische Werte, z. B. für BayAbmG 'Text gilt ab: 01.08.2015' und 'Fassung: 06.08.1981'. Im HTML stehen daneben zwei leere Zellen; ein Versionsauswahl-Widget existiert nicht.",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayAbmG"
+    },
+    {
+      "observation": "Auch der XML-Export trägt nur EINE Zeitschicht: alle einzelnorm/gliederung/annex-Elemente führen durchgängig version=\"p\" bzw. version.id=\"p\"; ein zweiter Versionsschlüssel kam in keinem der vier untersuchten Exporte vor."
+    }
+  ],
+  "partialException": {
+    "finding": "Ein Teilbestand historischer Stände IST im Export vorhanden, aber nur für Anlagen und nur als PDF.",
+    "example": "https://www.gesetze-bayern.de/Content/Zip/BayKVzKG",
+    "detail": "Das ZIP-Paket des Kostenverzeichnisses enthält 21 Anlagen-PDFs mit datierten Versionskennungen: BayKVzKG-ANL-20020101-p.pdf (geltende Fassung) sowie BayKVzKG-ANL-20021101-v1.pdf bis BayKVzKG-ANL-20150717-v20.pdf.",
+    "limits": [
+      "Die PDFs werden aus dem XML nicht referenziert; die Zuordnung ergibt sich allein aus dem Dateinamen.",
+      "Die Reihe endet 2015 und erreicht den Stichtag 2023-12-01 nicht.",
+      "Es handelt sich um PDF, nicht um strukturiertes XML.",
+      "Ob dieses Muster über BayKVzKG hinaus vorkommt, wurde NICHT geprüft."
+    ],
+    "status": "belegt für BayKVzKG, Verallgemeinerung offen"
+  },
+  "officialAlternatives": [
+    {
+      "rank": 1,
+      "name": "GVBl.-Jahrgangsarchiv auf der Verkündungsplattform Bayern",
+      "url": "https://www.verkuendung-bayern.de/gesetz-und-verordnungsblatt/alle-ausgaben-des-gvbl-ab-1945/?volume=2023",
+      "coverage": "1945–2026, je Jahrgang alle Ausgaben als PDF, mit veröffentlichter SHA-256-Prüfsumme",
+      "relevanceForStichtag": "Ausgabe 22/2023 (verkündet 30.11.2023) ist die letzte vor dem Stichtag 2023-12-01; Ausgabe 23/2023 (14.12.2023) die erste danach.",
+      "limitation": "Verkündungsblätter enthalten Änderungsbefehle, keine konsolidierten Fassungen. Eine Rückrechnung auf den Stand 2023-12-01 erfordert, die Änderungen zwischen 2023-12-01 und heute rückwärts anzuwenden.",
+      "amtlichkeit": "nachrichtlich/nichtamtlich (amtlich ist nur die Papierausgabe)"
+    },
+    {
+      "rank": 2,
+      "name": "BayMBl. auf der Verkündungsplattform Bayern",
+      "url": "https://www.verkuendung-bayern.de/ministerialblatt/uebersicht-baymbl/",
+      "coverage": "BayMBl. ab 2019 (amtlich elektronisch), Vorgängerblätter 2009–2018",
+      "machineReadable": "CSV-Jahreslistenexport je Jahrgang und Ressort (POST, siehe verkuendungsorgane.json)",
+      "relevanceForStichtag": "Deckt den Stichtag 2023-12-01 vollständig ab."
+    },
+    {
+      "rank": 3,
+      "name": "Änderungsverlauf im XML-Export selbst",
+      "detail": "rumpf/aenderungsverlauf listet je Norm alle Änderungen mit Datum und GVBl.-Fundstelle; rumpf/normzitat nennt die jeweils letzte Änderung. Für BayAbmG etwa acht Einträge von 1989 bis 2019.",
+      "use": "Erlaubt, je Norm zu entscheiden, OB sie sich zwischen 2023-12-01 und dem Abrufdatum geändert hat – und damit, für welchen Teilbestand der heutige Text zugleich der Stichtagstext ist.",
+      "limitation": "Liefert nur die Änderungsereignisse, nicht die Texte der früheren Fassungen.",
+      "status": "plausibel, als Verfahren nicht erprobt"
+    }
+  ],
+  "openQuestions": [
+    "Ob die kostenpflichtige Vollversion des Beck-Portals (gesetze-bayern.de ist der 'Bürgerservice') Zeitschichten führt, wurde nicht untersucht; es wurde kein Authentifizierungsbereich berührt.",
+    "Ob eine Datenlieferung der Bayerischen Staatskanzlei oder des Verlags C.H.Beck historische Konsolidierungsstände umfassen könnte, ist eine organisatorische, keine technische Frage."
+  ]
+}

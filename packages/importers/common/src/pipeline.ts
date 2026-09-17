@@ -161,3 +161,21 @@ export function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
     .slice(0, 120);
 }
+
+/**
+ * Abrufzeitpunkt einer Rohquelle als Tagesdatum für `SourceReference.retrievedAt`.
+ *
+ * `ArchivedSource.retrievedAt` trägt den vollen Zeitstempel des Abrufs (`2026-09-17T08:50:40.682Z`),
+ * `SourceReference.retrievedAt` verlangt nach `legal-core` ein Tagesdatum (`YYYY-MM-DD`). Wer den
+ * Zeitstempel durchreicht, dessen Normen scheitern ausnahmslos an der Schemaprüfung – aber erst beim
+ * Schreiben, lange nach dem Parsen, und Parsertests sehen es nicht, solange sie nur die Gestalt der
+ * Referenz prüfen und nicht ihre Gültigkeit.
+ *
+ * Fail-closed statt `slice(0, 10)`: Ein Wert, der weder Zeitstempel noch Tagesdatum ist, würde durch
+ * blindes Abschneiden zu einem stillen Falschdatum. Hier bricht er ab.
+ */
+export function retrievalDate(value: string, stage: PipelineStage = 'parse-source-format'): string {
+  const match = /^(\d{4}-\d{2}-\d{2})(?:T.*)?$/u.exec(value);
+  if (!match) throw new ImportPipelineError(stage, `Abrufzeitpunkt „${value}“ ist weder ein ISO-Zeitstempel noch ein Tagesdatum; die Quellenreferenz verlangt YYYY-MM-DD.`);
+  return match[1]!;
+}
