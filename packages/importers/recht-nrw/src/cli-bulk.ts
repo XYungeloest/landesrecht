@@ -211,11 +211,13 @@ export async function runCoverageCommand(options: CliOptions, root: string, io: 
 }
 
 export async function runReadinessCommand(options: CliOptions, root: string, io: Io): Promise<number> {
-  const result = await evaluateReadiness(root);
+  const result = await evaluateReadiness(root, options.requireApproval ? { requireApproval: true } : {});
+  const status = result.ready ? (result.pendingHumanApproval ? 'READY WITH PENDING HUMAN APPROVAL' : 'READY') : 'NOT READY';
   if (options.json) {
-    io.print(JSON.stringify({ status: result.ready ? 'READY' : 'NOT READY', ...result }, null, 2));
+    io.print(JSON.stringify({ status, ...result }, null, 2));
   } else {
     io.print(result.ready ? 'READY' : 'NOT READY');
+    if (result.ready && result.pendingHumanApproval) io.print(`  (${status}: ${result.pendingHumanApproval} Legacy-Ausnahme(n) warten auf redaktionelle Freigabe – npm run import:recht-nrw:approval-status)`);
     for (const check of result.checks) io.print(`  [${check.status === 'pass' ? 'ok' : check.status === 'notice' ? 'Hinweis' : 'BLOCKER'}] ${check.label}: ${check.detail}`);
     if (result.blockers.length > 0) {
       io.print('Systemische Blocker:');

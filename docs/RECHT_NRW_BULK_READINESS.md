@@ -41,6 +41,7 @@ Dieses Dokument ist die verbindliche Grundlage für den Auftrag:
 | Golden Set | `golden-results.json`: 0 Fehlschläge je Match-Modus (Blocker); älter als das Wasserzeichen nur Hinweis |
 | Secret-Scan | Testfall „statischer Secret-Scan“ im JUnit-Ergebnis vorhanden und grün |
 | Referenzbaseline | `docs/WEST_REFERENCE_BASELINE.md` mit den Abschnitten Referenzstichtag, Kennzahlen, Auditstatus, Einschränkungen; offene Platzhalter `<…>` nur Hinweis |
+| Human Approval der Legacy-Ausnahmen | jede Ausnahme in `legacy-exceptions.json` ist `pending-human-review` oder `approved` (`rejected` oder unbekannter Status = Blocker); ausstehende Freigaben = Hinweis **READY WITH PENDING HUMAN APPROVAL** (Exit 0), mit `--require-approval` (Freeze-Regel: alle relevanten Ausnahmen `approved`) = Blocker |
 
 **Aktualität ist deterministisch:** Das Manifest-Wasserzeichen ist der jüngste `importedAt` aller Manifesteinträge
 (ändert sich nur mit dem fachlichen Inhalt; Inhalte unter `content/` entstehen ausschließlich aus solchen Läufen). Ein
@@ -243,7 +244,8 @@ git status
 npm ci
 npm run check && npm run test && npm run content:check && npm run d1:schema:check && npm run build
 npm run import:recht-nrw:audit
-npm run import:recht-nrw:readiness                                   # muss READY melden
+npm run import:recht-nrw:readiness                                   # muss READY melden (READY WITH PENDING HUMAN APPROVAL zulässig)
+npm run import:recht-nrw:approval-status                             # Freigabestatus der Legacy-Ausnahmen (Exit 0 vollständig, 2 ausstehend, 1 inkonsistent)
 
 # 1. Enumeration auffrischen (je ≈ 60 Abrufe; Fortschritt bleibt erhalten)
 npm run import:recht-nrw:enumerate -- --area lrgv --write
@@ -307,6 +309,15 @@ npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --limit 25  
 npm run import:recht-nrw:r2-sync -- --r2-transport wrangler --write --concurrency 6   # vollständiger Sync über Wrangler-Prozesse (höchstens 8 Einträge gleichzeitig; Byte-Rücklesung je Objekt)
 npm run import:recht-nrw:r2-sync -- --r2-transport wrangler-api --write --concurrency 32 --verify etag   # optional, nur lokal (best effort): R2-API direkt mit dem Token der Wrangler-Anmeldung; Listing-/Etag-Prüfung + 2 % Byte-Stichproben, ≈2 Objekte/s (Einordnung: docs/DEPLOYMENT.md)
 npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remote landesrecht-west
+```
+
+Human Approval der Legacy-Ausnahmen (Freeze, `docs/WEST_REFERENCE_BASELINE.md` → „Final Freeze Procedure“):
+
+```sh
+npm run import:recht-nrw:approval-report -- --write                  # HUMAN_APPROVAL_WEST.md + human-approval-west.json (deterministisch)
+npm run import:recht-nrw:approval -- --term term:<id> --decision approve|reject --reason "…" [--approved-by "…"] --write
+npm run import:recht-nrw:approval-status                             # eine Zeile; Exit 0 = vollständig freigegeben
+npm run import:recht-nrw:readiness -- --require-approval             # Freeze-Regel: ausstehende Freigaben sind Blocker
 ```
 
 Alle Optionen: `node scripts/import-recht-nrw.ts r2-sync --help` (bzw. `help <befehl>` für jeden Befehl).

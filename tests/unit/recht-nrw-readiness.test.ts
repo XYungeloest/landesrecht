@@ -109,7 +109,7 @@ describe('Readiness: Versionsreport (veraltete Einträge je Status, Legacy-Ausna
     source: { url: target.sourceUrl, sha256: target.sha256 }, legacy: { parserVersion: target.parserVersion, transformerVersion: target.transformerVersion, importStatus: target.importStatus },
     current: { parserVersion: currentParserVersion(target.sourceArea), findings: ['structure-unnumbered-section'] },
     textIntegrity: { method: 'sichtbarer Text', legacySha256: 'c'.repeat(64), currentSha256: 'c'.repeat(64), legacyChars: 10, currentChars: 10, identical: true },
-    structuralDefect: 'Abschnitt ohne Kennzeichen', reason: 'Text identisch, Struktur nur formal', approvedAt: '2026-09-16', approvedBy: 'Review',
+    structuralDefect: 'Abschnitt ohne Kennzeichen', reason: 'Text identisch, Struktur nur formal', preparedAt: '2026-09-16', preparedBy: 'automated-review', approvalStatus: 'pending-human-review', legacyAssessment: { unclassifiedSections: [3], expectedLabels: ['§ 3'], impact: 'structure-only', resolution: 'override-proposed' },
   });
   const reportOf = (entries: ManifestEntry[], exceptions: LegacyException[] = []) => computeVersionReport({ manifest: manifestOf(entries), exceptions: { schemaVersion: 'recht-nrw-legacy-exceptions/1', entries: exceptions }, generatedAt: T2 });
 

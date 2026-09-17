@@ -52,7 +52,8 @@ function inlineFetcher(files: Record<string, string>): RechtNrwFetcher {
 
 function exceptionFor(overrides: Partial<LegacyException> = {}): LegacyException {
   const text = sha('sichtbarer Text');
-  return {
+  // legacyAssessment gehört nur zu deliver-legacy; Depublikationen tragen es nicht.
+  const { legacyAssessment, ...base } = {
     id: 'legacy-515151',
     sourceIdentity: IDENTITY,
     sourceArea: 'lrgv',
@@ -64,10 +65,13 @@ function exceptionFor(overrides: Partial<LegacyException> = {}): LegacyException
     textIntegrity: { method: 'sichtbarer Text der Fassung, zeilenweise', legacySha256: text, currentSha256: text, legacyChars: 100, currentChars: 100, identical: true },
     structuralDefect: 'Sektion 3 ohne Nummernfeld; ihr Text hängt in der gespeicherten Fassung an § 2',
     reason: 'Text vollständig und identisch; nur die Zuordnung eines Absatzes weicht ab',
-    approvedAt: '2026-09-17',
-    approvedBy: 'Testredaktion',
+    preparedAt: '2026-09-17',
+    preparedBy: 'automated-review',
+    approvalStatus: 'pending-human-review',
+    legacyAssessment: { unclassifiedSections: [3], expectedLabels: ['§ 3'], impact: 'structure-only', resolution: 'override-proposed' },
     ...overrides,
-  };
+  } as LegacyException;
+  return base.disposition === 'deliver-legacy' && legacyAssessment ? { ...base, legacyAssessment } : base;
 }
 
 async function writeExceptions(root: string, entries: LegacyException[]): Promise<void> {
@@ -153,7 +157,8 @@ describe('Legacy-Ausnahmen: Schema und Übereinstimmung', () => {
     expect(() => validateLegacyException(exceptionFor({ current: { parserVersion: OLD_PARSER, findings: ['x'] } }))).toThrow(/keine Legacy-Lage/u);
     expect(() => validateLegacyException(exceptionFor({ current: { parserVersion: PARSER_VERSION, findings: [] } }))).not.toThrow();
     expect(() => validateLegacyException(exceptionFor({ current: { parserVersion: PARSER_VERSION } as LegacyException['current'] }))).toThrow(/current\.findings/u);
-    expect(() => validateLegacyException(exceptionFor({ approvedAt: 'gestern' }))).toThrow(/approvedAt/u);
+    expect(() => validateLegacyException(exceptionFor({ preparedAt: 'gestern' }))).toThrow(/preparedAt/u);
+    expect(() => validateLegacyException(exceptionFor({ approvalStatus: 'freigegeben' as LegacyException['approvalStatus'] }))).toThrow(/approvalStatus/u);
     expect(() => validateLegacyException(exceptionFor({ source: { url: 'https://example.org/x', sha256: 'a'.repeat(64) } }))).toThrow(/RECHT\.NRW-Adresse/u);
     expect(() => validateLegacyException(exceptionFor({ disposition: 'archive' as 'depublish' }))).toThrow(/disposition/u);
     expect(() => validateLegacyExceptionRegistry({ schemaVersion: LEGACY_EXCEPTIONS_SCHEMA, entries: [exceptionFor(), exceptionFor({ id: 'legacy-anders' })] })).toThrow(/mehrere Ausnahmen für term:515151/u);
@@ -322,7 +327,7 @@ describe('Regressionsschutz mit Legacy-Ausnahmen (LRGV-Importpfad, Fixtures)', (
     expect(result.status).toBe('needs-review');
     expect(codesOf(result, 'error')).toEqual(['structure-unnumbered-section']);
     expect(codesOf(result, 'warning')).toContain('import-regression-legacy');
-    expect(result.findings.find((finding) => finding.code === 'import-regression-legacy')?.message).toContain('wird laut Legacy-Ausnahme legacy-515151 (freigegeben 2026-09-17, Testredaktion) weiter ausgeliefert');
+    expect(result.findings.find((finding) => finding.code === 'import-regression-legacy')?.message).toContain('wird laut Legacy-Ausnahme legacy-515151 (vorbereitet 2026-09-17, Freigabestatus pending-human-review) weiter ausgeliefert');
     expect(result.manifestEntry).toMatchObject({ importStatus: 'imported-with-warnings', parserVersion: OLD_PARSER, targetSlug: 'testvo-west' });
     expect(await readManifestEntry(root, 'lrgv', IDENTITY)).toMatchObject({ importStatus: 'imported-with-warnings', parserVersion: OLD_PARSER });
     expect(await contentExists()).toBe(true);

@@ -13,8 +13,19 @@
  *    Entscheidung steht mit Grund und Freigabe in dieser Datei, der Lauf protokolliert sie als Befund.
  *
  * Eine Ausnahme gilt nur für genau die Quelle (SHA-256 der Fassungsseite), den Legacy-Parserstand und den
- * aktuellen Parserstand, für die sie freigegeben wurde. Ändert sich eines davon, greift sie nicht mehr
+ * aktuellen Parserstand, für die sie vorbereitet wurde. Ändert sich eines davon, greift sie nicht mehr
  * (fail-closed): der Reimport meldet wieder `import-regression`, der Versionsreport einen unbegründeten Altstand.
+ *
+ * Freigabe (Human Approval): Jede Ausnahme wird maschinell vorbereitet (`preparedAt`, `preparedBy:
+ * "automated-review"`) und trägt einen Freigabestatus `approvalStatus`:
+ *
+ *  - `pending-human-review`  vorbereitet, redaktionelle Bestätigung durch einen Menschen ausstehend (Ausgangszustand)
+ *  - `approved`              redaktionell bestätigt (`decision` mit Datum, Begründung, optional Name des Freigebenden)
+ *  - `rejected`              nicht freigegeben; die Ausnahme greift nicht mehr (fail-closed), keine automatische Folgeaktion
+ *  - `superseded`            gegenstandslos geworden (z. B. Norm mit aktuellem Parser neu importiert); nur manuell
+ *
+ * Ein Name wird nie automatisch eingetragen (kein Git-/OS-Nutzer, kein Agent); `approvalHistory` hält jeden
+ * Statuswechsel (vorher, nachher, Datum, Begründung) fest. Report und CLI: `common/human-approval.ts`.
  */
 import { join } from 'node:path';
 
@@ -27,6 +38,48 @@ export const LEGACY_EXCEPTIONS_PATH = join(IMPORT_DATA_DIR, 'legacy-exceptions.j
 
 export const LEGACY_DISPOSITIONS = ['deliver-legacy', 'depublish'] as const;
 export type LegacyDisposition = (typeof LEGACY_DISPOSITIONS)[number];
+
+export const APPROVAL_STATUSES = ['pending-human-review', 'approved', 'rejected', 'superseded'] as const;
+export type ApprovalStatus = (typeof APPROVAL_STATUSES)[number];
+/** Vorbereitende Instanz jeder Ausnahme; nie ein Personenname. */
+export const AUTOMATED_PREPARER = 'automated-review' as const;
+
+export interface ApprovalDecision {
+  status: Extract<ApprovalStatus, 'approved' | 'rejected'>;
+  /** ISO-Zeitpunkt der Entscheidung. */
+  decidedAt: string;
+  reason: string;
+  /** Name der freigebenden Person – nur, wenn ausdrücklich angegeben; nie automatisch. */
+  approvedBy?: string;
+}
+
+export interface ApprovalHistoryEntry {
+  from: ApprovalStatus;
+  to: ApprovalStatus;
+  at: string;
+  reason: string;
+  by?: string;
+}
+
+/** Strukturierter Verweis auf einen Beleg oder eine Analyse, aus der der Freigabereport gespeist wird. */
+export interface EvidenceReference {
+  kind: 'analysis' | 'evidence-pass' | 'run-report' | 'review-item' | 'manifest';
+  /** Repository-Pfad (Dateien) oder Review-Fall-Kennung. */
+  ref: string;
+  note?: string;
+}
+
+/** Nur deliver-legacy: strukturierte Beantwortung der Legacy-Fragen (Report leitet Empfehlung und Risiko daraus ab). */
+export interface LegacyAssessment {
+  /** Sektionen der Quelle ohne Nummernfeld, die Parser 1.2.0 nicht einordnen kann. */
+  unclassifiedSections: number[];
+  /** Kennzeichen, die diesen Sektionen nach Zählung/Querverweis/Fußnote zukommen (nicht erfunden, nur dokumentiert). */
+  expectedLabels: string[];
+  /** structure-only: nur Zuordnung/Struktur weicht ab, kein Textverlust; possible-legal-content: Rechtsinhalt könnte betroffen sein. */
+  impact: 'structure-only' | 'possible-legal-content';
+  /** override-proposed: konkretes Override vorgeschlagen; editorial-decision: redaktionelle Entscheidung nötig. */
+  resolution: 'override-proposed' | 'editorial-decision';
+}
 
 export interface LegacyTextIntegrity {
   /** Vergleichsverfahren, z. B. „sichtbarer Text der Fassung (Kennzeichen, Titel, Text; ohne Fußnotenblöcke), zeilenweise“. */
@@ -59,9 +112,15 @@ export interface LegacyException {
   reason: string;
   /** Weg zur endgültigen Auflösung (z. B. dokumentiertes Override des fehlenden Kennzeichens). */
   followUp?: string;
-  /** ISO-Datum der Freigabe. */
-  approvedAt: string;
-  approvedBy: string;
+  /** ISO-Datum der maschinellen Vorbereitung (Prüfdatum). */
+  preparedAt: string;
+  preparedBy: typeof AUTOMATED_PREPARER;
+  approvalStatus: ApprovalStatus;
+  /** Nur bei approved/rejected: die redaktionelle Entscheidung. */
+  decision?: ApprovalDecision;
+  approvalHistory?: ApprovalHistoryEntry[];
+  evidenceReferences?: EvidenceReference[];
+  legacyAssessment?: LegacyAssessment;
 }
 
 export interface LegacyExceptionRegistry {
@@ -71,7 +130,48 @@ export interface LegacyExceptionRegistry {
 }
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
+const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z)?$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
+
+export function isApprovalStatus(value: unknown): value is ApprovalStatus {
+  return typeof value === 'string' && (APPROVAL_STATUSES as readonly string[]).includes(value);
+}
+
+function validateApproval(entry: LegacyException, where: string): void {
+  if (!ISO_DATE.test(entry.preparedAt ?? '')) throw new Error(`${where}: preparedAt muss ein ISO-Datum sein`);
+  if (entry.preparedBy !== AUTOMATED_PREPARER) throw new Error(`${where}: preparedBy muss "${AUTOMATED_PREPARER}" sein (kein Personenname)`);
+  if (!isApprovalStatus(entry.approvalStatus)) throw new Error(`${where}: approvalStatus erwartet ${APPROVAL_STATUSES.join('|')}, erhalten ${String(entry.approvalStatus)}`);
+  const decision = entry.decision;
+  if (entry.approvalStatus === 'approved' || entry.approvalStatus === 'rejected') {
+    if (!decision) throw new Error(`${where}: Status ${entry.approvalStatus} verlangt decision`);
+    if (decision.status !== entry.approvalStatus) throw new Error(`${where}: decision.status ${String(decision.status)} widerspricht approvalStatus ${entry.approvalStatus}`);
+    if (!ISO_INSTANT.test(decision.decidedAt ?? '')) throw new Error(`${where}: decision.decidedAt muss ein ISO-Zeitpunkt sein`);
+    if (!decision.reason?.trim()) throw new Error(`${where}: decision.reason fehlt`);
+    if (decision.approvedBy !== undefined && !decision.approvedBy.trim()) throw new Error(`${where}: decision.approvedBy darf nicht leer sein`);
+  } else if (decision) throw new Error(`${where}: decision nur bei approved/rejected`);
+  if (entry.approvalHistory !== undefined) {
+    if (!Array.isArray(entry.approvalHistory)) throw new Error(`${where}: approvalHistory muss eine Liste sein`);
+    for (const step of entry.approvalHistory) {
+      if (!isApprovalStatus(step.from) || !isApprovalStatus(step.to)) throw new Error(`${where}: approvalHistory mit unbekanntem Status`);
+      if (!ISO_INSTANT.test(step.at ?? '')) throw new Error(`${where}: approvalHistory.at muss ein ISO-Zeitpunkt sein`);
+      if (!step.reason?.trim()) throw new Error(`${where}: approvalHistory.reason fehlt`);
+    }
+    const last = entry.approvalHistory[entry.approvalHistory.length - 1];
+    if (last && last.to !== entry.approvalStatus) throw new Error(`${where}: letzter approvalHistory-Schritt (${last.to}) widerspricht approvalStatus ${entry.approvalStatus}`);
+  }
+  if (entry.evidenceReferences !== undefined) {
+    if (!Array.isArray(entry.evidenceReferences)) throw new Error(`${where}: evidenceReferences muss eine Liste sein`);
+    for (const reference of entry.evidenceReferences) if (!['analysis', 'evidence-pass', 'run-report', 'review-item', 'manifest'].includes(reference.kind) || !reference.ref?.trim()) throw new Error(`${where}: evidenceReferences mit ungültigem Eintrag`);
+  }
+  const assessment = entry.legacyAssessment;
+  if (entry.disposition === 'deliver-legacy') {
+    if (!assessment) throw new Error(`${where}: deliver-legacy verlangt legacyAssessment`);
+    if (!Array.isArray(assessment.unclassifiedSections) || assessment.unclassifiedSections.length === 0 || !assessment.unclassifiedSections.every((section) => Number.isInteger(section) && section > 0)) throw new Error(`${where}: legacyAssessment.unclassifiedSections fehlt`);
+    if (!Array.isArray(assessment.expectedLabels)) throw new Error(`${where}: legacyAssessment.expectedLabels fehlt`);
+    if (!['structure-only', 'possible-legal-content'].includes(assessment.impact)) throw new Error(`${where}: legacyAssessment.impact erwartet structure-only|possible-legal-content`);
+    if (!['override-proposed', 'editorial-decision'].includes(assessment.resolution)) throw new Error(`${where}: legacyAssessment.resolution erwartet override-proposed|editorial-decision`);
+  } else if (assessment) throw new Error(`${where}: legacyAssessment nur bei deliver-legacy`);
+}
 
 export function validateLegacyException(entry: LegacyException, path = LEGACY_EXCEPTIONS_PATH): void {
   const where = `${path}: Ausnahme ${entry?.id ?? '?'}`;
@@ -96,8 +196,7 @@ export function validateLegacyException(entry: LegacyException, path = LEGACY_EX
   if (entry.disposition === 'deliver-legacy' && !integrity.identical) throw new Error(`${where}: deliver-legacy verlangt identischen Text (textIntegrity.identical)`);
   if (!entry.structuralDefect?.trim()) throw new Error(`${where}: structuralDefect fehlt`);
   if (!entry.reason?.trim()) throw new Error(`${where}: Begründung fehlt`);
-  if (!ISO_DATE.test(entry.approvedAt ?? '')) throw new Error(`${where}: approvedAt muss ein ISO-Datum sein`);
-  if (!entry.approvedBy?.trim()) throw new Error(`${where}: approvedBy fehlt`);
+  validateApproval(entry, where);
 }
 
 export function validateLegacyExceptionRegistry(registry: LegacyExceptionRegistry, path = LEGACY_EXCEPTIONS_PATH): void {
@@ -143,6 +242,7 @@ export interface LegacyExceptionMatch {
 export function matchLegacyException(exception: LegacyException, situation: { sourceSha256: string; previous: Pick<ManifestEntry, 'parserVersion' | 'transformerVersion' | 'importStatus' | 'targetSlug'>; currentErrorCodes: readonly string[] }): LegacyExceptionMatch {
   const mismatches: string[] = [];
   const parser = currentParserVersion(exception.sourceArea);
+  if (exception.approvalStatus === 'rejected' || exception.approvalStatus === 'superseded') mismatches.push(`Freigabestatus ${exception.approvalStatus} – Ausnahme greift nicht`);
   if (exception.source.sha256 !== situation.sourceSha256) mismatches.push(`Quelle geändert (sha256 ${situation.sourceSha256.slice(0, 16)} ≠ freigegeben ${exception.source.sha256.slice(0, 16)})`);
   if (exception.legacy.parserVersion !== situation.previous.parserVersion) mismatches.push(`gespeicherter Parserstand ${situation.previous.parserVersion} ≠ freigegeben ${exception.legacy.parserVersion}`);
   if (exception.legacy.transformerVersion !== situation.previous.transformerVersion) mismatches.push(`gespeicherter Transformerstand ${situation.previous.transformerVersion} ≠ freigegeben ${exception.legacy.transformerVersion}`);

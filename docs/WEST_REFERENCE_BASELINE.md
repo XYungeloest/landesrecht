@@ -19,10 +19,10 @@ Dokument auf Vorhandensein und offene Platzhalter.
 
 | Komponente | Version |
 | --- | --- |
-| Importer (`packages/importers/recht-nrw`) | Git `1424a92c` + Abschlusslauf 2026-09-17 (Freeze-Commit = nächster Commit des Nutzers) |
+| Importer (`packages/importers/recht-nrw`) | Git `1424a92c` + Abschlusslauf 2026-09-17 (Freeze-Commit: `PENDING`, siehe „Final Freeze Procedure“) |
 | Parser LRGV / LRMB | `recht-nrw-parser/1.2.0` / `recht-nrw-lrmb-parser/1.3.0` (Evidence Pass) |
 | Transformer | `recht-nrw-transformer/2.1.0` |
-| Legacy-Ausnahmen (`legacy-exceptions.json`) | 21: 5 `deliver-legacy` (LRGV, Textidentität per SHA-256 nachgewiesen), 16 `depublish` (LRMB, ausgeführt und damit gegenstandslos); redaktionelle Bestätigung durch den Nutzer ausstehend |
+| Legacy-Ausnahmen (`legacy-exceptions.json`) | 21: 5 `deliver-legacy` (LRGV, Textidentität per SHA-256 nachgewiesen), 16 `depublish` (LRMB, ausgeführt und damit im Versionsreport gegenstandslos); Legacy-Ausnahmen maschinell vorbereitet (`automated-review`), redaktionelle Bestätigung ausstehend (`approvalStatus: pending-human-review`, siehe „Human Approval“) |
 
 Parserstände: LRGV 5 begründet veraltet (Legacy), 0 unbegründet; LRMB 0 veraltet (Versionsreport im `audit`).
 
@@ -62,7 +62,7 @@ Offene Reviewgruppen (Stand Freeze, `data/audits/recht-nrw/REVIEW_SUMMARY.md`; 1
 | D1 lokal ↔ remote (`audit:d1-remote`) | 0 Abweichungen, 11 Prüfungen (Zähler, Typen, Byte-Summen, 30-Norm-Stichprobe) | `data/audits/recht-nrw/d1/D1_REMOTE_CHECK.json` | 2026-09-17T06:12:46Z |
 | Suche voll (`search-audit --mode full`) | 1 482 Normen, 54 615 Abfragen, 0 Fehler, 544 s | `data/audits/recht-nrw/search/search-audit-full.json` | 2026-09-17T06:13:09Z |
 | Golden Set | Recall@10 94,1 %, MRR 0,933, Top-1 100 %, 0 Fehlschläge (and-first, p50 13,5 ms) | `data/audits/recht-nrw/search/golden-results.json` | 2026-09-17T06:13:50Z |
-| Readiness | READY (Hinweise: Legacy-Ausnahmen, S3-Variablen nicht gesetzt) | `npm run import:recht-nrw:readiness -- --json` | 2026-09-17 |
+| Readiness | READY WITH PENDING HUMAN APPROVAL (Hinweise: Legacy-Ausnahmen, 21 Freigaben ausstehend, S3-Variablen nicht gesetzt) | `npm run import:recht-nrw:readiness -- --json` | 2026-09-17 |
 
 ## Deployment
 
@@ -71,7 +71,56 @@ Offene Reviewgruppen (Stand Freeze, `data/audits/recht-nrw/REVIEW_SUMMARY.md`; 1
 | Worker-Version (Cloudflare) | `6dc90725-84f5-4585-9f89-0f36f1b282c6` (`https://landesrecht.xyungeloestlp.workers.dev`) |
 | D1 `landesrecht-west` | 1 482 Normen, 28 932 Sucheinheiten, `last_projected_at` 2026-09-17T06:11:51Z (inkrementell) |
 | Freeze-Datum | 2026-09-17 |
-| Freeze-Commit | Basis `1424a92c`; Freeze = nächster Commit des Nutzers mit den Änderungen des Abschlusslaufs |
+| Freeze-Commit | `PENDING` (Basis `1424a92c`; wird in Schritt 7 der Final Freeze Procedure eingetragen) |
+
+## Human Approval
+
+Die 21 Legacy-Ausnahmen (`data/imports/recht-nrw/legacy-exceptions.json`, Schema `recht-nrw-legacy-exceptions/1`
+mit `approvalStatus`) sind maschinell vorbereitet (`preparedBy: automated-review`); die redaktionelle Bestätigung
+durch den Nutzer ist ausstehend. Kein Eintrag trägt einen automatisch gesetzten Freigebenden.
+
+| Gruppe | Anzahl | Status |
+| --- | --- | --- |
+| `deliver-legacy` (LRGV, Text SHA-256-identisch, nur Struktur) | 5 | `pending-human-review` |
+| `depublish` (LRMB, Depublikation ausgeführt, Geltungsbefund Parser 1.3.0) | 16 | `pending-human-review` |
+| Summe | 21 | 0 approved · 21 pending · 0 rejected |
+
+Freigabereport: `data/audits/recht-nrw/HUMAN_APPROVAL_WEST.md` (maschinenlesbar `human-approval-west.json`,
+erzeugt mit `npm run import:recht-nrw:approval-report -- --write`, deterministisch aus Ausnahmefeldern, Manifest-
+Evidenz, Evidence Pass und Review-Shards). Je Fall genau eine Empfehlung (`DELIVER-LEGACY BEIBEHALTEN`,
+`DEPUBLIKATION BEIBEHALTEN`, `MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH`), Risikoklasse (low/medium/high) und die
+Belegklassen (strong/contradictory tragen, supporting ergänzt, insufficient trägt nicht allein). Die Empfehlung
+ersetzt die Entscheidung nicht; Fälle mit Risiko `high` verlangen sie ausdrücklich.
+
+Readiness-Semantik: Ausnahmen müssen `pending-human-review` oder `approved` sein (`rejected` = Blocker);
+ausstehende Freigaben ergeben **READY WITH PENDING HUMAN APPROVAL** (Hinweis, Exit 0), mit `--require-approval`
+(Freeze-Regel) einen Blocker. `npm run import:recht-nrw:approval-status` meldet Exit 0 nur bei vollständiger
+Freigabe (2 = ausstehend, 1 = inkonsistent).
+
+## Final Freeze Procedure
+
+Der Freeze ist erst mit dem Commit des Nutzers abgeschlossen; bis dahin bleibt der Freeze-Commit `PENDING`.
+
+1. **Report prüfen:** `npm run import:recht-nrw:approval-report -- --write`, dann
+   `data/audits/recht-nrw/HUMAN_APPROVAL_WEST.md` lesen – Übersichtstabelle, je Fall Belege, Kurzprüfung,
+   Empfehlung; Fälle mit `MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH` zuerst.
+2. **Entscheidungen treffen:** je Fall freigeben oder nicht freigeben; Begründung notieren (Primärquelle,
+   Datum, Beleg). `rejected` ist nur „nicht freigegeben“ – Folgeaktion (Regeneration, Override, Entfernung der
+   Ausnahme) ist eine eigene Entscheidung.
+3. **Approval-CLI:** je Fall
+   `npm run import:recht-nrw:approval -- --term term:NNNNN --decision approve|reject --reason "…" [--approved-by "…"] --write`
+   (ohne `--write` Dry-run; ein Name wird nur mit `--approved-by` eingetragen).
+4. **Approval-Check:** `npm run import:recht-nrw:approval-status` → Exit 0
+   (`West Human Approval · 21 exceptions · 21 approved · 0 pending · 0 rejected`); Report erneut schreiben
+   (`approval-report -- --write`).
+5. **Gates:** `npm run check && npm run test && npm run content:check && npm run d1:schema:check && npm run build`,
+   `npm run import:recht-nrw:audit`, `npm run import:recht-nrw:readiness -- --require-approval` → `READY`
+   (`ls content/norms/west | wc -l` = 1 482, Content-Fingerabdruck unverändert).
+6. **Commit:** Nutzer committet Ausnahmen, Reports und Dokumentation (kein Bulk-Schreiblauf, keine
+   Contentänderung durch Freigabemetadaten).
+7. **SHA eintragen:** Freeze-Commit in „Versionen“ und „Deployment“ dieses Dokuments (`PENDING` ersetzen).
+8. **Referenzbasis:** Stand als West Reference Baseline für weitere Landesimporte führen
+   (`docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md`); spätere Änderungen an Ausnahmen durchlaufen wieder Schritte 1–7.
 
 ## Einschränkungen
 

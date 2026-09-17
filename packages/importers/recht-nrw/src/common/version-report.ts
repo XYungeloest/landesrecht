@@ -31,7 +31,7 @@ export interface OutdatedEntry {
   transformerVersion: string;
   reasons: string[];
   /** Bei begründeten Altständen: die geltende Ausnahme. */
-  exception?: { id: string; disposition: LegacyException['disposition']; approvedAt: string; approvedBy: string };
+  exception?: { id: string; disposition: LegacyException['disposition']; approvalStatus: LegacyException['approvalStatus']; preparedAt: string };
   /** Bei unbegründeten Altständen: warum keine Ausnahme greift und was zu tun ist. */
   problem?: string;
 }
@@ -78,9 +78,10 @@ export function justifyOutdatedEntry(entry: ManifestEntry, exception: LegacyExce
   if (exception.legacy.importStatus !== entry.importStatus) mismatches.push(`Importstatus ${entry.importStatus} ≠ freigegeben ${exception.legacy.importStatus}`);
   if (exception.targetSlug !== entry.targetSlug) mismatches.push(`Ziel-Slug ${entry.targetSlug} ≠ freigegeben ${exception.targetSlug}`);
   if (exception.current.parserVersion !== currentParserVersion(entry.sourceArea)) mismatches.push(`Ausnahme für Parser ${exception.current.parserVersion} freigegeben, aktuell ${currentParserVersion(entry.sourceArea)}`);
+  if (exception.approvalStatus === 'rejected' || exception.approvalStatus === 'superseded') mismatches.push(`Freigabestatus ${exception.approvalStatus}`);
   if (mismatches.length > 0) return { problem: `Legacy-Ausnahme ${exception.id} greift nicht: ${mismatches.join('; ')}` };
   if (exception.disposition === 'depublish') return { problem: `Depublikation laut Legacy-Ausnahme ${exception.id} freigegeben, aber noch nicht ausgeführt: npm run import:recht-nrw:bulk -- --area ${entry.sourceArea} --only ${entry.sourceIdentity} --offline --write` };
-  return { exception: { id: exception.id, disposition: exception.disposition, approvedAt: exception.approvedAt, approvedBy: exception.approvedBy } };
+  return { exception: { id: exception.id, disposition: exception.disposition, approvalStatus: exception.approvalStatus, preparedAt: exception.preparedAt } };
 }
 
 export function computeVersionReport(input: { manifest: ImportManifest; exceptions: LegacyExceptionRegistry; generatedAt: string }): VersionReport {

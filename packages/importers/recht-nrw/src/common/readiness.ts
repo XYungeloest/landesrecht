@@ -40,6 +40,7 @@ import { readReviewQueue, type ReviewQueue } from './review-queue.ts';
 import { isSyntheticFixture } from './search-audit.ts';
 import { GOLDEN_RESULTS_JSON_PATH } from './search-golden.ts';
 import { parseVersionPage } from './version-page.ts';
+import { APPROVAL_STATUSES, readLegacyExceptions, type LegacyExceptionRegistry } from './legacy-exceptions.ts';
 import { collectVersionReport, type VersionReport } from './version-report.ts';
 
 export interface ReadinessCheck {
@@ -54,6 +55,8 @@ export interface ReadinessResult {
   checks: ReadinessCheck[];
   blockers: string[];
   notices: string[];
+  /** Legacy-Ausnahmen mit ausstehender redaktioneller Freigabe („READY WITH PENDING HUMAN APPROVAL“). */
+  pendingHumanApproval: number;
 }
 
 export const D1_SCALE_REPORT_PATH = join('data', 'audits', 'recht-nrw', 'd1-scale.json');
@@ -221,6 +224,32 @@ export function versionReportChecks(report: VersionReport): ReadinessCheck[] {
     detail: `aktuell ${current}${outdatedTotal ? `; ältere Stände: ${distribution}` : '; keine älteren Stände im Manifest'}`,
   };
   return [stale, parser];
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Human Approval der Legacy-Ausnahmen – Quelle: common/legacy-exceptions.ts, common/human-approval.ts */
+
+/**
+ * Freigabestatus der Legacy-Ausnahmen. Zulässig sind `pending-human-review` und `approved`; `rejected` ist ein
+ * Blocker (die Ausnahme greift nicht mehr, der Altstand bzw. die Depublikation ist nicht mehr gedeckt), `superseded`
+ * zählt nicht. Ausstehende Freigaben ergeben READY mit Hinweis („READY WITH PENDING HUMAN APPROVAL“); mit
+ * `requireApproval` (Freeze-Regel: alle relevanten Ausnahmen approved) werden sie zum Blocker.
+ */
+export function legacyApprovalCheck(registry: Pick<LegacyExceptionRegistry, 'entries'> | undefined, options: { requireApproval?: boolean } = {}): ReadinessCheck & { pending: number } {
+  const label = 'Human Approval der Legacy-Ausnahmen (pending-human-review oder approved)';
+  if (!registry) return { id: 'legacy-approval', label, status: 'pass', detail: 'keine Legacy-Ausnahmen', pending: 0 };
+  const rejected = registry.entries.filter((entry) => entry.approvalStatus === 'rejected').map((entry) => entry.sourceIdentity);
+  const unknown = registry.entries.filter((entry) => !(APPROVAL_STATUSES as readonly string[]).includes(entry.approvalStatus)).map((entry) => `${entry.sourceIdentity} (${String(entry.approvalStatus)})`);
+  const pending = registry.entries.filter((entry) => entry.approvalStatus === 'pending-human-review');
+  const approved = registry.entries.filter((entry) => entry.approvalStatus === 'approved').length;
+  const summary = `${registry.entries.length} Ausnahmen: ${approved} approved, ${pending.length} pending, ${rejected.length} rejected`;
+  if (unknown.length) return { id: 'legacy-approval', label, status: 'fail', detail: `${summary}; unbekannter Status: ${unknown.join(', ')}`, pending: pending.length };
+  if (rejected.length) return { id: 'legacy-approval', label, status: 'fail', detail: `${summary}; nicht freigegeben (rejected): ${rejected.join(', ')} – Ausnahme greift nicht mehr; Regeneration, neue Entscheidung oder Entfernung nötig`, pending: pending.length };
+  if (pending.length) {
+    const detail = `READY WITH PENDING HUMAN APPROVAL: ${summary}; redaktionelle Bestätigung ausstehend für ${pending.slice(0, 6).map((entry) => entry.sourceIdentity).join(', ')}${pending.length > 6 ? `, … (${pending.length})` : ''} – npm run import:recht-nrw:approval-report -- --write, dann npm run import:recht-nrw:approval`;
+    return { id: 'legacy-approval', label, status: options.requireApproval ? 'fail' : 'notice', detail: options.requireApproval ? `Freeze-Regel (--require-approval): ${detail}` : detail, pending: pending.length };
+  }
+  return { id: 'legacy-approval', label, status: 'pass', detail: summary, pending: 0 };
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -441,6 +470,8 @@ export interface ReadinessOptions {
   checkEnumerationFixpoint?: EnumerationFixpointCheck;
   /** Fertiger Versionsreport (Tests); sonst `collectVersionReport` (Manifest + Legacy-Ausnahmen). */
   versionReport?: VersionReport;
+  /** Freeze-Regel: ausstehende Human-Approval-Freigaben sind Blocker statt Hinweis. */
+  requireApproval?: boolean;
 }
 
 export async function evaluateReadiness(root: string, options: ReadinessOptions = {}): Promise<ReadinessResult> {
@@ -607,7 +638,17 @@ export async function evaluateReadiness(root: string, options: ReadinessOptions 
     add('fixtures', 'Keine synthetischen Fixtures im Produktionsbestand', false, (error as Error).message);
   }
 
+  // 14. Human Approval der Legacy-Ausnahmen (pending = Hinweis, rejected = Blocker; --require-approval: pending = Blocker).
+  let pendingHumanApproval = 0;
+  try {
+    const { pending, ...check } = legacyApprovalCheck(await readLegacyExceptions(root), options.requireApproval ? { requireApproval: true } : {});
+    pendingHumanApproval = pending;
+    push(check);
+  } catch (error) {
+    add('legacy-approval', 'Human Approval der Legacy-Ausnahmen (pending-human-review oder approved)', false, (error as Error).message);
+  }
+
   const blockers = checks.filter((check) => check.status === 'fail').map((check) => `${check.label}: ${check.detail}`);
   const notices = checks.filter((check) => check.status === 'notice').map((check) => `${check.label}: ${check.detail}`);
-  return { ready: blockers.length === 0, checks, blockers, notices };
+  return { ready: blockers.length === 0, checks, blockers, notices, pendingHumanApproval };
 }

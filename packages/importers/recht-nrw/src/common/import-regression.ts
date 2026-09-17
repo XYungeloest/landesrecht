@@ -35,7 +35,7 @@ export async function resolveImportRegression(input: { root: string; write: bool
   if (!exception) return keep('');
   const match = matchLegacyException(exception, { sourceSha256: result.manifestEntry!.sha256, previous, currentErrorCodes: result.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code) });
   if (!match.applies) return keep(`; Legacy-Ausnahme ${exception.id} greift nicht: ${match.mismatches.join('; ')}`);
-  const approval = `Legacy-Ausnahme ${exception.id} (freigegeben ${exception.approvedAt}, ${exception.approvedBy})`;
+  const approval = `Legacy-Ausnahme ${exception.id} (vorbereitet ${exception.preparedAt}, Freigabestatus ${exception.approvalStatus})`;
   if (exception.disposition === 'deliver-legacy') {
     result.findings.push({ severity: 'warning', code: 'import-regression-legacy', message: `${summary}; die gespeicherte Fassung (${previous.parserVersion}) wird laut ${approval} weiter ausgeliefert: ${exception.reason}` });
     return true;

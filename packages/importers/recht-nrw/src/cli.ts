@@ -13,6 +13,7 @@ import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-ro
 
 import { runBulkCommand, runCoverageCommand, runEnumerateCommand, runR2SyncCommand, runReadinessCommand, runReconstructionQueueCommand, runSearchAuditCommand } from './cli-bulk.ts';
 import { runReviewReportCommand } from './common/review-report.ts';
+import { runApprovalCommand, runApprovalReportCommand, runApprovalStatusCommand } from './common/human-approval.ts';
 import { TARGET_JURISDICTION } from './common/constants.ts';
 import { collectCoverageInput, computeCoverage, coverageComparable, COVERAGE_PATH, IMPORTED_NORM_TYPES, type CoverageReport } from './common/coverage.ts';
 import { checkEnumerationInvariants, readEnumeration } from './common/enumeration.ts';
@@ -77,6 +78,12 @@ export interface CliOptions {
   remoteSample?: string;
   /** review-report: keinen Quellcache lesen (nur Manifest, Queue, Enumeration). */
   noSources?: boolean;
+  /** approval: Fall, Entscheidung, optionaler Name der freigebenden Person (nie automatisch). */
+  term?: string;
+  decision?: string;
+  approvedBy?: string;
+  /** readiness: ausstehende Human-Approval-Freigaben als Blocker werten (Freeze-Regel). */
+  requireApproval: boolean;
 }
 
 /** „90s“, „15m“, „8h“, „2d“ oder Sekunden → Millisekunden. */
@@ -96,7 +103,7 @@ function positiveInteger(value: string | undefined, option: string): number {
 
 export function parseCliArguments(argv: readonly string[]): CliOptions {
   const [command = 'help', ...rest] = argv;
-  const options: CliOptions = { command, help: false, write: false, offline: false, refresh: false, baseline: SIMULATION_BASELINE_DATE, json: false, resume: false, only: [], retryFailed: false, retryReview: false, regenerateStale: false, golden: false };
+  const options: CliOptions = { command, help: false, write: false, offline: false, refresh: false, baseline: SIMULATION_BASELINE_DATE, json: false, resume: false, only: [], retryFailed: false, retryReview: false, regenerateStale: false, golden: false, requireApproval: false };
   const value = (index: number, name: string): string => {
     const next = rest[index];
     if (next === undefined || next.startsWith('--')) throw new Error(`${name} erwartet einen Wert`);
@@ -118,6 +125,10 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--retry-review': options.retryReview = true; break;
       case '--regenerate-stale': options.regenerateStale = true; break;
       case '--no-sources': options.noSources = true; break;
+      case '--require-approval': options.requireApproval = true; break;
+      case '--term': options.term = take(); break;
+      case '--decision': options.decision = take(); break;
+      case '--approved-by': options.approvedBy = take(); break;
       case '--url': options.url = take(); break;
       case '--cache-dir': options.cacheDir = take(); break;
       case '--baseline': options.baseline = take(); break;
@@ -280,12 +291,28 @@ search-audit --remote-sample <url> [--write]
     --remote-sample <url>  ≥ 50 deterministische Fälle gegen <url>/api/v1/search (nur auf ausdrücklichen Wunsch,
                          nie automatisch); --write schreibt das Ergebnis
   Details: docs/SEARCH.md`,
-  readiness: `readiness [--json]
+  readiness: `readiness [--json] [--require-approval]
   Maschinelle Bereitschaftsprüfung: erste Zeile READY oder NOT READY (Exit 0/1), danach Prüfungen und Blocker
   (docs/RECHT_NRW_BULK_READINESS.md). Prüft u. a. Enumeration mit Abgleich und Fixpoint (Offline-Rebuild aus dem
   Abrufcache), veraltete Einträge je Status (Legacy-Ausnahmen aus data/imports/recht-nrw/legacy-exceptions.json),
   Review-Queue ↔ Manifest, Coverage, R2-/D1-/Such-Audits (aktuell = nicht älter als das Manifest-Wasserzeichen und
-  mit passenden Zählwerten), Golden Set, Secret-Scan, Fixtures und die Referenzbaseline (docs/WEST_REFERENCE_BASELINE.md).`,
+  mit passenden Zählwerten), Golden Set, Secret-Scan, Fixtures und die Referenzbaseline (docs/WEST_REFERENCE_BASELINE.md).
+  Human Approval: Legacy-Ausnahmen müssen pending-human-review oder approved sein (rejected = Blocker); ausstehende
+  Freigaben ergeben READY mit Hinweis „READY WITH PENDING HUMAN APPROVAL“. --require-approval (Freeze-Regel) macht
+  ausstehende Freigaben zum Blocker.`,
+  'approval-report': `approval-report [--write] [--json]
+  Freigabereport der Legacy-Ausnahmen (Human Approval West): deterministisch aus Ausnahmefeldern, Manifest-Evidenz,
+  Evidence Pass und Review-Shards; Empfehlung je Fall (DELIVER-LEGACY BEIBEHALTEN | DEPUBLIKATION BEIBEHALTEN |
+  MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH), Risikoklasse low|medium|high, Belegklassen. Mit --write:
+  data/audits/recht-nrw/HUMAN_APPROVAL_WEST.md und human-approval-west.json.`,
+  approval: `approval --term term:<id> --decision approve|reject --reason "<Begründung>" [--approved-by "<Name>"] [--write]
+  Redaktionelle Entscheidung zu genau einer Legacy-Ausnahme (data/imports/recht-nrw/legacy-exceptions.json): setzt
+  approvalStatus approved|rejected, schreibt decision und approvalHistory (vorher, nachher, Datum, Begründung). Ein
+  Name wird nur eingetragen, wenn --approved-by angegeben ist – nie automatisch (kein Git-/OS-Nutzer, kein Agent).
+  rejected bedeutet nur „nicht freigegeben“ (keine Folgeaktion; die Ausnahme greift nicht mehr). Ohne --write Dry-run.`,
+  'approval-status': `approval-status [--json]
+  Eine Zeile „West Human Approval · n exceptions · n approved · n pending · n rejected“.
+  Exit 0 = vollständig freigegeben, 2 = technisch valide, Freigabe ausstehend, 1 = inkonsistent.`,
   audit: `audit
   Prüft Manifest, Rohquellen-Hashes, kanonische Dateien, Reports, Rekonstruktionen, Review-Status, Slug-Registry,
   Enumeration und Coverage auf Konsistenz. Exit 1 bei Abweichungen.`,
@@ -309,7 +336,10 @@ export function renderHelp(command?: string): string {
     '  reconstruction-queue   Rekonstruktionsqueue',
     '  review-report          Review-Statistik, Prioritäten, Arbeitslisten, PDF-Fälle, historische Lücken',
     '  search-audit           Suchintegrität',
-    '  readiness              READY / NOT READY',
+    '  readiness              READY / NOT READY (--require-approval: Freeze-Regel)',
+    '  approval-report        Freigabereport der Legacy-Ausnahmen (Human Approval West)',
+    '  approval               Entscheidung zu einer Legacy-Ausnahme (--term, --decision, --reason)',
+    '  approval-status        Freigabestatus (Exit 0 vollständig, 2 ausstehend, 1 inkonsistent)',
     '  audit                  Konsistenzprüfung des Bestands',
     '',
     'Hilfe je Befehl: help <befehl> oder <befehl> --help',
@@ -401,6 +431,12 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
       return runReconstructionQueueCommand(options, root, io);
     case 'review-report':
       return runReviewReportCommand(options, root, io);
+    case 'approval-report':
+      return runApprovalReportCommand(options, root, io);
+    case 'approval':
+      return runApprovalCommand(options, root, io);
+    case 'approval-status':
+      return runApprovalStatusCommand(options, root, io);
     default:
       break;
   }
