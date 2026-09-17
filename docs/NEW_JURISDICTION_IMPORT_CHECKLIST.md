@@ -6,6 +6,9 @@ Komponente, die dafür bereits existiert (Übersicht in `ARCHITECTURE.md`, „Wi
 Importkomponenten“). Verbindliche Regeln für alle Importer: `docs/IMPORT_ARCHITECTURE.md`; Umfang:
 `docs/LEGAL_SCOPE.md`. Ost bleibt lesend (OstRecht ist externe Source of Truth).
 
+Stand 2026-09-17: **West/NRW ist als Referenzbestand eingefroren** (`docs/WEST_REFERENCE_BASELINE.md`,
+Human Approval abgeschlossen). **Nächster Quelladapter: Niedersachsen-Holstein (`nsh`, juris SH).**
+
 | # | Schritt | Ergebnis / Nachweis | Wiederverwendbar | Neu je Jurisdiktion |
 | --- | --- | --- | --- | --- |
 | 1 | **Quellportal** erkunden: Bereiche (Gesetze/Verordnungen, Verwaltungsvorschriften, Verkündungsblatt), Adressschema, Fassungslisten, Robots/Nutzungsbedingungen, Ratenverhalten | Kurzdossier in `docs/<PORTAL>_IMPORT.md`: Adressmuster, Fassungsmodell, Sperrverhalten; Beleg, dass kein Zugriffsschutz umgangen wird | Fetcher-Policy (`common/fetcher.ts`: Mindestabstand, Retry-After, Sperrabbruch, Budgets, Cache) | Adressparser (`source-identity.ts`-Pendant), Bereichsdefinition |

@@ -2,9 +2,9 @@
 
 West Reference Baseline · Stichtag 2023-12-01 · 21 Ausnahmen · 5 Deliver-Legacy · 16 Depublikation/Regression
 
-Stand: 2026-09-17T06:50:04.519Z · Quelle: `data/imports/recht-nrw/legacy-exceptions.json` (vorbereitet durch `automated-review`) · maschinenlesbar: `data/audits/recht-nrw/human-approval-west.json` · Erzeugung: `npm run import:recht-nrw:approval-report -- --write`
+Stand: 2026-09-17T06:58:02.440Z · Quelle: `data/imports/recht-nrw/legacy-exceptions.json` (vorbereitet durch `automated-review`) · maschinenlesbar: `data/audits/recht-nrw/human-approval-west.json` · Erzeugung: `npm run import:recht-nrw:approval-report -- --write`
 
-Freigabestatus: 21 ausstehend · 0 freigegeben · 0 nicht freigegeben. Risiko: 13 low · 4 medium · 4 high. Empfehlungen: 5 × DELIVER-LEGACY BEIBEHALTEN · 12 × DEPUBLIKATION BEIBEHALTEN · 4 × MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH.
+Freigabestatus: 0 ausstehend · 21 freigegeben · 0 nicht freigegeben. Risiko: 13 low · 4 medium · 4 high. Empfehlungen: 5 × DELIVER-LEGACY BEIBEHALTEN · 12 × DEPUBLIKATION BEIBEHALTEN · 4 × MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH.
 
 Dieser Report bereitet die redaktionelle Entscheidung vor; er ersetzt sie nicht. Jede Empfehlung folgt den dokumentierten Regeln in `packages/importers/recht-nrw/src/common/human-approval.ts` und ist aus Ausnahmefeldern, Manifest-Evidenz, Evidence-Pass-Fällen und Review-Shards abgeleitet. Beweisklassen: **strong/contradictory** tragen die Entscheidung, **supporting** ergänzt, **insufficient** trägt nie allein. Risikoklassen: **low** = eindeutiger amtlicher Beleg bzw. reine Strukturabweichung ohne Textverlust; **medium** = mehrere Belege oder Legacy mit struktureller Einschränkung; **high** = widersprüchliche/unvollständige Evidenz. Die 16 Depublikationen sind ausgeführt (Versionsreport: gegenstandslos) und bleiben hier als Depublikations-Entscheidung zur Bestätigung; sie werden nicht als `superseded` geführt.
 
@@ -14,27 +14,27 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 | Nr. | Term-ID | Titel | Typ | Entscheidung (Vorschlag) | Grund | Amtlicher Beleg | Textintegrität | Aktueller Status | Risiko | Nutzerentscheidung |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | term:30782 | Richtlinien über die Gewährung von Zuwendungen zur Förderung der Ausb… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2013-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 2 | term:30825 | Richtlinie zur Berücksichtigung von bürgerschaftlichem Engagement bei… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2017-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 3 | term:30978 | Richtlinie über die Gewährung von Zuwendungen für die Umrüstung von n… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2014-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 4 | term:31221 | Richtlinien über die Gewährung von Zuwendungen an freie Träger für Pr… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2018-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 5 | term:31313 | Richtlinie über die Gewährung von Zuwendungen aus dem „Programm für r… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2020-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 6 | term:31771 | Verwaltungsvorschrift über die Legitimations- und Kennzeichnungspflic… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2022-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 7 | term:31908 | Verwaltungsvorschrift Technische Baubestimmungen (VV TB) Runderlass d… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2022-06-27 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 8 | term:31967 | Richtlinie über die Gewährung von Zuwendungen an Betreiber von Fähren… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2019-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 9 | term:32104 | Richtlinie über die Gewährung von Soforthilfen bei durch Naturkatastr… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2022-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | AUSSTEHEND |
-| 10 | term:31080 | Richtlinien für die dienstliche Beurteilung der Beschäftigten (Beamti… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-successor-contradicted | Aufhebung durch Richtlinien für die dienstliche Beurteilung der Beamtinnen und Beamten im Geschäftsbereich des Ministeriums f… (term:31887) 2017-06-01 [contradictory] | identisch (Fassungsseite) | depubliziert | medium | AUSSTEHEND |
-| 11 | term:32424 | Richtlinie über bauaufsichtliche Anforderungen an Schulen (Schulbauri… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-successor-contradicted | Aufhebung durch Richtlinie über bauaufsichtliche Anforderungen an Schulen (Schulbaurichtlinie – SchulBauR) Runderlass des Min… (term:32897) 2020-12-11 [contradictory] | identisch (Fassungsseite) | depubliziert | medium | AUSSTEHEND |
-| 12 | term:33495 | Richtlinie zur Förderung der Modernisierung von Wohnraum in Nordrhein… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-successor-contradicted | Aufhebung durch Richtlinie zur Förderung der Modernisierung von Wohnraum im Land Nordrhein-Westfalen (Modernisierungsförderun… (term:33747) 2023-02-15 [contradictory] | identisch (Fassungsseite) | depubliziert | medium | AUSSTEHEND |
-| 13 | term:27211 | Gesetz zur Neugliederung der Gemeinden und Kreise des Neugliederungsr… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 4c610d8f7bd547ee… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | AUSSTEHEND |
-| 14 | term:27217 | Gesetz zur Neugliederung der Gemeinden und Kreise des Neugliederungsr… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 577bedb9b6f96298… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | AUSSTEHEND |
-| 15 | term:27514 | Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem H… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 a413267dc15b4651… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | medium | AUSSTEHEND |
-| 16 | term:28146 | Verordnung über das Wahlverfahren zur Benennung der Beschäftigten des… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 2a256234d807169f… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | AUSSTEHEND |
-| 17 | term:29969 | Verordnung zur Umsetzung des Maßregelvollzugsgesetzes (VO MRVG) | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 9d33f834267bfeb4… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | AUSSTEHEND |
-| 18 | term:31390 | Richtlinie über die Gewährung von Zuwendungen zu Fortbildungsmaßnahme… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-expiry-contradicted | Eigene Außerkrafttretensformel 2019-12-31 [contradictory] | identisch (Fassungsseite) | depubliziert | high | AUSSTEHEND |
-| 19 | term:31791 | Richtlinien über die Gewährung von Zuwendungen zur Schaffung, Erhaltu… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-successor-contradicted | Aufhebung durch Richtlinien über die Gewährung von Zuwendung zur Schaffung, Erhaltung, Wiederherstellung und Verbesserung von… (term:33827) 2023-07-28 [contradictory] | identisch (Fassungsseite) | depubliziert | high | AUSSTEHEND |
-| 20 | term:32422 | Richtlinien zur Förderung der vernetzten Mobilität und des Mobilitäts… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-successor-contradicted | Aufhebung durch Richtlinien zur Förderung der Vernetzten Mobilität und des Mobilitätsmanagements (Förderrichtlinie Mobilitäts… (term:33558) 2022-07-01 [contradictory] | identisch (Fassungsseite) | depubliziert | high | AUSSTEHEND |
-| 21 | term:33461 | Richtlinie über die Gewährung von Zuwendungen für Maßnahmen gemäß § 9… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-expiry-ambiguous | Eigene Außerkrafttretensformel 2027-03-31 [contradictory] | identisch (Fassungsseite) | depubliziert | high | AUSSTEHEND |
+| 1 | term:30782 | Richtlinien über die Gewährung von Zuwendungen zur Förderung der Ausb… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2013-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 2 | term:30825 | Richtlinie zur Berücksichtigung von bürgerschaftlichem Engagement bei… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2017-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 3 | term:30978 | Richtlinie über die Gewährung von Zuwendungen für die Umrüstung von n… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2014-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 4 | term:31221 | Richtlinien über die Gewährung von Zuwendungen an freie Träger für Pr… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2018-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 5 | term:31313 | Richtlinie über die Gewährung von Zuwendungen aus dem „Programm für r… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2020-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 6 | term:31771 | Verwaltungsvorschrift über die Legitimations- und Kennzeichnungspflic… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2022-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 7 | term:31908 | Verwaltungsvorschrift Technische Baubestimmungen (VV TB) Runderlass d… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2022-06-27 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 8 | term:31967 | Richtlinie über die Gewährung von Zuwendungen an Betreiber von Fähren… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2019-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 9 | term:32104 | Richtlinie über die Gewährung von Soforthilfen bei durch Naturkatastr… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-expired-before-baseline | Eigene Außerkrafttretensformel 2022-12-31 [strong] | identisch (Fassungsseite) | depubliziert | low | FREIGEGEBEN |
+| 10 | term:31080 | Richtlinien für die dienstliche Beurteilung der Beschäftigten (Beamti… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-successor-contradicted | Aufhebung durch Richtlinien für die dienstliche Beurteilung der Beamtinnen und Beamten im Geschäftsbereich des Ministeriums f… (term:31887) 2017-06-01 [contradictory] | identisch (Fassungsseite) | depubliziert | medium | FREIGEGEBEN |
+| 11 | term:32424 | Richtlinie über bauaufsichtliche Anforderungen an Schulen (Schulbauri… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-successor-contradicted | Aufhebung durch Richtlinie über bauaufsichtliche Anforderungen an Schulen (Schulbaurichtlinie – SchulBauR) Runderlass des Min… (term:32897) 2020-12-11 [contradictory] | identisch (Fassungsseite) | depubliziert | medium | FREIGEGEBEN |
+| 12 | term:33495 | Richtlinie zur Förderung der Modernisierung von Wohnraum in Nordrhein… | depublish | DEPUBLIKATION BEIBEHALTEN | validity-successor-contradicted | Aufhebung durch Richtlinie zur Förderung der Modernisierung von Wohnraum im Land Nordrhein-Westfalen (Modernisierungsförderun… (term:33747) 2023-02-15 [contradictory] | identisch (Fassungsseite) | depubliziert | medium | FREIGEGEBEN |
+| 13 | term:27211 | Gesetz zur Neugliederung der Gemeinden und Kreise des Neugliederungsr… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 4c610d8f7bd547ee… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | FREIGEGEBEN |
+| 14 | term:27217 | Gesetz zur Neugliederung der Gemeinden und Kreise des Neugliederungsr… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 577bedb9b6f96298… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | FREIGEGEBEN |
+| 15 | term:27514 | Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem H… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 a413267dc15b4651… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | medium | FREIGEGEBEN |
+| 16 | term:28146 | Verordnung über das Wahlverfahren zur Benennung der Beschäftigten des… | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 2a256234d807169f… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | FREIGEGEBEN |
+| 17 | term:29969 | Verordnung zur Umsetzung des Maßregelvollzugsgesetzes (VO MRVG) | deliver-legacy | DELIVER-LEGACY BEIBEHALTEN | structure-unnumbered-section | Textidentität SHA-256 9d33f834267bfeb4… (Portalintervall strong) | identisch (Normtext) | veröffentlicht (Legacy-Parser) | low | FREIGEGEBEN |
+| 18 | term:31390 | Richtlinie über die Gewährung von Zuwendungen zu Fortbildungsmaßnahme… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-expiry-contradicted | Eigene Außerkrafttretensformel 2019-12-31 [contradictory] | identisch (Fassungsseite) | depubliziert | high | FREIGEGEBEN |
+| 19 | term:31791 | Richtlinien über die Gewährung von Zuwendungen zur Schaffung, Erhaltu… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-successor-contradicted | Aufhebung durch Richtlinien über die Gewährung von Zuwendung zur Schaffung, Erhaltung, Wiederherstellung und Verbesserung von… (term:33827) 2023-07-28 [contradictory] | identisch (Fassungsseite) | depubliziert | high | FREIGEGEBEN |
+| 20 | term:32422 | Richtlinien zur Förderung der vernetzten Mobilität und des Mobilitäts… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-successor-contradicted | Aufhebung durch Richtlinien zur Förderung der Vernetzten Mobilität und des Mobilitätsmanagements (Förderrichtlinie Mobilitäts… (term:33558) 2022-07-01 [contradictory] | identisch (Fassungsseite) | depubliziert | high | FREIGEGEBEN |
+| 21 | term:33461 | Richtlinie über die Gewährung von Zuwendungen für Maßnahmen gemäß § 9… | depublish | MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH | validity-expiry-ambiguous | Eigene Außerkrafttretensformel 2027-03-31 [contradictory] | identisch (Fassungsseite) | depubliziert | high | FREIGEGEBEN |
 
 ## Depublikationen mit starkem Außerkrafttretensbeleg (eigene Formel vor dem Stichtag)
 
@@ -78,10 +78,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:37.590Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:37.590Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 2. term:30825 – Richtlinie zur Berücksichtigung von bürgerschaftlichem Engagement bei der Gewährung von Zuwendungen im Zuständigkeitsbereich des Ministeriu…
 
@@ -124,10 +125,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:37.998Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:37.998Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 3. term:30978 – Richtlinie über die Gewährung von Zuwendungen für die Umrüstung von nordrhein-westfälischen Filmtheatern auf digitale Projektionstechnik (F…
 
@@ -170,10 +172,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:38.407Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:38.407Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 4. term:31221 – Richtlinien über die Gewährung von Zuwendungen an freie Träger für Projekte zum Täter-Opfer-Ausgleich bei Inhaftierten bei den Justizvollzu…
 
@@ -215,10 +218,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:38.803Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:38.803Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 5. term:31313 – Richtlinie über die Gewährung von Zuwendungen aus dem „Programm für rationelle Energieverwendung, regenerative Energien und Energiesparen -…
 
@@ -260,10 +264,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:39.189Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:39.189Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 6. term:31771 – Verwaltungsvorschrift über die Legitimations- und Kennzeichnungspflicht von Polizeivollzugsbeamtinnen und -beamten (VVKennzeichnung Pol) Ru…
 
@@ -305,10 +310,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:39.562Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:39.562Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 7. term:31908 – Verwaltungsvorschrift Technische Baubestimmungen (VV TB) Runderlass des Ministeriums für Bauen, Wohnen, Stadtentwicklung und Verkehr - VI A…
 
@@ -350,10 +356,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Außerkrafttreten 2022-06-27 vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:39.942Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:39.942Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 8. term:31967 – Richtlinie über die Gewährung von Zuwendungen an Betreiber von Fähren im Ausbildungsverkehr in Nordrhein-Westfalen (Richtlinie Fähren)
 
@@ -396,10 +403,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:40.315Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:40.315Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 9. term:32104 – Richtlinie über die Gewährung von Soforthilfen bei durch Naturkatastrophen hervorgerufenen Notständen (Soforthilferichtlinie – SHR) Runderl…
 
@@ -442,10 +450,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Außerkrafttretensbeleg (eigene Formel der amtlichen Fassung, Datum vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:40.742Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:40.742Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ## Depublikationen mit contradictory-Evidenz (amtlicher Nachfolgebeleg, offenes Portalintervall)
 
@@ -489,10 +498,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Nachfolgebeleg (ausdrueckliche Aufhebung mit Datum und Fundstelle vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:41.132Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:41.132Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 11. term:32424 – Richtlinie über bauaufsichtliche Anforderungen an Schulen (Schulbaurichtlinie – SchulBauR) * Runderlass des Ministeriums für Heimat, Kommun…
 
@@ -534,10 +544,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Nachfolgebeleg (ausdrueckliche Aufhebung mit Datum und Fundstelle vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:41.515Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:41.515Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ### 12. term:33495 – Richtlinie zur Förderung der Modernisierung von Wohnraum in Nordrhein-Westfalen (Modernisierungsförderung – RL Mod 2022)
 
@@ -580,10 +591,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend dem dokumentierten starken amtlichen Nachfolgebeleg (ausdrueckliche Aufhebung mit Datum und Fundstelle vor dem Stichtag 2023-12-01) beibehalten.
+- Datum: 2026-09-17T06:57:41.904Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:41.904Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): bestehende Depublikation entsprechend de…)
 
 ## Deliver-Legacy (Text identisch, nur Struktur)
 
@@ -628,10 +640,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textintegritaet ist nachgewiesen (sichtbarer Text SHA-256-identisch), die dokumentierte Parsergrenze betrifft die Struktur (Sektion ohne Nummernfeld) und bleibt als Ausnahme und Reviewhinweis erhalten.
+- Datum: 2026-09-17T06:57:42.289Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:42.289Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textint…)
 
 ### 14. term:27217 – Gesetz zur Neugliederung der Gemeinden und Kreise des Neugliederungsraumes Mönchengladbach/Düsseldorf/Wuppertal (Düsseldorf-Gesetz)
 
@@ -674,10 +687,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textintegritaet ist nachgewiesen (sichtbarer Text SHA-256-identisch), die dokumentierte Parsergrenze betrifft die Struktur (Sektion ohne Nummernfeld) und bleibt als Ausnahme und Reviewhinweis erhalten.
+- Datum: 2026-09-17T06:57:42.684Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:42.684Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textint…)
 
 ### 15. term:27514 – Gesetz zu dem Vertrag zwischen dem Land Nordrhein-Westfalen und dem Heiligen Stuhl
 
@@ -720,10 +734,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textintegritaet ist nachgewiesen (sichtbarer Text SHA-256-identisch). Italienischer Paralleltext mit 11 Sektionen ohne Nummernfeld; die Legacy-Struktur wird bewusst akzeptiert und bleibt als Ausnahme und Reviewhinweis erhalten.
+- Datum: 2026-09-17T06:57:43.775Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:43.775Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textint…)
 
 ### 16. term:28146 – Verordnung über das Wahlverfahren zur Benennung der Beschäftigten des Eigenbetriebs für die Wahl in den Betriebsausschuss (Wahlordnung für …
 
@@ -766,10 +781,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textintegritaet ist nachgewiesen (sichtbarer Text SHA-256-identisch), die dokumentierte Parsergrenze betrifft die Struktur (Sektion ohne Nummernfeld) und bleibt als Ausnahme und Reviewhinweis erhalten.
+- Datum: 2026-09-17T06:57:43.047Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:43.047Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textint…)
 
 ### 17. term:29969 – Verordnung zur Umsetzung des Maßregelvollzugsgesetzes (VO MRVG)
 
@@ -812,10 +828,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textintegritaet ist nachgewiesen (sichtbarer Text SHA-256-identisch), die dokumentierte Parsergrenze betrifft die Struktur (Sektion ohne Nummernfeld) und bleibt als Ausnahme und Reviewhinweis erhalten.
+- Datum: 2026-09-17T06:57:43.411Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:43.411Z: Menschlich bestaetigt (redaktionelle Freeze-Entscheidung): Legacy-Auslieferung beibehalten; Textint…)
 
 ## Menschliche Entscheidung erforderlich (widersprüchliche oder unvollständige Evidenz)
 
@@ -859,10 +876,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Depublikation wird als Referenzentscheidung bestaetigt, obwohl der eigenen Außerkrafttretensformel zum 2019-12-31 eine spaetere Aenderung im Fundstellenverlauf vom 2021-12-13 gegenuebersteht. Der High-Risk-Befund und die widerspruechliche Evidenz bleiben vollstaendig dokumentiert und koennen bei spaeterer redaktioneller Neubewertung wieder aufgegriffen werden.
+- Datum: 2026-09-17T06:57:44.165Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:44.165Z: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Dep…)
 
 ### 19. term:31791 – Richtlinien über die Gewährung von Zuwendungen zur Schaffung, Erhaltung, Wiederherstellung und Verbesserung von Grüner Infrastruktur einsch…
 
@@ -906,10 +924,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Depublikation aufgrund der dokumentierten Nachfolgeevidenz wird als Referenzentscheidung bestaetigt. Der entgegenstehende eigene Geltungshinweis bis 2023-12-31 bleibt als contradictory evidence vollstaendig dokumentiert; der High-Risk-Befund bleibt bestehen.
+- Datum: 2026-09-17T06:57:44.560Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:44.560Z: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Dep…)
 
 ### 20. term:32422 – Richtlinien zur Förderung der vernetzten Mobilität und des Mobilitätsmanagements (FöRi-MM) Runderlass des Ministeriums für Verkehr – IV B 3
 
@@ -953,10 +972,11 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Depublikation aufgrund der dokumentierten Nachfolgeevidenz wird als Referenzentscheidung bestaetigt. Der entgegenstehende eigene Geltungshinweis bis 2023-12-31 bleibt als contradictory evidence vollstaendig dokumentiert; der High-Risk-Befund bleibt bestehen.
+- Datum: 2026-09-17T06:57:44.935Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:44.935Z: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Dep…)
 
 ### 21. term:33461 – Richtlinie über die Gewährung von Zuwendungen für Maßnahmen gemäß § 96 des Bundesvertriebenengesetzes durch das Land Nordrhein-Westfalen
 
@@ -999,8 +1019,9 @@ Entscheidung eintragen: `npm run import:recht-nrw:approval -- --term term:<id> -
 
 **Freigabe.**
 
-- Status: AUSSTEHEND
-- Entscheidung Nutzer: –
-- Begründung Nutzer: –
-- Datum: –
+- Status: FREIGEGEBEN
+- Entscheidung Nutzer: freigegeben
+- Begründung Nutzer: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Depublikation wird als bewusste Referenzentscheidung bestaetigt, obwohl die zwei eigenen Formeln (2022-03-31 und 2027-03-31) keine eindeutige automatische Geltungsentscheidung erlauben. Beide Datumsangaben und der High-Risk-Befund bleiben vollstaendig erhalten.
+- Datum: 2026-09-17T06:57:45.316Z
+- Verlauf: pending-human-review → approved (2026-09-17T06:57:45.316Z: Menschliche Freeze-Entscheidung trotz dokumentierter widerspruechlicher Evidenz: Die bestehende Dep…)
 

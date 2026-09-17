@@ -126,4 +126,11 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/RECHT_NRW_LRMB_IMPORT.md` | Verwaltungsvorschriften (LRMB): Befund, Zeitmodell, Rekonstruktion, Parser, Beispielkorpus |
 | `docs/RECHT_NRW_BULK_IMPORT.md` | Vollständiger Ausgangsimport: Enumeration, Bulk-Runner, Checkpoints, Budgets, Cache, R2, Phasen und Audit |
 | `docs/RECHT_NRW_BULK_READINESS.md` | Bereitschaft: Policies (undatierte LRMB-Datensätze, PDF), GO/No-Go-Checkliste, Befehle und Reihenfolge des Bulk-Laufs |
+| `docs/WEST_REFERENCE_BASELINE.md` | Eingefrorener West-Referenzstand: Kennzahlen, Auditstände, Human Approval, Freeze-Regeln |
+| `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md` | Wiederverwendbare Checkliste für den Import einer weiteren Jurisdiktion |
+| `docs/SEARCH.md` | Suchplan (and-first), Golden Set, Fast-/Full-Audit |
 | `docs/DEPLOYMENT.md` | GitLab-CI, Cloudflare-Ressourcen, D1-Projektion, Variablen |
+
+Stand der Quelladapter: **West / NRW – Referenzbestand eingefroren** (`docs/WEST_REFERENCE_BASELINE.md`,
+Stichtag 2023-12-01, 1 482 Normen, Human Approval abgeschlossen). **Nächster Quelladapter:
+Niedersachsen-Holstein (`nsh`).** Ost bleibt lesend (OstRecht ist externe Source of Truth).

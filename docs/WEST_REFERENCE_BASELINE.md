@@ -22,7 +22,7 @@ Dokument auf Vorhandensein und offene Platzhalter.
 | Importer (`packages/importers/recht-nrw`) | Git `1424a92c` + Abschlusslauf 2026-09-17 (Freeze-Commit: `PENDING`, siehe „Final Freeze Procedure“) |
 | Parser LRGV / LRMB | `recht-nrw-parser/1.2.0` / `recht-nrw-lrmb-parser/1.3.0` (Evidence Pass) |
 | Transformer | `recht-nrw-transformer/2.1.0` |
-| Legacy-Ausnahmen (`legacy-exceptions.json`) | 21: 5 `deliver-legacy` (LRGV, Textidentität per SHA-256 nachgewiesen), 16 `depublish` (LRMB, ausgeführt und damit im Versionsreport gegenstandslos); Legacy-Ausnahmen maschinell vorbereitet (`automated-review`), redaktionelle Bestätigung ausstehend (`approvalStatus: pending-human-review`, siehe „Human Approval“) |
+| Legacy-Ausnahmen (`legacy-exceptions.json`) | 21: 5 `deliver-legacy` (LRGV, Textidentität per SHA-256 nachgewiesen), 16 `depublish` (LRMB, ausgeführt und damit im Versionsreport gegenstandslos); maschinell vorbereitet (`automated-review`), **redaktionell freigegeben am 2026-09-17** (`approvalStatus: approved`, 21/21, ohne Namensfeld – siehe „Human Approval“) |
 
 Parserstände: LRGV 5 begründet veraltet (Legacy), 0 unbegründet; LRMB 0 veraltet (Versionsreport im `audit`).
 
@@ -62,7 +62,8 @@ Offene Reviewgruppen (Stand Freeze, `data/audits/recht-nrw/REVIEW_SUMMARY.md`; 1
 | D1 lokal ↔ remote (`audit:d1-remote`) | 0 Abweichungen, 11 Prüfungen (Zähler, Typen, Byte-Summen, 30-Norm-Stichprobe) | `data/audits/recht-nrw/d1/D1_REMOTE_CHECK.json` | 2026-09-17T06:12:46Z |
 | Suche voll (`search-audit --mode full`) | 1 482 Normen, 54 615 Abfragen, 0 Fehler, 544 s | `data/audits/recht-nrw/search/search-audit-full.json` | 2026-09-17T06:13:09Z |
 | Golden Set | Recall@10 94,1 %, MRR 0,933, Top-1 100 %, 0 Fehlschläge (and-first, p50 13,5 ms) | `data/audits/recht-nrw/search/golden-results.json` | 2026-09-17T06:13:50Z |
-| Readiness | READY WITH PENDING HUMAN APPROVAL (Hinweise: Legacy-Ausnahmen, 21 Freigaben ausstehend, S3-Variablen nicht gesetzt) | `npm run import:recht-nrw:readiness -- --json` | 2026-09-17 |
+| Readiness | READY, auch mit `--require-approval` (21/21 Ausnahmen freigegeben; Hinweis: S3-Variablen nicht gesetzt) | `npm run import:recht-nrw:readiness -- --json` | 2026-09-17 |
+| Human Approval (`approval-status`) | 21 exceptions · 21 approved · 0 pending · 0 rejected (Exit 0) | `data/audits/recht-nrw/human-approval-west.json` | 2026-09-17 |
 
 ## Deployment
 
@@ -75,15 +76,34 @@ Offene Reviewgruppen (Stand Freeze, `data/audits/recht-nrw/REVIEW_SUMMARY.md`; 1
 
 ## Human Approval
 
+**Human Approval: COMPLETE** — 21 Ausnahmen, 21 approved, 0 pending, 0 rejected (Stand 2026-09-17).
+
 Die 21 Legacy-Ausnahmen (`data/imports/recht-nrw/legacy-exceptions.json`, Schema `recht-nrw-legacy-exceptions/1`
-mit `approvalStatus`) sind maschinell vorbereitet (`preparedBy: automated-review`); die redaktionelle Bestätigung
-durch den Nutzer ist ausstehend. Kein Eintrag trägt einen automatisch gesetzten Freigebenden.
+mit `approvalStatus`) wurden maschinell vorbereitet (`preparedBy: automated-review`) und am 2026-09-17 durch den
+Nutzer redaktionell freigegeben. Kein Eintrag trägt einen Freigebenden: die Entscheidung ist über `decision`
+(Status, Zeitpunkt, fallbezogene Begründung) und `approvalHistory` (`pending-human-review → approved`)
+dokumentiert, ein Name wird nur mit `--approved-by` gesetzt und wurde nicht angegeben.
 
 | Gruppe | Anzahl | Status |
 | --- | --- | --- |
-| `deliver-legacy` (LRGV, Text SHA-256-identisch, nur Struktur) | 5 | `pending-human-review` |
-| `depublish` (LRMB, Depublikation ausgeführt, Geltungsbefund Parser 1.3.0) | 16 | `pending-human-review` |
-| Summe | 21 | 0 approved · 21 pending · 0 rejected |
+| `deliver-legacy` (LRGV, Text SHA-256-identisch, nur Struktur) | 5 | `approved` |
+| `depublish` (LRMB, Depublikation ausgeführt, Geltungsbefund Parser 1.3.0) | 16 | `approved` |
+| Summe | 21 | 21 approved · 0 pending · 0 rejected |
+
+Vier dieser Depublikationen sind ausdrücklich als **High-Risk-Freeze-Entscheidung** bestätigt:
+
+| Term-ID | Dokumentierter Widerspruch |
+| --- | --- |
+| `term:31390` | eigene Außerkrafttretensformel 2019-12-31 gegen spätere Änderung im Fundstellenverlauf (2021-12-13) |
+| `term:31791` | Nachfolgebeleg (Aufhebung vor dem Stichtag) gegen eigenen Geltungshinweis bis 2023-12-31 |
+| `term:32422` | Nachfolgebeleg (Aufhebung vor dem Stichtag) gegen eigenen Geltungshinweis bis 2023-12-31 |
+| `term:33461` | zwei eigene Formeln (2022-03-31 und 2027-03-31), Geltung am Stichtag nicht eindeutig |
+
+Die Freigabe bestätigt die Ausnahmeentscheidung; sie macht die Evidenz nicht eindeutig. Belegklassen
+(`contradictory`), Risikoklasse `high`, Empfehlung `MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH` und alle Belege bleiben
+unverändert Bestandteil des Referenzdatensatzes und können bei späterer redaktioneller Neubewertung wieder
+aufgegriffen werden. Modell: technische Evidenz → `contradictory`/`high` → menschliche Entscheidung → `approved`
+(nicht umgekehrt).
 
 Freigabereport: `data/audits/recht-nrw/HUMAN_APPROVAL_WEST.md` (maschinenlesbar `human-approval-west.json`,
 erzeugt mit `npm run import:recht-nrw:approval-report -- --write`, deterministisch aus Ausnahmefeldern, Manifest-
@@ -95,24 +115,42 @@ ersetzt die Entscheidung nicht; Fälle mit Risiko `high` verlangen sie ausdrück
 Readiness-Semantik: Ausnahmen müssen `pending-human-review` oder `approved` sein (`rejected` = Blocker);
 ausstehende Freigaben ergeben **READY WITH PENDING HUMAN APPROVAL** (Hinweis, Exit 0), mit `--require-approval`
 (Freeze-Regel) einen Blocker. `npm run import:recht-nrw:approval-status` meldet Exit 0 nur bei vollständiger
-Freigabe (2 = ausstehend, 1 = inkonsistent).
+Freigabe (2 = ausstehend, 1 = inkonsistent). Aktueller Stand: beide Prüfungen grün.
+
+## Freeze-Status
+
+**FROZEN** (fachlich freigegebener Referenzstand, 2026-09-17; Freeze-Commit `PENDING`, wird vom Nutzer gesetzt).
+
+Der Freeze bedeutet **nicht**, dass sämtliche offenen historischen oder redaktionellen Reviewfälle endgültig
+gelöst sind (siehe „Einschränkungen“). Er bezeichnet den technisch und redaktionell freigegebenen Referenzstand
+des automatisierten Ausgangsimports. Spätere fachliche Nacharbeit – PDF-Transkriptionen, historische
+Belegrecherche, Rekonstruktionen, Normativitätsentscheidungen – erfolgt als nachvollziehbare Änderung auf Basis
+dieses Referenzstands.
+
+Änderungen an NRW/West nach dem Freeze nur noch als:
+
+1. konkreter Bugfix,
+2. neue amtliche Evidenz,
+3. redaktionell geprüfte Reviewentscheidung,
+4. bewusstes Schema-/Pipeline-Upgrade mit Migration.
+
+Keine allgemeine Experimentierphase mehr. Nächster Quelladapter: Niedersachsen-Holstein (`nsh`), nach
+`docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md`.
 
 ## Final Freeze Procedure
 
 Der Freeze ist erst mit dem Commit des Nutzers abgeschlossen; bis dahin bleibt der Freeze-Commit `PENDING`.
+Schritte 1–4 sind am 2026-09-17 erledigt (21/21 `approved`); offen sind nur noch 5–8.
 
-1. **Report prüfen:** `npm run import:recht-nrw:approval-report -- --write`, dann
-   `data/audits/recht-nrw/HUMAN_APPROVAL_WEST.md` lesen – Übersichtstabelle, je Fall Belege, Kurzprüfung,
-   Empfehlung; Fälle mit `MENSCHLICHE ENTSCHEIDUNG ERFORDERLICH` zuerst.
-2. **Entscheidungen treffen:** je Fall freigeben oder nicht freigeben; Begründung notieren (Primärquelle,
-   Datum, Beleg). `rejected` ist nur „nicht freigegeben“ – Folgeaktion (Regeneration, Override, Entfernung der
-   Ausnahme) ist eine eigene Entscheidung.
-3. **Approval-CLI:** je Fall
-   `npm run import:recht-nrw:approval -- --term term:NNNNN --decision approve|reject --reason "…" [--approved-by "…"] --write`
-   (ohne `--write` Dry-run; ein Name wird nur mit `--approved-by` eingetragen).
-4. **Approval-Check:** `npm run import:recht-nrw:approval-status` → Exit 0
-   (`West Human Approval · 21 exceptions · 21 approved · 0 pending · 0 rejected`); Report erneut schreiben
-   (`approval-report -- --write`).
+1. ~~**Report prüfen:**~~ erledigt – `data/audits/recht-nrw/HUMAN_APPROVAL_WEST.md` (neu erzeugt mit
+   `npm run import:recht-nrw:approval-report -- --write`).
+2. ~~**Entscheidungen treffen:**~~ erledigt – alle 21 Ausnahmen freigegeben, einschließlich der vier
+   High-Risk-Fälle als bewusste Freeze-Entscheidung.
+3. ~~**Approval-CLI:**~~ erledigt –
+   `npm run import:recht-nrw:approval -- --term term:NNNNN --decision approve --reason "…" --write` je Fall
+   (ohne `--approved-by`, daher kein Namensfeld in den Daten).
+4. ~~**Approval-Check:**~~ erledigt – `npm run import:recht-nrw:approval-status` → Exit 0
+   (`West Human Approval · 21 exceptions · 21 approved · 0 pending · 0 rejected`).
 5. **Gates:** `npm run check && npm run test && npm run content:check && npm run d1:schema:check && npm run build`,
    `npm run import:recht-nrw:audit`, `npm run import:recht-nrw:readiness -- --require-approval` → `READY`
    (`ls content/norms/west | wc -l` = 1 482, Content-Fingerabdruck unverändert).
