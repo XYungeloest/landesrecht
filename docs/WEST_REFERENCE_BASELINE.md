@@ -19,7 +19,7 @@ Dokument auf Vorhandensein und offene Platzhalter.
 
 | Komponente | Version |
 | --- | --- |
-| Importer (`packages/importers/recht-nrw`) | Git `1424a92c` + Abschlusslauf 2026-09-17 (Freeze-Commit: `PENDING`, siehe „Final Freeze Procedure“) |
+| Importer (`packages/importers/recht-nrw`) | Git `1424a92c` + Abschlusslauf 2026-09-17 (Freeze-Commit: `ff1b1f43e209390a0dd610e5a06b5c5e07efa27a`, siehe „Final Freeze Procedure“) |
 | Parser LRGV / LRMB | `recht-nrw-parser/1.2.0` / `recht-nrw-lrmb-parser/1.3.0` (Evidence Pass) |
 | Transformer | `recht-nrw-transformer/2.1.0` |
 | Legacy-Ausnahmen (`legacy-exceptions.json`) | 21: 5 `deliver-legacy` (LRGV, Textidentität per SHA-256 nachgewiesen), 16 `depublish` (LRMB, ausgeführt und damit im Versionsreport gegenstandslos); maschinell vorbereitet (`automated-review`), **redaktionell freigegeben am 2026-09-17** (`approvalStatus: approved`, 21/21, ohne Namensfeld – siehe „Human Approval“) |
@@ -72,7 +72,7 @@ Offene Reviewgruppen (Stand Freeze, `data/audits/recht-nrw/REVIEW_SUMMARY.md`; 1
 | Worker-Version (Cloudflare) | `6dc90725-84f5-4585-9f89-0f36f1b282c6` (`https://landesrecht.xyungeloestlp.workers.dev`) |
 | D1 `landesrecht-west` | 1 482 Normen, 28 932 Sucheinheiten, `last_projected_at` 2026-09-17T06:11:51Z (inkrementell) |
 | Freeze-Datum | 2026-09-17 |
-| Freeze-Commit | `PENDING` (Basis `1424a92c`; wird in Schritt 7 der Final Freeze Procedure eingetragen) |
+| Freeze-Commit | `ff1b1f43e209390a0dd610e5a06b5c5e07efa27a` (Basis `1424a92c`; wird in Schritt 7 der Final Freeze Procedure eingetragen) |
 
 ## Human Approval
 
@@ -119,7 +119,7 @@ Freigabe (2 = ausstehend, 1 = inkonsistent). Aktueller Stand: beide Prüfungen g
 
 ## Freeze-Status
 
-**FROZEN** (fachlich freigegebener Referenzstand, 2026-09-17; Freeze-Commit `PENDING`, wird vom Nutzer gesetzt).
+**FROZEN** (fachlich freigegebener Referenzstand, 2026-09-17; Freeze-Commit `ff1b1f43e209390a0dd610e5a06b5c5e07efa27a`, wird vom Nutzer gesetzt).
 
 Der Freeze bedeutet **nicht**, dass sämtliche offenen historischen oder redaktionellen Reviewfälle endgültig
 gelöst sind (siehe „Einschränkungen“). Er bezeichnet den technisch und redaktionell freigegebenen Referenzstand
