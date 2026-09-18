@@ -312,6 +312,92 @@ export function renderStatement(query: PlanQuery): string {
   return `${body};`;
 }
 
+
+/** Längengrenze einer einzelnen D1-Anweisung. */
+export const D1_MAX_STATEMENT_BYTES = 100_000;
+/**
+ * Schlüsselspalten je Tabelle, über die eine aufgeteilte Zeile wiedergefunden wird.
+ *
+ * Nur Tabellen, deren Zeilen tatsächlich übergroß werden können, stehen hier. Eine Tabelle, die hier
+ * fehlt, wird nie aufgeteilt – eine übergroße Anweisung dort bleibt ein Fehler, wie zuvor.
+ */
+export const SPLITTABLE_TABLE_KEYS: Readonly<Record<string, readonly string[]>> = {
+  law_norms: ['id'],
+  law_versions: ['norm_id', 'version_id'],
+};
+
+/** Reserve für Anweisungsrumpf und Schlüsselwerte der Anhänge-Anweisung. */
+const SPLIT_HEADROOM_BYTES = 8_000;
+
+/**
+ * Teilt ein übergroßes `INSERT` in ein `INSERT` mit gekürztem Wert und anhängende `UPDATE`s.
+ *
+ * Anlass: Eine bayerische Verwaltungsvorschrift trägt 758 PDF-Beilagen – eine Karte je
+ * Natura-2000-Gebiet. Jede ist eine Quellenreferenz; `meta_json` wird dadurch 431 KB groß, die
+ * D1-Grenze für eine Anweisung liegt bei 100 KB. Die Norm ist echt und vollständig; sie auszuschließen
+ * hieße, eine gültige Vorschrift wegen der Größe ihrer Beilagenliste zu verlieren.
+ *
+ * **Greift nur oberhalb der Grenze.** Eine Anweisung, die passt, bleibt Byte für Byte, wie sie war –
+ * der West-Bestand, in dem keine Anweisung die Grenze erreicht, erzeugt deshalb exakt dieselben
+ * Dateien wie zuvor.
+ *
+ * Sicherheit: Die Dateien beginnen je Norm mit dem Löschen dieser Norm (resumable-Modus). Bricht der
+ * Lauf zwischen `INSERT` und letztem `UPDATE` ab, entfernt die Wiederholung die halbe Zeile, bevor sie
+ * sie neu schreibt. Eine abgeschnittene Zeile kann so nicht stehen bleiben.
+ */
+export function splitOversizedInsert(query: PlanQuery, limit: number = D1_MAX_STATEMENT_BYTES): PlanQuery[] {
+  const encoder = new TextEncoder();
+  const size = (candidate: PlanQuery): number => encoder.encode(renderStatement(candidate)).byteLength + 1;
+  if (size(query) <= limit) return [query];
+
+  const match = /^\s*INSERT\s+INTO\s+([a-z_]+)\s*\(([^)]*)\)/iu.exec(query.sql);
+  if (!match) return [query];
+  const table = match[1]!;
+  const keys = SPLITTABLE_TABLE_KEYS[table];
+  if (!keys) return [query];
+  const columns = match[2]!.split(',').map((column) => column.trim());
+  if (columns.length !== query.params.length) return [query];
+  const keyIndexes = keys.map((key) => columns.indexOf(key));
+  if (keyIndexes.some((index) => index < 0)) return [query];
+
+  // Die größte Zeichenkette trägt das Volumen; nur sie wird aufgeteilt.
+  let target = -1;
+  let longest = 0;
+  query.params.forEach((value, index) => {
+    if (typeof value === 'string' && value.length > longest && !keyIndexes.includes(index)) {
+      target = index;
+      longest = value.length;
+    }
+  });
+  if (target < 0) return [query];
+
+  const value = query.params[target] as string;
+  const column = columns[target]!;
+  const whereClause = keys.map((key) => `${key} = ?`).join(' AND ');
+  const keyValues = keyIndexes.map((index) => query.params[index]);
+
+  // Stückgröße in Zeichen so wählen, dass auch mehrbytige Zeichen und Maskierung unter der Grenze
+  // bleiben: vier Bytes je Zeichen im ungünstigsten Fall, Apostrophe verdoppelt.
+  const chunkChars = Math.max(1_000, Math.floor((limit - SPLIT_HEADROOM_BYTES) / 8));
+  const chunks: string[] = [];
+  for (let offset = 0; offset < value.length; offset += chunkChars) chunks.push(value.slice(offset, offset + chunkChars));
+
+  const head: PlanQuery = { sql: query.sql, params: query.params.map((param, index) => (index === target ? chunks[0]! : param)) };
+  const appends: PlanQuery[] = chunks.slice(1).map((chunk) => ({
+    sql: `UPDATE ${table} SET ${column} = ${column} || ? WHERE ${whereClause}`,
+    params: [chunk, ...keyValues],
+  }));
+  const result = [head, ...appends];
+  // Passt ein Teil dennoch nicht (etwa weil eine zweite Spalte ebenfalls groß ist), bleibt es beim
+  // Fehler der Aufrufstelle – lieber gemeldet als halb geschrieben.
+  return result.every((part) => size(part) <= limit) ? result : [query];
+}
+
+/**
+ * Plan als eine SQL-Datei (lokaler Seed, Remote-Plan). Übergroße Anweisungen werden hier genauso
+ * aufgeteilt wie in den Remote-Batches – sonst lehnte die lokale Miniflare-D1 sie mit
+ * `SQLITE_TOOBIG` ab, während die Remote-D1 sie annähme.
+ */
 export function renderPlanSql(plan: ProjectionPlan): string {
-  return plan.groups.flatMap((group) => [`-- ${group.key}`, ...group.queries.map(renderStatement)]).join('\n');
+  return plan.groups.flatMap((group) => [`-- ${group.key}`, ...group.queries.flatMap((query) => splitOversizedInsert(query)).map(renderStatement)]).join('\n');
 }

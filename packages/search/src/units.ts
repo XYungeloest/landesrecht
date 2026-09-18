@@ -17,6 +17,20 @@ import type { NormBodyBlock, NormRecord, NormStatus, NormType, NormVersion, Stru
 import { classifyNormVersion, getNormLastChangeDate, type VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
 
 export const SYNTHETIC_UNIT_TYPES = ['metadata', 'supplement'] as const;
+
+/**
+ * Externe Kennungen, die als Gliederungsnummer suchbar sind (Metadatenblock: Bezeichnung und Wert, etwa
+ * „BayRS 2011-I“). Nur ausdrücklich gelistete Systeme: Jede weitere Kennung verändert den Suchbestand ihres
+ * Landes und damit dessen D1-Projektion – sie gehört bewusst hierher, nicht über eine Wildcard.
+ */
+export const SEARCHABLE_IDENTIFIER_SYSTEMS: Readonly<Record<string, string>> = { bayrs: 'BayRS' };
+
+function searchableIdentifiers(record: NormRecord): string[] {
+  return record.meta.externalIdentifiers.flatMap((entry) => {
+    const label = SEARCHABLE_IDENTIFIER_SYSTEMS[entry.system];
+    return label ? [`${label} ${entry.value}`] : [];
+  });
+}
 export type SearchUnitType = StructureType | (typeof SYNTHETIC_UNIT_TYPES)[number];
 
 export interface SearchUnit {
@@ -122,6 +136,7 @@ export function buildSearchDocument(record: NormRecord, version: NormVersion, as
     record.meta.initialCitation,
     version.citation,
     ...getNormAliases(record, identity),
+    ...searchableIdentifiers(record),
   ].filter((entry): entry is string => Boolean(entry)).join('\n');
 
   const allUnits: SearchUnit[] = [...units];

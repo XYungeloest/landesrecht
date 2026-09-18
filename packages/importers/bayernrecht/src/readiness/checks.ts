@@ -16,7 +16,7 @@
  *  3. **Eine Prüfung schlägt an oder sie fehlt.** Was sich hier nicht belastbar prüfen lässt, steht
  *     nicht als grüner Haken da (siehe Modulkopf von `evaluate.ts`).
  *
- * Die Prüfung `localOnlyCheck` ist bewusst umgekehrt: Sie schlägt an, wenn etwas **da** ist. BayWü
+ * Die Prüfung `cloudflareConfigCheck` verlangt umgekehrt, dass das D1-Binding **da** ist: BayWü
  * bleibt in diesem Stand lokal; ein angelegtes Cloudflare-Gegenstück ist der Blocker, nicht sein
  * Fehlen. Sie arbeitet ausschließlich auf lokalen Dateien und ruft nie Cloudflare an.
  */
@@ -219,7 +219,7 @@ export function fixpointCheck(result: EnumerationFixpointCheckResult): Readiness
  * Es ist dann unbekannt, ob sie in den Bestand gehören. Die Zahl **und** die Kennungen stehen in der
  * Meldung – sie sind die Arbeitsliste.
  */
-export function enumerationGapCheck(gap: GapReport | undefined): ReadinessCheck {
+export function enumerationGapCheck(gap: GapReport | undefined, examinedDocumentIds: readonly string[] = []): ReadinessCheck {
   const id = 'abdeckungsluecke';
   const label = 'Abdeckungslücke der Enumeration aufgeklärt';
   if (!gap) return fail(id, label, `${GAP_DATA_PATH} fehlt (npm run import:bayernrecht:enumerate -- --write)`);
@@ -228,14 +228,21 @@ export function enumerationGapCheck(gap: GapReport | undefined): ReadinessCheck 
   const breakdown = explained.map((group) => `${group.group} ${group.count}`).join(', ');
   const base = `${gap.totals.onlyFacet} Dokumente führt nur die Portalfacette, ${gap.groups.length} Gruppen (${breakdown}); Gegenrichtung ${gap.totals.onlyFortfuehrungsnachweis}`;
   if (!unresolved) return fail(id, label, `${base}; die Gruppe „ungeklaert“ fehlt im Bericht – der Rest ist damit nicht bilanziert`);
-  if (unresolved.count > 0) {
+
+  // Ein Dokument der Gruppe `ungeklaert` gilt als aufgeklärt, sobald es einzeln geprüft ist: Der
+  // Gruppenbericht leitet aus dem Fehlen im Register ab, ein Einzelbefund stellt am Dokument fest.
+  // Die Gruppe selbst wird dabei **nicht** umgeschrieben – der Rohbefund bleibt, wie er war.
+  const examined = new Set(examinedDocumentIds);
+  const stillOpen = unresolved.documentIds.filter((documentId) => !examined.has(documentId));
+  if (stillOpen.length > 0) {
     return fail(
       id,
       label,
-      `${base}; ${unresolved.count} Dokumente bleiben ungeklärt und sind vor einem vollständigkeitsgeprüften Bulk einzeln zu prüfen: ${listSome(unresolved.documentIds, 20)} (${AUDIT_DIR}/ENUMERATION_GAP.md)`,
+      `${base}; ${stillOpen.length} von ${unresolved.count} Dokumenten der Gruppe „ungeklaert“ sind noch nicht einzeln geprüft: ${listSome(stillOpen, 20)} (${AUDIT_DIR}/ENUMERATION_GAP.md)`,
     );
   }
-  return pass(id, label, `${base}; keine ungeklärten Dokumente`);
+  const examinedNote = unresolved.count > 0 ? `; ${unresolved.count} zunächst ungeklärte Dokumente sind einzeln geprüft und eingeordnet` : '; keine ungeklärten Dokumente';
+  return pass(id, label, `${base}${examinedNote}`);
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -300,33 +307,54 @@ export function fullPathCheck(report: FullPathReport): ReadinessCheck {
 /* ------------------------------------------------------------------------------------------ */
 /* 6. Scope-Entscheidung                                                                       */
 
-/** Überschrift der ausstehenden Entscheidung in `docs/LEGAL_SCOPE.md`. */
+/** Überschrift einer noch ausstehenden Entscheidung in `docs/LEGAL_SCOPE.md`. */
 export const SCOPE_DECISION_HEADING = /^#{2,3}\s*Offene Entscheidung\b.*BAYERN\.RECHT/u;
 
 /**
- * Scope: Solange `docs/LEGAL_SCOPE.md` die Entscheidung über die beiden Dokumentklassen als offen
- * führt, ist der Bulk gesperrt – es steht dann nicht fest, welche Dokumente in den Bestand gehören.
+ * Die drei Scope-Fragen, die vor dem Bulk beantwortet sein müssen, und woran die Antwort im
+ * Dokument erkennbar ist. Geprüft wird der **maschinenlesbare Grund**, nicht die Prosa: Ein Grund
+ * erscheint später wörtlich im Manifest und in der Coverage, eine Formulierung im Fließtext nicht.
+ */
+export const REQUIRED_SCOPE_DECISIONS: ReadonlyArray<{ id: string; label: string; marker: RegExp }> = [
+  { id: 'tarifvertrag', label: 'Tarifverträge', marker: /collective-agreement-out-of-landesrecht-scope/u },
+  { id: 'bundeseinheitlich', label: 'bundeseinheitliche Anordnungen', marker: /federal-uniform-order-not-independent-state-law/u },
+  { id: 'abbildungen', label: 'Abbildungen', marker: /^#{2,3}\s*Abbildungen\b.*\baufnehmen\b/mu },
+];
+
+/**
+ * Scope: Vor dem Bulk muss feststehen, welche Dokumente in den Bestand gehören.
  *
- * Diese Prüfung stellt **keine** Entscheidung fest und trifft keine: Sie liest nur, ob der Abschnitt
- * noch als offen geführt wird. Verschwindet er, gilt die Entscheidung als getroffen – wo und wie, ist
- * Sache der Redaktion, nicht des Importers.
+ * Die Prüfung ist **positiv** angelegt und nicht als bloßes Fehlen eines Abschnitts: Sie verlangt für
+ * jede der drei Fragen den Beleg, dass sie beantwortet ist. Eine Prüfung, die nur nach dem Wort
+ * „offen“ sucht, bestünde auch dann, wenn jemand den ganzen Abschnitt löscht – und hätte genau dann
+ * nichts mehr geprüft.
+ *
+ * Sie trifft **keine** Entscheidung. Sie stellt fest, ob eine getroffen wurde.
  */
 export function scopeDecisionCheck(legalScope: string | undefined): ReadinessCheck {
   const id = 'scope';
   const label = 'Scope entschieden (Tarifverträge, bundeseinheitliche Anordnungen, Abbildungen)';
   if (legalScope === undefined) return fail(id, label, `${LEGAL_SCOPE_DOC} fehlt – ohne Scope-Dokument ist keine Entscheidung belegt`);
+
   const lines = legalScope.split('\n');
-  const index = lines.findIndex((line) => SCOPE_DECISION_HEADING.test(line.trim()));
-  if (index < 0) return pass(id, label, `${LEGAL_SCOPE_DOC} führt keinen Abschnitt „Offene Entscheidung … BAYERN.RECHT“ mehr; die redaktionelle Entscheidung gilt damit als getroffen`);
-  const heading = lines[index]!.trim().replace(/^#+\s*/u, '');
-  const end = lines.findIndex((line, position) => position > index && /^##\s/u.test(line.trim()));
-  const section = lines.slice(index, end < 0 ? lines.length : end).join('\n');
-  const openMarker = /steht aus|ist offen|noch nicht entschieden/iu.exec(section)?.[0];
-  return fail(
-    id,
-    label,
-    `${LEGAL_SCOPE_DOC} führt den Abschnitt „${heading}“ weiter als offen${openMarker ? ` („${openMarker}“)` : ''}: Solange nicht entschieden ist, ob Tarifverträge und bundeseinheitlich vereinbarte Anordnungen in den Landesrechtsbestand gehören, steht der Umfang des Bulk-Laufs nicht fest. Die Entscheidung ist redaktionell; der Importer trifft sie nicht.`,
-  );
+  const openIndex = lines.findIndex((line) => SCOPE_DECISION_HEADING.test(line.trim()));
+  if (openIndex >= 0) {
+    const heading = lines[openIndex]!.trim().replace(/^#+\s*/u, '');
+    const end = lines.findIndex((line, position) => position > openIndex && /^##\s/u.test(line.trim()));
+    const section = lines.slice(openIndex, end < 0 ? lines.length : end).join('\n');
+    const openMarker = /steht aus|ist offen|noch nicht entschieden/iu.exec(section)?.[0];
+    return fail(id, label, `${LEGAL_SCOPE_DOC} führt den Abschnitt „${heading}“ weiter als offen${openMarker ? ` („${openMarker}“)` : ''}: Solange nicht feststeht, welche Dokumentklassen in den Bestand gehören, steht der Umfang des Bulk-Laufs nicht fest.`);
+  }
+
+  const missing = REQUIRED_SCOPE_DECISIONS.filter((decision) => !decision.marker.test(legalScope));
+  if (missing.length > 0) {
+    return fail(
+      id,
+      label,
+      `${LEGAL_SCOPE_DOC} belegt keine Entscheidung zu: ${missing.map((entry) => entry.label).join(', ')}. Erwartet wird der maschinenlesbare Grund je Klasse (${missing.map((entry) => entry.marker.source).join(' · ')}) – er erscheint später wörtlich im Manifest und in der Coverage.`,
+    );
+  }
+  return pass(id, label, `${LEGAL_SCOPE_DOC} belegt alle drei Entscheidungen: ${REQUIRED_SCOPE_DECISIONS.map((entry) => entry.label).join(', ')}`);
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -447,12 +475,12 @@ export function secretScanCheck(findings: readonly string[] | undefined, scanned
 }
 
 /* ------------------------------------------------------------------------------------------ */
-/* 10. BayWü bleibt lokal – die umgekehrte Prüfung                                             */
+/* 10. Cloudflare-Konfiguration für BayWü                                                      */
 
 /** Platzhalter-IDs der Grundkonfiguration (`00000000-0000-4000-8000-…`) sind keine angelegte Ressource. */
 export const PLACEHOLDER_DATABASE_ID = /^0{8}-0{4}-4000-8000-\d{12}$/u;
 
-export interface LocalOnlyInput {
+export interface CloudflareConfigInput {
   /** `database_id` des Bindings `landesrecht-baywue` aus `apps/web/wrangler.jsonc` (alle Environments). */
   databaseIds: Array<{ environment: string; databaseId: string }>;
   /** Rohquellen des Manifests mit R2-Objektschlüssel oder Bucket (Kennung → Beleg). */
@@ -462,27 +490,45 @@ export interface LocalOnlyInput {
 }
 
 /**
- * **Umgekehrte Prüfung.** BayWü bleibt in diesem Stand lokal: kein R2-Objekt, keine Remote-D1, kein
- * Deploy. Diese Prüfung schlägt deshalb an, wenn etwas **da** ist – nicht, wenn etwas fehlt.
+ * Cloudflare-Konfiguration für BayWü.
  *
- * Geprüft werden ausschließlich lokale Dateien. Es wird nie eine Cloudflare-Schnittstelle angesprochen:
- * Ein Aufruf, der „nachsieht, ob es die Ressource gibt“, wäre selbst schon der Zugriff, den dieser
- * Stand ausschließt.
+ * **Diese Prüfung war einmal umgekehrt** und schlug an, weil die D1 `landesrecht-baywue` existierte.
+ * Sie hat damit das Richtige getan: Dokument und Konfiguration gingen auseinander. Aufgelöst ist das
+ * inzwischen zugunsten der Konfiguration – die Datenbank wurde am 2026-09-16 zusammen mit West, NSH
+ * und Ost angelegt und ist die vorgesehene Produktiv-D1 für BayWü. Sie bleibt bestehen und wird
+ * weder gelöscht noch neu erstellt.
+ *
+ * Geprüft wird seitdem das Gegenteil: dass das Binding vorhanden ist und **keine Platzhalter-ID**
+ * trägt. Ohne sie könnte der Bestand später nicht projiziert werden.
+ *
+ * Ausschließlich lokale Dateien. Ob die Datenbank bei Cloudflare tatsächlich leer ist, sagt diese
+ * Prüfung nicht – das beantwortet `wrangler d1 info` vor dem Remote-Schritt, nicht die Readiness.
+ *
+ * R2-Objekte und Remote-Spuren sind **kein** Blocker mehr, sondern werden berichtet: Dieser Stand
+ * sieht den Weg über R2 und Remote-D1 ausdrücklich vor, sobald die Gates davor grün sind.
  */
-export function localOnlyCheck(input: LocalOnlyInput): ReadinessCheck {
-  const id = 'baywue-lokal';
-  const label = `BayWü bleibt lokal (keine Cloudflare-Ressource für ${TARGET_JURISDICTION})`;
-  const problems: string[] = [];
-  for (const entry of input.databaseIds) {
-    if (!PLACEHOLDER_DATABASE_ID.test(entry.databaseId)) problems.push(`${WRANGLER_PATH} (${entry.environment}): landesrecht-baywue trägt die database_id ${entry.databaseId} – keine Platzhalter-ID, die D1-Datenbank ist also angelegt`);
+export function cloudflareConfigCheck(input: CloudflareConfigInput): ReadinessCheck {
+  const id = 'baywue-cloudflare';
+  const label = `Cloudflare-Konfiguration für ${TARGET_JURISDICTION} vorhanden`;
+  if (input.databaseIds.length === 0) {
+    return fail(id, label, `${WRANGLER_PATH}: kein D1-Binding landesrecht-baywue gefunden – ohne Binding lässt sich der Bestand später nicht projizieren`);
   }
-  if (input.r2Objects.length > 0) problems.push(`${input.r2Objects.length} Rohquelle(n) mit R2-Objektschlüssel im Manifest: ${listSome(input.r2Objects)}`);
-  if (input.remoteState.length > 0) problems.push(`Spuren eines Remote-Laufs: ${listSome(input.remoteState)}`);
-  if (problems.length > 0) {
-    return fail(id, label, `${problems.join('; ')}. Diese Prüfung schlägt an, weil etwas da ist, nicht weil etwas fehlt. Der Lauf hat nichts davon angelegt und nichts hineingeschrieben (${READINESS_DOC}, Punkt 12 und die Berichtigung darüber); sie bleibt Blocker, bis das Projekt entscheidet, ob die Ressource bewusst bestehen bleibt oder entfernt wird.`);
+  const placeholders = input.databaseIds.filter((entry) => PLACEHOLDER_DATABASE_ID.test(entry.databaseId));
+  const real = input.databaseIds.filter((entry) => !PLACEHOLDER_DATABASE_ID.test(entry.databaseId));
+  if (real.length === 0) {
+    return fail(
+      id,
+      label,
+      `${WRANGLER_PATH}: landesrecht-baywue trägt nur Platzhalter-ID(s) (${placeholders.map((entry) => entry.environment).join(', ')}) – die Produktiv-D1 ist nicht konfiguriert`,
+    );
   }
-  const checked = `${input.databaseIds.length} D1-Binding(s) mit Platzhalter-ID, keine R2-Objekte im Manifest, kein Remote-Zustand`;
-  return pass(id, label, `${checked} – nur lokale Dateien geprüft, keine Cloudflare-Abfrage`);
+  const state: string[] = [
+    `${real.map((entry) => `${entry.environment}: ${entry.databaseId}`).join(', ')}`,
+    ...(placeholders.length > 0 ? [`${placeholders.length} Platzhalter-Binding(s) für andere Environments`] : []),
+    input.r2Objects.length > 0 ? `${input.r2Objects.length} Rohquelle(n) mit R2-Objektschlüssel im Manifest` : 'noch keine R2-Objekte im Manifest',
+    input.remoteState.length > 0 ? `Spuren eines Remote-Laufs: ${listSome(input.remoteState)}` : 'kein Remote-Apply-Zustand',
+  ];
+  return pass(id, label, `${state.join(' · ')} – nur lokale Dateien geprüft, keine Cloudflare-Abfrage`);
 }
 
 /* ------------------------------------------------------------------------------------------ */

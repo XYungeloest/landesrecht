@@ -1,0 +1,328 @@
+/**
+ * Änderungsformeln: Welcher Befehl ist welche Formel, und welche Formel bestimmt die vorherige Fassung
+ * vollständig?
+ *
+ * Die Formeln sind **aus den tatsächlich vorkommenden Befehlen erhoben** (Clusterung der Befehle aller
+ * Kandidaten, siehe `data/audits/bayernrecht/RECONSTRUCTION.md`), nicht aus einem Lehrbuch. Unterstützt
+ * ist nur, was an echten Beispielen belegt ist und die vorherige Fassung **vollständig bestimmt**:
+ *
+ * | Formel | Beispiel | Rückwärts |
+ * | --- | --- | --- |
+ * | `replace-words` | „In § 31 Abs. 6 Satz 2 wird die Angabe „Nr. 3“ durch die Angabe „Nr. 2“ ersetzt.“ | „Nr. 2“ → „Nr. 3“ |
+ * | `insert-words` | „In Art. 6 … wird nach der Angabe „Fahrrads“ die Angabe „oder …“ eingefügt.“ | eingefügten Wortlaut hinter dem Anker entfernen |
+ * | `delete-words-anchored` | „In Nr. 3.1.1 Satz 3 wird vor der Angabe „44“ die Angabe „Art.“ gestrichen.“ | Gestrichenes am Anker wieder einsetzen |
+ * | `append-words` | „Der Überschrift wird die Angabe „ , Verordnungsermächtigung“ angefügt.“ | angefügten Wortlaut am Ende entfernen |
+ * | `replace-final-punctuation` | „In Nr. 13 wird der Punkt am Ende durch ein Komma ersetzt.“ | Schlusszeichen zurücksetzen |
+ *
+ * Alles andere ist **nicht** rückrechenbar oder wird nicht maschinell angewandt – mit Begründung:
+ *
+ * - `recast` („… wird wie folgt gefasst:“, „erhält folgende Fassung“): Der Alttext steht nicht im Befehl.
+ * - `repeal-unit` („Abs. 3 wird aufgehoben.“): Der Alttext steht nicht im Befehl.
+ * - `annex-recast` („erhalten die aus dem Anhang ersichtliche Fassung“): Anlage ohne Alttext.
+ * - `delete-words` („In Art. 3 Abs. 6 wird die Angabe „nach dem Stand der Technik“ gestrichen.“): Der
+ *   Wortlaut ist bekannt, **die Stelle nicht** – die Streichung lässt keine Spur, an der sich ablesen
+ *   ließe, wo er stand. Jede Einfügestelle ergäbe im Rundlauf wieder den heutigen Text; der Rundlauf
+ *   beweist hier also nichts.
+ * - `insert-unit` („Folgender Abs. 2 wird angefügt: …“), `renumber` („Der bisherige Abs. 2 wird Abs. 3.“):
+ *   grundsätzlich umkehrbar, aber strukturelle Änderungen (neue Blöcke, Umnummerierung, Satznummern)
+ *   wendet dieses Modell nicht an.
+ * - `replace-by-punctuation` („das Wort „oder“ durch ein Komma ersetzt“): Das Komma ist im Text nicht
+ *   eindeutig wiederzufinden; nicht unterstützt.
+ * - `unrecognized`: Formel nicht erkannt – im Zweifel ausgeschlossen.
+ */
+import { formatPath, parseLocation, type LocationPath } from './location.ts';
+
+export const FORMULAS = [
+  'replace-words',
+  'insert-words',
+  'delete-words-anchored',
+  'append-words',
+  'replace-final-punctuation',
+  'delete-words',
+  'recast',
+  'repeal-unit',
+  'annex-recast',
+  'insert-unit',
+  'renumber',
+  'replace-by-punctuation',
+  'container',
+  'unrecognized',
+] as const;
+export type FormulaId = (typeof FORMULAS)[number];
+
+/** Formeln, deren Rückrechnung dieses Modell ausführt. */
+export const SUPPORTED_FORMULAS: ReadonlySet<FormulaId> = new Set(['replace-words', 'insert-words', 'delete-words-anchored', 'append-words', 'replace-final-punctuation']);
+
+/** Formeln, die die vorherige Fassung grundsätzlich nicht bestimmen. */
+export const NON_INVERTIBLE_FORMULAS: ReadonlySet<FormulaId> = new Set(['recast', 'repeal-unit', 'annex-recast', 'delete-words']);
+
+/** Eine Änderung in Vorwärtsrichtung (vom Stichtagstext zum heutigen Text). */
+export type Operation =
+  | { kind: 'replace'; from: string; to: string }
+  | { kind: 'insert'; anchor: string; side: 'after' | 'before'; text: string }
+  | { kind: 'delete-anchored'; anchor: string; side: 'after' | 'before'; text: string }
+  | { kind: 'append'; text: string }
+  | { kind: 'replace-final'; from: string; to: string };
+
+export interface ParsedOperation {
+  formula: FormulaId;
+  operation: Operation;
+  /** Eine oder mehrere Ortsangaben (bei „jeweils“ über mehrere Orte). */
+  locations: LocationPath[];
+  /** Der Befehl sagt „jeweils“ – jeder Ort muss dann genau ein Vorkommen tragen. */
+  each: boolean;
+}
+
+export interface ParsedCommand {
+  /** Formeln aller Klauseln des Befehls (für die Statistik). */
+  formulas: FormulaId[];
+  /** Gesetzt, wenn der Befehl vollständig unterstützt ist. */
+  operations?: ParsedOperation[];
+  /** Grund, falls nicht unterstützt. */
+  reason?: string;
+}
+
+/* ------------------------------------------------------------------------------- Zitate */
+
+export interface MaskedText {
+  masked: string;
+  quotes: string[];
+}
+
+const PAIRS: Readonly<Record<string, string>> = { '„': '“', '‚': '‘' };
+const ALT_CLOSERS: Readonly<Record<string, string>> = { '“': '”' };
+
+/**
+ * Ersetzt Zitate der obersten Ebene durch Platzhalter `⟦n⟧`. Verschachtelte Zitate bleiben Teil des
+ * äußeren. `undefined`, wenn die Zitate nicht aufgehen – ein halbes Zitat wird nie gedeutet.
+ */
+export function maskQuotes(text: string): MaskedText | undefined {
+  const quotes: string[] = [];
+  let masked = '';
+  const stack: string[] = [];
+  let current = '';
+  for (const character of text) {
+    const expected = stack.at(-1);
+    if (expected !== undefined && (character === expected || ALT_CLOSERS[expected] === character)) {
+      stack.pop();
+      if (stack.length === 0) {
+        masked += `⟦${quotes.length}⟧`;
+        quotes.push(current);
+        current = '';
+      } else {
+        current += character;
+      }
+      continue;
+    }
+    if (PAIRS[character] !== undefined) {
+      if (stack.length > 0) current += character;
+      stack.push(PAIRS[character]!);
+      continue;
+    }
+    if (stack.length > 0) current += character;
+    else masked += character;
+  }
+  if (stack.length > 0) return undefined;
+  return { masked, quotes };
+}
+
+/* ------------------------------------------------------------------------------ Formeln */
+
+const OBJ = String.raw`(?:die\s+Angaben?|das\s+Wort|die\s+Wörter|die\s+Zahlen?|das\s+Zeichen|die\s+Zeichen)`;
+const ANCHOR_OBJ = String.raw`(?:der\s+Angabe|dem\s+Wort|den\s+Wörtern|der\s+Zahl|den\s+Angaben)`;
+const Q = String.raw`⟦(\d+)⟧`;
+const VERB = String.raw`(?:(?:wird|werden)\s+)?`;
+const EACH = String.raw`(?:jeweils\s+)?`;
+const PUNCT_NAME: Readonly<Record<string, string>> = {
+  'der Punkt': '.', 'das Komma': ',', 'das Semikolon': ';', 'der Doppelpunkt': ':',
+  'ein Komma': ',', 'einen Punkt': '.', 'ein Semikolon': ';', 'einen Doppelpunkt': ':',
+};
+
+const NON_INVERTIBLE_LEAF: ReadonlyArray<[RegExp, FormulaId, string]> = [
+  [/ersichtlichen?\s+(?:Fassung|Anlage|Anhang)|aus\s+dem\s+Anhang\s+zu\s+dieser|beigefügten?\s+(?:neuen?\s+)?(?:Anhang|Anlage|Fassung)/u, 'annex-recast', 'Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der Alttext steht nicht im Befehl'],
+  [/(?:^|\s)(?:wie\s+folgt\s+)?(?:neu\s+)?gefasst\s*[:.]?\s*$/u, 'recast', 'Neufassung; der Alttext steht nicht im Befehl'],
+  [/(?:erhält|erhalten)\s+(?:folgende|die\s+folgende)\s+(?:neue\s+)?Fassung\s*[:.]?\s*$/u, 'recast', 'Neufassung; der Alttext steht nicht im Befehl'],
+  [/(?:wird|werden)\s+wie\s+folgt\s+ersetzt\s*:\s*$/u, 'recast', 'Ersetzung durch neuen Wortlaut ohne Alttext'],
+  [/\bdurch\s+(?:(?:den|die|das)\s+)?folgenden?\b[\s\S]*ersetzt\s*:\s*$/u, 'recast', 'Ersetzung durch neuen Wortlaut ohne Alttext'],
+  [/(?:wird|werden)\s+aufgehoben\s*\.?$/u, 'repeal-unit', 'Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl'],
+];
+
+/** Der Befehl ohne Zitate beginnt mit einer Ortsangabe „In …“ / „Im …“ vor dem Verb. */
+function splitLocation(masked: string): { location: string; rest: string } {
+  const match = /^(?:In|Im)\s+(.+?)\s+((?:wird|werden)\s[\s\S]*)$/u.exec(masked);
+  if (match && !/⟦/u.test(match[1]!)) return { location: match[1]!, rest: match[2]! };
+  return { location: '', rest: masked };
+}
+
+interface ClauseResult {
+  formula: FormulaId;
+  operations?: Operation[];
+  each: boolean;
+  reason?: string;
+}
+
+function quote(quotes: readonly string[], index: string): string {
+  return quotes[Number(index)]!;
+}
+
+/** Eine Klausel („die Angabe ⟦0⟧ durch die Angabe ⟦1⟧ ersetzt“). */
+function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
+  let text = clause.trim().replace(/^(?:,\s*|und\s+|sowie\s+)/u, '').trim();
+  text = text.replace(/^(?:wird|werden)\s+/u, '');
+  let each = false;
+  if (/^jeweils\s+/u.test(text)) {
+    each = true;
+    text = text.replace(/^jeweils\s+/u, '');
+  }
+  if (/\bjeweils\b/u.test(text)) each = true;
+
+  // Ersetzung: ein oder mehrere Paare „⟦a⟧ durch ⟦b⟧“.
+  const pair = String.raw`(?:${OBJ}\s+)?${Q}\s+${VERB}${EACH}durch\s+(?:${OBJ}\s+)?${Q}`;
+  const replaceClause = new RegExp(String.raw`^${pair}(?:(?:\s*,\s*|\s+und\s+|\s+sowie\s+)${pair})*\s+ersetzt$`, 'u');
+  if (replaceClause.test(text)) {
+    const operations: Operation[] = [];
+    for (const match of text.matchAll(new RegExp(pair, 'gu'))) {
+      operations.push({ kind: 'replace', from: quote(quotes, match[1]!), to: quote(quotes, match[2]!) });
+    }
+    return { formula: 'replace-words', operations, each };
+  }
+
+  const final = new RegExp(String.raw`^(der\s+Punkt|das\s+Komma|das\s+Semikolon|der\s+Doppelpunkt)\s+am\s+Ende\s+${VERB}durch\s+(?:(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon|einen\s+Doppelpunkt)|(?:${OBJ}\s+)?${Q})\s+ersetzt$`, 'u').exec(text);
+  if (final) {
+    const from = PUNCT_NAME[final[1]!.replace(/\s+/gu, ' ')]!;
+    const to = final[2] ? PUNCT_NAME[final[2].replace(/\s+/gu, ' ')]! : quote(quotes, final[3]!);
+    return { formula: 'replace-final-punctuation', operations: [{ kind: 'replace-final', from, to }], each };
+  }
+
+  if (new RegExp(String.raw`(?:${OBJ}\s+)?${Q}\s+${VERB}durch\s+(?:ein\s+Komma|einen\s+Punkt|ein\s+Semikolon)\s+ersetzt`, 'u').test(text)) {
+    return { formula: 'replace-by-punctuation', each, reason: 'Ersetzung durch ein Satzzeichen: die Stelle ist im heutigen Text nicht eindeutig wiederzufinden' };
+  }
+
+  const insert = new RegExp(String.raw`^(nach|vor)\s+${ANCHOR_OBJ}\s+${Q}\s+${VERB}${EACH}(?:(?:${OBJ}\s+)${Q}|(ein\s+Komma|ein\s+Semikolon))\s+eingefügt$`, 'u').exec(text);
+  if (insert) {
+    const inserted = insert[3] !== undefined ? quote(quotes, insert[3]) : PUNCT_NAME[insert[4]!.replace(/\s+/gu, ' ')]!;
+    return {
+      formula: 'insert-words',
+      operations: [{ kind: 'insert', anchor: quote(quotes, insert[2]!), side: insert[1] === 'nach' ? 'after' : 'before', text: inserted }],
+      each: each || /jeweils/u.test(text),
+    };
+  }
+
+  const anchoredDelete = new RegExp(String.raw`^(nach|vor)\s+${ANCHOR_OBJ}\s+${Q}\s+${VERB}${EACH}(?:(?:${OBJ}\s+)${Q}|(das\s+Komma|der\s+Punkt|das\s+Semikolon))\s+${VERB}gestrichen$`, 'u').exec(text);
+  if (anchoredDelete) {
+    const removed = anchoredDelete[3] !== undefined ? quote(quotes, anchoredDelete[3]) : PUNCT_NAME[anchoredDelete[4]!.replace(/\s+/gu, ' ')]!;
+    return {
+      formula: 'delete-words-anchored',
+      operations: [{ kind: 'delete-anchored', anchor: quote(quotes, anchoredDelete[2]!), side: anchoredDelete[1] === 'nach' ? 'after' : 'before', text: removed }],
+      each: each || /jeweils/u.test(text),
+    };
+  }
+
+  if (new RegExp(String.raw`^${OBJ}\s+${Q}(?:(?:\s*,\s*|\s+und\s+|\s+sowie\s+)${OBJ}\s+${Q})*\s+${VERB}${EACH}gestrichen$`, 'u').test(text)) {
+    return { formula: 'delete-words', each, reason: 'Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht' };
+  }
+
+  const append = new RegExp(String.raw`^${OBJ}\s+${Q}\s+angefügt$`, 'u').exec(text);
+  if (append) {
+    return { formula: 'append-words', operations: [{ kind: 'append', text: quote(quotes, append[1]!) }], each };
+  }
+
+  return { formula: 'unrecognized', each, reason: `Klausel nicht erkannt: „${clause.trim().slice(0, 120)}“` };
+}
+
+/** Container („Art. 53 wird wie folgt geändert:“) → Ortsangabe, sonst `undefined`. */
+export function containerLocation(text: string): string | undefined {
+  const match = /^(.+?)\s+(?:wird|werden)\s+wie\s+folgt\s+geändert\s*:\s*$/u.exec(text.trim());
+  if (!match) return undefined;
+  const location = match[1]!.replace(/^(?:Die|Der|Das)\s+/u, '').trim();
+  // „Der bisherige Abs. 2 wird Abs. 4 und wird wie folgt geändert:“ ist eine Umnummerierung, kein Ort.
+  if (/(?:^|\s)(?:wird|werden|bisherigen?|und)(?:\s|$)/u.test(location)) return undefined;
+  return location;
+}
+
+/**
+ * Zerlegt einen Befehl (ein Listenglied oder den Ein-Satz-Befehl des Einleitungssatzes) in Operationen.
+ * `context` sind die Ortsangaben der übergeordneten Befehle, von außen nach innen.
+ */
+export function parseCommand(text: string, context: readonly LocationPath[]): ParsedCommand {
+  const trimmed = text.trim();
+  if (containerLocation(trimmed) !== undefined) return { formulas: ['container'], reason: 'Gliederungsbefehl ohne eigene Änderung' };
+  for (const [pattern, formula, reason] of NON_INVERTIBLE_LEAF) {
+    if (pattern.test(trimmed)) return { formulas: [formula], reason };
+  }
+  if (/(?:eingefügt|angefügt|vorangestellt)\s*:\s*$/u.test(trimmed) || /^(?:Es\s+wird|Es\s+werden)\s+folgender?\b/u.test(trimmed)) {
+    return { formulas: ['insert-unit'], reason: 'Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewandt' };
+  }
+  const UNIT = String.raw`(?:§§?|Art\.|Abs\.|Nrn?\.|Satz|Sätze|Buchst\.|Teil|Abschnitt|Anlagen?|Absätze)`;
+  const renumberPattern = new RegExp(String.raw`^(?:(?:Die|Der|Das)\s+)?${UNIT}\s+[\d.a-z]+(?:\s*(?:,|und|bis)\s*[\d.a-z]+)*\s+(?:wird|werden)\s+(?:zu\s+)?(?:(?:die|den|der)\s+)?${UNIT}\s+[\d.a-z]+(?:\s*(?:,|und|bis)\s*[\d.a-z]+)*(?:\s+und\s+(?:wird\s+)?(?:[\s\S]*\s)?wie\s+folgt\s+geändert\s*:)?\.?$`, 'u');
+  if (/^(?:Der|Die|Das)\s+bisherigen?\s/u.test(trimmed) || /^Der\s+Wortlaut\s+wird\s/u.test(trimmed) || renumberPattern.test(trimmed)) {
+    return { formulas: ['renumber'], reason: 'Umnummerierung: strukturelle Änderung, von diesem Modell nicht angewandt' };
+  }
+  // Satznummern und Absatzbezeichnungen sind Gliederung, nicht Wortlaut: „Die Satznummerierung „¹“ wird
+  // gestrichen.“, „In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“, „Satz 7 wird Satz 5 und …“.
+  if (/Satznummerierung|Absatzbezeichnung/u.test(trimmed) || /^(?:In\s+\S+\s+\S+\s+)?(?:Satz|Abs\.|Nr\.|§|Art\.|Buchst\.)\s*[\d.a-z]+\s+wird\s+(?:zu\s+)?(?:Satz|Abs\.|Nr\.|§|Art\.|Buchst\.)\s*[\d.a-z]+\s*(?:,|und\b)/u.test(trimmed)) {
+    return { formulas: ['renumber'], reason: 'Umnummerierung oder Satz-/Absatzbezeichnung: strukturelle Änderung, von diesem Modell nicht angewandt' };
+  }
+  if (/(?:wird|werden)\s+gestrichen\s*\.?$/u.test(trimmed) && !/[„‚]/u.test(trimmed)) {
+    return { formulas: ['repeal-unit'], reason: 'Streichung eines Glieds; der Wortlaut steht nicht im Befehl' };
+  }
+
+  const masked = maskQuotes(trimmed.replace(/\.\s*$/u, ''));
+  if (!masked) return { formulas: ['unrecognized'], reason: 'Zitate im Befehl gehen nicht auf' };
+  if (/\.\s+[A-ZÄÖÜ]/u.test(masked.masked)) return { formulas: ['unrecognized'], reason: 'Mehrere Sätze in einem Befehl; der Ortsbezug der Folgesätze ist nicht bestimmt' };
+
+  let body = masked.masked.trim();
+  let location = '';
+  // „Der Überschrift wird die Angabe ⟦0⟧ angefügt.“ / „Dem Spiegelstrich 4 wird …“
+  const dative = /^(?:Der|Dem|Den)\s+(.+?)\s+((?:wird|werden)\s+[\s\S]*angefügt)$/u.exec(body);
+  if (dative && !/⟦/u.test(dative[1]!)) {
+    location = /^Überschrift/u.test(dative[1]!) ? `der ${dative[1]!}` : dative[1]!;
+    body = dative[2]!;
+  } else {
+    const split = splitLocation(body);
+    location = split.location;
+    body = split.rest;
+  }
+  // Objekt zuerst: „Die Angabe ⟦0⟧ wird durch die Angabe ⟦1⟧ ersetzt.“ / „Nach der Angabe ⟦0⟧ wird …“
+  body = body.replace(/^(Die|Das|Der|Nach|Vor)\b/u, (word) => word.toLowerCase());
+
+  const ownPaths = parseLocation(location);
+  if (!ownPaths) return { formulas: ['unrecognized'], reason: `Ortsangabe nicht lesbar: „${location}“` };
+
+  // Klauseln an ihren Schlussverben trennen.
+  const clauses: string[] = [];
+  let rest = body;
+  const closer = /\b(ersetzt|eingefügt|gestrichen|angefügt)\b/u;
+  while (rest.trim() !== '') {
+    const match = closer.exec(rest);
+    if (!match) return { formulas: ['unrecognized'], reason: `Befehlsrest ohne Schlussverb: „${rest.trim().slice(0, 80)}“` };
+    clauses.push(rest.slice(0, match.index + match[0].length));
+    rest = rest.slice(match.index + match[0].length);
+  }
+  if (clauses.length === 0) return { formulas: ['unrecognized'], reason: 'Kein Befehl erkannt' };
+
+  const formulas: FormulaId[] = [];
+  const operations: ParsedOperation[] = [];
+  let reason: string | undefined;
+  for (const clause of clauses) {
+    const parsed = parseClause(clause, masked.quotes);
+    formulas.push(parsed.formula);
+    if (!parsed.operations) {
+      reason ??= parsed.reason;
+      continue;
+    }
+    // Pfade: eigene Ortsangabe relativ zum Kontext; mehrere eigene Pfade nur mit „jeweils“.
+    const paths = ownPaths.map((own) => [...context.flat(), ...own]);
+    if (paths.length > 1 && !parsed.each) {
+      reason ??= `Mehrere Orte (${ownPaths.map(formatPath).join('; ')}) ohne „jeweils“`;
+      continue;
+    }
+    if (parsed.each && paths.length < 2) {
+      reason ??= '„jeweils“ an nur einem Ort: der Befehl behauptet mehrere Vorkommen, deren Herkunft im heutigen Text nicht zu unterscheiden ist';
+      continue;
+    }
+    for (const operation of parsed.operations) operations.push({ formula: parsed.formula, operation, locations: paths, each: parsed.each });
+  }
+  if (reason !== undefined || operations.length === 0) return { formulas, reason: reason ?? 'Keine anwendbare Operation' };
+  return { formulas, operations };
+}

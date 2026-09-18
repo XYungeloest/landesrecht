@@ -146,6 +146,13 @@ export function checkAttributes(ctx: ParseContext, element: XmlElement, allowed:
 
 /** Platzhalter für einen harten Umbruch (`<br/>`, Absatzgrenze in Zellen); überlebt die Leerraumglättung. */
 const HARD_BREAK = '\u0001';
+/**
+ * Weiche Wortgrenze: an der Stelle eines Elements, das im Text nichts hinterlässt, aber Wörter trennt
+ * (Fußnotenaufruf ohne Zeichen, `DM<fn.call>…</fn.call>nicht`). `normalizeInline` macht daraus ein
+ * Leerzeichen, wenn links und rechts Wortzeichen stehen, sonst nichts – so entsteht weder „DMnicht“ noch
+ * „DM .“, und es wird kein Zeichen erfunden.
+ */
+const SOFT_BOUNDARY = '\u0002';
 
 const SUPERSCRIPT_CHARS: Readonly<Record<string, string>> = {
   '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
@@ -175,6 +182,8 @@ export function toSuperscript(value: string): { text: string; mapped: boolean } 
 /** Leerraum glätten, harte Umbrüche als Zeilenumbruch erhalten, Zeilen einzeln trimmen. */
 export function normalizeInline(raw: string): string {
   return raw
+    .replace(/(?<=[\p{L}\p{Nd}])\u0002+(?=[\p{L}\p{Nd}])/gu, ' ')
+    .replace(/\u0002/gu, '')
     .replace(/\s+/gu, ' ')
     .replace(/ ?\u0001 ?/gu, '\n')
     .split('\n')
@@ -264,6 +273,12 @@ function endsOpen(text: string): boolean {
 
 function appendSuperscript(buffer: InlineBuffer, element: XmlElement, ctx: ParseContext, where: string): void {
   const raw = rawInlineText(element);
+  // `In<sup> </sup>allen` (BayVV_2030_2_3_G_15657): Eine Hochstellung aus reinem Leerraum ist keine
+  // Hochstellung, sondern die Wortgrenze. Sie zu verwerfen klebte die Wörter zusammen („Inallen“).
+  if (raw.trim() === '') {
+    if (raw !== '') buffer.text += ' ';
+    return;
+  }
   const { text, mapped } = toSuperscript(raw);
   const numeric = /^\d+$/u.test(raw.trim());
   if (ctx.dialect === 'byrecht-vv') {
@@ -317,6 +332,7 @@ function appendFootnote(buffer: InlineBuffer, element: XmlElement, ctx: ParseCon
     ctx.counters.unmarkedFootnotes += 1;
     addFinding(ctx, 'warning', 'footnote-marker-missing',
       `Fußnote ohne Aufrufzeichen (<fn.text/>) in ${where} (Zeile ${element.line}); ersatzweise als „${label}“ geführt`);
+    buffer.text += SOFT_BOUNDARY;
   } else {
     buffer.text += marker;
   }
@@ -420,11 +436,46 @@ export function appendInline(node: XmlNode, buffer: InlineBuffer, ctx: ParseCont
       }
       buffer.text += HARD_BREAK;
       return;
+    case 'table': {
+      // Tabelle in einem reinen Textzusammenhang (Fußnotentext in einer Tabellenzelle, BayBSOF): Das Zielmodell
+      // kennt dort nur Text. Jede Zeile wird eine eigene Zeile, Zellen durch ein Leerzeichen getrennt – kein
+      // eingefügtes Trennzeichen, der Wortlaut bleibt vollständig; die verlorene Spaltenform ist ein Befund.
+      const rows = descendantRows(node);
+      addFinding(ctx, 'warning', 'table-flattened-in-text',
+        `Tabelle in ${where} (Zeile ${node.line}) als ${rows.length} Textzeilen übernommen; die Spaltenform geht verloren`);
+      for (const row of rows) {
+        const cells: string[] = [];
+        for (const cell of elementChildren(row)) {
+          if (cell.name !== 'td' && cell.name !== 'th') {
+            reportUnknownElement(ctx, cell, `${where} → <tr>`);
+            continue;
+          }
+          // Absätze einer Zelle bleiben in ihrer Zeile; Fußnoten der Zelle wandern an die Aufrufstelle.
+          const cellBuffer = newBuffer();
+          for (const child of cell.children) appendInline(child, cellBuffer, ctx, where);
+          cells.push(normalizeInline(cellBuffer.text).replace(/\s*\n\s*/gu, ' '));
+          buffer.footnotes.push(...cellBuffer.footnotes);
+        }
+        buffer.text += HARD_BREAK + cells.filter((text) => text !== '').join(' ');
+      }
+      buffer.text += HARD_BREAK;
+      return;
+    }
     default:
       reportUnknownElement(ctx, node, where);
       // Meldemodus: Text bleibt erhalten, damit nichts verloren geht.
       for (const child of node.children) appendInline(child, buffer, ctx, where);
   }
+}
+
+/** Zeilen einer Tabelle in Dokumentreihenfolge (`thead`/`tbody`/`tfoot` oder direkt); `colgroup` trägt keinen Text. */
+function descendantRows(table: XmlElement): XmlElement[] {
+  const rows: XmlElement[] = [];
+  for (const child of elementChildren(table)) {
+    if (child.name === 'tr') rows.push(child);
+    else if (child.name === 'thead' || child.name === 'tbody' || child.name === 'tfoot') rows.push(...elementChildren(child).filter((row) => row.name === 'tr'));
+  }
+  return rows;
 }
 
 /** Zusammengesetzter Inline-Inhalt eines Elements (Text plus Fußnotenblöcke an der Aufrufstelle). */
@@ -689,10 +740,29 @@ function gridWidth(rows: readonly NormBodyBlock[], ctx: ParseContext, where: str
     }
   });
   const width = occupied.reduce((maximum, row) => Math.max(maximum, row.length), 0);
-  const ragged = occupied.findIndex((row) => row.filter(Boolean).length !== width);
-  if (width > 0 && ragged >= 0) {
+  if (width === 0) return width;
+
+  // Kurze Zeilen auf die Rasterbreite auffüllen.
+  //
+  // Die Quelle führt sie wirklich: `<tr><td colspan="1"><p>nachrichtlich</p></td></tr>` in einer
+  // zweispaltigen Tabelle (belegt an BayVV_2242_K_727). Im Browser rendert eine solche Zeile mit
+  // leerer zweiter Spalte – die Lücke sitzt am Ende, das ist in HTML eindeutig.
+  //
+  // Zuvor wurde nichts ergänzt und nur gemeldet. Das war konservativ gemeint, hatte aber einen
+  // teuren Preis: `validateNormRecord` verlangt ein volles Raster, und so fiel die **ganze** Norm
+  // aus dem Bestand – acht Vorschriften mitsamt ihrem vollständigen Text, wegen einer leeren Zelle.
+  // Eine leere Zelle zu ergänzen verliert nichts und erfindet nichts; eine Norm zu verwerfen schon.
+  const short: number[] = [];
+  rows.forEach((row, rowIndex) => {
+    const filled = (occupied[rowIndex] ?? []).filter(Boolean).length;
+    if (filled >= width) return;
+    short.push(rowIndex + 1);
+    const cells = row.children ?? (row.children = []);
+    for (let missing = width - filled; missing > 0; missing -= 1) cells.push({ type: 'tableCell', text: '' });
+  });
+  if (short.length > 0) {
     addFinding(ctx, 'warning', 'table-ragged',
-      `Tabelle in ${where} (Zeile ${line}): Zeile ${ragged + 1} belegt ${occupied[ragged]!.filter(Boolean).length} statt ${width} Spalten; es werden keine Zellen ergänzt`);
+      `Tabelle in ${where} (Zeile ${line}): ${short.length} Zeile(n) belegen weniger als ${width} Spalten (Zeile ${short.slice(0, 5).join(', ')}${short.length > 5 ? ' …' : ''}); die fehlenden Zellen werden am Zeilenende leer ergänzt, wie die Quelle sie darstellt`);
   }
   return width;
 }

@@ -8,6 +8,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { parseSourceReference } from '@landesrecht/legal-core/lib/schema.ts';
+import { continuedTitle, splitDivisionNumber, stripTrailingMarkers } from '@landesrecht/importer-bayernrecht/parse/norm.ts';
 
 import { ImportPipelineError } from '@landesrecht/importer-common/pipeline.ts';
 import { parseBodyBlocks, type NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
@@ -568,16 +569,19 @@ describe('Fail-closed: unbekannte Strukturen', () => {
     expect(document.law.body.length).toBeGreaterThan(1);
   });
 
-  it('kennt den belegten Normtyp „vertrag“ und meldet einen mehrzeilig gesetzten Titel', () => {
-    // Werte aus dem Exportpaket BayBwEgauquVertr: @doktyp="vertrag", Titel über zwei Zeilen.
+  it('kennt den belegten Normtyp „vertrag“ und setzt einen mehrzeilig gesetzten Titel zusammen', () => {
+    // Werte aus dem Exportpaket BayBwEgauquVertr: @doktyp="vertrag", Titel über zwei Zeilen. Früher blieb der
+    // Titel „Staatsvertrag“ stehen (Befund title-possibly-truncated); die Folgezeile beginnt klein und gehört dazu.
     const content = fixture('abmarkungsgesetz')
       .replace('doktyp="gesetz"', 'doktyp="vertrag"')
       .replace('<titelangaben>Gesetz über die Abmarkung der Grundstücke<br />', '<titelangaben>Staatsvertrag<br />zwischen dem Freistaat Bayern und dem Land Baden-Württemberg<br />');
     const document = parseBayernRechtDocument(source, content);
     expect(document.law.type).toBe('staatsvertrag');
-    expect(document.law.findings).toContainEqual(expect.objectContaining({ severity: 'warning', code: 'title-possibly-truncated' }));
-    // Der vollständige Quelltext der Titelangaben bleibt im Körper stehen.
-    expect(document.law.body[0]!.text).toContain('zwischen dem Freistaat Bayern und dem Land Baden-Württemberg');
+    expect(document.law.title).toBe('Staatsvertrag zwischen dem Freistaat Bayern und dem Land Baden-Württemberg');
+    expect(document.law.findings).toContainEqual(expect.objectContaining({ severity: 'info', code: 'title-continued' }));
+    expect(document.law.findings.some((finding) => finding.code === 'title-possibly-truncated')).toBe(false);
+    // Die Zeile steht genau einmal im Ergebnis: im Titel, nicht noch einmal als Überschrift im Körper.
+    expect(JSON.stringify(document.law.body)).not.toContain('zwischen dem Freistaat Bayern und dem Land Baden-Württemberg');
   });
 
   it('bricht bei unbekanntem Normtyp ab, statt einen zu raten', () => {
@@ -759,5 +763,219 @@ describe('Quellenreferenz besteht die Schemaprüfung von legal-core', () => {
     for (const bad of ['17.09.2026', '2026-09', 'gestern', '']) {
       expect(() => parseBayernRechtDocument(archivedSource({ retrievedAt: bad }), fixture('abmarkungsgesetz'))).toThrow(/Abrufzeitpunkt/u);
     }
+  });
+});
+
+describe('Gliederungsnummer vor dem Titel', () => {
+  // Die Quelle stellt Verwaltungsvorschriften ihre Gliederungsnummer voran – mal auf eigener Zeile
+  // („3033.3-J“ vor „Aktenordnung für Justizverwaltungsangelegenheiten“), mal als Präfix derselben
+  // Zeile („237-B Richtlinien für das Sonderförderprogramm …“). Bliebe sie stehen, hieße eine
+  // Aktenordnung „3033.3-J“.
+  it('entfernt eine Nummer, die allein auf der ersten Zeile steht', () => {
+    const result = splitDivisionNumber(['3033.3-J', 'Aktenordnung für Justizverwaltungsangelegenheiten in Bayern']);
+    expect(result.divisionNumber).toBe('3033.3-J');
+    expect(result.lines[0]).toBe('Aktenordnung für Justizverwaltungsangelegenheiten in Bayern');
+  });
+
+  it('entfernt eine Nummer, die dem Titel vorangestellt ist', () => {
+    const result = splitDivisionNumber(['237-B Richtlinien für das Sonderförderprogramm zur Sanierung kommunaler Schwimmbäder']);
+    expect(result.divisionNumber).toBe('237-B');
+    expect(result.lines[0]).toBe('Richtlinien für das Sonderförderprogramm zur Sanierung kommunaler Schwimmbäder');
+  });
+
+  it('kennt die belegten Schreibungen der Ressortkürzel', () => {
+    for (const [number, rest] of [['2038.3.13-B', 'Konzept zur modularen Qualifizierung'], ['2230.1.1.1-WK', 'Archivierungsvereinbarung'], ['103-S', 'Redaktionsrichtlinien'], ['2230.7.1-K', 'Durchführung der Härteregelung']] as const) {
+      expect(splitDivisionNumber([`${number} ${rest}`])).toEqual({ lines: [rest], divisionNumber: number });
+    }
+  });
+
+  it('lässt einen Titel unangetastet, der keine Nummer trägt', () => {
+    const lines = ['Verordnung über die Schifffahrt auf dem Bodensee', '(Bodensee-Schifffahrts-Ordnung – BSO)'];
+    expect(splitDivisionNumber(lines)).toEqual({ lines });
+  });
+
+  it('verschluckt nicht die einzige Zeile', () => {
+    // Ohne diese Grenze bliebe eine Norm, deren titelangaben nur die Nummer trägt, ohne Titel –
+    // und der Parser bräche mit „nennt keinen Titel“ ab, statt die Nummer zu melden.
+    expect(splitDivisionNumber(['3033.3-J'])).toEqual({ lines: ['3033.3-J'] });
+  });
+
+  it('hält eine Zahl ohne Ressortkürzel nicht für eine Gliederungsnummer', () => {
+    expect(splitDivisionNumber(['2023 war ein besonderes Jahr'])).toEqual({ lines: ['2023 war ein besonderes Jahr'] });
+    expect(splitDivisionNumber(['§ 3 Abs. 2 bleibt unberührt'])).toEqual({ lines: ['§ 3 Abs. 2 bleibt unberührt'] });
+  });
+});
+
+describe('Weitere Dokumentklassen des Bestands', () => {
+  // Zehn Dokumente brachen mit „unbekannter Normtyp @doktyp=bekanntmachung“ ab – von der Wappen- und
+  // Flaggen-Bekanntmachung über das Begnadigungsrecht bis zur Biersteuer-Bekanntmachung von 1924.
+  // Sie zu lesen heißt nicht, sie aufzunehmen: docs/LEGAL_SCOPE.md nimmt eine Bekanntmachung nur
+  // auf, wenn sie Regelungsgehalt trägt.
+  const withDocType = (type: string, title: string) =>
+    fixture('abmarkungsgesetz')
+      .replace('doktyp="gesetz"', `doktyp="${type}"`)
+      .replace(/<titelangaben>[\s\S]*?<\/titelangaben>/u, `<titelangaben>${title}</titelangaben>`);
+
+  it('liest eine Bekanntmachung und meldet sie zur Normativitätsprüfung', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), withDocType('bekanntmachung', 'Bekanntmachung über die Führung des Wappens des Freistaates Bayern'));
+    expect(doc.law.type).toBe('bekanntmachung');
+    const finding = doc.law.findings.find((entry) => entry.code === 'norm-type-out-of-model');
+    expect(finding?.severity).toBe('warning');
+    expect(finding?.message).toContain('LEGAL_SCOPE');
+  });
+
+  it('erkennt ein Verwaltungsabkommen am Titel, auch wenn der Normtyp „bekanntmachung“ lautet', () => {
+    // Zwei Abkommen mit Baden-Württemberg führt das Portal als Bekanntmachung; der Titel sagt, was
+    // sie sind.
+    const doc = parseBayernRechtDocument(archivedSource(), withDocType('bekanntmachung', 'Verwaltungsabkommen zwischen dem Freistaat Bayern und dem Land Baden-Württemberg über die Verkehrsverwaltung'));
+    expect(doc.law.type).toBe('verwaltungsabkommen');
+    expect(doc.law.findings.some((entry) => entry.code === 'norm-type-refined')).toBe(true);
+  });
+
+  it('liest eine sonstige Norm ohne eigene Gliederungsstelle', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), withDocType('normsonst', 'Verordnung über die Schifffahrt auf dem Bodensee'));
+    expect(doc.law.type).toBe('verordnung');
+    expect(doc.law.findings.some((entry) => entry.code === 'norm-type-out-of-model')).toBe(true);
+  });
+
+  it('bricht bei einem wirklich unbekannten Normtyp weiterhin ab', () => {
+    // Das Fail-closed bleibt: Eine Klasse, die niemand geprüft hat, wird nicht stillschweigend
+    // eingeordnet.
+    expect(() => parseBayernRechtDocument(archivedSource(), withDocType('phantasietyp', 'Irgendetwas'))).toThrow(/unbekannter Normtyp/u);
+  });
+});
+
+describe('Fußnoten des Titelblocks', () => {
+  // `<titelangaben>` trägt bei Staatsverträgen eine Fußnote mit der Ratifikationsliste aller Länder.
+  // Sie ging verloren, weil nur die Zeilen des Blocks weitergereicht wurden – die
+  // Textintegritätsprüfung meldete daraufhin bei 179 Dokumenten Textverlust.
+  const withTitleFootnote = () =>
+    fixture('abmarkungsgesetz').replace(
+      /<titelangaben>[\s\S]*?<\/titelangaben>/u,
+      '<titelangaben>ARD-Staatsvertrag<br /> (<amtlicheAbk>ARD-StV</amtlicheAbk>)<br />vom 31. August 1991<fn.call role="nichtamtlich"><fn.text /><fn.def><p>Der Staatsvertrag wurde ratifiziert in:</p><p>Baden-Württemberg: G v. 19.11.1991 (GBl. S. 745)</p></fn.def></fn.call></titelangaben>',
+    );
+
+  it('behält den Fußnotentext im Normkörper', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), withTitleFootnote());
+    const body = JSON.stringify(doc.law.body);
+    expect(body).toContain('Der Staatsvertrag wurde ratifiziert in');
+    expect(body).toContain('Baden-Württemberg: G v. 19.11.1991 (GBl. S. 745)');
+  });
+
+  it('nimmt den Fußnoteninhalt nicht in den Titel', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), withTitleFootnote());
+    expect(doc.law.title).toBe('ARD-Staatsvertrag');
+    expect(doc.law.title).not.toContain('ratifiziert');
+  });
+
+  it('kommt ohne Fußnote im Titelblock aus', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), fixture('abmarkungsgesetz'));
+    expect('titleFootnotes' in doc.head && doc.head.titleFootnotes).toEqual([]);
+  });
+});
+
+describe('Tabelle im Fußnotentext', () => {
+  // BayBSOF: Eine Fußnote in einer Tabellenzelle trägt selbst eine Tabelle. Das Zielmodell kennt im
+  // Fußnotentext nur Text – vorher brach der Parser mit „Unbekanntes Element <table>“ ab.
+  const withFootnoteTable = () =>
+    fixture('abmarkungsgesetz').replace(
+      '<fn.def><p>BayRS 219-1-F</p></fn.def>',
+      '<fn.def><p>Bei Blinden tritt an die Stelle von Fachzeichnen:</p><table rules="none"><colgroup><col /><col /></colgroup><tbody><tr><td><p>Maschinenschreiben</p></td><td><p>1</p></td></tr><tr><td><p>Blindenpunktschrift</p></td><td><p>2</p></td></tr></tbody></table><p>Schluss</p></fn.def>',
+    );
+
+  it('übernimmt die Tabelle zeilenweise als Text, ohne Wortlaut zu verlieren oder Zeichen einzufügen', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), withFootnoteTable());
+    const artikel3 = find(doc.law.body, (block) => block.label === 'Art. 3');
+    const footnote = find([artikel3], (block) => block.type === 'footnote');
+    expect(footnote.text).toMatch(/Fachzeichnen:\s*\n\s*Maschinenschreiben 1\s*\n\s*Blindenpunktschrift 2\s*\n\s*Schluss/u);
+  });
+
+  it('meldet die verlorene Spaltenform als Warnung, nicht als Fehler', () => {
+    const doc = parseBayernRechtDocument(archivedSource(), withFootnoteTable());
+    expect(doc.law.findings).toContainEqual(expect.objectContaining({ severity: 'warning', code: 'table-flattened-in-text' }));
+    expect(doc.law.findings.filter((entry) => entry.severity === 'error')).toEqual([]);
+  });
+});
+
+describe('Wortgrenzen und Vermerke: Befunde der Textintegrität im Vollkorpus', () => {
+  // Jeder Fall stammt aus einem Dokument, das die Textintegritätsprüfung als `mismatch` meldete –
+  // verklebte Wörter oder verlorene Vermerke, die kein Strukturtest gesehen hätte.
+  const bodyText = (document: ReturnType<typeof parseBayernRechtDocument>): string => JSON.stringify(document.law.body);
+
+  it('führt eine Hochstellung aus reinem Leerraum als Wortgrenze (BayVV_2030_2_3_G_15657: „In<sup> </sup>allen“)', () => {
+    const document = parseBayernRechtDocument(source, fixture('redaktionsrichtlinien').replace('Diese Richtlinien sind', 'Diese Richtlinien<sup> </sup>sind'));
+    expect(bodyText(document)).toContain('Diese Richtlinien sind');
+    expect(bodyText(document)).not.toContain('Richtliniensind');
+  });
+
+  it('trennt Wörter an einem Fußnotenaufruf ohne Zeichen, ohne vor Satzzeichen Leerraum zu erfinden (BayVV_2246_K_737: „DM<fn.call>…</fn.call>nicht“)', () => {
+    const xml = fixture('abmarkungsgesetz')
+      .replace('Die Abmarkung wird von', 'Die Abmarkung<fn.call><fn.text /><fn.def><p>Hinweis A</p></fn.def></fn.call>wird von')
+      .replace('Vermessungsbehörden vollzogen.', 'Vermessungsbehörden vollzogen<fn.call><fn.text /><fn.def><p>Hinweis B</p></fn.def></fn.call>.');
+    const text = bodyText(parseBayernRechtDocument(source, xml));
+    expect(text).toContain('Die Abmarkung wird von');
+    expect(text).not.toContain('Abmarkungwird');
+    expect(text).toContain('vollzogen.');
+    expect(text).not.toContain('vollzogen .');
+    expect(text).toContain('Hinweis A');
+    expect(text).not.toContain('\\u0002');
+  });
+
+  it('liest <br/> im Anlagentitel als Wortgrenze (BayLAusstSiftE: „Stiftungsurkunde<br/>für …“)', () => {
+    const xml = fixture('beihilfeverordnung').replace('<annex.titel>Sonderregelungen für Bedienstete mit dienstlichem Wohnsitz im Ausland</annex.titel>', '<annex.titel>Sonderregelungen<br /><span style="font-weight: normal">für Bedienstete mit dienstlichem Wohnsitz im Ausland</span></annex.titel>');
+    const annex = find(parseBayernRechtDocument(source, xml).law.body, (block) => block.type === 'annex' && block.label === 'Anlage 6');
+    expect(annex.title).toBe('Sonderregelungen für Bedienstete mit dienstlichem Wohnsitz im Ausland');
+  });
+
+  it('behält eine Fußnote an der Absatznummer (BayIntG Art. 12 Abs. 3: Nichtigkeitsvermerk)', () => {
+    const xml = fixture('abmarkungsgesetz').replace('<absatz.nr>(1)</absatz.nr>', '<absatz.nr>(1)<fn.call role="nichtamtlich"><fn.text /><fn.def><p>Abs. 1 ist gemäß Entscheidung des Verfassungsgerichtshofs nichtig.</p></fn.def></fn.call></absatz.nr>');
+    const document = parseBayernRechtDocument(source, xml);
+    const subparagraph = find(document.law.body, (block) => block.type === 'subparagraph' && (block.children ?? []).some((child) => child.type === 'footnote' && (child.text ?? '').includes('nichtig')));
+    expect(subparagraph.label).toBe('(1)');
+  });
+
+  it('behält eine Fußnote am Gliederungszeichen – in der Norm- und in der VV-DTD (BayKonk „Artikel 3“)', () => {
+    const norm = fixture('beihilfeverordnung').replace('<gliederung.nr><p>I.</p></gliederung.nr>', '<gliederung.nr><p>I.<fn.call role="nichtamtlich"><fn.text /><fn.def><p>Vgl. den Notenwechsel vom 15. Dezember 2020.</p></fn.def></fn.call></p></gliederung.nr>');
+    expect(bodyText(parseBayernRechtDocument(source, norm))).toContain('Vgl. den Notenwechsel vom 15. Dezember 2020.');
+    const vv = fixture('redaktionsrichtlinien').replace('<p>1.</p>', '<p>1.<fn.call><fn.text /><fn.def><p>Vermerk zur Nummer 1</p></fn.def></fn.call></p>');
+    expect(bodyText(parseBayernRechtDocument(source, vv))).toContain('Vermerk zur Nummer 1');
+  });
+
+  it('macht ohne <annex.nummer> nicht den ganzen Anlagenkörper zum Label (BayGLKrWO: Anlagenverzeichnis)', () => {
+    const xml = fixture('beihilfeverordnung').replace('<annex.nummer>Anlage 6 Zu § 45 Abs. 4</annex.nummer><annex.nummer int="1">Anlage 6</annex.nummer>', '');
+    const annex = find(parseBayernRechtDocument(source, xml).law.body, (block) => block.type === 'annex' && block.title === 'Sonderregelungen für Bedienstete mit dienstlichem Wohnsitz im Ausland');
+    expect(annex.label ?? '').not.toContain('Sonderregelungen');
+  });
+});
+
+describe('Titel über mehrere Zeilen von <titelangaben>', () => {
+  // Belegt an 53 übernommenen Normen mit Befund `title-possibly-truncated`: echte Verkürzungen („Verordnung,“,
+  // „Staatsvertrag“) neben harmlosen Folgezeilen (Abkürzung, Datum), die nie zum Titel gehören.
+  it.each([
+    [['Verordnung,', 'Ausführungsvorschriften zu dem Gesetz über die Aufhebung der Fideikommisse betreffend'], 'Verordnung, Ausführungsvorschriften zu dem Gesetz über die Aufhebung der Fideikommisse betreffend'],
+    [['Staatsvertrag', 'zwischen', 'dem Freistaat Bayern und dem Land Rheinland-Pfalz', 'Vom 12. Mai 1970'], 'Staatsvertrag zwischen dem Freistaat Bayern und dem Land Rheinland-Pfalz'],
+    [['Verordnung über den', 'Bau und Betrieb von Verkaufsstätten', '(Verkaufsstättenverordnung – VkV)'], 'Verordnung über den Bau und Betrieb von Verkaufsstätten'],
+    [['Stiftungsurkunde', 'Seiner Majestät des Königs Ludwig von Bayern für Freiplätze'], 'Stiftungsurkunde Seiner Majestät des Königs Ludwig von Bayern für Freiplätze'],
+    [['Bestattungsgesetz', '(BestG)'], 'Bestattungsgesetz'],
+    [['Bayerische Biergartenverordnung', 'Vom 20. April 1999'], 'Bayerische Biergartenverordnung'],
+    [['Schulberatung in Bayern', 'Bekanntmachung des Bayerischen Staatsministeriums für Unterricht und Kultus'], 'Schulberatung in Bayern'],
+  ])('%j → %s', (lines, expected) => {
+    expect(continuedTitle(lines).title).toBe(expected);
+  });
+
+  it('entfernt Fußnotenzeichen am Titelende, nicht aber Ersatzmarken oder Text', () => {
+    const footnotes = [{ type: 'footnote', label: '1)', text: 'a' }, { type: 'footnote', label: '2)', text: 'b' }, { type: 'footnote', label: 'Fn 3', text: 'c' }] as NormBodyBlock[];
+    expect(stripTrailingMarkers('Reichsversicherungsordnung1)2)', footnotes)).toBe('Reichsversicherungsordnung');
+    expect(stripTrailingMarkers('Bekanntmachung über Biersteuer1)', footnotes)).toBe('Bekanntmachung über Biersteuer');
+    expect(stripTrailingMarkers('Gesetz über Nr. 1)', [])).toBe('Gesetz über Nr. 1)');
+  });
+
+  it('führt angefügte Titelzeilen nicht noch einmal als Überschrift im Körper', () => {
+    const xml = fixture('abmarkungsgesetz').replace(/<titelangaben>[\s\S]*?<\/titelangaben>/u, '<titelangaben>Verordnung,<br />Ausführungsvorschriften zu dem Abmarkungsgesetz betreffend<br />Vom 6. August 1981</titelangaben>');
+    const document = parseBayernRechtDocument(source, xml);
+    expect(document.law.title).toBe('Verordnung, Ausführungsvorschriften zu dem Abmarkungsgesetz betreffend');
+    const body = JSON.stringify(document.law.body);
+    expect(body).not.toContain('Ausführungsvorschriften zu dem Abmarkungsgesetz betreffend');
+    expect(body).toContain('Vom 6. August 1981');
   });
 });

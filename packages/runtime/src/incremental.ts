@@ -92,7 +92,9 @@ export function diffProjection(previous: ProjectionState | undefined, current: P
       diff.added.push(id);
       continue;
     }
-    if (old.record === fingerprint.record) {
+    // Unverändert nur, wenn auch die Sucheinheiten gleich sind: Eine Änderung am Code der Sucheinheiten
+    // (etwa neu suchbare Kennungen) lässt den Datensatz gleich und verändert trotzdem den Index.
+    if (old.record === fingerprint.record && old.search === fingerprint.search) {
       diff.unchanged += 1;
       continue;
     }

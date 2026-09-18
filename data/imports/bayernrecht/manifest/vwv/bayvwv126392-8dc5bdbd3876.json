@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "bayernrecht-import-manifest-entry/1",
+  "entry": {
+    "sourceSystem": "bayernrecht",
+    "targetJurisdiction": "baywue",
+    "baselineDate": "2023-12-01",
+    "parserVersion": "bayernrecht-parser/0.1.0",
+    "validityEvidence": [
+      {
+        "kind": "text-in-force-clause",
+        "dimension": "begin",
+        "strength": "strong",
+        "statement": "Der geführte Text gilt laut Quelle ab 2008-08-29",
+        "date": "2008-08-29",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayVwV126392"
+      },
+      {
+        "kind": "portal-version-interval",
+        "dimension": "validity",
+        "strength": "strong",
+        "statement": "Das Portal führt am 2026-09-18 genau diesen Text als geltende Fassung; ein Fassungsende ist nicht vermerkt",
+        "date": "2026-09-18",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+        "sha256": "8f6fee3c8ebb87aa7ebdadaf88da42f85467a86076f3208a68b19a802f1ee4ce"
+      }
+    ],
+    "rawDocuments": [
+      {
+        "role": "text-document",
+        "url": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+        "finalUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+        "sha256": "8f6fee3c8ebb87aa7ebdadaf88da42f85467a86076f3208a68b19a802f1ee4ce",
+        "contentType": "application/zip",
+        "retrievedAt": "2026-09-18T01:09:01.568Z",
+        "byteLength": 2211,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv126392-8dc5bdbd3876/8f6fee3c8ebb87aa-text-document.zip",
+        "archiveStatus": "verified"
+      }
+    ],
+    "versionsConsidered": [
+      {
+        "validFrom": "2008-08-29",
+        "validTo": null,
+        "url": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+        "selected": true
+      }
+    ],
+    "overrides": [],
+    "findings": [
+      {
+        "severity": "info",
+        "code": "vv-bayrs-number-absent",
+        "message": "Die erste Zeile des Titelabsatzes (\"Feuerwehr-Dienstvorschrift 3 - FwDV 3 \\\"Einheiten im Lösch- und Hilfeleistungseinsatz\\\"\") ist keine Gliederungsnummer; es wird keine erfunden"
+      },
+      {
+        "severity": "info",
+        "code": "tables",
+        "message": "1 Tabellen nach dem Blockmodell übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "organ-formula-conflict",
+        "message": "Widersprüchliche Erlassformeln (Bayerisches Staatsministerium des Innern / Bayerisches Staatsministerium); kein Erlassorgan übernommen"
+      }
+    ],
+    "integrity": {
+      "fetchParse": true,
+      "sourceCanonical": true
+    },
+    "transformation": {
+      "changes": 4,
+      "unresolved": 6,
+      "detections": 10,
+      "postTransformAudit": true
+    },
+    "reviewStatus": "none",
+    "targetSlug": "feuerwehr-dienstvorschrift-3-baywue",
+    "sourceArea": "vwv",
+    "sourceIdentity": "BayVwV126392",
+    "sourceTitle": "Feuerwehr-Dienstvorschrift 3 - FwDV 3 \"Einheiten im Lösch- und Hilfeleistungseinsatz\"",
+    "sourceType": "100",
+    "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayVwV126392",
+    "sourceVersion": {
+      "url": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+      "validFrom": "2008-08-29",
+      "validTo": null
+    },
+    "selectedVersionUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+    "sourceValidFrom": "2008-08-29",
+    "sourceValidTo": null,
+    "baselineStatus": "active-at-baseline",
+    "baselineRecoveryMethod": "current-source",
+    "sourceProvenance": {
+      "publicationAuthority": "unknown",
+      "digitalRepresentation": "born-digital",
+      "note": "XML-Export der konsolidierten Fassung aus BAYERN.RECHT. Verwaltungsvorschriften erscheinen im AllMBl. bzw. BayMBl.; welche Ausgabe amtlich ist, hängt vom Verkündungsjahr ab und wird am Einzeldokument nicht festgestellt."
+    },
+    "retrievedAt": "2026-09-18T01:09:01.568Z",
+    "sha256": "8f6fee3c8ebb87aa7ebdadaf88da42f85467a86076f3208a68b19a802f1ee4ce",
+    "contentType": "application/zip",
+    "transformerVersion": "bayernrecht-transformer/1.1.0",
+    "importStatus": "imported-with-warnings",
+    "decisionTrace": {
+      "schemaVersion": "bayernrecht-decision-trace/1",
+      "documentId": "BayVwV126392",
+      "baselineDate": "2023-12-01",
+      "statement": "Die Vorschrift wurde am ? ausgefertigt und ihr gezeigter Text gilt seit 2008-08-29 unverändert; damit galt genau dieser Text am 2023-12-01.",
+      "scope": {
+        "decision": "include",
+        "reason": "state-law-in-scope",
+        "evidence": [
+          "enumeration:facet-hitlist"
+        ]
+      },
+      "baseline": {
+        "class": "unchanged-since-baseline",
+        "status": "active-at-baseline",
+        "method": "current-unchanged",
+        "reason": "text-unchanged-since-before-baseline",
+        "blockers": [],
+        "evidence": [
+          {
+            "kind": "issue-year",
+            "value": "2008",
+            "source": "xml:fundstelle/jahr"
+          },
+          {
+            "kind": "text-in-force",
+            "value": "2008-08-29",
+            "source": "xml:inkraft"
+          }
+        ]
+      },
+      "recovery": {
+        "method": "current-source",
+        "note": "Der gezeigte Text gilt seit vor dem Stichtag unverändert; die abgerufene Quellfassung ist zugleich die Stichtagsfassung."
+      },
+      "source": {
+        "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV126392",
+        "documentUrl": "https://www.gesetze-bayern.de/Content/Document/BayVwV126392",
+        "sha256": "8f6fee3c8ebb87aa7ebdadaf88da42f85467a86076f3208a68b19a802f1ee4ce",
+        "retrievedAt": "2026-09-18T01:09:01.568Z",
+        "textInForceFrom": "2008-08-29",
+        "parserVersion": "bayernrecht-parser/0.1.0",
+        "transformerVersion": "bayernrecht-transformer/1.1.0"
+      },
+      "evidenceChain": [
+        "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
+        "Stichtag: unchanged-since-baseline / active-at-baseline / current-unchanged – text-unchanged-since-before-baseline",
+        "Beleg issue-year: 2008 (xml:fundstelle/jahr)",
+        "Beleg text-in-force: 2008-08-29 (xml:inkraft)",
+        "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayVwV126392 (SHA-256 8f6fee3c8ebb87aa…, abgerufen 2026-09-18T01:09:01.568Z)",
+        "Werkzeuge: bayernrecht-parser/0.1.0, bayernrecht-transformer/1.1.0"
+      ]
+    },
+    "importedAt": "2026-09-18T08:57:41.689Z",
+    "runId": "bayernrecht-bulk-20260918t085550z"
+  }
+}

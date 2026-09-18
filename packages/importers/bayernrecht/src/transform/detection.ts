@@ -102,6 +102,11 @@ const REASONS = {
   municipality: 'Kommune des Herkunftslandes – keine automatische Entsprechung in der Simulation.',
   geography: 'Geographische Bezeichnung – keine automatische Entsprechung in der Simulation.',
   residual: 'Form der Landesbezeichnung ohne sichere Überleitungsregel – bleibt unverändert, Entscheidung manuell.',
+  compoundProperName:
+    'Zusammengesetzter Eigenname mit „Bayern“ ohne Trennzeichen (BayernLabo, BayernPortal, BayernLB, Bayernhymne). ' +
+    'Keine Bezeichnung des Landes, sondern Marke, Einrichtung oder Werk. Die Überleitungsregel verlangt hinter dem ' +
+    'Landesnamen eine Wortgrenze und fasst ihn deshalb nicht an; eine Überleitung wäre eine redaktionelle ' +
+    'Entscheidung über die Institutionen-Zuordnung, keine Regel auf Wortteilen.',
   bayAbbreviation:
     'Amtliche Abkürzung mit dem Landeszusatz „Bay“ (BayVerf, BayBO, BayHO, BayRS, BayVwVfG, BayMBl.). ' +
     'Ob der Landeszusatz in Abkürzungen übergeleitet wird, ist eine Grundsatzentscheidung mit Folgen für ' +
@@ -265,6 +270,23 @@ export const DOUBLED_TARGET_NAME = new RegExp(
   'giu',
 );
 
+/**
+ * Zusammengesetzter Eigenname: „Bayern“ unmittelbar mit weiteren Buchstaben verwachsen, ohne
+ * Trennzeichen – `BayernLabo`, `BayernPortal`, `BayernLB`, `Bayernhymne`, `Bayernwerk`.
+ *
+ * Solche Namen sind **keine Bezeichnung des Landes**, sondern Marken, Einrichtungen und Werke. Die
+ * Überleitungsregel fasst sie richtigerweise nicht an: Sie verlangt hinter „Bayern“ eine
+ * Wortgrenze. Die Restpostensuche verlangte das bisher nicht und meldete damit genau das als
+ * Defekt, was die Regel bewusst verschont – 58 Normen scheiterten daran.
+ *
+ * Erfasst bleiben sie trotzdem, nur als **eigener Befund**: Wer „BayernLabo“ übergeleitet sehen
+ * will, entscheidet das redaktionell über die Institutionen-Zuordnung, nicht über eine Regel, die
+ * Wortteile ersetzt.
+ *
+ * Nicht erfasst sind die Flexionsformen des Landesnamens selbst (`Bayerns`); sie trägt die Regel.
+ */
+const COMPOUND_PROPER_NAME = new RegExp(String.raw`^${SOURCE_STATE}(?!s(?![\p{L}]))\p{L}+$`, 'u');
+
 /** Grober Vorfilter: Enthält ein Schutzbereich überhaupt etwas Landesbezogenes? */
 const STATE_SPECIFIC = new RegExp(
   [SOURCE_STATE, SOURCE_STATE.toLocaleUpperCase('de-DE'), String.raw`[${SOURCE_ADJECTIVE.slice(0, 1).toLocaleUpperCase('de-DE')}${SOURCE_ADJECTIVE.slice(0, 1)}]${SOURCE_ADJECTIVE.slice(1)}`, BAY_ABBREVIATION].join('|'),
@@ -295,7 +317,13 @@ const BAY_ABBREVIATION_EXACT = new RegExp(String.raw`^(?:${BAY_ABBREVIATION})$`,
 /** Restform einordnen: amtliche Abkürzung mit „Bay“ oder unklare Landesform. */
 function classifyResidual(term: string): { category: ReferenceCategory; reason: string } {
   if (BAY_ABBREVIATION_EXACT.test(term)) return { category: 'official-abbreviation', reason: REASONS.bayAbbreviation };
+  if (COMPOUND_PROPER_NAME.test(term)) return { category: 'external-name', reason: REASONS.compoundProperName };
   return { category: 'jurisdiction-name', reason: REASONS.residual };
+}
+
+/** Ist der Treffer ein zusammengesetzter Eigenname und damit keine Restform des Landesnamens? */
+export function isCompoundProperName(term: string): boolean {
+  return COMPOUND_PROPER_NAME.test(term);
 }
 
 /** Wendet die zentrale Institutionen-Zuordnung auf eine manuelle Erkennung an (Text bleibt unverändert). */

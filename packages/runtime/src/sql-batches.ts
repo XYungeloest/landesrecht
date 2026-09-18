@@ -13,13 +13,16 @@
  */
 import { createHash } from 'node:crypto';
 
-import { deleteNormQueries, normId, renderStatement, type PlanQuery, type ProjectionPlan } from './projection.ts';
+import { D1_MAX_STATEMENT_BYTES, deleteNormQueries, normId, renderStatement, splitOversizedInsert, type PlanQuery, type ProjectionPlan } from './projection.ts';
+
+export { D1_MAX_STATEMENT_BYTES, SPLITTABLE_TABLE_KEYS, splitOversizedInsert } from './projection.ts';
 
 export const SQL_BATCH_SCHEMA = 'landesrecht-d1-batches/1' as const;
 export const DEFAULT_SQL_FILE_STATEMENTS = 1_500;
 export const DEFAULT_SQL_FILE_BYTES = 6_000_000;
-export const D1_MAX_STATEMENT_BYTES = 100_000;
 export const SQL_TOTAL_WARNING_BYTES = 500_000_000;
+
+
 
 export interface SqlBatchFileMeta {
   index: number;
@@ -141,7 +144,8 @@ export function splitPlanIntoSqlFiles(plan: ProjectionPlan, options: { database:
   for (const group of plan.groups) {
     const isNorm = !group.key.startsWith('(');
     if (isNorm) norms += 1;
-    const queries: PlanQuery[] = resumable && plan.full && isNorm ? [...deleteNormQueries(normId(plan.jurisdiction, group.key)), ...group.queries] : group.queries;
+    const base: PlanQuery[] = resumable && plan.full && isNorm ? [...deleteNormQueries(normId(plan.jurisdiction, group.key)), ...group.queries] : group.queries;
+    const queries: PlanQuery[] = base.flatMap((query) => splitOversizedInsert(query));
     const rendered = queries.map(renderStatement);
     let groupBytes = 0;
     for (const statement of rendered) {

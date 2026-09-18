@@ -189,9 +189,14 @@ export function generateGoldenQueries(records: readonly NormRecord[], seed = 'go
 
   for (const word of ['West', 'Gesetz', 'Verordnung', 'Land Westdeutschland']) add('common-word', { query: word, expectedTop: [], acceptable: [], expectHits: true, note: 'häufiges Wort: nur Laufzeit und Trefferzahl' });
 
-  for (const norm of pick((entry) => uniqueTitle(entry) && contentWords(entry.meta.title).some((word) => word.length >= 9), 5)) {
-    const word = contentWords(norm.meta.title).find((entry) => entry.length >= 9)!;
-    const original = norm.meta.title.split(/\s+/u).find((token) => normalizeSearchText(token) === word)!;
+  // Das Tippfehlerwort muss als eigenes Titelwort vorkommen; ein erst durch die Normalisierung entstandenes Wort
+  // (Bindestrichkompositum wie „Bayern-Württembergischen“) hat kein Original, das sich verändern ließe.
+  const typoToken = (title: string): string | undefined => {
+    const word = contentWords(title).find((entry) => entry.length >= 9);
+    return word === undefined ? undefined : title.split(/\s+/u).find((token) => normalizeSearchText(token) === word);
+  };
+  for (const norm of pick((entry) => uniqueTitle(entry) && typoToken(entry.meta.title) !== undefined, 5)) {
+    const original = typoToken(norm.meta.title)!;
     add('typo', { query: queryText(norm.meta.title.replace(original, introduceTypo(original))), expectedTop: [], acceptable: [norm.meta.slug], niceToHave: true, note: `„${original}“ → „${introduceTypo(original)}“ (keine Fuzzy-Suche)` });
   }
 

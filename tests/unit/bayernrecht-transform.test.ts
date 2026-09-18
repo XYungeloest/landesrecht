@@ -93,7 +93,8 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.0.0');
+    // 1.1.0: Herrschernamen geschützt (Nutzerentscheidung 2026-09-18).
+    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.1.0');
   });
 
   it('kennt den angehängten Zielteil, auf dem der Idempotenzschutz beruht', () => {
@@ -786,5 +787,50 @@ describe('Der ganze Weg: Paket → Parser → Überleitung → geprüfte Norm', 
     if (available.length < ids.length) {
       console.info(`[Korpus] ${available.length} von ${ids.length} Paketen lokal vorhanden; der Durchlauf prüft nur diese.`);
     }
+  });
+});
+
+describe('Namenskollisionen Bayern / Bayern-Württemberg / Baden-Württemberg', () => {
+  // Das Ziel heißt Bayern-Württemberg; echte Nennungen des Landes Baden-Württemberg (Staatsverträge,
+  // Verwaltungsabkommen, Ratifikationslisten) bleiben unverändert – in jeder Schreibweise und Flexion.
+  it.each([
+    'Land Baden-Württemberg',
+    'Baden-Württembergischen Landtag',
+    'BADEN-WÜRTTEMBERG',
+    'baden-württembergisch',
+    'Württemberg',
+    'Oberbayern',
+  ])('lässt „%s“ unverändert', (value) => {
+    expect(apply(value)).toBe(value);
+  });
+
+  it('überführt Bayern neben Baden-Württemberg und lässt den Vertragspartner stehen', () => {
+    expect(apply('zwischen dem Freistaat Bayern und dem Land Baden-Württemberg')).toBe('zwischen dem Freistaat Bayern-Württemberg und dem Land Baden-Württemberg');
+    expect(apply('Bayerisch-Baden-Württembergische Kommission')).toBe('Bayern-Württembergisch-Baden-Württembergische Kommission');
+  });
+
+  it.each(['Bayern', 'Bayerns', 'Bayerischen Staatsministerium', 'Bayern-Württemberg', 'Land Baden-Württemberg', 'Freistaat Bayern und Land Baden-Württemberg'])(
+    'ist für „%s“ idempotent',
+    (value) => {
+      expect(apply(apply(value))).toBe(apply(value));
+    },
+  );
+});
+
+describe('Herrschernamen bleiben unverändert (Nutzerentscheidung 2026-09-18)', () => {
+  it.each([
+    'Seiner Majestät des Königs Ludwig von Bayern',
+    'König Ludwig III. und Königin Marie Therese von Bayern',
+    'Kurfürstin von Bayern',
+    'Prinzregent Luitpold von Bayern',
+    'Herzog Max in Bayern',
+  ])('lässt „%s“ stehen', (value) => {
+    expect(apply(value)).toBe(value);
+    expect(apply(`Stiftung ${value} im Freistaat Bayern`)).toBe(`Stiftung ${value} im Freistaat Bayern-Württemberg`);
+  });
+
+  it('überleitet Staatsbezeichnungen weiter, auch historische und in Ortsangaben', () => {
+    expect(apply('Blindenerziehungsanstalt des Königreichs Bayern')).toBe('Blindenerziehungsanstalt des Königreichs Bayern-Württemberg');
+    expect(apply('am Königssee in Bayern')).toBe('am Königssee in Bayern-Württemberg');
   });
 });

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "bayernrecht-import-manifest-entry/1",
+  "entry": {
+    "sourceSystem": "bayernrecht",
+    "targetJurisdiction": "baywue",
+    "baselineDate": "2023-12-01",
+    "parserVersion": "bayernrecht-parser/0.1.0",
+    "validityEvidence": [
+      {
+        "kind": "text-in-force-clause",
+        "dimension": "begin",
+        "strength": "strong",
+        "statement": "Der geführte Text gilt laut Quelle ab 2025-08-01",
+        "date": "2025-08-01",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayKG"
+      },
+      {
+        "kind": "portal-version-interval",
+        "dimension": "validity",
+        "strength": "strong",
+        "statement": "Das Portal führt am 2026-09-18 genau diesen Text als geltende Fassung; ein Fassungsende ist nicht vermerkt",
+        "date": "2026-09-18",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+        "sha256": "f7b6ff04741a402033751900aee2364c7c7fde0a5b86d6a142fccf862c4df26c"
+      },
+      {
+        "kind": "gazette-publication",
+        "dimension": "begin",
+        "strength": "supporting",
+        "statement": "Ausgefertigt am 1998-02-20",
+        "date": "1998-02-20",
+        "citation": "Kostengesetz (KG) vom 20. Februar 1998 (GVBl. S. 43, BayRS 2013-1-1-F), das zuletzt durch § 1 des Gesetzes vom 25. Juli 2025 (GVBl. S. 254) geändert worden ist"
+      },
+      {
+        "kind": "registry-position",
+        "dimension": "identity",
+        "strength": "supporting",
+        "statement": "Geführt unter der BayRS-Gliederungsnummer 2013-1-1-F",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayKG"
+      }
+    ],
+    "rawDocuments": [
+      {
+        "role": "text-document",
+        "url": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+        "finalUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+        "sha256": "f7b6ff04741a402033751900aee2364c7c7fde0a5b86d6a142fccf862c4df26c",
+        "contentType": "application/zip",
+        "retrievedAt": "2026-09-18T00:35:05.944Z",
+        "byteLength": 15728
+      }
+    ],
+    "versionsConsidered": [
+      {
+        "validFrom": "2025-08-01",
+        "validTo": null,
+        "url": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+        "selected": true
+      }
+    ],
+    "overrides": [],
+    "findings": [
+      {
+        "severity": "info",
+        "code": "sentence-numbers",
+        "message": "121 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)"
+      }
+    ],
+    "integrity": {
+      "fetchParse": true,
+      "sourceCanonical": true
+    },
+    "transformation": {
+      "changes": 0,
+      "unresolved": 0,
+      "detections": 0,
+      "postTransformAudit": false
+    },
+    "reviewStatus": "open",
+    "targetSlug": "",
+    "sourceArea": "landesrecht",
+    "sourceIdentity": "BayKG",
+    "bayRsNumber": "2013-1-1-F",
+    "sourceTitle": "Kostengesetz",
+    "sourceType": "gesetz",
+    "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayKG",
+    "sourceVersion": {
+      "url": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+      "validFrom": "2025-08-01",
+      "validTo": null
+    },
+    "selectedVersionUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+    "sourceValidFrom": "2025-08-01",
+    "sourceValidTo": null,
+    "baselineStatus": "active-at-baseline",
+    "baselineRecoveryMethod": "reverse-post-baseline-event",
+    "sourceProvenance": {
+      "publicationAuthority": "printed-official",
+      "digitalRepresentation": "born-digital",
+      "note": "XML-Export der konsolidierten Fassung aus BAYERN.RECHT (Bayerische Rechtssammlung); amtlich verkündet ist die Druckausgabe des GVBl., die elektronische Darstellung ist nachrichtlich."
+    },
+    "retrievedAt": "2026-09-18T00:35:05.944Z",
+    "sha256": "f7b6ff04741a402033751900aee2364c7c7fde0a5b86d6a142fccf862c4df26c",
+    "contentType": "application/zip",
+    "transformerVersion": "bayernrecht-transformer/1.1.0",
+    "importStatus": "needs-review",
+    "decisionTrace": {
+      "schemaVersion": "bayernrecht-decision-trace/1",
+      "documentId": "BayKG",
+      "baselineDate": "2023-12-01",
+      "statement": "Nicht übernommen: text-changed-after-baseline (changed-after-baseline, active-at-baseline).",
+      "scope": {
+        "decision": "include",
+        "reason": "state-law-in-scope",
+        "evidence": [
+          "enumeration:facet-hitlist"
+        ]
+      },
+      "baseline": {
+        "class": "changed-after-baseline",
+        "status": "active-at-baseline",
+        "method": "undetermined",
+        "reason": "text-changed-after-baseline",
+        "blockers": [
+          "Der gezeigte Text gilt erst ab 2025-08-01; die Fassung vom 2023-12-01 ist zu beschaffen",
+          "Rekonstruktion: partial-chain (multi-step) – 2 belegte Änderungsschritte nach dem Stichtag; nur einschrittige Ketten werden zurückgerechnet"
+        ],
+        "evidence": [
+          {
+            "kind": "issue-date",
+            "value": "1998-02-20",
+            "source": "xml:ausfertigungsdatum"
+          },
+          {
+            "kind": "text-in-force",
+            "value": "2025-08-01",
+            "source": "xml:inkraft"
+          },
+          {
+            "kind": "version-date",
+            "value": "1998-02-20",
+            "source": "xml:fassungsdatum"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "new 2024-12-16 (GVBl. 2024 S. 570)",
+            "source": "event-ledger"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "repeal 2025-07-30 (GVBl. 2025 S. 254)",
+            "source": "event-ledger"
+          },
+          {
+            "kind": "change-note",
+            "value": "2025-07-25",
+            "source": "citation:zuletzt geändert"
+          }
+        ]
+      },
+      "recovery": {
+        "method": "reverse-post-baseline-event",
+        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
+      },
+      "source": {
+        "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKG",
+        "documentUrl": "https://www.gesetze-bayern.de/Content/Document/BayKG",
+        "sha256": "f7b6ff04741a402033751900aee2364c7c7fde0a5b86d6a142fccf862c4df26c",
+        "retrievedAt": "2026-09-18T00:35:05.944Z",
+        "documentDate": "1998-02-20",
+        "textInForceFrom": "2025-08-01",
+        "parserVersion": "bayernrecht-parser/0.1.0",
+        "transformerVersion": "bayernrecht-transformer/1.1.0"
+      },
+      "evidenceChain": [
+        "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
+        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – text-changed-after-baseline",
+        "Beleg issue-date: 1998-02-20 (xml:ausfertigungsdatum)",
+        "Beleg text-in-force: 2025-08-01 (xml:inkraft)",
+        "Beleg version-date: 1998-02-20 (xml:fassungsdatum)",
+        "Beleg post-baseline-event: new 2024-12-16 (GVBl. 2024 S. 570) (event-ledger)",
+        "Beleg post-baseline-event: repeal 2025-07-30 (GVBl. 2025 S. 254) (event-ledger)",
+        "Beleg change-note: 2025-07-25 (citation:zuletzt geändert)",
+        "Offen: Der gezeigte Text gilt erst ab 2025-08-01; die Fassung vom 2023-12-01 ist zu beschaffen",
+        "Offen: Rekonstruktion: partial-chain (multi-step) – 2 belegte Änderungsschritte nach dem Stichtag; nur einschrittige Ketten werden zurückgerechnet",
+        "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayKG (SHA-256 f7b6ff04741a4020…, abgerufen 2026-09-18T00:35:05.944Z)",
+        "Werkzeuge: bayernrecht-parser/0.1.0, bayernrecht-transformer/1.1.0"
+      ]
+    }
+  }
+}

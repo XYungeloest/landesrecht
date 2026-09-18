@@ -75,9 +75,13 @@ for (const check of [...CHECKS, { name: `Stichprobe (${sampleSize} Normen)`, sql
 const differences = results.filter((result) => !result.equal).length;
 console.log(differences === 0 ? `Lokal ↔ Remote (${database}): identisch in ${results.length} Prüfungen.` : `Lokal ↔ Remote (${database}): ${differences} Abweichung(en).`);
 if (write) {
-  const directory = join(root, 'data', 'audits', 'recht-nrw', 'd1');
+  // Je Datenbank ihr eigenes Auditverzeichnis. Der Pfad war fest auf West gesetzt – ein Lauf für
+  // eine andere Jurisdiktion überschrieb damit den West-Bericht, und die West-Readiness las danach
+  // fremde Zahlen. West behält seinen Pfad unverändert.
+  const AUDIT_SYSTEM: Record<string, string> = { 'landesrecht-west': 'recht-nrw', 'landesrecht-baywue': 'bayernrecht', 'landesrecht-nsh': 'juris-sh', 'landesrecht-ost': 'ostrecht' };
+  const directory = join(root, 'data', 'audits', AUDIT_SYSTEM[database]!, 'd1');
   mkdirSync(directory, { recursive: true });
   writeFileSync(join(directory, 'D1_REMOTE_CHECK.json'), `${JSON.stringify({ schemaVersion: 'landesrecht-d1-remote-check/1', database, checkedAt: new Date().toISOString(), sampleSize, differences, results }, null, 2)}\n`);
-  console.log('Geschrieben: data/audits/recht-nrw/d1/D1_REMOTE_CHECK.json');
+  console.log(`Geschrieben: data/audits/${AUDIT_SYSTEM[database]}/d1/D1_REMOTE_CHECK.json`);
 }
 process.exitCode = differences === 0 ? 0 : 1;

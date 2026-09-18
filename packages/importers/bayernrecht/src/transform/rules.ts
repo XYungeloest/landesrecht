@@ -40,7 +40,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { SOURCE_STATE, TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.0.0';
+export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.1.0';
 
 export interface TransformationRule {
   id: string;
@@ -293,6 +293,16 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
     reason: 'Gliederungsnummer bzw. Band der Bayerischen Rechtssammlung bleibt unverändert',
   },
   { id: 'gazette-federal', category: 'source-citation', pattern: /\bBGBl\.\s*[IVX]*\s*(?:\d{4}\s*)?S\.\s*\d+/gu, reason: 'Fundstelle im Bundesgesetzblatt bleibt unverändert' },
+  {
+    id: 'ruler-name',
+    category: 'external-name',
+    // Nutzerentscheidung 2026-09-18: Herrschernamen bleiben unverändert. „Seiner Majestät des Königs Ludwig von
+    // Bayern“, „König Ludwig III. und Königin Marie Therese von Bayern“, „Kurfürstin von Bayern“ sind Namen von
+    // Personen, keine Bezeichnung des Landes. Der Titel muss unmittelbar vor Namen, Ordnungszahlen und „von/in
+    // Bayern“ stehen; „Königreich Bayern“ (Staatsbezeichnung) und „Königssee“ trifft das Muster nicht.
+    pattern: /\b(?:König(?:s|in)?|Prinzregent(?:en)?|Prinz(?:en|essin)?|Herzog(?:s|in)?|Kurfürst(?:en|in)?|Kronprinz(?:en|essin)?)(?:\s+(?:[A-ZÄÖÜ][\p{L}-]*|[IVX]+\.|und)){0,8}\s+(?:von|in)\s+Bayern\b/gu,
+    reason: 'Herrschername (Titel, Vorname, „von Bayern“) ist ein Personenname und bleibt unverändert (Nutzerentscheidung)',
+  },
   {
     id: 'landscape-proper-name',
     category: 'external-name',

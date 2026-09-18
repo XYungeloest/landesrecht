@@ -300,9 +300,17 @@ export function attribute(element: XmlElement, name: string): string | undefined
 }
 
 /** Roher Textinhalt eines Teilbaums, ohne Auszeichnung und ohne Normalisierung. */
+/** Elemente, deren Grenze im gezeigten Text eine Wortgrenze ist (Umbruch, Absatz, Listenpunkt, Zelle). */
+const WORD_SEPARATING_ELEMENTS: ReadonlySet<string> = new Set(['br', 'hr', 'p', 'li', 'td', 'th', 'tr']);
+
+/**
+ * Textinhalt eines Knotens. Umbrüche und Absatzgrenzen werden zu Leerraum – `<annex.titel>Stiftungsurkunde<br/>
+ * <span>für …` ergäbe sonst „Stiftungsurkundefür“ (BayLAusstSiftE). Aufrufer glätten den Leerraum ohnehin.
+ */
 export function rawText(node: XmlNode): string {
   if (isText(node)) return node.value;
-  return node.children.map(rawText).join('');
+  const inner = node.children.map(rawText).join('');
+  return WORD_SEPARATING_ELEMENTS.has(node.name) ? ` ${inner} ` : inner;
 }
 
 /** Leerraumfolgen zu einem Leerzeichen, außen getrimmt. */

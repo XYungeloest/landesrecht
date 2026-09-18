@@ -32,3 +32,11 @@ export const AUDIT_DIR = `data/audits/${SOURCE_SYSTEM}`;
 export const CACHE_DIR = `.cache/${SOURCE_SYSTEM}`;
 /** R2-Objektpräfix; kollidiert nicht mit `west/recht-nrw/…` oder `nsh/juris-sh/…`. */
 export const R2_PREFIX = `${TARGET_JURISDICTION}/${SOURCE_SYSTEM}/${BASELINE_DATE}`;
+
+/**
+ * Auswertungsstichtag für Berichte, die den Bestand gegen „heute“ halten (Scope, Coverage,
+ * Ereignisregister). **Eine Konstante, kein Tagesdatum:** Nur so erzeugt ein Wiederholungslauf
+ * denselben Bericht, und nur so lässt sich ein Unterschied als Befund lesen statt als Kalender.
+ * Wird sie erhöht, wandern abgelaufene Befristungen von „künftig“ zu „eingetreten“.
+ */
+export const EVALUATION_DATE = '2026-09-18' as const;

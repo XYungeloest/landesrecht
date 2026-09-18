@@ -29,6 +29,7 @@ import { assertJurisdictionSlug } from '../common/slug-registry.ts';
 import { CORPUS_PATH, CORPUS_SOURCE_DIR, type CorpusFile } from '../corpus/run.ts';
 import { checkEnumerationFixpoint, readEnumeration, type EnumerationFile } from '../enumerate/enumeration.ts';
 import { GAP_DATA_PATH, type GapReport } from '../enumerate/gap.ts';
+import { readScopeOverrides } from '../scope/run.ts';
 import { parseFortfuehrungsnachweis } from '../enumerate/fortfuehrungsnachweis.ts';
 import { readFacetInventory } from '../enumerate/inventory.ts';
 import { AREA_NORM_TYPES, fortfuehrungsnachweisUrl } from '../enumerate/portal.ts';
@@ -47,7 +48,7 @@ import {
   fullPathCheck,
   JUNIT_PATH,
   LEGAL_SCOPE_DOC,
-  localOnlyCheck,
+  cloudflareConfigCheck,
   manifestR2Objects,
   parseJUnit,
   readinessDocCheck,
@@ -374,7 +375,8 @@ export async function evaluateReadiness(root: string, options: ReadinessOptions 
   }
 
   // 3. Abdeckungslücke zwischen Portalfacette und Fortführungsnachweis.
-  checks.push(enumerationGapCheck(await readJsonFile<GapReport>(join(root, GAP_DATA_PATH))));
+  const scopeOverrides = await readScopeOverrides(root);
+  checks.push(enumerationGapCheck(await readJsonFile<GapReport>(join(root, GAP_DATA_PATH)), [...scopeOverrides.keys()]));
 
   // 4.–5. Beispielkorpus und der ganze Weg über alle Bausteine.
   const corpus = await readJsonFile<CorpusFile>(join(root, CORPUS_PATH));
@@ -399,7 +401,7 @@ export async function evaluateReadiness(root: string, options: ReadinessOptions 
 
   // 10. Umgekehrte Prüfung: BayWü bleibt lokal (nur lokale Dateien, kein Cloudflare-Aufruf).
   checks.push(
-    localOnlyCheck({
+    cloudflareConfigCheck({
       databaseIds: baywueDatabaseIds(await readTextIfExists(join(root, WRANGLER_PATH))),
       r2Objects: manifestR2Objects(manifest),
       remoteState: await remoteStateTraces(root),

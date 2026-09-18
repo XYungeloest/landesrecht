@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "bayernrecht-import-manifest-entry/1",
+  "entry": {
+    "sourceSystem": "bayernrecht",
+    "targetJurisdiction": "baywue",
+    "baselineDate": "2023-12-01",
+    "parserVersion": "bayernrecht-parser/0.1.0",
+    "validityEvidence": [
+      {
+        "kind": "text-in-force-clause",
+        "dimension": "begin",
+        "strength": "strong",
+        "statement": "Der geführte Text gilt laut Quelle ab 2025-09-01",
+        "date": "2025-09-01",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayHiMiBekmJD"
+      },
+      {
+        "kind": "portal-version-interval",
+        "dimension": "validity",
+        "strength": "strong",
+        "statement": "Das Portal führt am 2026-09-18 genau diesen Text als geltende Fassung; ein Fassungsende ist nicht vermerkt",
+        "date": "2026-09-18",
+        "sourceUrl": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+        "sha256": "eac4a533dd104d1a5e0aa02f57ef4c656a491c5676908cd608e5fbe66f2d36e0"
+      }
+    ],
+    "rawDocuments": [
+      {
+        "role": "text-document",
+        "url": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+        "finalUrl": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+        "sha256": "eac4a533dd104d1a5e0aa02f57ef4c656a491c5676908cd608e5fbe66f2d36e0",
+        "contentType": "application/zip",
+        "retrievedAt": "2026-09-18T00:45:53.820Z",
+        "byteLength": 2856
+      }
+    ],
+    "versionsConsidered": [
+      {
+        "validFrom": "2025-09-01",
+        "validTo": null,
+        "url": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+        "selected": true
+      }
+    ],
+    "overrides": [],
+    "findings": [
+      {
+        "severity": "info",
+        "code": "vv-section-address-unresolved",
+        "message": "6 Gliederungen ohne Permalink: das numerische Gliederungssuffix der Verwaltungsvorschriften (BayVwV…-0, -13, -19, …) ist ungeklärt; der Positionspfad ist mitgezählt, eine Portal-ID wird nicht geraten"
+      },
+      {
+        "severity": "info",
+        "code": "vv-section-effective-dates",
+        "message": "1 Gliederungen tragen @inkraft (2024-08-01); abschnittsweise Zeitinformation, die das Normmodell nicht kennt"
+      }
+    ],
+    "integrity": {
+      "fetchParse": true,
+      "sourceCanonical": true
+    },
+    "transformation": {
+      "changes": 0,
+      "unresolved": 0,
+      "detections": 0,
+      "postTransformAudit": false
+    },
+    "reviewStatus": "open",
+    "targetSlug": "",
+    "sourceArea": "vwv",
+    "sourceIdentity": "BayHiMiBekmJD",
+    "sourceTitle": "Hilfsmittel für die Qualifikationsprüfung für den Justizfachwirtedienst",
+    "sourceType": "100",
+    "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayHiMiBekmJD",
+    "sourceVersion": {
+      "url": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+      "validFrom": "2025-09-01",
+      "validTo": null
+    },
+    "selectedVersionUrl": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+    "sourceValidFrom": "2025-09-01",
+    "sourceValidTo": null,
+    "baselineStatus": "active-at-baseline",
+    "baselineRecoveryMethod": "reverse-post-baseline-event",
+    "sourceProvenance": {
+      "publicationAuthority": "unknown",
+      "digitalRepresentation": "born-digital",
+      "note": "XML-Export der konsolidierten Fassung aus BAYERN.RECHT. Verwaltungsvorschriften erscheinen im AllMBl. bzw. BayMBl.; welche Ausgabe amtlich ist, hängt vom Verkündungsjahr ab und wird am Einzeldokument nicht festgestellt."
+    },
+    "retrievedAt": "2026-09-18T00:45:53.820Z",
+    "sha256": "eac4a533dd104d1a5e0aa02f57ef4c656a491c5676908cd608e5fbe66f2d36e0",
+    "contentType": "application/zip",
+    "transformerVersion": "bayernrecht-transformer/1.1.0",
+    "importStatus": "needs-review",
+    "decisionTrace": {
+      "schemaVersion": "bayernrecht-decision-trace/1",
+      "documentId": "BayHiMiBekmJD",
+      "baselineDate": "2023-12-01",
+      "statement": "Nicht übernommen: text-changed-after-baseline (changed-after-baseline, active-at-baseline).",
+      "scope": {
+        "decision": "include",
+        "reason": "state-law-in-scope",
+        "evidence": [
+          "enumeration:facet-hitlist"
+        ]
+      },
+      "baseline": {
+        "class": "changed-after-baseline",
+        "status": "active-at-baseline",
+        "method": "undetermined",
+        "reason": "text-changed-after-baseline",
+        "blockers": [
+          "Der gezeigte Text gilt erst ab 2025-09-01; die Fassung vom 2023-12-01 ist zu beschaffen",
+          "Rekonstruktion: partial-chain (multi-step) – 3 belegte Änderungsschritte nach dem Stichtag; nur einschrittige Ketten werden zurückgerechnet"
+        ],
+        "evidence": [
+          {
+            "kind": "issue-date",
+            "value": "2003-08-18",
+            "source": "xml:ausfertigungsdatum"
+          },
+          {
+            "kind": "text-in-force",
+            "value": "2025-09-01",
+            "source": "xml:inkraft"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "amend 2024-05-22 (BayMBl. 2024 Nr. 236)",
+            "source": "event-ledger"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "amend 2025-08-13 (BayMBl. 2025 Nr. 331)",
+            "source": "event-ledger"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "amend 2025-10-29 (BayMBl. 2025 Nr. 444)",
+            "source": "event-ledger"
+          },
+          {
+            "kind": "issue-date",
+            "value": "2003-08-18",
+            "source": "citation:Zitiervorschlag"
+          },
+          {
+            "kind": "change-note",
+            "value": "2025-10-10",
+            "source": "citation:zuletzt geändert"
+          }
+        ]
+      },
+      "recovery": {
+        "method": "reverse-post-baseline-event",
+        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
+      },
+      "source": {
+        "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD",
+        "documentUrl": "https://www.gesetze-bayern.de/Content/Document/BayHiMiBekmJD",
+        "sha256": "eac4a533dd104d1a5e0aa02f57ef4c656a491c5676908cd608e5fbe66f2d36e0",
+        "retrievedAt": "2026-09-18T00:45:53.820Z",
+        "textInForceFrom": "2025-09-01",
+        "parserVersion": "bayernrecht-parser/0.1.0",
+        "transformerVersion": "bayernrecht-transformer/1.1.0"
+      },
+      "evidenceChain": [
+        "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
+        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – text-changed-after-baseline",
+        "Beleg issue-date: 2003-08-18 (xml:ausfertigungsdatum)",
+        "Beleg text-in-force: 2025-09-01 (xml:inkraft)",
+        "Beleg post-baseline-event: amend 2024-05-22 (BayMBl. 2024 Nr. 236) (event-ledger)",
+        "Beleg post-baseline-event: amend 2025-08-13 (BayMBl. 2025 Nr. 331) (event-ledger)",
+        "Beleg post-baseline-event: amend 2025-10-29 (BayMBl. 2025 Nr. 444) (event-ledger)",
+        "Beleg issue-date: 2003-08-18 (citation:Zitiervorschlag)",
+        "Beleg change-note: 2025-10-10 (citation:zuletzt geändert)",
+        "Offen: Der gezeigte Text gilt erst ab 2025-09-01; die Fassung vom 2023-12-01 ist zu beschaffen",
+        "Offen: Rekonstruktion: partial-chain (multi-step) – 3 belegte Änderungsschritte nach dem Stichtag; nur einschrittige Ketten werden zurückgerechnet",
+        "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayHiMiBekmJD (SHA-256 eac4a533dd104d1a…, abgerufen 2026-09-18T00:45:53.820Z)",
+        "Werkzeuge: bayernrecht-parser/0.1.0, bayernrecht-transformer/1.1.0"
+      ]
+    }
+  }
+}

@@ -100,9 +100,13 @@ export function parseVvHead(root: XmlElement, ctx: ParseContext): VvHead {
   if (!bavarian) fail(`${documentId}: <metadaten><bayernrecht> fehlt`);
   checkAttributes(ctx, bavarian, [], '<bayernrecht>');
 
+  // `bayernrecht_gliederungsnummernliste` (belegt an fünf Verwaltungsvorschriften, u. a.
+  // BayVV_7815_L_137, BayVwV318607): eine Liste von Gliederungsnummern im Metadatenkopf. Sie ist
+  // **Metadatum**, kein Normtext – bekannt, gelesen und bewusst nicht in den Körper übernommen. Ihr
+  // Inhalt bleibt in der archivierten Rohquelle.
   const known = new Set([
     'bayernrecht_langtitel', 'bayernrecht_kurztitel', 'bayernrecht_abkuerzung', 'bayernrecht_dokumentklasse',
-    'bayernrecht_fundstellen', 'bayernrecht_inkraft', 'bayernrecht_ausserkraft',
+    'bayernrecht_fundstellen', 'bayernrecht_inkraft', 'bayernrecht_ausserkraft', 'bayernrecht_gliederungsnummernliste',
   ]);
   for (const child of elementChildren(bavarian)) {
     if (!known.has(child.name)) reportUnknownElement(ctx, child, '<bayernrecht>');
@@ -169,6 +173,40 @@ interface VvState {
   effectiveDates: VvSectionEffectiveDate[];
 }
 
+
+
+/**
+ * `<abschnitt>` in einer VwV-Gliederung (belegt an BayVwV97614): eine eigene, rekursive Gliederung
+ * mit `<abschnitt.nr>` und `<abschnitt.titel>` – strukturell dasselbe wie `<gliederung>`, nur anders
+ * benannt. Nummer und Titel werden zur Überschrift, der Inhalt folgt; ein verschachtelter Abschnitt
+ * wird ebenso gelesen. Kein Text geht verloren, auch leere Nummern oder Titel brechen nicht ab.
+ */
+function abschnittBlocks(element: XmlElement, ctx: ParseContext, where: string): NormBodyBlock[] {
+  const text = (name: string): string => {
+    const found = childElement(element, name);
+    return found ? flowBlocks(found.children, ctx, `${where} → <${name}>`).map((block) => block.text ?? '').join(' ').trim() : '';
+  };
+  const heading = [text('abschnitt.nr'), text('abschnitt.titel')].filter((part) => part !== '').join(' ');
+  const blocks: NormBodyBlock[] = heading === '' ? [] : [{ type: 'heading', text: heading }];
+  for (const child of elementChildren(element)) {
+    switch (child.name) {
+      case 'abschnitt.nr':
+      case 'abschnitt.titel':
+        break;
+      case 'abschnitt':
+        blocks.push(...abschnittBlocks(child, ctx, `${where} → <abschnitt>`));
+        break;
+      case 'p':
+      case 'ul':
+      case 'table':
+        blocks.push(...flowBlocks([child], ctx, where));
+        break;
+      default:
+        blocks.push(...recoverUnknown(child, ctx, where));
+    }
+  }
+  return blocks;
+}
 function sectionBlock(element: XmlElement, ctx: ParseContext, state: VvState, position: number[], blockPath: number[]): NormBodyBlock {
   checkAttributes(ctx, element, ['ebene', 'inkraft', 'id'], '<gliederung>');
   const where = `<gliederung ebene=${attribute(element, 'ebene') ?? '?'} Position ${position.join('.')}>`;
@@ -182,7 +220,9 @@ function sectionBlock(element: XmlElement, ctx: ParseContext, state: VvState, po
 
   const numberElement = childElement(element, 'gliederung.nr');
   const titleElement = childElement(element, 'gliederung.titel');
-  const label = numberElement ? collapseWhitespace(inlineContent(numberElement, ctx, `${where} → <gliederung.nr>`).text) : '';
+  // Fußnoten am Gliederungszeichen bleiben erhalten (wie in der Norm-DTD), statt mit dem Kennzeichen zu verschwinden.
+  const numbered = numberElement ? inlineContent(numberElement, ctx, `${where} → <gliederung.nr>`) : { text: '', footnotes: [] as NormBodyBlock[] };
+  const label = collapseWhitespace(numbered.text);
   const heading = titleElement ? headingContent(titleElement, ctx, `${where} → <gliederung.titel>`) : { lines: [] as string[], footnotes: [] as NormBodyBlock[] };
   const title = heading.lines.join(' ');
 
@@ -191,7 +231,7 @@ function sectionBlock(element: XmlElement, ctx: ParseContext, state: VvState, po
     state.effectiveDates.push({ label: label || undefined, title: title || undefined, date: effective });
   }
 
-  const children: NormBodyBlock[] = [...heading.footnotes];
+  const children: NormBodyBlock[] = [...numbered.footnotes, ...heading.footnotes];
   let sectionIndex = 0;
   for (const child of elementChildren(element)) {
     switch (child.name) {
@@ -206,6 +246,9 @@ function sectionBlock(element: XmlElement, ctx: ParseContext, state: VvState, po
       case 'ul':
       case 'table':
         children.push(...flowBlocks([child], ctx, where));
+        break;
+      case 'abschnitt':
+        children.push(...abschnittBlocks(child, ctx, `${where} → <abschnitt>`));
         break;
       default:
         children.push(...recoverUnknown(child, ctx, where));

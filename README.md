@@ -87,7 +87,10 @@ npm run import:recht-nrw:bulk -- --area lrgv|lrmb [--limit n]      # Bulk-Runner
 npm run import:recht-nrw:readiness                # READY / NOT READY für den Bulkimport
 npm run import:recht-nrw:search-audit             # Suchintegrität des West-Bestands
 npm run import:bayernrecht:enumerate -- --area landesrecht|vwv [--offline] # BayWü: Enumeration (Fixpunkt)
+npm run import:bayernrecht:scope [-- --write]      # BayWü: Scope-Entscheidung je Dokument
+npm run import:bayernrecht:baseline [-- --write]  # BayWü: Stichtagsklassifikation (nur Cache, kein Netz)
 npm run import:bayernrecht:sample [-- --write]    # BayWü: Beispielkorpus (28 Normen)
+npm run import:bayernrecht:search-audit [-- --sample 0] [--write] # BayWü: Suchprüfung und Golden Set (≥ 100 Anfragen)
 npm run import:juris-sh:events [-- --write]        # NSH: Ereignisregister nach dem Stichtag (nur Cache, kein Netz)
 npm run import:juris-sh:review                    # NSH: offene Review-Fälle
 npm run d1:plan -- --jurisdiction west            # SQL-Batches für Remote-D1 (kein Remote-Zugriff)
@@ -141,6 +144,9 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/BAYERN_SOURCE_DISCOVERY.md` | BAYERN.RECHT: XML-Export (zwei DTDs), Enumeration, fehlende Fassungshistorie, Lizenz, Verkündungsorgane |
 | `docs/BAYERN_PARSER.md` | BayWü-Parser: Abdeckung beider DTDs, Annahmen, Abbruchbedingungen, Befundcodes |
 | `docs/BAYERN_TRANSFORMATION.md` | Überleitung Bayern → Bayern-Württemberg: konstruierte Idempotenz, Adjektiv- und Abkürzungsentscheidung |
+| `docs/BAYWUE_HISTORICAL_BASELINE.md` | Wie der Stichtagsbestand 2023-12-01 entsteht: Klassen, Wiederherstellungswege, Provenienzrang |
+| `docs/BAYWUE_BASELINE_STATUS.md` | Stand des BayWü-Stichtagsbestands: was übernommen ist, was fehlt und warum |
+| `docs/BAYWUE_SOURCE_MODEL.md` | Quellenmodell: amtlich, nachrichtlich, nichtamtlich – und wo das im Datenmodell steht |
 | `docs/BAYERN_BULK_READINESS.md` | Bereitschaft des BayWü-Ausgangsimports: NOT READY, offene Punkte, GO/No-Go |
 | `docs/SEARCH.md` | Suchplan (and-first), Golden Set, Fast-/Full-Audit |
 | `docs/DEPLOYMENT.md` | GitLab-CI, Cloudflare-Ressourcen, D1-Projektion, Variablen |
@@ -152,7 +158,7 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
 | NSH | juris Schleswig-Holstein | **kein Normbestand – Quelle gesperrt.** Überleitung, Zustandsschicht und Ereignisregister stehen; das konsolidierte Portal untersagt automatisierten Zugriff (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
 | Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
-| BayWü | BAYERN.RECHT | **Vorbereitung, lokal.** Quelle zugänglich (`Allow: /`), XML-Export je Norm; Enumeration 2 413 Dokumente (Fixpunkt), Beispielkorpus 28 Normen, Parser für beide DTDs. Kein Bestand, keine Cloudflare-Ressourcen (`docs/BAYERN_SOURCE_DISCOVERY.md`) |
+| BayWü | BAYERN.RECHT | **Deployed (Teilbestand).** 1 582 Normen zum Stichtag (13 davon bewiesen rückgerechnet), R2 und Remote-D1 befüllt. 506 geänderte Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
 
 Der NSH-Befund ist kein offener Arbeitsrest, sondern ein Ergebnis: Ohne freigegebene Quelle entsteht
 kein Normtext, und die Sperre wird nicht umgangen.

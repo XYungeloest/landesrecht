@@ -51,6 +51,18 @@ export interface NormHead {
   normType: NormType;
   title: string;
   titleLines: string[];
+  /** Wie viele Zeilen von `titleLines` der Titel umfasst; die übrigen stehen als Überschrift im Körper. */
+  titleLineCount: number;
+  /**
+   * Fußnoten des Titelblocks.
+   *
+   * `<titelangaben>` trägt bei Staatsverträgen eine `<fn.call role="nichtamtlich">` mit der
+   * Ratifikationsliste aller Länder – teils hundert Zeilen. Sie wurde verworfen, weil nur die
+   * Zeilen des Blocks weitergereicht wurden; die Textintegritätsprüfung meldete daraufhin bei 179
+   * Dokumenten Textverlust. Fachlich ist es nichtamtlicher redaktioneller Hinweis, also kein
+   * Normtext – verloren gehen darf er trotzdem nicht.
+   */
+  titleFootnotes: NormBodyBlock[];
   shortTitle?: string;
   abbr?: string;
   bayRsNumber?: string;
@@ -84,6 +96,81 @@ const PROVISION_ATTRIBUTES = ['einzelnormid', 'version', 'inkraft'];
 const QUOTED_ATTRIBUTES = ['hochkomma'];
 const ANNEX_ATTRIBUTES = ['annexid', 'version', 'inkraft'];
 
+/**
+ * Gliederungsnummer der Verwaltungsvorschriften, wie die Quelle sie **vor** den Titel setzt:
+ * `237-B`, `2038.3.13-B`, `2230.1.1.1-WK`, `3033.3-J`, `103-S`. Ziffern, punktgetrennt, dann ein
+ * Ressortkürzel aus ein bis drei Großbuchstaben.
+ *
+ * Sie erscheint mal auf einer eigenen Zeile, mal dem Titel vorangestellt. Beides ist keine
+ * Titelangabe: Bliebe sie stehen, hieße eine Aktenordnung „3033.3-J“.
+ */
+const DIVISION_NUMBER = /^\d+(?:\.\d+)*-[A-ZÄÖÜ]{1,3}$/u;
+const DIVISION_NUMBER_PREFIX = /^(\d+(?:\.\d+)*-[A-ZÄÖÜ]{1,3})\s+(?=\S)/u;
+
+/** Zeilen, die nie Teil des Titels sind: Abkürzung „(BestG)“, Datum „Vom 20. April 1999“. */
+export const TITLE_STOP_LINE = /^(?:\(|[Vv]om\s+\d)/u;
+/** Wörter, nach denen ein Titel nicht enden kann. */
+const TITLE_OPEN_ENDINGS = new Set(['den', 'der', 'die', 'das', 'des', 'dem', 'über', 'zu', 'zur', 'zum', 'für', 'von', 'und', 'zwischen', 'mit', 'betreffend', 'nach', 'bei']);
+/** Gattungswörter, die allein nie ein ganzer Titel sind: „Staatsvertrag ⏎ zwischen …“, „Stiftungsurkunde ⏎ Seiner Majestät …“. */
+const TITLE_HEADS = new Set(['Staatsvertrag', 'Vertrag', 'Abkommen', 'Konkordat', 'Stiftungsurkunde', 'Urkunde', 'Vereinbarung', 'Verwaltungsabkommen', 'Übereinkommen', 'Protokoll']);
+
+/**
+ * Setzt einen über mehrere `<br/>`-Zeilen laufenden Titel zusammen – nur, wo der Satz erkennbar weiterläuft:
+ * die Zeile endet mit Komma oder einem Wort, nach dem kein Titel endet, die Folgezeile beginnt klein, oder die
+ * Zeile ist ein bloßes Gattungswort. Abkürzungs- und Datumszeilen beenden den Titel immer. Höchstens fünf Zeilen.
+ */
+export function continuedTitle(lines: readonly string[]): { title: string; lines: number } {
+  let title = lines[0]!;
+  let used = 1;
+  while (used < lines.length && used < 5) {
+    const next = lines[used]!;
+    if (TITLE_STOP_LINE.test(next)) break;
+    const lastWord = title.split(/\s+/u).at(-1) ?? '';
+    const opens = title.endsWith(',') || TITLE_OPEN_ENDINGS.has(lastWord) || /^\p{Ll}/u.test(next) || (used === 1 && TITLE_HEADS.has(title));
+    if (!opens) break;
+    title = `${title} ${next}`;
+    used += 1;
+  }
+  return { title, lines: used };
+}
+
+/** Entfernt Fußnotenzeichen am Titelende („Biersteuer1)“, „Reichsversicherungsordnung1)2)“); die Fußnote bleibt im Körper. */
+export function stripTrailingMarkers(title: string, footnotes: readonly NormBodyBlock[]): string {
+  const labels = footnotes.map((footnote) => footnote.label).filter((label): label is string => Boolean(label) && !/^Fn \d+$/u.test(label!));
+  let result = title;
+  for (let changed = true; changed;) {
+    changed = false;
+    for (const label of labels) {
+      if (result.length > label.length && result.endsWith(label)) {
+        result = result.slice(0, -label.length).trimEnd();
+        changed = true;
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Trennt die vorangestellte Gliederungsnummer vom Titel.
+ *
+ * Gibt die bereinigten Zeilen und die gefundene Nummer zurück. Die Nummer wird nicht verworfen: Wo
+ * `gliederungsNr.BayRS` leer ist, ist sie der einzige Beleg der Gliederungsstelle im Dokument.
+ */
+export function splitDivisionNumber(lines: readonly string[]): { lines: string[]; divisionNumber?: string } {
+  const rest = [...lines];
+  let divisionNumber: string | undefined;
+  while (rest.length > 1 && DIVISION_NUMBER.test(rest[0]!)) {
+    divisionNumber ??= rest[0]!;
+    rest.shift();
+  }
+  const prefix = rest[0] ? DIVISION_NUMBER_PREFIX.exec(rest[0]) : null;
+  if (prefix) {
+    divisionNumber ??= prefix[1]!;
+    rest[0] = rest[0]!.slice(prefix[0].length);
+  }
+  return divisionNumber === undefined ? { lines: rest } : { lines: rest, divisionNumber };
+}
+
 /** Normtypen des Portals (`dokumentation/@doktyp`). Alles andere bricht ab. */
 const DOCUMENT_TYPES: Readonly<Record<string, NormType>> = {
   gesetz: 'gesetz',
@@ -102,6 +189,28 @@ const DOCUMENT_TYPES: Readonly<Record<string, NormType>> = {
   // `vertr` ist der Facettenfilterwert des Portals; als @doktyp bisher nicht belegt, aber naheliegend.
   vertr: 'staatsvertrag',
   satzung: 'satzung',
+  /**
+   * „Sonstige Norm“ – belegt an der Bodensee-Schifffahrts-Ordnung (BayBodSchO). Das Portal führt
+   * darunter Vorschriften, die keine eigene Gliederungsstelle der Bayerischen Rechtssammlung haben,
+   * weil sie in Bayern als **Anhang einer anderen Vorschrift** in Kraft gesetzt sind (dort: als
+   * Anhang zur EV-BodenseeSchO, dreistaatlich einheitlich erlassen). `gliederungsNr.BayRS` ist bei
+   * ihnen leer.
+   *
+   * Als Verordnung geführt, weil das die Rechtsform der Inkraftsetzung ist – aber immer mit Befund:
+   * Ob ein solcher Anhang als eigene Norm geführt oder der Stammnorm zugeschlagen wird, ist eine
+   * redaktionelle Entscheidung nach docs/LEGAL_SCOPE.md, keine des Parsers.
+   */
+  normsonst: 'verordnung',
+  /**
+   * Bekanntmachung – belegt an zehn Dokumenten des Bestands, von der Wappen- und Flaggen-
+   * Bekanntmachung über das Begnadigungsrecht bis zur Biersteuer-Bekanntmachung von 1924.
+   *
+   * Das Zielmodell führt `bekanntmachung` als eigenen Typ. Ob eine Bekanntmachung in den
+   * Landesrechtsbestand gehört, ist damit **nicht** entschieden: `docs/LEGAL_SCOPE.md` nimmt sie nur
+   * auf, wenn sie Regelungsgehalt trägt. Deshalb steht sie zugleich in `TYPES_REQUIRING_REVIEW` –
+   * der Parser liest sie, die Normativität entscheidet das Review.
+   */
+  bekanntmachung: 'bekanntmachung',
 };
 
 /** Gliederungswörter → Blocktyp. Reihenfolge ist die Rangfolge im bayerischen Sprachgebrauch. */
@@ -123,6 +232,10 @@ const DIVISION_WORDS: Readonly<Record<string, NormBodyBlock['type']>> = {
  */
 const TYPES_REQUIRING_REVIEW: Readonly<Record<string, string>> = {
   tarifvertrag: 'Tarifverträge sind keine Rechtsnormen des Landes; das Zielmodell kennt keinen eigenen Typ. Geführt als „verwaltungsabkommen“ – die Aufnahme in den Bestand ist eine Entscheidung nach docs/LEGAL_SCOPE.md.',
+  normsonst:
+    'Sonstige Norm ohne eigene Gliederungsstelle der Bayerischen Rechtssammlung; in Bayern regelmäßig als Anhang einer anderen Vorschrift in Kraft gesetzt. Geführt als „verordnung“ – ob eigene Norm oder Teil der Stammnorm, entscheidet das Review nach docs/LEGAL_SCOPE.md.',
+  bekanntmachung:
+    'Bekanntmachung: nach docs/LEGAL_SCOPE.md nur aufzunehmen, wenn sie Regelungsgehalt trägt. Der Parser liest sie; über die Normativität entscheidet das Review.',
 };
 
 const DIVISION_WORD_PATTERN = /\b(Buch|Hauptteil|Teil|Kapitel|Abteilung|Unterabschnitt|Abschnitt|Untertitel|Titel)\b/u;
@@ -219,18 +332,30 @@ export function parseNormHead(kopf: XmlElement, ctx: ParseContext): NormHead {
   if (!documentType) fail(`<dokumentation> von ${documentId} trägt kein @doktyp`);
 
   const titleElement = childElement(dependent, 'titelangaben');
-  const titleLines = titleElement ? headingContent(titleElement, ctx, '<titelangaben>').lines : [];
+  const titleContent = titleElement ? headingContent(titleElement, ctx, '<titelangaben>') : { lines: [] as string[], footnotes: [] as NormBodyBlock[] };
+  const rawTitleLines = titleContent.lines;
+  // Die Quelle stellt Verwaltungsvorschriften ihre Gliederungsnummer voran – teils auf eigener
+  // Zeile, teils als Präfix. Sie ist kein Titel.
+  const { lines: titleLines, divisionNumber } = splitDivisionNumber(rawTitleLines);
   const shortTitle = optionalText(childElement(dependent, 'kurzbezeichnung'));
   const abbr = optionalText(childElement(dependent, 'amtlicheAbk'));
-  const title = titleLines[0] ?? shortTitle;
+  // `titelangaben` setzt den Titel mit `<br/>` um. Zeile 1 ist der Titel – außer der Satz läuft erkennbar
+  // weiter (continuedTitle): „Verordnung, ⏎ Ausführungsvorschriften …“, „Staatsvertrag ⏎ zwischen dem Land …“.
+  // Abkürzungs- und Datumszeilen werden nie angefügt. Fußnotenzeichen am Titelende gehören zur Fußnote.
+  const continued = titleLines.length > 0 ? continuedTitle(titleLines) : undefined;
+  const title = continued ? stripTrailingMarkers(continued.title, titleContent.footnotes) : shortTitle;
   if (!title) fail(`${documentId}: weder <titelangaben> noch <kurzbezeichnung> nennen einen Titel`);
-  // `titelangaben` setzt den Titel mit `<br/>` um. Zeile 1 ist der Titel – außer der Satz läuft
-  // weiter (Staatsverträge: „Staatsvertrag ⏎ zwischen dem Land …“). Die Folgezeilen sind nicht
-  // sicher von Fassungs-, Fundstellen- und Datumszeilen zu unterscheiden, deshalb wird nicht
-  // zusammengefügt, sondern gemeldet; der vollständige Quelltext bleibt im Körper erhalten.
-  if (titleLines.length > 1 && title.split(/\s+/u).length <= 3) {
+  if (continued && continued.lines > 1) {
+    addFinding(ctx, 'info', 'title-continued',
+      `${documentId}: Der Titel läuft über ${continued.lines} Zeilen von <titelangaben> und wird zusammengesetzt: „${title}“`);
+  } else if (titleLines.length > 1 && title.split(/\s+/u).length <= 3 && !TITLE_STOP_LINE.test(titleLines[1]!)) {
     addFinding(ctx, 'warning', 'title-possibly-truncated',
       `${documentId}: <titelangaben> beginnt mit der kurzen Zeile „${title}“ und läuft weiter („${titleLines[1]!.slice(0, 60)}…“); der Titel könnte über mehrere Zeilen gesetzt sein`);
+  }
+
+  if (divisionNumber) {
+    addFinding(ctx, 'info', 'division-number-before-title',
+      `${documentId}: <titelangaben> stellt die Gliederungsnummer „${divisionNumber}“ vor den Titel; sie wird als Gliederungsnummer geführt, nicht als Titelbestandteil`);
   }
 
   let normType = DOCUMENT_TYPES[documentType];
@@ -243,6 +368,12 @@ export function parseNormHead(kopf: XmlElement, ctx: ParseContext): NormHead {
   const review = TYPES_REQUIRING_REVIEW[documentType];
   if (review) {
     addFinding(ctx, 'warning', 'norm-type-out-of-model', `${documentId}: @doktyp="${documentType}". ${review}`);
+  }
+  // Zwei Verwaltungsabkommen mit Baden-Württemberg führt das Portal als `bekanntmachung`; der Titel
+  // sagt, was sie sind. Die Verfeinerung gilt deshalb für beide Ausgangstypen.
+  if (normType === 'bekanntmachung' && /^Verwaltungsabkommen\b/u.test(title)) {
+    normType = 'verwaltungsabkommen';
+    addFinding(ctx, 'info', 'norm-type-refined', `${documentId}: @doktyp="${documentType}" mit Titel „${title}“ wird als Normtyp „verwaltungsabkommen“ geführt`);
   }
   // `doktyp="vertrag"` fasst Staatsverträge und Verwaltungsabkommen zusammen; der Titel trennt sie.
   if (normType === 'staatsvertrag' && /^Verwaltungsabkommen\b/u.test(title)) {
@@ -271,9 +402,11 @@ export function parseNormHead(kopf: XmlElement, ctx: ParseContext): NormHead {
   return {
     documentId,
     documentType,
+    titleFootnotes: titleContent.footnotes,
     normType,
     title,
     titleLines,
+    titleLineCount: continued?.lines ?? (titleLines.length > 0 ? 1 : 0),
     shortTitle,
     abbr,
     bayRsNumber: bayRsRaw ? bayRsRaw.replace(/^BayRS\s+/u, '').trim() : undefined,
@@ -390,12 +523,15 @@ function subparagraphBlocks(jurAbsatz: XmlElement, ctx: ParseContext, state: Bod
   for (const child of elementChildren(jurAbsatz)) {
     if (child.name !== 'absatz.nr' && child.name !== 'absatz.text') reportUnknownElement(ctx, child, `${where} → <jurAbsatz>`);
   }
-  const label = numberElement ? collapseWhitespace(inlineContent(numberElement, ctx, `${where} → <absatz.nr>`).text) : '';
+  // Fußnoten an der Absatznummer tragen oft Vermerke von Gewicht (BayIntG Art. 12 Abs. 3: Nichtigkeit laut
+  // BayVerfGH); sie gehören wie bei `para.nr` an den Absatz, statt mit dem Kennzeichen zu verschwinden.
+  const number = numberElement ? inlineContent(numberElement, ctx, `${where} → <absatz.nr>`) : { text: '', footnotes: [] as NormBodyBlock[] };
+  const label = collapseWhitespace(number.text);
   const content = textElement ? absatzBlocks(textElement, ctx, state, where, blockPath) : [];
 
   // Absatz ohne Kennzeichen: der Inhalt gehört unmittelbar zur Vorschrift; ein leeres
   // Gliederungszeichen wird nicht erfunden.
-  if (label === '') return content;
+  if (label === '') return [...number.footnotes, ...content];
 
   const block: NormBodyBlock = { type: 'subparagraph', label };
   const first = content[0];
@@ -405,6 +541,7 @@ function subparagraphBlocks(jurAbsatz: XmlElement, ctx: ParseContext, state: Bod
   } else if (content.length > 0) {
     block.children = content;
   }
+  if (number.footnotes.length > 0) block.children = [...number.footnotes, ...(block.children ?? [])];
   return [block];
 }
 
@@ -448,6 +585,12 @@ function provisionBlock(element: XmlElement, ctx: ParseContext, state: BodyState
         break;
       case 'jurAbsatz':
         children.push(...subparagraphBlocks(child, ctx, state, where, [...blockPath, children.length]));
+        break;
+      case 'table':
+        // Tabelle unmittelbar in der Vorschrift, ohne umschließenden Absatz (belegt an BayBSOF). Sie
+        // ist **struktureller** Normtext; der gemeinsame Fließtextleser baut sie wie jede andere
+        // Tabelle – mit Spaltenraster und Auffüllen kurzer Zeilen.
+        children.push(...flowBlocks([child], ctx, where));
         break;
       default:
         children.push(...recoverUnknown(child, ctx, where));
@@ -542,7 +685,10 @@ function annexBlock(element: XmlElement, ctx: ParseContext, state: BodyState, bl
     if (flag !== undefined && flag !== '1') {
       addFinding(ctx, 'warning', 'annex-number-flag-unknown', `${where}: annex.nummer@int="${flag}"; belegt ist nur der Wert 1 (Kennzeichen der Kurzform)`);
     }
-    label = collapseWhitespace(rawText(preferred ?? numbers[0] ?? body)) || label;
+    // Nur ein ausdrückliches Kennzeichen wird Label. Ohne `annex.nummer` trägt die Anlage ihren Titel (BayGLKrWO:
+    // „Anlagenverzeichnis zur GLKrWO“); der ganze Anlagenkörper als Label verdoppelte den Text.
+    const chosen = preferred ?? numbers[0];
+    if (chosen) label = collapseWhitespace(rawText(chosen)) || label;
     if (!preferred && numbers.length > 0) {
       addFinding(ctx, 'warning', 'annex-number-flag-missing', `${where}: keine <annex.nummer> mit @int; ersatzweise gilt die erste Schreibweise „${label ?? ''}“`);
     }
@@ -563,6 +709,13 @@ function annexBlock(element: XmlElement, ctx: ParseContext, state: BodyState, bl
           // BAY_791_3_150_U, MStV, BayVSO).
           checkAttributes(ctx, child, [], where);
           children.push(...flowBlocks(child.children, ctx, `${where} → <annex.text>`));
+          break;
+        case 'annex.einleitungssatz':
+          // Einleitungssatz einer Anlage (belegt an BayIsraelKultVertrag, BaySalKonvVertr) – das
+          // Gegenstück zum Einleitungssatz des Rumpfs und wie dieser **Normtext**. Er steht vor dem
+          // übrigen Inhalt der Anlage.
+          checkAttributes(ctx, child, ['version'], where);
+          children.push(...flowBlocks(child.children, ctx, `${where} → <annex.einleitungssatz>`));
           break;
         case 'einzelnorm':
           children.push(provisionBlock(child, ctx, state, [...blockPath, children.length]));
@@ -617,10 +770,13 @@ function divisionBlock(element: XmlElement, ctx: ParseContext, state: BodyState,
   const titleElement = childElement(element, 'gliederung.titel');
   const numberElement = childElement(element, 'gliederung.nr');
   const heading = titleElement ? headingContent(titleElement, ctx, `${where} → <gliederung.titel>`) : { lines: [] as string[], footnotes: [] as NormBodyBlock[] };
-  const number = numberElement ? collapseWhitespace(inlineContent(numberElement, ctx, `${where} → <gliederung.nr>`).text) : '';
+  // Fußnoten am Gliederungszeichen (BayKonk: „Artikel 3“ mit dem Hinweis auf den Notenwechsel) gehören wie die
+  // der Überschrift an den Abschnitt.
+  const numbered = numberElement ? inlineContent(numberElement, ctx, `${where} → <gliederung.nr>`) : { text: '', footnotes: [] as NormBodyBlock[] };
+  const number = collapseWhitespace(numbered.text);
   const { type, label, title } = divisionHeading(heading.lines, position.length, ctx, where, number || undefined);
 
-  const children: NormBodyBlock[] = [...heading.footnotes];
+  const children: NormBodyBlock[] = [...numbered.footnotes, ...heading.footnotes];
   let divisionIndex = 0;
   for (const child of elementChildren(element)) {
     switch (child.name) {
@@ -713,7 +869,10 @@ export function parseNormDocument(root: XmlElement, ctx: ParseContext): NormDocu
 
   // Die Titelangaben jenseits der ersten Zeile (Kurzbezeichnung, Ausfertigungsdatum, Fundstelle,
   // BayRS-Nummer) sind Quelltext und bleiben im Körper stehen; die erste Zeile ist der Titel.
-  if (head.titleLines.length > 1) body.push({ type: 'heading', text: head.titleLines.slice(1).join('\n') });
+  if (head.titleLines.length > head.titleLineCount) body.push({ type: 'heading', text: head.titleLines.slice(Math.max(1, head.titleLineCount)).join('\n') });
+  // Fußnoten des Titelblocks stehen hinter dem Titel, wie in der Quelle. Sie sind Quelltext und
+  // gehen sonst verloren – bei Staatsverträgen ist das die vollständige Ratifikationsliste.
+  body.push(...head.titleFootnotes);
 
   let divisionIndex = 0;
   for (const child of elementChildren(rumpf)) {

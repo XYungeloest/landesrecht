@@ -425,7 +425,10 @@ export async function auditNorms(corpus: ProjectedCorpus, jurisdiction: Jurisdic
       record('structure', slug, Boolean(hit && hit.unit?.anchor === provision.anchor), `„${address} ${identity}“ zeigt nicht auf ${provision.anchor}`);
     } else record('structure', slug, undefined);
     const numbered = units.find((unit) => unit.references?.number);
-    if (numbered?.references?.number) {
+    // Trägt schon die Identität eine Nummer („Art. 13 Abs. 1 Nr. 5 des PAG“ → Rest „Nr. 5 des PAG“: Nummern hinter
+    // Artikeln bleiben stehen), enthielte die Prüfanfrage zwei Nummernadressen und wäre mehrdeutig – keine Prüfung.
+    const identityAddressed = extractStructuralIntents(identity).references.length > 0;
+    if (numbered?.references?.number && !identityAddressed) {
       const page = await search('number', { q: queryText(`Nr. ${numbered.references.number} ${identity}`), jurisdictions: [jurisdiction], limit: 20 });
       const hit = page.hits.find((candidate) => candidate.slug === slug);
       record('number', slug, Boolean(hit && hit.unit?.references?.number === numbered.references.number), `„Nr. ${numbered.references.number} ${identity}“ zeigt nicht auf ${numbered.anchor}`);

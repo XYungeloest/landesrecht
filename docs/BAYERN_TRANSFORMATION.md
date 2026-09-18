@@ -210,6 +210,11 @@ Diese Regel ist hart und wird getestet.
 * **Landschafts- und Ortsnamen mit dem Quelladjektiv**: „Bayerischer Wald“ (die Landschaft, nicht das
   Land), „Bayerisches Meer“ (Chiemsee), „Bayerische Alpen“, „Bayerisch Eisenstein“. Sie stehen als
   Schutzmuster `landscape-proper-name` und bleiben byteidentisch.
+* **Herrschernamen** (Nutzerentscheidung 2026-09-18, Transformer 1.1.0): „Seiner Majestät des Königs Ludwig
+  von Bayern“, „König Ludwig III. und Königin Marie Therese von Bayern“, „Kurfürstin von Bayern“, „Herzog Max
+  in Bayern“ – Titel, Vorname(n), Ordnungszahl und „von/in Bayern“ sind ein Personenname. Schutzmuster
+  `ruler-name`. Staatsbezeichnungen werden weiter übergeleitet, auch historische („Königreich Bayern“ →
+  „Königreich Bayern-Württemberg“).
 * **Wörter, die nur mit „Bay“ beginnen**: „Bayreuth“, „Bayreuther“, „Bayerwald“. Sie sind für keine
   Regel erreichbar und werden zusätzlich als `municipality` bzw. `geography` eingeordnet, damit sie
   nicht als unklare Restform erscheinen.

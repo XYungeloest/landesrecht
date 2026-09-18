@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { buildFtsConjuncts, buildFtsMatch, buildSearchQueryPlan, createSearchState, extractStructuralIntents, parseSearchState } from '@landesrecht/search/query.ts';
 import { buildSnippet, mergeSearchPages, runSearch } from '@landesrecht/search/ranking.ts';
 import { SEARCH_RANK_WEIGHTS, SEARCH_UNIT_COLUMNS } from '@landesrecht/search/schema.ts';
-import { buildSearchDocument, collectBodyUnits } from '@landesrecht/search/units.ts';
+import { buildSearchDocument, collectBodyUnits, SEARCHABLE_IDENTIFIER_SYSTEMS } from '@landesrecht/search/units.ts';
 import { createFileNormStore } from '@landesrecht/runtime/file-store.ts';
 import { createStoreRegistry } from '@landesrecht/runtime/registry.ts';
 
@@ -33,6 +33,17 @@ describe('Sucheinheiten', () => {
     expect(document.versionKind).toBe('current');
     expect(document.units.at(-1)!.type).toBe('metadata');
     expect(document.units.at(-1)!.body).toContain('Prüfstand');
+  });
+
+  it('macht nur ausdrücklich gelistete externe Kennungen suchbar (BayRS-Gliederungsnummer)', () => {
+    const west = norms.find((record) => record.meta.jurisdiction === 'west')!;
+    const version = west.versions.at(-1)!;
+    const withIdentifiers = { ...west, meta: { ...west.meta, externalIdentifiers: [{ system: 'bayrs', value: '2034.4-F' }, { system: 'sgv-nrw', value: '223' }] } };
+    const metadata = buildSearchDocument(withIdentifiers, version, FIXTURE_REFERENCE_DATE).units.at(-1)!.body;
+    expect(metadata).toContain('BayRS 2034.4-F');
+    // Nicht gelistete Systeme bleiben draußen: Sonst änderte jede neue Kennung still den Suchbestand ihres Landes.
+    expect(metadata).not.toContain('223');
+    expect(SEARCHABLE_IDENTIFIER_SYSTEMS).toEqual({ bayrs: 'BayRS' });
   });
 });
 

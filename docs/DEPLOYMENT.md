@@ -1,7 +1,9 @@
 # Deployment
 
-Stand: Der Worker `landesrecht` läuft unter workers.dev (West: D1 `landesrecht-west` befüllt, R2
-`landesrecht-quellen` privat mit den Rohquellen). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
+Stand: Der Worker `landesrecht` läuft unter workers.dev, zuletzt deployt 2026-09-18 als Version
+`cf8c773d-2280-456b-ad84-564d405f66d2` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
+`landesrecht-baywue` mit 1 582 Normen, inkrementell eingespielt; R2 `landesrecht-quellen` privat mit den
+Rohquellen beider Länder). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
 manuelle, einzeln freigegebene Schritte; Wrangler-Anmeldung nur per OAuth (`npx wrangler login`).
 
 ## GitLab-CI (`.gitlab-ci.yml`)
@@ -165,6 +167,35 @@ setzt `r2-sync` bzw. `bulk --resume` am Manifest-/Enumerationsstand fort.
   Für `CLOUDFLARE_API_TOKEN`: Workers R2 Storage – Bearbeiten.
 - **Tests** (`tests/unit/recht-nrw-r2-wrangler-api.test.ts`, `…-http.test.ts`) decken alle Fälle mit Fake-Fetch
   und Fake-Dateien ab; keine echten Tokens.
+
+### BayWü (`import:bayernrecht:r2-sync`)
+
+`npm run import:bayernrecht:r2-sync -- --write --r2-transport wrangler-api --concurrency 32 --verify etag` stagt die
+Exportpakete der übernommenen BayWü-Normen aus `.cache/bayernrecht/` nach `.cache/bayernrecht-r2-staging/`, prüft
+Manifest ↔ Staging (fehlende Objekte oder abweichende SHA-256 sperren den Sync), überträgt nach
+`landesrecht-quellen` unter `baywue/bayernrecht/2023-12-01/` und prüft nach (Listing mit Größe/Etag, deterministische
+Byte-Stichprobe, Bucketzählung vorher/nachher). Bericht: `data/audits/bayernrecht/R2_AUDIT.{json,md}`. Abweichend
+vom West-Sync: nur die Transporte `wrangler` und `wrangler-api` (ausschließlich Wrangler-OAuth; ein gesetztes
+`CLOUDFLARE_API_TOKEN` oder ein API-Token in der Anmeldedatei wird abgelehnt), Präfixschutz auf jedem Schlüssel,
+Umschläge bytegleich zwischen Staging und R2, Zeitlimit je HTTP-Aufruf 180 s (Pakete bis rund 36 MB). Muss die
+Anmeldung interaktiv erneuert werden, endet der Lauf mit Exit 2 und nennt den Wiederaufnahmebefehl.
+Rückgerechnete Normen bringen die Verkündungsseiten ihrer Belege (zurückgenommene Änderung, Beginn der
+Stichtagsfassung) als weitere Rohdokumente mit; sie werden auf demselben Weg archiviert.
+
+Umschläge sind wie Rohobjekte unveränderlich. Maßgeblich sind ihre **Kernfelder** (Schlüssel, Bucket, SHA-256,
+Größe, Medienart, Adressen, Abrufzeit, Quellidentität, Bereich). Ändert sich nach einer Parserkorrektur nur ein
+beschreibendes Feld (Quelltitel), bleibt der archivierte Umschlag stehen: Das Staging behält ihn, der Sync übernimmt
+bei Abweichung den archivierten Stand ins Staging, und die Audits zählen solche Umschläge („archivierter Stand
+beibehalten“), statt zu scheitern. Weicht ein Kernfeld ab, bricht der Sync ab; überschrieben wird nie.
+
+### Inkrementelle D1-Runde
+
+`npm run d1:plan -- --jurisdiction <land> --incremental` vergleicht den Bestand mit dem Remote-Projektionszustand
+(`data/runtime/projection-state-<land>.remote.json`) und schreibt nur neue, entfernte und geänderte Normen neu –
+geändert heißt: anderer Datensatz **oder** andere Sucheinheiten (so kommen auch Änderungen am Code der
+Sucheinheiten remote an). Der erste Batch prüft in SQL, dass die Remote-D1 genau auf dem Vorzustand steht. Danach
+`npm run d1:seed:dev -- --jurisdiction <land>` und `d1-remote-check.ts`: Der Vergleich mit der frisch gesäten
+lokalen Vollprojektion zeigt, dass die inkrementelle Runde dasselbe ergibt wie eine vollständige.
 
 ## Offen
 

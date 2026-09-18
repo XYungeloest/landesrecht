@@ -17,7 +17,8 @@
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 import type { NormBodyBlock, NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 
-import { DOUBLED_TARGET_NAME, SOURCE_STATE_REFERENCE } from './detection.ts';
+import {
+  isCompoundProperName, DOUBLED_TARGET_NAME, SOURCE_STATE_REFERENCE } from './detection.ts';
 import { BAY_ABBREVIATION, findProtectedSpans } from './rules.ts';
 
 export interface RecordAuditField {
@@ -97,6 +98,7 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
   const findings: ImportFinding[] = [];
   let protectedResiduals = 0;
   const abbreviations: Array<{ path: string; term: string; context: string }> = [];
+  const properNames: Array<{ path: string; term: string; context: string }> = [];
   for (const field of auditableFields(record)) {
     const { spans } = findProtectedSpans(field.text);
     for (const match of field.text.matchAll(new RegExp(SOURCE_STATE_REFERENCE.source, SOURCE_STATE_REFERENCE.flags))) {
@@ -108,6 +110,14 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
       }
       if (BAY_ABBREVIATION_EXACT.test(match[0])) {
         abbreviations.push({ path: field.path, term: match[0], context: contextOf(field.text, start, end) });
+        continue;
+      }
+      if (isCompoundProperName(match[0])) {
+        // „BayernLabo“, „BayernPortal“, „Bayernhymne“: Marken, Einrichtungen und Werke, keine
+        // Bezeichnung des Landes. Die Überleitungsregel verlangt hinter dem Landesnamen eine
+        // Wortgrenze und fasst sie deshalb nicht an – sie hier als Defekt zu melden hieße, genau
+        // das zum Fehler zu erklären, was die Regel richtig verschont.
+        properNames.push({ path: field.path, term: match[0], context: contextOf(field.text, start, end) });
         continue;
       }
       findings.push({
@@ -125,6 +135,15 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
       });
     }
   }
+  if (properNames.length > 0) {
+    const distinct = [...new Set(properNames.map((entry) => entry.term))];
+    findings.push({
+      severity: 'info',
+      code: 'compound-proper-name',
+      message: `${properNames.length} zusammengesetzte(r) Eigenname(n) mit dem Landesnamen bleiben unverändert (${distinct.slice(0, 8).join(', ')}${distinct.length > 8 ? ', …' : ''}); eine Überleitung wäre eine Entscheidung der Institutionen-Zuordnung`,
+    });
+  }
+
   if (abbreviations.length > 0) {
     const distinct = [...new Set(abbreviations.map((entry) => entry.term))];
     findings.push({

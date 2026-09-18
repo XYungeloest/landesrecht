@@ -7,6 +7,13 @@ Titel, Kurztitel und Abkürzung stehen an **jeder** Einheit der Norm, Spaltenver
 (`packages/search/src/ranking.ts`). Beide liefern dieselben Treffer und Trefferarten (Tests
 `tests/unit/search-match-mode.test.ts`, `search-ranking.test.ts`).
 
+Die letzte Einheit jeder Fassung ist der Metadatenblock (`type: 'metadata'`): Zusammenfassung, Schlagwörter,
+Sachgebiete, Zitate, Aliase – und die **suchbaren externen Kennungen** (`SEARCHABLE_IDENTIFIER_SYSTEMS` in
+`packages/search/src/units.ts`). Gelistet ist bisher nur die BayRS-Gliederungsnummer (`bayrs` → „BayRS 2011-I“);
+sie ist Metadatum, nicht Teil des Titels. Jedes weitere System verändert den Suchbestand seines Landes und damit
+dessen D1-Projektion und wird deshalb ausdrücklich eingetragen, nie über eine Wildcard. Die West-Batches sind mit
+dieser Liste byteidentisch zu vorher (West führt keine BayRS-Kennung).
+
 ## Match-Modi
 
 | Modus | MATCH-Ausdruck | AND auf Normebene | Präfixe |
@@ -113,6 +120,21 @@ sie aus dem Bestand erzeugt (`--write` schreibt sie).
 `search-audit --remote-sample <url> [--write]` prüft mindestens 50 deterministische Fälle des Golden Sets
 (gleichmäßig über die Kategorien) gegen `<url>/api/v1/search?q=…&jurisdiction=west` und schreibt
 `remote-sample-results.json`. Läuft nur auf ausdrücklichen Wunsch, nie automatisch.
+
+### BayWü
+
+`npm run import:bayernrecht:search-audit [-- --sample 0] [--write]` (`packages/importers/bayernrecht/src/search/golden.ts`):
+Fast- oder Full-Audit des BayWü-Bestands, Golden Set `data/audits/bayernrecht/search/golden-queries.json` (mindestens
+100 Anfragen; erzeugt mit dem generischen `generateGoldenQueries` plus BayWü-Ergänzungen: Artikeladressen –
+bayerische Gesetze zählen nach Artikeln –, Gesetzes- und Verordnungstitel, BayRS-Nummern) und die
+länderübergreifende Prüfung West + BayWü (`cross-jurisdiction.json`: gemeinsame Titelbruchstücke liefern Treffer
+aus beiden Ländern, jeder Länderfilter nur das eigene, der Typfilter nur seine Typfamilie). West-spezifische
+Anfragen („West“, „Land Westdeutschland“) werden durch BayWü-Wörter ersetzt.
+
+BayRS-Nummern: Als Phrase (`"2011-2-4-I"`) ist die Nummer Vertrag (Recall). Ohne Anführungszeichen zerlegt die Suche
+sie in Einzelteile („2011“, „2“, „4“, „i“), die im ganzen Bestand vorkommen; der Rang ist dann nicht gesichert und
+wird nur gemessen (`niceToHave`). Eine Phrasenbehandlung für Kennungen im Abfrageplan würde auch West betreffen
+und ist nicht umgesetzt.
 
 ## Entscheidung zum Standardmodus
 

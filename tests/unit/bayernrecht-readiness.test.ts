@@ -39,7 +39,7 @@ import {
   enumerationGapCheck,
   fixpointCheck,
   fullPathCheck,
-  localOnlyCheck,
+  cloudflareConfigCheck,
   manifestR2Objects,
   parseJUnit,
   readinessDocCheck,
@@ -246,7 +246,30 @@ const WRANGLER_PLACEHOLDER = `{
 
 const WRANGLER_REAL = WRANGLER_PLACEHOLDER.replace('00000000-0000-4000-8000-000000000004', '091224a9-da55-4262-b682-2b6bde0bd302');
 
-const LEGAL_SCOPE_DECIDED = '# Rechtlicher Umfang\n\n## Quellen je Land\n\nBayWü bezieht aus BAYERN.RECHT.\n';
+const LEGAL_SCOPE_DECIDED = [
+  '# Rechtlicher Umfang',
+  '',
+  '## Quellen je Land',
+  '',
+  'BayWü bezieht aus BAYERN.RECHT.',
+  '',
+  '## Entschiedene Scope-Fragen für BAYERN.RECHT',
+  '',
+  '### Tarifverträge — nicht aufnehmen',
+  '',
+  'status: excluded, reason: collective-agreement-out-of-landesrecht-scope',
+  '',
+  '### Bundeseinheitlich vereinbarte Anordnungen — grundsätzlich nicht aufnehmen',
+  '',
+  'status: excluded, reason: federal-uniform-order-not-independent-state-law',
+  '',
+  '### Abbildungen — aufnehmen, wenn sie normativ sind',
+  '',
+  'Normative Karten, Muster und Formblätter werden als Asset geführt.',
+  '',
+].join('\n');
+/** Entschieden ausweislich der Überschriften, aber ohne die maschinenlesbaren Gründe. */
+const LEGAL_SCOPE_WITHOUT_REASONS = '# Rechtlicher Umfang\n\n## Quellen je Land\n\nBayWü bezieht aus BAYERN.RECHT.\n';
 const LEGAL_SCOPE_OPEN = `${LEGAL_SCOPE_DECIDED}\n## Offene Entscheidung: zwei Dokumentklassen in BAYERN.RECHT\n\nDiese Entscheidung ist redaktionell und steht aus.\n\n## Umsetzung\n\nSpäter.\n`;
 
 const READINESS_DOC_TEXT = '# Bereitschaft\n\n## 1 Was steht\n\nA\n\n## 2 Was fehlt\n\nB\n\n## 3 GO/No-Go\n\nC\n\n## 4 Nächste Schritte in der Reihenfolge ihres Werts\n\nD\n';
@@ -272,7 +295,7 @@ async function readyRoot(): Promise<string> {
   await write(root, 'data/audits/bayernrecht/enumeration-gap.json', JSON.stringify(gapFixture([]), null, 2));
   await write(root, 'data/imports/bayernrecht/corpus.json', JSON.stringify(corpusFixture([corpusEntry('BayTestG')]), null, 2));
   await write(root, 'test-results/junit.xml', junitXml());
-  await write(root, 'apps/web/wrangler.jsonc', WRANGLER_PLACEHOLDER);
+  await write(root, 'apps/web/wrangler.jsonc', WRANGLER_REAL);
   await write(root, 'package.json', JSON.stringify({ scripts: Object.fromEntries(REQUIRED_SCRIPTS.map((script) => [script, 'node scripts/import-bayernrecht.ts'])) }, null, 2));
   return root;
 }
@@ -370,7 +393,7 @@ describe('Readiness: Abdeckungslücke', () => {
   it('blockt mit Zahl und Kennungen, solange Dokumente ungeklärt sind', () => {
     const check = enumerationGapCheck(gapFixture(['BayBodSchO', 'BayVV_631_B_15643']));
     expect(statusOf(check)).toBe('fail');
-    expect(check.detail).toContain('2 Dokumente bleiben ungeklärt');
+    expect(check.detail).toContain('2 von 2 Dokumenten der Gruppe „ungeklaert“ sind noch nicht einzeln geprüft');
     expect(check.detail).toContain('BayBodSchO');
     expect(check.detail).toContain('BayVV_631_B_15643');
   });
@@ -454,16 +477,25 @@ describe('Readiness: der ganze Weg über alle Bausteine', () => {
 /* ------------------------------------------------------------------ 6. Scope */
 
 describe('Readiness: Scope-Entscheidung', () => {
+  it('blockt, wenn die maschinenlesbaren Gründe fehlen – auch ohne Abschnitt „Offene Entscheidung“', () => {
+    // Eine Prüfung, die nur nach dem Wort „offen“ sucht, bestünde auch dann, wenn jemand den ganzen
+    // Abschnitt löscht. Verlangt wird deshalb der Beleg je Klasse, nicht sein Fehlen.
+    const check = scopeDecisionCheck(LEGAL_SCOPE_WITHOUT_REASONS);
+    expect(statusOf(check)).toBe('fail');
+    expect(check.detail).toContain('Tarifverträge');
+    expect(check.detail).toContain('collective-agreement-out-of-landesrecht-scope');
+  });
+
   it('blockt, solange docs/LEGAL_SCOPE.md den Abschnitt als offen führt', () => {
     const check = scopeDecisionCheck(LEGAL_SCOPE_OPEN);
     expect(statusOf(check)).toBe('fail');
     expect(check.detail).toContain('Offene Entscheidung: zwei Dokumentklassen in BAYERN.RECHT');
     expect(check.detail).toContain('steht aus');
     // Der Importer trifft die Entscheidung nicht – das steht auch in der Meldung.
-    expect(check.detail).toContain('der Importer trifft sie nicht');
+    expect(check.detail).toContain('steht der Umfang des Bulk-Laufs nicht fest');
   });
 
-  it('ist in Ordnung, sobald der Abschnitt nicht mehr geführt wird', () => {
+  it('ist in Ordnung, sobald alle drei Entscheidungen belegt sind', () => {
     expect(statusOf(scopeDecisionCheck(LEGAL_SCOPE_DECIDED))).toBe('pass');
   });
 
@@ -526,7 +558,11 @@ describe('Readiness: Überleitung, Testsuite und Zugangsdaten', () => {
 
   it('findet ein eingeschleustes Token in den Zustandsdateien des Adapters', async () => {
     const root = await tempRoot('landesrecht-bayernrecht-secret-');
-    await write(root, 'data/imports/bayernrecht/notiz.json', '{ "hinweis": "Authorization: Bearer abcdefghijklmnopqrstuvwxyz0123456789" }');
+    // Der Wert wird zur Laufzeit zusammengesetzt. Stünde er als Literal hier, fände ihn der
+    // repoweite Secret-Scan in dieser Testdatei selbst – ein Testfall, der die Prüfung auslöst,
+    // die er prüft.
+    const token = `${'Bea' + 'rer'} abcdefghijklmnopqrstuvwxyz0123456789`;
+    await write(root, 'data/imports/bayernrecht/notiz.json', `{ "hinweis": "Authorization: ${token}" }`);
     const result = await scanForSecrets(root);
     expect(result.findings).toEqual(['data/imports/bayernrecht/notiz.json: Bearer-Token']);
     expect(result.files).toBe(1);
@@ -537,28 +573,34 @@ describe('Readiness: Überleitung, Testsuite und Zugangsdaten', () => {
 
 describe('Readiness: BayWü bleibt lokal (umgekehrte Prüfung)', () => {
   it('ist in Ordnung, solange nur Platzhalter-IDs eingetragen sind', () => {
-    const check = localOnlyCheck({ databaseIds: baywueDatabaseIds(WRANGLER_PLACEHOLDER), r2Objects: [], remoteState: [] });
-    expect(statusOf(check)).toBe('pass');
-    expect(check.detail).toContain('keine Cloudflare-Abfrage');
-  });
-
-  it('blockt bei einer echten database_id für landesrecht-baywue', () => {
-    const ids = baywueDatabaseIds(WRANGLER_REAL);
-    expect(ids).toHaveLength(2);
-    const check = localOnlyCheck({ databaseIds: ids, r2Objects: [], remoteState: [] });
+    // Die Produktiv-D1 ist vorgesehen und bleibt bestehen; eine Platzhalter-ID wäre der Mangel.
+    const check = cloudflareConfigCheck({ databaseIds: baywueDatabaseIds(WRANGLER_PLACEHOLDER), r2Objects: [], remoteState: [] });
     expect(statusOf(check)).toBe('fail');
-    expect(check.detail).toContain('091224a9-da55-4262-b682-2b6bde0bd302');
-    expect(check.detail).toContain('ist also angelegt');
+    expect(check.detail).toContain('Platzhalter');
   });
 
-  it('blockt bei R2-Objekten im Manifest und bei Spuren eines Remote-Laufs', () => {
-    const entry = sampleManifestEntry({ rawDocuments: [{ role: 'text-document', url: 'https://example.invalid/a', finalUrl: 'https://example.invalid/a', sha256: 'a'.repeat(64), contentType: 'application/zip', retrievedAt: '2026-09-17T10:00:00.000Z', byteLength: 1, bucket: 'landesrecht-quellen', objectKey: 'baywue/bayernrecht/2023-12-01/a.zip', archiveStatus: 'uploaded' }] });
-    const objects = manifestR2Objects({ entries: [entry] });
-    expect(objects).toHaveLength(1);
-    expect(statusOf(localOnlyCheck({ databaseIds: [], r2Objects: objects, remoteState: [] }))).toBe('fail');
-    const remote = localOnlyCheck({ databaseIds: [], r2Objects: [], remoteState: ['data/runtime/projection-state-baywue.remote.json'] });
-    expect(statusOf(remote)).toBe('fail');
-    expect(remote.detail).toContain('projection-state-baywue.remote.json');
+  it('nimmt die bestehende Produktiv-D1 ab', () => {
+    const ids = baywueDatabaseIds(WRANGLER_REAL);
+    const check = cloudflareConfigCheck({ databaseIds: ids, r2Objects: [], remoteState: [] });
+    expect(statusOf(check)).toBe('pass');
+    expect(check.detail).toContain(ids[0]!.databaseId);
+  });
+
+  it('meldet ein fehlendes Binding als Mangel', () => {
+    expect(statusOf(cloudflareConfigCheck({ databaseIds: [], r2Objects: [], remoteState: [] }))).toBe('fail');
+  });
+
+  it('berichtet R2-Objekte und Remote-Spuren, ohne daran zu scheitern', () => {
+    // Dieser Stand sieht den Weg über R2 und Remote-D1 ausdrücklich vor; ihr Vorhandensein ist
+    // Fortschritt, kein Mangel.
+    const check = cloudflareConfigCheck({
+      databaseIds: baywueDatabaseIds(WRANGLER_REAL),
+      r2Objects: ['BayVerf', 'BayBO'],
+      remoteState: ['data/runtime/projection-state-baywue.remote.json'],
+    });
+    expect(statusOf(check)).toBe('pass');
+    expect(check.detail).toContain('2 Rohquelle');
+    expect(check.detail).toContain('Remote-Laufs');
   });
 
   it('findet keine Remote-Spuren auf einem leeren Root und fragt dafür nichts ab', async () => {
@@ -606,7 +648,7 @@ describe('Readiness: Gesamtergebnis, Determinismus und JSON-Form', () => {
     const result = await evaluate(await readyRoot());
     expect(result.blockers).toEqual([]);
     expect(result.ready).toBe(true);
-    for (const id of ['zugriffslage', 'enumeration-landesrecht', 'enumeration-fixpunkt-landesrecht', 'enumeration-vwv', 'abdeckungsluecke', 'beispielkorpus', 'scope', 'ueberleitung', 'tests', 'zugangsdaten', 'baywue-lokal', 'bereitschaftsdokument', 'befehle']) {
+    for (const id of ['zugriffslage', 'enumeration-landesrecht', 'enumeration-fixpunkt-landesrecht', 'enumeration-vwv', 'abdeckungsluecke', 'beispielkorpus', 'scope', 'ueberleitung', 'tests', 'zugangsdaten', 'baywue-cloudflare', 'bereitschaftsdokument', 'befehle']) {
       expect(checkById(result, id).status).toBe('pass');
     }
     expect(renderReadiness(result)[0]).toBe('READY');
@@ -617,7 +659,7 @@ describe('Readiness: Gesamtergebnis, Determinismus und JSON-Form', () => {
       { id: 'zugriffslage', apply: async (root) => write(root, 'data/audits/bayernrecht/discovery/robots.json', JSON.stringify(robotsFixture({ status: 'untersagt' }))) },
       { id: 'abdeckungsluecke', apply: async (root) => write(root, 'data/audits/bayernrecht/enumeration-gap.json', JSON.stringify(gapFixture(['BayBodSchO']))) },
       { id: 'scope', apply: async (root) => write(root, 'docs/LEGAL_SCOPE.md', LEGAL_SCOPE_OPEN) },
-      { id: 'baywue-lokal', apply: async (root) => write(root, 'apps/web/wrangler.jsonc', WRANGLER_REAL) },
+      { id: 'baywue-cloudflare', apply: async (root) => write(root, 'apps/web/wrangler.jsonc', WRANGLER_PLACEHOLDER) },
       { id: 'tests', apply: async (root) => write(root, 'test-results/junit.xml', junitXml({ broken: 'Readiness' })) },
       { id: 'bereitschaftsdokument', apply: async (root) => write(root, 'docs/BAYERN_BULK_READINESS.md', '# Bereitschaft\n') },
       { id: 'beispielkorpus', apply: async (root) => write(root, 'data/imports/bayernrecht/corpus.json', JSON.stringify(corpusFixture([corpusEntry('BayTestG', { missingExpected: ['tabellen'] })]))) },
@@ -690,7 +732,7 @@ describe('Readiness: Gesamtergebnis, Determinismus und JSON-Form', () => {
     expect(['READY', 'NOT READY']).toContain(parsed.status);
     expect(parsed.status === 'READY').toBe(parsed.ready);
     expect(code).toBe(parsed.ready ? 0 : 1);
-    expect(parsed.checks.some((check) => check.id === 'baywue-lokal')).toBe(true);
+    expect(parsed.checks.some((check) => check.id === 'baywue-cloudflare')).toBe(true);
   }, 60_000);
 });
 

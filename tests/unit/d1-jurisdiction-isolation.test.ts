@@ -70,6 +70,20 @@ describe('D1-Projektion: nur die gewählte Jurisdiktion', () => {
   });
 });
 
+describe('Inkrementeller Plan erkennt codebedingte Änderungen der Sucheinheiten', () => {
+  it('schreibt eine Norm neu, deren Datensatz gleich blieb, deren Sucheinheiten sich aber geändert haben', () => {
+    const corpus = buildFixtureNorms();
+    const previous = projectionStateFor(corpus, { jurisdiction: 'west', asOf: FIXTURE_REFERENCE_DATE });
+    // Gleicher Datensatz, andere Sucheinheiten – so sieht ein Vorzustand aus, der mit älterem Code der
+    // Sucheinheiten berechnet wurde (etwa bevor die BayRS-Nummer suchbar wurde).
+    const stale = { ...previous, norms: Object.fromEntries(Object.entries(previous.norms).map(([id, fingerprint]) => [id, { ...fingerprint, search: '0'.repeat(64) }])) };
+    const incremental = buildIncrementalProjectionPlan(corpus, stale, { jurisdiction: 'west', asOf: FIXTURE_REFERENCE_DATE, now: NOW });
+    expect(incremental.mode).toBe('incremental');
+    expect(incremental.diff).toMatchObject({ changedSearch: ['west:testgesetz-west'], unchanged: 0 });
+    expect(buildIncrementalProjectionPlan(corpus, previous, { jurisdiction: 'west', asOf: FIXTURE_REFERENCE_DATE, now: NOW }).mode).toBe('noop');
+  });
+});
+
 describe('Bindings und Datenbanknamen je Jurisdiktion', () => {
   it('jede Jurisdiktion hat genau eine D1-Datenbank und ein Binding; die Wrangler-Konfiguration stimmt damit überein', async () => {
     expect(Object.keys(D1_BINDINGS).sort()).toEqual([...JURISDICTION_IDS].sort());

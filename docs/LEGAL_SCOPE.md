@@ -125,64 +125,79 @@ Regel:
 | Ost | OstRecht | übernimmt den OstRecht-Bestand einschließlich Verwaltungsvorschriften |
 | BayWü | BAYERN.RECHT | Gesetze, Verordnungen, Verträge und Verwaltungsvorschriften (Importer vorbereitet, 2 413 Dokumente enumeriert) |
 
-## Offene Entscheidung: zwei Dokumentklassen in BAYERN.RECHT
+## Entschiedene Scope-Fragen für BAYERN.RECHT (Nutzerentscheidung 2026-09-18)
 
-Die BayWü-Enumeration führt 2 413 Dokumente. 70 davon gehören zwei Klassen an, für die die Regeln
-oben keine eindeutige Antwort geben. **Diese Entscheidung ist redaktionell und steht aus** – die
-Enumeration führt beide Klassen, der Parser liest sie, die Auswahl trifft das Review.
+Die BayWü-Enumeration führt 2 413 Dokumente. Drei Fragen waren offen und sind jetzt **verbindlich
+entschieden**. Jede Entscheidung trägt einen maschinenlesbaren Grund, der im Manifest und in der
+Coverage erscheint; keine Auslassung bleibt stillschweigend.
 
-Die beiden Klassen sind unterschiedlich gut erkennbar, und das gehört zur Entscheidung dazu:
+### Tarifverträge — nicht aufnehmen
 
-* **Tarifverträge** trägt das XML selbst als `@doktyp="tarifvertrag"`. Der Parser meldet jeden
-  einzelnen mit `norm-type-out-of-model` (Warnung); keiner kann unbemerkt in den Bestand laufen.
-* **Bundeseinheitliche Anordnungen** sind am Dokument **nicht** erkennbar – sie tragen denselben
-  `@doktyp` wie jede andere Verwaltungsvorschrift. Erkannt werden sie allein bei der Enumeration, am
-  Fehlen im Fortführungsnachweis und an der Bundesanzeiger-Fundstelle
-  (`data/audits/bayernrecht/ENUMERATION_GAP.md`, Gruppe `bundeseinheitliche-anordnung`). Wer sie
-  ausschließen will, muss das dort tun; ein Filter im Parser wäre wirkungslos.
+Etwa **56 Dokumente**. Beispiele: „Tarifvertrag über die betriebliche Altersversorgung der
+Beschäftigten“, „TV-Fahrradleasing Ärzte Bayern“, „TV Corona-Sonderzahlung Ärzte“.
 
-### Tarifverträge (56 Dokumente)
+```text
+status: excluded
+reason: collective-agreement-out-of-landesrecht-scope
+```
 
-Beispiele: „Tarifvertrag über die betriebliche Altersversorgung der Beschäftigten“, „TV-Fahrradleasing
-Ärzte Bayern“, „Tarifvertrag über eine einmalige Corona-Sonderzahlung Ärzte“.
+**Begründung:** Tarifverträge sind kollektivrechtliche Vereinbarungen der Tarifvertragsparteien und
+als solche keine Gesetze, Rechtsverordnungen oder Verwaltungsvorschriften des Landesrechtsbestands.
+Der Fortführungsnachweis – das amtliche Verzeichnis der Bayerischen Rechtssammlung – führt sie nicht;
+sie tragen deshalb keine BayRS-Gliederungsnummer.
 
-**Dafür:** Das Portal führt sie im Normtypfilter mit; sie binden den Freistaat als Arbeitgeber und
-wirken auf eine große Zahl von Beschäftigten.
+**Sie dürfen weiterhin erscheinen als:** externe Referenz oder Quellenbeleg, wenn eine Landesnorm auf
+sie verweist. **Nicht** als eigene Norm. Erkennbar sind sie am `@doktyp="tarifvertrag"` des XML; der
+Parser meldet jeden mit `norm-type-out-of-model`.
 
-**Dagegen:** Es sind Vereinbarungen der Tarifvertragsparteien, keine Rechtsvorschriften des
-Freistaats. Der Fortführungsnachweis – das amtliche Verzeichnis der Bayerischen Rechtssammlung –
-führt sie **nicht**, und sie tragen deshalb keine BayRS-Gliederungsnummer. Genau darin besteht die
-Abdeckungslücke von 56 Dokumenten.
+### Bundeseinheitlich vereinbarte Anordnungen — grundsätzlich nicht aufnehmen
 
-**Empfehlung:** nicht aufnehmen. Die Quelle selbst zieht die Grenze, und sie deckt sich mit dem
-Grundsatz oben, der autonome Satzungen und Vereinbarungen nicht führt.
+Etwa **14 Dokumente**. Beispiele: Geschäftsanweisung für Gerichtsvollzieher (GVGA),
+Gerichtsvollzieherordnung (GVO), Einforderungs- und Beitreibungsanordnung, Dienst- und
+Sicherheitsvorschriften für den Strafvollzug (DSVollz), Mitteilungen in Straf- und Zivilsachen
+(MiStra, MiZi), Rechtshilfeordnung (ZRHO).
 
-### Bundeseinheitlich vereinbarte Anordnungen (14 Dokumente)
+```text
+status: excluded
+reason: federal-uniform-order-not-independent-state-law
+```
 
-Beispiele: Geschäftsanweisung für Gerichtsvollzieher (GVGA), Gerichtsvollzieherordnung (GVO),
-Einforderungs- und Beitreibungsanordnung, Dienst- und Sicherheitsvorschriften für den Strafvollzug
-(DSVollz), Mitteilungen in Straf- und Zivilsachen (MiStra, MiZi), Rechtshilfeordnung (ZRHO).
-
-**Dafür:** Sie gelten in Bayern und binden bayerische Behörden; inhaltlich sind es
-Verwaltungsvorschriften.
-
-**Dagegen:** Sie sind zwischen Bund und Ländern vereinbart und werden im **Bundesanzeiger** bekannt
+**Begründung:** Sie sind zwischen Bund und Ländern vereinbart und werden im Bundesanzeiger bekannt
 gemacht, nicht im GVBl. oder BayMBl. Als Recht *eines* Simulationslandes geführt, entstünde der
-Eindruck, Bayern-Württemberg habe sie allein gesetzt – und die drei übrigen Länder hätten sie nicht.
-Im Zweifel wären sie in allen vier Ländern zu führen oder in keinem.
+Eindruck, Bayern-Württemberg habe sie allein gesetzt.
 
-**Empfehlung:** nicht aufnehmen, aber als bewusste Auslassung dokumentieren statt stillschweigend
-wegzulassen. Wenn die Simulation eine bundesweite Ebene abbildet, gehören sie dorthin
-(`docs/FEDERAL_COMPATIBILITY.md`), nicht in den Landesbestand.
+**Ausnahme, nur im Einzelfall:** Aufnahme, wenn für das konkrete Dokument ein bayerischer Rechtsakt
+eindeutig belegt
 
-### Abbildungen in Normtexten
+* eine eigene landesrechtliche Inkraftsetzung,
+* eine Übernahme als eigenständige landesrechtliche Regelung, oder
+* eine andere klare normative Landesrechtsidentität.
 
-Kein Scope- sondern ein Modellproblem: Das Blockmodell in `legal-core` kennt keinen Bildblock. Der
-BayWü-Parser überträgt Abbildungen deshalb nicht in den Normtext, legt die Datei mit SHA-256 als
-Beilage ab und meldet `graphic-not-transferred`; eine Vorschrift, die nur eine Abbildung trägt, meldet
-`provision-graphic-only` statt „leer“. Im 28-Normen-Korpus sind sieben Normen betroffen, darunter eine
-Gebietskarte von 19 MB. Ein Bildblock wäre eine Schemaänderung und berührt den eingefrorenen
-West-Bestand – also ein eigener, bewusster Schritt.
+Dann Einzelprüfung mit Beleg, sonst nicht. **Die bloße Anzeige in BAYERN.RECHT genügt nicht.**
+
+Am Dokument selbst sind sie **nicht** erkennbar – sie tragen denselben `@doktyp` wie jede andere
+Verwaltungsvorschrift. Erkannt werden sie allein bei der Enumeration, am Fehlen im
+Fortführungsnachweis und an der Bundesanzeiger-Fundstelle
+(`data/audits/bayernrecht/ENUMERATION_GAP.md`, Gruppe `bundeseinheitliche-anordnung`). Ein Filter im
+Parser wäre wirkungslos; der Ausschluss gehört in die Enumeration.
+
+### Abbildungen — aufnehmen, wenn sie normativ sind
+
+**Aufnehmen**, wenn die Abbildung selbst normativen Inhalt trägt, Bestandteil einer verbindlichen
+Anlage ist oder für das Verständnis des Norminhalts erforderlich ist: Karten, Muster, Zeichen,
+technische Zeichnungen, Formblätter, Diagramme mit normativer Funktion.
+
+**Nicht aufnehmen:** Logos, Dekoration, rein redaktionelle Grafiken, Oberflächenbilder.
+
+Der XML-ZIP-Export enthält die Bilddateien. Sie werden als Asset geführt – Rohquelle archiviert,
+gehasht, normbezogen und deterministisch referenziert –, **nicht** als Base64 im Norm-JSON. Geht die
+Bedeutung ohne die Abbildung verloren und ist das Asset nicht verfügbar, gilt die Norm nicht als
+vollständig.
+
+### Was damit nicht mehr blockiert
+
+`readiness` darf wegen dieser drei Fragen nicht mehr blockieren. Was bleibt, ist die Einzelprüfung
+dort, wo eine Ausnahme behauptet wird – und die ist ein Reviewfall, kein Scope-Blocker.
 
 ## Umsetzung
 
