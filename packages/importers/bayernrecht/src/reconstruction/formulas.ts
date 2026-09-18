@@ -46,6 +46,7 @@ export const FORMULAS = [
   'relabel',
   'renumber-sentence',
   'number-sentences',
+  'number-paragraph',
   'insert-title',
   'delete-words',
   'recast',
@@ -64,6 +65,8 @@ export const SUPPORTED_FORMULAS: ReadonlySet<FormulaId> = new Set([
   'replace-words', 'insert-words', 'delete-words-anchored', 'append-words', 'replace-final-punctuation',
   // Seit der mehrstufigen Rückrechnung, je an echten Befehlen belegt (`structural.ts`):
   'replace-final-words', 'delete-final-words', 'insert-sentence', 'insert-block', 'relabel', 'renumber-sentence', 'number-sentences', 'insert-title',
+  // Run 5: Satzzeichen statt Wort, nur wenn das Satzzeichen im Bereich genau einmal steht; „Der Wortlaut wird Abs. 1.“
+  'replace-by-punctuation', 'number-paragraph',
 ]);
 
 /** Formeln, die die vorherige Fassung grundsätzlich nicht bestimmen. */
@@ -157,8 +160,12 @@ const NON_INVERTIBLE_LEAF: ReadonlyArray<[RegExp, FormulaId, string]> = [
   [/ersichtlichen?\s+(?:Fassung|Anlage|Anhang)|aus\s+dem\s+Anhang\s+zu\s+dieser|beigefügten?\s+(?:neuen?\s+)?(?:Anhang|Anlage|Fassung)/u, 'annex-recast', 'Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der Alttext steht nicht im Befehl'],
   [/(?:^|\s)(?:wie\s+folgt\s+)?(?:neu\s+)?gefasst\s*[:.]?\s*$/u, 'recast', 'Neufassung; der Alttext steht nicht im Befehl'],
   [/(?:erhält|erhalten)\s+(?:folgende|die\s+folgende)\s+(?:neue\s+)?Fassung\s*[:.]?\s*$/u, 'recast', 'Neufassung; der Alttext steht nicht im Befehl'],
+  [/(?:erhält|erhalten)\s+folgenden\s+(?:neuen\s+)?Wortlaut\s*[:.]?\s*$/u, 'recast', 'Neufassung; der Alttext steht nicht im Befehl'],
+  [/durch\s+(?:die\s+)?(?:Anlage|Anhang)\s*[\dIVX]*[a-z]?\s+(?:dieser|zu\s+dieser)\s+(?:Bekanntmachung|Verordnung|Richtlinie)\s+ersetzt\.?$/u, 'annex-recast', 'Anlage durch eine beigefügte Anlage ersetzt; der Alttext steht nicht im Befehl'],
   [/(?:wird|werden)\s+wie\s+folgt\s+ersetzt\s*:\s*$/u, 'recast', 'Ersetzung durch neuen Wortlaut ohne Alttext'],
   [/\bdurch\s+(?:(?:den|die|das)\s+)?folgenden?\b[\s\S]*ersetzt\s*:\s*$/u, 'recast', 'Ersetzung durch neuen Wortlaut ohne Alttext'],
+  // „Die bisherige Anlage wird durch die folgende Anlage ersetzt.“ (BayMBl. 2024 Nr. 655)
+  [/\bdurch\s+(?:die\s+)?folgende\s+(?:Anlage|Anhang)\b[^„]*ersetzt\s*[.:]?\s*$/u, 'annex-recast', 'Anlage durch eine folgende Anlage ersetzt; der Alttext steht nicht im Befehl'],
   [/(?:wird|werden)\s+aufgehoben\s*\.?$/u, 'repeal-unit', 'Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl'],
 ];
 
@@ -222,8 +229,14 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
     return { formula: 'delete-final-words', operations: [{ kind: 'delete-final', text: removed }], each };
   }
 
+  // „In Spiegelstrich 5 wird das Wort „und“ durch ein Komma ersetzt.“ – rückwärts muss das Komma im Bereich genau einmal
+  // stehen (sonst Mehrdeutigkeit); das Satzzeichen schließt ohne Leerzeichen an.
+  const byPunctuation = new RegExp(String.raw`^(?:${OBJ}\s+)?${Q}\s+${VERB}${EACH}durch\s+(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon)\s+ersetzt$`, 'u').exec(text);
+  if (byPunctuation) {
+    return { formula: 'replace-by-punctuation', operations: [{ kind: 'replace', from: quote(quotes, byPunctuation[1]!), to: ` ${PUNCT_NAME[byPunctuation[2]!.replace(/\s+/gu, ' ')]!}` }], each };
+  }
   if (new RegExp(String.raw`(?:${OBJ}\s+)?${Q}\s+${VERB}durch\s+(?:ein\s+Komma|einen\s+Punkt|ein\s+Semikolon)\s+ersetzt`, 'u').test(text)) {
-    return { formula: 'replace-by-punctuation', each, reason: 'Ersetzung durch ein Satzzeichen: die Stelle ist im heutigen Text nicht eindeutig wiederzufinden' };
+    return { formula: 'replace-by-punctuation', each, reason: 'Ersetzung durch ein Satzzeichen in einer nicht erkannten Form' };
   }
 
   const insert = new RegExp(String.raw`^(nach|vor)\s+${ANCHOR_OBJ}\s+${Q}\s+${VERB}${EACH}(?:(?:${OBJ}\s+)${Q}|(ein\s+Komma|ein\s+Semikolon))\s+eingefügt$`, 'u').exec(text);
@@ -234,6 +247,18 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
       operations: [{ kind: 'insert', anchor: quote(quotes, insert[2]!), side: insert[1] === 'nach' ? 'after' : 'before', text: inserted }],
       each: each || /jeweils/u.test(text),
     };
+  }
+
+  // Mehrere Einfügungen mit je eigenem Anker und einem Schlussverb: „nach der Angabe ⟦0⟧ wird die Angabe ⟦1⟧ und nach
+  // der Angabe ⟦2⟧ wird die Angabe ⟦3⟧ eingefügt“ (GVBl. 2025 S. 695). Jede Einfügung wird für sich zurückgenommen.
+  const insertPair = String.raw`(nach|vor)\s+${ANCHOR_OBJ}\s+${Q}\s+${VERB}${EACH}${OBJ}\s+${Q}`;
+  const insertList = new RegExp(String.raw`^${insertPair}(?:(?:\s*,\s*|\s+und\s+|\s+sowie\s+)${insertPair})+\s+eingefügt$`, 'u');
+  if (insertList.test(text)) {
+    const operations: Operation[] = [];
+    for (const match of text.matchAll(new RegExp(insertPair, 'gu'))) {
+      operations.push({ kind: 'insert', anchor: quote(quotes, match[2]!), side: match[1] === 'nach' ? 'after' : 'before', text: quote(quotes, match[3]!) });
+    }
+    return { formula: 'insert-words', operations, each: each || /jeweils/u.test(text) };
   }
 
   const anchoredDelete = new RegExp(String.raw`^(nach|vor)\s+${ANCHOR_OBJ}\s+${Q}\s+${VERB}${EACH}(?:(?:${OBJ}\s+)${Q}|(das\s+Komma|der\s+Punkt|das\s+Semikolon))\s+${VERB}gestrichen$`, 'u').exec(text);
@@ -295,6 +320,8 @@ export function parseCommand(text: string, context: readonly LocationPath[]): Pa
     return { formulas: ['repeal-unit'], reason: 'Streichung eines Glieds; der Wortlaut steht nicht im Befehl' };
   }
 
+  // Ein überzähliges schließendes Anführungszeichen am Befehlsende („… ersetzt“.“, BayMBl. 2023 Nr. 632) wird nicht
+  // gedeutet: Es kann das Ende eines Zitats sein, in dem der Befehl nur zitiert wird.
   const masked = maskQuotes(trimmed.replace(/\.\s*$/u, ''));
   if (!masked) return { formulas: ['unrecognized'], reason: 'Zitate im Befehl gehen nicht auf' };
   if (/\.\s+[A-ZÄÖÜ]/u.test(masked.masked)) return { formulas: ['unrecognized'], reason: 'Mehrere Sätze in einem Befehl; der Ortsbezug der Folgesätze ist nicht bestimmt' };

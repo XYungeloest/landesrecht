@@ -1,31 +1,25 @@
 # Bereitschaft des NSH-Ausgangsimports
 
-**Stand 2026-09-17 · Ergebnis: NOT READY — nicht wegen fehlender Technik, sondern wegen fehlender Quelle.**
+**Stand 2026-09-18 · Ergebnis: NOT READY — die Quelle liefert über ihre dokumentierten Adressen keinen Normtext.**
 
-Dieses Dokument ist das Gegenstück zu `docs/RECHT_NRW_BULK_READINESS.md`. Dort steht eine
-GO/No-Go-Liste, deren Punkte abgehakt werden können. Hier steht zuerst der eine Punkt, der
-alle anderen sperrt, und danach ehrlich, was trotzdem fertig ist.
+Maschinelle Prüfung: `npm run import:juris-sh:readiness` (Bericht `data/audits/juris-sh/READINESS.md`). Dieses
+Dokument erklärt den sperrenden Punkt und listet, was trotzdem fertig ist.
 
 ## 1 Der sperrende Punkt
 
 Der Ausgangsbestand eines Landes besteht aus **konsolidierten Normtexten zum Stichtag**. Für
-Schleswig-Holstein führt sie ausschließlich das juris-Landesrechtsportal
-(`www.gesetze-rechtsprechung.sh.juris.de`). Dessen `robots.txt` lautet vollständig:
+Schleswig-Holstein führt sie ausschließlich das juris-Landesrechtsportal (`www.gesetze-rechtsprechung.sh.juris.de`).
 
-```text
-User-agent: *
-Disallow: /
-```
+- **robots.txt** (`User-agent: * / Disallow: /`) ist seit 2026-09-18 für den juris-SH-Adapter ein dokumentierter
+  Hinweis, kein Blocker (Nutzerentscheidung, `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`).
+- **Sperrend** ist, dass alle dokumentierten öffentlichen Adressformen (`/bssh/document/<ID>`, `…/part/X`,
+  `…/format/xsl`, `…/format/xsl/part/X`, Permalinks) für jedes Dokument nur die leere Startseite der
+  Portaloberfläche liefern. Den Inhalt lädt die Oberfläche per POST über die interne, sitzungsgebundene
+  Schnittstelle `/jportal/wsrest/recherche3/` (CSRF-Token, Sitzungscookie). Sie wird nach der Zugriffspolitik
+  nicht benutzt (Beleg: `data/audits/juris-sh/STRUCTURE_REPORT.md`).
 
-Automatisierter Zugriff ist damit für jeden Client untersagt. Die Sperre wird **nicht umgangen** —
-nicht über abweichende User-Agents, nicht über Suchmaschinen-Caches als Ersatzabruf, nicht über
-Browserautomation, nicht über nichtöffentliche Schnittstellen. Begründung, geprüfte Alternativen und
-die Bedingungen, unter denen sich das ändern würde, stehen in
-`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`.
-
-**Folge:** Es gibt keinen zulässigen Weg, konsolidierte SH-Normtexte maschinell zu beschaffen. Ein
-Bulklauf hätte nichts zu importieren. Kein weiterer Prüfpunkt kann das aufwiegen, und keine Menge
-Infrastruktur ersetzt eine Quelle.
+**Folge:** Enumeration ja (Sitemap, 2 808 Rahmendokumente Landesrecht, 2 389 VwV), Normtext und Metadaten nein.
+Ein Bulklauf hätte nichts zu importieren.
 
 Die Verkündungsblätter (GVOBl. Schl.-H., Amtsbl. Schl.-H.) sind zugänglich und werden genutzt — sie
 enthalten aber **Verkündungstexte, keine konsolidierten Fassungen**. Aus ihnen ließe sich eine
@@ -48,12 +42,14 @@ Portalunabhängig gebaut, geprüft und lauffähig:
 | Restpostenprüfung auf der fertigen Norm | fertig, getestet | `transform/audit-record.ts` |
 | Post-Baseline-Ereignisregister | fertig, 5 857 Ereignisse, 54 baseline-only-Kandidaten | `src/events/`, `data/imports/juris-sh/events/` |
 | VwV-Inventar | fertig, 846 Vorschriften | `data/imports/juris-sh/events/vwv-inventory.json` |
-| CLI-Gerüst | 2 von 11 Befehlen umgesetzt (`review`, `events`) | `src/cli.ts` |
+| Zugriffspolitik (robots.txt advisory, verweigerte interne Schnittstellen) | fertig, getestet | `src/access/`, `common/fetcher.ts` |
+| Enumeration aus der Sitemap mit Fixpunkt und Stichprobenabgleich | fertig, getestet | `src/enumerate/`, `data/imports/juris-sh/enumeration-*.json` |
+| Probe der Inhaltsadressierbarkeit | fertig, getestet | `src/probe/`, `data/audits/juris-sh/STRUCTURE_REPORT.md` |
+| Berichte (Quelleninventar, Coverage, Stichtag, Rekonstruktionsqueue, Review, Readiness) | fertig | `src/reports/`, `data/audits/juris-sh/` |
+| CLI | 8 von 11 Befehlen umgesetzt | `src/cli.ts` |
 
-Die neun übrigen CLI-Befehle (`enumerate`, `sample`, `bulk`, `audit`, `coverage`, `readiness`,
-`search-audit`, `reconstruction-queue`, `r2-sync`) melden ausdrücklich „noch nicht implementiert“ und
-Exit-Code 2. Sie sind nicht implementiert, weil sie ohne Quelle nichts tun könnten — nicht, weil sie
-vergessen wurden.
+`bulk`, `search-audit` und `r2-sync` melden ausdrücklich „noch nicht implementiert“ und Exit-Code 2: Sie setzen
+abrufbaren Normtext voraus.
 
 ### Die Überleitung im Besonderen
 

@@ -142,3 +142,21 @@ export async function writeNormRecord(options: { root: string; record: NormRecor
   }
   return { files, changed: true };
 }
+
+/**
+ * Entfernt das Normverzeichnis eines stillgelegten Slugs – nur, wenn es nachweislich zu dieser Quellidentität gehört
+ * (externe Kennung `bayernrecht` in `meta.json`). Ein fremdes Verzeichnis bleibt unberührt.
+ */
+export async function removeRetiredNormDirectory(root: string, slug: string, sourceIdentity: string): Promise<string | undefined> {
+  const normDir = join(normsDirectory(root), slug);
+  let meta: { externalIdentifiers?: Array<{ system?: string; value?: string }> } | undefined;
+  try {
+    meta = JSON.parse(await readFile(join(normDir, 'meta.json'), 'utf8')) as typeof meta;
+  } catch {
+    return undefined;
+  }
+  const own = (meta?.externalIdentifiers ?? []).some((identifier) => identifier.system === 'bayernrecht' && identifier.value === sourceIdentity);
+  if (!own) throw new Error(`Stillgelegter Slug ${slug}: Verzeichnis gehört nicht zu ${sourceIdentity}; es wird nicht entfernt`);
+  await rm(normDir, { recursive: true, force: true });
+  return ['content', 'norms', TARGET_JURISDICTION, slug].join('/');
+}

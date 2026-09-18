@@ -32,8 +32,8 @@ Von 2 413 enumerierten Dokumenten ist **keines** ohne erklärten Endstatus:
 | Endstatus | Zahl |
 | --- | ---: |
 | `imported` – heutiger Text ist der Stichtagstext (einschl. BayVwV96990 mit Quellkorrektur) | 1 570 |
-| `imported` – Stichtagsfassung rückgerechnet (`reverse-amendment`, 28 einstufig, 5 mehrstufig) | 33 |
-| `reconstruction-required` | 486 |
+| `imported` – Stichtagsfassung rückgerechnet (`reverse-amendment`, 37 einstufig, 7 mehrstufig) | 44 |
+| `reconstruction-required` | 475 |
 | `review` – Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
 | `not-at-baseline` (erst nach dem Stichtag erlassen) | 239 |
 | `excluded` – Tarifvertrag | 56 |
@@ -42,8 +42,8 @@ Von 2 413 enumerierten Dokumenten ist **keines** ohne erklärten Endstatus:
 | `review` – Geltung unbestimmt | 13 |
 | **gesamt** | **2 413** |
 
-Dazu 15 heute nicht mehr geführte Stichtagsnormen (Bereich `events`), aus amtlichen Verkündungen
-wiederhergestellt (`docs/BAYWUE_BASELINE_ONLY.md`); übernommen insgesamt **1 618**.
+Dazu 25 heute nicht mehr geführte Stichtagsnormen (Bereich `events`), aus amtlichen Verkündungen
+wiederhergestellt (`docs/BAYWUE_BASELINE_ONLY.md`); übernommen insgesamt **1 639**.
 
 ### Befunde, die der Bulk sonst verfehlt hätte
 
@@ -81,22 +81,25 @@ Vollständige Liste mit Belegen: Abschlussbericht des Laufs, Abschnitt D.
 
 ## 2 Was fehlt
 
-- **486 `reconstruction-required`** in zehn Gruppen (`data/imports/bayernrecht/reconstruction-queue.json`):
-  - Die Gruppen 1–3 (eine, zwei, drei oder mehr Änderungen) sind grundsätzlich umkehrbar. Offen bleiben dort
-    72 Normen, vor allem wegen nicht lesbarer Befehlsblöcke, nicht lesbaren Inkrafttretens und nicht unterstützter
-    Formeln.
+- **475 `reconstruction-required`** in zehn Gruppen (`data/imports/bayernrecht/reconstruction-queue.json`):
+  - Gruppen 1–3 (eine, zwei, drei oder mehr Änderungen): Von den 72 offenen Fällen aus Run 4 sind 11
+    zurückgerechnet; 26 gehören nach vollständigem Lesen in andere Gruppen. 35 bleiben offen, jeweils mit
+    benanntem Grund: Staatsverträge mit Neufassungen, Satzfehler in Verkündung oder Portal, Tabellen- und
+    Fußnotenorte, Gliederungsumbau, Titeländerungen, relatives Inkrafttreten.
   - Die Gruppen 4–10 sind nicht umkehrbar oder nicht belegt: Neufassung, Anlagen-, Tabellen- oder
-    Bildersetzung, fehlender Vorgängertext (283), heute fehlender Vorgänger und widersprüchliche Belege (35).
+    Bildersetzung, fehlender Vorgängertext (289), heute fehlender Vorgänger und widersprüchliche Belege (40).
   - Gründe je Norm: `data/audits/bayernrecht/RECONSTRUCTION.md`, maschinenlesbar
     `data/audits/bayernrecht/reconstruction-audit.json`.
-- **Heute fehlende Stichtagsnormen:** 401 offen von 426 Kandidaten (15 wiederhergestellt, 5 nicht am Stichtag,
-  5 nicht Landesrecht). Die meisten haben keine elektronische Ausgangsverkündung (287). Stand je Kandidat:
-  `data/audits/bayernrecht/BASELINE_ONLY.md`.
+- **Heute fehlende Stichtagsnormen:** 25 Normen wiederhergestellt; offen vor allem Vorschriften ohne
+  elektronische Ausgangsverkündung (292). Stand je Kandidat: `data/audits/bayernrecht/BASELINE_ONLY.md`.
 - **13 Normen mit unbestimmter Stichtagsgeltung** und 1 Norm mit belegter Geltung, aber unbelegtem Textbeginn.
-- **Prüffälle ohne Blockade:**
-  - 5 nicht entscheidbare Eigennamen: 4× „Bayerisches Konkordat“, 1× „Zentrum Digitalisierung.Bayern“;
-  - 74 Slugkollisionen, deterministisch aufgelöst;
-  - offene Organzuordnungen: `data/audits/bayernrecht/INSTITUTIONS.md`.
+  Zwei VwV (BayVV_2230_1_1_1_0_K_14216, BayVV_2330_B_14207) sind erst nach dem Stichtag verkündet und als
+  „am Stichtag geltend“ eingestuft; sie sind gesperrt (Blocker) und warten auf eine Korrektur der Klassifikation.
+- **Offene Organzuordnungen:** 415 Befunde der am Stichtag bestehenden Ressorts und von Mehrfachformeln
+  (`data/audits/bayernrecht/INSTITUTIONS.md`); für Bayern-Württemberg ist kein Simulationsressort definiert.
+- **Entschieden (Run 5):** „Bayerisches Konkordat“ und „Zentrum Digitalisierung.Bayern“ bleiben Eigennamen;
+  Slugkollisionen sind akzeptierte technische Kollisionen (Befund, kein Review-Fall); der sachlich falsche Slug
+  des Iller-Staatsvertrags ist migriert und permanent umgeleitet.
 
 ## 3 GO/No-Go
 
@@ -106,13 +109,14 @@ Vollständige Liste mit Belegen: Abschlussbericht des Laufs, Abschnitt D.
 | Vollkorpus-Struktur | 2 342 Kandidaten geprüft, **2 342 ohne Importhindernis** (Quellkorrektur BayVwV96990 auch in der Inventur) |
 | Textintegrität | `mismatch` 198 → 28 → **0**; `review` 4 → **0** (verschmolzene Fußnotenzeichen, Parser 0.2.0) |
 | Überleitung | Idempotenz konstruiert; Provenienzschutz aller Blattnamen; Baden-Württemberg-Kollisionen regressionsgeschützt |
-| Rückrechnung | 33 Rezepte (28 v1, 5 v2 mit Forward-Replay), Rundlauf exakt, Beginn der Stichtagsfassung belegt; Bulk prüft Rezept, Paket, jeden Beleg und Rundlauf erneut |
-| Bulk | 1 603 übernommen + 15 baseline-only = 1 618; Audit ohne Abweichung, Slug-Registry = Manifest |
-| Lokale D1 | 1 618 Normen, 31 691 Sucheinheiten, FTS5-Integrität |
-| R2 | 3 928 Objekte unter `baywue/`: 1 603 Pakete, 1 Anhangpaket, 97 Verkündungsbelege und 263 Abbildungs-Assets, je mit Umschlag; 0 Abweichungen; West-Objekte unverändert |
-| Remote-D1 | inkrementell eingespielt (94 Normen); lokal ↔ remote identisch in 11 Prüfungen, Blocksumme byte-genau |
-| Suche | Vollprüfung grün: 1 618 Titel, 596 Abkürzungen, 616 Strukturadressen, 722 Nummernadressen, 0 Fehler; Golden Set 128 Anfragen (11 kuratiert: Anhang, Quellkorrektur, historische Namen, rückgerechnet, baseline-only), 0 verletzt; West + BayWü 10/10; Remote-Stichprobe 60 Fälle, 0 verletzt, 0 fremde Treffer |
-| Worker | `43d211e3`; West 1 482 und BayWü 1 618 Normen ausgeliefert; Asset-Route und Teilbestand-Hinweis im Smoke-Test |
+| Rückrechnung | 44 Rezepte (37 v1, 7 v2 mit Forward-Replay), Rundlauf exakt, Beginn der Stichtagsfassung belegt; Bulk prüft Rezept, Paket, jeden Beleg und Rundlauf erneut |
+| Bulk | 1 614 übernommen + 25 baseline-only = 1 639; Audit ohne Abweichung, Slug-Registry = Manifest; 1 Slug migriert (stillgelegt, permanent umgeleitet) |
+| Organe | 961 → 415 offene Zuordnungen; 562 Befunde betreffen belegt historische Staatsministerien (StRGVV § 2) und sind nur Provenienz; bestehende Ressorts bleiben Prüffall |
+| Lokale D1 | 1 639 Normen, 31 923 Sucheinheiten, FTS5-Integrität |
+| R2 | 4 036 Objekte unter `baywue/` (2 018 Rohquellen inkl. 263 Abbildungs-Assets, je mit Umschlag); 0 Abweichungen; West-Objekte unverändert |
+| Remote-D1 | inkrementell eingespielt (22 neu, 1 entfernt, 5 geändert); lokal ↔ remote identisch in 11 Prüfungen, Blocksumme byte-genau |
+| Suche | Vollprüfung grün: 1 639 Titel, 607 Abkürzungen, 626 Strukturadressen, 723 Nummernadressen, 0 Fehler; Golden Set 128 Anfragen (11 kuratiert), 0 verletzt; West + BayWü 10/10; Remote-Stichprobe 60 Fälle, 0 verletzt, 0 fremde Treffer |
+| Worker | `af1d62ce`; West 1 482 und BayWü 1 639 Normen ausgeliefert; Asset-Route, Teilbestand-Hinweis und Slug-Umleitung (301) im Smoke-Test |
 | West | Fingerabdruck identisch, 1 482 Normen, Readiness READY mit Human Approval, Remote-D1 identisch |
 
 ## 4 Nächste Schritte

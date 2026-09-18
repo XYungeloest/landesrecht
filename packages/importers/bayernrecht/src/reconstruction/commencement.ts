@@ -145,6 +145,10 @@ export function commencementStatements(units: readonly GazetteUnit[], eventDate:
         balance = 0;
         continue;
       }
+      // Ein Glied der obersten Befehlsebene des BayMBl. („2. Diese Bekanntmachung tritt … in Kraft.“, Klasse
+      // `MBL1Listenebene`) steht nie in einem Zitat: Ein weiter oben nicht geschlossenes Zitat (Satzfehler „…"“,
+      // BayMBl. 2025 Nr. 233) verdeckt es nicht.
+      if (/\bMBL1Listenebene\b/u.test(unit.className) && /^\d+\.$/u.test((unit.label ?? '').trim())) balance = 0;
       const full = `${unit.label ?? ''} ${unit.text}`.trim();
       const inside = balance > 0 || /^[„‚]/u.test(full);
       balance = Math.max(0, balance + (full.match(/[„‚]/gu)?.length ?? 0) - (full.match(/[“”‘]/gu)?.length ?? 0));
@@ -207,7 +211,10 @@ export function commencementStatements(units: readonly GazetteUnit[], eventDate:
         continue;
       }
       if (/außer\s+Kraft/u.test(sentence) && !/(?:^|\s)in\s+Kraft/u.test(sentence.replace(/außer\s+Kraft/gu, ''))) continue;
-      const general = /^(?:Dieses|Diese|Die|Das)\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Änderungssatzung|Statut|Richtlinie|Richtlinien|Verwaltungsvorschrift|Änderungsbekanntmachung|Änderungsverordnung|Änderung\s+der\s+(?:Bekanntmachung|Geschäftsordnung|Verwaltungsvorschrift|Richtlinien?|Satzung))\s+(?:tritt|treten)\s+([\s\S]+?)\s+in\s+Kraft\.?$/u.exec(sentence);
+      // Auch Staatsverträge und Abkommen („Dieser Staatsvertrag tritt am 1. Dezember 2025 in Kraft.“); ihre
+      // Ratifikationsklausel („Sind bis zum … nicht alle Ratifikationsurkunden hinterlegt, wird der Staatsvertrag
+      // gegenstandslos“) kann das Inkrafttreten nur verhindern, nicht verschieben.
+      const general = /^(?:Dieses|Diese|Dieser|Die|Das|Der)\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Änderungssatzung|Statut|Richtlinie|Richtlinien|Verwaltungsvorschrift|Änderungsbekanntmachung|Änderungsverordnung|Staatsvertrag|Änderungsstaatsvertrag|Abkommen|Änderung\s+der\s+(?:Bekanntmachung|Geschäftsordnung|Verwaltungsvorschrift|Richtlinien?|Satzung))\s+(?:tritt|treten)\s+([\s\S]+?)\s+in\s+Kraft\.?$/u.exec(sentence);
       if (general) {
         const date = commencementDate(general[1]!, eventDate);
         statements.push({ text: sentence, refs: null, ...(date ? { date } : {}) });

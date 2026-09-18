@@ -39,7 +39,7 @@ import { candidateKeys, historyEntries, lastAmendmentClause, registerNote, type 
 import { commencementFor, sectionRef } from './commencement.ts';
 import { pdfCommencement } from './pdf.ts';
 import { candidateRefs, lookupPage, publicationCitation, publicationKey, type GazettePage, type PublicationRef } from './pages.ts';
-import { amendingCitations, citationMatches, commandBlocks, isStrongMatch, type CommandBlock, type NormCitation, type NormIdentity } from './structure.ts';
+import { amendingCitations, blockFromCandidate, citationMatches, commandBlocks, isBlockFailure, isStrongMatch, normCitations, referenceKey, weakIntroCandidates, type CommandBlock, type NormCitation, type NormIdentity } from './structure.ts';
 
 /** Ereignis des Registers, soweit der Gang es braucht. */
 export interface WalkLedgerEvent {
@@ -217,7 +217,45 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     result.failures.push({ state, reason, detail });
     return result;
   };
-  const ledgerKeys = new Map(input.ledgerEvents.map((event) => [publicationKey(refOfUrl(event.sourceUrl) ?? { organ: 'gvbl', volume: 0, position: 0 }), event]));
+  // Je Verkündung das Ereignis der Norm. Führt das Register mehrere (GVBl. 2024 S. 229: § 1 ändert die FGV, § 2 hebt eine
+  // in sie übernommene Verordnung auf – beide der FGV zugeordnet), zählt für einen Änderungsschritt das Änderungsereignis,
+  // nicht ein Aufhebungs- oder Endeereignis; gleichrangige bleiben in Registerreihenfolge (erstes).
+  const TEXT_EVENT_RANK: Readonly<Record<string, number>> = { amend: 0, correction: 1, recast: 2, new: 3, commencement: 4, notice: 5, treaty: 6, unknown: 7, expire: 8, repeal: 9 };
+  const ledgerKeys = new Map<string, WalkLedgerEvent>();
+  for (const event of input.ledgerEvents) {
+    const key = publicationKey(refOfUrl(event.sourceUrl) ?? { organ: 'gvbl', volume: 0, position: 0 });
+    const present = ledgerKeys.get(key);
+    if (!present || (TEXT_EVENT_RANK[event.eventType] ?? 7) < (TEXT_EVENT_RANK[present.eventType] ?? 7)) ledgerKeys.set(key, event);
+  }
+
+  // Die Norm selbst (ihre eigene Fundstelle) ist erst nach dem Stichtag verkündet (BayMBl. 2023 Nr. 629, 633): Dann gab es
+  // am Stichtag keine Fassung dieser Norm zurückzurechnen – die Stichtagsklassifikation ist zu prüfen, nicht die Kette.
+  // Eigene Fundstelle: aus den Metadaten, sonst aus dem Vollzitat („… vom 1. Dezember 2023 (BayMBl. Nr. 629)“ mit dem
+  // Ausfertigungsdatum der Norm). Ohne Jahrgang zählt das Jahr der Ausfertigung oder das folgende.
+  const ownRefs = [...input.identity.references];
+  if (input.identity.documentDate && input.fullCitation) {
+    const first = normCitations(input.fullCitation).find((cited) => cited.date === input.identity.documentDate);
+    if (first) ownRefs.push(...first.references);
+  }
+  const documentYear = input.identity.documentDate ? Number(input.identity.documentDate.slice(0, 4)) : undefined;
+  const isOwn = (citation: string): boolean => {
+    const key = referenceKey(citation);
+    if (!key) return false;
+    const [organ, year, position] = key.split('|');
+    return ownRefs.some((reference) => {
+      const own = referenceKey(reference);
+      if (!own) return false;
+      const [ownOrgan, ownYear, ownPosition] = own.split('|');
+      if (ownOrgan !== organ || ownPosition !== position) return false;
+      if (ownYear) return ownYear === year;
+      return documentYear !== undefined && (Number(year) === documentYear || Number(year) === documentYear + 1);
+    });
+  };
+  const ownLate = input.ledgerEvents.filter((event) => isOwn(event.citation) && event.eventDate !== undefined && event.eventDate > input.baselineDate);
+  if (ownLate.length > 0) {
+    const event = ownLate[0]!;
+    return fail('contradictory', 'norm-published-after-baseline', `Die Norm selbst ist erst nach dem Stichtag verkündet: ${event.citation} (eigene Fundstelle, Register: ${event.eventType} am ${event.eventDate}); am Stichtag gab es diese Fassung nicht – die Einstufung „am Stichtag in Kraft“ ist zu prüfen (die Stichtagsnorm ist gegebenenfalls ein Vorgänger)`);
+  }
 
   // Seiten auflösen: Verweis → Kandidaten (Verkündung, Abschnitt, Block).
   const resolve = async (ref: AmendmentRef, selfPage: GazettePage | undefined, selfEnactment?: string): Promise<Candidate[] | 'stop'> => {
@@ -258,7 +296,20 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     if (page.kind === 'pdf') {
       return [{ ref: page.ref, page, namedAs: ref.text, ...(enactmentDate ? { enactmentDate } : {}), ...(ref.sections.length === 1 ? { section: ref.sections[0]! } : {}) }];
     }
-    const { blocks, failures: blockFailures } = commandBlocks(page.units, input.identity);
+    const { blocks: strongBlocks, failures: blockFailures } = commandBlocks(page.units, input.identity);
+    let blocks = strongBlocks;
+    if (blocks.length === 0) {
+      // Die Seite ist durch den amtlichen Verweis als Änderung dieser Norm bestimmt: Genau ein Einleitungssatz, der die
+      // Norm über Ausfertigungsdatum oder BayRS-Nummer bezeichnet und keinem Merkmal widerspricht, ist ihrer.
+      const weak = weakIntroCandidates(page.units, input.identity);
+      if (weak.length === 1) {
+        const block = blockFromCandidate(page.units, weak[0]!);
+        if (!isBlockFailure(block)) {
+          blocks = [block];
+          result.evidence.push(`${page.citation}: Einleitungssatz nur über ${weak[0]!.matched.join('+')} bezeichnet (Titel oder Fundstelle abweichend); die Seite ist durch „${ref.text.slice(0, 120)}“ als Änderung dieser Norm bestimmt, und kein anderer Einleitungssatz trägt ein Merkmal der Norm`);
+        } else blockFailures.push(block);
+      }
+    }
     const withSection = blocks.map((block) => ({ block, section: sectionRef(block.section, block.intro.label?.replace(/^[„‚]/u, '')) }));
     const chosen = ref.sections.length > 0 ? withSection.filter((entry) => entry.section !== undefined && ref.sections.includes(entry.section)) : withSection;
     const found: Candidate[] = chosen.map((entry) => ({ ref: page.ref, page, block: entry.block, ...(entry.section ? { section: entry.section } : {}), namedAs: ref.text, ...(enactmentDate ? { enactmentDate } : {}) }));

@@ -226,11 +226,11 @@ describe('Rückwärts, vorwärts, Rundlauf', () => {
     expect(baseline[0]!.children![0]!.text).toBe('dem Klinikum rechts der Isar der Technischen Universität München.');
   });
 
-  it('Mehrdeutigkeit schließt aus (GVBl. 2026 S. 425, UntVergV): „Anwärter“ steht zweimal in § 1 Abs. 1', () => {
+  it('Mehrdeutigkeit schließt aus (GVBl. 2026 S. 425, UntVergV): „Anwärter“ steht zweimal als ganzes Wort in § 1 Abs. 1', () => {
     const body: NormBodyBlock[] = [{ type: 'paragraph', label: '§ 1', title: 'Allgemeine Voraussetzungen', children: [{ type: 'subparagraph', label: '(1)', text: 'Lehramtsanwärtern wird nach Maßgabe der §§ 5 bis 7 mit den Bezügen für Anwärterinnen und Anwärter im Sinn des Art. 75 des Bayerischen Besoldungsgesetzes (BayBesG) eine Unterrichtsvergütung gewährt.' }] }];
-    // Heute: „Lehramtsanwärter …“ – der neue Wortlaut kommt im Bereich zweimal vor.
+    // Ein Treffer in „Anwärterinnen“ zählt seit Lauf 5 nicht mehr mit (Wortteil); zwei **ganze** Treffer bleiben mehrdeutig.
     const current = structuredClone(body);
-    current[0]!.children![0]!.text = current[0]!.children![0]!.text!.replace('Lehramtsanwärtern', 'Lehramtsanwärter');
+    current[0]!.children![0]!.text = current[0]!.children![0]!.text!.replace('Lehramtsanwärtern wird', 'Anwärter wird');
     const steps = stepsFor(current, 'In § 1 Abs. 1 wird die Angabe „Anwärtern“ durch die Angabe „Anwärter“ ersetzt.');
     expect(() => reverseSteps(current, steps)).toThrowError(ReconstructionError);
     try {
@@ -841,7 +841,9 @@ describe('PDF-Textlayer als Beleg des Beginns (GVBl. 2006 S. 190, BayBedV)', () 
 
   it('verlangt Identität, Grenzen der Verkündung und genau eine Inkrafttretensregel', () => {
     expect(pdfPageCommencement(layer.pages, { first: 189, position: 190, enactmentDate: '2006-05-10' }).ok).toBe(false);
-    expect(pdfPageCommencement(layer.pages, { first: 188, position: 190, enactmentDate: '2006-05-09' }).reason).toMatch(/ersten Inhaltsseite/u);
+    // Falscher Seitenbereich: Die Seite trägt nicht die erwartete Seitenzahl.
+    expect(pdfPageCommencement(layer.pages, { first: 189, position: 189, enactmentDate: '2006-05-09' }).reason).toMatch(/Seitenzahl 189|Titelzusatz/u);
+    expect(pdfPageCommencement(layer.pages, { first: 188, position: 190, enactmentDate: '2006-05-09' }).ok).toBe(false);
     const doubled = [layer.pages[0]!, `${layer.pages[1]!} Diese Verordnung tritt am 1. Juli 2006 in Kraft.`];
     expect(pdfPageCommencement(doubled, { first: 189, position: 190, enactmentDate: '2006-05-09' }).ok).toBe(false);
   });

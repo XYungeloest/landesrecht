@@ -217,7 +217,7 @@ export const BAYWUE_CURATED_QUERIES: readonly GoldenQuery[] = [
   // Quellkorrektur „Bayerischne“ → „Bayerischen“ (BayVwV96990): der korrigierte, übergeleitete Titel ist suchbar.
   { id: 'curated-correction-01', category: 'vwv-title', query: 'Geschäftsordnung des Bayern-Württembergischen Landesbeirats für Familienfragen', expectedTop: ['geschaeftsordnung-des-bayern-wuerttembergischen-landesbeirats-fuer-familienfragen-baywue'], acceptable: [], note: 'kuratiert: Quellkorrektur obvious-source-typo' },
   // Historische Staatsbezeichnungen bleiben unverändert (Transformer 1.2.0) und sind so suchbar.
-  { id: 'curated-historical-01', category: 'partial-title', query: 'Königreichen Bayern und Württemberg Iller', expectedTop: ['staatsvertrag-zwischen-den-koenigreichen-bayern-wuerttemberg-und-baywue'], acceptable: [], note: 'kuratiert: historischer Staatsname unverändert' },
+  { id: 'curated-historical-01', category: 'partial-title', query: 'Königreichen Bayern und Württemberg Iller', expectedTop: ['staatsvertrag-zwischen-den-koenigreichen-bayern-und-wuerttemberg-ueber-baywue'], acceptable: [], note: 'kuratiert: historischer Staatsname unverändert' },
   { id: 'curated-historical-02', category: 'partial-title', query: 'Konkordat Papst Pius XI. Staate Bayern', expectedTop: ['konkordat-baywue'], acceptable: [], note: 'kuratiert: historischer Vertragsname unverändert' },
   { id: 'curated-historical-03', category: 'partial-title', query: 'Blindenerziehungsanstalt des Königreichs Bayern', expectedTop: ['stiftungsurkunde-baywue-520e35d0'], acceptable: [], note: 'kuratiert: historischer Staatsname unverändert' },
   // Zurückgerechnete Stichtagsfassungen (einstufig und mehrstufig): Titel und Abkürzung führen zur Norm.

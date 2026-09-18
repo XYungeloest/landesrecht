@@ -122,7 +122,16 @@ export function formatReference(organ: GazetteName, volume: number | undefined, 
 }
 
 export function locateBase(reference: GazetteReference, documentDate: string | undefined): BaseLocation {
-  const volumes = candidateVolumes(reference, documentDate);
+  let volumes = candidateVolumes(reference, documentDate);
+  // Das BayMBl. gibt es erst seit 2019: Eine im Dezember 2018 erlassene Vorschrift „(BayMBl. Nr. 76)“ steht im
+  // Jahrgang 2019 (belegt: BayMBl. 2024 Nr. 262 zitiert so eine Bekanntmachung vom 6. Dezember 2018).
+  if (reference.organ === 'BayMBl' && reference.explicitVolume === undefined && volumes.some((volume) => volume >= 2019)) volumes = volumes.filter((volume) => volume >= 2019);
+  // Amtsblätter 2009–2018 ohne Jahrgang im Zitat: Die Verkündung kann im Folgejahr liegen (Erlass im Herbst,
+  // Veröffentlichung im Januar); welcher Jahrgang es ist, entscheidet die Ausgabe, die nach dem Erlass erschien.
+  if (reference.organ in MINISTERIAL_JOURNALS && reference.explicitVolume === undefined && documentDate) {
+    const year = Number(documentDate.slice(0, 4));
+    volumes = [year, year + 1].filter((volume) => volume >= 2009 && volume <= 2018 || volume === year);
+  }
   const citation = formatReference(reference.organ, volumes[0], reference.kind, reference.position, reference.part);
   const base = { reference, volumes, citation };
   if (volumes.length === 0) return { ...base, availability: 'paper-only', reason: `Fundstelle ${reference.text} ohne bestimmbaren Jahrgang` };

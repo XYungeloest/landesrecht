@@ -95,17 +95,17 @@ const BAY_ABBREVIATION_EXACT = new RegExp(String.raw`^(?:${BAY_ABBREVIATION})$`,
  * Jede Doppelbildung ist ein Fehler; sie kann nur aus einer fehlerhaften Regel stammen.
  */
 /**
- * Übergeleitete Eigennamen, bei denen nicht entscheidbar ist, ob sie historisch oder heutiger Selbstbezug sind:
- * „Bayerisches Konkordat“ ist der Name des Vertrags von 1924 (dessen Volltitel geschützt ist) und zugleich ein heute
- * für das Land geltender Vertrag. Nicht automatisch entschieden, sondern als Prüffall gemeldet (nicht blockierend).
- */
-export const HISTORICAL_NAME_UNCERTAIN = new RegExp(`\\b${targetAdjective(true)}(?:e|er|es|en|em)?\\s+Konkordat(?:e?s)?\\b`, 'gu');
-
-/**
  * Übergeleitete Markennamen mit Punkt („Zentrum Digitalisierung.Bayern“): Ob „.Bayern“ Landesbezeichnung oder fester
  * Namensbestandteil ist, ist nicht entscheidbar – Prüffall, nicht blockierend; der Text bleibt, wie die Regel ihn bildet.
  */
 export const PROPER_NAME_UNCERTAIN = new RegExp(`\\p{L}{2}\\.${targetProperName()}(?![\\p{L}])`, 'gu');
+
+/**
+ * Entschiedene Eigennamen (Nutzerentscheidung Run 5), deren Überleitung ein Fehler ist: „Bayern-Württembergisches
+ * Konkordat“ und „Digitalisierung.Bayern-Württemberg“ – Regressionsschutz für die Schutzmuster
+ * `historical-treaty-short-name` und `institution-proper-name`.
+ */
+export const PROPER_NAME_TRANSFORMED = new RegExp(`\\b(?:${targetAdjective(true)}(?:e|er|es|en|em)?\\s+Konkordat(?:e?s)?\\b|Digitalisierung\\.${targetProperName()})`, 'giu');
 
 /** Übergeleitete historische Bezeichnungen – das Ergebnis der früheren Fehlüberleitung (Regressionsschutz). */
 export const HISTORICAL_NAME_TRANSFORMED = new RegExp(
@@ -154,12 +154,12 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
       });
     }
     // Ein historischer Staat, ein Organ des Königreichs oder ein Herrschername darf nie übergeleitet erscheinen.
-    for (const match of field.text.matchAll(HISTORICAL_NAME_UNCERTAIN)) {
+    for (const match of field.text.matchAll(PROPER_NAME_TRANSFORMED)) {
       const start = match.index ?? 0;
       findings.push({
-        severity: 'warning',
-        code: 'historical-name-uncertain',
-        message: `${field.path}: „${match[0]}“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)`,
+        severity: 'error',
+        code: 'historical-name-transformed',
+        message: `${field.path}: Eigenname übergeleitet „${match[0]}“ (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)`,
       });
     }
     for (const match of field.text.matchAll(PROPER_NAME_UNCERTAIN)) {

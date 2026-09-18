@@ -25,6 +25,8 @@ export interface PlatformPage {
   url: string;
   finalUrl: string;
   html: string;
+  /** Rohbytes der Antwort (für PDF-Quellen; `html` ist deren UTF-8-Lesart). */
+  bytes: Uint8Array;
   sha256: string;
   byteLength: number;
   contentType: string;
@@ -96,7 +98,7 @@ export function createPlatform(options: PlatformOptions): Platform {
           options.log?.(`  abgerufen: ${url}`);
         }
         if (sha256Hex(document.bytes) !== document.sha256) throw new Error(`SHA-256 der Antwort stimmt nicht (${url})`);
-        result = { url, finalUrl: document.finalUrl, html: decode(document.bytes), sha256: document.sha256, byteLength: document.bytes.byteLength, contentType: document.contentType, retrievedAt: document.retrievedAt, fromCache: document.fromCache };
+        result = { url, finalUrl: document.finalUrl, html: decode(document.bytes), bytes: document.bytes, sha256: document.sha256, byteLength: document.bytes.byteLength, contentType: document.contentType, retrievedAt: document.retrievedAt, fromCache: document.fromCache };
         if (!document.fromCache) await writeCheckpoint();
       } catch (error) {
         const kind = (error as { kind?: string }).kind;

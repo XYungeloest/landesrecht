@@ -137,7 +137,7 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/RECHT_NRW_BULK_READINESS.md` | Bereitschaft: Policies (undatierte LRMB-Datensätze, PDF), GO/No-Go-Checkliste, Befehle und Reihenfolge des Bulk-Laufs |
 | `docs/WEST_REFERENCE_BASELINE.md` | Eingefrorener West-Referenzstand: Kennzahlen, Auditstände, Human Approval, Freeze-Regeln |
 | `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md` | Wiederverwendbare Checkliste für den Import einer weiteren Jurisdiktion |
-| `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` | Warum das konsolidierte SH-Landesrecht nicht abgerufen wird (robots.txt), geprüfte Alternativen |
+| `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` | Zugriffspolitik juris SH (robots.txt advisory), warum trotzdem kein Normtext abrufbar ist, Alternativen |
 | `docs/SCHLESWIG_HOLSTEIN_SOURCE_DISCOVERY.md` | juris SH: Dokumentmodell, Identität, Fassungen, Enumerationspfade (Befund, nicht Bauplan) |
 | `docs/SCHLESWIG_HOLSTEIN_PUBLICATION_DISCOVERY.md` | GVOBl./Amtsbl. Schl.-H.: Adressschemata, Formatwechsel 2024/2025, PDF-Befunde |
 | `docs/SCHLESWIG_HOLSTEIN_TRANSFORMATION.md` | Überleitung Schleswig-Holstein → Niedersachsen-Holstein: Regelwerk, Schutzmuster, fail-closed-Prüfung |
@@ -158,9 +158,9 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | Land | Quelle | Stand |
 | --- | --- | --- |
 | West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
-| NSH | juris Schleswig-Holstein | **kein Normbestand – Quelle gesperrt.** Überleitung, Zustandsschicht und Ereignisregister stehen; das konsolidierte Portal untersagt automatisierten Zugriff (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
+| NSH | juris Schleswig-Holstein | **kein Normbestand – Normtext nicht abrufbar.** Überleitung, Zustandsschicht, Ereignisregister und Enumeration stehen; die dokumentierten Portaladressen liefern keinen Inhalt (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
 | Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
-| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 618 Normen zum Stichtag: 1 570 unverändert, 33 bewiesen rückgerechnet (5 davon über mehrere Änderungen), 15 heute fehlende aus amtlichen Verkündungen wiederhergestellt; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 486 geänderte und 401 heute fehlende Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
+| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 639 Normen zum Stichtag: 1 570 unverändert, 44 bewiesen rückgerechnet (7 davon über mehrere Änderungen), 25 heute fehlende aus amtlichen Verkündungen wiederhergestellt; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 475 geänderte und die übrigen heute fehlenden Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
 
 Der NSH-Befund ist kein offener Arbeitsrest, sondern ein Ergebnis: Ohne freigegebene Quelle entsteht
 kein Normtext, und die Sperre wird nicht umgangen.

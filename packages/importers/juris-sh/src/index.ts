@@ -2,11 +2,14 @@
  * Importer für juris Schleswig-Holstein (Schleswig-Holstein → Land Niedersachsen-Holstein).
  *
  * Stand der Umsetzung:
- * - **Transformation, Zustandsschicht, Ereignisregister sind umgesetzt** und werden hier ausgeleitet.
- * - **Parser und Fetch des konsolidierten Landesrechts sind nicht umgesetzt** – nicht aus Zeitgründen,
- *   sondern weil das konsolidierte Landesrechtsportal Schleswig-Holsteins automatisierten Zugriff
- *   per robots.txt vollständig untersagt (`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`).
- *   Diese Sperre wird nicht umgangen; ohne freigegebene Quelle entsteht kein Normtext.
+ * - **Transformation, Zustandsschicht, Ereignisregister, Zugriffspolitik, Enumeration (Sitemap, Fixpunkt,
+ *   Stichprobenabgleich), Adressierbarkeitsprobe und Berichte sind umgesetzt** und werden hier ausgeleitet.
+ * - robots.txt ist für diesen Adapter `advisory` (Nutzerentscheidung 2026-09-18, `access/policy.ts`).
+ * - **Parser und Bulk des konsolidierten Landesrechts sind nicht umgesetzt**: Die dokumentierten öffentlichen
+ *   Adressformen liefern für jedes Dokument nur die leere Startseite der Portaloberfläche; der Inhalt kommt
+ *   ausschließlich über eine interne, sitzungsgebundene Schnittstelle (`/jportal/wsrest/recherche3/`), die nach
+ *   der Zugriffspolitik nicht benutzt wird (`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`). Ohne abrufbaren
+ *   Normtext entsteht kein Parser und kein Normtext.
  *
  * Ein Parser liefert echtes Recht des Landes Schleswig-Holstein (SourceLaw); erst die Transformation
  * macht daraus Recht der Simulationsjurisdiktion „Land Niedersachsen-Holstein“. Rohquellen werden
@@ -28,6 +31,9 @@ export * from './common/slug-registry.ts';
 export * from './common/overrides.ts';
 export * from './common/unresolved.ts';
 export * from './common/fetcher.ts';
+export * from './access/policy.ts';
+export * from './enumerate/sitemap.ts';
+export * from './enumerate/enumeration.ts';
 export * from './transform/rules.ts';
 export * from './transform/detection.ts';
 export * from './transform/organs.ts';
@@ -41,9 +47,9 @@ export const TARGET_JURISDICTION: JurisdictionId = 'nsh';
 export const SOURCE_LABEL = 'juris Schleswig-Holstein';
 
 /**
- * Nicht umgesetzt: Das konsolidierte Landesrechtsportal ist für automatisierten Zugriff gesperrt.
- * `detect` meldet deshalb für jede Quelle `false` – ein Aufruf von `parse` ist ein Programmierfehler,
- * kein erwarteter Pfad.
+ * Nicht umgesetzt: Die dokumentierten Adressformen des Portals liefern keinen Normtext (nur die leere
+ * Oberflächenseite). `detect` meldet deshalb für jede Quelle `false` – ein Aufruf von `parse` ist ein
+ * Programmierfehler, kein erwarteter Pfad.
  */
 export function createParser(): SourceParser {
   return {
@@ -54,7 +60,7 @@ export function createParser(): SourceParser {
     async parse(): Promise<SourceLaw> {
       throw new ImportPipelineError(
         'parse-source-format',
-        'Für juris Schleswig-Holstein existiert kein Parser: Das konsolidierte Landesrechtsportal untersagt automatisierten Zugriff vollständig (robots.txt „Disallow: /“). Die Sperre wird nicht umgangen; siehe docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md.',
+        'Für juris Schleswig-Holstein existiert kein Parser: Die dokumentierten öffentlichen Adressformen liefern keinen Normtext, der Inhalt kommt nur über eine interne, sitzungsgebundene Schnittstelle, die nicht benutzt wird; siehe docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md.',
       );
     },
   };

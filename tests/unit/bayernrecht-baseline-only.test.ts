@@ -22,7 +22,9 @@ import { ownBegin, ownExpiry, scopeDecision, titleParts } from '@landesrecht/imp
 import { citationsOfBase, glnrStem } from '@landesrecht/importer-bayernrecht/baseline-only/chain.ts';
 import { parseAmtsblattIssue, parsePublicationHead } from '@landesrecht/importer-bayernrecht/baseline-only/platform.ts';
 import { MISSING_LINKS, recipePath, type BaselineOnlyRecipe } from '@landesrecht/importer-bayernrecht/baseline-only/model.ts';
-import { runBaselineOnly } from '@landesrecht/importer-bayernrecht/baseline-only/run.ts';
+import { findInPositivliste, parsePositivliste, type Positivliste } from '@landesrecht/importer-bayernrecht/baseline-only/positivliste.ts';
+import { keepArchiveState, linkTitleDuplicates, runBaselineOnly, subjectKey } from '@landesrecht/importer-bayernrecht/baseline-only/run.ts';
+import type { CandidateWork } from '@landesrecht/importer-bayernrecht/baseline-only/analyze.ts';
 import { RecipeError, replayRecipe } from '@landesrecht/importer-bayernrecht/baseline-only/restore.ts';
 import { isBaselineOnlyEntry, readRecipeHeads, restoredBaselineOnlyEventIds } from '@landesrecht/importer-bayernrecht/baseline-only/recognize.ts';
 import { checkBaselineOnly, runAudit } from '@landesrecht/importer-bayernrecht/audit/audit.ts';
@@ -59,6 +61,14 @@ describe('baseline-only: Fundstellen und ihr Ort auf der Verkündungsplattform',
     expect(candidateVolumes(reference, '2018-12-18')).toEqual([2018, 2019]);
     expect(candidateVolumes(parseParenthetical('BayMBl. 2019 Nr. 5').primary!, '2018-12-18')).toEqual([2019]);
     expect(candidateVolumes(reference, undefined)).toEqual([]);
+  });
+
+  it('sucht eine Dezember-Verkündung ohne Jahrgang im BayMBl. erst ab 2019 und im Amtsblatt auch im Folgejahr', () => {
+    // BayMBl. 2024 Nr. 262 zitiert eine Bekanntmachung vom 6. Dezember 2018 „(BayMBl. Nr. 76)“ – das BayMBl. beginnt 2019.
+    expect(locateBase(parseParenthetical('BayMBl. Nr. 76').primary!, '2018-12-06')).toMatchObject({ availability: 'baymbl-html', volumes: [2019] });
+    // „KWMBl. S. 77“ einer Bekanntmachung vom 11. Oktober 2017: Seite 77 des Jahrgangs 2017 erschien vor dem Erlass.
+    expect(locateBase(parseParenthetical('KWMBl. S. 77').primary!, '2017-10-11')).toMatchObject({ availability: 'amtsblatt-html', volumes: [2017, 2018] });
+    expect(locateBase(parseParenthetical('KWMBl. S. 77').primary!, '2018-10-11')).toMatchObject({ volumes: [2018] });
   });
 
   it('weiß, welche Stammverkündung elektronisch amtlich vorliegt und welche nur gedruckt', () => {
@@ -243,6 +253,13 @@ describe('baseline-only: Beginn nur mit Kalenderdatum, Befristung, Umfang', () =
     expect(ownExpiry(combined).expiry?.date).toBe('2025-12-31');
   });
 
+  it('liest die Inkrafttretensvorschrift auch hinter einer Zwischenüberschrift ohne Punkt (BayMBl. 2020 Nr. 36)', () => {
+    // Die Sätze werden je Block gebildet: „Inkrafttreten, Außerkrafttreten“ verschmilzt nicht mit dem folgenden Satz.
+    const blocks = [paragraph('Inkrafttreten, Außerkrafttreten'), paragraph('Diese Bekanntmachung tritt mit Wirkung zum 1. Februar 2020 in Kraft und mit Ablauf des 31. Dezember 2025 außer Kraft.')];
+    expect(ownBegin(blocks, [], '2020-01-29').begin?.date).toBe('2020-02-01');
+    expect(ownExpiry(blocks).expiry?.date).toBe('2025-12-31');
+  });
+
   it('errechnet kein Datum aus der Verkündung und erfindet keinen Beginn', () => {
     expect(ownBegin([paragraph('Diese Bekanntmachung tritt am Tag nach ihrer Bekanntmachung in Kraft.')], [], '2021-03-10')).toMatchObject({ code: 'begin-not-calendar-date' });
     expect(ownBegin([paragraph('Die Regelungen gelten für alle Schulen.')], [], '2021-03-10')).toMatchObject({ code: 'begin-no-commencement-clause' });
@@ -313,6 +330,80 @@ describe('baseline-only: Glieder der Kette auf einer Verkündungsseite', () => {
     expect(fulltextQuery('2018-10-12', parseParenthetical('AllMBl. S. 962').primary!)).toBe('12. Oktober 2018 AllMBl. S. 962');
     expect(baymblFulltextUrl('25. Februar 2021 BayMBl. Nr. 182', 0)).toBe('https://www.verkuendung-bayern.de/baymbl/?query=25.%20Februar%202021%20BayMBl.%20Nr.%20182&itemsPerPage=50');
     expect(baymblFulltextUrl('1. März 2023 BayMBl. Nr. 5', 50)).toBe('https://www.verkuendung-bayern.de/baymbl/?query=1.%20M%C3%A4rz%202023%20BayMBl.%20Nr.%205&itemsPerPage=50&offset=51');
+  });
+});
+
+/* --------------------------------------------------------------- doppelte Register-Ereignisse */
+
+describe('baseline-only: dieselbe Aufhebung zweimal im Register', () => {
+  const work = (id: string, sourceId: string, title: string, citedTitle?: string): CandidateWork =>
+    ({
+      event: { id, sourceId, targetTitle: title },
+      record: { eventId: id, ...(citedTitle ? { outcome: 'safe' } : { outcome: 'undetermined', missing: { code: 'identity-not-strong', detail: 'x' } }) },
+      ...(citedTitle ? { citation: { citedTitle } } : {}),
+    }) as unknown as CandidateWork;
+
+  it('vergleicht Betreffe ohne Artikel, Dokumentart und Erlassstelle', () => {
+    expect(subjectKey('Die Bekanntmachung des Bayerischen Staatsministeriums der Justiz betreffend Büchereien der Justizbehörden (ohne Gefangenenbüchereien)')).toBe('büchereien der justizbehörden');
+    expect(subjectKey('Verwaltungsvorschrift betreffend Büchereien der Justizbehörden (ohne Gefangenenbüchereien)')).toBe('büchereien der justizbehörden');
+    expect(subjectKey('Die Rundfunk- und Medienrat-Bekanntmachung (RMRatBek)')).toBe('rundfunk- und medienrat-bekanntmachung');
+    // Titel in Anführungszeichen direkt hinter der Erlassstelle (BayMBl. 2025 Nr. 113).
+    expect(subjectKey('Die Bekanntmachung des Bayerischen Staatsministeriums für Wirtschaft, Landesentwicklung und Energie „Richtlinien für die staatliche Förderung der Betreuung bei der Existenzgründung (Richtlinie Vorgründungscoaching)“')).toBe(
+      subjectKey('Richtlinien für die staatliche Förderung der Betreuung bei der Existenzgründung (Richtlinie Vorgründungscoaching)'),
+    );
+  });
+
+  it('verbindet das titelbasierte Ereignis mit genau einem Zitat derselben Veröffentlichung, sonst mit keinem', () => {
+    const titleOnly = work('p-00', 'baymbl-2024-161', 'Bekanntmachung über den Bußgeldkatalog „Coronavirus-Einreiseverordnung');
+    const cited = work('p-01', 'baymbl-2024-161', 'Allgemeinverfügung Testnachweis', 'Die Bekanntmachung des Bayerischen Staatsministeriums für Gesundheit und Pflege über den Bußgeldkatalog „Coronavirus-Einreiseverordnung – CoronaEinreiseV und Allgemeinverfügung Testnachweis“');
+    const elsewhere = work('q-01', 'baymbl-2024-999', 'x', 'Die Bekanntmachung über den Bußgeldkatalog „Coronavirus-Einreiseverordnung – CoronaEinreiseV“');
+    expect([...linkTitleDuplicates([titleOnly, cited, elsewhere]).entries()].map(([left, right]) => [left.event.id, right.event.id])).toEqual([['p-00', 'p-01']]);
+    // Zwei Zitate mit passendem Betreff: keine Entscheidung.
+    const second = work('p-02', 'baymbl-2024-161', 'y', 'Die Bekanntmachung über den Bußgeldkatalog „Coronavirus-Einreiseverordnung – Fassung 2022“');
+    expect(linkTitleDuplicates([titleOnly, cited, second]).size).toBe(0);
+    // Kein bloßer Wortanfang innerhalb eines Worts.
+    expect(linkTitleDuplicates([work('r-00', 's', 'Bekanntmachung über die Schulgesundheit'), work('r-01', 's', 'z', 'Die Bekanntmachung über die Schulgesundheitspflege')]).size).toBe(0);
+  });
+});
+
+describe('baseline-only: Archivstand beim erneuten Schreiben', () => {
+  it('übernimmt Objektschlüssel und Archivstatus nur für dieselbe Rohquelle (Adresse, Rolle, SHA-256)', () => {
+    const raw = { role: 'gazette' as const, url: 'https://www.verkuendung-bayern.de/baymbl/2023-377/', finalUrl: 'https://www.verkuendung-bayern.de/baymbl/2023-377/', sha256: 'a'.repeat(64), contentType: 'text/html', retrievedAt: '2026-09-18T10:00:00.000Z', byteLength: 10 };
+    const archived = { ...raw, bucket: 'landesrecht-quellen', objectKey: 'baywue/bayernrecht/2023-12-01/events/x/gazette.html', archiveStatus: 'verified' as const };
+    expect(keepArchiveState(raw, [archived])).toMatchObject({ objectKey: archived.objectKey, archiveStatus: 'verified', bucket: 'landesrecht-quellen' });
+    expect(keepArchiveState({ ...raw, sha256: 'b'.repeat(64) }, [archived])).not.toHaveProperty('objectKey');
+    expect(keepArchiveState({ ...raw, role: 'pdf' }, [archived])).not.toHaveProperty('archiveStatus');
+  });
+});
+
+/* ------------------------------------------------------------------------ Positivliste VwVWBek */
+
+describe('baseline-only: Positivliste der VwVWBek (Textlayer, kein OCR)', () => {
+  const excerpt = JSON.parse(readFileSync(join(FIXTURES, 'baseline-only-positivliste-excerpt.json'), 'utf8')) as { excerpts: Record<string, string> };
+  const list = (text: string): Positivliste => {
+    const parsed = parsePositivliste(text);
+    return { page: {} as Positivliste['page'], rows: parsed.rows, latestFassung: parsed.rows.map((row) => row.fassungsdatum).sort().at(-1)! };
+  };
+
+  it('zerlegt Zeilen vollständig – jedes Datum gehört genau einer Zeile', () => {
+    const head = parsePositivliste(excerpt.excerpts.head!);
+    expect(head).toMatchObject({ complete: true, unassigned: 0 });
+    expect(head.rows[0]).toEqual({ klasse: '100', gliederungsnummern: ['103-S'], ressort: 'StK', title: 'Richtlinien für die Redaktion von Vorschriften (Redaktionsrichtlinien - RedR)', erlassdatum: '2015-06-16', fassungsdatum: '2015-06-16', anwendungsbeginn: '2015-08-01' });
+    // Zwischenüberschrift mitten in der Liste, Nummer mit Zeilenumbruch, Anwendungsende.
+    expect(parsePositivliste(excerpt.excerpts.heading!)).toMatchObject({ complete: true, rows: [{ fassungsdatum: '1997-07-02' }, { erlassdatum: '2004-03-24' }] });
+    expect(parsePositivliste(excerpt.excerpts.split!).rows.map((row) => row.gliederungsnummern)).toEqual([['2210.1.1.3.0-K'], ['2210.1.1.3.1-K']]);
+    expect(parsePositivliste(excerpt.excerpts.ende!).rows[0]).toMatchObject({ anwendungsende: '2019-12-31' });
+    // Ein Datum ohne Zeile macht die Liste unauswertbar: Dann folgt aus „steht nicht drin“ nichts.
+    const broken = parsePositivliste(`${excerpt.excerpts.head!} Stand 2016-01-01`);
+    expect(broken.complete).toBe(false);
+    expect(broken.unassigned).toBeGreaterThan(0);
+  });
+
+  it('findet eine Vorschrift über Erlassdatum und Gliederungsnummer, bei gleichnamigen Zeilen über den Titel', () => {
+    const ferien = list(excerpt.excerpts.ferienordnung!);
+    expect(findInPositivliste(ferien, { documentDate: '2010-10-04', gliederungsnummern: ['2230.1.1.0-UK'], title: 'Ferienordnung und schulfreie Samstage für das Schuljahr 2015/2016' })).toMatchObject({ status: 'listed', row: { title: 'Ferienordnung und schulfreie Samstage für das Schuljahr 2015/2016' } });
+    expect(findInPositivliste(ferien, { documentDate: '2010-10-04', gliederungsnummern: ['2230.1.1.0-K'], title: 'Ferienordnung und schulfreie Samstage' })).toMatchObject({ status: 'ambiguous' });
+    expect(findInPositivliste(ferien, { documentDate: '2010-10-05', gliederungsnummern: ['2230.1.1.0-K'], title: 'Ferienordnung' })).toMatchObject({ status: 'not-listed' });
   });
 });
 

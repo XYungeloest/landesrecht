@@ -121,7 +121,7 @@ Regel:
 | Land | Quelle | Bereiche |
 | --- | --- | --- |
 | West | RECHT.NRW | LRGV (Gesetze, Rechtsverordnungen) und LRMB (Verwaltungsvorschriften aus dem Ministerialblatt), gemeinsames Manifest |
-| NSH | juris Schleswig-Holstein | Gesetze, Verordnungen und Verwaltungsvorschriften – **kein Bestand**, das konsolidierte Portal untersagt automatisierten Zugriff (`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`) |
+| NSH | juris Schleswig-Holstein | Gesetze, Verordnungen und Verwaltungsvorschriften – **kein Bestand**, die dokumentierten Portaladressen liefern keinen Normtext (`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`) |
 | Ost | OstRecht | übernimmt den OstRecht-Bestand einschließlich Verwaltungsvorschriften |
 | BayWü | BAYERN.RECHT | Gesetze, Verordnungen, Verträge und Verwaltungsvorschriften (Importer vorbereitet, 2 413 Dokumente enumeriert) |
 

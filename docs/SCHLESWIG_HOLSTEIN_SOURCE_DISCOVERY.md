@@ -5,6 +5,27 @@ Stand: 2026-09-17 · Auftrag: Vorbereitung eines Importers (kein Importer-Code i
 
 ## Kurzfassung
 
+> **Am Portal verifiziert (2026-09-18, nach der Nutzerentscheidung „robots.txt advisory“ für diesen Adapter;
+> Belege unter `data/audits/juris-sh/`):**
+>
+> - **Dokumentadressen liefern keinen Inhalt.** `/bssh/document/<ID>`, `…/part/X`, `…/format/xsl`,
+>   `…/format/xsl/part/X`, `/perma?…`, jlink und die Legacy-Adressen liefern für jedes Dokument dieselbe
+>   5 353-Byte-Startseite der Skriptoberfläche (Abschnitte 5, 6 und 9.3 damit beantwortet). Den Inhalt lädt die
+>   Oberfläche per POST über `/jportal/wsrest/recherche3/` mit `JURIS-PORTALID` und `X-CSRF-TOKEN` – intern,
+>   sitzungsgebunden, nicht benutzt (`STRUCTURE_REPORT.md`).
+> - **Sitemap** (Abschnitt 7.4): 89 092 Dokumentadressen, darunter 2 808 Rahmendokumente Landesrecht
+>   (`jlr-NNLSH<8 Hex>`) mit 59 003 Einheiten, 2 389 VwV (`VVSH-VVSH<9 Ziffern>`), 6 FFN-Register,
+>   13 590 Verkündungsblatt-Dokumente, 1 582 Ortsrecht, 9 714 Rechtsprechung (`SOURCE_INVENTORY.md`).
+> - **Identität:** Sprechende Kennungen sind Aliase; `/perma?d=<Alias>` leitet serverseitig auf die DOKNR um
+>   (`jlr-VerfSH2014rahmen` → `jlr-NNLSH00002D11`). Die Fassungssegmente `p`/`V<n>` (Abschnitt 2.3) sind
+>   Einheiten **desselben** Rahmendokuments (`…pArt14` → `…D11NN00000000016`, `…V5Art46` → `…D11NN00000000054`).
+> - **Historie:** Außer Kraft getretene Normen stehen mit DOKNR in der Sitemap; am Stichtag geltende, inzwischen
+>   abgelaufene VwV (`VVSH-2032.29-0001`) fehlen dort.
+> - **Nutzungsbedingungen:** Impressum und Datenschutzhinweis ohne Aussage zum automatisierten Abruf; jede
+>   Oberflächenseite trägt `<meta name='tdm-reservation' content='1'>`.
+>
+> Die folgenden Abschnitte geben den Stand vom 2026-09-17 (ohne Portalabruf) wieder.
+
 Das konsolidierte Landesrecht Schleswig-Holsteins liegt im **Bürgerservice Schleswig-Holstein**
 (`www.gesetze-rechtsprechung.sh.juris.de`), betrieben vom Land Schleswig-Holstein und technisch
 umgesetzt von der juris GmbH.

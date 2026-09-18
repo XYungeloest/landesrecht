@@ -25,8 +25,9 @@ unter `tests/fixtures/juris-sh/`.
 
 ## 1 Warum es dieses Register gibt
 
-Das konsolidierte Landesrechtsportal (juris Schleswig-Holstein) ist für automatisierte Abrufe durch
-`robots.txt` gesperrt; es wird dort nichts abgerufen (`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`).
+Das konsolidierte Landesrechtsportal (juris Schleswig-Holstein) liefert über seine dokumentierten
+Adressformen keinen Normtext (robots.txt ist seit 2026-09-18 für diesen Adapter nur Hinweis; sperrend ist die
+sitzungsgebundene interne Schnittstelle, `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`).
 Damit fehlt die Textquelle für einen Stichtagsbestand. Erlaubt und amtlich sind die Verkündungsblätter
 (`docs/SCHLESWIG_HOLSTEIN_PUBLICATION_DISCOVERY.md`). Sie liefern keinen konsolidierten Normtext, wohl
 aber **Belege**, und zwar genau die, die ein späterer Import als Erstes braucht:

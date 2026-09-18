@@ -97,6 +97,13 @@ der Auslieferung wird der Inhalt gegen den SHA-256 der Adresse geprüft (Abweich
 Antwort ist `immutable` mit `nosniff`. Der Bucket bleibt privat; Rohpakete, Umschläge und Belege sind über diese
 Route nicht erreichbar. Länder ohne Asset-Präfix (West) haben keine Assets.
 
+**Umleitung stillgelegter Norm-Slugs.** Ein sachlich falscher Slug (einzeln entschieden in
+`data/imports/<adapter>/slug-migrations.json`) wird stillgelegt, nie wieder vergeben und dauerhaft umgeleitet. Die
+Importer schreiben die Zuordnung alt → neu aus ihrer Slug-Registry nach `packages/legal-core/src/config/slug-redirects.json`.
+Die Middleware (`apps/web/src/middleware.ts`, Logik `apps/web/src/lib/norm-redirects.ts`) antwortet für
+`/<land>/norm/<alt>/…` und `/api/v1/norms/<land>/<alt>…` mit 301 auf den Nachfolger; Unterpfad und Abfrage bleiben
+erhalten. Die Datei ist Teil des Worker-Bundles; eine neue Umleitung braucht deshalb ein Deployment.
+
 Nach jeder Änderung unter `apps/web/` ist ein Redeploy nötig (`npm run build && npm run deploy`).
 
 ### Healthcheck und Fehlermodus

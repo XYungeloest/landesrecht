@@ -481,7 +481,7 @@ describe('Bestand: was je Norm entsteht', () => {
     expect(history.entries[0]!.date).toBe(BASELINE);
   });
 
-  it('löst eine Slugkollision deterministisch auf und meldet sie', async () => {
+  it('löst eine Slugkollision deterministisch auf und meldet sie als akzeptierte technische Kollision (kein Review-Fall)', async () => {
     const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }]);
     // Ein fremdes Verzeichnis belegt den abgeleiteten Slug (nicht registriert, nicht diesem Import gehörend).
     await mkdir(join(root, 'content', 'norms', 'baywue', 'abmg-baywue', 'versions'), { recursive: true });
@@ -489,11 +489,36 @@ describe('Bestand: was je Norm entsteht', () => {
     const outcome = await run(root, { write: true });
     const entry = resultFor(outcome, 'BayAbmG')!;
     expect(entry.targetSlug).toBe(`abmg-baywue-${identityHash('BayAbmG').slice(0, 8)}`);
-    expect(entry.reviewCategories).toContain('identity');
+    expect(entry.reviewCategories ?? []).not.toContain('identity');
     // Das fremde Verzeichnis bleibt unberührt.
     expect(await readFile(join(root, 'content', 'norms', 'baywue', 'abmg-baywue', 'meta.json'), 'utf8')).toBe('{"fremd":true}\n');
     const queue = await readReviewQueue(root);
-    expect(queue.items.some((item) => item.category === 'identity')).toBe(true);
+    expect(queue.items.some((item) => item.category === 'identity')).toBe(false);
+    // Der Befund bleibt sichtbar, als Information; die Norm hat eine eigene, stabile URL.
+    const manifest = await readManifestEntry(root, 'landesrecht', 'BayAbmG');
+    expect(manifest!.findings).toContainEqual(expect.objectContaining({ severity: 'info', code: 'slug-collision' }));
+    const again = await run(root, { write: true });
+    expect(resultFor(again, 'BayAbmG')!.targetSlug).toBe(entry.targetSlug);
+  });
+
+  it('migriert einen einzeln entschiedenen, sachlich falschen Slug: neues Verzeichnis, altes entfernt, Umleitung geschrieben', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }]);
+    await run(root, { write: true });
+    const old = resultFor(await run(root, { write: true }), 'BayAbmG')!.targetSlug!;
+    await writeFile(join(root, 'data', 'imports', 'bayernrecht', 'slug-migrations.json'), JSON.stringify({ schemaVersion: 'bayernrecht-slug-migrations/1', migrations: [{ id: 'test', sourceIdentity: 'BayAbmG', from: old, reason: 'test', evidence: 'Test', decidedBy: 'Test', decidedAt: '2026-09-18' }] }), 'utf8');
+    const migrated = resultFor(await run(root, { write: true }), 'BayAbmG')!;
+    // Der heutige Kandidat ist derselbe wie der alte Slug; der alte ist stillgelegt, also entsteht der Kollisionszusatz.
+    expect(migrated.targetSlug).toBe(`${old}-${identityHash('BayAbmG').slice(0, 8)}`);
+    await expect(readFile(join(root, 'content', 'norms', 'baywue', old, 'meta.json'), 'utf8')).rejects.toThrow();
+    expect(JSON.parse(await readFile(join(root, 'content', 'norms', 'baywue', migrated.targetSlug!, 'meta.json'), 'utf8')).slug).toBe(migrated.targetSlug);
+    const registry = await readSlugRegistry(root);
+    expect(registry.retired).toEqual([{ slug: old, sourceIdentity: 'BayAbmG', successor: migrated.targetSlug, migration: 'test' }]);
+    const redirects = JSON.parse(await readFile(join(root, 'packages', 'legal-core', 'src', 'config', 'slug-redirects.json'), 'utf8'));
+    expect(redirects.jurisdictions.baywue).toEqual({ [old]: migrated.targetSlug });
+    expect((await readManifestEntry(root, 'landesrecht', 'BayAbmG'))!.findings).toContainEqual(expect.objectContaining({ code: 'slug-migrated' }));
+    // Weitere Läufe: stabil, keine erneute Migration.
+    expect(resultFor(await run(root, { write: true }), 'BayAbmG')!.targetSlug).toBe(migrated.targetSlug);
+    expect((await readSlugRegistry(root)).retired).toHaveLength(1);
   });
 
   it('hinterlässt einen in sich stimmigen Zustand (Audit ohne Abweichung)', async () => {

@@ -10,10 +10,10 @@
  *    – was nicht sicher dekodierbar ist, gilt als nicht lesbar.
  *
  * Aus dem Textlayer wird **nur** die Inkrafttretensvorschrift gelesen, nie ein Änderungsbefehl, und nur unter
- * strengen Grenzen, die ohne Layoutdeutung auskommen (`pdfCommencement`): Die Verkündung beginnt auf der ersten
- * Inhaltsseite der Ausgabe (davor steht nur das Inhaltsverzeichnis), ihre Seite trägt Seitenzahl, Kopfzeile,
- * Ausfertigungsdatum und Unterschrift mit demselben Datum, und sie enthält **genau eine** Inkrafttretensregel –
- * eine Grundregel mit Kalenderdatum. Alles andere bleibt Review.
+ * strengen Grenzen, die ohne Layoutdeutung auskommen (`pdfPageCommencement`): Die Seiten von der Anfangsseite der
+ * Verkündung bis zu ihrer Unterschrift tragen Seitenzahl und Kopfzeile, genau einen Titelzusatz (ihren) und genau eine
+ * Unterschrift (ihre, mit dem Ausfertigungsdatum) – dann gehört nichts auf ihnen zu einer anderen Verkündung – und
+ * **genau eine** Inkrafttretensregel, eine Grundregel mit Kalenderdatum. Alles andere bleibt Review.
  */
 import { inflateSync } from 'node:zlib';
 
@@ -31,38 +31,65 @@ interface PdfObject {
   stream?: Uint8Array;
 }
 
-/** Objekte `n 0 obj … endobj` einer PDF ohne Objektströme. */
+function inflate(raw: Uint8Array): Uint8Array | undefined {
+  for (const candidate of [raw, raw.subarray(0, Math.max(0, raw.length - 1)), raw.subarray(0, Math.max(0, raw.length - 2))]) {
+    try {
+      return new Uint8Array(inflateSync(candidate));
+    } catch {
+      // Zeilenende vor `endstream` gehört nicht zum Strom: kürzer versuchen.
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Objekte `n g obj … endobj` einer PDF, auch in Objektströmen (`/Type /ObjStm`). Ströme werden über ihre direkte
+ * `/Length` begrenzt (ein Strom kann das Wort „endobj“ enthalten); bei mehrfach definierten Objekten (inkrementelle
+ * Aktualisierung) gilt das letzte.
+ */
 function objects(bytes: Uint8Array): Map<number, PdfObject> {
   const text = latin1(bytes);
   const found = new Map<number, PdfObject>();
-  for (const match of text.matchAll(/(\d+)\s+0\s+obj\b([\s\S]*?)\bendobj/gu)) {
-    const body = match[2]!;
-    const streamAt = /stream\r?\n/u.exec(body);
-    if (!streamAt) {
-      found.set(Number(match[1]), { body });
+  const header = /(\d+)\s+\d+\s+obj\b/gu;
+  let match: RegExpExecArray | null;
+  while ((match = header.exec(text))) {
+    const bodyStart = match.index + match[0].length;
+    const streamAt = text.indexOf('stream', bodyStart);
+    const endAt = text.indexOf('endobj', bodyStart);
+    if (endAt < 0) break;
+    if (streamAt < 0 || streamAt > endAt && !/\/Length/u.test(text.slice(bodyStart, streamAt))) {
+      found.set(Number(match[1]), { body: text.slice(bodyStart, endAt) });
+      header.lastIndex = endAt;
       continue;
     }
-    const start = match.index! + match[0].indexOf(body) + streamAt.index + streamAt[0].length;
-    const end = text.indexOf('endstream', start);
-    const dictionary = body.slice(0, streamAt.index);
-    let raw = bytes.subarray(start, end);
-    let stream: Uint8Array | undefined;
-    if (/\/Filter\s*\/FlateDecode/u.test(dictionary)) {
-      try {
-        stream = new Uint8Array(inflateSync(raw));
-      } catch {
-        // Ende des Stroms mit Zeilenumbruch: noch einmal ohne ihn.
-        raw = raw.subarray(0, Math.max(0, raw.length - 2));
-        try {
-          stream = new Uint8Array(inflateSync(raw));
-        } catch {
-          stream = undefined;
-        }
-      }
-    } else if (!/\/Filter/u.test(dictionary)) {
-      stream = raw;
+    const dictionary = text.slice(bodyStart, streamAt);
+    if (/endobj/u.test(dictionary)) {
+      found.set(Number(match[1]), { body: text.slice(bodyStart, endAt) });
+      header.lastIndex = endAt;
+      continue;
     }
+    const dataStart = streamAt + 'stream'.length + (text[streamAt + 6] === '\r' && text[streamAt + 7] === '\n' ? 2 : 1);
+    const length = /\/Length\s+(\d+)(?!\s+\d+\s+R)/u.exec(dictionary);
+    const dataEnd = length ? dataStart + Number(length[1]) : text.indexOf('endstream', dataStart);
+    const raw = bytes.subarray(dataStart, dataEnd);
+    const stream = /\/Filter\s*\/FlateDecode/u.test(dictionary) ? inflate(raw) : /\/Filter/u.test(dictionary) ? undefined : raw;
     found.set(Number(match[1]), { body: dictionary, ...(stream ? { stream } : {}) });
+    const close = text.indexOf('endobj', dataEnd);
+    header.lastIndex = close < 0 ? dataEnd : close;
+  }
+  // Objektströme: `/N` Paare (Nummer, Versatz) ab `/First`; nur Objekte, die nicht direkt stehen.
+  for (const object of [...found.values()]) {
+    if (!/\/Type\s*\/ObjStm/u.test(object.body) || !object.stream) continue;
+    const count = Number(/\/N\s+(\d+)/u.exec(object.body)?.[1] ?? 0);
+    const first = Number(/\/First\s+(\d+)/u.exec(object.body)?.[1] ?? 0);
+    const content = latin1(object.stream);
+    const numbers = content.slice(0, first).trim().split(/\s+/u).map(Number);
+    for (let index = 0; index < count; index += 1) {
+      const id = numbers[index * 2]!;
+      const offset = first + numbers[index * 2 + 1]!;
+      const next = index + 1 < count ? first + numbers[index * 2 + 3]! : content.length;
+      if (!found.has(id)) found.set(id, { body: content.slice(offset, next) });
+    }
   }
   return found;
 }
@@ -113,8 +140,74 @@ interface FontDecoder {
   decode(bytes: number[]): string | undefined;
 }
 
+/** ToUnicode-CMap: Zeichencode (als Hex) → Unicode; `width` = Bytes je Code laut `codespacerange`. */
+function toUnicodeMap(cmap: string): { width: number; map: Map<number, string> } | undefined {
+  const hexToString = (hex: string): string => {
+    let output = '';
+    for (let at = 0; at + 4 <= hex.length; at += 4) output += String.fromCharCode(Number.parseInt(hex.slice(at, at + 4), 16));
+    return hex.length === 2 ? String.fromCharCode(Number.parseInt(hex, 16)) : output;
+  };
+  const space = /begincodespacerange\s*<([0-9A-Fa-f]+)>/u.exec(cmap);
+  const width = space ? space[1]!.length / 2 : 1;
+  const map = new Map<number, string>();
+  for (const block of cmap.matchAll(/beginbfchar([\s\S]*?)endbfchar/gu)) {
+    for (const pair of block[1]!.matchAll(/<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]*)>/gu)) map.set(Number.parseInt(pair[1]!, 16), hexToString(pair[2]!));
+  }
+  for (const block of cmap.matchAll(/beginbfrange([\s\S]*?)endbfrange/gu)) {
+    for (const range of block[1]!.matchAll(/<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s*(?:<([0-9A-Fa-f]+)>|\[([^\]]*)\])/gu)) {
+      const low = Number.parseInt(range[1]!, 16);
+      const high = Number.parseInt(range[2]!, 16);
+      if (high - low > 65535) return undefined;
+      if (range[3] !== undefined) {
+        const base = hexToString(range[3]);
+        for (let code = low; code <= high; code += 1) map.set(code, base.slice(0, -1) + String.fromCharCode(base.charCodeAt(base.length - 1) + (code - low)));
+      } else {
+        const targets = [...range[4]!.matchAll(/<([0-9A-Fa-f]+)>/gu)].map((item) => hexToString(item[1]!));
+        for (let code = low; code <= high; code += 1) if (targets[code - low] !== undefined) map.set(code, targets[code - low]!);
+      }
+    }
+  }
+  return { width, map };
+}
+
 function fontDecoder(objectsById: Map<number, PdfObject>, fontDictionary: string): FontDecoder | undefined {
-  if (/\/Subtype\s*\/Type0/u.test(fontDictionary)) return undefined;
+  const toUnicodeRef = entry(fontDictionary, 'ToUnicode');
+  const cmapStream = toUnicodeRef && /^\d+\s+0\s+R$/u.test(toUnicodeRef) ? objectsById.get(refs(toUnicodeRef)[0]!)?.stream : undefined;
+  const cmap = cmapStream ? toUnicodeMap(latin1(cmapStream)) : undefined;
+  if (/\/Subtype\s*\/Type0/u.test(fontDictionary)) {
+    // Zusammengesetzte Schrift (Identity-H): nur mit ToUnicode-CMap, jeder Code muss abgebildet sein.
+    if (!cmap || !/\/Encoding\s*\/Identity-H/u.test(fontDictionary)) return undefined;
+    return {
+      decode(bytes) {
+        let output = '';
+        for (let at = 0; at + cmap.width <= bytes.length; at += cmap.width) {
+          let code = 0;
+          for (let offset = 0; offset < cmap.width; offset += 1) code = code * 256 + bytes[at + offset]!;
+          const mapped = cmap.map.get(code);
+          if (mapped === undefined) return undefined;
+          output += mapped;
+        }
+        return output;
+      },
+    };
+  }
+  const simple = simpleDecoder(objectsById, fontDictionary);
+  if (!cmap || cmap.width !== 1) return simple;
+  // Einfache Schrift mit ToUnicode: die CMap zuerst, sonst die Kodierung.
+  return {
+    decode(bytes) {
+      let output = '';
+      for (const byte of bytes) {
+        const mapped = cmap.map.get(byte) ?? simple?.decode([byte]);
+        if (mapped === undefined) return undefined;
+        output += mapped;
+      }
+      return output;
+    },
+  };
+}
+
+function simpleDecoder(objectsById: Map<number, PdfObject>, fontDictionary: string): FontDecoder | undefined {
   let encoding = entry(fontDictionary, 'Encoding');
   let base = 'StandardEncoding';
   let differences = new Map<number, string>();
@@ -349,8 +442,6 @@ export async function pdfCommencement(root: string, page: GazettePage, enactment
   if (!range) return fail(`Seitenbereich der Ausgabe nicht lesbar („${page.pdf.pages}“)`);
   const first = Number(range[1]);
   const position = page.ref.position;
-  // Nur die erste Inhaltsseite der Ausgabe (davor steht allein das Inhaltsverzeichnis) – vor jeder Textextraktion prüfen.
-  if (position !== first + 1) return fail(`Die Verkündung beginnt auf S. ${position}, nicht auf der ersten Inhaltsseite der Ausgabe (S. ${first + 1}); ihre Grenzen sind im Textlayer nicht ohne Layoutdeutung bestimmbar`);
   const text = pdfText(cached.bytes);
   if (!text.ok) return fail(`Textlayer nicht verwertbar: ${text.reason}`);
   const result = pdfPageCommencement(text.pages, { first, position, enactmentDate });
@@ -367,25 +458,42 @@ export function pdfPageCommencement(pages: readonly string[], input: { first: nu
   const evidence: string[] = [];
   const fail = (reason: string): PdfCommencement => ({ ok: false, evidence, reason });
   const { first, position, enactmentDate } = input;
-  if (position !== first + 1) return fail(`Die Verkündung beginnt auf S. ${position}, nicht auf der ersten Inhaltsseite der Ausgabe (S. ${first + 1}); ihre Grenzen sind im Textlayer nicht ohne Layoutdeutung bestimmbar`);
-  const index = position - first;
-  const content = pages[index];
-  const toc = pages[0];
-  if (content === undefined || toc === undefined) return fail(`PDF hat keine Seite ${index + 1}`);
-  const header = new RegExp(`(?:^|\\s)${position}(?:\\s|$)`, 'u').test(content) && /Gesetz-\s*und\s+Verordnungsblatt/u.test(content);
-  if (!header) return fail(`Seite ${index + 1} der PDF trägt nicht Seitenzahl ${position} mit Kopfzeile des GVBl.`);
-  if (!new RegExp(`(?:^|\\s)${first}(?:\\s|$)`, 'u').test(toc) || !/I\s?n\s?h\s?a\s?l\s?t/u.test(toc)) return fail(`Seite 1 der PDF ist nicht das Inhaltsverzeichnis mit Seitenzahl ${first}`);
   const long = longGermanDate(enactmentDate);
   // Sperrsatz und Unterschneidung im Titelzusatz („Vo m 9. Mai 2006“): Leerzeichen zwischen den Buchstaben sind zulässig.
-  const titles = [...content.matchAll(/V\s?o\s?m\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/gu)];
-  const signatures = [...content.matchAll(/München,\s+den\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/gu)];
-  if (titles.length !== 1 || parseLongGermanDate(titles[0]![1]!) !== enactmentDate) return fail(`Seite ${position} trägt nicht genau einen Titelzusatz „Vom ${long}“ (${titles.map((title) => title[0]).join(', ') || 'keinen'})`);
-  if (signatures.length !== 1 || parseLongGermanDate(signatures[0]![1]!) !== enactmentDate) return fail(`Seite ${position} trägt nicht genau eine Unterschrift „München, den ${long}“`);
-  const statements = [...content.matchAll(/(?:tritt|treten)\s(?:[^.]|(?<=\d)\.){0,200}?in\s+Kraft/gu)];
-  const sentences = [...content.matchAll(COMMENCEMENT_SENTENCE)];
-  if (statements.length !== 1 || sentences.length !== 1) return fail(`Seite ${position} enthält ${statements.length} Inkrafttretensregeln; verlangt ist genau eine Grundregel mit Kalenderdatum`);
+  // Neuere Ausgaben (GVBl. 2017) setzen den Titel mit Gliederungsnummer und kleinem „vom“: „300-12-6-J Verordnung zur
+  // Änderung der Aufbewahrungsverordnung vom 30. Mai 2017“ – ein Zitat im Text trägt keine Gliederungsnummer davor.
+  const titlesOf = (text: string): RegExpMatchArray[] => [
+    ...text.matchAll(/V\s?o\s?m\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/gu),
+    ...text.matchAll(/(?<![\p{L}\d-])\d{2,4}(?:-\d+[a-z]?)*-[A-Z]{1,3}(?:\/[A-Z])?\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Haushaltsgesetz)\b[^.„“]{0,300}?\svom\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/gu),
+  ];
+  const signaturesOf = (text: string): RegExpMatchArray[] => [...text.matchAll(/München,\s+den\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/gu)];
+  // Die Verkündung beginnt auf S. `position` und endet auf der Seite ihrer Unterschrift. Auf diesen Seiten darf es genau
+  // einen Titelzusatz (ihren, auf der ersten) und genau eine Unterschrift (ihre, auf der letzten) geben: Dann enthalten
+  // die Seiten nichts von einer anderen Verkündung – der Rest der vorangehenden endete mit deren Unterschrift, die
+  // nächste begänne mit ihrem Titelzusatz. Ohne Layoutdeutung.
+  const start = position - first;
+  const span: string[] = [];
+  // Eine Verkündung umfasst höchstens 30 Seiten dieser Prüfung (GVBl. 2017 S. 283–301: 19 Seiten Tabelle).
+  for (let index = start; index < pages.length && index <= start + 29; index += 1) {
+    const content = pages[index]!;
+    const pageNumber = first + index;
+    if (!new RegExp(`(?:^|\\s)${pageNumber}(?:\\s|$)`, 'u').test(content) || !/Gesetz-\s*und\s+Verordnungsblatt/u.test(content)) return fail(`PDF-Seite ${index + 1} trägt nicht Seitenzahl ${pageNumber} mit Kopfzeile des GVBl.`);
+    span.push(content);
+    if (signaturesOf(content).length > 0) break;
+  }
+  if (span.length === 0) return fail(`PDF hat keine Seite ${start + 1}`);
+  // Silbentrennung am Zeilenende erscheint im Textlayer als „Verord - nung“ (Leerzeichen um den Strich); für die
+  // Prüfung wird sie zusammengezogen. Ein echter Bindestrich („Sonn- und“) hat kein Leerzeichen davor.
+  const text = span.join(' ').replace(/(\p{Ll}) - (\p{Ll})/gu, '$1$2');
+  const titles = titlesOf(text);
+  const signatures = signaturesOf(text);
+  if (titles.length !== 1 || parseLongGermanDate(titles[0]![1]!) !== enactmentDate || titlesOf(span[0]!).length !== 1) return fail(`S. ${position}–${position + span.length - 1} tragen nicht genau einen Titelzusatz „Vom ${long}“ auf der ersten Seite (${titles.map((title) => title[0]).join(', ') || 'keinen'})`);
+  if (signatures.length !== 1 || parseLongGermanDate(signatures[0]![1]!) !== enactmentDate) return fail(`S. ${position}–${position + span.length - 1} tragen nicht genau eine Unterschrift „München, den ${long}“ (${signatures.map((signature) => signature[0]).join(', ') || 'keine'})`);
+  const statements = [...text.matchAll(/(?:tritt|treten)\s(?:[^.]|(?<=\d)\.){0,200}?in\s+Kraft/gu)];
+  const sentences = [...text.matchAll(COMMENCEMENT_SENTENCE)];
+  if (statements.length !== 1 || sentences.length !== 1) return fail(`S. ${position}–${position + span.length - 1} enthalten ${statements.length} Inkrafttretensregeln; verlangt ist genau eine Grundregel mit Kalenderdatum`);
   const date = parseLongGermanDate(sentences[0]![1]!);
   if (!date) return fail(`Datum der Inkrafttretensregel nicht lesbar („${sentences[0]![0]}“)`);
-  evidence.push(`Textlayer S. ${position} (PDF-Seite ${index + 1}): Titelzusatz „${titles[0]![0]}“, Unterschrift „${signatures[0]![0]}“, einzige Inkrafttretensregel „${sentences[0]![0]}“`);
+  evidence.push(`Textlayer S. ${position}${span.length > 1 ? `–${position + span.length - 1}` : ''} (PDF-Seite ${start + 1}${span.length > 1 ? `–${start + span.length}` : ''}): Titelzusatz „${titles[0]![0]}“, Unterschrift „${signatures[0]![0]}“, einzige Inkrafttretensregel „${sentences[0]![0]}“`);
   return { ok: true, date, evidence };
 }

@@ -129,7 +129,7 @@ export interface ChainScan {
     unmatched: string[];
   };
   /** Amtsblätter 2009–2018 im Zeitraum: Zahl der Veröffentlichungen und ob jede gelesen wurde. */
-  amtsblatt?: { documents: number; fullRead: boolean; withoutHtml: number };
+  amtsblatt?: { documents: number; fullRead: boolean; withoutHtml: number; issues: number };
   /** Beschreibung des Zeitraums und des Verfahrens (Beleg). */
   method: string;
 }
@@ -139,9 +139,17 @@ export const glnrStem = (value: string): string => value.replace(/[‐-―−]/g
 
 /**
  * Höchstzahl der Veröffentlichungen der Amtsblätter 2009–2018, die für eine Norm vollständig gelesen werden (die
- * Blätter haben keine Volltextsuche). Darüber bleibt die Kette `incomplete-chain` (Netzlast, Auftrag: maßvoll).
+ * Blätter haben keine Volltextsuche). Die Seiten sind allen Normen gemeinsam (Cache); die Netzlast begrenzt das
+ * Abrufbudget des Laufs. Darüber bleibt die Kette `incomplete-chain`: Das betrifft Normen, deren Zeitraum vor
+ * 2016 beginnt und die nicht über die Positivliste als bis 2015 unverändert belegt sind.
  */
-export const AMTSBLATT_FULL_READ_CAP = 120;
+export const AMTSBLATT_FULL_READ_CAP = 1600;
+/**
+ * Vorab-Schranke in Ausgaben (aus den Jahrgangslisten, ohne die Inhaltsübersichten zu holen): Mehr als 200
+ * Ausgaben (rund 1 400 Veröffentlichungen) liest ein Lauf nicht. Ein Zeitraum ab Herbst 2015 hat 182 Ausgaben,
+ * einer ab 2014 schon 256.
+ */
+export const AMTSBLATT_ISSUE_CAP = 200;
 
 const detailUrlOf = (path: string): string => `${PLATFORM_ORIGIN}${path}`;
 
@@ -159,7 +167,7 @@ type Candidate = { url: string; citation: string; publishedAt: string; title: st
  * Durchsucht eine absteigend nach Datum sortierte BayMBl.-Trefferliste seitenweise bis vor die Verkündung der Norm.
  * Liefert alle Treffer-Adressen (für die Belegprüfung) und die im Zeitraum.
  */
-async function scanBaymblListing(platform: Platform, urlOf: (offset: number) => string, base: GazettePublication, until: string, listings: SourceDocumentRef[], missing: string[]): Promise<{ hits: Set<string>; total: number; inWindow: Candidate[] }> {
+async function scanBaymblListing(platform: Platform, urlOf: (offset: number) => string, base: GazettePublication, from: string, until: string, listings: SourceDocumentRef[], missing: string[]): Promise<{ hits: Set<string>; total: number; inWindow: Candidate[] }> {
   const hits = new Set<string>();
   const inWindow: Candidate[] = [];
   let total = 0;
@@ -178,13 +186,13 @@ async function scanBaymblListing(platform: Platform, urlOf: (offset: number) => 
       if (!row.detailPath) continue;
       const detail = detailUrlOf(row.detailPath);
       hits.add(detail);
-      if (!row.publishedAt || row.publishedAt <= base.publishedAt || row.publishedAt > until || detail === base.page.url) continue;
+      if (!row.publishedAt || row.publishedAt <= from || row.publishedAt > until || detail === base.page.url) continue;
       inWindow.push({ url: detail, citation: `BayMBl. ${row.volume} Nr. ${row.position}`, publishedAt: row.publishedAt, title: row.title });
     }
     offset += 50;
     // Absteigend sortiert: Sobald eine Seite nur noch Älteres führt als die Norm, ist die Suche am Ende.
     const oldest = parsed.rows.at(-1)?.publishedAt;
-    if (parsed.rows.length < 50 || parsed.totalHits === undefined || offset >= parsed.totalHits || (oldest !== undefined && oldest < base.publishedAt)) break;
+    if (parsed.rows.length < 50 || parsed.totalHits === undefined || offset >= parsed.totalHits || (oldest !== undefined && oldest < from)) break;
   }
   return { hits, total, inWindow };
 }
@@ -194,7 +202,9 @@ async function scanBaymblListing(platform: Platform, urlOf: (offset: number) => 
  * Treffer-Seite; Übersichtsseiten und Einzelseiten kommen aus dem Cache oder werden – im Budget – einmal geholt.
  * `anchors`: Seiten, die die Norm bekanntermaßen zitieren (Aufhebungsbefehle) – die Volltextsuche muss sie finden.
  */
-export async function scanChain(platform: Platform, base: GazettePublication, documentDate: string, reference: GazetteReference, until: string, anchors: readonly string[] = []): Promise<{ scan: ChainScan; pages: ChainPages }> {
+export async function scanChain(platform: Platform, base: GazettePublication, documentDate: string, reference: GazetteReference, until: string, anchors: readonly string[] = [], windowStart?: string): Promise<{ scan: ChainScan; pages: ChainPages }> {
+  /** Beginn des Zeitraums: die Verkündung der Norm, bei belegter Unverändertheit bis zu einem Stand dieser Stand. */
+  const from = windowStart ?? base.publishedAt;
   const listings: SourceDocumentRef[] = [];
   const missing: string[] = [];
   const examined: ExaminedPublication[] = [];
@@ -208,7 +218,7 @@ export async function scanChain(platform: Platform, base: GazettePublication, do
   let fulltextHits: Set<string> | undefined;
   if (until >= '2019-01-01') {
     const query = fulltextQuery(documentDate, reference);
-    const result = await scanBaymblListing(platform, (offset) => baymblFulltextUrl(query, offset), base, until, listings, missing);
+    const result = await scanBaymblListing(platform, (offset) => baymblFulltextUrl(query, offset), base, from, until, listings, missing);
     for (const candidate of result.inWindow) candidates.set(candidate.url, candidate);
     fulltextHits = result.hits;
     fulltext = { query, hits: result.total, verified: false, unmatched: [] };
@@ -217,47 +227,58 @@ export async function scanChain(platform: Platform, base: GazettePublication, do
 
   // 2 – BayMBl.: Gliederungssuche (Gegenkontrolle).
   for (const stem of stems) {
-    const result = await scanBaymblListing(platform, (offset) => baymblGlnrListingUrl(stem, offset), base, until, listings, missing);
+    const result = await scanBaymblListing(platform, (offset) => baymblGlnrListingUrl(stem, offset), base, from, until, listings, missing);
     for (const candidate of result.inWindow) if (!candidates.has(candidate.url)) candidates.set(candidate.url, candidate);
   }
   if (stems.length > 0) methods.push(`BayMBl.-Gliederungssuche ${stems.join(', ')}`);
 
-  // 3 – Amts- und Ministerialblätter 2009–2018 (vor dem BayMBl.): jede Veröffentlichung im Zeitraum, sonst Gliederungsnummern.
+  // 3 – Amts- und Ministerialblätter 2009–2018 (vor dem BayMBl.): jede Veröffentlichung im Zeitraum.
   let amtsblatt: ChainScan['amtsblatt'];
-  if (base.publishedAt < '2019-01-01') {
-    const firstYear = Math.max(Number(base.publishedAt.slice(0, 4)), 2009);
-    const windowDocs: Array<Candidate & { gliederungsnummern: string[]; hasHtml: boolean }> = [];
-    for (const journal of Object.keys(MINISTERIAL_JOURNALS) as MinisterialJournal[]) {
-      for (let year = firstYear; year <= 2018; year += 1) {
+  if (from < '2019-01-01') {
+    const firstYear = Math.max(Number(from.slice(0, 4)), 2009);
+    const windowIssues: Array<{ journal: MinisterialJournal; year: number; issue: ReturnType<typeof parseAmtsblattVolume>[number] }> = [];
+    const missingVolumes: string[] = [];
+    // Jüngste Jahrgänge zuerst: Überschreitet schon deren Zahl der Ausgaben die Schranke, sind ältere entbehrlich.
+    for (let year = 2018; year >= firstYear && windowIssues.length <= AMTSBLATT_ISSUE_CAP; year -= 1) {
+      for (const journal of Object.keys(MINISTERIAL_JOURNALS) as MinisterialJournal[]) {
         const url = amtsblattVolumeUrl(journal, year);
         const volumePage = await platform.get(url);
         if (isPageMiss(volumePage)) {
-          missing.push(url);
+          missingVolumes.push(url);
           continue;
         }
         listings.push(sourceRef(volumePage));
-        for (const issue of parseAmtsblattVolume(volumePage.html)) {
-          if (issue.publishedAt < base.publishedAt || issue.publishedAt > until) continue;
-          const issueUrl = amtsblattIssueUrl(issue.htmlPath);
-          const issuePage = await platform.get(issueUrl);
-          if (isPageMiss(issuePage)) {
-            missing.push(issueUrl);
-            continue;
-          }
-          listings.push(sourceRef(issuePage));
-          for (const row of parseAmtsblattIssue(issuePage.html).documents) {
-            const detail = row.htmlPath ? detailUrlOf(row.htmlPath) : `${issueUrl}#S${row.page}`;
-            if (detail === base.page.url) continue;
-            windowDocs.push({ url: detail, citation: `${journal}. ${year} S. ${row.page}`, publishedAt: issue.publishedAt, title: row.title, gliederungsnummern: row.gliederungsnummern, hasHtml: Boolean(row.htmlPath) });
-          }
-        }
+        for (const issue of parseAmtsblattVolume(volumePage.html)) if (issue.publishedAt >= from && issue.publishedAt <= until) windowIssues.push({ journal, year, issue });
       }
     }
-    const fullRead = windowDocs.length <= AMTSBLATT_FULL_READ_CAP && windowDocs.every((doc) => doc.hasHtml);
-    const selected = fullRead ? windowDocs : windowDocs.filter((doc) => doc.hasHtml && doc.gliederungsnummern.some((value) => stems.includes(glnrStem(value))));
-    for (const doc of selected) candidates.set(doc.url, { url: doc.url, citation: doc.citation, publishedAt: doc.publishedAt, title: doc.title });
-    amtsblatt = { documents: windowDocs.length, fullRead, withoutHtml: windowDocs.filter((doc) => !doc.hasHtml).length };
-    methods.push(fullRead ? `AllMBl., FMBl., JMBl. und KWMBl. bis 2018: alle ${windowDocs.length} Veröffentlichungen im Zeitraum` : `AllMBl., FMBl., JMBl. und KWMBl. bis 2018: nur Gliederungsnummern (${windowDocs.length} Veröffentlichungen im Zeitraum, Obergrenze für das vollständige Lesen ${AMTSBLATT_FULL_READ_CAP}${amtsblatt.withoutHtml > 0 ? `, ${amtsblatt.withoutHtml} ohne HTML` : ''})`);
+    windowIssues.sort((left, right) => (left.issue.publishedAt < right.issue.publishedAt ? -1 : left.issue.publishedAt > right.issue.publishedAt ? 1 : left.journal < right.journal ? -1 : left.journal > right.journal ? 1 : left.issue.issue - right.issue.issue));
+    if (windowIssues.length <= AMTSBLATT_ISSUE_CAP) missing.push(...missingVolumes);
+    if (windowIssues.length > AMTSBLATT_ISSUE_CAP) {
+      // Die Inhaltsübersichten werden gar nicht erst geholt: Der Zeitraum ist für einen Lauf zu groß.
+      amtsblatt = { documents: 0, fullRead: false, withoutHtml: 0, issues: windowIssues.length };
+      methods.push(`AllMBl., FMBl., JMBl. und KWMBl. bis 2018: schon ${windowIssues.length} Ausgaben in den jüngsten Jahrgängen des Zeitraums – mehr als ${AMTSBLATT_ISSUE_CAP}, nicht gelesen`);
+    } else {
+      const windowDocs: Array<Candidate & { gliederungsnummern: string[]; hasHtml: boolean }> = [];
+      for (const { journal, year, issue } of windowIssues) {
+        const issueUrl = amtsblattIssueUrl(issue.htmlPath);
+        const issuePage = await platform.get(issueUrl);
+        if (isPageMiss(issuePage)) {
+          missing.push(issueUrl);
+          continue;
+        }
+        listings.push(sourceRef(issuePage));
+        for (const row of parseAmtsblattIssue(issuePage.html).documents) {
+          const detail = row.htmlPath ? detailUrlOf(row.htmlPath) : `${issueUrl}#S${row.page}`;
+          if (detail === base.page.url) continue;
+          windowDocs.push({ url: detail, citation: `${journal}. ${year} S. ${row.page}`, publishedAt: issue.publishedAt, title: row.title, gliederungsnummern: row.gliederungsnummern, hasHtml: Boolean(row.htmlPath) });
+        }
+      }
+      const fullRead = windowDocs.length <= AMTSBLATT_FULL_READ_CAP && windowDocs.every((doc) => doc.hasHtml);
+      const selected = fullRead ? windowDocs : windowDocs.filter((doc) => doc.hasHtml && doc.gliederungsnummern.some((value) => stems.includes(glnrStem(value))));
+      for (const doc of selected) candidates.set(doc.url, { url: doc.url, citation: doc.citation, publishedAt: doc.publishedAt, title: doc.title });
+      amtsblatt = { documents: windowDocs.length, fullRead, withoutHtml: windowDocs.filter((doc) => !doc.hasHtml).length, issues: windowIssues.length };
+      methods.push(fullRead ? `AllMBl., FMBl., JMBl. und KWMBl. bis 2018: alle ${windowDocs.length} Veröffentlichungen aus ${windowIssues.length} Ausgaben im Zeitraum` : `AllMBl., FMBl., JMBl. und KWMBl. bis 2018: nur Gliederungsnummern (${windowDocs.length} Veröffentlichungen im Zeitraum, Obergrenze für das vollständige Lesen ${AMTSBLATT_FULL_READ_CAP}${amtsblatt.withoutHtml > 0 ? `, ${amtsblatt.withoutHtml} ohne HTML` : ''})`);
+    }
   }
 
   // 4 – Jede Veröffentlichung lesen.
@@ -281,7 +302,7 @@ export async function scanChain(platform: Platform, base: GazettePublication, do
   }
 
   const complete = missing.length === 0 && (fulltext === undefined || fulltext.verified) && (amtsblatt === undefined || amtsblatt.fullRead);
-  const method = `${methods.join('; ') || '–'}; Veröffentlichungen vom ${base.publishedAt} (ausschließlich) bis ${until}; ${examined.length} Seite(n) gelesen, ${examined.filter((entry) => entry.relations.length > 0).length} zitieren die Norm`;
+  const method = `${methods.join('; ') || '–'}; Veröffentlichungen vom ${from} (ausschließlich) bis ${until}; ${examined.length} Seite(n) gelesen, ${examined.filter((entry) => entry.relations.length > 0).length} zitieren die Norm`;
   return { scan: { complete, gliederungsnummern: stems, listings, examined, missing, ...(fulltext ? { fulltext } : {}), ...(amtsblatt ? { amtsblatt } : {}), method }, pages };
 }
 

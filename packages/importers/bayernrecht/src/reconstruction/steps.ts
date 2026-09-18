@@ -61,6 +61,14 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
   const walk = (nodes: readonly CommandNode[], context: LocationPath[], labels: string[], statisticsOnly: boolean): void => {
     for (const node of nodes) {
       const nodeLabels = node.label ? [...labels, node.label] : labels;
+      const listed = listedReplacement(node);
+      if (listed !== undefined) {
+        // „In Satz 1 werden ersetzt:“ – „das Wort „A“ durch das Wort „B“ und“ – „das Wort „C“ durch das Wort „D“.“
+        // (BayMBl. 2023 Nr. 632, 647): ein Befehl, dessen Paare als Unterglieder gesetzt sind.
+        const command = `${node.text} ${node.children.map((child) => child.text).join(' ')}`;
+        leaves.push({ node: { ...node, text: listed, children: [] }, context, labels: nodeLabels, command, ...(statisticsOnly ? { statisticsOnly } : {}) });
+        continue;
+      }
       const container = containerLocation(node.text);
       if (container !== undefined && node.children.length > 0) {
         const paths = parseLocation(container);
@@ -73,8 +81,10 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
         continue;
       }
       const quoted = node.quoted.map((unit) => `${unit.label ? `${unit.label} ` : ''}${unit.text}`).join(' ');
-      const structural = parseStructural(node.text, context, node.quoted);
-      const leaf: Leaf = { node, context, labels: nodeLabels, command: quoted === '' ? node.text : `${node.text} ${quoted}`, ...(structural ? { structural } : {}), ...(statisticsOnly ? { statisticsOnly } : {}) };
+      // „Nach Nr. 1.2 wird folgende Nr. 1.3 angefügt.“ mit folgendem Zitat: für die Erkennung wie mit Doppelpunkt.
+      const parseText = node.quoted.length > 0 ? node.text.replace(/\.\s*$/u, ':') : node.text;
+      const structural = parseStructural(parseText, context, node.quoted);
+      const leaf: Leaf = { node: parseText === node.text ? node : { ...node, text: parseText }, context, labels: nodeLabels, command: quoted === '' ? node.text : `${node.text} ${quoted}`, ...(structural ? { structural } : {}), ...(statisticsOnly ? { statisticsOnly } : {}) };
       if (node.children.length > 0) {
         // „Der bisherige § 5 wird § 6 und wie folgt geändert:“ – Unterbefehle am Glied unter neuer Bezeichnung.
         const template = structural?.templates?.[0];
@@ -94,6 +104,41 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
   return { leaves, failures };
 }
 
+const LISTED_PAIR = /^(?:das\s+Wort|die\s+Wörter|die\s+Angabe|die\s+Angaben)\s+„[^„“]*(?:„[^„“]*“[^„“]*)*“\s+durch\s+(?:das\s+Wort|die\s+Wörter|die\s+Angabe|die\s+Angaben)\s+„[^„“]*(?:„[^„“]*“[^„“]*)*“\s*(?:und|,|;|\.)?$/u;
+
+/**
+ * Ersetzung mit untergliederten Paaren → ein Befehlssatz („In Satz 1 werden das Wort „A“ durch das Wort „B“ und das
+ * Wort „C“ durch das Wort „D“ ersetzt.“), sonst `undefined`. Jedes Unterglied muss genau ein Paar sein.
+ */
+function listedReplacement(node: CommandNode): string | undefined {
+  const head = /^(.+?\s(?:wird|werden))\s+ersetzt\s*:\s*$/u.exec(node.text.trim());
+  if (!head || node.quoted.length > 0 || node.children.length < 2) return undefined;
+  if (!node.children.every((child) => child.children.length === 0 && child.quoted.length === 0 && LISTED_PAIR.test(child.text.trim()))) return undefined;
+  const parts = node.children.map((child) => child.text.trim().replace(/\s*[,;.]$/u, ''));
+  const last = parts.length - 1;
+  const joined = parts.map((part, index) => (index < last ? (/\sund$/u.test(part) ? part : `${part},`) : part.replace(/\s+und$/u, ''))).join(' ');
+  return `${head[1]} ${joined} ersetzt.`;
+}
+
+/**
+ * Befehle in Bearbeitungsgruppen (Indizes, vorwärts): Läufe aufeinanderfolgender Umnummerierungen am selben Ort bilden
+ * eine Gruppe, jeder andere Befehl eine eigene.
+ */
+function relabelRuns(parsed: ReadonlyArray<{ leaf: Leaf; parsed: Parsed }>): number[][] {
+  const contextOf = (index: number): string | undefined => {
+    const template = parsed[index]!.parsed.items?.[0]?.template;
+    return template?.kind === 'relabel' ? formatPath(template.context) : undefined;
+  };
+  const groups: number[][] = [];
+  for (let index = 0; index < parsed.length; index += 1) {
+    const context = contextOf(index);
+    const last = groups.at(-1);
+    if (context !== undefined && last && contextOf(last.at(-1)!) === context && last.at(-1) === index - 1) last.push(index);
+    else groups.push([index]);
+  }
+  return groups;
+}
+
 /** Ein Befehl als Folge von Vorlagen (strukturell) oder Operationen mit Orten (Wortlaut). */
 type Parsed = { formulas: FormulaId[]; items?: Array<{ formula: FormulaId; template?: StructuralTemplate; parsed?: ParsedOperation }>; reason?: string };
 
@@ -101,7 +146,13 @@ function parseLeaf(leaf: Leaf): Parsed {
   if (leaf.structural) {
     const formula = leaf.structural.formula as FormulaId;
     if (!leaf.structural.templates) return { formulas: [formula], reason: leaf.structural.reason ?? 'nicht lesbar' };
-    return { formulas: [formula], items: leaf.structural.templates.map((template) => ({ formula, template })) };
+    const items: NonNullable<Parsed['items']> = leaf.structural.templates.map((template) => ({ formula, template }));
+    const followUp = leaf.structural.followUp;
+    if (!followUp) return { formulas: [formula], items };
+    // Weiterer Befehl im selben Satz, am umnummerierten Glied (nach der Umnummerierung ausgeführt).
+    const command = parseCommand(followUp.text, [followUp.context]);
+    if (!command.operations) return { formulas: [formula, ...command.formulas], reason: command.reason ?? 'weiterer Befehl nicht unterstützt' };
+    return { formulas: [formula, ...command.formulas], items: [...items, ...command.operations.map((parsed) => ({ formula: parsed.formula, parsed }))] };
   }
   const command = parseCommand(leaf.node.text, leaf.context);
   if (!command.operations) return { formulas: command.formulas, reason: command.reason ?? 'nicht unterstützt' };
@@ -160,44 +211,88 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
   // Rückwärts: letzter Befehl zuerst, je im aktuellen Zustand aufgelöst.
   const working = structuredClone(after) as NormBodyBlock[];
   const collected: RecipeStep[][] = [];
-  try {
-    for (const { leaf, parsed: command } of [...parsed].reverse()) {
-      const leafSteps: RecipeStep[] = [];
-      for (const item of [...command.items!].reverse()) {
-        const realizedSteps: RecipeStep[] = [];
-        if (item.template) {
-          const realized = realize(working, item.template, `${leaf.labels.join(' ')}`, explicit.has(formatPath((item.template as { context: LocationPath }).context)));
-          for (const entry of realized) {
-            const scope: ScopeRecord = { fields: entry.field ? [entry.field] : [], resolved: entry.resolved, widened: entry.widened };
-            realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation) });
-          }
-        } else {
-          const operation = item.parsed!;
-          const scopes: ScopeRecord[] = [];
-          for (const path of operation.locations) {
-            const resolved = resolvePath(working, path);
-            if (!resolved.ok) throw new ReconstructionError('location-unresolved', `${leaf.labels.join(' ')} ${formatPath(path)}: ${resolved.reason}`);
-            scopes.push(resolved.scope);
-          }
-          if (scopes.length > 1) {
-            const seen = new Set<string>();
-            for (const scope of scopes) {
-              for (const field of scope.fields) {
-                const key = `${field.path.join('.')}:${field.key}`;
-                if (seen.has(key)) throw new ReconstructionError('overlapping-locations', `${leaf.labels.join(' ')}: die Orte von „jeweils“ überschneiden sich`);
-                seen.add(key);
-              }
-            }
-          }
-          operation.locations.forEach((path, index) => {
-            realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: operation.formula, location: formatPath(path), scope: scopes[index]!, operation: operation.operation, evidence: { baseline: '', current: '' } });
-          });
-        }
-        // Rückwärts in umgekehrter Reihenfolge der konkreten Schritte.
-        for (const step of [...realizedSteps].reverse()) applyBackward(working, step.scope, step.operation, `${leaf.labels.join(' ')} ${step.location}`);
-        leafSteps.unshift(...realizedSteps);
+  type Item = NonNullable<Parsed['items']>[number];
+  const realizeItem = (leaf: Leaf, item: Item): RecipeStep[] => {
+    const realizedSteps: RecipeStep[] = [];
+    if (item.template) {
+      const realized = realize(working, item.template, `${leaf.labels.join(' ')}`, explicit.has(formatPath((item.template as { context: LocationPath }).context)));
+      for (const entry of realized) {
+        const scope: ScopeRecord = { fields: entry.field ? [entry.field] : [], resolved: entry.resolved, widened: entry.widened };
+        realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation) });
       }
-      collected.unshift(leafSteps);
+      return realizedSteps;
+    }
+    const operation = item.parsed!;
+    const scopes: ScopeRecord[] = [];
+    for (const path of operation.locations) {
+      const resolved = resolvePath(working, path);
+      if (!resolved.ok) throw new ReconstructionError('location-unresolved', `${leaf.labels.join(' ')} ${formatPath(path)}: ${resolved.reason}`);
+      scopes.push(resolved.scope);
+    }
+    if (scopes.length > 1) {
+      // Dasselbe Feld darf mehrfach vorkommen, wenn die Orte verschiedene Sätze darin sind („In Satz 2 und 3 wird jeweils …“).
+      const seen = new Map<string, Set<string>>();
+      for (const scope of scopes) {
+        for (const field of scope.fields) {
+          const key = `${field.path.join('.')}:${field.key}`;
+          const sentence = scope.sentence === undefined ? '*' : String(scope.sentence);
+          const taken = seen.get(key) ?? new Set<string>();
+          if (taken.has(sentence) || (taken.size > 0 && (sentence === '*' || taken.has('*')))) throw new ReconstructionError('overlapping-locations', `${leaf.labels.join(' ')}: die Orte von „jeweils“ überschneiden sich`);
+          taken.add(sentence);
+          seen.set(key, taken);
+        }
+      }
+    }
+    operation.locations.forEach((path, index) => {
+      realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: operation.formula, location: formatPath(path), scope: scopes[index]!, operation: operation.operation, evidence: { baseline: '', current: '' } });
+    });
+    return realizedSteps;
+  };
+  // Rückwärts in umgekehrter Reihenfolge der konkreten Schritte.
+  const undo = (leaf: Leaf, realizedSteps: readonly RecipeStep[]): void => {
+    for (const step of [...realizedSteps].reverse()) applyBackward(working, step.scope, step.operation, `${leaf.labels.join(' ')} ${step.location}`);
+  };
+  try {
+    for (const group of [...relabelRuns(parsed)].reverse()) {
+      if (group.length === 1) {
+        const { leaf, parsed: command } = parsed[group[0]!]!;
+        const leafSteps: RecipeStep[] = [];
+        for (const item of [...command.items!].reverse()) {
+          const realizedSteps = realizeItem(leaf, item);
+          undo(leaf, realizedSteps);
+          leafSteps.unshift(...realizedSteps);
+        }
+        collected.unshift(leafSteps);
+        continue;
+      }
+      // Aufeinanderfolgende Umnummerierungen am selben Ort („Der bisherige Buchst. b wird Buchst. c …“ – „Der bisherige
+      // Buchst. c wird Buchst. d.“ – „Die bisherigen Buchst. d und e werden die Buchst. e und f.“) nennen die Glieder
+      // alle nach der **bisherigen** Zählung: Sie gelten gleichzeitig. Rückwärts werden zuerst die weiteren Befehle
+      // dieser Sätze (am Glied unter neuer Bezeichnung) zurückgenommen, dann alle Umnummerierungen als eine.
+      const rest = new Map<number, RecipeStep[]>();
+      for (const index of [...group].reverse()) {
+        const { leaf, parsed: command } = parsed[index]!;
+        const leafSteps: RecipeStep[] = [];
+        for (const item of command.items!.slice(1).reverse()) {
+          const realizedSteps = realizeItem(leaf, item);
+          undo(leaf, realizedSteps);
+          leafSteps.unshift(...realizedSteps);
+        }
+        rest.set(index, leafSteps);
+      }
+      const owners = group.flatMap((index) => (parsed[index]!.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>).pairs.map(() => index));
+      const first = parsed[group[0]!]!;
+      const template = first.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>;
+      const merged: StructuralTemplate = { kind: 'relabel', context: template.context, pairs: group.flatMap((index) => (parsed[index]!.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>).pairs) };
+      const realized = realize(working, merged, group.map((index) => parsed[index]!.leaf.labels.join(' ')).join(', '), false);
+      const relabels = new Map<number, RecipeStep[]>(group.map((index) => [index, []]));
+      for (const entry of realized) {
+        const owner = owners[entry.pair!]!;
+        const { leaf, parsed: command } = parsed[owner]!;
+        relabels.get(owner)!.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: command.items![0]!.formula, location: entry.location, scope: { fields: [], resolved: entry.resolved, widened: entry.widened }, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation) });
+      }
+      for (const entry of [...realized].reverse()) applyBackward(working, { fields: [], resolved: entry.resolved, widened: entry.widened }, entry.operation as Operation, `${first.leaf.labels.join(' ')} ${entry.location}`);
+      for (const index of [...group].reverse()) collected.unshift([...relabels.get(index)!, ...rest.get(index)!]);
     }
   } catch (error) {
     const code = error instanceof ReconstructionError || error instanceof StructuralError ? error.code : 'error';

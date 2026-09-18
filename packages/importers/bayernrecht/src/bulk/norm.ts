@@ -57,7 +57,7 @@ import {
   type ReviewItemInput,
   type ReviewQueue,
 } from '../common/review.ts';
-import { createSlugReserver, writeSlugRegistry, type SlugRegistry, type SlugReservation } from '../common/slug-registry.ts';
+import { createSlugReserver, writeSlugRegistry, type SlugMigration, type SlugRegistry, type SlugReservation } from '../common/slug-registry.ts';
 import { parseBayernRechtPackage, type BayernRechtDocument } from '../parse/index.ts';
 import { readBayernRechtPackage } from '../parse/package.ts';
 import { assessTextIntegrity } from '../inventory/document.ts';
@@ -72,7 +72,7 @@ import { loadMergedAnnexes } from './annex.ts';
 import { figureRawDocuments, type FigurePackage } from './figures.ts';
 import { reversedAmendmentsText } from './trace.ts';
 import { isCachedPackageProblem, readCachedPackage, type CachedPackage } from './cache.ts';
-import { writeNormRecord } from './persist.ts';
+import { removeRetiredNormDirectory, writeNormRecord } from './persist.ts';
 import { baselineGate, type BulkCandidate, type GateVerdict } from './select.ts';
 import type { BulkPhase, BulkResult } from './state.ts';
 import { buildDecisionTrace, recoveryMethodFor, type DecisionTrace } from './trace.ts';
@@ -100,6 +100,8 @@ export interface ProcessCandidateOptions {
   /** Wird bei einer Neureservierung verändert; der Aufrufer schreibt sie nach dem Lauf. */
   registry: SlugRegistry;
   existingSlugs: ReadonlySet<string>;
+  /** Einzeln entschiedene Slugmigrationen (`slug-migrations.json`); ohne Eintrag bleibt jeder Slug stabil. */
+  slugMigrations?: readonly SlugMigration[];
   institutions: CompiledInstitutionRegistry;
   /** Quellkorrekturen **dieses** Dokuments (`source-corrections.json`), an Paket-SHA-256 und Wortlaut gebunden. */
   sourceCorrections?: readonly SourceCorrection[];
@@ -587,7 +589,7 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   if (!gate.admit && gate.review) reviewItems.push(gate.review);
 
   /* ------------------------------------------------------------------ Überleitung und Prüfung */
-  const reserver = createSlugReserver(options.registry, options.existingSlugs);
+  const reserver = createSlugReserver(options.registry, options.existingSlugs, options.slugMigrations ?? []);
   let reservation: SlugReservation | undefined;
   let record: NormRecord | undefined;
   let figureRaw: ManifestRawDocument[] = [];
@@ -597,8 +599,15 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   let phase: BulkPhase = gate.admit ? 'parse' : 'auswahl';
   let failure: { code: string; message: string } | undefined;
 
+  const registrySnapshot = { entries: [...options.registry.entries], retired: [...(options.registry.retired ?? [])] };
   const rollbackSlug = (): void => {
     if (!reservation?.newlyReserved) return;
+    if (reservation.migratedFrom) {
+      // Eine Migration, die nicht zur Übernahme führt, wird vollständig zurückgenommen: alter Slug aktiv, nichts stillgelegt.
+      options.registry.entries.splice(0, options.registry.entries.length, ...registrySnapshot.entries);
+      options.registry.retired = registrySnapshot.retired;
+      return;
+    }
     const index = options.registry.entries.findIndex((entry) => entry.sourceIdentity === candidate.documentId);
     if (index >= 0) options.registry.entries.splice(index, 1);
   };
@@ -640,8 +649,8 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
       figureRaw = figures.raw;
       if (figures.unbound.length > 0) block('figure-asset-unbound', `${figures.unbound.length} Abbildungen ohne belegte Bilddatei im Exportpaket: ${figures.unbound.slice(0, 5).join(', ')}`, ['Eine Abbildung wird nur mit Bilddatei aus dem Paket (Pfad und SHA-256) ausgeliefert.']);
       const audit = auditRecord(record);
-      // Nicht entscheidbare Eigennamen („Bayerisches Konkordat“): Prüffall, nicht blockierend; der Text bleibt.
-      for (const [code, summary] of [['historical-name-uncertain', 'historischer Vertragsname oder heutiger Selbstbezug'], ['proper-name-uncertain', 'Markenname mit Landesbezeichnung']] as const) {
+      // Nicht entscheidbare Eigennamen (Markenname mit Punkt und Landesbezeichnung): Prüffall, nicht blockierend.
+      for (const [code, summary] of [['proper-name-uncertain', 'Markenname mit Landesbezeichnung']] as const) {
         const uncertain = audit.filter((finding) => finding.code === code);
         if (uncertain.length === 0) continue;
         findings.push({ severity: 'warning', code, message: `${uncertain.length}× ${summary} – nicht entscheidbar: ${uncertain.slice(0, 3).map((finding) => finding.message).join(' · ')}` });
@@ -657,9 +666,9 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
       // wird zentral in data/imports/bayernrecht/institution-mapping.json getroffen. Der Befund bleibt
       // am Manifesteintrag und in der Warnungsbilanz des Laufs.
       if (reservation?.collision) {
-        // Deterministisch aufgelöst (Kennungshash als Zusatz) und gemeldet – nicht stillschweigend.
-        findings.push({ severity: 'warning', code: 'slug-collision', message: `Slug ${reservation.collision.candidate} ist durch ${reservation.collision.heldBy} belegt; vergeben wurde ${reservation.slug}` });
-        reviewItems.push({ category: 'identity', key: 'slug-collision', severity: 'non-blocking', summary: `Slugkollision: ${reservation.collision.candidate} → ${reservation.slug}`, details: [`Belegt durch ${reservation.collision.heldBy}`, 'Die Auflösung ist deterministisch (Kennungshash) und bleibt über Läufe stabil.'] });
+        // Akzeptierte technische Kollision (Nutzerentscheidung Run 5): deterministisch aufgelöst (Kennungshash als
+        // Zusatz), über Läufe stabil und eindeutig (Slug-Registry, Audit) – ein Befund, kein Review-Fall.
+        findings.push({ severity: 'info', code: 'slug-collision', message: `Slug ${reservation.collision.candidate} ist durch ${reservation.collision.heldBy} belegt; vergeben wurde ${reservation.slug} (akzeptierte technische Kollision)` });
       }
     } catch (error) {
       rollbackSlug();
@@ -818,6 +827,13 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
     written.push(...normWrite.files);
     // `changed` beschreibt den Bestand, nicht die Absicht: Im Dry-run ändert sich nichts.
     changed = options.write && normWrite.changed;
+    if (reservation?.migratedFrom) {
+      findings.push({ severity: 'info', code: 'slug-migrated', message: `Slug ${reservation.migratedFrom} stillgelegt (sachlich falsch), neuer Slug ${reservation.slug}; permanente Umleitung alt → neu` });
+      if (options.write) {
+        const removed = await removeRetiredNormDirectory(root, reservation.migratedFrom, candidate.documentId);
+        if (removed) { written.push(removed); changed = true; }
+      }
+    }
     if (options.write && reserver.changed) await writeSlugRegistry(root, options.registry);
   }
 

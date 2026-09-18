@@ -79,9 +79,15 @@ export type StructuralOperation =
   /** Wörter oder Satzzeichen am Ende des einzigen Feldes streichen (`text` wie zitiert). */
   | { kind: 'delete-final'; text: string }
   /** Schluss des einzigen Feldes ersetzen; beide Seiten wie zitiert (Wort oder anschließendes Satzzeichen). */
-  | { kind: 'replace-final-words'; from: string; to: string };
+  | { kind: 'replace-final-words'; from: string; to: string }
+  /**
+   * „Der Wortlaut wird Abs. 1.“: Der unbezeichnete Inhalt der Vorschrift unter `parent` ab `index` (ein Textglied, wenn
+   * `text`, dann `count` weitere Glieder) wird der Absatz `label` – so, wie der Parser einen bezeichneten Absatz bildet
+   * (`subparagraphBlocks`: erster Fließtext als `text`, der Rest als Kinder).
+   */
+  | { kind: 'number-paragraph'; parent: number[]; index: number; label: string; text: boolean; count: number };
 
-export const STRUCTURAL_KINDS: ReadonlySet<string> = new Set(['insert-sentence', 'renumber-sentence', 'number-sentences', 'insert-block', 'relabel', 'insert-title', 'delete-final', 'replace-final-words']);
+export const STRUCTURAL_KINDS: ReadonlySet<string> = new Set(['insert-sentence', 'renumber-sentence', 'number-sentences', 'insert-block', 'relabel', 'insert-title', 'delete-final', 'replace-final-words', 'number-paragraph']);
 
 function childrenAt(body: NormBodyBlock[], parent: readonly number[]): NormBodyBlock[] {
   if (parent.length === 0) return body;
@@ -175,6 +181,21 @@ export function structuralForward(body: NormBodyBlock[], field: FieldRef | undef
       block.label = operation.to;
       return;
     }
+    case 'number-paragraph': {
+      const siblings = childrenAt(body, operation.parent);
+      const size = (operation.text ? 1 : 0) + operation.count;
+      if (operation.index + size > siblings.length || size === 0) throw new StructuralError('block-missing', `${step}: unter [${operation.parent.join(',')}] fehlen die Glieder des Wortlauts`);
+      const taken = siblings.slice(operation.index, operation.index + size);
+      const block: NormBodyBlock = { type: 'subparagraph', label: operation.label };
+      if (operation.text) {
+        const first = taken[0]!;
+        if (first.type !== 'paragraphText' || first.children !== undefined || first.label !== undefined || typeof first.text !== 'string' || Object.keys(first).some((key) => key !== 'type' && key !== 'text')) throw new StructuralError('target-not-found', `${step}: der Wortlaut beginnt nicht mit einem einfachen Textglied`);
+        block.text = first.text;
+      }
+      if (operation.count > 0) block.children = taken.slice(operation.text ? 1 : 0);
+      siblings.splice(operation.index, size, block);
+      return;
+    }
     case 'insert-title': {
       const block = blockAt(body, operation.path);
       if (!block || block.title !== undefined) throw new StructuralError('target-not-found', `${step}: Glied [${operation.path.join(',')}] fehlt oder trägt schon eine Überschrift`);
@@ -255,6 +276,14 @@ export function structuralBackward(body: NormBodyBlock[], field: FieldRef | unde
       block.label = operation.from;
       return;
     }
+    case 'number-paragraph': {
+      const siblings = childrenAt(body, operation.parent);
+      const block = siblings[operation.index];
+      if (!block || block.type !== 'subparagraph' || block.label !== operation.label || Object.keys(block).some((key) => !['type', 'label', 'text', 'children'].includes(key))) throw new StructuralError('target-not-found', `${step}: an Stelle ${operation.index} unter [${operation.parent.join(',')}] steht nicht der Absatz „${operation.label}“`);
+      if ((typeof block.text === 'string') !== operation.text || (block.children?.length ?? 0) !== operation.count) throw new StructuralError('target-not-found', `${step}: Absatz „${operation.label}“ hat nicht die belegte Gestalt`);
+      siblings.splice(operation.index, 1, ...(operation.text ? [{ type: 'paragraphText', text: block.text! } as NormBodyBlock] : []), ...(block.children ?? []));
+      return;
+    }
     case 'insert-title': {
       const block = blockAt(body, operation.path);
       if (!block || block.title !== operation.title) throw new StructuralError('target-not-found', `${step}: Glied [${operation.path.join(',')}] trägt nicht die eingefügte Überschrift`);
@@ -280,12 +309,16 @@ export function structuralBackward(body: NormBodyBlock[], field: FieldRef | unde
 /* --------------------------------------------------------------------------- Zitate der Verkündung */
 
 /** Zitierte Einheiten in Gruppen je Zitat (ein Glied, ein Satz), äußere Anführungszeichen entfernt. */
-export function quoteGroups(units: readonly GazetteUnit[]): string[] | undefined {
+export function quoteGroups(units: readonly GazetteUnit[], options: { dashes?: boolean } = {}): string[] | undefined {
   const groups: string[] = [];
   let current: string[] = [];
   let balance = 0;
   for (const unit of units) {
-    const text = `${unit.label ?? ''} ${unit.text}`.trim();
+    let text = `${unit.label ?? ''} ${unit.text}`.trim();
+    // Spiegelstriche setzen die Verkündungen als Listenpunkt ohne Zeichen im Text (`li.MBLSpiegelstrich18`, BayMBl. 2024
+    // Nr. 442; `li` ohne Klasse, GVBl. 2025 S. 272); der Körper führt sie mit der Bezeichnung „–“. Für den Vergleich
+    // eingefügter Glieder wird der Strich ergänzt – stimmt er nicht, scheitert der wörtliche Vergleich.
+    if (options.dashes && unit.tag === 'li' && (unit.className === '' || /Spiegelstrich/u.test(unit.className)) && !unit.label) text = /^[„‚]/u.test(text) ? `${text[0]}– ${text.slice(1)}` : `– ${text}`;
     if (balance <= 0) {
       // Äußeres Zitat „…“; manche Verkündungen setzen es als ‚…‘ (GVBl. 2026 S. 487).
       if (!/^[„‚]/u.test(text)) return undefined;
@@ -327,14 +360,20 @@ export type StructuralTemplate =
   | { kind: 'relabel'; context: LocationPath; pairs: Array<[LocationStep, LocationStep]> }
   | { kind: 'insert-title'; context: LocationPath; title: string }
   | { kind: 'replace-final'; context: LocationPath; from: string; to: string }
-  | { kind: 'delete-final'; context: LocationPath; text: string };
+  | { kind: 'delete-final'; context: LocationPath; text: string }
+  | { kind: 'number-paragraph'; context: LocationPath };
 
-export type StructuralFormula = 'insert-sentence' | 'insert-block' | 'relabel' | 'renumber-sentence' | 'number-sentences' | 'insert-title' | 'replace-final-words' | 'delete-final-words';
+export type StructuralFormula = 'insert-sentence' | 'insert-block' | 'relabel' | 'renumber-sentence' | 'number-sentences' | 'insert-title' | 'replace-final-words' | 'delete-final-words' | 'number-paragraph';
 
 export interface StructuralParse {
   formula: StructuralFormula | 'insert-unit' | 'renumber' | 'unrecognized';
   templates?: StructuralTemplate[];
   reason?: string;
+  /**
+   * Weiterer Befehl im selben Satz, nach der Umnummerierung auszuführen, am Glied unter seiner **neuen** Bezeichnung:
+   * „Der bisherige Buchst. b wird Buchst. c und nach der Angabe „§ 62 Abs. 3“ wird die Angabe „ , § 76 Abs. 1“ eingefügt.“
+   */
+  followUp?: { text: string; context: LocationPath };
 }
 
 const KIND_WORDS: ReadonlyArray<[RegExp, StepKind]> = [
@@ -411,6 +450,22 @@ export function parseStructural(input: string, context: readonly LocationPath[],
 
   // „Der Wortlaut wird Satz 1.“
   if (/^Der\s+Wortlaut\s+wird\s+Satz\s+1\.?$/u.test(text)) return { formula: 'number-sentences', templates: [{ kind: 'number-sentences', context: flat(context) }] };
+  // „Der Wortlaut wird Abs. 1.“ (GVBl. 2024 S. 562, 2026 S. 190)
+  if (/^Der\s+Wortlaut\s+wird\s+Abs\.\s*1\.?$/u.test(text)) return { formula: 'number-paragraph', templates: [{ kind: 'number-paragraph', context: flat(context) }] };
+
+  // Umnummerierung mit weiterem Befehl: „Der bisherige Satz 3 wird Satz 4 und nach der Angabe „Bei dem“ … eingefügt.“,
+  // „Nr. 6 wird Nr. 5 und in Buchst. c wird die Angabe „Nrn.“ durch die Angabe „Nr.“ ersetzt.“
+  const combined = new RegExp(String.raw`^((?:(?:Der|Die|Das)\s+)?(?:bisherigen?\s+)?(?:${UNIT}|Satz)\s+${VALUE}\s+wird\s+(?:zu\s+)?(?:${UNIT}|Satz)\s+${VALUE})\s+und\s+(?!(?:wird\s+)?wie\s+folgt)([\s\S]+?)\.?$`, 'u').exec(text);
+  if (combined) {
+    const head = parseStructural(`${combined[1]!}.`, context, []);
+    const renumbered = head?.templates?.[0];
+    if (head && renumbered && (renumbered.kind === 'relabel' || renumbered.kind === 'renumber-sentences') && (renumbered.kind === 'relabel' ? renumbered.pairs.length === 1 : renumbered.pairs.length === 1)) {
+      const rest = combined[combined.length - 1]!.trim();
+      const target: LocationStep = renumbered.kind === 'relabel' ? renumbered.pairs[0]![1] : { kind: 'satz', value: String(renumbered.pairs[0]![1]) };
+      const restContext = renumbered.kind === 'relabel' ? [...renumbered.context, target] : [...renumbered.context, target];
+      return { ...head, followUp: { text: `${rest.charAt(0).toUpperCase()}${rest.slice(1)}.`, context: restContext } };
+    }
+  }
 
   // Satzumnummerierung: „Der bisherige Satz 2 wird Satz 3.“ / „Die bisherigen Sätze 2 und 3 werden die Sätze 3 und 4.“
   if ((match = /^(?:In\s+(.+?)\s+(?:wird|werden)\s+)?(?:(?:Der|Die)\s+)?(?:bisherigen?\s+)?(?:Satz|Sätze)\s+([\d\s,undbis]+?)\s+(?:wird|werden)\s+(?:zu\s+)?(?:(?:die|den)\s+)?(?:Satz|Sätzen?)\s+([\d\s,undbis]+?)\.?$/u.exec(text))) {
@@ -433,8 +488,10 @@ export function parseStructural(input: string, context: readonly LocationPath[],
     return { formula: 'relabel', templates: [{ kind: 'relabel', context: flat(context), pairs: from.map((value, index) => [{ kind: fromKind, value }, { kind: toKind, value: to[index]! }] as [LocationStep, LocationStep]) }] };
   }
 
-  // Überschrift: „In § 5 wird folgende Überschrift eingefügt:“ / „Folgende Überschrift wird eingefügt:“
-  if ((match = /^(?:(?:In|Im)\s+(.+?)\s+wird\s+folgende\s+Überschrift\s+eingefügt|Folgende\s+Überschrift\s+wird\s+eingefügt)\s*:$/u.exec(text))) {
+  // Überschrift: „In § 5 wird folgende Überschrift eingefügt:“ / „Folgende Überschrift wird eingefügt:“ /
+  // „Der Nr. 1 wird folgende Überschrift vorangestellt:“ (BayMBl. 2025 Nr. 391)
+  if ((match = /^(?:(?:In|Im)\s+(.+?)\s+wird\s+folgende\s+Überschrift\s+eingefügt|Folgende\s+Überschrift\s+wird\s+eingefügt|(?:Der|Dem)\s+(.+?)\s+wird\s+folgende\s+Überschrift\s+vorangestellt)\s*:$/u.exec(text))) {
+    if (match[1] === undefined && match[2] !== undefined) match[1] = match[2];
     const where = locationOf(match[1] ?? '', context);
     const groups = quoteGroups(quoted);
     if (!where || !groups || groups.length !== 1 || where.length === 0) return { formula: 'insert-unit', reason: 'Eingefügte Überschrift: Ort oder Zitat nicht eindeutig' };
@@ -474,7 +531,7 @@ export function parseStructural(input: string, context: readonly LocationPath[],
     const targetKind = kindOf(match[6]!);
     const values = expandValues(match[7]!, match[8]!);
     const verb = match[9]!;
-    const groups = quoteGroups(quoted);
+    const groups = quoteGroups(quoted, { dashes: true });
     if (!where || !targetKind || !values || !groups || (match[4] && !anchorKind)) return { formula: 'insert-unit', reason: 'Eingefügtes Glied: Ort, Bezeichnung oder Zitat nicht lesbar' };
     if (groups.length !== values.length && groups.length !== 1) return { formula: 'insert-unit', reason: `Eingefügte Glieder: ${values.length} genannt, ${groups.length} zitiert` };
     if (verb === 'eingefügt' && !match[3]) return { formula: 'insert-unit', reason: 'Eingefügtes Glied ohne Anker („nach …“/„vor …“): die Stelle ist nicht bestimmt' };
@@ -493,7 +550,7 @@ export function parseStructural(input: string, context: readonly LocationPath[],
   if ((match = blockAppendFirst.exec(text))) {
     const targetKind = kindOf(match[1]!);
     const values = expandValues(match[2]!, match[3]!);
-    const groups = quoteGroups(quoted);
+    const groups = quoteGroups(quoted, { dashes: true });
     if (!targetKind || !values || !groups) return { formula: 'insert-unit', reason: 'Angefügtes Glied: Bezeichnung oder Zitat nicht lesbar' };
     if (groups.length !== values.length && groups.length !== 1) return { formula: 'insert-unit', reason: `Angefügte Glieder: ${values.length} genannt, ${groups.length} zitiert` };
     if (match[4] === 'eingefügt') return { formula: 'insert-unit', reason: 'Eingefügtes Glied ohne Anker: die Stelle ist nicht bestimmt' };
@@ -507,6 +564,8 @@ export function parseStructural(input: string, context: readonly LocationPath[],
 /** Ein aufgelöster Schritt: konkrete Operation, Feld (bei Satz- und Schlussoperationen), Ort und Beleg. */
 export interface RealizedStep {
   operation: StructuralOperation;
+  /** Umnummerierung: Index des Paars in `template.pairs`, aus dem der Schritt stammt. */
+  pair?: number;
   field?: FieldRef;
   location: string;
   resolved: string[];
@@ -521,6 +580,30 @@ function singleTextField(body: readonly NormBodyBlock[], path: LocationPath, ste
   if (fields.length !== 1) throw new StructuralError('end-not-determined', `${step} ${formatPath(path)}: genau ein Textfeld verlangt, der Bereich hat ${fields.length}`);
   return { field: fields[0]!, resolved: scope.scope.resolved, widened: scope.scope.widened };
 }
+
+/**
+ * Ein Absatz, dessen Satz über eine Aufzählung läuft (Art. 7 Abs. 2 BayUIG: „¹Soweit ein Antrag“ – „1. …“ … „5. …“ –
+ * „ist er abzulehnen, …“): eigener Text, nur bezeichnete Aufzählungsglieder, dann genau ein unbezeichneter Schlusstext
+ * als letztes Kind. Satz 1 beginnt im eigenen Text; ein angefügter Satz steht am Ende des Schlusstexts.
+ */
+function listFrame(body: readonly NormBodyBlock[], path: LocationPath): { first: FieldRef; last: FieldRef; inner: FieldRef[]; resolved: string[]; widened: string[] } | undefined {
+  const scope = resolvePath(body, path);
+  if (!scope.ok || scope.scope.sentence !== undefined) return undefined;
+  const fields = scope.scope.fields.filter((field) => field.key === 'text');
+  if (fields.length < 3) return undefined;
+  const first = fields[0]!;
+  const last = fields.at(-1)!;
+  const owner = blockAt(body, first.path);
+  const children = owner?.children ?? [];
+  if (children.length < 2 || last.path.join(',') !== [...first.path, children.length - 1].join(',')) return undefined;
+  const tail = children.at(-1)!;
+  if (tail.type !== 'paragraphText' || tail.label || (tail.children?.length ?? 0) > 0) return undefined;
+  if (!children.slice(0, -1).every((child) => (child.type === 'item' || child.type === 'subitem') && Boolean(child.label))) return undefined;
+  if (!fields.every((field) => field.path.slice(0, first.path.length).join(',') === first.path.join(','))) return undefined;
+  return { first, last, inner: fields.slice(1, -1), resolved: scope.scope.resolved, widened: scope.scope.widened };
+}
+
+const markersIn = (body: readonly NormBodyBlock[], fields: readonly FieldRef[]): number => fields.reduce((sum, field) => sum + sentenceNumbers(String(blockAt(body, field.path)?.[field.key] ?? '')).length, 0);
 
 const SAME_KIND: Readonly<Partial<Record<StepKind, RegExp>>> = {
   absatz: /^\(\d+[a-z]?\)$/u,
@@ -540,6 +623,16 @@ const SAME_KIND: Readonly<Partial<Record<StepKind, RegExp>>> = {
 export function realize(body: readonly NormBodyBlock[], template: StructuralTemplate, step: string, explicitNumbering: boolean): RealizedStep[] {
   switch (template.kind) {
     case 'insert-sentence': {
+      const frame = template.after === 'end' ? listFrameOrUndefined(body, template.context, step) : undefined;
+      if (frame) {
+        // Angefügter Satz hinter dem Schlusstext einer Aufzählung. Die Satznummer ¹ im eigenen Text stammt nur dann nicht
+        // aus dieser Änderung, wenn die Änderung sie ausdrücklich setzt („Der Wortlaut wird Satz 1.“) oder der Absatz
+        // schon vorher weitere Sätze zählte.
+        const lastText = String(blockAt(body, frame.last.path)?.text ?? '');
+        const before = sentenceNumbers(lastText).filter((marker) => marker.value < template.first).length + markersIn(body, frame.inner);
+        if (!explicitNumbering && before === 0) throw new StructuralError('sentence-ambiguous', `${step} ${formatPath(template.context)}: Satz ${template.first} hinter einer Aufzählung ohne ausdrückliche Satznummerierung`);
+        return [{ operation: { kind: 'insert-sentence', after: 'end', text: template.text, numberFirst: false }, field: frame.last, location: `${formatPath(template.context)} (Schlusstext hinter der Aufzählung)`, resolved: frame.resolved, widened: frame.widened }];
+      }
       const { field, resolved, widened } = singleTextField(body, template.context, step);
       const text = String(blockAt(body, field.path)?.text ?? '');
       const markers = sentenceNumbers(text);
@@ -575,6 +668,14 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
       return realized;
     }
     case 'number-sentences': {
+      const frame = listFrameOrUndefined(body, template.context, step);
+      if (frame) {
+        // „Der Wortlaut wird Satz 1.“ an einem Absatz mit Aufzählung: ¹ steht am Anfang des eigenen Texts, sonst trägt
+        // der Absatz (nach Rücknahme der späteren Befehle) keine Satznummer.
+        const firstMarkers = sentenceNumbers(String(blockAt(body, frame.first.path)?.text ?? ''));
+        if (firstMarkers.length !== 1 || firstMarkers[0]!.value !== 1 || firstMarkers[0]!.start !== 0 || markersIn(body, [...frame.inner, frame.last]) > 0) throw new StructuralError('sentence-ambiguous', `${step} ${formatPath(template.context)}: der Absatz mit Aufzählung trägt nicht genau die Satznummer ¹ am Anfang`);
+        return [{ operation: { kind: 'number-sentences' }, field: frame.first, location: `${formatPath(template.context)} (Text vor der Aufzählung)`, resolved: frame.resolved, widened: frame.widened }];
+      }
       const { field, resolved, widened } = singleTextField(body, template.context, step);
       return [{ operation: { kind: 'number-sentences' }, field, location: formatPath(template.context), resolved, widened }];
     }
@@ -583,6 +684,19 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
       const { field, resolved, widened } = singleTextField(body, template.context, step);
       const operation: StructuralOperation = template.kind === 'replace-final' ? { kind: 'replace-final-words', from: template.from, to: template.to } : { kind: 'delete-final', text: template.text };
       return [{ operation, field, location: formatPath(template.context), resolved, widened }];
+    }
+    case 'number-paragraph': {
+      // Rückwärts (nach Rücknahme der späteren Befehle) ist der Absatz (1) das einzige Glied der Vorschrift; seine
+      // Kinder sind kein Fußnotenvermerk an der Absatznummer (den der Parser voranstellt).
+      const located = locateBlock(body, template.context);
+      if (!located.ok) throw new StructuralError('location-unresolved', `${step} ${formatPath(template.context)}: ${located.reason}`);
+      const owner = located.path.length === 0 ? undefined : blockAt(body, located.path);
+      const children = located.path.length === 0 ? body : (owner?.children ?? []);
+      const only = children[0];
+      if (children.length !== 1 || !only || only.type !== 'subparagraph' || normalizeLabelText(only.label) !== '(1)') throw new StructuralError('location-unresolved', `${step} ${formatPath(template.context)}: Abs. 1 ist nicht das einzige Glied der Vorschrift`);
+      if ((only.children ?? []).some((child) => (child.type as string) === 'footnote')) throw new StructuralError('location-unresolved', `${step}: Fußnote am Absatz – Zugehörigkeit zur Absatznummer nicht bestimmt`);
+      const operation: StructuralOperation = { kind: 'number-paragraph', parent: located.path, index: 0, label: only.label!, text: typeof only.text === 'string', count: only.children?.length ?? 0 };
+      return [{ operation, location: `${formatPath(template.context)} Abs. 1`, resolved: located.resolved, widened: located.widened }];
     }
     case 'insert-title': {
       const located = locateBlock(body, template.context);
@@ -599,7 +713,8 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
       // Aufgelöst wird rückwärts, also in umgekehrter Vorwärtsreihenfolge, jeweils im aktuellen Zustand.
       const working = structuredClone(body) as NormBodyBlock[];
       const realized: RealizedStep[] = [];
-      for (const [from, to] of [...ordered].reverse()) {
+      for (const pair of [...ordered].reverse()) {
+        const [from, to] = pair;
         const located = locateBlock(working, [...template.context, to]);
         if (!located.ok) throw new StructuralError('location-unresolved', `${step} ${formatPath([...template.context, to])}: ${located.reason}`);
         const block = blockAt(working, located.path)!;
@@ -607,7 +722,7 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
         if (oldLabel === undefined || block.label === undefined) throw new StructuralError('renumber-ambiguous', `${step}: Bezeichnung „${block.label ?? ''}“ nicht eindeutig umzuschreiben`);
         const operation: StructuralOperation = { kind: 'relabel', path: located.path, from: oldLabel, to: block.label };
         structuralBackward(working, undefined, operation, step);
-        realized.unshift({ operation, location: `${formatPath([...template.context, from])} → ${formatPath([to])}`, resolved: located.resolved, widened: located.widened });
+        realized.unshift({ operation, pair: template.pairs.indexOf(pair), location: `${formatPath([...template.context, from])} → ${formatPath([to])}`, resolved: located.resolved, widened: located.widened });
       }
       return realized;
     }
@@ -638,13 +753,18 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
         if (template.quotes.length === template.targets.length && squash(wording.text) !== squash(template.quotes[position]!)) throw new StructuralError('inserted-text-mismatch', `${step}: ${formatPath([target])} im heutigen Text ist nicht wörtlich das eingefügte Glied („${template.quotes[position]!.slice(0, 80)}“ ≠ „${wording.text.slice(0, 80)}“)`);
         combined.push(wording.text);
         const siblings = here.length === 0 ? body : (blockAt(body, here)?.children ?? []);
+        // Der Anker ist das unmittelbar vorangehende (folgende) Glied – oder, wenn dieses selbst gegliedert ist, sein
+        // letztes (erstes) Unterglied: „Nach § 14 wird folgender Teil 4 eingefügt“, wenn § 14 der letzte Paragraph von Teil 3 ist.
+        const edge = (block: NormBodyBlock | undefined, side: 'last' | 'first'): NormBodyBlock[] => {
+          const chain: NormBodyBlock[] = [];
+          for (let current = block; current; current = side === 'last' ? current.children?.at(-1) : current.children?.[0]) chain.push(current);
+          return chain;
+        };
         if (template.anchor && position === 0 && template.anchor.side === 'after') {
-          const previous = siblings[index - 1];
-          if (!previous || !blockLabelMatches(previous, template.anchor.step)) throw new StructuralError('anchor-mismatch', `${step}: vor ${formatPath([target])} steht nicht ${formatPath([template.anchor.step])}`);
+          if (!edge(siblings[index - 1], 'last').some((block) => blockLabelMatches(block, template.anchor!.step))) throw new StructuralError('anchor-mismatch', `${step}: vor ${formatPath([target])} steht nicht ${formatPath([template.anchor.step])}`);
         }
         if (template.anchor && position === template.targets.length - 1 && template.anchor.side === 'before') {
-          const next = siblings[index + 1];
-          if (!next || !blockLabelMatches(next, template.anchor.step)) throw new StructuralError('anchor-mismatch', `${step}: nach ${formatPath([target])} steht nicht ${formatPath([template.anchor.step])}`);
+          if (!edge(siblings[index + 1], 'first').some((block) => blockLabelMatches(block, template.anchor!.step))) throw new StructuralError('anchor-mismatch', `${step}: nach ${formatPath([target])} steht nicht ${formatPath([template.anchor.step])}`);
         }
         if (template.append && position === template.targets.length - 1) {
           const pattern = SAME_KIND[target.kind];
@@ -658,6 +778,19 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
     }
   }
 }
+
+/** Rahmen einer Aufzählung nur, wenn der Bereich nicht ohnehin genau ein Textfeld hat. */
+function listFrameOrUndefined(body: readonly NormBodyBlock[], path: LocationPath, step: string): ReturnType<typeof listFrame> {
+  try {
+    singleTextField(body, path, step);
+    return undefined;
+  } catch (error) {
+    if (!(error instanceof StructuralError) || error.code !== 'end-not-determined') return undefined;
+    return listFrame(body, path);
+  }
+}
+
+const normalizeLabelText = (label: string | undefined): string => (label ?? '').replace(/\s+/gu, ' ').trim();
 
 /** Vergleich von Gliedwerten („5“ < „5a“ < „6“, „a“ < „b“, „1.2“ < „1.10“). */
 export function compareValues(left: string, right: string): number {
@@ -687,5 +820,6 @@ export function structuralEvidence(operation: StructuralOperation): { baseline: 
     case 'insert-title': return { baseline: '(ohne Überschrift)', current: operation.title };
     case 'delete-final': return { baseline: `…${finalSurface(operation.text)}`, current: '(am Ende gestrichen)' };
     case 'replace-final-words': return { baseline: `…${finalSurface(operation.from)}`, current: `…${finalSurface(operation.to)}` };
+    case 'number-paragraph': return { baseline: '(Wortlaut ohne Absatzbezeichnung)', current: operation.label };
   }
 }

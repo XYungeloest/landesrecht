@@ -224,10 +224,13 @@ Diese Regel ist hart und wird getestet.
   weiter übergeleitet („Zuständigkeiten des Staates Bayern“ in der geltenden Verfassung, „Freistaat Bayern“ als
   heutige Vertragspartei). Die frühere Überleitung „Königreich Bayern → Königreich Bayern-Württemberg“ war falsch
   und ist im Bestand bereinigt; der Prüfschritt `historical-name-transformed` (Fehler) verhindert ihre Rückkehr.
-  **Nicht entscheidbar** ist „Bayerisches Konkordat“: der eingeführte Name des Vertrags von 1924 (dessen Volltitel
-  geschützt ist) und zugleich ein heute für das Land geltender Vertrag. Er wird nicht automatisch geschützt, sondern
-  als Prüffall gemeldet (`historical-name-uncertain`, Kategorie `institution-mapping`, nicht blockierend); die
-  Entscheidung – Schutzmuster oder Überleitung – ist redaktionell.
+  **„Bayerisches Konkordat“** ist der Eigenname des Vertrags von 1924 und bleibt in allen Kasus unverändert
+  (Nutzerentscheidung Run 5, Transformer 1.3.0, `historical-treaty-short-name`); die heutige Vertragspartei
+  („Freistaat Bayern“ im Notenwechsel) wird weiter übergeleitet.
+* **„Zentrum Digitalisierung.Bayern“** ist ein Eigenname und bleibt erhalten (`institution-proper-name`). Für diese
+  Institution ist kein Simulations-Mapping definiert; ein Name wie „Zentrum Digitalisierung.Bayern-Württemberg“
+  wird nicht gebildet. Beide Überleitungen sind als Fehler gesperrt (`historical-name-transformed`). Andere
+  Markennamen mit Punkt und Landesbezeichnung bleiben nicht blockierende Prüffälle (`proper-name-uncertain`).
 * **Wörter, die nur mit „Bay“ beginnen**: „Bayreuth“, „Bayreuther“, „Bayerwald“. Sie sind für keine
   Regel erreichbar und werden zusätzlich als `municipality` bzw. `geography` eingeordnet, damit sie
   nicht als unklare Restform erscheinen.
@@ -236,6 +239,13 @@ Diese Regel ist hart und wird getestet.
   Finanzen und für Heimat“ → „Bayern-Württembergisches Staatsministerium der Finanzen und für
   Heimat“); der Organ- oder Behördenbegriff selbst bleibt unangetastet und wird zur Prüfung
   gemeldet. Das historische Erlassorgan bleibt als `originEnactingBody` vollständig erhalten.
+  **Erlassorgane (Run 5):** Für Bayern-Württemberg ist kein Simulationsressort definiert; eine Zuordnung auf ein
+  Simulationsorgan gibt es deshalb nur für die drei Verfassungsorgane. Staatsministerien, die am Stichtag unter
+  ihrem Namen nicht mehr bestanden, sind belegt historisch: Die Geschäftsverteilungsverordnung (StRGVV § 2,
+  Fassung seit 2023-11-08) nennt abschließend die Staatskanzlei und zwölf Staatsministerien. 27 solche
+  Bezeichnungen sind in `institution-mapping.json` `historical-source-only` (Befund `enacting-body-historical`,
+  Information); die am Stichtag bestehenden Ressorts und Mehrfachformeln bleiben Prüffall
+  (`enacting-body-mapping-required`, `data/audits/bayernrecht/INSTITUTIONS.md`).
 
 **Titel einer in Bezug genommenen Norm** sind dagegen Normtext und werden übergeleitet, die
 Fundstelle daneben nicht: „des Bayerischen Beamtengesetzes (BayBG) … (GVBl S. 702, BayRS

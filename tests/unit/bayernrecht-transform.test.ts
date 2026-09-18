@@ -93,8 +93,9 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    // 1.1.0: Herrschernamen geschützt; 1.2.0: historische Staaten, Organe und Vertragsnamen (Nutzerentscheidungen 2026-09-18).
-    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.2.0');
+    // 1.1.0: Herrschernamen geschützt; 1.2.0: historische Staaten, Organe und Vertragsnamen; 1.3.0: „Bayerisches
+    // Konkordat“ und „Zentrum Digitalisierung.Bayern“ (Nutzerentscheidungen 2026-09-18).
+    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.3.0');
   });
 
   it('kennt den angehängten Zielteil, auf dem der Idempotenzschutz beruht', () => {
@@ -436,8 +437,11 @@ describe('Erkennung und Institutionenpolitik', () => {
     expect(transformed).toContain('Stadt München');
   });
 
-  it('führt nur unstrittige Verfassungsorgane in der Zuordnung', () => {
-    expect(registry.registry.entries.map((entry) => entry.id)).toEqual(['landtag', 'staatsregierung', 'ministerpraesident']);
+  it('führt nur unstrittige Verfassungsorgane in der Zuordnung und historische Ressorts nur als Provenienz', () => {
+    expect(registry.registry.entries.slice(0, 3).map((entry) => entry.id)).toEqual(['landtag', 'staatsregierung', 'ministerpraesident']);
+    // Alle übrigen Einträge: am Stichtag nicht mehr bestehende Staatsministerien, ohne Ziel (kein Simulationsorgan).
+    for (const entry of registry.registry.entries.slice(3)) expect(entry).toMatchObject({ category: 'ministry', status: 'historical-source-only' });
+    expect(registry.registry.entries.every((entry) => entry.status !== 'map')).toBe(true);
     expect(registry.resolve('Bayerisches Staatsministerium der Finanzen und für Heimat', 'ministry')).toEqual({ status: 'review', source: 'default' });
     expect(registry.resolve('Bayerisches Landesamt für Statistik', 'authority')).toEqual({ status: 'review', source: 'default' });
     expect(registry.resolve('Bayerischer Landtag', 'legislature').status).toBe('safe-transform');
@@ -455,7 +459,7 @@ describe('Erkennung und Institutionenpolitik', () => {
     }
     // Der Zielname selbst enthält den Quellnamen – und muss trotzdem zulässig sein.
     expect(() => compileInstitutionRegistry(entry('Bayern-Württembergischer Landtag'))).not.toThrow();
-    for (const registryEntry of registry.registry.entries) expect(registryEntry.target).not.toMatch(/bayerisch/iu);
+    for (const registryEntry of registry.registry.entries) expect(registryEntry.target ?? '').not.toMatch(/bayerisch/iu);
   });
 });
 
@@ -467,6 +471,18 @@ describe('Erlassorgan nur aus ausdrücklicher Formel', () => {
     expect(mapEnactingBody(organs.enactingBody?.name).enactingBody).toBe(`${targetAdjective(true)}er Landtag`);
     const withState = extractSourceOrgans({ blocks: [{ type: 'paragraphText', text: 'Der Landtag des Freistaates Bayern hat das folgende Gesetz beschlossen:' }] });
     expect(mapEnactingBody(withState.enactingBody?.name).enactingBody).toBe(`Landtag des Freistaates ${targetProperName()}`);
+  });
+
+  it('führt am Stichtag nicht mehr bestehende Staatsministerien als historisches Erlassorgan (Beleg StRGVV), bestehende bleiben Prüffall', async () => {
+    const real = registry;
+    expect(mapEnactingBody('Bayerisches Staatsministerium des Innern', { institutions: real })).toMatchObject({ decision: 'source-only', mappingEntry: 'historisches-staatsministerium-inneres' });
+    expect(mapEnactingBody('Bayerisches Staatsministerium für Gesundheit und Pflege', { institutions: real }).decision).toBe('source-only');
+    // Am Stichtag bestehende Ressorts: kein Simulationsressort definiert, also Prüffall – nichts wird erfunden.
+    for (const name of ['Bayerisches Staatsministerium der Justiz', 'Bayerisches Staatsministerium des Innern, für Sport und Integration', 'Bayerisches Staatsministerium der Finanzen und für Heimat', 'Bayerisches Staatsministerium für Gesundheit, Pflege und Prävention']) {
+      expect(mapEnactingBody(name, { institutions: real }).decision).toBe('manual-review');
+    }
+    // Mehrere Ressorts in einer Formel bleiben Prüffall.
+    expect(mapEnactingBody('Bayerisches Staatsministerium des Innern und das Bayerische Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie', { institutions: real }).decision).toBe('manual-review');
   });
 
   it('erkennt den Ministerpräsidenten auch mit Landesadjektiv als Verfassungsorgan', () => {
@@ -497,9 +513,12 @@ describe('Erlassorgan nur aus ausdrücklicher Formel', () => {
     });
     expect(organs.enactingBody?.name).toBe('Bayerisches Staatsministerium der Finanzen');
     expect(organs.enactingBody?.formula).toBe('ordinance-formula');
+    // „Staatsministerium der Finanzen“ bestand am Stichtag nicht mehr (StRGVV): historisches Erlassorgan.
     const mapping = mapEnactingBody(organs.enactingBody?.name, { institutions: registry });
-    expect(mapping.decision).toBe('manual-review');
+    expect(mapping.decision).toBe('source-only');
     expect(mapping.enactingBody).toBeUndefined();
+    // Das am Stichtag bestehende Ressort bleibt Prüffall.
+    expect(mapEnactingBody('Bayerisches Staatsministerium der Finanzen und für Heimat', { institutions: registry }).decision).toBe('manual-review');
   });
 
   it('erkennt den Ressortzuschnitt mit Komma und den Erlasskopf in mehrzeiligen Titelangaben', () => {
@@ -636,19 +655,17 @@ describe('Restpostenprüfung auf der fertigen Norm', () => {
     expect(auditRecord(transformed()).some((finding) => finding.code === 'historical-name-transformed')).toBe(false);
   });
 
-  it('meldet einen nicht entscheidbaren Vertragsnamen als Prüffall, nicht als Fehler („Bayerisches Konkordat“)', () => {
+  it('meldet ein übergeleitetes „Bayerisches Konkordat“ und „Digitalisierung.Bayern“ als Fehler (Regressionsschutz)', () => {
     const record = transformed();
     record.versions[0]!.body[1]!.title = `Art. 5 des ${targetAdjective(true)}en Konkordats vom 29. März 1924`;
-    const findings = auditRecord(record).filter((finding) => finding.code === 'historical-name-uncertain');
-    expect(findings).toHaveLength(1);
-    expect(findings[0]!.severity).toBe('warning');
-    expect(auditRecord(record).filter((finding) => finding.severity === 'error')).toEqual([]);
-    expect(auditRecord(transformed()).some((finding) => finding.code === 'historical-name-uncertain')).toBe(false);
+    expect(auditRecord(record).filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toContain('historical-name-transformed');
+    record.versions[0]!.body[1]!.title = `Geschäftsstelle Zentrum Digitalisierung.${targetProperName()}`;
+    expect(auditRecord(record).filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toContain('historical-name-transformed');
   });
 
-  it('meldet einen Markennamen mit Punkt als Prüffall, nicht als Fehler („Zentrum Digitalisierung.Bayern“)', () => {
+  it('meldet einen anderen Markennamen mit Punkt als Prüffall, nicht als Fehler', () => {
     const record = transformed();
-    record.versions[0]!.body[1]!.title = `Zentrum Digitalisierung.${targetProperName()}`;
+    record.versions[0]!.body[1]!.title = `Initiative Wasser.${targetProperName()}`;
     const findings = auditRecord(record).filter((finding) => finding.code === 'proper-name-uncertain');
     expect(findings).toHaveLength(1);
     expect(findings[0]!.severity).toBe('warning');
@@ -721,11 +738,13 @@ describe('Echte Norm aus dem Beispielkorpus (Parser → Überleitung)', () => {
     expect(record.meta.shortTitle).toBe(`${targetAdjective(true)}e Beihilfeverordnung`);
     // Abkürzungen werden nicht übergeleitet.
     expect(record.meta.abbr).toBe('BayBhV');
-    // Erlassformel erkannt, Ressort ohne Entsprechung → Quellorgan erhalten, Simulationsorgan leer.
+    // Erlassformel erkannt, historisches Ressort (am Stichtag nicht mehr bestehend) → Quellorgan erhalten,
+    // Simulationsorgan leer, Information statt Prüffall.
     expect(report.organs.source?.formula).toBe('ordinance-formula');
     expect(record.meta.originEnactingBody).toBe('Bayerisches Staatsministerium der Finanzen');
     expect(record.meta.enactingBody).toBeUndefined();
-    expect(findings.map((finding) => finding.code)).toContain('enacting-body-mapping-required');
+    expect(findings.map((finding) => finding.code)).toContain('enacting-body-historical');
+    expect(findings.map((finding) => finding.code)).not.toContain('enacting-body-mapping-required');
 
     // Eingangsformel: Landesadjektiv übergeleitet, Fundstellen und Abkürzungen unverändert.
     const einleitung = record.versions[0]!.body.find((block) => block.type === 'paragraphText')!.text!;
@@ -888,9 +907,22 @@ describe('Historische Staaten, Organe und Vertragsnamen bleiben unverändert (Nu
     'Konkordat zwischen seiner Heiligkeit Papst Pius XI. und dem Staate Bayern',
     'Art. 5 des Konkordats zwischen Seiner Heiligkeit Papst Pius XI. und dem Staate Bayern vom 29. März 1924',
     'Der König von Bayern',
+    // Nutzerentscheidung Run 5: Eigenname des Vertrags von 1924 (BayNotHSt, BayKonk, BayTheolHSUniRBek) und
+    // Eigenname einer Institution (baymbl-2020-719).
+    'Art. 5 des Bayerischen Konkordats vom 29. März 1924',
+    'Die einschlägigen Bestimmungen des Bayerischen Konkordates vom 29. März 1924',
+    'Zusatzprotokoll zum Bayerischen Konkordat',
+    'Staatsbetrieb Geschäftsstelle Zentrum Digitalisierung.Bayern',
+    'die Geschäftsstelle des Zentrums Digitalisierung.Bayern',
   ])('lässt „%s“ stehen', (value) => {
     expect(apply(value)).toBe(value);
     expect(apply(apply(value))).toBe(value);
+  });
+
+  it('überleitet im Vertragsnamen die heutige Vertragspartei weiter, den Konkordatsnamen nicht', () => {
+    expect(apply('Notenwechsel zwischen dem Heiligen Stuhl und dem Freistaat Bayern zu Art. 5 des Bayerischen Konkordats')).toBe('Notenwechsel zwischen dem Heiligen Stuhl und dem Freistaat Bayern-Württemberg zu Art. 5 des Bayerischen Konkordats');
+    // Ein anderes „Bayerisches …“ bleibt Landesadjektiv.
+    expect(apply('das Bayerische Konkordanzgesetz')).toBe('das Bayern-Württembergische Konkordanzgesetz');
   });
 
   it('überleitet den heutigen Freistaat im selben Satz weiter', () => {

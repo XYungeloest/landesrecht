@@ -35,6 +35,7 @@ const FORMULA_LABELS: Readonly<Record<FormulaId, string>> = {
   relabel: '„Der bisherige Abs. 3 wird Abs. 4.“ / „Die bisherigen Nrn. 5 bis 7 werden die Nrn. 6 bis 8.“ (neu)',
   'renumber-sentence': '„Der bisherige Satz 2 wird Satz 3.“ (neu)',
   'number-sentences': '„Der Wortlaut wird Satz 1.“ (neu)',
+  'number-paragraph': '„Der Wortlaut wird Abs. 1.“ (Run 5)',
   'insert-title': '„In § 5 wird folgende Überschrift eingefügt: „…““ (neu)',
   'delete-words': '„… wird die Angabe „X“ gestrichen“ (ohne Anker)',
   recast: '„… wird wie folgt gefasst:“ / „erhält folgende Fassung“',

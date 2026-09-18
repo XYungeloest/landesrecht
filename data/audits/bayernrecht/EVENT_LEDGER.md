@@ -50,15 +50,15 @@ Netzabrufe dieses Laufs: **0**, aus dem Cache bedient: **1308**.
 ## 3 Ereignisse
 
 Verarbeitete Veröffentlichungen im Zeitraum: **2121** (GVBl. und BayMBl. zusammen).
-Ereignisse gesamt: **3064** – GVBl. 908, BayMBl. 2156.
+Ereignisse gesamt: **3045** – GVBl. 906, BayMBl. 2139.
 
 | Ereignistyp | 2023 | 2024 | 2025 | 2026 | gesamt |
 | --- | --- | --- | --- | --- | --- |
 | `new` | 22 | 233 | 129 | 100 | 484 |
-| `amend` | 36 | 439 | 387 | 263 | 1125 |
-| `repeal` | 0 | 301 | 55 | 173 | 529 |
+| `amend` | 36 | 459 | 409 | 293 | 1197 |
+| `repeal` | 0 | 273 | 28 | 141 | 442 |
 | `recast` | 0 | 1 | 1 | 0 | 2 |
-| `expire` | 6 | 21 | 20 | 10 | 57 |
+| `expire` | 6 | 20 | 17 | 10 | 53 |
 | `commencement` | 0 | 0 | 1 | 2 | 3 |
 | `correction` | 2 | 8 | 14 | 6 | 30 |
 | `treaty` | 0 | 7 | 8 | 2 | 17 |
@@ -67,48 +67,48 @@ Ereignisse gesamt: **3064** – GVBl. 908, BayMBl. 2156.
 
 Nicht aufgetreten: `replace`, `extend`.
 Die bayerischen Quellen drücken die Ablösung einer Vorschrift durch eine neue nicht als eigenen Typ aus, sondern
-als Aufhebung oder Außerkrafttreten durch den Nachfolger (Subtyp `ausserkrafttreten-durch-nachfolger`, **101** Ereignisse).
+als Aufhebung oder Außerkrafttreten durch den Nachfolger (Subtyp `ausserkrafttreten-durch-nachfolger`, **84** Ereignisse).
 Die Typen bleiben im Schema, damit ein späterer Lauf sie führen kann, ohne das Schema zu ändern.
 
 | Subtyp | Anzahl |
 | --- | --- |
 | `aenderungsgesetz` | 63 |
-| `aenderungsverordnung` | 276 |
-| `ausserkrafttreten-durch-nachfolger` | 101 |
+| `aenderungsverordnung` | 278 |
+| `ausserkrafttreten-durch-nachfolger` | 84 |
 | `berichtigung` | 30 |
 | `inkrafttretensbekanntmachung` | 3 |
-| `mantelaenderung` | 199 |
+| `mantelaenderung` | 200 |
 | `neubekanntmachung` | 3 |
 | `staatsvertrag` | 17 |
-| `teilaufhebung` | 22 |
-| `teilausserkrafttreten` | 3 |
+| `teilaufhebung` | 7 |
+| `teilausserkrafttreten` | 2 |
 
 ## 4 Evidenz, Zielauflösung, Verarbeitungsstand
 
 | Beweisklasse | Anzahl |
 | --- | --- |
-| `strong` | 1728 |
-| `supporting` | 1330 |
+| `strong` | 1706 |
+| `supporting` | 1333 |
 | `insufficient` | 6 |
 | `contradictory` | 0 |
 
 | Zielauflösung | Anzahl |
 | --- | --- |
-| `absent-from-portal` | 547 |
-| `ambiguous` | 33 |
+| `absent-from-portal` | 528 |
+| `ambiguous` | 40 |
 | `missing-predecessor` | 11 |
 | `not-applicable` | 1111 |
-| `resolved` | 1320 |
+| `resolved` | 1313 |
 | `unidentified` | 42 |
 
-Ziele mit **strukturell starker** Zuordnung (Gliederungsnummer, Fundstelle im Änderungsverlauf, eindeutige Abkürzung oder vollständiger Titel): **1731**.
+Ziele mit **strukturell starker** Zuordnung (Gliederungsnummer, Fundstelle im Änderungsverlauf, eindeutige Abkürzung oder vollständiger Titel): **1709**.
 Ein bloß ähnlicher Titel trägt nie eine starke Zuordnung – das ist die bindende Regel dieses Registers.
 
 | Verarbeitungsstand | Anzahl |
 | --- | --- |
 | `missing-predecessor` | 11 |
-| `needs-review` | 33 |
-| `recorded` | 3014 |
+| `needs-review` | 40 |
+| `recorded` | 2988 |
 | `unparsed` | 6 |
 
 ## 5 Baseline-only-Kandidaten
@@ -118,7 +118,7 @@ Ein Ende der **ganzen** Vorschrift (Aufhebung, Ersetzung, Ablauf) mit Verkündun
 Die Vorschrift galt damit am Stichtag und fehlt heute – genau diese Vorschriften muss ein späterer Import
 zusätzlich beschaffen. Das ist der wichtigste Vollständigkeitsnachweis dieses Registers.
 
-Anzahl: **426**.
+Anzahl: **414**.
 
 | verkündet | Typ | Ziel | Gl.-Nr. | Merkmale | Fundstelle |
 | --- | --- | --- | --- | --- | --- |
@@ -231,7 +231,6 @@ Anzahl: **426**.
 | 2024-06-05 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Wissenschaft und Kunst über das Telemedienkonzept der AR | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 262 |
 | 2024-06-05 | `repeal` | Verwaltungsvorschriften zum Jugendgerichtsgesetz | 3122-2-2-J | exact-title | BayMBl. 2024 Nr. 265 |
 | 2024-06-05 | `repeal` | Jugendgerichtsgesetz | – | abbreviation, exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 265 |
-| 2024-06-26 | `repeal` | Bayerischen Landesamts für Schule | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 292 |
 | 2024-06-26 | `repeal` | Gemeinsame Bekanntmachung der Bayerischen Staatsministerien des Innern, für Unterricht und Kultus und für Arbe | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 297 |
 | 2024-06-26 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Arbeit und Sozialordnung über die Dienstanweisung für de | – | abbreviation, exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 297 |
 | 2024-06-26 | `repeal` | Schreiben des Bayerischen Staatsministeriums für Arbeit und Sozialordnung über die Entgeltüberwachung in der H | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 297 |
@@ -243,9 +242,7 @@ Anzahl: **426**.
 | 2024-06-26 | `repeal` | Schreiben des Bayerischen Staatsministeriums für Arbeit und Soziales, Familie und Integration über den Vollzug | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 297 |
 | 2024-06-26 | `repeal` | Schreiben des Bayerischen Staatsministeriums für Arbeit und Soziales, Familie und Integration über das Bildung | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 297 |
 | 2024-06-26 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Familie, Arbeit und Soziales über die Aufrechterhaltung  | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 297 |
-| 2024-06-28 | `repeal` | Bestattungsverordnung | – | exact-title, ausfertigungsdatum, fundstelle | GVBl. 2024 S. 160 |
 | 2024-07-10 | `expire` | Freistaates Bayern im Haushaltsjahr 2023 | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 324 |
-| 2024-08-07 | `repeal` | Bayerischen Staatsministeriums der Finanzen | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 362 |
 | 2024-08-28 | `repeal` | Bekanntmachung über die Mitwirkung der Staatsanwaltschaft in Verfahren nach dem Verschollenheitsgesetz | 3156-J | exact-title | BayMBl. 2024 Nr. 394 |
 | 2024-08-28 | `repeal` | Verschollenheitsgesetz | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 394 |
 | 2024-08-28 | `repeal` | Bekanntmachung über die Änderung der Bezeichnung der Aus- und Fortbildungsstätte Pegnitz | 2038-3-3-1-J | exact-title | BayMBl. 2024 Nr. 395 |
@@ -277,7 +274,7 @@ Anzahl: **426**.
 | 2024-10-09 | `repeal` | Allgemeines Rundschreiben Straßenbau (ARS) Nr. 13/2004 Sachgebiet 05.2: Brücken- und Ingenieurbau; Grundlagen  | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
 | 2024-10-09 | `repeal` | Richtlinien für das Aufstellen von Bauwerksentwürfen (RAB-ING), Ausgabe 2016, Einführungshinweise | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
 | 2024-10-09 | `repeal` | Vertragsangelegenheiten im Straßen- und Brückenbau; Überwachung der Gewährleistungsfristen | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
-| 2024-10-09 | `repeal` | Richtlinien für den Lärmschutz an Straßen – RLS-90 | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
+| 2024-10-09 | `repeal` | Richtlinien für den Lärmschutz an Straßen – RLS-90 | – | abbreviation, exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
 | 2024-10-09 | `repeal` | Zusätzliche Technische Vertragsbedingungen und Richtlinien für die Ausführung von Lärmschutzwänden an Straßen  | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
 | 2024-10-09 | `repeal` | Empfehlungen für die Gestaltung von Lärmschutzanlagen an Straßen – Ausgabe 2005 | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
 | 2024-10-09 | `repeal` | Technische Lieferbedingungen für Bauprodukte zur Herstellung von Pflasterdecken, Plattenbelägen und Einfassung | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 467 |
@@ -326,6 +323,7 @@ Anzahl: **426**.
 | 2024-12-11 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Bildung und Kultus, Wissenschaft und Kunst über die Feri | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 611 |
 | 2024-12-11 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Bildung und Kultus, Wissenschaft und Kunst über die Würd | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 611 |
 | 2024-12-11 | `repeal` | Staatsanwaltschaften in dessen Geschäftsbereich | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 615 |
+| 2024-12-11 | `expire` | Freistaates Bayern | – | abbreviation, exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 618 |
 | 2024-12-11 | `repeal` | Bekanntmachung des Staatsministeriums für Gesundheit, Ernährung und Verbraucherschutz über die Gegenseitige Be | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 620 |
 | 2024-12-11 | `repeal` | Bekanntmachung des Staatsministeriums für Arbeit und Sozialordnung über die Richtlinien für die Stellenpläne b | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 620 |
 | 2024-12-11 | `repeal` | Bekanntmachung des Staatsministeriums für Gesundheit, Pflege und Prävention über die Ehrungen für Verdienste u | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 620 |
@@ -340,13 +338,6 @@ Anzahl: **426**.
 | 2024-12-18 | `repeal` | Bekanntmachung zur Anpassung der in § 9 Abs. 3 der Bayerischen Nebentätigkeitsverordnung enthaltenen Höchstbet | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Bekanntmachung zur Anpassung der in § 9 Abs. 3 der Bayerischen Nebentätigkeitsverordnung enthaltenen Höchstbet | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Bekanntmachung zur Anpassung der in § 9 Abs. 3 der Bayerischen Nebentätigkeitsverordnung enthaltenen Höchstbet | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen über den Vollzug der Bayerischen Beihilfeverord | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen, für Landesentwicklung und Heimat über den Voll | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen über Sammelheizung aus dienstlichen Versorgungs | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen über Sammelheizung aus dienstlichen Versorgungs | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen, für Landesentwicklung und Heimat über Sammelhe | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen, für Landesentwicklung und Heimat über Sammelhe | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
-| 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen, für Landesentwicklung und Heimat über Sammelhe | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen über die Anforderung von Bewerbererklärungen be | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums der Finanzen über die Energieeinsparung im öffentlichen Bere | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Schreiben des Bayerischen Staatsministeriums der Finanzen über die Teilnahme von Staatsbediensteten an Veranst | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 651 |
@@ -397,11 +388,13 @@ Anzahl: **426**.
 | 2024-12-18 | `repeal` | Schreiben des Bayerischen Staatsministeriums der Finanzen über die Arbeitsgelegenheiten (so genannte "Ein-Euro | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Schreiben des Bayerischen Staatsministeriums der Finanzen und für Heimat über die Hinweise zur Beschaffung von | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 651 |
 | 2024-12-18 | `repeal` | Schreiben des Bayerischen Staatsministeriums der Finanzen über den Vollzug des Krankenhausfinanzierungsgesetze | – | exact-title, ausfertigungsdatum | BayMBl. 2024 Nr. 651 |
+| 2025-01-15 | `expire` | Feuerwehr-Zuwendungsrichtlinien | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 17 |
 | 2025-01-29 | `expire` | Wanderwegen und von Unterkunftshäusern | – | abbreviation, exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 42 |
 | 2025-02-05 | `repeal` | Bekanntmachung über die Eignungsprüfung 2015 für das Studium eines Sportstudiengangs an den Hochschulen in Bay | 2210-2-WK | exact-title | BayMBl. 2025 Nr. 52 |
 | 2025-02-05 | `repeal` | Hochschulen in Bayern | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 52 |
 | 2025-02-19 | `expire` | Bayerischen Staatsministeriums für Wohnen, Bau und Verkehr | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 87 |
 | 2025-03-12 | `repeal` | Richtlinien für die staatliche Förderung der Betreuung bei der Existenzgründung und Betriebsübernahme in der V | 7071-W | exact-title | BayMBl. 2025 Nr. 113 |
+| 2025-03-12 | `repeal` | Vorgründungsphase (Richtlinie Vorgründungs- und Nachfolgecoaching)“ | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 113 |
 | 2025-03-19 | `repeal` | Alltagskompetenzen – Schule fürs Leben“ an kommunalen Schulen und an privaten Ersatzschulen | – | abbreviation, exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 127 |
 | 2025-05-28 | `repeal` | Landeshauptstadt München | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 219 |
 | 2025-05-28 | `repeal` | Landeshauptstadt München | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2025 Nr. 219 |
@@ -425,6 +418,7 @@ Anzahl: **426**.
 | 2026-01-28 | `repeal` | Gerichten der ordentlichen Gerichtsbarkeit und Staatsanwaltschaften | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 26 |
 | 2026-02-18 | `repeal` | Bekanntmachung über die Ausgestaltung der Jahrgangsstufe 5 an allen weiterführenden Schulen als Gelenkklasse i | 2230-1-1-1-0-K | exact-title | BayMBl. 2026 Nr. 60 |
 | 2026-02-18 | `repeal` | Jahrgangsstufe 5 an allen weiterführenden Schulen als Gelenkklasse in der Übertrittsphase | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 60 |
+| 2026-05-15 | `repeal` | Bayerischen Besoldungsgesetzes und weiterer Rechtsvorschriften | – | exact-title, ausfertigungsdatum, fundstelle | GVBl. 2026 S. 208 |
 | 2026-05-20 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Unterricht und Kultus über die Kommunalwahlen; Inanspruc | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 201 |
 | 2026-05-20 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Unterricht, Kultus, Wissenschaft und Kunst über den Spor | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 201 |
 | 2026-05-20 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Unterricht, Kultus, Wissenschaft und Kunst über die Zusa | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 201 |
@@ -486,7 +480,7 @@ Anzahl: **426**.
 | 2026-07-01 | `expire` | Hilfsmittelbekanntmachung GV | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 260 |
 | 2026-07-01 | `expire` | Bekanntmachung | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 260 |
 | 2026-07-08 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Ernährung, Landwirtschaft und Forsten über Ausnahmen vom | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 269 |
-| 2026-07-08 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Ernährung, Landwirtschaft und Forsten über den Dienstaus | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 269 |
+| 2026-07-08 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Ernährung, Landwirtschaft und Forsten über den Dienstaus | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 269 |
 | 2026-07-08 | `repeal` | Bekanntmachung über den Vollzug des Bundeszentralregistergesetzes | 3127-I | exact-title | BayMBl. 2026 Nr. 282 |
 | 2026-07-15 | `repeal` | Bekanntmachung über Verkehrsüberwachung | 9212-I | exact-title | BayMBl. 2026 Nr. 287 |
 | 2026-07-15 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums des Innern über die Regenwassernutzung im Haushalt; Hinweise | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 290 |
@@ -541,18 +535,12 @@ Anzahl: **426**.
 | 2026-08-12 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Wissenschaft, Forschung und Kunst über die Erhebung von  | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 328 |
 | 2026-08-12 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Bildung und Kultus, Wissenschaft und Kunst über die Rich | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 328 |
 | 2026-08-12 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Wissenschaft, Forschung und Kunst über die Richtlinien f | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 328 |
-| 2026-09-09 | `repeal` | Bekanntmachung über das Sachverständigenwesen | 3003-8-J | exact-title | BayMBl. 2026 Nr. 369 |
-| 2026-09-09 | `repeal` | Justiz über das Sachverständigenwesen | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 369 |
-| 2026-09-16 | `repeal` | Europamedaillen-Bekanntmachung – EuMedBek | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 377 |
-| 2026-09-16 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie und Frauen über die Ve | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 379 |
-| 2026-09-16 | `repeal` | Bekanntmachung des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie und Frauen über die Ge | – | exact-title, ausfertigungsdatum, fundstelle | BayMBl. 2026 Nr. 379 |
-| 2026-09-16 | `repeal` | Schreiben des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie und Frauen über die Grundsä | – | exact-title, ausfertigungsdatum | BayMBl. 2026 Nr. 379 |
 | 2026-09-16 | `repeal` | Verkehr vom 30. Oktober 2023, Az. 49-4384-2-1-7 | – | exact-title, fundstelle | BayMBl. 2026 Nr. 380 |
 
-Zusätzlich **28** Vorschriften mit einem erst nach dem 2026-09-18 wirkenden Ende (künftige Befristung).
+Zusätzlich **9** Vorschriften mit einem erst nach dem 2026-09-18 wirkenden Ende (künftige Befristung).
 Auch sie galten am Stichtag; sie gelten aber weiterhin und sind deshalb keine baseline-only-Kandidaten.
 
-Nicht gezählt sind **25** Teilaufhebungen und Teilaußerkrafttreten nach dem Stichtag
+Nicht gezählt sind **9** Teilaufhebungen und Teilaußerkrafttreten nach dem Stichtag
 („§ 7 der Verordnung X wird aufgehoben“). Sie beweisen das Gegenteil eines Endes: Die Vorschrift bestand
 im Übrigen fort und galt damit auch am Stichtag.
 
@@ -563,10 +551,10 @@ Reviewfall. Kein Ereignis verschwindet, und keines wird stillschweigend verworfe
 
 | Ende-Ereignisse | Anzahl |
 | --- | --- |
-| gesamt | 586 |
-| Vorgänger im Bestand wiedergefunden (`resolved`) | 131 |
-| Vorgänger benannt, heute nicht mehr im Bestand (`absent-from-portal`) | 436 |
-| mehrdeutig (`ambiguous`, Review) | 8 |
+| gesamt | 495 |
+| Vorgänger im Bestand wiedergefunden (`resolved`) | 49 |
+| Vorgänger benannt, heute nicht mehr im Bestand (`absent-from-portal`) | 420 |
+| mehrdeutig (`ambiguous`, Review) | 15 |
 | ohne bestimmbaren Vorgänger (`missing-predecessor`, Review) | 11 |
 
 Reviewfälle `missing-predecessor`: **11**.
@@ -585,7 +573,7 @@ Reviewfälle `missing-predecessor`: **11**.
 | 2026-07-08 | `repeal` | Aufhebung von Verwaltungsvorschriften | BayMBl. 2026 Nr. 283 |
 | 2026-07-08 | `repeal` | Aufhebung von Verwaltungsvorschriften | BayMBl. 2026 Nr. 283 |
 
-Mehrdeutige Ziele insgesamt: **33** (Mantelakte und gleichnamige Vorschriften; keine automatische Entscheidung).
+Mehrdeutige Ziele insgesamt: **40** (Mantelakte und gleichnamige Vorschriften; keine automatische Entscheidung).
 
 ## 7 Nicht zugeordnete Veröffentlichungen
 

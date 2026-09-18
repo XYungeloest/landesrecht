@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import { readJsonFile, writeFileAtomic, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 
 import { EVALUATION_DATE, IMPORT_DATA_DIR } from '../common/constants.ts';
-import { readManifest, writeManifestEntry } from '../common/manifest.ts';
+import { readManifest, writeManifestEntry, type ManifestRawDocument } from '../common/manifest.ts';
 import { mergeReviewItems, readReviewQueue, reviewStatusFor, writeReviewShard } from '../common/review.ts';
 import { readSlugRegistry, writeSlugRegistry } from '../common/slug-registry.ts';
 import { isBaselineOnlyCandidate, type EventLedger, type LedgerEvent } from '../events/ledger.ts';
@@ -25,6 +25,7 @@ import { listExistingSlugs, writeNormRecord } from '../bulk/persist.ts';
 import { readInstitutionRegistry } from '../transform/institution-registry.ts';
 import { analyzeCandidate, analyzeNorm, type CandidateWork, type NormResult } from './analyze.ts';
 import { titleKey } from './identity.ts';
+import { normalizeTitle, subjectReading } from '../events/resolve.ts';
 import { CONVERTER_VERSION } from './html.ts';
 import { BASELINE_ONLY_DIR, BASELINE_ONLY_REPORT_PATH, CANDIDATES_PATH, CANDIDATES_SCHEMA, MISSING_LINKS, OUTCOMES, recipePath, type BaselineOnlyRecipe, type CandidateRecord, type CandidatesFile, type Metrics, type Outcome } from './model.ts';
 import { createPlatform, type Platform, type PlatformStats } from './platform.ts';
@@ -95,6 +96,7 @@ export function computeMetrics(candidates: readonly CandidateRecord[]): Metrics 
     fullChain: candidates.filter((candidate) => candidate.funnel.fullChain).length,
     safelyReconstructed: candidates.filter((candidate) => candidate.funnel.safe).length,
     safeNorms: new Set(candidates.filter((candidate) => candidate.funnel.safe).map((candidate) => candidate.normId)).size,
+    duplicates: candidates.filter((candidate) => candidate.duplicateOf !== undefined).length,
     byOutcome,
     byMissingLink: Object.fromEntries(Object.entries(byMissingLink).sort(([left], [right]) => (left < right ? -1 : 1))),
   };
@@ -103,6 +105,51 @@ export function computeMetrics(candidates: readonly CandidateRecord[]): Metrics 
 function matchesOnly(only: readonly string[] | undefined, work: CandidateWork): boolean {
   if (!only || only.length === 0) return true;
   return only.some((value) => value === work.event.id || value === work.record.normId || value === work.event.sourceId || work.record.fundstelle === value);
+}
+
+/**
+ * Betreff eines Titels oder Zitats ohne Artikel, Dokumentart und Erlassstelle, in der Vergleichsform
+ * `normalizeTitle`: „Die Bekanntmachung des … über die Führung des Schiffsregisters …“ → „führung des
+ * schiffsregisters …“; ein Titel in Anführungszeichen („… Energie „Richtlinien für …““) ist selbst der Betreff.
+ */
+export function subjectKey(title: string): string {
+  const text = title.replace(/\s+/gu, ' ').trim().replace(/^(?:die|das|der)\s+/iu, '');
+  const reading = subjectReading(text) ?? /^(?:Gemeinsamen?\s+)?(?:Bekanntmachung|Verwaltungsvorschrift(?:en)?|Richtlinien?|Schreiben)\b.*?\s(?<![\p{L}])(?:über|betreffend)(?![\p{L}])\s+(?:(?:die|den|das|dem)\s+)?(.+)$/u.exec(text)?.[1];
+  if (reading) return normalizeTitle(reading);
+  const quoted = /„([^“”]{6,})[“”]/u.exec(text);
+  return normalizeTitle(quoted ? quoted[1]! : text);
+}
+
+/** Gleicher Betreff: vollständig gleich oder einer ist Wortanfang des anderen (Titel der Veröffentlichung gekürzt). */
+const sameSubject = (left: string, right: string): boolean => {
+  if (left === right) return true;
+  const [short, long] = left.length <= right.length ? [left, right] : [right, left];
+  return short.length >= 12 && long.startsWith(short) && /^[\s,;.(-]/u.test(long.slice(short.length));
+};
+
+/**
+ * Verbindet ein Ereignis ohne Zitat (Ziel nur aus dem Titel der Veröffentlichung, Zuordnung daher nicht stark)
+ * mit dem Ereignis derselben Veröffentlichung, dessen Zitat die Analyse im Text belegt hat – wenn genau eines
+ * denselben Betreff trägt (Vergleich nach `normalizeTitle`; der Titel der Veröffentlichung darf gekürzt sein, dann
+ * muss er Wortanfang des Zitats sein – keine Ähnlichkeit, und nur innerhalb derselben Veröffentlichung).
+ */
+export function linkTitleDuplicates(works: readonly CandidateWork[]): Map<CandidateWork, CandidateWork> {
+  const links = new Map<CandidateWork, CandidateWork>();
+  for (const work of works) {
+    if (work.record.missing?.code !== 'identity-not-strong') continue;
+    const key = subjectKey(work.event.targetTitle);
+    if (key.length < 6) continue;
+    const twins = works.filter((other) => other !== work && other.event.sourceId === work.event.sourceId && other.citation !== undefined && sameSubject(subjectKey(other.citation.citedTitle), key));
+    if (twins.length === 1) links.set(work, twins[0]!);
+  }
+  return links;
+}
+
+/** Übernimmt `bucket`, `objectKey` und `archiveStatus` einer gleichen Rohquelle des bisherigen Eintrags. */
+export function keepArchiveState(raw: ManifestRawDocument, previous: readonly ManifestRawDocument[]): ManifestRawDocument {
+  const same = previous.find((entry) => entry.url === raw.url && entry.role === raw.role && entry.sha256 === raw.sha256 && entry.objectKey !== undefined);
+  if (!same) return raw;
+  return { ...raw, ...(same.bucket ? { bucket: same.bucket } : {}), objectKey: same.objectKey!, ...(same.archiveStatus ? { archiveStatus: same.archiveStatus } : {}) };
 }
 
 export async function runBaselineOnly(options: BaselineOnlyOptions): Promise<BaselineOnlyRun> {
@@ -120,6 +167,9 @@ export async function runBaselineOnly(options: BaselineOnlyOptions): Promise<Bas
     const work = await analyzeCandidate(ctx, event);
     if (matchesOnly(options.only, work)) works.push(work);
   }
+
+  // Doppelte Register-Ereignisse derselben Aufhebung (Titel der Veröffentlichung ↔ Zitat im Text) verbinden.
+  const duplicates = linkTitleDuplicates(works);
 
   // Normstufe: Kandidaten derselben Ausgangsverkündung gemeinsam.
   const groups = new Map<string, CandidateWork[]>();
@@ -139,6 +189,18 @@ export async function runBaselineOnly(options: BaselineOnlyOptions): Promise<Bas
       if (result.missing) work.record.missing = result.missing;
       work.record.funnel.fullChain = result.fullChain;
     }
+  }
+
+  // Duplikate übernehmen das Ergebnis ihres zitierten Zwillings; ihre Kennung gehört zum Ende der Norm.
+  for (const [duplicate, twin] of duplicates) {
+    duplicate.record.duplicateOf = twin.event.id;
+    duplicate.record.outcome = twin.record.outcome;
+    if (twin.record.missing) duplicate.record.missing = twin.record.missing;
+    else delete duplicate.record.missing;
+    for (const field of ['normId', 'documentDate', 'fundstelle', 'baseUrl', 'lastDay'] as const) if (twin.record[field] !== undefined) duplicate.record[field] = twin.record[field];
+    duplicate.record.funnel = { ...twin.record.funnel };
+    const norm = norms.find((entry) => entry.id === twin.record.normId);
+    if (norm?.recipe && !norm.recipe.end.eventIds.includes(duplicate.event.id)) norm.recipe.end.eventIds = [...norm.recipe.end.eventIds, duplicate.event.id].sort();
   }
 
   // Wiederherstellung: derselbe Weg wie jede Norm; Fehler machen aus „safe“ einen Review-Fall.
@@ -220,6 +282,10 @@ export async function runBaselineOnly(options: BaselineOnlyOptions): Promise<Bas
       norm.entry.reviewStatus = reviewStatusFor(queue, norm.entry.sourceIdentity);
       const shard = await writeReviewShard(options.root, queue, 'events', norm.entry.sourceIdentity);
       if (shard.changed) written.push(shard.path);
+      // Archivstand unveränderter Rohquellen übernehmen (gleiche Adresse, Rolle und SHA-256): Der Objektschlüssel
+      // ist inhaltsadressiert, eine schon verifizierte Quelle muss r2-sync nicht erneut bereitstellen.
+      const previous = manifest.entries.find((entry) => entry.sourceArea === 'events' && entry.sourceIdentity === norm.entry.sourceIdentity);
+      if (previous) norm.entry.rawDocuments = norm.entry.rawDocuments.map((raw) => keepArchiveState(raw, previous.rawDocuments));
       const manifestWrite = await writeManifestEntry(options.root, norm.entry);
       if (manifestWrite.changed) written.push(manifestWrite.path);
       if (await writeJsonAtomic(join(options.root, recipePath(recipe.id)), recipe)) written.push(recipePath(recipe.id));
@@ -227,6 +293,11 @@ export async function runBaselineOnly(options: BaselineOnlyOptions): Promise<Bas
   }
   if (options.write && registry.entries.length !== registrySize) {
     if (await writeSlugRegistry(options.root, registry)) written.push('data/imports/bayernrecht/slug-registry.json');
+  }
+  for (const [duplicate, twin] of duplicates) {
+    duplicate.record.outcome = twin.record.outcome;
+    if (twin.record.missing) duplicate.record.missing = twin.record.missing;
+    duplicate.record.funnel = { ...twin.record.funnel };
   }
   for (const work of works) work.record.funnel.safe = work.record.outcome === 'safe';
   const candidates = works.map((work) => work.record);
@@ -262,7 +333,7 @@ export function baselineOnlySummary(run: BaselineOnlyRun, options: { write: bool
   const m = run.metrics;
   const lines = [
     `Baseline-only (heute fehlende Stichtagsnormen): ${m.candidates} Kandidaten des Ereignisregisters`,
-    `  starke Identität ${m.strongIdentity} · Ausgangsverkündung gefunden ${m.baseFound} · Kette vollständig ${m.fullChain} · sicher wiederhergestellt ${m.safelyReconstructed} (${m.safeNorms} Normen)`,
+    `  starke Identität ${m.strongIdentity} · Ausgangsverkündung gefunden ${m.baseFound} · Kette vollständig ${m.fullChain} · sicher wiederhergestellt ${m.safelyReconstructed} (${m.safeNorms} Normen) · Doppelerfassungen verbunden ${m.duplicates}`,
     `  ${OUTCOMES.map((outcome) => `${outcome} ${m.byOutcome[outcome]}`).join(' · ')}`,
     ...Object.entries(m.byMissingLink).map(([code, count]) => `    ${String(count).padStart(4)}  ${code} (${MISSING_LINKS[code as keyof typeof MISSING_LINKS]})`),
     `  Netzabrufe ${run.network.networkRequests}, aus dem Cache ${run.network.cacheHits}, 404 ${run.network.notFound}${run.network.pending.length > 0 ? `, offen ${new Set(run.network.pending).size}${run.network.budgetExhausted ? ' (Budget erreicht – erneut ausführen)' : ''}` : ''}`,

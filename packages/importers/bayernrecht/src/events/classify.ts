@@ -55,8 +55,11 @@ export interface CitedNorm {
   raw: string;
 }
 
-/** Klammerzusatz, der eine Fundstelle oder eine BayRS-Nummer trägt. */
-const REFERENCE_PAREN = /\(([^()]*(?:BayRS|GVBl\.|BayMBl\.|AllMBl\.|JMBl\.|FMBl\.|KWMBl\.)[^()]*)\)/gu;
+/**
+ * Klammerzusatz, der eine Fundstelle oder eine BayRS-Nummer trägt. Der Punkt hinter dem Blattnamen fehlt in
+ * der Quelle gelegentlich („(BayMBl Nr. 580)“, BayMBl. 2025 Nr. 113) – er ist deshalb optional.
+ */
+const REFERENCE_PAREN = /\(([^()]*(?:BayRS|(?<![\p{L}])(?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl)(?:\.|\s+(?=\d|S\.|Nr\.)))[^()]*)\)/gu;
 /** Der Ausfertigungsteil unmittelbar vor der Klammer. */
 const ENACTMENT_TAIL = /(?:vom|v\.)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s*$/u;
 /**
@@ -67,6 +70,28 @@ const ENACTMENT_TAIL = /(?:vom|v\.)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}
 const VERSION_TAIL = /\s*in\s+der\s+(?:jeweils\s+)?(?:geltenden\s+)?Fassung\s+der\s+(?:Bekanntmachung|Bek\.|Neubekanntmachung)$/u;
 /** Abkürzungsklammer unmittelbar vor dem Ausfertigungsteil. */
 const ABBREVIATION_TAIL = /\(([^()]{1,60})\)\s*$/u;
+/**
+ * Abkürzung hinter einem Gedankenstrich statt in Klammern: „Europamedaillen-Bekanntmachung – EuMedBek“
+ * (BayMBl. 2026 Nr. 377), „Richtlinien für den Lärmschutz an Straßen – RLS-90“. Nur ein einzelnes Wort
+ * mit mindestens zwei Großbuchstaben gilt als Abkürzung – „– Teil A“ oder „– Ausgabe 2019“ nicht.
+ */
+const DASH_ABBREVIATION_TAIL = /\s[\u2013\u2014-]\s*([A-Za-zÄÖÜäöü][A-Za-zÄÖÜäöüß0-9./-]{1,39})\s*$/u;
+
+/** Abkürzung am Ende eines Titels in Klammern oder hinter einem Gedankenstrich; sonst `undefined`. */
+export function titleAbbreviation(title: string): { abbreviation: string; index: number; form: 'paren' | 'dash' } | undefined {
+  const paren = ABBREVIATION_TAIL.exec(title);
+  if (paren) {
+    const candidate = paren[1]!.replace(/[\u2010-\u2015\u2212]/gu, '-').split(/\s+-\s+/u).at(-1)!.trim();
+    if (!/\s/u.test(candidate) && (candidate.match(/[A-ZÄÖÜ]/gu) ?? []).length >= 2) return { abbreviation: candidate, index: paren.index, form: 'paren' };
+    return undefined;
+  }
+  const dash = DASH_ABBREVIATION_TAIL.exec(title);
+  if (dash) {
+    const candidate = dash[1]!.replace(/[\u2010-\u2015\u2212]/gu, '-').replace(/[.]$/u, '');
+    if ((candidate.match(/[A-ZÄÖÜ]/gu) ?? []).length >= 2) return { abbreviation: candidate, index: dash.index, form: 'dash' };
+  }
+  return undefined;
+}
 /**
  * Grenze, ab der ein Titel beginnt: Satzzeichen, Artikelwort oder Gliederungsverweis. Gesucht wird die
  * **letzte** Grenze vor dem Zitat – der Titel ist der kürzestmögliche sinnvolle Rest.
@@ -95,7 +120,7 @@ export function scanCitations(text: string): CitedNorm[] {
     const parenEnd = parenStart + match[0].length;
     const inner = normalizeQuote(match[1]!);
     const bayRs = /BayRS\s*([0-9A-Za-zÄÖÜäöü]+(?:[.\-/][0-9A-Za-zÄÖÜäöü]+)*)/u.exec(inner)?.[1];
-    const citation = /((?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl)\.\s*(?:\d{4}\s*)?(?:S\.|Nr\.)\s*\d+)/u.exec(inner)?.[1];
+    const citation = /((?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl)\.?\s*(?:\d{4}\s*)?(?:S\.|Nr\.)\s*\d+)/u.exec(inner)?.[1];
 
     let head = text.slice(Math.max(0, parenStart - TITLE_WINDOW), parenStart).replace(/\s+$/u, '');
     const enactment = ENACTMENT_TAIL.exec(head);
@@ -117,10 +142,17 @@ export function scanCitations(text: string): CitedNorm[] {
       if (!/\s/u.test(candidate) && (candidate.match(/[A-ZÄÖÜ]/gu) ?? []).length >= 2) abbreviation = candidate;
       head = head.slice(0, abbreviationMatch.index).replace(/\s+$/u, '');
     }
+    // Abkürzung hinter einem Gedankenstrich: Sie bleibt im Titel (die Kennung des Ereignisses hängt am
+    // Titel), zählt aber als Abkürzung, und der Titel ohne sie wird als weitere Lesart geführt.
+    const dashAbbreviation = abbreviationMatch ? undefined : titleAbbreviation(head);
+    if (dashAbbreviation?.form === 'dash') abbreviation = dashAbbreviation.abbreviation;
 
     const headStart = Math.max(0, parenStart - TITLE_WINDOW);
     const candidates = extractTitleCandidates(head);
     const titleCandidates = candidates.map((candidate) => candidate.text);
+    if (dashAbbreviation?.form === 'dash') {
+      for (const candidate of extractTitleCandidates(head.slice(0, dashAbbreviation.index))) if (!titleCandidates.includes(candidate.text)) titleCandidates.push(candidate.text);
+    }
     const title = titleCandidates[0];
     // Ein Zitat ohne jedes Identitätsmerkmal ist kein Zitat, sondern eine Fundstellenangabe im Fließtext.
     if (bayRs === undefined && title === undefined && citation === undefined) continue;
@@ -237,13 +269,22 @@ const COMMAND_RULES: readonly { pattern: RegExp; eventType: EventType; subtype?:
   { pattern: /\bwird\s+berichtigt\b/u, eventType: 'correction', subtype: 'berichtigung' },
 ];
 
-/** Klassifiziert den Wortlaut unmittelbar hinter einem Normzitat. `undefined`, wenn kein Befehl dasteht. */
+/**
+ * Klassifiziert den Wortlaut unmittelbar hinter einem Normzitat. `undefined`, wenn kein Befehl dasteht.
+ *
+ * Es entscheidet der **erste** Befehl im Fenster; die Reihenfolge der Regeln entscheidet nur bei
+ * gleichem Beginn. Sonst machte ein Unterbefehl das Ganze zum Ende: „Nr. 5 der Europamedaillen-
+ * Bekanntmachung (EuMedBek) … wird wie folgt geändert: 1.1 … gestrichen. 1.2 Die Sätze 3 bis 5 werden
+ * aufgehoben.“ (BayMBl. 2024 Nr. 7) ist eine Änderung, keine Aufhebung der EuMedBek.
+ */
 export function classifyCommand(window: string): CommandClassification | undefined {
+  let best: { rule: (typeof COMMAND_RULES)[number]; match: RegExpExecArray } | undefined;
   for (const rule of COMMAND_RULES) {
     const match = rule.pattern.exec(window);
-    if (match) return { eventType: rule.eventType, ...(rule.subtype ? { subtype: rule.subtype } : {}), keyword: normalizeQuote(match[0]) };
+    if (match && (best === undefined || match.index < best.match.index)) best = { rule, match };
   }
-  return undefined;
+  if (best === undefined) return undefined;
+  return { eventType: best.rule.eventType, ...(best.rule.subtype ? { subtype: best.rule.subtype } : {}), keyword: normalizeQuote(best.match[0]) };
 }
 
 /** Wieviel Text hinter einem Zitat überhaupt betrachtet wird, bevor die Änderungshistorie entfernt ist. */
@@ -399,21 +440,28 @@ export function extractEffectiveDate(text: string): string | undefined {
 }
 
 /**
- * Außerkrafttretensdatum. „mit Ablauf des 31. Dezember 2025“ ist der bayerische Regelfall und meint den
- * letzten Geltungstag – das Datum wird **unverändert** übernommen und nicht auf den Folgetag gerechnet.
+ * Außerkrafttretensdatum als **letzter Geltungstag**. „mit Ablauf des 31. Dezember 2025“ ist der
+ * bayerische Regelfall und meint den letzten Geltungstag – das Datum wird unverändert übernommen.
+ * „tritt am 1. Februar 2025 außer Kraft“ (ebenso „zum“, „mit Wirkung vom“) meint den ersten Tag ohne
+ * Geltung; letzter Geltungstag ist der Vortag.
  */
 export function extractTerminationDate(text: string): string | undefined {
-  const patterns = [
-    /\b(?:tritt|treten)\s+mit\s+Ablauf\s+des\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+außer\s+Kraft/u,
-    /\b(?:tritt|treten)\s+(?:am|zum|mit\s+Wirkung\s+vom)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+außer\s+Kraft/u,
-    /\baußer\s+Kraft\s+(?:tritt|treten)[^.]{0,40}?(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/u,
-  ];
-  for (const pattern of patterns) {
-    const match = pattern.exec(text);
-    const parsed = match === null ? undefined : parseLongGermanDate(match[1]!);
-    if (parsed) return parsed;
-  }
+  const lastDay = /\b(?:tritt|treten)\s+mit\s+Ablauf\s+des\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+außer\s+Kraft/u.exec(text);
+  const lastDayParsed = lastDay === null ? undefined : parseLongGermanDate(lastDay[1]!);
+  if (lastDayParsed) return lastDayParsed;
+  const firstDayWithout = /\b(?:tritt|treten)\s+(?:am|zum|mit\s+Wirkung\s+vom)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+außer\s+Kraft/u.exec(text);
+  const firstDayParsed = firstDayWithout === null ? undefined : parseLongGermanDate(firstDayWithout[1]!);
+  if (firstDayParsed) return previousDay(firstDayParsed);
+  const inverted = /\baußer\s+Kraft\s+(?:tritt|treten)([^.]{0,40}?)(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})/u.exec(text);
+  const invertedParsed = inverted === null ? undefined : parseLongGermanDate(inverted[2]!);
+  if (invertedParsed) return /\bAblauf\b/u.test(inverted![1]!) ? invertedParsed : previousDay(invertedParsed);
   return undefined;
+}
+
+function previousDay(iso: string): string {
+  const date = new Date(`${iso}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() - 1);
+  return date.toISOString().slice(0, 10);
 }
 
 /* -------------------------------------------------------------------------- Aufhebungslisten */
@@ -469,14 +517,16 @@ export function scanRepealList(paragraphs: readonly string[]): CitedNorm[] {
     const title = normalizeQuote(item.slice(0, enactment.index)).replace(/[,;:]$/u, '').trim();
     if (title.length < 6 || !/^[A-ZÄÖÜ]/u.test(title)) continue;
     const tail = item.slice(enactment.index);
-    const citation = /((?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl)\.\s*(?:\d{4}\s*)?(?:S\.|Nr\.)\s*\d+)/u.exec(tail)?.[1];
+    const citation = /((?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl)\.?\s*(?:\d{4}\s*)?(?:S\.|Nr\.)\s*\d+)/u.exec(tail)?.[1];
     const bayRs = /BayRS\s*([0-9A-Za-zÄÖÜäöü]+(?:[.\-/][0-9A-Za-zÄÖÜäöü]+)*)/u.exec(item)?.[1];
-    const abbreviation = extractTitleAbbreviation(title);
+    const abbreviation = titleAbbreviation(title);
+    const titleCandidates = [title];
+    if (abbreviation?.form === 'dash') titleCandidates.push(normalizeQuote(title.slice(0, abbreviation.index)));
     found.push({
       ...(bayRs === undefined ? {} : { bayRsNumber: bayRs }),
       title,
-      titleCandidates: [title],
-      ...(abbreviation === undefined ? {} : { abbreviation }),
+      titleCandidates,
+      ...(abbreviation === undefined ? {} : { abbreviation: abbreviation.abbreviation }),
       ...(enactmentDate === undefined ? {} : { enactmentDate }),
       ...(citation === undefined ? {} : { citation }),
       start: 0,
@@ -485,15 +535,6 @@ export function scanRepealList(paragraphs: readonly string[]): CitedNorm[] {
     });
   }
   return found;
-}
-
-/** Abkürzung aus dem Klammerzusatz am Ende eines Titels, soweit vorhanden. */
-function extractTitleAbbreviation(title: string): string | undefined {
-  const match = /\(([^()]{1,60})\)\s*$/u.exec(title);
-  if (!match) return undefined;
-  const candidate = match[1]!.replace(/[‐-―−]/gu, '-').split(/\s+-\s+/u).at(-1)!.trim();
-  if (/\s/u.test(candidate) || (candidate.match(/[A-ZÄÖÜ]/gu) ?? []).length < 2) return undefined;
-  return candidate;
 }
 
 /** Wörtlicher Ausschnitt eines Listenglieds, auf die Länge eines Belegs gekürzt. */

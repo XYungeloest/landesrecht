@@ -14,8 +14,8 @@ Datengrundlage: `data/imports/bayernrecht/inventory.json` (ein Eintrag je Dokume
 
 | Ausgang | Dokumente | Anteil | Bedeutung |
 | --- | --- | --- | --- |
-| `parsed-with-warnings` | 2153 | 91,9 % | durchgelaufen, mit Hinweisen |
-| `parsed` | 189 | 8,1 % | ohne Befund durch den ganzen Weg |
+| `parsed-with-warnings` | 1868 | 79,8 % | durchgelaufen, mit Hinweisen |
+| `parsed` | 474 | 20,2 % | ohne Befund durch den ganzen Weg |
 
 ## Erfolg je DTD
 
@@ -23,8 +23,8 @@ Die beiden Dokumentmodelle teilen den Fließtextvorrat, sonst wenig – sie verh
 
 | DTD | geprüft | `parsed` | `parsed-with-warnings` |
 | --- | --- | --- | --- |
-| `byrecht-norm` | 1001 | 115 | 886 |
-| `byrecht-vv` | 1341 | 74 | 1267 |
+| `byrecht-norm` | 1001 | 215 | 786 |
+| `byrecht-vv` | 1341 | 259 | 1082 |
 
 ## Erfolg je Normtyp
 
@@ -33,11 +33,11 @@ Die beiden Dokumentmodelle teilen den Fließtextvorrat, sonst wenig – sie verh
 | `bekanntmachung` | 8 | 0 | 8 |
 | `gesetz` | 240 | 61 | 179 |
 | `satzung` | 5 | 1 | 4 |
-| `staatsvertrag` | 95 | 4 | 91 |
+| `staatsvertrag` | 95 | 6 | 89 |
 | `verfassung` | 1 | 0 | 1 |
-| `verordnung` | 502 | 45 | 457 |
+| `verordnung` | 502 | 137 | 365 |
 | `verwaltungsabkommen` | 21 | 1 | 20 |
-| `verwaltungsvorschrift` | 1470 | 77 | 1393 |
+| `verwaltungsvorschrift` | 1470 | 268 | 1202 |
 
 ## Einzelne Kennzahlen
 
@@ -53,16 +53,17 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 
 | Dokumente | Signatur | Stufe | Gewicht |
 | --- | --- | --- | --- |
-| 1553 | `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` | transform | info |
+| 1555 | `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` | transform | info |
 | 1485 | `sentence-numbers` | parse | info |
-| 1459 | `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` | transform | warning |
 | 1143 | `vv-section-address-unresolved` | parse | info |
 | 811 | `tables` | parse | info |
+| 770 | `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` | transform | warning |
 | 739 | `footnotes` | parse | info |
 | 482 | `vv-depth-beyond-model` | parse | info |
 | 324 | `undecidable-source-state-abbreviation:BayHO` | transform | warning |
 | 317 | `referenced-file-case-mismatch` | parse | info |
 | 284 | `vv-bayrs-number-absent` | parse | info |
+| 241 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simula…` | transform | info |
 | 170 | `vv-section-effective-dates` | parse | info |
 | 165 | `undecidable-source-state-abbreviation:BayVwVfG` | transform | warning |
 | 157 | `undecidable-source-state-abbreviation:BayEUG` | transform | warning |
@@ -72,6 +73,8 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 125 | `division-number-before-title` | parse | info |
 | 115 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <aenderungsverlauf> → Listenpunkt ; ersatzweise als „…“ geführt` | parse | warning |
 | 109 | `slug-collision` | transform | warning |
+| 103 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simul…` | transform | info |
+| 102 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erhalten, kein…` | transform | info |
 | 77 | `undecidable-source-state-abbreviation:BayBesG` | transform | warning |
 | 75 | `undecidable-source-state-abbreviation:BayRKG` | transform | warning |
 | 71 | `undecidable-source-state-abbreviation:BayBO` | transform | warning |
@@ -80,13 +83,17 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 63 | `organ-formula-conflict:Widersprüchliche Erlassformeln (…); kein Erlassorgan übernommen` | transform | warning |
 | 61 | `annex-number-flag-missing:<annex ANL_#>: keine <annex.nummer> mit @int; ersatzweise gilt die erste Schreibweise „…“` | parse | warning |
 | 60 | `repealed-provision:§ # ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
+| 54 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein Simulat…` | transform | info |
 | 54 | `package-media-type-mismatch:image/jpg→.gif` | parse | warning |
 | 54 | `undecidable-source-state-abbreviation:BayPVG` | transform | warning |
 | 54 | `undecidable-source-state-abbreviation:BaySchO` | transform | warning |
 | 52 | `undecidable-source-state-abbreviation:BaySchFG` | transform | warning |
 | 49 | `figures-transferred` | parse | info |
 | 49 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium)…` | transform | warning |
+| 41 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-wirtschaft); als Quellorgan erhalten, kein Sim…` | transform | info |
+| 39 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalten, kein Simulat…` | transform | info |
 | 38 | `norm-type-assumed:@doktyp="vertrag"` | parse | info |
+| 37 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellorgan erhalten, kei…` | transform | info |
 | 37 | `undecidable-source-state-abbreviation:BayWG` | transform | warning |
 | 35 | `undecidable-source-state-abbreviation:BayDSG` | transform | warning |
 | 34 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <absatz.text> ; ersatzweise als „…“ geführt` | parse | warning |
@@ -96,10 +103,13 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 33 | `vv-superscript-ambiguous:<sup>#</sup> in <gliederung ebene=# Position #> steht nicht am Satzanfang; als Hochstellung übernommen, nicht als Satznu…` | parse | warning |
 | 32 | `undecidable-source-state-abbreviation:BayGlG` | transform | warning |
 | 31 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <gliederung ebene=# Position #> ; ersatzweise als „…“ geführt` | parse | warning |
+| 30 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-gesundheit); als Quellorgan erhalten, kein Sim…` | transform | info |
 | 26 | `undecidable-source-state-abbreviation:BayBS` | transform | warning |
 | 26 | `undecidable-source-state-abbreviation:BayHIG` | transform | warning |
 | 25 | `repealed-provision:Art. #a ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 23 | `title-continued:Der Titel läuft über # Zeilen von <titelangaben> und wird zusammengesetzt: „…“` | parse | info |
+| 21 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-justiz); als Quellorgan erhalten, kein Simulat…` | transform | info |
+| 21 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-wissenschaft); als Quellorgan erhalten, kein S…` | transform | info |
 | 21 | `undecidable-source-state-abbreviation:BayHSchG` | transform | warning |
 | 21 | `undecidable-source-state-abbreviation:BayKiBiG` | transform | warning |
 | 20 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium des Innern / Bayerisches Staatsministerium); kein Erlassor…` | transform | warning |
@@ -228,7 +238,6 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 3 | `empty-provision:Art. #e hat keinen Textinhalt` | parse | warning |
 | 3 | `empty-provision:§ #a hat keinen Textinhalt` | parse | warning |
 | 3 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <p typ=titel> ; ersatzweise als „…“ geführt` | parse | warning |
-| 3 | `historical-name-uncertain:versions[#].body[#].children[#].text: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
 | 3 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium …` | transform | warning |
 | 3 | `repealed-provision:Art. #d ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 3 | `repealed-provision:Art. #e ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
@@ -265,8 +274,6 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 2 | `empty-provision:Art. #k hat keinen Textinhalt` | parse | warning |
 | 2 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <para.titel> ; ersatzweise als „…“ geführt` | parse | warning |
 | 2 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <rumpf> ; ersatzweise als „…“ geführt` | parse | warning |
-| 2 | `historical-name-uncertain:versions[#].body[#].children[#].children[#].children[#].text: „…“ – historischer Vertragsname oder heutiger Selbstbezug?…` | transform | warning |
-| 2 | `historical-name-uncertain:versions[#].body[#].children[#].children[#].text: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…` | transform | warning |
 | 2 | `norm-type-refined:@doktyp="bekanntmachung"` | parse | info |
 | 2 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Umwelt und Gesundheit / Bayerisches Staatsministerium)…` | transform | warning |
 | 2 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Umwelt und Verbraucherschutz / Bayerisches Staatsminis…` | transform | warning |
@@ -354,10 +361,6 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <gliederung ebene=# Position #> → <gliederung.titel> ; ersatzweise als „…“ ge…` | parse | warning |
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <rumpf> → Listenpunkt → Listenpunkt ; ersatzweise als „…“ geführt` | parse | warning |
 | 1 | `graphic-not-transferred` | parse | warning |
-| 1 | `historical-name-uncertain:meta.initialCitation: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
-| 1 | `historical-name-uncertain:meta.title: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
-| 1 | `historical-name-uncertain:versions[#].body[#].title: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
-| 1 | `historical-name-uncertain:versions[#].citation: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
 | 1 | `norm-type-refined:@doktyp="gesetz"` | parse | info |
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium der Finanzen / Staatsministerium der Finanzen); kein Erlas…` | transform | warning |
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium der Finanzen vom / Bayerisches Staatsministerium der Finan…` | transform | warning |
@@ -552,9 +555,9 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 
 ### Die Klassen im Einzelnen
 
-Zuerst alle 0 Klassen mit Gewicht `error` (sie halten den Bulk-Lauf auf), danach die 40 größten der übrigen. Alle 496 Klassen stehen in der Tabelle oben und vollständig in `data/imports/bayernrecht/inventory.json`.
+Zuerst alle 0 Klassen mit Gewicht `error` (sie halten den Bulk-Lauf auf), danach die 40 größten der übrigen. Alle 499 Klassen stehen in der Tabelle oben und vollständig in `data/imports/bayernrecht/inventory.json`.
 
-#### `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` · 1553 Dokumente
+#### `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` · 1555 Dokumente
 
 Stufe transform · Gewicht info
 
@@ -563,7 +566,7 @@ Stufe transform · Gewicht info
 - `BAY_2131_3_8_I`: 1 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
 - `BAY_2210_2_5_4_WFK`: 1 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
 - `BAY_2220_3_UK`: 4 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
-- … und 1548 weitere Dokumente mit derselben Signatur
+- … und 1550 weitere Dokumente mit derselben Signatur
 
 #### `sentence-numbers` · 1485 Dokumente
 
@@ -575,17 +578,6 @@ Stufe parse · Gewicht info
 - `BAY_110_1984_201`: 4 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)
 - `BAY_2131_3_7_I`: 12 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)
 - … und 1480 weitere Dokumente mit derselben Signatur
-
-#### `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` · 1459 Dokumente
-
-Stufe transform · Gewicht warning
-
-- `BAY_2210_2_5_4_WFK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wissenschaft und Kunst“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- `BAY_2230_1_1_2_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- `BAY_2237_4_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- `BAY_791_3_148_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- `BAY_791_3_150_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- … und 1454 weitere Dokumente mit derselben Signatur
 
 #### `vv-section-address-unresolved` · 1143 Dokumente
 
@@ -608,6 +600,17 @@ Stufe parse · Gewicht info
 - `BayAGO`: 1 Tabellen nach dem Blockmodell übernommen
 - `BayAGSG`: 1 Tabellen nach dem Blockmodell übernommen
 - … und 806 weitere Dokumente mit derselben Signatur
+
+#### `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` · 770 Dokumente
+
+Stufe transform · Gewicht warning
+
+- `BAY_2210_2_5_4_WFK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wissenschaft und Kunst“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
+- `BAY_2230_1_1_2_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
+- `BAY_2237_4_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
+- `Bay224BRAOBefUeV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Justiz“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
+- `BayABOB`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst soweit erforderlich“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (m…
+- … und 765 weitere Dokumente mit derselben Signatur
 
 #### `footnotes` · 739 Dokumente
 
@@ -663,6 +666,17 @@ Stufe parse · Gewicht info
 - `BayVV_1132_F_035`: Die erste Zeile des Titelabsatzes ("Verleihung einer Medaille für besondere Verdienste um die bayerischen Schlösser, Gärten und Seen sowie Heimat und Brauchtum") ist keine Gliederu…
 - `BayVV_1132_F_054`: Die erste Zeile des Titelabsatzes ("Verleihung einer Medaille für besondere Verdienste um die Bayerische Vermessungsverwaltung") ist keine Gliederungsnummer; es wird keine erfunden
 - … und 279 weitere Dokumente mit derselben Signatur
+
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simula…` · 241 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BayAKDB`: Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simulationsorgan
+- `BayAVFwG`: Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simulationsorgan
+- `BayAVRDG`: Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simulationsorgan
+- `BayAnerkV`: Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simulationsorgan
+- `BayAufVGem`: Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ist historisch (historisches-staatsministerium-inneres); als Quellorgan erhalten, kein Simulationsorgan
+- … und 236 weitere Dokumente mit derselben Signatur
 
 #### `vv-section-effective-dates` · 170 Dokumente
 
@@ -763,6 +777,28 @@ Stufe transform · Gewicht warning
 - `BayVV_3122_2_7_J_430`: gtv-baywue: BayVV_3122_2_7_J_430, BayVwV153959
 - … und 104 weitere Dokumente mit derselben Signatur
 
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simul…` · 103 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BayALBV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Finanzen“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simulationsorgan
+- `BayARV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Finanzen“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simulationsorgan
+- `BayBSVV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Finanzen“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simulationsorgan
+- `BayBhV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Finanzen“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simulationsorgan
+- `BayBodenschEntschV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Finanzen“ ist historisch (historisches-staatsministerium-finanzen); als Quellorgan erhalten, kein Simulationsorgan
+- … und 98 weitere Dokumente mit derselben Signatur
+
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erhalten, kein…` · 102 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BayALFV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landwirtschaft und Forsten“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erhalten, kein …
+- `BayAVBayWeinAFoeG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landwirtschaft und Forsten“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erhalten, kein …
+- `BayAVFiG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landwirtschaft und Forsten“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erhalten, kein …
+- `BayAVJG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landwirtschaft und Forsten“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erhalten, kein …
+- `BayAVVForst`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Ernährung, Landwirtschaft und Forsten“ ist historisch (historisches-staatsministerium-landwirtschaft); als Quellorgan erha…
+- … und 97 weitere Dokumente mit derselben Signatur
+
 #### `undecidable-source-state-abbreviation:BayBesG` · 77 Dokumente
 
 Stufe transform · Gewicht warning
@@ -851,6 +887,17 @@ Stufe parse · Gewicht info
 - `BayAVUeG`: § 2 ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten
 - … und 55 weitere Dokumente mit derselben Signatur
 
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein Simulat…` · 54 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BAY_791_3_148_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein …
+- `BAY_791_3_150_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein …
+- `BAY_791_3_151_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein …
+- `BAY_791_3_153_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein …
+- `BAY_791_5_12_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ist historisch (historisches-staatsministerium-umwelt); als Quellorgan erhalten, kein …
+- … und 49 weitere Dokumente mit derselben Signatur
+
 #### `package-media-type-mismatch:image/jpg→.gif` · 54 Dokumente
 
 Stufe parse · Gewicht warning
@@ -917,6 +964,28 @@ Stufe transform · Gewicht warning
 - `BayVV_2033_UK_114`: Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium); kein Erlassorgan übernommen
 - … und 44 weitere Dokumente mit derselben Signatur
 
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-wirtschaft); als Quellorgan erhalten, kein Sim…` · 41 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BayAVEAG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie“ ist historisch (historisches-staatsministerium-wirtschaft); als Quello…
+- `BayBergVO`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie“ ist historisch (historisches-staatsministerium-wirtschaft); als Quello…
+- `BayBeschGebV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie“ ist historisch (historisches-staatsministerium-wirtschaft); als Quello…
+- `BayBetrlnichtbEisb`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wirtschaft, Verkehr und Technologie“ ist historisch (historisches-staatsministerium-wirtschaft); als Quellorgan erhalten, …
+- `BayBoersV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wirtschaft, Verkehr und Technologie“ ist historisch (historisches-staatsministerium-wirtschaft); als Quellorgan erhalten, …
+- … und 36 weitere Dokumente mit derselben Signatur
+
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalten, kein Simulat…` · 39 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BayAVSchFG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
+- `BayBergSkiV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Bildung und Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
+- `BayBildGrundV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
+- `BayFHSchkiTraeV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
+- `BayFOBOSO`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Bildung und Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
+- … und 34 weitere Dokumente mit derselben Signatur
+
 #### `norm-type-assumed:@doktyp="vertrag"` · 38 Dokumente
 
 Stufe parse · Gewicht info
@@ -927,70 +996,4 @@ Stufe parse · Gewicht info
 - `BayELKV`: BayELKV: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „Vertrag zwischen dem Bayerischen Staate und der Evangelisch-Lutherischen Kirche in Bayern rechts …
 - `BayIsraelKultVertrag`: BayIsraelKultVertrag: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „Vertrag zwischen dem Freistaat Bayern und dem Landesverband der Israelitischen Kultu…
 - … und 33 weitere Dokumente mit derselben Signatur
-
-#### `undecidable-source-state-abbreviation:BayWG` · 37 Dokumente
-
-Stufe transform · Gewicht warning
-
-- `BayBO`: 25 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayBO, BayVwVfG, BayESG, BayWG, BayBQFG, …1 weitere); ob sie zu einer amtlichen Kurzbezeichnung ge…
-- `BayBadeGewV`: 4 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayBadeGewV, BayWG, BayUIG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Tra…
-- `BayEUeV`: 7 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformationsbericht (…
-- `BayFischG`: 6 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayFiG, BayWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformationsb…
-- `BayGrKrV`: 3 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformationsbericht (…
-- … und 32 weitere Dokumente mit derselben Signatur
-
-#### `undecidable-source-state-abbreviation:BayDSG` · 35 Dokumente
-
-Stufe transform · Gewicht warning
-
-- `BayDSG`: 2 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayDSG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformationsbericht …
-- `BayEUG`: 11 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayEUG, BaySchFG, BayPrG, BayBG, BayDSG, …1 weitere); ob sie zu einer amtlichen Kurzbezeichnung ge…
-- `BayILSG`: 5 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayRDG, BayDSG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformations…
-- `BayLTGO`: 23 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayLTGeschO, BayAbgG, BayDSG, BayHO, BayPetG); ob sie zu einer amtlichen Kurzbezeichnung gehören, …
-- `BayMRVG`: 21 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayMRVG, BayStVollzG, BaySvVollzG, BayDSG); ob sie zu einer amtlichen Kurzbezeichnung gehören, ent…
-- … und 30 weitere Dokumente mit derselben Signatur
-
-#### `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <absatz.text> ; ersatzweise als „…“ geführt` · 34 Dokumente
-
-Stufe parse · Gewicht warning
-
-- `BayAGFlurbG` (Zeile 182): <satz.nr id="xx">1</satz.nr>Das Amt für Ländliche Entwicklung bestimmt die Zahl der von der Teilnehmerversammlung zu wählenden Vorstandsmitglieder; es kann auch Bestimmungen über e…
-- `BayAGGlueStV` (Zeile 124): <satz.nr id="xx">1</satz.nr>Der Freistaat Bayern veranstaltet durch die Staatliche Lotterie- und Spielbankverwaltung (<verweis.norm>Art. <v.norm ersatz="BayAGGlueStV">5</v.norm></v…
-- `BayAbgG` (Zeile 1874): <p>Dieses Gesetz tritt mit Ausnahme der <verweis.norm>Art. <v.norm ersatz="BayAbgG">2</v.norm>, <v.norm ersatz="BayAbgG">3</v.norm>, <v.norm ersatz="BayAbgG">28</v.norm> und <v.nor…
-- `BayAbmG` (Zeile 615): <satz.nr id="xx">1</satz.nr>Über den Entschädigungsanspruch nach Art. <verweis.norm><v.norm ersatz="BayAbmG">10</v.norm> Abs. 4 Satz 1</verweis.norm> sowie über den Erstattungsansp…
-- `BayAufbauG` (Zeile 398): <satz.nr id="xx">1</satz.nr>Das Gesetz ist dringlich. <satz.nr id="xx">2</satz.nr>Es tritt am 20. November 1950 in Kraft<fn.call><fn.text /><fn.def><p>Diese Vorschrift betrifft das…
-- … und 29 weitere Dokumente mit derselben Signatur
-
-#### `undecidable-source-state-abbreviation:BayWaldG` · 34 Dokumente
-
-Stufe transform · Gewicht warning
-
-- `BayKWaldV`: 8 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayWaldG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformationsberich…
-- `BayLplG`: 5 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayLplG, BayVwVfG, BayWaldG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Tr…
-- `BayNatWaldV`: 11 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayWaldNatPV, BayNatSchG, BayWaldG, BayJG); ob sie zu einer amtlichen Kurzbezeichnung gehören, ent…
-- `BayPuKWFV`: 2 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayAgrarWiG, BayWaldG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transfor…
-- `BayStFoG`: 7 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayWaldG, BayBS, BayJG, BayBG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der …
-- … und 29 weitere Dokumente mit derselben Signatur
-
-#### `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <p typ=-> ; ersatzweise als „…“ geführt` · 33 Dokumente
-
-Stufe parse · Gewicht warning
-
-- `BayVV_2012_4_5_I_081` (Zeile 172): <p>Der Teil E ergänzt die gültige Technische Richtlinie Relaisfunkstellengeräte – Stand: März 1992.<fn.call><fn.text /><fn.def><p>Eingeführt mit Bekanntmachung des Bayerischen Staa…
-- `BayVV_2032_3_K_772` (Zeile 47): <fn.call>
-- `BayVV_2032_4_A_135` (Zeile 40): <fn.call>
-- `BayVV_2033_1_K_749` (Zeile 38): <fn.call>
-- `BayVV_2033_6_F_138` (Zeile 44): <fn.call>
-- … und 28 weitere Dokumente mit derselben Signatur
-
-#### `undecidable-source-state-abbreviation:BayStrWG` · 33 Dokumente
-
-Stufe transform · Gewicht warning
-
-- `BayBGG`: 3 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayBGG, BayStrWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformatio…
-- `BayFAG`: 7 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayFAG, BaySchFG, BayVwVfG, BayStrWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheid…
-- `BayFAGDV02`: 57 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayFAG, BayAVGFRG, BayStrWG, BayHO); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheide…
-- `BayGBGA`: 1 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayStrWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformationsberich…
-- `BayGebOVerm`: 3 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayFiG, BayStrWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheidet der Transformatio…
-- … und 28 weitere Dokumente mit derselben Signatur
 

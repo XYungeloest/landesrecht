@@ -30,7 +30,13 @@ export type StepKind =
   | 'spiegelstrich'
   | 'satzteil-vor'
   | 'satzteil-nach'
-  | 'ueberschrift';
+  | 'ueberschrift'
+  /** Vorbemerkung, Einleitung, Präambel: der unbezeichnete Text vor dem ersten bezeichneten Glied (Verwaltungsvorschriften). */
+  | 'vorspann'
+  /** Tabellenzeile über den Schlüssel in ihrer ersten Zelle („in der Zeile der Kennziffer 821“, GVBl. 2025 S. 178). */
+  | 'zeile'
+  /** Tabellenspalte einer Zeile, 1-basiert („Spalte 6“). */
+  | 'spalte';
 
 export interface LocationStep {
   kind: StepKind;
@@ -57,6 +63,9 @@ const RANK: Record<StepKind, number> = {
   'satzteil-vor': 10,
   'satzteil-nach': 10,
   ueberschrift: 10,
+  vorspann: 3,
+  zeile: 6,
+  spalte: 7,
 };
 const TERMINAL: ReadonlySet<StepKind> = new Set(['halbsatz', 'satzteil-vor', 'satzteil-nach', 'ueberschrift']);
 
@@ -99,8 +108,26 @@ function tokenize(input: string): Token[] | undefined {
     [/^(?:Teiles|Teils|Teil)(?![\p{L}])\s*/u, 'teil'],
     [/^(?:Anlagen|Anlage)(?![\p{L}])\s*/u, 'anlage'],
   ];
+  // „Satz 1 der Vorbemerkung“: Der Satz steht vor seinem Bezugsglied.
+  const vorspannFirst = /^(?:Satz|Sätze)\s+(\d+)\s+(?:der|in\s+der)\s+(?:Vorbemerkung|Einleitung|Präambel)$/u.exec(rest);
+  if (vorspannFirst) return [{ kind: 'vorspann', value: '' }, { kind: 'satz', value: vorspannFirst[1]! }];
   while (rest !== '') {
     let match: RegExpExecArray | null;
+    // „Im Wortlaut vor Buchst. a“ = Satzteil vor Buchst. a; „Im Wortlaut“ allein = der Text des Glieds (keine Stufe).
+    if ((match = /^(?:dem\s+)?Wortlaut\s+vor\s+/u.exec(rest))) {
+      rest = `Satzteil vor ${rest.slice(match[0].length)}`;
+      continue;
+    }
+    if ((match = /^(?:dem\s+)?Wortlaut(?![\p{L}])\s*/u.exec(rest)) && tokens.length === 0) {
+      rest = rest.slice(match[0].length);
+      if (rest === '') return tokens;
+      continue;
+    }
+    if ((match = /^(?:der\s+|die\s+)?(?:Vorbemerkung|Einleitung|Präambel)(?![\p{L}])\s*/u.exec(rest))) {
+      tokens.push({ kind: 'vorspann', value: '' });
+      rest = rest.slice(match[0].length);
+      continue;
+    }
     if ((match = /^(?:der|dem|den|des|die|das)\s+Überschrift(?:\s+(?:des|der|zu))?\s*/u.exec(rest)) || (match = /^Überschrift(?:\s+(?:des|der|zu))?\s*/u.exec(rest))) {
       tokens.push({ kind: 'ueberschrift', value: '' });
       rest = rest.slice(match[0].length);
@@ -126,6 +153,17 @@ function tokenize(input: string): Token[] | undefined {
       rest = rest.slice(match[0].length);
       continue;
     }
+    // „Zeile der Kennziffer 821“, „Spalte 6“ (Tabellen in Anlagen, GVBl. 2025 S. 178)
+    if ((match = /^(?:(?:in\s+)?der\s+)?Zeile\s+(?:der|mit\s+der)\s+Kennziffer\s+(\d+[a-z]?)(?=\s|,|$)\s*/u.exec(rest))) {
+      tokens.push({ kind: 'zeile', value: match[1]! });
+      rest = rest.slice(match[0].length);
+      continue;
+    }
+    if ((match = /^(?:(?:in\s+)?der\s+)?Spalte\s+(\d+)(?=\s|,|$)\s*/u.exec(rest))) {
+      tokens.push({ kind: 'spalte', value: match[1]! });
+      rest = rest.slice(match[0].length);
+      continue;
+    }
     if ((match = /^(?:bis)\s+/u.exec(rest))) {
       // „Nr. 6 bis 8“ – ein Bereich ist eine Aufzählung ohne benannte Glieder; nicht unterstützt.
       return undefined;
@@ -137,6 +175,12 @@ function tokenize(input: string): Token[] | undefined {
       rest = rest.slice(hit[0].length);
       // „Buchstabe a)“: die Klammer gehört zur Bezeichnung, nicht zum Wert.
       const value = new RegExp(`^(${VALUE})\\)?(?=\\s|,|$)\\s*`, 'u').exec(rest);
+      // „Der Anlage wird folgende Nr. 19 angefügt“ (GVBl. 2025 S. 272): die einzige, unnummerierte Anlage.
+      if (!value && kind === 'anlage' && (rest === '' || /^(?:Nr\.|Nrn\.|Abs\.|Satz|Buchst\.|Abschnitt|Teil|Zeile|Spalte)(?![\p{L}])/u.test(rest))) {
+        tokens.push({ kind, value: '' });
+        keyedHit = true;
+        break;
+      }
       if (!value) return undefined;
       tokens.push({ kind, value: value[1]!.replace(/\.$/u, '') });
       rest = rest.slice(value[0].length);
@@ -228,6 +272,11 @@ export function parseLocation(input: string): LocationPath[] | undefined {
   if (headingPending) current.push({ kind: 'ueberschrift', value: '' });
   if (pendingJoin) return undefined;
   if (current.length > 0) paths.push(current);
+  // „Teil 1 Abschnitt 6 Unterabschnitt 2 der Anlage“: Die Anlage im Genitiv ist das äußerste Glied.
+  for (const path of paths) {
+    const at = path.findIndex((step) => step.kind === 'anlage');
+    if (at > 0 && path.slice(0, at).every((step) => step.kind === 'teil' || step.kind === 'abschnitt' || step.kind === 'unterabschnitt' || step.kind === 'nummer')) path.unshift(...path.splice(at, 1));
+  }
   return paths.length > 0 ? paths : undefined;
 }
 
@@ -249,10 +298,13 @@ export const formatPath = (path: LocationPath): string =>
             case 'teil': return `Teil ${step.value}`;
             case 'abschnitt': return `Abschnitt ${step.value}`;
             case 'unterabschnitt': return `Unterabschnitt ${step.value}`;
-            case 'anlage': return `Anlage ${step.value}`;
+            case 'anlage': return step.value === '' ? 'Anlage' : `Anlage ${step.value}`;
             case 'satzteil-vor': return `Satzteil vor ${step.value}`;
             case 'satzteil-nach': return `Satzteil nach ${step.value}`;
             case 'ueberschrift': return 'Überschrift';
+            case 'vorspann': return 'Vorbemerkung';
+            case 'zeile': return `Zeile ${step.value}`;
+            case 'spalte': return `Spalte ${step.value}`;
           }
         })
         .join(' ');
@@ -329,6 +381,7 @@ function labelMatches(step: LocationStep, block: NormBodyBlock): boolean {
     case 'unterabschnitt':
       return label === `Unterabschnitt ${value}` || label === `Unterabschnitt ${arabic}`;
     case 'anlage':
+      if (value === '') return label === 'Anlage';
       return label === `Anlage ${value}` || label === `Anlage ${arabic}`;
     default:
       return false;
@@ -346,6 +399,23 @@ function findUnique(step: LocationStep, located: Located, body: readonly NormBod
   const top = hits.filter((hit) => hit.depth === shallowest);
   if (top.length !== 1) return 'ambiguous';
   return { block: top[0]!.block, path: top[0]!.path };
+}
+
+/**
+ * Nummer oder Buchstabe als Tabellenzeile (Art. 6 Abs. 6 BayRKG: „1. | Kraftwagens | 0,25 €,“; BayMBl. 2025 Nr. 286:
+ * „k)⏎Arbeitsgericht Würzburg: | 13 Kammern“): Die Aufzählung ist als Tabelle gesetzt, die erste Zelle beginnt mit
+ * dem Gliederungszeichen. Genau eine Zeile im Bereich muss es tragen.
+ */
+function tableRowNumber(step: LocationStep, located: Located, body: readonly NormBodyBlock[]): Located | 'missing' | 'ambiguous' {
+  const mark = step.kind === 'nummer' ? `${step.value}.` : `${step.value})`;
+  const starts = (text: string): boolean => {
+    const cell = text.trim();
+    return cell === mark || (cell.startsWith(mark) && /^\s/u.test(cell.slice(mark.length)));
+  };
+  const rows = descendants(located, body).filter((entry) => entry.block.type === 'tableRow' && typeof entry.block.children?.[0]?.text === 'string' && starts(entry.block.children[0].text));
+  if (rows.length === 0) return 'missing';
+  if (rows.length !== 1) return 'ambiguous';
+  return { block: rows[0]!.block, path: rows[0]!.path };
 }
 
 const DASH_LABELS = new Set(['–', '-', '—', '•', '·']);
@@ -419,11 +489,18 @@ export function sentenceMarkers(text: string): Array<{ number: number; start: nu
 /** Zeichenbereich des Satzes `number` in `text` (samt Satznummer). */
 export function sentenceRange(text: string, number: number): { start: number; end: number } | undefined {
   const markers = sentenceMarkers(text);
-  if (!markers) return undefined;
-  const marker = markers.find((entry) => entry.number === number);
-  if (!marker) return undefined;
-  const next = markers.find((entry) => entry.number === number + 1);
-  return { start: marker.start, end: next ? next.start : text.length };
+  const marker = markers?.find((entry) => entry.number === number);
+  if (markers && marker) {
+    const next = markers.find((entry) => entry.number === number + 1);
+    return { start: marker.start, end: next ? next.start : text.length };
+  }
+  // Fließtext, der nicht mit Satz 1 beginnt („⁴… ⁵…“ hinter einer Aufzählung): Die Nummer muss genau einmal an einem
+  // Satzanfang stehen; der Satz reicht bis zur nächsten Satznummer.
+  const all = [...text.matchAll(/(?<=^|[\s(„])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)(?=\S)/gu)].map((match) => ({ value: Number([...match[1]!].map((character) => '⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(character)).join('')), start: match.index! }));
+  const hits = all.filter((entry) => entry.value === number);
+  if (hits.length !== 1 || all[0]!.value > number) return undefined;
+  const next = all.find((entry) => entry.start > hits[0]!.start);
+  return { start: hits[0]!.start, end: next ? next.start : text.length };
 }
 
 /**
@@ -433,10 +510,20 @@ export function sentenceRange(text: string, number: number): { start: number; en
 export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath): ScopeResult {
   let located: Located = ROOT;
   let sentence: number | undefined;
-  let mode: 'all' | 'leading' | 'heading' = 'all';
+  let mode: 'all' | 'leading' | 'heading' | 'vorspann' = 'all';
   const resolved: string[] = [];
   const widened: string[] = [];
   for (const step of path) {
+    if (step.kind === 'vorspann') {
+      if (located.block || mode !== 'all') return { ok: false, reason: 'Vorbemerkung nur auf oberster Ebene' };
+      mode = 'vorspann';
+      widened.push('Vorbemerkung (unbezeichneter Text vor dem ersten bezeichneten Glied)');
+      continue;
+    }
+    if (mode === 'vorspann' && step.kind === 'satz') {
+      widened.push(formatPath([step]));
+      continue;
+    }
     const label = formatPath([step]);
     if (mode !== 'all') return { ok: false, reason: `Nach „${mode === 'heading' ? 'Überschrift' : 'Satzteil vor'}“ folgt keine weitere Stufe (${label})` };
     switch (step.kind) {
@@ -458,19 +545,57 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
         const own = located.block?.text;
         const markers = own === undefined ? undefined : sentenceMarkers(own);
         if (!markers) {
+          // Ein Glied ohne eigenen Text, dessen Wortlaut als einziges Textglied darunter steht (BayMBl.: „4.2.2
+          // Überschrift“ – „¹… ²… ³…“): Trägt genau ein unbezeichnetes Textglied die Satznummer, ist es der Satz.
+          if (own === undefined && sentence === undefined && located.block) {
+            const number = Number(step.value);
+            const texts = (located.block.children ?? []).map((child, index) => ({ child, index })).filter(({ child }) => child.type === 'paragraphText' && !child.label && typeof child.text === 'string');
+            const carrying = texts.filter(({ child }) => sentenceMarkers(child.text!) !== undefined && sentenceRange(child.text!, number) !== undefined);
+            if (carrying.length === 1 && texts.length === 1) {
+              located = { block: carrying[0]!.child, path: [...located.path, carrying[0]!.index] };
+              sentence = number;
+              resolved.push(`${label} (einziges Textglied)`);
+              continue;
+            }
+          }
           // Ohne Satznummern (Verwaltungsvorschriften, Absätze mit nur einem Satz) bleibt der Bereich, wie er ist.
           widened.push(label);
           continue;
         }
         if (sentence !== undefined) return { ok: false, reason: `${label}: zweite Satzangabe` };
         const number = Number(step.value);
-        if (!markers.some((marker) => marker.number === number)) return { ok: false, reason: `${label}: Satz im Text nicht nummeriert vorhanden` };
+        if (!markers.some((marker) => marker.number === number)) {
+          // Nach einer Aufzählung setzt der Absatz im Fließtext fort („⁴…“ hinter Nr. 1 bis 3): genau ein unbezeichnetes
+          // Textglied des Absatzes trägt die Satznummer.
+          const rest = (located.block?.children ?? []).map((child, index) => ({ child, index })).filter(({ child }) => child.type === 'paragraphText' && typeof child.text === 'string' && sentenceRange(child.text, number) !== undefined);
+          if (rest.length !== 1 || sentence !== undefined) return { ok: false, reason: `${label}: Satz im Text nicht nummeriert vorhanden` };
+          located = { block: rest[0]!.child, path: [...located.path, rest[0]!.index] };
+          sentence = number;
+          resolved.push(`${label} (Absatzrest hinter der Aufzählung)`);
+          continue;
+        }
         // Die Eingrenzung auf den Satz gilt nur für den eigenen Text; Kinder (Nummern) gehören zum Satz davor.
         if ((located.block?.children ?? []).length > 0) {
           widened.push(label);
           continue;
         }
         sentence = number;
+        resolved.push(label);
+        continue;
+      }
+      case 'zeile': {
+        const rows = descendants(located, body).filter((entry) => entry.block.type === 'tableRow' && typeof entry.block.children?.[0]?.text === 'string' && entry.block.children[0].text.replace(/\s+/gu, ' ').trim() === step.value);
+        if (rows.length !== 1) return { ok: false, reason: `${label}: ${rows.length === 0 ? 'keine' : 'mehrere'} Tabellenzeilen mit diesem Schlüssel in der ersten Zelle` };
+        located = { block: rows[0]!.block, path: rows[0]!.path };
+        resolved.push(label);
+        continue;
+      }
+      case 'spalte': {
+        const cells = located.block?.type === 'tableRow' ? (located.block.children ?? []) : [];
+        const index = Number(step.value) - 1;
+        const cell = cells[index];
+        if (!cell || !/^table(?:Header)?Cell$/u.test(cell.type as string)) return { ok: false, reason: `${label}: keine Zelle ${step.value} in der Tabellenzeile` };
+        located = { block: cell, path: [...located.path, index] };
         resolved.push(label);
         continue;
       }
@@ -491,6 +616,13 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
             widened.push(label);
             continue;
           }
+          const row = step.kind === 'nummer' || step.kind === 'buchstabe' ? tableRowNumber(step, located, body) : 'missing';
+          if (row === 'ambiguous') return { ok: false, reason: `${label} mehrfach vorhanden (Tabellenzeilen)` };
+          if (row !== 'missing') {
+            located = row;
+            resolved.push(`${label} (Tabellenzeile mit Nummer in der ersten Zelle)`);
+            continue;
+          }
           return { ok: false, reason: `${label} nicht gefunden` };
         }
         // Ein bezeichnetes, aber leeres Glied („6.6“ ohne Text, der Text steht als Geschwister dahinter):
@@ -507,7 +639,16 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
     }
   }
   let fields: FieldRef[];
-  if (mode === 'heading') fields = [{ path: located.path, key: 'title' }];
+  if (mode === 'vorspann') {
+    // Oberste Ebene bis zum ersten bezeichneten Glied, ohne den Normkopf (`heading`) – eine Obermenge der Vorbemerkung.
+    fields = [];
+    for (let index = 0; index < body.length; index += 1) {
+      const block = body[index]!;
+      if (normalizeLabel(block.label) !== '' || (block.type as string) === 'section' || (block.type as string) === 'part') break;
+      if (block.type === 'heading') continue;
+      fields.push(...fieldsOf({ block, path: [index] }, body));
+    }
+  } else if (mode === 'heading') fields = [{ path: located.path, key: 'title' }];
   else if (mode === 'leading') fields = leadingFields(located, body);
   else fields = fieldsOf(located, body);
   if (sentence !== undefined) {

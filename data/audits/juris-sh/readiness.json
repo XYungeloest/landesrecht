@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "juris-sh-readiness/1",
+  "ready": false,
+  "checks": [
+    {
+      "id": "zugriffspolitik",
+      "label": "Zugriffspolitik belegt (robots.txt advisory, Nutzerentscheidung)",
+      "status": "pass",
+      "detail": "robots.txt 420 Bytes, SHA-256 e13af9e19d86…, abgerufen 2026-09-18T12:35:48.600Z; 5/5 Pfade „disallowed“ – Befund, keine Sperre (Entscheidung 2026-09-18)"
+    },
+    {
+      "id": "keine-technische-sperre",
+      "label": "Keine technische Zugriffssperre (403/429/Challenge)",
+      "status": "pass",
+      "detail": "20 Proben ohne Sperrsignal"
+    },
+    {
+      "id": "enumeration",
+      "label": "Enumeration Landesrecht und VwV vorhanden und konsistent",
+      "status": "pass",
+      "detail": "landesrecht 2808 · vwv 2389"
+    },
+    {
+      "id": "enumeration-fixpunkt",
+      "label": "Enumeration im Fixpunkt (zweiter, unabhängiger Abruf unverändert)",
+      "status": "pass",
+      "detail": "landesrecht: 1 Bestätigung(en), Fingerabdruck 7a0460777bbb… · vwv: 1 Bestätigung(en), Fingerabdruck 8ab1f8eef243…"
+    },
+    {
+      "id": "zweite-quelle",
+      "label": "Abgleich mit einer zweiten, vollständigen Quelle",
+      "status": "fail",
+      "detail": "nur Stichprobe: 25/29 Kennungen der Discovery-Stichprobe in der Sitemap (4 nicht, 0 unaufgelöst); die vollständigen Register (FFN-Übersichten) sind wie jeder Dokumentinhalt nicht öffentlich adressierbar"
+    },
+    {
+      "id": "inhalt-adressierbar",
+      "label": "Normtext über dokumentierte öffentliche Adressformen abrufbar",
+      "status": "fail",
+      "detail": "20/20 Proben liefern die leere Startseite der Portaloberfläche (kein sichtbarer Text; Inhalt wird erst per Skript geladen); 1 unterschiedliche Antwortkörper über alle Dokumente und Formen – die Antwort hängt nicht vom Dokument ab; Die Oberfläche lädt Dokumente über /jportal/wsrest/recherche3/ (Build-Konfiguration VITE_apiPath) mit X-CSRF-TOKEN und JURIS-PORTALID, Sitzungscookie (credentials: include) – interne, nicht dokumentierte Schnittstelle; nach der Zugriffspolitik nicht benutzt",
+      "blocker": true
+    },
+    {
+      "id": "vollkorpus-strukturinventur",
+      "label": "Strukturinventur des Vollkorpus mit Textintegrität",
+      "status": "fail",
+      "detail": "nicht durchführbar: 0 Dokumente mit abrufbarem Normtext"
+    },
+    {
+      "id": "stichtagsklassifikation",
+      "label": "Stichtagsklassifikation aller Normen",
+      "status": "fail",
+      "detail": "5197 undetermined: Ohne Dokumentinhalt fehlen Titel, Abkürzung, Gliederungsnummer, Fassungs- und Geltungsdaten. Weder die Zuordnung zum Ereignisregister noch der Vergleich mit dem Stichtag ist möglich; die DOKNR allein trägt keine dieser Angaben."
+    },
+    {
+      "id": "scope-dokumentebene",
+      "label": "Scope je Dokument (Normtyp, normativ/informativ, landesweit)",
+      "status": "fail",
+      "detail": "nur auf Kennungsfamilien-Ebene entschieden (Ortsrecht, Rechtsprechung, Verkündungsblätter ausgeschlossen); je Dokument ohne Inhalt nicht entscheidbar"
+    },
+    {
+      "id": "baseline-only",
+      "label": "baseline-only-Kandidaten mit dem Bestand abgeglichen",
+      "status": "fail",
+      "detail": "54 Kandidaten (Dubletten 0, durch Register bestätigt 21, nur angekündigt 33); Abgleich mit dem heutigen Bestand nicht möglich"
+    },
+    {
+      "id": "kein-ungeprueft-bestand",
+      "label": "Kein Bestand ohne grüne Gates geschrieben",
+      "status": "pass",
+      "detail": "content/norms/nsh leer, Manifest 0 Einträge, Review 0 Fälle"
+    }
+  ],
+  "blockers": [
+    "inhalt-adressierbar: 20/20 Proben liefern die leere Startseite der Portaloberfläche (kein sichtbarer Text; Inhalt wird erst per Skript geladen); 1 unterschiedliche Antwortkörper über alle Dokumente und Formen – die Antwort hängt nicht vom Dokument ab; Die Oberfläche lädt Dokumente über /jportal/wsrest/recherche3/ (Build-Konfiguration VITE_apiPath) mit X-CSRF-TOKEN und JURIS-PORTALID, Sitzungscookie (credentials: include) – interne, nicht dokumentierte Schnittstelle; nach der Zugriffspolitik nicht benutzt"
+  ]
+}

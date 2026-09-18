@@ -232,6 +232,18 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
   const titleTarget = targetTitleFromPublicationTitle(entry.title);
   const missingTextLayer = needsText && document !== undefined && !document.hasTextLayer;
 
+  /**
+   * Letzter Geltungstag **der zitierten Vorschrift** – aus dem Befehl hinter ihrem Zitat, nicht aus dem
+   * ganzen Text. Die erste „außer Kraft“-Angabe eines Textes ist oft die eigene Befristung der neuen
+   * Vorschrift („Diese Bekanntmachung tritt am 1. Januar 2024 in Kraft und mit Ablauf des 31. Dezember
+   * 2026 außer Kraft“); sie der abgelösten Vorschrift zuzuschreiben, verschob deren Ende in die Zukunft.
+   */
+  const terminationFor = (cited: CitedNorm | undefined): string | undefined => {
+    if (cited === undefined) return publicationTermination;
+    const window = text === '' ? undefined : commandWindow(text, cited);
+    return window === undefined ? undefined : extractTerminationDate(window);
+  };
+
   const byBayRs = new Map<string, CitedNorm>();
   for (const cited of citations) {
     const key = canonicalBayRs(cited.bayRsNumber);
@@ -358,7 +370,7 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
         targetResolution: resolution,
         targetIdentityHints: [...identityHints(cited, undefined), ...hint('gl-nr-sachgebiet', gliederungsnummern.join(', ')), 'aufhebungsliste'],
         ...(effectiveDate ? { effectiveDate } : {}),
-        ...(publicationTermination ? { terminationDate: publicationTermination } : {}),
+        // Eine Aufhebungsliste hebt auf; sie befristet nicht. Wirksam wird das Ende mit dem Inkrafttreten.
         excerpt: cited.raw,
       });
     }
@@ -383,7 +395,7 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
         targetResolution: resolution,
         targetIdentityHints: identityHints(cited, gliederungsnummer),
         ...(effectiveDate ? { effectiveDate } : {}),
-        ...(terminating && publicationTermination ? { terminationDate: publicationTermination } : {}),
+        ...(terminating && terminationFor(cited) ? { terminationDate: terminationFor(cited)! } : {}),
         excerpt: cited?.raw ?? `${entry.title} (${citation}${entry.enactmentDate ? `, ausgefertigt ${entry.enactmentDate}` : ''})`,
         ...(eventType === 'unknown' ? { rawText: text === '' ? entry.title : text.slice(0, 2000) } : {}),
       });
@@ -404,7 +416,7 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
       targetResolution: resolution,
       targetIdentityHints: [...identityHints(cited, undefined), ...hint('zieltitel-aus-verkuendungstitel', titleTarget)],
       ...(effectiveDate ? { effectiveDate } : {}),
-      ...(terminating && publicationTermination ? { terminationDate: publicationTermination } : {}),
+      ...(terminating && terminationFor(cited) ? { terminationDate: terminationFor(cited)! } : {}),
       excerpt: cited?.raw ?? `${entry.title} (${citation}${entry.enactmentDate ? `, ausgefertigt ${entry.enactmentDate}` : ''})`,
       ...(eventType === 'unknown' ? { rawText: text === '' ? entry.title : text.slice(0, 2000) } : {}),
     });
@@ -438,12 +450,88 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
       targetResolution: resolution,
       targetIdentityHints: identityHints(cited, cited.bayRsNumber),
       ...(effectiveDate ? { effectiveDate } : {}),
-      ...(publicationTermination ? { terminationDate: publicationTermination } : {}),
+      ...(terminationFor(cited) ? { terminationDate: terminationFor(cited)! } : {}),
       excerpt: cited.raw,
     });
   }
 
   return events;
+}
+
+/* ------------------------------------------------------- Identität über Ereignisse hinweg */
+
+const hintValue = (event: Pick<LedgerEvent, 'targetIdentityHints'>, prefix: string): string | undefined =>
+  event.targetIdentityHints.find((entry) => entry.startsWith(`${prefix}:`))?.slice(prefix.length + 1).trim();
+
+/**
+ * Stammzitat einer Zielnorm: Ausfertigungsdatum und Fundstelle (Blatt, Seite bzw. Nummer). Beides
+ * zusammen bezeichnet genau eine Veröffentlichung und damit genau eine Vorschrift – unabhängig davon,
+ * wie der Titel im jeweiligen Zitat lautet. Der Jahrgang wird weggelassen, weil Zitate ihn mal nennen,
+ * mal nicht; das Ausfertigungsdatum legt ihn fest.
+ */
+export function citedNormKey(event: Pick<LedgerEvent, 'targetIdentityHints'>): string | undefined {
+  const date = hintValue(event, 'zitat-ausfertigung');
+  const reference = hintValue(event, 'zitat-fundstelle');
+  if (date === undefined || reference === undefined) return undefined;
+  const match = /(GVBl|BayMBl|AllMBl|AIIMBl|JMBl|FMBl|KWMBl)\.?\s*(?:I\s+)?(?:\d{4}\s*)?(S\.|Nr\.)\s*(\d+)/u.exec(reference);
+  if (!match) return undefined;
+  const organ = match[1] === 'AIIMBl' ? 'AllMBl' : match[1]!;
+  return `${date}|${organ}|${match[2] === 'Nr.' ? 'Nr' : 'S'}|${match[3]}`;
+}
+
+/**
+ * Eine Vorschrift, die ein Ereignis im Bestand wiederfindet, kann ein anderes nicht als „heute nicht
+ * mehr im Portal“ führen. Zitieren zwei Ereignisse dieselbe Vorschrift (gleiches Stammzitat,
+ * `citedNormKey`) und ist eines davon stark aufgelöst, übernimmt das andere diese Auflösung; führen
+ * die aufgelösten Ereignisse verschiedene Bestandseinträge, bleibt es ein Reviewfall (`ambiguous`).
+ *
+ * Belegt: BayMBl. 2024 Nr. 7 ändert die „Europamedaillen-Bekanntmachung (EuMedBek) vom 12. Oktober
+ * 2018 (AllMBl. S. 962)“ und wird über die Abkürzung `BayVV_1132_S_086` zugeordnet; BayMBl. 2026 Nr. 377
+ * hebt dieselbe Vorschrift als „Europamedaillen-Bekanntmachung – EuMedBek“ auf. Ohne diesen Abgleich
+ * stand sie als heute fehlend im Register, obwohl das Portal sie führt.
+ */
+export function reconcileTargetIdentities(events: readonly LedgerEvent[]): LedgerEvent[] {
+  const resolvedByKey = new Map<string, Map<string, LedgerEvent>>();
+  for (const event of events) {
+    if (event.targetResolution.status !== 'resolved' || event.targetResolution.matchStrength !== 'strong' || event.targetResolution.sourceIdentity === undefined) continue;
+    const key = citedNormKey(event);
+    if (key === undefined) continue;
+    const byIdentity = resolvedByKey.get(key) ?? new Map<string, LedgerEvent>();
+    if (!byIdentity.has(event.targetResolution.sourceIdentity)) byIdentity.set(event.targetResolution.sourceIdentity, event);
+    resolvedByKey.set(key, byIdentity);
+  }
+  return events.map((event) => {
+    if (event.targetResolution.status !== 'absent-from-portal') return event;
+    const key = citedNormKey(event);
+    const byIdentity = key === undefined ? undefined : resolvedByKey.get(key);
+    if (byIdentity === undefined) return event;
+    const [date, organ, kind, position] = key!.split('|');
+    const cited = `${organ}. ${kind === 'Nr' ? 'Nr.' : 'S.'} ${position} vom ${date}`;
+    let targetResolution: TargetResolution;
+    if (byIdentity.size === 1) {
+      const [[sourceIdentity, other]] = [...byIdentity.entries()] as [[string, LedgerEvent]];
+      targetResolution = {
+        status: 'resolved',
+        matchStrength: 'strong',
+        sourceIdentity,
+        ...(other.targetResolution.bayRsNumber ? { bayRsNumber: other.targetResolution.bayRsNumber } : event.targetResolution.bayRsNumber ? { bayRsNumber: event.targetResolution.bayRsNumber } : {}),
+        matchedOn: ['ausfertigungsdatum', 'fundstelle'],
+        note: `Dieselbe Vorschrift (${cited}) ist in ${other.citation} (${other.id}) als ${sourceIdentity} im Bestand aufgelöst (${other.targetResolution.matchedOn.join(', ')}); sie wird heute im Portal geführt.`,
+      };
+    } else {
+      targetResolution = {
+        status: 'ambiguous',
+        matchStrength: 'supporting',
+        matchedOn: ['ausfertigungsdatum', 'fundstelle'],
+        candidates: [...byIdentity.keys()].sort(),
+        note: `Dieselbe Vorschrift (${cited}) ist in anderen Ereignissen verschiedenen Bestandseinträgen zugeordnet; keine automatische Entscheidung.`,
+      };
+    }
+    const evidenceInput = { eventType: event.eventType, ...(event.eventDate ? { eventDate: event.eventDate } : {}), citation: event.citation, targetTitle: event.targetTitle, targetMatchStrength: targetResolution.matchStrength };
+    const evidenceStrength = deriveEvidenceStrength(evidenceInput);
+    const processingStatus: EventProcessingStatus = event.processingStatus === 'recorded' && (targetResolution.status === 'ambiguous' || evidenceStrength === 'insufficient') ? 'needs-review' : event.processingStatus;
+    return { ...event, targetResolution, evidenceStrength, confidence: deriveConfidence(evidenceInput), processingStatus };
+  });
 }
 
 /* ------------------------------------------------------------------------------------ Aufbau */
@@ -565,7 +653,7 @@ export async function buildEventLedger(options: BuildOptions): Promise<BuildResu
     provenance: ORGAN_PROVENANCE,
     sources,
     issues,
-    events: sortEvents(events),
+    events: sortEvents(reconcileTargetIdentities(events)),
   };
   const problems = validateLedger(ledger);
   if (problems.length > 0) throw new Error(`Ereignisregister ist nicht schemakonform (${problems.length} Probleme): ${problems.slice(0, 5).join('; ')}`);

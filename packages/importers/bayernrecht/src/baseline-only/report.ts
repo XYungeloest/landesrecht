@@ -35,6 +35,7 @@ export function renderReport(run: BaselineOnlyRun, options: { baselineDate: stri
     `| Ausgangsverkündung gefunden und als dieselbe Norm belegt | ${m.baseFound} |`,
     `| Kette vollständig (Gegenprobe, Änderungen angewandt, Beginn und Ende belegt) | ${m.fullChain} |`,
     `| sicher wiederhergestellt | ${m.safelyReconstructed} (${m.safeNorms} Normen) |`,
+    `| Doppelerfassungen im Register (Ereignis ohne Zitat, mit dem zitierten Ereignis derselben Aufhebung verbunden; übernimmt dessen Ergebnis) | ${m.duplicates ?? 0} |`,
     `| missing-base | ${m.byOutcome['missing-base']} |`,
     `| incomplete-chain | ${m.byOutcome['incomplete-chain']} |`,
     `| contradictory | ${m.byOutcome.contradictory} |`,
@@ -88,8 +89,8 @@ export function renderReport(run: BaselineOnlyRun, options: { baselineDate: stri
   lines.push('## 5 Grenzen', '');
   lines.push(
     '- Ausgangsfassungen vor 2009 (Amtsblätter nur gedruckt), nicht verkündete Schreiben und Blätter außerhalb der Verkündungsplattform bleiben `missing-base`; es gibt keine OCR und keinen Text aus Sekundärquellen.',
-    '- Verwaltungsvorschriften, die bis 31. Dezember 2015 erlassen wurden, gelten nach der VwVWBek nur fort, wenn sie in der Positivliste stehen; deren Textlayer ist nicht durchgehend sicher dekodierbar – bis dahin `undetermined` (`vwvwbek-positivliste`).',
-    '- Die Kette wird im BayMBl. per Volltextsuche nach Ausfertigungsdatum und Fundstelle gegengeprüft (Gliederungsnummern allein übersehen Sammeländerungen, belegt an BayMBl. 2022 Nr. 766); die Amtsblätter 2009–2018 haben keine Volltextsuche – dort wird jede Veröffentlichung des Zeitraums gelesen, bei mehr als 120 bleibt die Kette `chain-amtsblatt-unsearchable`.',
+    '- Verwaltungsvorschriften, die bis 31. Dezember 2015 erlassen wurden, gelten nach der VwVWBek nur fort, wenn sie in der Positivliste stehen (Textlayer vollständig zerlegt, kein OCR). Nicht gelistet heißt: galt am Stichtag nicht (`vwvwbek-not-listed`); vor 2016 geändert (Fassungsdatum ≠ Erlassdatum) bleibt `vwvwbek-amended-before-2016`.',
+    '- Die Kette wird im BayMBl. per Volltextsuche nach Ausfertigungsdatum und Fundstelle gegengeprüft (Gliederungsnummern allein übersehen Sammeländerungen, belegt an BayMBl. 2022 Nr. 766); die Amtsblätter 2009–2018 haben keine Volltextsuche – dort wird jede Veröffentlichung des Zeitraums gelesen, höchstens 200 Ausgaben je Norm – Verwaltungsvorschriften, die vor Herbst 2015 verkündet wurden, bleiben deshalb `chain-amtsblatt-unsearchable`.',
     '- Änderungen werden nur mit den Wortlautformeln der Rückrechnung angewandt (`reconstruction/formulas.ts`); Neufassungen, Aufhebungen einzelner Glieder, Einfügungen ganzer Glieder und Berichtigungen bleiben `incomplete-chain`.',
     '- Fingerabdrücke gelten dem Quelltext vor der Überleitung; eine Änderung der Überleitung macht kein Rezept ungültig.',
     '',

@@ -1,18 +1,19 @@
 # Stand des Stichtagsbestands Bayern-Württemberg
 
-## Status: DEPLOYED (Teilbestand) · Stand 2026-09-18, Worker `43d211e3`
+## Status: DEPLOYED (Teilbestand) · Stand 2026-09-18 (Run 5), Worker `af1d62ce`
 
-**1 618 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
+**1 639 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
 ausgeliefert:**
 
 - 1 570, deren heutiger Text belegt der Stichtagstext ist;
-- 33, deren Stichtagsfassung bewiesen zurückgerechnet ist: 28 über eine spätere Änderung, 5 über zwei oder
+- 44, deren Stichtagsfassung bewiesen zurückgerechnet ist: 37 über eine spätere Änderung, 7 über zwei oder
   mehr Änderungen mit Vorwärtsprobe;
-- 15 heute nicht mehr geführte Stichtagsnormen, aus amtlichen Verkündungen wiederhergestellt
+- 25 heute nicht mehr geführte Stichtagsnormen, aus amtlichen Verkündungen wiederhergestellt
   (`docs/BAYWUE_BASELINE_ONLY.md`).
 
-Der Stichtagsbestand ist damit **nicht vollständig**: 487 weitere heute geführte Normen galten am Stichtag
-mit einem anderen oder nicht belegten Wortlaut, und 401 heute fehlende sind noch nicht wiederhergestellt. Die
+Der Stichtagsbestand ist damit **nicht vollständig**: 476 weitere heute geführte Normen galten am Stichtag
+mit einem anderen oder nicht belegten Wortlaut, und heute fehlende Stichtagsnormen sind nur zum Teil
+wiederhergestellt. Die
 Oberfläche kennzeichnet den Bestand als Teilbestand (unten).
 
 Von den fünf Stufen des Auftrags trifft genau eine zu:
@@ -44,24 +45,21 @@ am 2023-12-01 noch nicht gab, und er zeigt geänderte Vorschriften im heutigen W
 | davon im Scope | 2 342 |
 | davon am Stichtag geltend | 2 090 |
 | — heutiger Text **ist** der Stichtagstext → **übernommen** (einschließlich BayVwV96990 mit Quellkorrektur) | **1 570** |
-| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **33** |
-| — heutiger Text ist jünger → **Rekonstruktion nötig** | 486 |
+| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **44** |
+| — heutiger Text ist jünger → **Rekonstruktion nötig** | 475 |
 | — Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
 | davon Geltung am Stichtag unbestimmt | 13 |
 | davon erst nach dem Stichtag erlassen | 239 |
 | **Summe der Scope-Dokumente** | **2 342** |
 
-Dazu kommen die **heute fehlenden Stichtagsnormen**. Das Ereignisregister nennt 426 Kandidaten: Aufhebungen
-und Außerkrafttreten nach dem Stichtag, deren Vorgänger nicht mehr im Portal steht, 395 davon mit starker
-Identität. **15** sind aus den amtlichen Verkündungen sicher wiederhergestellt, 5 erwiesen sich als nicht am
-Stichtag geltend, 5 als nicht Landesrecht. **401** sind offen:
+Dazu kommen die **heute fehlenden Stichtagsnormen**. Das Ereignisregister – in Run 5 um den EuMedBek-Fehler
+bereinigt: eine heute im Portal stehende Norm ist nie `baseline-only` – nennt 414 Kandidaten (392 ohne
+Doppelerfassungen), 405 mit starker Identität. **25 Normen** (28 Kandidaten) sind aus den amtlichen
+Verkündungen sicher wiederhergestellt, 7 erwiesen sich als nicht am Stichtag geltend, 5 als nicht Landesrecht.
+Offen bleiben vor allem Vorschriften ohne elektronische Ausgangsverkündung (292: nie verkündet oder nur
+gedruckt), 58 mit unbestimmtem Glied und 24 mit unvollständiger Änderungskette.
 
-- 287 ohne auffindbare elektronische Ausgangsverkündung (nicht verkündet, nur Papier, Anlage nur als PDF);
-- 104 mit unbestimmtem Glied (Inkrafttreten, Identität, Normativität);
-- 6 mit unvollständiger Änderungskette;
-- 4 widersprüchliche.
-
-Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 618 von mindestens rund 2 500 Stichtagsnormen.**
+Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 639 von mindestens rund 2 500 Stichtagsnormen.**
 
 ## Was jede übernommene Norm vorweisen kann
 

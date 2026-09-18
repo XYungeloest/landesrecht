@@ -148,6 +148,8 @@ export function transformToBayWue(law: SourceLaw, context: TransformContext, opt
   const mapping = mapEnactingBody(organs.enactingBody?.name, { ...(options.institutions ? { institutions: options.institutions } : {}), transformation: ruleOptions });
   if (organs.conflict) findings.push({ severity: 'warning', code: 'organ-formula-conflict', message: `Widersprüchliche Erlassformeln (${[...new Set(organs.candidates.map((candidate) => candidate.name))].join(' / ')}); kein Erlassorgan übernommen` });
   if (mapping.decision === 'manual-review') findings.push({ severity: 'warning', code: 'enacting-body-mapping-required', message: `Erlassorgan der Quelle „${organs.enactingBody?.name}“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` });
+  // Historisches Erlassorgan (am Stichtag nicht mehr bestehend): nur Provenienz, sichtbar als Information.
+  if (mapping.decision === 'source-only') findings.push({ severity: 'info', code: 'enacting-body-historical', message: `Erlassorgan der Quelle „${organs.enactingBody?.name}“ ist historisch (${mapping.mappingEntry ?? 'Registereintrag'}); als Quellorgan erhalten, kein Simulationsorgan` });
 
   // 2. Erkennung auf dem unveränderten Quelltext.
   const body: NormBodyBlock[] = structuredClone(law.body);

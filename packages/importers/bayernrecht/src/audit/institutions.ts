@@ -38,11 +38,11 @@ export interface InstitutionGroup {
   names: Array<{ name: string; warnings: number }>;
 }
 
-export function groupMappingWarnings(manifest: Pick<ImportManifest, 'entries'>): { total: number; distinct: number; groups: InstitutionGroup[] } {
+export function groupMappingWarnings(manifest: Pick<ImportManifest, 'entries'>, code = 'enacting-body-mapping-required'): { total: number; distinct: number; groups: InstitutionGroup[] } {
   const byName = new Map<string, number>();
   for (const entry of manifest.entries) {
     for (const finding of entry.findings) {
-      if (finding.code !== 'enacting-body-mapping-required') continue;
+      if (finding.code !== code) continue;
       const name = /„(.*)“/u.exec(finding.message)?.[1] ?? finding.message;
       byName.set(name, (byName.get(name) ?? 0) + 1);
     }
@@ -62,7 +62,7 @@ export function groupMappingWarnings(manifest: Pick<ImportManifest, 'entries'>):
   return { total: [...byName.values()].reduce((sum, count) => sum + count, 0), distinct: byName.size, groups: sorted };
 }
 
-export function renderInstitutionsReport(summary: ReturnType<typeof groupMappingWarnings>, before?: { total: number; distinct: number }): string {
+export function renderInstitutionsReport(summary: ReturnType<typeof groupMappingWarnings>, before?: { total: number; distinct: number }, historical?: ReturnType<typeof groupMappingWarnings>): string {
   const lines = [
     '# Offene Organzuordnungen BayWü (Institution-Mapping-Review)',
     '',
@@ -73,6 +73,9 @@ export function renderInstitutionsReport(summary: ReturnType<typeof groupMapping
     `- Befunde: **${summary.total}**${before ? ` (vorher ${before.total})` : ''}`,
     `- Unterschiedliche Bezeichnungen: **${summary.distinct}**${before ? ` (vorher ${before.distinct})` : ''}`,
     `- Ressortgruppen: **${summary.groups.length}**`,
+    ...(historical ? [
+      `- Historische Erlassorgane (am Stichtag nicht mehr bestehend, Beleg StRGVV § 2; nur Provenienz, kein Prüffall): **${historical.total}** Befunde, ${historical.distinct} Bezeichnungen`,
+    ] : []),
     '',
     '| Ressortgruppe | Befunde | Bezeichnungen |',
     '| --- | ---: | ---: |',
@@ -84,9 +87,14 @@ export function renderInstitutionsReport(summary: ReturnType<typeof groupMapping
     for (const name of group.names) lines.push(`- ${name.warnings} × ${name.name.replace(/\|/gu, '\\|')}`);
     lines.push('');
   }
+  if (historical && historical.total > 0) {
+    lines.push('## Historische Erlassorgane (nur Provenienz)', '', '`historical-source-only` in `institution-mapping.json`: kein Simulationsorgan, Quellorgan bleibt `originEnactingBody`, Normtext unverändert.', '');
+    for (const group of historical.groups) lines.push(`- ${group.group}: ${group.warnings} (${group.names.map((name) => `${name.warnings} × ${name.name.replace(/\|/gu, '\\|')}`).join('; ')})`);
+    lines.push('');
+  }
   return `${lines.join('\n').trimEnd()}\n`;
 }
 
 export async function writeInstitutionsReport(root: string, manifest: Pick<ImportManifest, 'entries'>, before?: { total: number; distinct: number }): Promise<boolean> {
-  return writeFileAtomic(join(root, INSTITUTIONS_REPORT_PATH), renderInstitutionsReport(groupMappingWarnings(manifest), before));
+  return writeFileAtomic(join(root, INSTITUTIONS_REPORT_PATH), renderInstitutionsReport(groupMappingWarnings(manifest), before, groupMappingWarnings(manifest, 'enacting-body-historical')));
 }

@@ -14,6 +14,12 @@
  * (ausgeschriebene Titel) bleiben unverändert; es wird nichts angehängt, was die Quelle nicht hergibt.
  * Der ausgeschriebene Name des Simulationslandes (`…-bayern-wuerttemberg`) ist kein Quellzusatz und
  * bleibt deshalb stehen.
+ *
+ * Slugmigration (Nutzerentscheidung Run 5): Nur für einzeln belegte, sachlich falsche Slugs – etwa aus einem
+ * früher falsch übergeleiteten historischen Titel – und nur über `slug-migrations.json`. Der neue Slug entsteht
+ * aus dem heutigen (bereinigten) Kandidaten; der alte wird stillgelegt (`retired`), nie wieder vergeben und
+ * permanent auf den Nachfolger umgeleitet (`packages/legal-core/src/config/slug-redirects.json`). Keine
+ * allgemeine Massenmigration: Ohne Migrationseintrag bleibt jeder Slug stabil.
  */
 import { join } from 'node:path';
 
@@ -45,10 +51,47 @@ export interface SlugRegistryEntry {
   assignment: 'derived' | 'collision-suffix';
 }
 
+/** Stillgelegter Slug: nie wieder vergeben, permanent auf den Nachfolger umgeleitet. */
+export interface RetiredSlug {
+  slug: string;
+  sourceIdentity: string;
+  successor: string;
+  migration: string;
+}
+
 export interface SlugRegistry {
   schemaVersion: typeof SLUG_REGISTRY_SCHEMA;
   jurisdiction: typeof TARGET_JURISDICTION;
   entries: SlugRegistryEntry[];
+  retired?: RetiredSlug[];
+}
+
+/** Einzeln entschiedene Slugmigration (`data/imports/bayernrecht/slug-migrations.json`). */
+export interface SlugMigration {
+  id: string;
+  sourceIdentity: string;
+  /** Der sachlich falsche Slug, der stillgelegt wird. */
+  from: string;
+  reason: string;
+  evidence: string;
+  decidedBy: string;
+  decidedAt: string;
+}
+
+export const SLUG_MIGRATIONS_SCHEMA = 'bayernrecht-slug-migrations/1' as const;
+export const SLUG_MIGRATIONS_PATH = 'data/imports/bayernrecht/slug-migrations.json';
+
+export async function readSlugMigrations(root: string): Promise<SlugMigration[]> {
+  const file = await readJsonFile<{ schemaVersion: string; migrations: SlugMigration[] }>(join(root, SLUG_MIGRATIONS_PATH));
+  if (!file) return [];
+  if (file.schemaVersion !== SLUG_MIGRATIONS_SCHEMA) throw new Error(`${SLUG_MIGRATIONS_PATH}: unbekannte Schemaversion ${String(file.schemaVersion)}`);
+  for (const [index, migration] of file.migrations.entries()) {
+    for (const field of ['id', 'sourceIdentity', 'from', 'reason', 'evidence', 'decidedBy', 'decidedAt'] as const) {
+      if (typeof migration[field] !== 'string' || migration[field] === '') throw new Error(`${SLUG_MIGRATIONS_PATH}: migrations[${index}].${field} fehlt`);
+    }
+    assertJurisdictionSlug(migration.from, `${SLUG_MIGRATIONS_PATH}: migrations[${index}].from`);
+  }
+  return file.migrations;
 }
 
 export interface SlugReservation {
@@ -57,6 +100,8 @@ export interface SlugReservation {
   /** Der Kandidat hat sich gegenüber der Erstvergabe geändert; der Slug bleibt stabil. */
   candidateChanged?: { previous: string; current: string };
   newlyReserved: boolean;
+  /** Slugmigration: der stillgelegte Vorgänger (permanent umgeleitet). */
+  migratedFrom?: string;
 }
 
 export function emptySlugRegistry(): SlugRegistry {
@@ -102,7 +147,14 @@ export function validateSlugRegistry(registry: SlugRegistry, path = SLUG_REGISTR
   if (registry.jurisdiction !== TARGET_JURISDICTION) throw new Error(`${path}: Registry gehört zu ${String(registry.jurisdiction)}, erwartet ${TARGET_JURISDICTION}`);
   const slugs = new Set<string>();
   const identities = new Set<string>();
+  const retired = new Set<string>();
+  for (const entry of registry.retired ?? []) {
+    if (!SLUG.test(entry.slug)) throw new Error(`${path}: ungültiger stillgelegter Slug ${entry.slug}`);
+    if (retired.has(entry.slug)) throw new Error(`${path}: stillgelegter Slug ${entry.slug} doppelt`);
+    retired.add(entry.slug);
+  }
   for (const entry of registry.entries) {
+    if (retired.has(entry.slug)) throw new Error(`${path}: Slug ${entry.slug} ist stillgelegt und darf nicht wieder vergeben werden`);
     if (!SLUG.test(entry.slug)) throw new Error(`${path}: ungültiger Slug ${entry.slug}`);
     const forbidden = forbiddenSourceSuffix(entry.slug);
     if (forbidden) throw new Error(`${path}: Slug ${entry.slug} trägt den Quellzusatz ${forbidden} statt ${JURISDICTION_SUFFIX}`);
@@ -110,6 +162,10 @@ export function validateSlugRegistry(registry: SlugRegistry, path = SLUG_REGISTR
     if (identities.has(entry.sourceIdentity)) throw new Error(`${path}: ${entry.sourceIdentity} hat mehrere Slugs`);
     slugs.add(entry.slug);
     identities.add(entry.sourceIdentity);
+  }
+  for (const entry of registry.retired ?? []) {
+    const current = registry.entries.find((candidate) => candidate.sourceIdentity === entry.sourceIdentity);
+    if (!current || current.slug !== entry.successor) throw new Error(`${path}: stillgelegter Slug ${entry.slug} verweist auf ${entry.successor}, ${entry.sourceIdentity} führt ${current?.slug ?? '(keinen Slug)'}`);
   }
 }
 
@@ -123,7 +179,11 @@ export async function readSlugRegistry(root: string): Promise<SlugRegistry> {
 
 export async function writeSlugRegistry(root: string, registry: SlugRegistry): Promise<boolean> {
   validateSlugRegistry(registry);
-  const sorted: SlugRegistry = { ...registry, entries: [...registry.entries].sort((left, right) => (left.slug < right.slug ? -1 : left.slug > right.slug ? 1 : 0)) };
+  const sorted: SlugRegistry = {
+    ...registry,
+    entries: [...registry.entries].sort((left, right) => (left.slug < right.slug ? -1 : left.slug > right.slug ? 1 : 0)),
+    ...(registry.retired && registry.retired.length > 0 ? { retired: [...registry.retired].sort((left, right) => (left.slug < right.slug ? -1 : left.slug > right.slug ? 1 : 0)) } : {}),
+  };
   return writeJsonAtomic(join(root, SLUG_REGISTRY_PATH), sorted);
 }
 
@@ -145,18 +205,37 @@ export function seedSlugRegistryFromManifest(registry: SlugRegistry, manifest: I
  * Reserviert Slugs in einem Registry-Objekt (wird verändert). `existingSlugs` sind die vorhandenen
  * Normverzeichnisse der Jurisdiktion; ein Verzeichnis ohne Registry-Eintrag gilt als fremd (Kollision).
  */
-export function createSlugReserver(registry: SlugRegistry, existingSlugs: ReadonlySet<string>): { reserve(sourceIdentity: string, candidate: string): SlugReservation; readonly changed: boolean } {
+export function createSlugReserver(registry: SlugRegistry, existingSlugs: ReadonlySet<string>, migrations: readonly SlugMigration[] = []): { reserve(sourceIdentity: string, candidate: string): SlugReservation; readonly changed: boolean } {
   let changed = false;
   const bySlug = new Map(registry.entries.map((entry) => [entry.slug, entry]));
   const byIdentity = new Map(registry.entries.map((entry) => [entry.sourceIdentity, entry]));
+  const retired = new Set((registry.retired ?? []).map((entry) => entry.slug));
   return {
     get changed() {
       return changed;
     },
     reserve(sourceIdentity, rawCandidate) {
       const candidate = jurisdictionSlugCandidate(rawCandidate);
-      const heldBy = (slug: string): string | undefined => bySlug.get(slug)?.sourceIdentity ?? (existingSlugs.has(slug) ? 'nicht registriertes Verzeichnis' : undefined);
+      const heldBy = (slug: string): string | undefined => bySlug.get(slug)?.sourceIdentity ?? (retired.has(slug) ? 'stillgelegter Slug' : existingSlugs.has(slug) ? 'nicht registriertes Verzeichnis' : undefined);
       const own = byIdentity.get(sourceIdentity);
+      // Einzeln entschiedene Migration: der heutige Kandidat wird neu reserviert, der alte Slug stillgelegt.
+      const migration = own ? migrations.find((entry) => entry.sourceIdentity === sourceIdentity && entry.from === own!.slug) : undefined;
+      if (own && migration) {
+        const from = own.slug;
+        registry.entries.splice(registry.entries.indexOf(own), 1);
+        bySlug.delete(from);
+        byIdentity.delete(sourceIdentity);
+        retired.add(from);
+        const target = heldBy(candidate) ? `${candidate}-${identityHash(sourceIdentity).slice(0, 8)}` : candidate;
+        if (heldBy(target)) throw new Error(`Slugmigration ${migration.id}: Ziel ${target} ist bereits durch ${heldBy(target)} belegt`);
+        const next: SlugRegistryEntry = { slug: target, sourceIdentity, candidate, assignment: target === candidate ? 'derived' : 'collision-suffix' };
+        registry.entries.push(next);
+        registry.retired = [...(registry.retired ?? []), { slug: from, sourceIdentity, successor: target, migration: migration.id }];
+        bySlug.set(target, next);
+        byIdentity.set(sourceIdentity, next);
+        changed = true;
+        return { slug: target, newlyReserved: true, migratedFrom: from };
+      }
       if (own) {
         const reservation: SlugReservation = { slug: own.slug, newlyReserved: false };
         if (own.candidate !== candidate && own.slug !== candidate) reservation.candidateChanged = { previous: own.candidate, current: candidate };

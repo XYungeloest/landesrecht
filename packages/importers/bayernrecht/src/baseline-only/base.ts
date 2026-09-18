@@ -269,7 +269,8 @@ export async function resolveBase(platform: Platform, input: ResolveBaseInput): 
       if (isPageMiss(volumePage)) return { ok: false, code: 'base-not-fetched', detail: `${volumeUrl}: ${volumePage.detail}`, urls };
       // Seitenbereiche der Jahrgangsliste sind nicht immer richtig (belegt: „233 - 600“); jede Ausgabe, deren
       // Bereich die Seite enthält, wird geprüft – entscheidend ist das Dokument, das auf der Seite beginnt.
-      const issues = parseAmtsblattVolume(volumePage.html).filter((row) => row.firstPage <= reference.position && reference.position <= row.lastPage);
+      // Eine Ausgabe, die vor dem Erlass erschien, kann die Vorschrift nicht enthalten.
+      const issues = parseAmtsblattVolume(volumePage.html).filter((row) => row.firstPage <= reference.position && reference.position <= row.lastPage && (!input.documentDate || row.publishedAt >= input.documentDate));
       if (issues.length === 0) {
         misses.push(`${volumeUrl}: keine Ausgabe mit Seite ${reference.position}`);
         continue;

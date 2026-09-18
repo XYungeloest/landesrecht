@@ -31,7 +31,8 @@ import { AUDIT_DIR, BASELINE_DATE, CACHE_DIR, IMPORT_DATA_DIR, PARSER_VERSION, S
 import { readManifest, type ManifestEntry } from '../common/manifest.ts';
 import { runReportPath } from '../common/paths.ts';
 import { emptyReviewQueue, readReviewQueue, type ReviewQueue } from '../common/review.ts';
-import { emptySlugRegistry, readSlugRegistry, seedSlugRegistryFromManifest, writeSlugRegistry, SLUG_REGISTRY_PATH } from '../common/slug-registry.ts';
+import { emptySlugRegistry, readSlugMigrations, readSlugRegistry, seedSlugRegistryFromManifest, writeSlugRegistry, SLUG_REGISTRY_PATH, type SlugMigration } from '../common/slug-registry.ts';
+import { writeSlugRedirects } from '../common/slug-redirects.ts';
 import { readSourceCorrections, type SourceCorrection } from '../common/source-corrections.ts';
 import { readInstitutionRegistry } from '../transform/institution-registry.ts';
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
@@ -260,6 +261,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
   let institutions: Awaited<ReturnType<typeof readInstitutionRegistry>>;
   let sourceCorrections: SourceCorrection[] = [];
   let existingSlugs = new Set<string>();
+  const slugMigrations: SlugMigration[] = await readSlugMigrations(options.root);
   try {
     const previousState = await readBulkState(options.root);
     for (const entry of previousState?.entries ?? []) stateEntries.set(entry.documentId, entry);
@@ -347,6 +349,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
         candidate,
         registry,
         existingSlugs,
+        slugMigrations,
         institutions,
         sourceCorrections: sourceCorrections.filter((correction) => correction.sourceIdentity === candidate.documentId),
         reviewQueue: { ...emptyReviewQueue(), items: [...(reviewByIdentity.get(candidate.documentId) ?? [])] },
@@ -440,7 +443,11 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
     runStatus = 'limit-reached';
     stopReason = `Auswahlbudget von ${options.limit} Kandidaten erreicht; ${queue.length - budgeted.length} bleiben offen`;
   }
-  if (options.write) await writeSlugRegistry(options.root, registry);
+  if (options.write) {
+    await writeSlugRegistry(options.root, registry);
+    // Permanente Umleitungen stillgelegter Slugs für den Worker (aus der Registry abgeleitet, nie von Hand).
+    await writeSlugRedirects(options.root, registry);
+  }
   await checkpoint();
   log(`Lauf ${runId} beendet: ${runStatus}${stopReason ? ` – ${stopReason}` : ''} · verarbeitet ${entries.length}/${budgeted.length} · ${Math.round(Math.max(0, clock() - startedClock) / 1000)} s`);
   return finish();

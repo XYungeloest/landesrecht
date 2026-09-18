@@ -28,7 +28,12 @@ import { gazetteUnits } from '../reconstruction/gazette.ts';
 import { parseLongGermanDate } from '../events/resolve.ts';
 import type { LedgerEvent } from '../events/ledger.ts';
 import { headDates, resolveBase, sourceRef, type GazettePublication } from './base.ts';
-import { AMTSBLATT_FULL_READ_CAP, amendmentCommencement, applyAmendment, normIdentityOf, scanChain } from './chain.ts';
+import { AMTSBLATT_FULL_READ_CAP, AMTSBLATT_ISSUE_CAP, amendmentCommencement, applyAmendment, normIdentityOf, scanChain } from './chain.ts';
+import { findInPositivliste, loadPositivliste, POSITIVLISTE_CITATION, POSITIVLISTE_URL, type Positivliste, type PositivlisteRow } from './positivliste.ts';
+
+/** Nr. 1 VwVWBek: bis zu diesem Tag erlassene Verwaltungsvorschriften gelten nur mit Aufnahme in die Positivliste fort. */
+const VWVWBEK_CUTOFF = '2015-12-31';
+
 import { convertGazetteHtml, ConversionError, CONVERTER_VERSION, type ConvertedGazette } from './html.ts';
 import { addDays, determineEndAcross, locateCitation, type EndDetermination, type LocatedCitation } from './identity.ts';
 import { MISSING_LINKS, RECIPE_SCHEMA, type BaselineOnlyRecipe, type CandidateRecord, type MissingLink, type MissingLinkRecord, type Outcome, type RecipeAmendment, type RecipeSource } from './model.ts';
@@ -153,12 +158,18 @@ export function scopeDecision(head: { title: string; issuer?: string }): ScopeDe
 }
 
 /** Sätze eines Körpers (Satznummern, Absatzzählung, Satzende vor Großbuchstaben). */
+/**
+ * Sätze der Blöcke – **je Block** zerlegt, nie über Blockgrenzen hinweg: Eine Zwischenüberschrift ohne Punkt
+ * („Inkrafttreten, Außerkrafttreten“, BayMBl. 2020 Nr. 36) verschmölze sonst mit dem folgenden Satz, und dessen
+ * Anfang („Diese Bekanntmachung tritt …“) wäre nicht mehr erkennbar.
+ */
 function sentencesOf(texts: readonly string[]): string[] {
-  return texts
-    .join(' ')
-    .split(/(?=[¹²³⁴⁵⁶⁷⁸⁹](?=\S))|(?<=[a-zäöüß)\]]\.)\s+(?=[A-ZÄÖÜ(])|(?=\(\d+\)\s)/u)
-    .map((sentence) => sentence.replace(/^[¹²³⁴⁵⁶⁷⁸⁹]+|^\(\d+\)\s*/u, '').trim())
-    .filter((sentence) => sentence !== '');
+  return texts.flatMap((text) =>
+    text
+      .split(/(?=[¹²³⁴⁵⁶⁷⁸⁹](?=\S))|(?<=[a-zäöüß)\]]\.)\s+(?=[A-ZÄÖÜ(])|(?=\(\d+\)\s)/u)
+      .map((sentence) => sentence.replace(/^[¹²³⁴⁵⁶⁷⁸⁹]+|^\(\d+\)\s*/u, '').trim())
+      .filter((sentence) => sentence !== ''),
+  );
 }
 
 function blockTexts(blocks: readonly NormBodyBlock[]): string[] {
@@ -318,9 +329,25 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
   if (!own.begin) return failNorm(own.code!, own.detail!, { converted });
   if (own.begin.date > ctx.baselineDate) return failNorm('begin-after-baseline', `Inkrafttreten am ${own.begin.date}, nach dem Stichtag: „${own.begin.evidence}“`, { converted });
 
-  // 9 – Weitergeltung nach der VwVWBek (AllMBl. 2016 S. 1555).
-  if (citation.documentDate <= '2015-12-31') {
-    return failNorm('vwvwbek-positivliste', `Ausgefertigt am ${citation.documentDate}: Nach Nr. 1 VwVWBek (AllMBl. 2016 S. 1555) traten alle bis 31. Dezember 2015 erlassenen veröffentlichten Verwaltungsvorschriften der Staatsregierung, der Staatskanzlei und der Staatsministerien außer Kraft, soweit sie nicht als fortgeltend in BAYERN.RECHT eingestellt waren. Beleg wäre das „Verzeichnis der ab 1. Januar 2016 fortgeltenden veröffentlichten Verwaltungsvorschriften“ (Positivliste, nur als PDF: https://www.verkuendung-bayern.de/fileadmin/Anlage_1_Positivliste_veroeffentlichte_Verwaltungsvorschriften.pdf); sein Textlayer ist nicht durchgehend sicher dekodierbar (Type0-Schrift) – Aufnahme nicht maschinell belegt`, { converted });
+  // 9 – Weitergeltung nach der VwVWBek (AllMBl. 2016 S. 1555): Positivliste.
+  let positivliste: { list: Positivliste; row: PositivlisteRow } | undefined;
+  if (citation.documentDate <= VWVWBEK_CUTOFF) {
+    const loaded = await loadPositivliste(ctx.platform);
+    if (!loaded.ok) return failNorm(loaded.pending ? 'base-not-fetched' : 'vwvwbek-positivliste', `Ausgefertigt am ${citation.documentDate}, also nur mit Aufnahme in die Positivliste der VwVWBek fortgeltend: ${loaded.reason}`, { converted });
+    const match = findInPositivliste(loaded.list, { documentDate: citation.documentDate, gliederungsnummern: publication.head.gliederungsnummern, title: converted.head.title });
+    if (match.status === 'not-listed') {
+      return failNorm('vwvwbek-not-listed', `Ausgefertigt am ${citation.documentDate}; nach Nr. 1 VwVWBek (AllMBl. 2016 S. 1555) mit Ablauf des 31. Dezember 2015 außer Kraft getreten, weil nicht im ${POSITIVLISTE_CITATION} (${POSITIVLISTE_URL}, SHA-256 ${loaded.list.page.sha256}, ${loaded.list.rows.length} Zeilen vollständig gelesen): ${match.detail} – galt am Stichtag nicht; die spätere Aufhebung bereinigt nur`, { converted });
+    }
+    if (match.status === 'ambiguous') return failNorm('vwvwbek-positivliste', `Positivliste mehrdeutig: ${match.detail}`, { converted });
+    const row = match.row;
+    if (row.anwendungsende && row.anwendungsende < ctx.baselineDate) return failNorm('ended-before-baseline', `Positivliste: Anwendungsende ${row.anwendungsende} vor dem Stichtag („${row.title.slice(0, 120)}“)`, { converted });
+    if (row.fassungsdatum !== citation.documentDate) {
+      return failNorm('vwvwbek-amended-before-2016', `Positivliste: Fassungsdatum ${row.fassungsdatum}, Erlassdatum ${row.erlassdatum} – die Vorschrift wurde vor 2016 geändert; diese Änderungen sind nur durch vollständiges Lesen der Amtsblätter seit ${citation.documentDate.slice(0, 4)} nachweisbar (keine Volltextsuche)`, { converted });
+    }
+    // Fassungsdatum = Erlassdatum belegt keine Unverändertheit: BayMBl. 2026 Nr. 294 nennt eine Änderung der
+    // KWMBl.-Bekanntmachung vom 2. Januar 2013 vom 14. Juli 2015, die Liste führt Fassungsdatum = Erlassdatum.
+    // Die Gegenprobe beginnt deshalb immer mit der Verkündung der Norm.
+    positivliste = { list: loaded.list, row };
   }
 
   // 10 – Kette.
@@ -333,7 +360,11 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     return failNorm('chain-fulltext-unverified', `BayMBl.-Volltextsuche „${scan.fulltext.query}“ (${scan.fulltext.hits} Treffer) findet ${scan.fulltext.unmatched.length > 0 ? `die zitierende(n) Seite(n) ${scan.fulltext.unmatched.join(', ')} nicht` : 'keine bekannte zitierende Seite'} – die Suche ist für diese Norm nicht belegt`, { converted });
   }
   if (scan.amtsblatt && !scan.amtsblatt.fullRead) {
-    return failNorm('chain-amtsblatt-unsearchable', `Zeitraum ${publication.publishedAt} bis 2018 in den Amtsblättern (ohne Volltextsuche): ${scan.amtsblatt.documents} Veröffentlichungen${scan.amtsblatt.withoutHtml > 0 ? `, davon ${scan.amtsblatt.withoutHtml} ohne HTML` : ''} – mehr als ${AMTSBLATT_FULL_READ_CAP} werden nicht vollständig gelesen; die Gliederungsnummern allein schließen Sammeländerungen nicht aus`, { converted });
+    return failNorm(
+      'chain-amtsblatt-unsearchable',
+      `Zeitraum ${publication.publishedAt} bis 2018 in den Amtsblättern (ohne Volltextsuche): ${scan.amtsblatt.documents > 0 ? '' : 'mindestens '}${scan.amtsblatt.issues} Ausgaben${scan.amtsblatt.documents > 0 ? `, ${scan.amtsblatt.documents} Veröffentlichungen` : ''}${scan.amtsblatt.withoutHtml > 0 ? `, davon ${scan.amtsblatt.withoutHtml} ohne HTML` : ''} – mehr als ${scan.amtsblatt.documents > 0 ? `${AMTSBLATT_FULL_READ_CAP} Veröffentlichungen` : `${AMTSBLATT_ISSUE_CAP} Ausgaben`} werden nicht vollständig gelesen; die Gliederungsnummern allein schließen Sammeländerungen nicht aus`,
+      { converted },
+    );
   }
   if (citation.fundstelle.corrections.length > 0) return failNorm('chain-correction', `Fundstelle mit Berichtigung (${citation.fundstelle.corrections.join('; ')}); Berichtigungen werden nicht angewandt`, { converted });
 
@@ -461,6 +492,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       ...(endWork.event.gazettePdfUrl ? { pdf: { url: endWork.event.gazettePdfUrl, ...(endWork.event.gazettePdfSha256Published ? { sha256Published: endWork.event.gazettePdfSha256Published } : {}) } } : {}),
     },
     ...publication.listings.map((listing) => ({ role: 'listing' as const, ...listing })),
+    ...(positivliste ? [{ role: 'registry' as const, ...sourceRef(positivliste.list.page), citation: POSITIVLISTE_CITATION }] : []),
     ...scan.listings.map((listing) => ({ role: 'listing' as const, ...listing })),
     ...scan.examined.filter((entry) => entry.relations.length > 0 && !applied.some((amendment) => amendment.url === entry.url) && !repealUrls.has(entry.url)).map((entry) => {
       const page = pages.get(entry.url)!.page;
@@ -500,6 +532,20 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       sha256: publication.page.sha256,
       citation: publication.citation,
     },
+    ...(positivliste
+      ? [
+          {
+            kind: 'registry-position' as const,
+            dimension: 'validity' as const,
+            strength: 'supporting' as const,
+            statement: `Fortgeltung ab 1. Januar 2016 nach Nr. 1 VwVWBek: in der Positivliste als „${positivliste.row.title.slice(0, 160)}“ (Erlassdatum ${positivliste.row.erlassdatum}, Fassungsdatum ${positivliste.row.fassungsdatum}) geführt`,
+            date: '2016-01-01',
+            sourceUrl: POSITIVLISTE_URL,
+            sha256: positivliste.list.page.sha256,
+            citation: POSITIVLISTE_CITATION,
+          } satisfies ValidityEvidence,
+        ]
+      : []),
     ...applied.map((amendment): ValidityEvidence => ({
       kind: 'gazette-amendment',
       dimension: 'amendment',
@@ -561,6 +607,11 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       citing: scan.examined.filter((entry) => entry.relations.length > 0).map((entry) => ({ url: entry.url, citation: entry.citation, relations: entry.relations })),
       evidence: [
         citation.priorClause ? `Aufhebungsbefehl nennt ${citation.priorClauseLast ? 'als letzte Änderung' : 'die Änderung'}: „${citation.priorClause}“` : 'Aufhebungsbefehl zitiert die Norm ohne Änderungszusatz (für Verwaltungsvorschriften nach RedR Nr. 8 nur Hinweis, kein Beleg)',
+        ...(positivliste
+          ? [
+              `Positivliste der VwVWBek: „${positivliste.row.title}“ (${positivliste.row.gliederungsnummern.join(', ')}), Erlassdatum ${positivliste.row.erlassdatum}, Fassungsdatum ${positivliste.row.fassungsdatum}, Anwendungsbeginn ${positivliste.row.anwendungsbeginn}${positivliste.row.anwendungsende ? `, Anwendungsende ${positivliste.row.anwendungsende}` : ''} – fortgeltend ab 1. Januar 2016 (Nr. 1 VwVWBek); Änderungen belegt allein die Gegenprobe ab der Verkündung`,
+            ]
+          : []),
         `Gegenprobe im amtlichen Organ: ${scan.method}`,
         applied.length > 0 ? `Angewandt: ${applied.map((amendment) => `${amendment.citation} (Wirkung ${amendment.effectiveDate})`).join(', ')}` : 'Keine Änderung vor dem Stichtag',
         ...(textValidTo ? [`Nach dem Stichtag: ${textValidTo.reason}`] : []),

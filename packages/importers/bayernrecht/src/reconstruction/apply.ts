@@ -40,7 +40,11 @@ interface Surface {
 
 export function surface(value: string): Surface {
   const attached = ATTACHED.test(value);
-  return { text: attached ? value.trimStart() : value, attached };
+  if (!attached) return { text: value, attached };
+  // „ , “ allein (GVBl. 2025 S. 695: „die Angabe „und“ durch die Angabe „ , “ ersetzt“): Das Leerzeichen hinter dem
+  // Satzzeichen ist Schreibweise des Zitats; das Leerzeichen vor dem folgenden Wort steht schon im Text.
+  const text = value.trimStart();
+  return { text: /^[,;.:)]\s+$/u.test(text) ? text.trimEnd() : text, attached };
 }
 
 function readField(body: readonly NormBodyBlock[], ref: FieldRef): string {
@@ -90,6 +94,10 @@ function uniqueHit(body: readonly NormBodyBlock[], scope: ScopeRecord, needle: s
     }
     for (const position of occurrences(text, needle, start, end)) hits.push({ ref, text, position });
   }
+  // Ein Treffer mitten in einem längeren Wort ist nie die Angabe („Anwärter“ in „Anwärterinnen“, „10“ in „2010“): Er zählt
+  // nicht mit. Bleibt genau ein ganzer Treffer, ist er gemeint (GVBl. 2026 S. 425 § 17, UntVergV § 1 Abs. 1).
+  const whole = hits.filter((hit) => !partOfWord(hit.text, hit.position, needle));
+  if (whole.length === 1 && hits.length > 1) return whole[0]!;
   if (hits.length !== 1) {
     throw new ReconstructionError(hits.length === 0 ? 'target-not-found' : 'target-ambiguous', `${step}: ${what} „${needle.slice(0, 80)}“ kommt im Bereich ${hits.length}-mal vor (erwartet: genau einmal)`);
   }
@@ -105,11 +113,31 @@ function uniqueHit(body: readonly NormBodyBlock[], scope: ScopeRecord, needle: s
 
 const WORD = /[\p{L}\p{Nd}]/u;
 
+/** Steht der Treffer als Teil eines längeren Wortes (Buchstabe oder Ziffer unmittelbar an einer Wortkante des Suchtexts)? */
+function partOfWord(text: string, position: number, needle: string): boolean {
+  const before = text[position - 1];
+  const after = text[position + needle.length];
+  return (WORD.test(needle[0]!) && before !== undefined && WORD.test(before)) || (WORD.test(needle.at(-1)!) && after !== undefined && WORD.test(after));
+}
+
 /** Das einzige Textfeld eines Bereichs (für „am Ende“ und „angefügt“). */
 function singleField(scope: ScopeRecord, step: string, key?: 'text' | 'title'): FieldRef {
   const fields = key ? scope.fields.filter((field) => field.key === key) : scope.fields;
   if (fields.length !== 1) throw new ReconstructionError('end-not-determined', `${step}: „am Ende“ setzt genau ein Textfeld voraus, der Bereich hat ${fields.length}`);
   return fields[0]!;
+}
+
+/**
+ * Bereich, dessen Ende „am Ende“ meint: das ganze Feld, oder mit Satzangabe („In Satz 4 wird der Punkt am Ende durch …
+ * ersetzt“, GVBl. 2024 S. 573) der Satz ohne das Leerzeichen vor der nächsten Satznummer.
+ */
+function finalRange(text: string, scope: ScopeRecord, step: string): { start: number; end: number } {
+  if (scope.sentence === undefined) return { start: 0, end: text.length };
+  const range = sentenceRange(text, scope.sentence);
+  if (!range) throw new ReconstructionError('sentence-missing', `${step}: Satz ${scope.sentence} im Feld nicht gefunden`);
+  let end = range.end;
+  while (end > range.start && text[end - 1] === ' ') end -= 1;
+  return { start: range.start, end };
 }
 
 const insertedAfter = (text: string): string => (ATTACHED.test(text) ? text.trimStart() : ` ${text}`);
@@ -200,9 +228,10 @@ export function applyForward(body: NormBodyBlock[], scope: ScopeRecord, operatio
     case 'replace-final': {
       const ref = singleField(scope, step, 'text');
       const text = readField(body, ref);
-      if (!text.endsWith(operation.from)) throw new ReconstructionError('target-not-found', `${step}: Text endet nicht auf „${operation.from}“`);
-      const at = text.length - operation.from.length;
-      writeField(body, ref, `${text.slice(0, at)}${finalReplacement(operation.to)}`);
+      const { start, end } = finalRange(text, scope, step);
+      if (!text.slice(start, end).endsWith(operation.from)) throw new ReconstructionError('target-not-found', `${step}: Text endet nicht auf „${operation.from}“`);
+      const at = end - operation.from.length;
+      writeField(body, ref, `${text.slice(0, at)}${finalReplacement(operation.to)}${text.slice(end)}`);
       return { ref, position: at };
     }
     default:
@@ -265,9 +294,10 @@ export function applyBackward(body: NormBodyBlock[], scope: ScopeRecord, operati
       const ref = singleField(scope, step, 'text');
       const text = readField(body, ref);
       const replacement = finalReplacement(operation.to);
-      if (!text.endsWith(replacement)) throw new ReconstructionError('target-not-found', `${step}: Text endet nicht auf dem neuen Schluss „${replacement.slice(-40)}“`);
-      const at = text.length - replacement.length;
-      writeField(body, ref, `${text.slice(0, at)}${operation.from}`);
+      const { start, end } = finalRange(text, scope, step);
+      if (!text.slice(start, end).endsWith(replacement) || end - replacement.length <= start) throw new ReconstructionError('target-not-found', `${step}: Text endet nicht auf dem neuen Schluss „${replacement.slice(-40)}“`);
+      const at = end - replacement.length;
+      writeField(body, ref, `${text.slice(0, at)}${operation.from}${text.slice(end)}`);
       return { ref, position: at };
     }
     default:

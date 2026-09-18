@@ -67,6 +67,8 @@ export const MISSING_LINKS = {
   'own-expiry-before-baseline': 'contradictory',
   'own-expiry-unreadable': 'undetermined',
   'vwvwbek-positivliste': 'undetermined',
+  'vwvwbek-not-listed': 'not-at-baseline',
+  'vwvwbek-amended-before-2016': 'incomplete-chain',
   'chain-organ-unsearchable': 'incomplete-chain',
   'chain-fulltext-unverified': 'incomplete-chain',
   'chain-amtsblatt-unsearchable': 'incomplete-chain',
@@ -93,7 +95,8 @@ export interface MissingLinkRecord {
 
 /** Eine amtliche Quelle des Rezepts. */
 export interface RecipeSource {
-  role: 'base' | 'amendment' | 'repeal' | 'chain-publication' | 'listing';
+  /** `registry`: amtliches Verzeichnis als Beleg der Geltung (Positivliste der VwVWBek, PDF). */
+  role: 'base' | 'amendment' | 'repeal' | 'chain-publication' | 'listing' | 'registry';
   url: string;
   sha256: string;
   retrievedAt: string;
@@ -211,6 +214,12 @@ export interface CandidateRecord {
   baseUrl?: string;
   lastDay?: string;
   priorClause?: string;
+  /**
+   * Dieselbe Aufhebung, zweimal im Register: Das Ereignis aus dem Titel der Veröffentlichung („Aufhebung der
+   * Bekanntmachung über …“) ohne Zitat und das Ereignis aus dem Zitat im Text. Das titelbasierte übernimmt dann
+   * Ergebnis und Norm des zitierten (`duplicateOf` = dessen Kennung).
+   */
+  duplicateOf?: string;
   /** Kennzahlen des Trichters. */
   funnel: { strongIdentity: boolean; baseFound: boolean; fullChain: boolean; safe: boolean };
 }
@@ -232,6 +241,8 @@ export interface Metrics {
   safelyReconstructed: number;
   /** Verschiedene Normen unter den sicher wiederhergestellten Kandidaten. */
   safeNorms: number;
+  /** Register-Ereignisse ohne Zitat, die mit dem zitierten Ereignis derselben Aufhebung verbunden wurden (`duplicateOf`). */
+  duplicates: number;
   byOutcome: Record<Outcome, number>;
   byMissingLink: Record<string, number>;
 }

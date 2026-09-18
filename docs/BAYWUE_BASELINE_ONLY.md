@@ -27,15 +27,15 @@ Geltung. Ausfertigung ist nicht Textgeltung; verkündet ist nicht in Kraft.
 
 | # | Prüfung | Beleg | scheitert als |
 | --- | --- | --- | --- |
-| 1 | Identität | starke Registerzuordnung; das Zitat (Titel unmittelbar vor „vom <Ausfertigung>“) steht in der Aufhebungsverkündung, alle Fundorte mit derselben Fundstelle | `identity-not-strong`, `citation-not-located`, `citation-ambiguous` |
+| 1 | Identität | starke Registerzuordnung; das Zitat (Titel unmittelbar vor „vom <Ausfertigung>“) steht in der Aufhebungsverkündung, alle Fundorte mit derselben Fundstelle. Ein Register-Ereignis ohne Zitat (Ziel nur aus dem Titel der Veröffentlichung) übernimmt Ergebnis und Norm des Ereignisses derselben Veröffentlichung, dessen Zitat denselben Betreff trägt (`duplicateOf`) | `identity-not-strong`, `citation-not-located`, `citation-ambiguous` |
 | 2 | Ende | Aufhebungs-/Außerkrafttretensbefehl hinter dem Zitat oder im Einleitungssatz der Aufhebungsliste; Wirksamwerden aus der Inkrafttretensvorschrift der aufhebenden Verkündung (`commencement.ts`) | `not-a-repeal` (die Verkündung ändert die Norm), `end-undetermined` |
 | 3 | Stichtag | letzter Geltungstag ≥ Stichtag, Ausfertigung ≤ Stichtag | `ended-before-baseline`, `enacted-after-baseline` |
 | 4 | Fundstelle | Stammverkündung elektronisch amtlich (BayMBl. ab 2019; AllMBl., FMBl., JMBl., KWMBl. 2009–2018) oder GVBl.-Detailseite | `base-unpublished` (nur Aktenzeichen, nie verkündet), `base-paper-only` (vor 2009, andere Blätter), `base-pdf-only` |
 | 5 | Ausgangsseite | Seite unter der Fundstelle abgerufen; Ausfertigungsdatum im Kopf gleich; Titel passt (Wortüberdeckung ≥ 0,6 in einer Richtung, gleiche Abkürzung oder Zitat nur mit Erlassstelle) | `base-not-found`, `base-identity-mismatch` |
 | 6 | Umfang | Erlassstelle Staatsregierung, Staatskanzlei, Staatsministerium; kein Prüffall nach `docs/LEGAL_SCOPE.md` (Muster, Vordrucke, Merkblätter …) | `scope-not-state-regulation`, `scope-normativity-review` |
 | 7 | Text | keine Anlage nur als Datei, kein Bild; Umsetzung vollständig und in Reihenfolge (Abschnitt 4) | `annex-pdf-only`, `text-image-in-body`, `text-structure-unsupported` |
-| 8 | Beginn | eigene Inkrafttretensvorschrift mit **Kalenderdatum** (`commencementDate`), Gegenprobe mit `commencementStatements`; nie Ausfertigung oder Verkündung | `begin-no-commencement-clause`, `begin-not-calendar-date`, `begin-unreadable`, `begin-after-baseline` |
-| 9 | Weitergeltung | bis 31.12.2015 erlassene veröffentlichte Verwaltungsvorschriften gelten nach Nr. 1 VwVWBek (AllMBl. 2016 S. 1555) nur mit Aufnahme in die Positivliste | `vwvwbek-positivliste` |
+| 8 | Beginn | eigene Inkrafttretensvorschrift mit **Kalenderdatum** (`commencementDate`), Gegenprobe mit `commencementStatements`; nie Ausfertigung oder Verkündung. Sätze werden je Block gebildet – eine Zwischenüberschrift ohne Punkt („Inkrafttreten, Außerkrafttreten“) verdeckt die Vorschrift nicht | `begin-no-commencement-clause`, `begin-not-calendar-date`, `begin-unreadable`, `begin-after-baseline` |
+| 9 | Weitergeltung | bis 31.12.2015 erlassene veröffentlichte Verwaltungsvorschriften gelten nach Nr. 1 VwVWBek (AllMBl. 2016 S. 1555) nur mit Aufnahme in die Positivliste (Abschnitt 5a): Zeile mit gleichem Erlassdatum und gleicher Gliederungsnummer; ein Fassungsdatum nach dem Erlass belegt eine Änderung vor 2016 | `vwvwbek-not-listed` (galt am Stichtag nicht), `vwvwbek-amended-before-2016`, `vwvwbek-positivliste` (Liste nicht auswertbar oder mehrdeutig) |
 | 10 | Kette | Gegenprobe im amtlichen Organ (Abschnitt 5), genannte Änderungen gefunden, Änderungen vor dem Stichtag angewandt, keine Berichtigung, kein früheres Ende | `chain-*`, `amendment-*` |
 | 11 | Ende der Fassung | erste Änderung nach dem Stichtag begrenzt die Quellgeltung des Textes; Rückwirkung auf den Stichtag schließt aus | `amendment-retroactive` |
 | 12 | Bestand | kein Eintrag des Bestands (außer `not-at-baseline`/`excluded`) mit derselben Verkündung oder demselben Titel – sonst widerspricht der Bestand dem „heute fehlt“ des Registers (belegt: EuMedBek, AllMBl. 2018 S. 962, als `BayVV_1132_S_086` im Bestand, Aufhebung erst zum 1. Oktober 2026) | `present-in-bestand` |
@@ -93,9 +93,11 @@ Verkündung der Norm und der Verkündung des Aufhebungsbefehls; jeder Treffer wi
    Aufhebungsbefehl und jeden Treffer der Gliederungssuche); sonst `chain-fulltext-unverified`.
 2. **BayMBl.-Gliederungssuche** (`?referencenumber=<nummer ohne Ressortzusatz>`) als Gegenkontrolle.
 3. **Amtsblätter 2009–2018** (AllMBl., FMBl., JMBl., KWMBl.; ohne Volltextsuche): **jede** Veröffentlichung im
-   Zeitraum aus den Inhaltsübersichten aller Ausgaben, höchstens 120 je Norm (`AMTSBLATT_FULL_READ_CAP`). Sind es
-   mehr, bleibt die Kette `chain-amtsblatt-unsearchable` – die Gliederungsnummern allein schließen Sammeländerungen
-   nicht aus.
+   Zeitraum aus den Inhaltsübersichten aller Ausgaben – höchstens 200 Ausgaben (`AMTSBLATT_ISSUE_CAP`, vorab aus
+   den Jahrgangslisten gezählt) und 1 600 Veröffentlichungen (`AMTSBLATT_FULL_READ_CAP`) je Norm; die Seiten sind
+   allen Normen gemeinsam. Ein Zeitraum ab Herbst 2015 hat 182 Ausgaben (1 285 Veröffentlichungen), einer ab 2014
+   schon 256. Darüber bleibt die Kette `chain-amtsblatt-unsearchable` – die Gliederungsnummern allein schließen
+   Sammeländerungen nicht aus.
 
 Eine gelesene Seite ist Glied der Kette, wenn sie die Norm mit **Ausfertigungsdatum und Fundstelle** zitiert und ein
 Befehl folgt (ändern, berichtigen, beenden). Jede Änderungsklausel („die zuletzt durch … geändert worden ist“) des
@@ -107,6 +109,28 @@ Gegenprobe ist nicht umgesetzt (`chain-organ-unsearchable`).
 (`commencementFor`), nur Wortlautformeln (`parseCommand`), jeder Ort aufgelöst (`resolvePath`), jeder zu ändernde
 Wortlaut genau einmal im Bereich (`applyForward`) und mit Rundlauf (rückwärts ergibt sich exakt der Körper davor).
 Neufassungen, Aufhebungen einzelner Glieder, Einfügungen ganzer Glieder und Berichtigungen werden nicht angewandt.
+
+## 5a Positivliste der VwVWBek (`positivliste.ts`)
+
+Das „Verzeichnis der ab 1. Januar 2016 fortgeltenden veröffentlichten Verwaltungsvorschriften“ (Anlage 1 zur
+VwVWBek) liegt nur als PDF auf der Verkündungsplattform (`/fileadmin/Anlage_1_Positivliste_…pdf`, SHA-256 im
+Rezept). Sein Textlayer wird mit `reconstruction/pdf.ts#pdfText` gelesen – kein OCR. Die Liste führt je Vorschrift
+Gliederungsnummer, Ressort, Langtitel, Erlassdatum, **Fassungsdatum**, Anwendungsbeginn und -ende.
+
+- **Vollständig zerlegt oder gar nicht:** Jedes Datum des Textlayers muss genau einer erkannten Zeile angehören
+  (1 576 Zeilen). Nur dann ist „steht nicht in der Liste“ eine Aussage; sonst bleibt `vwvwbek-positivliste`.
+- **Zuordnung:** gleiches Erlassdatum und gleiche Gliederungsnummer (ohne Ressortzusatz); mehrere Zeilen desselben
+  Tages (Ferienordnungen) nur über den vollständigen Listentitel.
+- **Nicht gelistet** → nach Nr. 1 VwVWBek mit Ablauf des 31. Dezember 2015 außer Kraft; die Aufhebung nach dem
+  Stichtag bereinigt nur (`vwvwbek-not-listed`, `not-at-baseline`).
+- **Fassungsdatum ≠ Erlassdatum** → vor 2016 geändert; diese Änderungen fänden sich nur durch vollständiges Lesen der
+  Amtsblätter seit dem Erlass (`vwvwbek-amended-before-2016`, `incomplete-chain`).
+- **Fassungsdatum = Erlassdatum belegt keine Unverändertheit.** Geprüft: BayMBl. 2026 Nr. 294 nennt eine Änderung
+  der KWMBl.-Bekanntmachung vom 2. Januar 2013 vom 14. Juli 2015 (KWMBl. S. 121), KWMBl. 2018 S. 347 eine Änderung
+  der Bekanntmachung vom 13. April 2012 vom 10. Februar 2015 – beide stehen mit Fassungsdatum = Erlassdatum in der
+  Liste. Die Gegenprobe (Abschnitt 5) beginnt deshalb immer mit der Verkündung der Norm; die Liste belegt nur die
+  Fortgeltung ab 1. Januar 2016.
+- Der **Anwendungsbeginn** der Liste ersetzt keine Inkrafttretensvorschrift (Prüfung 8); er wird nicht benutzt.
 
 ## 6 Rezept (`data/imports/bayernrecht/baseline-only/<id>.json`)
 
@@ -126,6 +150,11 @@ Rezept → Nachspielen aus dem Cache (alle Prüfsummen und Fingerabdrücke) → 
 Rohquellen Rolle `gazette` (Stammverkündung, Änderungen, Aufhebung – `r2-sync` archiviert sie), Slug-Reservierung.
 
 - `sourceStatus`: `validity: reconstructed`, `text: direct` (unveränderte Stammfassung) bzw. `reconstructed`.
+- Rohquellen: Stammverkündung, Änderungen und Aufhebung (Rolle `gazette`), bei Verwaltungsvorschriften bis 2015 die
+  Positivliste der VwVWBek (Rolle `pdf`). Beim erneuten Schreiben bleibt der Archivstand (`bucket`, `objectKey`,
+  `archiveStatus`) jeder unveränderten Rohquelle erhalten – `r2-sync` muss sie nicht neu bereitstellen.
+- Doppelerfassungen im Register (dieselbe Aufhebung als titelbasiertes und als zitiertes Ereignis) stehen beide in
+  `baselineOnly.eventIds`; die Bestandsübersicht zählt die Norm damit nicht mehr als offen.
 - Zeitmodell: `simulationValidFrom` = Stichtag; Quellgeltung = belegter Beginn (Inkrafttreten der Stammfassung bzw.
   der letzten angewandten Änderung) bis zum letzten Geltungstag (Aufhebung, eigene Befristung oder Tag vor der
   ersten Änderung nach dem Stichtag).
@@ -145,9 +174,14 @@ Nur `createBayernRechtFetcher` (sequenziell, Mindestabstand, identifizierender U
 
 - Ausgangsfassungen vor 2009 gibt es nur gedruckt; nicht verkündete Schreiben haben keine amtliche Fassung – beides
   bleibt `missing-base`.
-- Die Positivliste der VwVWBek liegt nur als PDF vor; eine Schrift (Type0, Identity-H) dekodiert der vorhandene
-  Textlayer-Leser nicht sicher – Verwaltungsvorschriften bis 2015 bleiben `vwvwbek-positivliste`.
+- Verwaltungsvorschriften bis 2015, die vor 2016 geändert wurden (Fassungsdatum der Positivliste ≠ Erlassdatum),
+  bleiben `vwvwbek-amended-before-2016`: Ihre Änderungen fänden sich nur durch Lesen aller Amtsblätter seit 2009.
 - Anlagen, die die Verkündung nur als Datei verlinkt, werden nicht als Text übernommen (`annex-pdf-only`).
-- Die Amtsblätter 2009–2018 haben keine Volltextsuche; lange Zeiträume dort (mehr als 120 Veröffentlichungen)
-  bleiben `chain-amtsblatt-unsearchable`. Die Volltextsuche des BayMBl. ist ein Dienst der Plattform; ihr Beleg ist
-  die Gegenprobe gegen bekannte Zitate, keine Zusicherung des Betreibers.
+- Die Amtsblätter 2009–2018 haben keine Volltextsuche; jede Veröffentlichung des Zeitraums wird gelesen (bis 200
+  Ausgaben je Norm), darüber bleibt es `chain-amtsblatt-unsearchable`. Das betrifft alle Verwaltungsvorschriften,
+  die vor Herbst 2015 verkündet wurden – auch die in der Positivliste. Mit rund 2 500 weiteren Abrufen
+  (Amtsblätter 2009 bis Herbst 2015 vollständig) wären sie prüfbar. Die Volltextsuche des BayMBl. ist ein Dienst
+  der Plattform; ihr Beleg ist die Gegenprobe gegen bekannte Zitate, keine Zusicherung des Betreibers.
+- Neufassungen ganzer Glieder („Nr. 1 wird wie folgt gefasst: …“) und Einfügungen ganzer Glieder werden vorwärts
+  nicht angewandt (Rückforderungsrichtlinie, BayMBl. 2022 Nr. 766; Einführung der elektronischen Aktenführung in
+  der Arbeits- und Sozialgerichtsbarkeit, BayMBl. 2023 Nr. 495) – `amendment-formula-unsupported`.

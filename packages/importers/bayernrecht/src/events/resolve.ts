@@ -102,6 +102,30 @@ export function normalizeTitle(value: string): string {
     .toLowerCase();
 }
 
+/**
+ * Erlassstelle vor dem Betreff eines Zitats: „Bekanntmachung des Bayerischen Staatsministeriums für Arbeit
+ * und Sozialordnung, Familie und Frauen über die …“, „Gemeinsame Bekanntmachung der Bayerischen
+ * Staatsministerien … über …“, „Schreiben des … über …“. Ressortbezeichnungen enthalten „für“, „des“ und
+ * „der“, aber nie „über“ – das erste „über“ trennt Erlassstelle und Betreff.
+ */
+const ISSUER_PREFIX =
+  /^(?:(?:die|das|der)\s+)?(?:Gemeinsame\s+)?(?:Bekanntmachung|Schreiben|Richtlinien?|Verwaltungsvorschrift(?:en)?|Rundschreiben)\s+(?:(?:des|der)\s+(?:[^\s]+\s+){0,24}?(?:Staatsministeri\w*|Staatskanzlei|Staatsregierung|Ministeri\w*|Landesamts?|Landesamtes)\b[^]*?\s)?(?<![\p{L}])über(?![\p{L}])\s+(?:(?:die|den|das|dem|eine[nmrs]?)\s+)?/iu;
+
+/**
+ * Betreff eines Zitats ohne Erlassstelle. Der Fortführungsnachweis führt Verwaltungsvorschriften als
+ * „Bek StMAS: Gewährung einer Entschädigung …“, der Verkündungstext zitiert dieselbe Vorschrift als
+ * „Bekanntmachung des Bayerischen Staatsministeriums für Arbeit … über die Gewährung einer Entschädigung
+ * …“. `normalizeTitle` streicht das Ressortpräfix des Bestands; hier wird die Erlassstelle des Zitats
+ * gestrichen. Beide Seiten werden danach **vollständig** verglichen – eine weitere Lesart, keine
+ * Ähnlichkeit.
+ */
+export function subjectReading(title: string): string | undefined {
+  const match = ISSUER_PREFIX.exec(title.replace(/[\u00a0\u202f\u2009]/gu, ' ').replace(/\s+/gu, ' ').trim());
+  if (!match) return undefined;
+  const rest = match.input.slice(match[0].length).trim();
+  return rest.length >= 6 ? rest : undefined;
+}
+
 /** Abkürzungen aus einem Titel: `(BayKiBiG)`, `(Redaktionsrichtlinien - RedR)`, `(ARD-StV)`. */
 export function extractAbbreviations(title: string): string[] {
   const found = new Set<string>();
@@ -301,7 +325,8 @@ export function matchStrength(criteria: readonly TargetMatchCriterion[], confirm
 export function resolveTarget(index: StockIndex, candidate: TargetCandidate): TargetResolution {
   const criteria: TargetMatchCriterion[] = [];
   const bayRs = canonicalBayRs(candidate.gliederungsnummer);
-  const titles = [...new Set([...(candidate.title === undefined ? [] : [candidate.title]), ...(candidate.titleCandidates ?? [])].map((value) => normalizeTitle(value)).filter((value) => value !== ''))];
+  const readings = [...(candidate.title === undefined ? [] : [candidate.title]), ...(candidate.titleCandidates ?? [])];
+  const titles = [...new Set([...readings, ...readings.map((value) => subjectReading(value)).filter((value): value is string => value !== undefined)].map((value) => normalizeTitle(value)).filter((value) => value !== ''))];
   const normalizedTitle = titles[0] ?? '';
   /** Trifft eine der Lesarten den Titel eines Bestandseintrags vollständig? */
   const titleMatches = (entry: StockEntry): boolean => titles.includes(entry.normalizedTitle);

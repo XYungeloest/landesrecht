@@ -272,19 +272,67 @@ Tagesdatum. Nur so erzeugt ein Wiederholungslauf byteidentische Dateien – gepr
 über denselben Cache schreibt keine Datei neu. Die Konstante begrenzt zugleich den erfassten Zeitraum
 nach oben; wird sie erhöht, wandern abgelaufene Befristungen von „künftig“ zu „eingetreten“.
 
+### 3.7 Korrektur „Registerfehler EuMedBek“ (Lauf 5, 2026-09-18)
+
+Die Europamedaillen-Bekanntmachung (EuMedBek, AllMBl. 2018 S. 962) steht im Portal (`BayVV_1132_S_086`),
+stand aber als heute fehlende Stichtagsnorm im Register – und wurde deshalb als baseline-only-Norm
+wiederhergestellt, während das Portal sie weiter führt. Vier allgemeine Ursachen, alle behoben und mit
+Regressionstests belegt (`tests/unit/bayernrecht-events.test.ts`, Abschnitt „Registerfehler EuMedBek“):
+
+| Ursache | Beleg | Korrektur |
+| --- | --- | --- |
+| Abkürzung hinter Gedankenstrich nicht erkannt | BayMBl. 2026 Nr. 377: „Europamedaillen-Bekanntmachung – EuMedBek vom 12. Oktober 2018 (AllMBl. S. 962)“ | `classify.ts#titleAbbreviation`: Klammer **oder** Gedankenstrich + ein Wort mit ≥ 2 Großbuchstaben; der Titel bleibt wörtlich (Kennung), die Lesart ohne Abkürzung kommt hinzu |
+| Wirksamwerden des Endes nicht berücksichtigt | Aufhebung verkündet am 16. September 2026, wirksam am 1. Oktober 2026 – am Auswertungsstichtag galt die EuMedBek noch | `ledger.ts#endEffectiveDay`: `terminationDate` + 1, sonst `effectiveDate`, sonst Verkündung; Kandidat nur bei Wirksamwerden bis zum Auswertungsstichtag, sonst künftiges Ende |
+| Unterbefehl machte eine Änderung zur Aufhebung | BayMBl. 2024 Nr. 7: „Nr. 5 der EuMedBek … wird wie folgt geändert: … 1.2 Die Sätze 3 bis 5 werden aufgehoben.“ stand als Aufhebung der ganzen EuMedBek zum 1. Februar 2024 im Register | `classify.ts#classifyCommand`: Es entscheidet der **erste** Befehl im Fenster, nicht die Rangfolge der Regeln |
+| Keine Konsistenz über Ereignisse hinweg | BayMBl. 2024 Nr. 7 löste die EuMedBek im Bestand auf, BayMBl. 2026 Nr. 377 dieselbe Vorschrift nicht | `build.ts#reconcileTargetIdentities`: gleiches Stammzitat (Ausfertigungsdatum + Blatt + Seite/Nummer) wie ein stark aufgelöstes Ereignis → dieselbe Bestandsnorm; verschiedene → `ambiguous` |
+
+Zwei verwandte Lücken derselben Zielauflösung wurden mitbehoben:
+
+- **Betreff statt Erlassstelle** (`resolve.ts#subjectReading`): Der Fortführungsnachweis führt „Bek StMAS:
+  Vereinbarung über Richtlinien …“, der Verkündungstext zitiert „Bekanntmachung des Bayerischen
+  Staatsministeriums für Arbeit … über die Vereinbarung über Richtlinien …“. Der Betreff hinter dem ersten
+  „über“ ist eine weitere, vollständig zu vergleichende Lesart (BayMBl. 2026 Nr. 369 und Nr. 379: vier
+  Ereignisse zu drei künftig aufgehobenen, heute im Portal geführten Vorschriften).
+- **Außerkrafttreten je Zitat** (`build.ts#terminationFor`): Die erste „außer Kraft“-Angabe eines Textes ist
+  oft die Befristung der *neuen* Vorschrift. Das Ende der abgelösten Vorschrift steht jetzt aus dem Befehl
+  hinter ihrem Zitat (belegt: BayMBl. 2025 Nr. 17 – neue Feuerwehr-Zuwendungsrichtlinien bis 2027, die alten
+  enden mit Ablauf des 31. Dezember 2024). „tritt am … außer Kraft“ wird als letzter Geltungstag (Vortag)
+  geführt.
+- **Fundstelle ohne Punkt** („(BayMBl Nr. 580)“, BayMBl. 2025 Nr. 113) wird als Zitat erkannt.
+
+Auswirkung des Neuaufbaus (offline, derselbe Cache): 3 064 → 3 045 Ereignisse. 72 vermeintliche
+Aufhebungen/Außerkrafttreten sind Änderungen – alle gegen heute im Portal geführte Normen (etwa BayKiBiG,
+ZustV, BayHIG, VV-BayHO, Notarbekanntmachung); das Register hatte diese Normen als beendet ausgewiesen.
+20 Ende-Ereignisse entfallen ganz (16 davon gegen Bestandsnormen), ein neues kommt hinzu.
+baseline-only-Kandidaten 426 → 414:
+
+| Änderung | Kandidaten |
+| --- | ---: |
+| Ende wirkt erst nach dem Auswertungsstichtag (BayMBl. 2026 Nr. 369, 377, 379) | −6 |
+| im Bestand aufgelöst (EuMedBek, Sachverständigenwesen, Schule/Berufsberatung, Jugendarbeitsschutz – alle zugleich künftige Enden) | (in −6 enthalten) |
+| über den Betreff mehrdeutig (BayMBl. 2024 Nr. 651: jährliche Bekanntmachungen mit gleichlautendem Titel) | −7 |
+| keine Aufhebung, sondern Änderung (Landesamt für Schule, Bestattungsverordnung, Hilfsmittelbekanntmachung-Q2) | −3 |
+| Ende jetzt aus dem Befehl hinter dem Zitat (Rechnungslegungsrichtlinie, Feuerwehr-Zuwendungsrichtlinien, Besoldungs-Änderungsgesetz) | +3 |
+| Fundstelle ohne Punkt erkannt (Richtlinie Vorgründungs- und Nachfolgecoaching) | +1 |
+
+Die Kennungen der 15 bereits übernommenen baseline-only-Ereignisse sind unverändert. Eine Kennung ändert sich,
+wo sich der Ereignistyp ändert (er ist Teil des Inhaltsanteils) oder ein früheres Ereignis derselben
+Veröffentlichung wegfällt (laufende Nummer) – betroffen ist unter den Kandidaten nur die Aufhebung der
+Rückforderungsrichtlinie (`baymbl-2025-590-n00590-03-…` → `…-02-…`).
+
 ---
 
 ## 4 Kennzahlen (Lauf 2026-09-18)
 
-3 064 Ereignisse aus 2 121 Veröffentlichungen – GVBl. 908, BayMBl. 2 156.
+3 045 Ereignisse aus 2 121 Veröffentlichungen – GVBl. 906, BayMBl. 2 139 (nach der Korrektur in 3.7).
 
 | Ereignistyp | 2023 | 2024 | 2025 | 2026 | gesamt |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `new` | 22 | 233 | 129 | 100 | 484 |
-| `amend` | 36 | 439 | 387 | 263 | 1 125 |
-| `repeal` | 0 | 301 | 55 | 173 | 529 |
+| `amend` | 36 | 459 | 409 | 293 | 1 197 |
+| `repeal` | 0 | 273 | 28 | 141 | 442 |
 | `recast` | 0 | 1 | 1 | 0 | 2 |
-| `expire` | 6 | 21 | 20 | 10 | 57 |
+| `expire` | 6 | 20 | 17 | 10 | 53 |
 | `commencement` | 0 | 0 | 1 | 2 | 3 |
 | `correction` | 2 | 8 | 14 | 6 | 30 |
 | `treaty` | 0 | 7 | 8 | 2 | 17 |
@@ -293,21 +341,22 @@ nach oben; wird sie erhöht, wandern abgelaufene Befristungen von „künftig“
 
 `replace` und `extend` traten nicht auf. Die bayerischen Quellen drücken die Ablösung einer Vorschrift
 durch eine neue nicht als eigenen Typ aus, sondern als Aufhebung oder Außerkrafttreten durch den
-Nachfolger – dafür steht der Subtyp `ausserkrafttreten-durch-nachfolger` mit 101 Ereignissen. Eine
+Nachfolger – dafür steht der Subtyp `ausserkrafttreten-durch-nachfolger` mit 84 Ereignissen. Eine
 Verlängerung der Geltungsdauer kam im Zeitraum nicht vor. Beide Typen bleiben im Schema, damit ein
 späterer Lauf sie führen kann, ohne das Schema zu ändern.
 
-Häufigste Subtypen: `aenderungsverordnung` 276, `mantelaenderung` 199,
-`ausserkrafttreten-durch-nachfolger` 101, `aenderungsgesetz` 63, `berichtigung` 30, `teilaufhebung` 22,
-`staatsvertrag` 17, `teilausserkrafttreten` 3, `neubekanntmachung` 3, `inkrafttretensbekanntmachung` 3.
+Häufigste Subtypen: `aenderungsverordnung` 278, `mantelaenderung` 200,
+`ausserkrafttreten-durch-nachfolger` 84, `aenderungsgesetz` 63, `berichtigung` 30, `staatsvertrag` 17,
+`teilaufhebung` 7, `neubekanntmachung` 3, `inkrafttretensbekanntmachung` 3, `teilausserkrafttreten` 2.
 
-Evidenz: `strong` 1 728, `supporting` 1 330, `insufficient` 6, `contradictory` 0.
-Zielauflösung: `resolved` 1 320, `absent-from-portal` 547, `not-applicable` 1 111, `unidentified` 42,
-`ambiguous` 33, `missing-predecessor` 11. Strukturell stark aufgelöst: **1 731**.
+Evidenz: `strong` 1 706, `supporting` 1 333, `insufficient` 6, `contradictory` 0.
+Zielauflösung: `resolved` 1 313, `absent-from-portal` 528, `not-applicable` 1 111, `unidentified` 42,
+`ambiguous` 40, `missing-predecessor` 11. Strukturell stark aufgelöst: **1 709**.
 
-**Baseline-only-Kandidaten: 426.** Davon 397 mit strukturell starker Zuordnung (überwiegend
-vollständiger Titel plus Ausfertigungsdatum, oft zusätzlich die Fundstelle) und 29 mit stützender.
-Es sind ganz überwiegend Verwaltungsvorschriften aus den Aufhebungslisten des BayMBl.
+**Baseline-only-Kandidaten: 414** (vor der Korrektur 426). Davon 386 mit strukturell starker Zuordnung
+(überwiegend vollständiger Titel plus Ausfertigungsdatum, oft zusätzlich die Fundstelle). Künftige Enden: 9.
+Es sind ganz überwiegend Verwaltungsvorschriften aus den Aufhebungslisten des BayMBl.; ihre Wiederherstellung
+aus den Verkündungen beschreibt `docs/BAYWUE_BASELINE_ONLY.md`.
 
 Lesart der Kennzahlen:
 
@@ -315,7 +364,8 @@ Lesart der Kennzahlen:
   ohne Datum zählen hier nicht mit – es wird nichts unterstellt.
 - **baseline-only-Kandidat** ist ein Ereignis, das (a) das Ende der *ganzen* Vorschrift belegt, (b)
   regulär erfasst ist, (c) ein benanntes, im heutigen Bestand aber nicht mehr geführtes Ziel hat und
-  (d) zwischen 2023-12-02 und dem Auswertungsstichtag wirkt.
+  (d) zwischen 2023-12-02 und dem Auswertungsstichtag **wirksam wird** (`endEffectiveDay`: letzter
+  Geltungstag + 1, sonst Inkrafttreten des aufhebenden Akts, sonst Verkündung).
 - **Künftige Befristung** ist dasselbe mit einem Enddatum *nach* dem Auswertungsstichtag. Auch sie
   beweist die Geltung am Stichtag, aber die Vorschrift gilt weiter – kein Kandidat.
 - **`notice` ist mit 811 der zweithäufigste Typ.** Das ist kein Fehler: Das BayMBl. verkündet
@@ -342,7 +392,7 @@ Lesart der Kennzahlen:
 
 ## 6 Was daraus für einen späteren Import folgt
 
-1. **Der Stichtagsbestand ist nicht der heutige Bestand.** Die 426 baseline-only-Kandidaten fehlen in
+1. **Der Stichtagsbestand ist nicht der heutige Bestand.** Die 414 baseline-only-Kandidaten fehlen in
    jedem Portalabzug von heute. Für jeden braucht ein Import eine eigene Beschaffung und einen
    dokumentierten `baselineRecoveryMethod`. Die Mehrzahl sind Verwaltungsvorschriften.
 2. **Nach Verkündungsdatum filtern, nie nach Ausfertigungsdatum.** Die Dezember-Auswertung zeigt den

@@ -40,7 +40,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { SOURCE_STATE, TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.2.0';
+export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.3.0';
 
 export interface TransformationRule {
   id: string;
@@ -328,6 +328,23 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
     // zwischen Seiner Heiligkeit Papst Pius XI. und dem Staate Bayern“ (1924). Vertragsnamen sind Eigennamen.
     pattern: /\bKonkordat(?:s|es|e)?\s+zwischen\s+[Ss]einer\s+Heiligkeit\s+Papst\s+Pius\s+XI\.\s+und\s+dem\s+Staate\s+Bayern\b/gu,
     reason: 'Name eines historischen Vertrags mit der Vertragspartei in ihrer historischen Bezeichnung bleibt unverändert (Nutzerentscheidung)',
+  },
+  {
+    id: 'historical-treaty-short-name',
+    category: 'historical-name',
+    // Nutzerentscheidung 2026-09-18 (Run 5): „Bayerisches Konkordat“ ist der eingeführte Eigenname des Vertrags von
+    // 1924 und bleibt unverändert – in allen Kasus, auch in „Zusatzprotokoll zum Bayerischen Konkordat“.
+    pattern: /\b[Bb]ayerische[mnrs]?\s+Konkordat(?:e?s)?\b/gu,
+    reason: 'Eigenname des historischen Vertrags („Bayerisches Konkordat“) bleibt unverändert (Nutzerentscheidung)',
+  },
+  {
+    id: 'institution-proper-name',
+    category: 'external-name',
+    // Nutzerentscheidung 2026-09-18 (Run 5): „Zentrum Digitalisierung.Bayern“ ist ein Eigenname (Marke) und bleibt
+    // erhalten. Ein Simulations-Mapping dieser Institution ist nicht definiert; ein Name wie
+    // „Zentrum Digitalisierung.Bayern-Württemberg“ wird nicht erfunden.
+    pattern: /\b(?:Zentrums?\s+)?Digitalisierung\.Bayern\b/gu,
+    reason: 'Eigenname einer Institution („Zentrum Digitalisierung.Bayern“) bleibt unverändert (Nutzerentscheidung)',
   },
   {
     id: 'landscape-proper-name',

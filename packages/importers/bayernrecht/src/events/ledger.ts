@@ -346,29 +346,55 @@ export function isFullTermination(event: Pick<LedgerEvent, 'eventType' | 'subtyp
   return event.subtype !== 'teilaufhebung' && event.subtype !== 'teilausserkrafttreten';
 }
 
+/** ISO-Datum plus `days` Tage (UTC, ohne Zeitzonenfehler). */
+function addIsoDays(iso: string, days: number): string {
+  const date = new Date(`${iso}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+/**
+ * Erster Tag, an dem die Vorschrift nicht mehr gilt – das **Wirksamwerden** des Endes, nicht die
+ * Verkündung des Belegs:
+ *
+ *   terminationDate (letzter Geltungstag, „mit Ablauf des …“)  → Folgetag
+ *   effectiveDate   (Inkrafttreten des aufhebenden Akts)       → dieser Tag
+ *   sonst eventDate (Verkündung; frühestmögliches Ende)        → dieser Tag
+ *
+ * Belegt: Die EuMedBek (AllMBl. 2018 S. 962) wurde am 16. September 2026 zum 1. Oktober 2026
+ * aufgehoben (BayMBl. 2026 Nr. 377). Am Auswertungsstichtag 2026-09-18 galt sie noch und stand im
+ * Portal; das Verkündungsdatum hätte sie zum baseline-only-Kandidaten gemacht.
+ */
+export function endEffectiveDay(event: Pick<LedgerEvent, 'terminationDate' | 'effectiveDate' | 'eventDate'>): string | undefined {
+  if (event.terminationDate !== undefined) return addIsoDays(event.terminationDate, 1);
+  return event.effectiveDate ?? event.eventDate;
+}
+
 /**
  * Baseline-only-Kandidat: Ein Ende der *ganzen* Vorschrift nach dem Stichtag, dessen Vorgänger im
  * heutigen Portalbestand **nicht** mehr geführt wird. Die Vorschrift galt dann am 2023-12-01 und fehlt
  * heute – genau diese Vorschriften muss ein späterer Import zusätzlich beschaffen.
  *
- * Ein entschärftes oder ersetztes Fristende zählt nicht, ein erst künftig wirkendes Ende ebenfalls nicht,
- * und ein Teilaußerkrafttreten beweist das Gegenteil eines Endes.
+ * Maßgeblich ist das Wirksamwerden des Endes (`endEffectiveDay`): Es muss nach dem Stichtag und
+ * spätestens am Auswertungsstichtag liegen. Eine Vorschrift, deren Ende erst künftig wirkt, gilt heute
+ * noch – sie gehört in den Portalbestand, nicht zu den heute fehlenden. Ein entschärftes oder ersetztes
+ * Fristende zählt nicht, und ein Teilaußerkrafttreten beweist das Gegenteil eines Endes.
  */
 export function isBaselineOnlyCandidate(event: LedgerEvent, evaluationDate: string = EVALUATION_DATE): boolean {
   if (!isFullTermination(event)) return false;
   if (event.processingStatus !== 'recorded') return false;
   if (event.targetResolution.status !== 'absent-from-portal') return false;
   if (event.evidenceStrength === 'insufficient' || event.evidenceStrength === 'contradictory') return false;
-  const date = event.terminationDate ?? event.eventDate;
-  return date !== undefined && date >= FIRST_POST_BASELINE_DAY && date <= evaluationDate;
+  const day = endEffectiveDay(event);
+  return day !== undefined && day >= FIRST_POST_BASELINE_DAY && day <= evaluationDate;
 }
 
 /** Künftige Befristung: belegt ebenfalls die Geltung am Stichtag, aber die Vorschrift gilt weiter. */
 export function isFutureTermination(event: LedgerEvent, evaluationDate: string = EVALUATION_DATE): boolean {
   if (!isFullTermination(event)) return false;
   if (event.processingStatus !== 'recorded') return false;
-  const date = event.terminationDate ?? event.eventDate;
-  return date !== undefined && date > evaluationDate;
+  const day = endEffectiveDay(event);
+  return day !== undefined && day > evaluationDate;
 }
 
 /** Deterministische Ordnung: Datum (ohne Datum zuletzt), dann Quelle, Position, Kennung. */

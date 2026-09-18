@@ -22,6 +22,10 @@
  * Zuschnitt im Freistaat Bayern-Württemberg ist nicht festgelegt. Sie laufen über die Standardwerte
  * der Kategorie in den Status `review` – nicht blockierend, messbar, mit erhaltenem Quellorgan
  * (`originEnactingBody`). Es werden keine Behörden erfunden.
+ *
+ * Ausnahme (Run 5): Staatsministerien, die am Stichtag unter ihrem Namen nicht mehr bestanden (Beleg: StRGVV § 2 in
+ * der seit 2023-11-08 geltenden Fassung), sind `historical-source-only` – historisches Erlassorgan, nur Provenienz,
+ * kein Simulationsorgan. Die am Stichtag bestehenden Ressorts bleiben `review`.
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';

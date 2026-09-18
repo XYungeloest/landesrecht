@@ -16,8 +16,10 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  citedNormKey,
   derivePublicationEvents,
   formatCitation,
+  reconcileTargetIdentities,
   type PublicationInput,
 } from '@landesrecht/importer-bayernrecht/events/build.ts';
 import {
@@ -30,6 +32,7 @@ import {
   isPlausibleTitle,
   scanCitations,
   scanRepealList,
+  titleAbbreviation,
 } from '@landesrecht/importer-bayernrecht/events/classify.ts';
 import { parsePublicationDocument } from '@landesrecht/importer-bayernrecht/events/documents.ts';
 import { needsFullText, coveredVolumes, gvblListingUrl, baymblListingUrl, EXPORT_PROBE } from '@landesrecht/importer-bayernrecht/events/harvest.ts';
@@ -40,9 +43,11 @@ import {
   ORGAN_PROVENANCE,
   deriveConfidence,
   deriveEvidenceStrength,
+  endEffectiveDay,
   eventId,
   isBaselineOnlyCandidate,
   isFullTermination,
+  isFutureTermination,
   sortEvents,
   toExcerpt,
   validateLedgerEvent,
@@ -58,6 +63,7 @@ import {
   parseLongGermanDate,
   publicationReference,
   resolveTarget,
+  subjectReading,
   type StockIndex,
 } from '@landesrecht/importer-bayernrecht/events/resolve.ts';
 
@@ -310,6 +316,8 @@ describe('Daten aus der Schlussvorschrift', () => {
 
   it('übernimmt „mit Ablauf des“ unverändert und rechnet nicht auf den Folgetag', () => {
     expect(extractTerminationDate('Sie tritt mit Ablauf des 31. Dezember 2028 außer Kraft.')).toBe('2028-12-31');
+    // „am 1. Februar 2025 außer Kraft“ nennt den ersten Tag ohne Geltung; geführt wird der letzte Geltungstag.
+    expect(extractTerminationDate('Die Richtlinie tritt am 1. Februar 2025 außer Kraft.')).toBe('2025-01-31');
   });
 });
 
@@ -599,8 +607,12 @@ describe('Ereignisse je Veröffentlichung', () => {
     expect(events.every((event) => event.eventType === 'repeal')).toBe(true);
     expect(events.every((event) => event.publicationAuthority === 'electronic-official')).toBe(true);
     expect(events.every((event) => event.targetResolution.status === 'absent-from-portal')).toBe(true);
-    // Genau das ist der Vollständigkeitsnachweis: Vorschriften, die es heute nicht mehr gibt.
-    expect(events.filter((event) => isBaselineOnlyCandidate(event, EVALUATION_DATE))).toHaveLength(3);
+    // Die Aufhebung wirkt erst am 1. Oktober 2026: Am Auswertungsstichtag galten die Vorschriften noch –
+    // sie sind künftige Enden, keine heute fehlenden Vorschriften. Ab dem Wirksamwerden wären sie es.
+    expect(events.every((event) => event.effectiveDate === '2026-10-01')).toBe(true);
+    expect(events.filter((event) => isBaselineOnlyCandidate(event, EVALUATION_DATE))).toHaveLength(0);
+    expect(events.filter((event) => isFutureTermination(event, EVALUATION_DATE))).toHaveLength(3);
+    expect(events.filter((event) => isBaselineOnlyCandidate(event, '2026-10-01'))).toHaveLength(3);
     expect(events.every((event) => validateLedgerEvent(event).length === 0)).toBe(true);
   });
 
@@ -689,5 +701,130 @@ describe('Abrufplan', () => {
   it('druckt Fundstellen so, wie das jeweilige Organ sie führt', () => {
     expect(formatCitation('gvbl', 2024, 682)).toBe('GVBl. 2024 S. 682');
     expect(formatCitation('baymbl', 2024, 100)).toBe('BayMBl. 2024 Nr. 100');
+  });
+});
+
+/* ------------------------------------------- Registerfehler EuMedBek (BayMBl. 2024 Nr. 7, 2026 Nr. 377) */
+
+/**
+ * Die Europamedaillen-Bekanntmachung (EuMedBek, AllMBl. 2018 S. 962) steht im Portal (`BayVV_1132_S_086`),
+ * stand aber als heute fehlende Stichtagsnorm im Register. Drei Ursachen, alle allgemein behoben:
+ *   1. BayMBl. 2026 Nr. 377 zitiert sie als „Europamedaillen-Bekanntmachung – EuMedBek“: Die Abkürzung
+ *      hinter dem Gedankenstrich wurde nicht erkannt, der Titel passte auf keinen Bestandseintrag.
+ *   2. Die Aufhebung wirkt erst am 1. Oktober 2026; maßgeblich war das Verkündungsdatum (16. September).
+ *   3. BayMBl. 2024 Nr. 7 ändert Nr. 5 der EuMedBek („Die Sätze 3 bis 5 werden aufgehoben“) und stand als
+ *      Aufhebung der ganzen EuMedBek zum 1. Februar 2024 im Register.
+ */
+describe('Registerfehler EuMedBek: eine Vorschrift des Portals ist nie „heute fehlend“', () => {
+  const EUMEDBEK_STOCK = (title: string): StockIndex =>
+    createStockIndex([{ area: 'vwv', path: 'test/enumeration-vwv.json', items: [{ documentId: 'BayVV_1132_S_086', title, sectionPath: ['1', '11', '113', '1132'], changeNotes: ['Änderung vom 14.12.2023, BayMBl. 2024 Nr. 7'] }] }]);
+  const WITH_ABBREVIATION = EUMEDBEK_STOCK('Bek StK: Verleihung einer Medaille für besondere Verdienste um den Freistaat Bayern in Europa und der Welt (Europamedaillen-Bekanntmachung - EuMedBek)');
+  const baymbl = (volume: number, position: number, title: string, publishedAt: string, enactmentDate: string): PublicationInput => {
+    const base = input({ organ: 'baymbl', volume, position, title, publishedAt, enactmentDate, gliederungsnummern: ['1132-S'] }, parsePublicationDocument(fixture(`verkuendung-baymbl-${volume}-${position}-excerpt.html`), 'baymbl', volume, position));
+    return { ...base, sourceId: `baymbl-${volume}-${position}`, sourceUrl: `https://www.verkuendung-bayern.de/baymbl/${volume}-${position}/` };
+  };
+  const amendment2024 = (): PublicationInput => baymbl(2024, 7, 'Änderung der Europamedaillen-Bekanntmachung', '2024-01-10', '2023-12-14');
+  const repeal2026 = (): PublicationInput => baymbl(2026, 377, 'Änderung der Bekanntmachung über die Verleihung einer Medaille für Verdienste um die Zivil-Militärische Zusammenarbeit', '2026-09-16', '2026-08-26');
+
+  it('liest die Abkürzung auch hinter einem Gedankenstrich – und nur ein Wort mit zwei Großbuchstaben', () => {
+    expect(titleAbbreviation('Europamedaillen-Bekanntmachung – EuMedBek')).toMatchObject({ abbreviation: 'EuMedBek', form: 'dash' });
+    expect(titleAbbreviation('Richtlinien für den Lärmschutz an Straßen – RLS-90')).toMatchObject({ abbreviation: 'RLS-90' });
+    expect(titleAbbreviation('Richtlinien für den Lärmschutz an Straßen – Ausgabe')).toBeUndefined();
+    expect(titleAbbreviation('Staatsvertrag – Teil A')).toBeUndefined();
+    const text = parsePublicationDocument(fixture('verkuendung-baymbl-2026-377-excerpt.html'), 'baymbl', 2026, 377).text;
+    const cited = scanCitations(text).find((entry) => entry.enactmentDate === '2018-10-12');
+    // Der Titel bleibt wörtlich (die Ereigniskennung hängt an ihm); die Lesart ohne Abkürzung kommt hinzu.
+    expect(cited).toMatchObject({ title: 'Europamedaillen-Bekanntmachung – EuMedBek', abbreviation: 'EuMedBek', citation: 'AllMBl. S. 962' });
+    expect(cited!.titleCandidates).toContain('Europamedaillen-Bekanntmachung');
+  });
+
+  it('löst die Aufhebung von 2026 über die Abkürzung auf und führt sie als künftiges Ende, nicht als fehlende Norm', () => {
+    const events = derivePublicationEvents(repeal2026(), WITH_ABBREVIATION);
+    const repeal = events.find((event) => event.eventType === 'repeal')!;
+    expect(repeal).toMatchObject({ effectiveDate: '2026-10-01', targetAbbreviation: 'EuMedBek', targetResolution: { status: 'resolved', sourceIdentity: 'BayVV_1132_S_086', matchStrength: 'strong' } });
+    expect(isBaselineOnlyCandidate(repeal, EVALUATION_DATE)).toBe(false);
+    expect(isFutureTermination(repeal, EVALUATION_DATE)).toBe(true);
+    // Selbst wenn der Bestand sie nicht fände: Ein erst am 1. Oktober 2026 wirkendes Ende macht am
+    // 18. September 2026 keine heute fehlende Vorschrift.
+    const unresolved = { ...repeal, targetResolution: { status: 'absent-from-portal' as const, matchStrength: 'strong' as const, matchedOn: ['exact-title' as const, 'fundstelle' as const], note: 'x' } };
+    expect(endEffectiveDay(unresolved)).toBe('2026-10-01');
+    expect(isBaselineOnlyCandidate(unresolved, EVALUATION_DATE)).toBe(false);
+  });
+
+  it('macht aus „Nr. 5 … wird wie folgt geändert: … Die Sätze 3 bis 5 werden aufgehoben“ keine Aufhebung der Vorschrift', () => {
+    const text = parsePublicationDocument(fixture('verkuendung-baymbl-2024-7-excerpt.html'), 'baymbl', 2024, 7).text;
+    const cited = scanCitations(text).find((entry) => entry.enactmentDate === '2018-10-12')!;
+    expect(classifyCommand(commandWindow(text, cited) ?? '')).toMatchObject({ eventType: 'amend' });
+    // Die erste Anweisung entscheidet – auch umgekehrt: Eine Aufhebung bleibt eine Aufhebung.
+    expect(classifyCommand(' wird aufgehoben. 2. Die Bekanntmachung Y wird wie folgt geändert:')).toMatchObject({ eventType: 'repeal' });
+    const events = derivePublicationEvents(amendment2024(), WITH_ABBREVIATION);
+    expect(events.map((event) => event.eventType)).toEqual(['amend']);
+    expect(events[0]!.targetResolution).toMatchObject({ status: 'resolved', sourceIdentity: 'BayVV_1132_S_086' });
+  });
+
+  it('gleicht Ereignisse über das Stammzitat ab: Wer dieselbe Vorschrift im Bestand findet, widerlegt „heute fehlend“', () => {
+    const repeal = derivePublicationEvents(repeal2026(), EUMEDBEK_STOCK('Bek StK: Eine ganz andere Überschrift'))
+      .find((event) => event.eventType === 'repeal')!;
+    expect(repeal.targetResolution.status).toBe('absent-from-portal');
+    expect(citedNormKey(repeal)).toBe('2018-10-12|AllMBl|S|962');
+    const resolvedElsewhere: LedgerEvent = {
+      ...repeal,
+      id: 'anderes-ereignis',
+      eventType: 'amend',
+      citation: 'BayMBl. 2024 Nr. 7',
+      targetIdentityHints: ['zitat-ausfertigung:2018-10-12', 'zitat-fundstelle:AllMBl. 2018 S. 962'],
+      targetResolution: { status: 'resolved', matchStrength: 'strong', sourceIdentity: 'BayVV_1132_S_086', matchedOn: ['abbreviation'], note: 'x' },
+    };
+    const [reconciled] = reconcileTargetIdentities([repeal, resolvedElsewhere]);
+    expect(reconciled!.targetResolution).toMatchObject({ status: 'resolved', sourceIdentity: 'BayVV_1132_S_086', matchStrength: 'strong', matchedOn: ['ausfertigungsdatum', 'fundstelle'] });
+    expect(reconciled!.id).toBe(repeal.id);
+    expect(validateLedgerEvent(reconciled).length).toBe(0);
+    // Zwei verschiedene Bestandseinträge für dasselbe Stammzitat: keine Entscheidung, ein Reviewfall.
+    const conflicting = { ...resolvedElsewhere, id: 'drittes', targetResolution: { ...resolvedElsewhere.targetResolution, sourceIdentity: 'BayVV_ANDERE' } };
+    const [ambiguous] = reconcileTargetIdentities([repeal, resolvedElsewhere, conflicting]);
+    expect(ambiguous!.targetResolution).toMatchObject({ status: 'ambiguous', candidates: ['BayVV_1132_S_086', 'BayVV_ANDERE'] });
+    expect(ambiguous!.processingStatus).toBe('needs-review');
+  });
+
+  it('vergleicht den Betreff eines Zitats ohne Erlassstelle mit dem Bestandstitel ohne Ressortpräfix', () => {
+    expect(subjectReading('Bekanntmachung des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie und Frauen über die Vereinbarung über Richtlinien für die Zusammenarbeit von Schule und Berufsberatung in Bayern')).toBe(
+      'Vereinbarung über Richtlinien für die Zusammenarbeit von Schule und Berufsberatung in Bayern',
+    );
+    expect(subjectReading('Bekanntmachung über das Sachverständigenwesen')).toBe('Sachverständigenwesen');
+    expect(subjectReading('Verordnung über die Zuständigkeit')).toBeUndefined();
+    const stock = createStockIndex([{ area: 'vwv', path: 't', items: [{ documentId: 'BayVV_97977', title: 'Bek StMAS: Vereinbarung über Richtlinien für die Zusammenarbeit von Schule und Berufsberatung in Bayern' }] }]);
+    // BayMBl. 2026 Nr. 379 hebt genau diese Vorschrift (zum 1. Oktober 2026) auf; das Portal führt sie.
+    expect(
+      resolveTarget(stock, {
+        title: 'Bekanntmachung des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie und Frauen über die Vereinbarung über Richtlinien für die Zusammenarbeit von Schule und Berufsberatung in Bayern',
+        enactmentDate: '2006-07-10',
+        targetCitation: 'AllMBl. S. 252',
+        terminating: true,
+        addressesExistingNorm: true,
+      }),
+    ).toMatchObject({ status: 'resolved', sourceIdentity: 'BayVV_97977' });
+  });
+
+  it('erkennt die Fundstelle auch ohne Punkt hinter dem Blattnamen (BayMBl. 2025 Nr. 113)', () => {
+    const text =
+      '1. Die Bekanntmachung des Bayerischen Staatsministeriums für Wirtschaft, Landesentwicklung und Energie „Richtlinien für die staatliche Förderung der Betreuung bei der Existenzgründung und Betriebsübernahme in der Vorgründungsphase (Richtlinie Vorgründungs- und Nachfolgecoaching)“ vom 13. November 2023 (BayMBl Nr. 580), die zuletzt durch Bekanntmachung vom 6. Juni 2024 (BayMBl. Nr. 290) geändert worden ist, wird aufgehoben.';
+    const cited = scanCitations(text).find((entry) => entry.enactmentDate === '2023-11-13');
+    expect(cited).toMatchObject({ citation: 'BayMBl Nr. 580' });
+    expect(classifyCommand(commandWindow(text, cited!) ?? '')).toMatchObject({ eventType: 'repeal' });
+    expect(citedNormKey({ targetIdentityHints: ['zitat-ausfertigung:2023-11-13', 'zitat-fundstelle:BayMBl Nr. 580'] })).toBe('2023-11-13|BayMBl|Nr|580');
+    // Ohne Fundstellenmerkmal bleibt eine Klammer mit „BayMBl“ im Fließtext kein Zitat.
+    expect(scanCitations('Die Hinweise (siehe BayMBler Bekanntmachung) gelten weiter.')).toEqual([]);
+  });
+
+  it('schreibt das Ende der abgelösten Vorschrift nicht die Befristung der neuen zu', () => {
+    // BayMBl. 2025 Nr. 17, wörtlich: Die neue Richtlinie ist bis 2027 befristet, die alte endet 2024.
+    const text =
+      '1Diese Bekanntmachung tritt mit Wirkung vom 1. Januar 2025 in Kraft; sie tritt mit Ablauf des 31. Dezember 2027 außer Kraft. 2Die Feuerwehr-Zuwendungsrichtlinien vom 17. Dezember 2021 (BayMBl. 2022 Nr. 46), die durch Bekanntmachung vom 27. Juni 2023 (BayMBl. Nr. 337) geändert worden sind, treten mit Ablauf des 31. Dezember 2024 außer Kraft; sie bleiben jedoch für alle vor dem 1. Januar 2025 begonnenen Maßnahmen anwendbar.';
+    const document = { organ: 'baymbl' as const, volume: 2025, position: 17, reference: 'BayMBl. 2025 Nr. 17', documentKind: 'Verwaltungsvorschrift', gliederungsnummern: ['2153-I'], title: 'Richtlinien für Zuwendungen des Freistaates Bayern zur Förderung des kommunalen Feuerwehrwesens (Feuerwehr-Zuwendungsrichtlinien – FwZR)', text, paragraphs: [text], hasTextLayer: true };
+    const events = derivePublicationEvents(input({ organ: 'baymbl', volume: 2025, position: 17, title: document.title, publishedAt: '2025-01-15', enactmentDate: '2024-12-17', gliederungsnummern: ['2153-I'] }, document), STOCK);
+    const expiry = events.find((event) => event.eventType === 'expire' && event.targetTitle === 'Feuerwehr-Zuwendungsrichtlinien')!;
+    expect(expiry.terminationDate).toBe('2024-12-31');
+    expect(endEffectiveDay(expiry)).toBe('2025-01-01');
+    expect(isBaselineOnlyCandidate(expiry, EVALUATION_DATE)).toBe(true);
   });
 });
