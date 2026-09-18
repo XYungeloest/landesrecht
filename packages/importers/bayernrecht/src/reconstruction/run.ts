@@ -1,139 +1,173 @@
 /**
- * Rückrechnung von Änderungen nach dem Stichtag (Methode `reverse-amendment`).
+ * Rückrechnung von Änderungen nach dem Stichtag (Methode `reverse-amendment`), ein- und mehrstufig.
  *
- * Für jede Norm der Klasse `changed-after-baseline` entscheidet dieser Lauf, ob sich ihr Stichtagstext
- * **sicher** aus dem heutigen Text und dem Änderungsbefehl zurückrechnen lässt – und schreibt für genau
- * diese Normen ein Rezept. Alle übrigen erhalten einen Zustand der Rekonstruktionsschlange mit Grund.
+ * Für jede Norm der Klasse `changed-after-baseline` entscheidet dieser Lauf, ob sich ihr Stichtagstext **sicher**
+ * aus dem heutigen Text und den amtlichen Änderungsbefehlen zurückrechnen lässt – und schreibt für genau diese
+ * Normen ein Rezept (`bayernrecht-reverse-amendment/1` für eine Änderung, `/2` für mehrere). Alle übrigen erhalten
+ * einen Zustand der Rekonstruktionsschlange, **genau eine Gruppe** und ihre Gründe (`groups.ts`).
  *
- * Angegangen werden nur Normen mit **genau einem** stark belegten Änderungsschritt nach dem Stichtag.
- * Für sie müssen alle Prüfungen bestehen:
+ * Ablauf je Norm, jede Prüfung notwendig:
  *
- * 1. Detailseite der Verkündung und heutiges Paket liegen im Cache (kein Netz).
- * 2. Der Einleitungssatz für die Norm steht genau einmal in der Verkündung; der Befehlsblock ist lesbar.
- * 3. **Jeder** Befehl des Blocks hat eine unterstützte, rückrechenbare Formel (`formulas.ts`).
- * 4. Das Inkrafttreten für die Norm ist bestimmt, liegt **nach** dem Stichtag und nicht nach dem
- *    Auswertungsstichtag, und der heutige Text gilt laut Paket seit genau diesem Tag.
- * 5. Die Kette ist einschrittig (`chain.ts`: Vollzitat, Änderungsverlauf, vorangehende Änderung,
- *    übrige Verkündungen).
- * 6. Jeder Ort ist auflösbar, jeder Wortlaut im Bereich genau einmal vorhanden.
- * 7. **Rundlauf:** rückwärts und wieder vorwärts ergibt exakt den heutigen Körper.
+ * 1. Heutiges Paket im Cache, geparst wie im Bulk (Quelltext vor der Überleitung).
+ * 2. **Kette** (`walk.ts`): vom Vollzitat über die „zuletzt geändert durch …“-Verweise bis zur letzten Änderung
+ *    vor dem Stichtag oder zur Stammfassung; Inkrafttreten je Änderung und Abschnitt; Gegenproben mit Register,
+ *    Änderungsverlauf, Fortführungsnachweis und allen übrigen Verkündungen.
+ * 3. **Rücknahme** je Änderung, jüngste zuerst (`steps.ts`): jeder Befehl mit unterstützter, eindeutig
+ *    umkehrbarer Formel, aufgelöst im Zustand unmittelbar nach ihm; je Änderung Vorwärtsprobe.
+ * 4. **Beginn der Stichtagsfassung**: Kalenderdatum der letzten Änderung vor dem Stichtag (ihre Verkündung liegt
+ *    im Cache) oder der Inkrafttretensvorschrift der Stammfassung.
+ * 5. **Forward-Replay**: Stichtagskörper plus alle Änderungen, älteste zuerst, ergibt exakt den heutigen Körper –
+ *    auch nach Serialisierung des Rezepts.
  *
- * Normen werden **nicht** nach `content/` geschrieben. Ergebnis sind Rezepte, die Schlange und die
- * Stichtagsentscheidungen in `baseline.json`.
+ * Normen werden **nicht** nach `content/` geschrieben. Ergebnis: Rezepte, Schlange, Quellenregister, Audit und
+ * die Stichtagsentscheidungen in `baseline.json` (frisch gelesen beim Schreiben; nur eigene Entscheidungen).
  */
 import { readdir, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 import { writeFileAtomic, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 
 import type { BaselineDecision } from '../baseline/classify.ts';
 import { COMMAND_STATE_PRIORITY, NON_INVERTIBLE_EVENT_TYPES, type ReconstructionState } from '../baseline/reconstruction.ts';
-import { BASELINE_PATH, EVENT_LEDGER_PATH, type BaselineFile } from '../baseline/run.ts';
-import { AUDIT_DIR, BASELINE_DATE, EVALUATION_DATE, IMPORT_DATA_DIR, PARSER_VERSION } from '../common/constants.ts';
+import { BASELINE_PATH, type BaselineFile } from '../baseline/run.ts';
+import { AUDIT_DIR, IMPORT_DATA_DIR, PARSER_VERSION } from '../common/constants.ts';
 import { RECONSTRUCTION_QUEUE_PATH } from '../common/paths.ts';
-import { applyForward, ReconstructionError, reverseSteps, verifyRoundTrip } from './apply.ts';
-import { checkChain, publicationKeyFromCitation, publicationKeyString, type PublicationKey } from './chain.ts';
-import { commencementFor, effectiveDateVerdict, ownCommencement, sectionRef } from './commencement.ts';
-import { containerLocation, FORMULAS, NON_INVERTIBLE_FORMULAS, parseCommand, SUPPORTED_FORMULAS, type FormulaId, type ParsedOperation } from './formulas.ts';
-import { gazetteUnits, normalizeGazetteText, type GazetteUnit } from './gazette.ts';
 import { decodeEntities } from '../events/listings.ts';
-import { blockAt, formatPath, parseLocation, resolvePath, type LocationPath } from './location.ts';
-import { bodyFingerprint, RECIPE_SCHEMA, recipeProblems, stableStringify, WHITESPACE_NORMALIZATION, type ReconstructionRecipe, type RecipeStep, type ScopeRecord } from './recipe.ts';
+import { FETCH_CHECKPOINT_PATH, walkInputFor, type FetchCheckpoint } from './acquire.ts';
+import { verifyRoundTrip } from './apply.ts';
+import { buildAudit, RECONSTRUCTION_AUDIT_PATH, type ReconstructionAudit } from './audit.ts';
+import { lastAmendmentClause } from './chain.ts';
+import { commencementFor, ownCommencement, sectionRef } from './commencement.ts';
+import { loadRunContext, pageUnits, type LedgerRecord, type RunContext } from './context.ts';
+import { FORMULAS, NON_INVERTIBLE_FORMULAS, parseCommand, SUPPORTED_FORMULAS, type FormulaId } from './formulas.ts';
+import { normalizeGazetteText, type GazetteUnit } from './gazette.ts';
+import { assignGroup, emptySurvey, GROUPS, surveyCommand, type CommandSurvey, type GroupReason, type ReconstructionGroup } from './groups.ts';
+import { publicationCitation, SOURCE_AUTHORITY } from './pages.ts';
+import {
+  bodyFingerprint,
+  isRecipeV2,
+  RECIPE_SCHEMA,
+  RECIPE_SCHEMA_V2,
+  recipeAmendments,
+  recipeProblems,
+  WHITESPACE_NORMALIZATION,
+  type AnyReconstructionRecipe,
+  type RecipeAmendment,
+  type RecipeAmendmentV2,
+  type RecipeSource,
+  type ReconstructionRecipe,
+} from './recipe.ts';
+import { buildSourceRegister, RECONSTRUCTION_SOURCES_PATH, type SourceRegister } from './register.ts';
 import { packageUrl, parseCurrentNorm, readCached, type CurrentNorm } from './source.ts';
-import { amendingCitations, citationMatches, clauseAmendments, commandBlock, isBlockFailure, isStrongMatch, type CommandBlock, type CommandNode, type NormCitation } from './structure.ts';
+import { commandLeaves, reverseAmendment } from './steps.ts';
+import { clauseAmendments, commandBlocks, type CommandBlock } from './structure.ts';
+import { recheckUndetermined, applyUndeterminedDecisions, type UndeterminedResult } from './undetermined.ts';
+import { walkChain, type WalkResult, type WalkStep } from './walk.ts';
 
 export const RECONSTRUCTION_DIR = join(IMPORT_DATA_DIR, 'reconstruction');
 export const RECONSTRUCTION_REPORT_PATH = join(AUDIT_DIR, 'RECONSTRUCTION.md');
-export const QUEUE_SCHEMA = 'bayernrecht-reconstruction-queue/1' as const;
+export const QUEUE_SCHEMA = 'bayernrecht-reconstruction-queue/2' as const;
 
-/** Ereignis des Registers, soweit die Rückrechnung es braucht. */
-export interface LedgerRecord {
-  id: string;
-  sourceUrl: string;
-  sourceSha256?: string;
-  organ: string;
-  publicationAuthority: string;
-  digitalRepresentation: string;
-  citation: string;
-  eventDate?: string;
-  enactmentDate?: string;
-  effectiveDate?: string;
-  gazettePdfUrl?: string;
-  gazettePdfSha256Published?: string;
-  eventType: string;
-  subtype?: string;
-  targetResolution?: { status?: string; matchStrength?: string; sourceIdentity?: string };
-}
+export type { LedgerRecord } from './context.ts';
 
 export interface QueueEntry {
   documentId: string;
   state: ReconstructionState;
-  /** Maschinenlesbarer Grund (`multi-step`, `recast`, `chain-last-amendment` …). */
+  /** Maschinenlesbarer Grund (`prior-source-missing`, `recast`, `chain-last-amendment` …). */
   reason: string;
   detail: string;
-  /** Weitere nicht bestandene Prüfungen neben dem maßgeblichen Grund, je Zustand und Grund einmal (erster Befund, Anzahl). */
+  /** Genau eine Gruppe (`groups.ts`). */
+  group: ReconstructionGroup;
+  /** Alle Gründe (maßgeblicher zuerst), je Zustand und Grund einmal. */
+  reasons: Array<{ state: string; reason: string; detail: string }>;
+  /** Weitere nicht bestandene Prüfungen neben dem maßgeblichen Grund (erster Befund, Anzahl). */
   alsoFailed: Array<{ state: ReconstructionState; reason: string; detail: string; count: number }>;
+  /** Stark zugeordnete Ereignisse des Registers nach dem Stichtag. */
   steps: number;
+  /** Zahl der zurückzunehmenden Änderungen (Kette, sonst Register). */
+  amendments: number;
+  /** Zurückzunehmende Änderungen laut Kette, jüngste zuerst (soweit erreicht). */
+  chain?: string[];
   priority: number;
   events: Array<{ id: string; eventType: string; eventDate: string; citation: string }>;
   formulas?: FormulaId[];
   effectiveDate?: string;
-  /** Vorangehende Änderung laut Einleitungssatz des Änderungsbefehls. */
   priorAmendment?: string;
-  /** Befehl, Orte und Rundlauf bestanden; ausgeschlossen nur, weil der Beginn der Stichtagsfassung nicht belegt ist. */
+  /** Befehle, Orte und Rundlauf bestanden; ausgeschlossen nur, weil der Beginn der Stichtagsfassung nicht belegt ist. */
   roundTripVerified?: boolean;
-  /** Ergebnis je Prüfung (nur Einschrittkandidaten; fehlend = nicht erreicht). */
   checks?: Partial<Record<CheckName, boolean>>;
-  recipe?: { path: string; steps: number; currentFingerprint: string; baselineFingerprint: string };
+  /** Fehlende Quellen, die ein gezielter Abruf beschaffen könnte. */
+  needs?: string[];
+  recipe?: { path: string; schema: string; amendments: number; steps: number; currentFingerprint: string; baselineFingerprint: string };
+}
+
+export interface QueueTotals {
+  changedAfterBaseline: number;
+  recipeReady: number;
+  recipeReadySingle: number;
+  recipeReadyMulti: number;
+  byGroup: Record<string, number>;
+  byState: Record<string, number>;
+  byReason: Record<string, number>;
+  /** Je Gruppe die maßgeblichen Gründe. */
+  byGroupReason: Record<string, Record<string, number>>;
+  checks: Record<string, { passed: number; failed: number; notReached: number }>;
+  roundTripVerifiedWithoutStart: number;
+  formulas: Record<string, { clauses: number; norms: number; supported: boolean; invertible: boolean }>;
 }
 
 export interface ReconstructionQueue {
   schemaVersion: typeof QUEUE_SCHEMA;
   baselineDate: string;
   evaluationDate: string;
-  totals: {
-    changedAfterBaseline: number;
-    singleStep: number;
-    recipeReady: number;
-    byState: Record<string, number>;
-    byReason: Record<string, number>;
-    singleStepByState: Record<string, number>;
-    singleStepByReason: Record<string, number>;
-    /** Je Prüfung: wie viele Einschrittkandidaten sie bestanden, nicht bestanden oder nicht erreicht haben. */
-    checks: Record<string, { passed: number; failed: number; notReached: number }>;
-    /** Einschrittkandidaten, deren Rundlauf exakt ist, die aber am fehlenden Beleg für den Beginn der Stichtagsfassung scheitern. */
-    roundTripVerifiedWithoutStart: number;
-    /** Je Formel: Zahl der Befehlsklauseln und der Normen, in denen sie vorkommt (nur Einschrittkandidaten mit lesbarem Block). */
-    formulas: Record<string, { clauses: number; norms: number; supported: boolean; invertible: boolean }>;
-  };
+  /** Stand vor der mehrstufigen Rückrechnung (aus der Schlange v1 übernommen und fortgeführt). */
+  before: { recipeReady: number; reconstructionRequired: number; byState: Record<string, number>; source: string };
+  totals: QueueTotals;
   entries: QueueEntry[];
 }
 
 export interface ReconstructionRun {
   queue: ReconstructionQueue;
-  recipes: ReconstructionRecipe[];
+  recipes: AnyReconstructionRecipe[];
   baseline: BaselineFile;
+  audit: ReconstructionAudit;
+  sources: SourceRegister;
+  undetermined: UndeterminedResult[];
+  /** Stand des gezielten Abrufs laut Prüfpunkt (nur Bericht). */
+  fetch?: { networkRequests: number; fetched: number; notFound: number; errors: number };
+}
+
+async function readFetchSummary(root: string): Promise<ReconstructionRun['fetch']> {
+  try {
+    const checkpoint = JSON.parse(await readFile(join(root, FETCH_CHECKPOINT_PATH), 'utf8')) as FetchCheckpoint;
+    return {
+      networkRequests: checkpoint.networkRequests,
+      fetched: checkpoint.attempts.filter((attempt) => attempt.status === 'fetched').length,
+      notFound: checkpoint.attempts.filter((attempt) => attempt.status === 'not-found').length,
+      errors: checkpoint.attempts.filter((attempt) => attempt.status === 'error').length,
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 interface Failure {
   state: ReconstructionState;
   reason: string;
   detail: string;
-  /**
-   * Die Norm bleibt ausgeschlossen, aber die übrigen Prüfungen laufen weiter – damit die Schlange zeigt,
-   * ob Befehl und Rundlauf bestanden hätten (fehlender Beleg für den Beginn der Stichtagsfassung).
-   */
+  /** Die Norm bleibt ausgeschlossen, aber Befehle und Rundlauf werden noch geprüft (nur der Beginn fehlt). */
   soft?: boolean;
 }
 
 /** Rangfolge der Zustände, wenn mehrere Prüfungen scheitern: der schwerste Grund zählt. */
 const PRECEDENCE: readonly ReconstructionState[] = [
+  'contradictory',
   'missing-base',
   'command-unreadable',
   'asset-missing',
   'non-invertible-amendment',
   'partial-chain',
-  'contradictory',
   'effective-date-undetermined',
   'unsupported-formula',
   'ambiguous-target',
@@ -142,39 +176,10 @@ const PRECEDENCE: readonly ReconstructionState[] = [
 
 const byPrecedence = (left: Failure, right: Failure): number => PRECEDENCE.indexOf(left.state) - PRECEDENCE.indexOf(right.state);
 
-const DETAIL_URL = /^https:\/\/www\.verkuendung-bayern\.de\/(gvbl|baymbl)\/(\d{4})-(\d+)\/$/u;
-
-interface Context {
-  root: string;
-  /** Änderungsnotizen des Fortführungsnachweises je Norm. */
-  registerNotes: Map<string, string[]>;
-  baselineDate: string;
-  evaluationDate: string;
-  postBaselinePublications: Set<string>;
-  /** Je Detailseite die Normzitate mit Änderungsbefehl (Seitwärtsprüfung der Kette). */
-  amendingByPage: Map<string, NormCitation[]>;
-  units: Map<string, GazetteUnit[]>;
-}
-
-async function loadLedger(root: string): Promise<LedgerRecord[]> {
-  const raw = await readFile(join(root, EVENT_LEDGER_PATH), 'utf8');
-  return (JSON.parse(raw) as { events: LedgerRecord[] }).events;
-}
-
-async function pageUnits(ctx: Pick<Context, 'root' | 'units'>, url: string): Promise<GazetteUnit[] | undefined> {
-  if (ctx.units.has(url)) return ctx.units.get(url);
-  const cached = await readCached(ctx.root, url);
-  if (!cached) return undefined;
-  const units = gazetteUnits(new TextDecoder().decode(cached.bytes));
-  ctx.units.set(url, units);
-  return units;
-}
-
 /* ------------------------------------------------------- Inkrafttreten der vorangehenden Änderung */
 
 export interface PriorInForce {
   ok: boolean;
-  /** Spätestes belegtes Inkrafttreten aller vorangehenden Änderungen (ISO). */
   date?: string;
   evidence: string[];
   sources: Array<{ url: string; sha256: string; citation: string; retrievedAt?: string }>;
@@ -195,14 +200,11 @@ export function priorDetailUrl(reference: string | undefined, date: string | und
 }
 
 /**
- * Beleg für das Inkrafttreten der vorangehenden Änderung(en) – und damit für den Beginn der Stichtagsfassung.
- * Verkündet ist nicht in Kraft: Belegt ist nur, was die Inkrafttretensvorschrift der vorangehenden Verkündung
- * mit **ausdrücklichem Kalenderdatum** sagt, für genau den Abschnitt, der die Norm geändert hat (Mantelregel und
- * Abweichungen wie beim Inkrafttreten der zurückgenommenen Änderung). Die Detailseite muss im Cache liegen und
- * das Ausfertigungsdatum der vorangehenden Änderung tragen (Identität). „Am Tag nach der Verkündung“ bleibt
- * unbelegt – das Verkündungsdatum liest die Rückrechnung nicht aus der Seite.
+ * Beleg für das Inkrafttreten einer vorangehenden Änderung aus ihrer eigenen Verkündung (Einzelprüfung; der Lauf
+ * selbst verwendet die Kette in `walk.ts`, die dieselben Regeln anwendet). Belegt ist nur ein ausdrückliches
+ * Kalenderdatum am oder vor dem Stichtag, für den ändernden Abschnitt, auf einer Seite mit dem Ausfertigungsdatum.
  */
-export async function priorAmendmentInForce(ctx: Pick<Context, 'root' | 'units'>, priorClause: string, baselineDate: string): Promise<PriorInForce> {
+export async function priorAmendmentInForce(ctx: Pick<RunContext, 'root' | 'units'>, priorClause: string, baselineDate: string): Promise<PriorInForce> {
   const amendments = clauseAmendments(priorClause);
   const evidence: string[] = [];
   const sources: PriorInForce['sources'] = [];
@@ -220,14 +222,11 @@ export async function priorAmendmentInForce(ctx: Pick<Context, 'root' | 'units'>
     }
     const units = await pageUnits(ctx, url);
     if (!units || units.length === 0) return { ok: false, evidence, sources, reason: `Detailseite ${url} ohne Textkörper` };
-    // Der ändernde Abschnitt steht vor „vom …“: „§ 2 der Verordnung vom 1. Oktober 2019 (GVBl. S. 594)“.
     const before = priorClause.slice(Math.max(0, priorClause.indexOf(amendment.text) - 120), priorClause.indexOf(amendment.text));
     const heading = /(§|Art\.|Artikel)\s*(\d+[a-z]?)(?:(?!§|Art\.|Artikel)[\s\S])*$/u.exec(before);
     const section = heading ? `${heading[1] === 'Artikel' ? 'Art.' : heading[1]} ${heading[2]}` : undefined;
     const commencement = commencementFor(units, amendment.date ?? baselineDate, section, section !== undefined);
     if (!commencement.ok) return { ok: false, evidence, sources, reason: `Inkrafttreten von „${amendment.text}“ nicht lesbar: ${commencement.reason}` };
-    // Relativ ist, was sich auf die Verkündung bezieht („am Tag nach der Verkündung“) oder kein Kalenderdatum trägt;
-    // „mit Wirkung vom 1. Januar 2018“ ist ein ausdrückliches Datum.
     const relative = commencement.applicable.find((statement) => /[Vv]erkünd/u.test(statement.text) || !CALENDAR_DATE.test(statement.text));
     if (relative) return { ok: false, evidence, sources, reason: `Inkrafttreten von „${amendment.text}“ ohne Kalenderdatum: „${relative.text.slice(0, 140)}“` };
     const latest = commencement.dates.at(-1)!;
@@ -239,112 +238,55 @@ export async function priorAmendmentInForce(ctx: Pick<Context, 'root' | 'units'>
   return { ok: true, date: dates.sort().at(-1)!, evidence, sources };
 }
 
-/* --------------------------------------------------------------------------- Befehlsbaum */
-
-interface Leaf {
-  node: CommandNode;
-  context: LocationPath[];
-  labels: string[];
-  command: string;
-  /** Befehl mit Untergliederung, der kein reiner Gliederungsbefehl ist (Umnummerierung mit Änderungen). */
-  hasChildren?: boolean;
-}
-
-/** Blätter des Befehlsbaums mit dem Ort ihrer übergeordneten Befehle. Unlesbare Orte werden gemeldet. */
-function leavesOf(block: CommandBlock): { leaves: Leaf[]; failures: string[] } {
-  const leaves: Leaf[] = [];
-  const failures: string[] = [];
-  const base: LocationPath[] = [];
-  const opensList = block.commands.some((node) => node.depth >= 1);
-  if (opensList) {
-    const introPaths = parseLocation(block.introPrefix);
-    if (!introPaths || introPaths.length !== 1) failures.push(`Ortsangabe des Einleitungssatzes nicht lesbar: „${block.introPrefix}“`);
-    else if (introPaths[0]!.length > 0) base.push(introPaths[0]!);
-    if (block.introScope !== undefined) {
-      const scoped = parseLocation(block.introScope);
-      if (!scoped || scoped.length !== 1) failures.push(`Ortsangabe „${block.introScope}“ nicht lesbar`);
-      else base.push(scoped[0]!);
-    }
-  }
-  const walk = (nodes: readonly CommandNode[], context: LocationPath[], labels: string[]): void => {
-    for (const node of nodes) {
-      const nodeLabels = node.label ? [...labels, node.label] : labels;
-      const container = containerLocation(node.text);
-      if (container !== undefined && node.children.length > 0) {
-        const paths = parseLocation(container);
-        if (!paths || paths.length !== 1) {
-          failures.push(`Ortsangabe „${container}“ nicht lesbar (${nodeLabels.join(' ')})`);
-          continue;
-        }
-        walk(node.children, [...context, paths[0]!], nodeLabels);
-        continue;
-      }
-      const quoted = node.quoted.map((unit) => `${unit.label ? `${unit.label} ` : ''}${unit.text}`).join(' ');
-      leaves.push({ node, context, labels: nodeLabels, command: quoted === '' ? node.text : `${node.text} ${quoted}`, ...(node.children.length > 0 ? { hasChildren: true } : {}) });
-      // „Der bisherige § 5 wird § 6 und wie folgt geändert:“ – die Glieder darunter werden nur für die
-      // Formelstatistik gelesen; ihr Ort bezieht sich auf eine Nummerierung, die das Modell nicht nachführt.
-      if (node.children.length > 0) walk(node.children, [...context, [{ kind: 'teil', value: '\u0000unbestimmt' }]], nodeLabels);
-    }
-  };
-  walk(block.commands, base, []);
-  return { leaves, failures };
-}
-
-/** Gleichartige Befunde zusammenfassen: je Zustand und Grund der erste Befund und die Anzahl. */
-function groupFailures(failures: readonly Failure[]): QueueEntry['alsoFailed'] {
-  const grouped = new Map<string, QueueEntry['alsoFailed'][number]>();
-  for (const failure of failures) {
-    const key = `${failure.state}/${failure.reason}`;
-    const existing = grouped.get(key);
-    if (existing) existing.count += 1;
-    else grouped.set(key, { state: failure.state, reason: failure.reason, detail: failure.detail, count: 1 });
-  }
-  return [...grouped.values()];
-}
-
 /* ----------------------------------------------------------------------- Einzelne Norm */
 
-/** Prüfungen in ihrer Reihenfolge – für die Übersicht, an welcher Stelle die Einschrittkandidaten scheitern. */
-export const CHECKS = ['sources', 'block', 'formulas', 'effectiveDate', 'chain', 'roundTrip', 'baselineStart'] as const;
+/** Prüfungen in ihrer Reihenfolge – für die Übersicht, an welcher Stelle die Normen scheitern. */
+export const CHECKS = ['sources', 'chain', 'effectiveDate', 'block', 'formulas', 'roundTrip', 'baselineStart'] as const;
 export type CheckName = (typeof CHECKS)[number];
 
 interface NormOutcome {
   checks: Partial<Record<CheckName, boolean>>;
   failures: Failure[];
   formulas: FormulaId[];
+  survey: CommandSurvey;
+  amendments: number;
+  chain?: string[];
+  needs: string[];
   effectiveDate?: string;
   priorAmendment?: string;
-  /** Befehl, Orte und Rundlauf haben bestanden; ausgeschlossen nur wegen eines weichen Grundes. */
   roundTripVerified?: boolean;
-  recipe?: ReconstructionRecipe;
+  stammfassungAfterBaseline?: string;
+  recipe?: AnyReconstructionRecipe;
+  walk?: WalkResult;
 }
 
-const snippet = (text: string, position: number, length: number): string => {
-  const start = Math.max(0, position - 60);
-  const end = Math.min(text.length, position + length + 60);
-  return `${start > 0 ? '…' : ''}${text.slice(start, end)}${end < text.length ? '…' : ''}`;
-};
+const stepLabel = (step: Pick<WalkStep, 'citation' | 'section'>): string => `${step.citation}${step.section ? ` (${step.section})` : ''}`;
 
-function fieldText(body: CurrentNorm['body'], scope: ScopeRecord, at: { ref: { path: number[]; key: 'text' | 'title' } }): string {
-  const block = blockAt(body, at.ref.path);
-  return String(block?.[at.ref.key] ?? '');
+/** Befehle einer Verkündung für die Norm in die Befundklassen einordnen (unabhängig vom Ausgang). */
+function surveyBlock(survey: CommandSurvey, block: CommandBlock): void {
+  const { leaves } = commandLeaves(block);
+  for (const leaf of leaves) {
+    const topLevel = leaf.node.depth === 0 && block.introPrefix.trim() === '' && /(?:wie\s+folgt\s+(?:neu\s+)?gefasst|erhält\s+folgende\s+(?:neue\s+)?Fassung)\s*:?\s*$/u.test(leaf.node.text);
+    const formulas = leaf.structural ? [leaf.structural.formula as FormulaId] : (commandFormulas(leaf.node.text, leaf.context) ?? ['unrecognized' as FormulaId]);
+    surveyCommand(survey, leaf.command, formulas, topLevel);
+  }
 }
 
-async function reconstructNorm(ctx: Context, documentId: string, event: LedgerRecord): Promise<NormOutcome> {
+function commandFormulas(text: string, context: Parameters<typeof parseCommand>[1]): FormulaId[] | undefined {
+  return parseCommand(text, context).formulas;
+}
+
+async function reconstructNorm(ctx: RunContext, documentId: string): Promise<NormOutcome> {
   const failures: Failure[] = [];
   const checks: Partial<Record<CheckName, boolean>> = {};
-  const outcome: NormOutcome = { checks, failures, formulas: [] };
-  const fail = (state: ReconstructionState, reason: string, detail: string): NormOutcome => {
-    failures.push({ state, reason, detail });
+  const outcome: NormOutcome = { checks, failures, formulas: [], survey: emptySurvey(), amendments: 0, needs: [] };
+  const fail = (state: ReconstructionState, reason: string, detail: string, soft = false): NormOutcome => {
+    failures.push({ state, reason, detail, ...(soft ? { soft } : {}) });
     return outcome;
   };
+  const ledgerEvents = ctx.eventsByDocument.get(documentId) ?? [];
+  outcome.amendments = new Set(ledgerEvents.map((event) => event.sourceUrl)).size;
 
-  const detail = DETAIL_URL.exec(event.sourceUrl);
-  if (!detail) return fail('missing-base', 'no-detail-page', `Das Ereignis verweist auf keine Detailseite (${event.sourceUrl})`);
-  const page = await readCached(ctx.root, event.sourceUrl);
-  if (!page) return fail('missing-base', 'detail-page-not-cached', `Detailseite nicht im Cache: ${event.sourceUrl} (nicht abgerufen)`);
-  const units = await pageUnits(ctx, event.sourceUrl);
-  if (!units || units.length === 0) return fail('missing-base', 'no-text-layer', 'Detailseite ohne HTML-Textkörper (kein OCR)');
   const packageSource = await readCached(ctx.root, packageUrl(documentId));
   if (!packageSource) return fail('missing-base', 'current-package-not-cached', 'Heutiges Exportpaket nicht im Cache');
   let norm: CurrentNorm;
@@ -353,237 +295,204 @@ async function reconstructNorm(ctx: Context, documentId: string, event: LedgerRe
   } catch (error) {
     return fail('missing-base', 'current-package-unreadable', `Heutiges Paket nicht lesbar: ${(error as Error).message}`);
   }
-  if (!event.eventDate) return fail('contradictory', 'event-without-date', 'Ereignis ohne Verkündungsdatum');
-  checks.sources = true;
-  const eventKey: PublicationKey = { organ: detail[1] as 'gvbl' | 'baymbl', volume: Number(detail[2]), position: Number(detail[3]) };
 
-  // 2 – Befehlsblock.
-  const block = commandBlock(units, norm.identity);
-  if (isBlockFailure(block)) {
-    checks.block = false;
-    if (block.code === 'intro-ambiguous') return fail('partial-chain', 'multiple-sections', block.detail);
-    return fail('command-unreadable', block.code, block.detail);
+  // Befund der Befehle aller Register-Ereignisse (für Gruppe und Gründe, auch wenn die Kette früher scheitert).
+  for (const event of ledgerEvents) {
+    if (NON_INVERTIBLE_EVENT_TYPES.includes(event.eventType)) outcome.survey.fullRecast.push(`${event.eventType} ${event.citation}`);
+    const units = await pageUnits(ctx, event.sourceUrl);
+    if (!units) continue;
+    for (const block of commandBlocks(units, norm.identity).blocks) surveyBlock(outcome.survey, block);
   }
 
-  // 3 – Formeln.
-  const { leaves, failures: structureFailures } = leavesOf(block);
-  for (const message of structureFailures) failures.push({ state: 'command-unreadable', reason: 'location-unreadable', detail: message });
-  const parsed = leaves.map((leaf) => ({ leaf, parsed: parseCommand(leaf.node.depth === 0 ? leaf.node.text : leaf.node.text, leaf.context) }));
-  for (const { leaf, parsed: command } of parsed) {
-    outcome.formulas.push(...command.formulas);
-    if (command.operations && leaf.hasChildren) {
-      failures.push({ state: 'unsupported-formula', reason: 'unrecognized', detail: `${leaf.labels.join(' ')} „${leaf.node.text.slice(0, 140)}“: Befehl mit eigener Änderung und Untergliederung` });
-      continue;
-    }
-    if (command.operations) continue;
-    const worst = command.formulas.find((formula) => NON_INVERTIBLE_FORMULAS.has(formula)) ?? command.formulas.find((formula) => !SUPPORTED_FORMULAS.has(formula)) ?? command.formulas[0]!;
-    const label = leaf.labels.length > 0 ? `${leaf.labels.join(' ')} ` : '';
-    const text = `${label}„${leaf.node.text.slice(0, 140)}“: ${command.reason}`;
-    if (worst === 'annex-recast') failures.push({ state: 'asset-missing', reason: worst, detail: text });
-    else if (NON_INVERTIBLE_FORMULAS.has(worst)) failures.push({ state: 'non-invertible-amendment', reason: worst, detail: text });
-    else failures.push({ state: 'unsupported-formula', reason: worst, detail: text });
-  }
-
-  checks.block = structureFailures.length === 0;
-  checks.formulas = parsed.every(({ leaf, parsed: command }) => command.operations !== undefined && !leaf.hasChildren);
-
-  // 4 – Inkrafttreten.
-  const mantel = new Set(amendingCitations(units).map((entry) => entry.unit.index)).size > 1;
-  const section = sectionRef(block.section, block.intro.label?.replace(/^[„‚]/u, ''));
-  const commencement = commencementFor(units, event.eventDate, section, mantel);
-  if (!commencement.ok) {
-    checks.effectiveDate = false;
-    failures.push({ state: 'effective-date-undetermined', reason: 'commencement-unreadable', detail: commencement.reason });
-  } else {
-    outcome.effectiveDate = commencement.dates.at(-1)!;
-    const verdict = effectiveDateVerdict(commencement.dates, { baselineDate: ctx.baselineDate, evaluationDate: ctx.evaluationDate, ...(norm.inForceFrom ? { inForceFrom: norm.inForceFrom } : {}) });
-    checks.effectiveDate = verdict.ok;
-    if (!verdict.ok) failures.push({ state: 'contradictory', reason: verdict.reason, detail: verdict.detail });
-  }
-
-  // 5 – Kette.
-  const others: string[] = [];
-  for (const [url, citations] of ctx.amendingByPage) {
-    if (url === event.sourceUrl) continue;
-    if (citations.some((citation) => isStrongMatch(citationMatches(citation, norm.identity)))) others.push(url);
-  }
-  const chain = checkChain({
-    baselineDate: ctx.baselineDate,
-    event: eventKey,
-    ...(norm.fullCitation ? { fullCitation: norm.fullCitation } : {}),
-    ...(norm.changeHistory ? { changeHistory: norm.changeHistory } : {}),
-    ...(block.priorAmendmentClause ? { priorClause: block.priorAmendmentClause } : {}),
-    postBaselinePublications: ctx.postBaselinePublications,
-    otherAmendingPublications: others.sort(),
-    ...(ctx.registerNotes.has(documentId) ? { registerNotes: ctx.registerNotes.get(documentId)! } : {}),
-  });
-  // Das Inkrafttreten der vorangehenden Änderung ist belegt, wenn ihre Verkündung im Cache liegt und ein
-  // Kalenderdatum am oder vor dem Stichtag nennt – dann fällt der einzige weiche Kettenbefund weg.
-  const priorProof = block.priorAmendmentClause && chain.failures.some((failure) => failure.reason === 'prior-amendment-in-force-unproven')
-    ? await priorAmendmentInForce(ctx, block.priorAmendmentClause, ctx.baselineDate)
-    : undefined;
-  const chainFailures = priorProof?.ok ? chain.failures.filter((failure) => failure.reason !== 'prior-amendment-in-force-unproven') : chain.failures;
-  for (const failure of chainFailures) {
-    const detail = failure.reason === 'prior-amendment-in-force-unproven' && priorProof?.reason ? `${failure.detail} (${priorProof.reason})` : failure.detail;
-    failures.push({ state: failure.state, reason: failure.reason, detail, ...(failure.reason === 'prior-amendment-in-force-unproven' ? { soft: true } : {}) });
-  }
-  if (block.priorAmendmentClause) outcome.priorAmendment = block.priorAmendmentClause;
-  checks.chain = chainFailures.every((failure) => failure.reason === 'prior-amendment-in-force-unproven');
-  if (chainFailures.some((failure) => failure.reason === 'prior-amendment-in-force-unproven')) checks.baselineStart = false;
-  if (chainFailures.length === 0 && chain.stammfassung && (block.citation.versionForm || block.citation.consolidatedForm)) {
-    checks.baselineStart = false;
-    failures.push({
-      state: 'partial-chain',
-      reason: 'baseline-text-in-force-unproven',
-      detail: `Der Befehl zitiert die Norm ${block.citation.versionForm ? '„in der Fassung der Bekanntmachung“' : 'in der bereinigten Fassung der BayRS'}; die Inkrafttretensvorschrift des Stammgesetzes belegt nicht den Beginn dieser Fassung`,
-      soft: true,
-    });
-  }
-
-  if (failures.some((failure) => !failure.soft)) return outcome;
-  checks.roundTrip = false;
-
-  // 6 – Orte auflösen, Schritte bilden.
-  const steps: RecipeStep[] = [];
-  for (const { leaf, parsed: command } of parsed) {
-    for (const operation of command.operations as ParsedOperation[]) {
-      const scopes: ScopeRecord[] = [];
-      for (const path of operation.locations) {
-        const resolved = resolvePath(norm.body, path);
-        if (!resolved.ok) return fail('ambiguous-target', 'location-unresolved', `${leaf.labels.join(' ')} ${formatPath(path)}: ${resolved.reason}`);
-        scopes.push(resolved.scope);
-      }
-      if (scopes.length > 1) {
-        const seen = new Set<string>();
-        for (const scope of scopes) {
-          for (const field of scope.fields) {
-            const key = `${field.path.join('.')}:${field.key}`;
-            if (seen.has(key)) return fail('ambiguous-target', 'overlapping-locations', `${leaf.labels.join(' ')}: die Orte von „jeweils“ überschneiden sich`);
-            seen.add(key);
-          }
-        }
-      }
-      operation.locations.forEach((path, index) => {
-        steps.push({
-          id: `s${String(steps.length + 1).padStart(2, '0')}`,
-          command: leaf.command,
-          commandPath: leaf.labels,
-          formula: operation.formula,
-          location: formatPath(path),
-          scope: scopes[index]!,
-          operation: operation.operation,
-          evidence: { baseline: '', current: '' },
-        });
-      });
+  // Stammfassung, die erst nach dem Stichtag gilt: am Stichtag galt sie nicht (Vorgänger oder nichts). Belegt nur,
+  // wenn ihre eigene Inkrafttretensvorschrift genau das `inkraft` des Pakets nennt; sonst widersprechen sich die Belege.
+  if (!lastAmendmentClause(norm.fullCitation) && ledgerEvents.length === 0 && norm.inForceFrom && norm.inForceFrom > ctx.baselineDate && norm.identity.documentDate && norm.identity.documentDate <= ctx.baselineDate) {
+    const own = ownCommencement(norm.body, ctx.baselineDate);
+    if (!own.ok && own.date === norm.inForceFrom) {
+      outcome.stammfassungAfterBaseline = `Das Vollzitat nennt keine Änderung; die Stammfassung vom ${norm.identity.documentDate} tritt nach ihrer eigenen Inkrafttretensvorschrift erst am ${norm.inForceFrom} in Kraft (${own.evidence[0]?.slice(0, 160) ?? ''}) – am Stichtag galt ein Vorgänger oder keine Norm`;
+    } else {
+      return fail('contradictory', 'portal-in-force-unexplained', `Das Vollzitat nennt keine Änderung und das Register kein Ereignis, der Text gilt laut Paket aber erst seit ${norm.inForceFrom}; die eigene Inkrafttretensvorschrift ${own.ok ? `nennt ${own.date}` : `belegt das nicht (${own.reason ?? ''})`} – welche Änderung den Text trägt, ist nicht belegt`);
     }
   }
-  if (steps.length === 0) return fail('unsupported-formula', 'no-operation', 'Kein anwendbarer Schritt');
 
-  // 7 – Rückwärts, vorwärts, Rundlauf.
-  let baselineBody;
-  try {
-    baselineBody = reverseSteps(norm.body, steps);
-  } catch (error) {
-    const code = error instanceof ReconstructionError ? error.code : 'error';
-    return fail(code === 'target-ambiguous' || code === 'end-not-determined' ? 'ambiguous-target' : 'round-trip-failed', `reverse-${code}`, (error as Error).message);
+  // 2 – Kette.
+  const walk = await walkChain(walkInputFor(ctx, documentId, norm));
+  outcome.walk = walk;
+  outcome.needs = [...new Set(walk.needs)].sort();
+  outcome.chain = walk.steps.map(stepLabel);
+  outcome.amendments = Math.max(outcome.amendments, walk.steps.length);
+  for (const step of walk.steps) if (step.block) surveyBlock(outcome.survey, step.block);
+  const sourceFailure = walk.failures.find((failure) => failure.state === 'missing-base');
+  checks.sources = !sourceFailure;
+  if (walk.failures.length > 0) {
+    const failure = walk.failures[0]!;
+    if (failure.reason === 'commencement-unreadable') checks.effectiveDate = false;
+    else checks.chain = false;
+    // Wie weit die Rücknahme ohne die Kette gekommen wäre, bleibt ungeprüft; der Befund ist der der Kette.
+    return fail(failure.state, failure.reason, failure.detail);
   }
-  // Vorher-/Nachher-Belege: vorwärts Schritt für Schritt, Ausschnitt um die Stelle.
-  const walker = structuredClone(baselineBody);
-  try {
-    for (const step of steps) {
-      const beforeBody = structuredClone(walker);
-      const at = applyForward(walker, step.scope, step.operation, step.id);
-      const before = fieldText(beforeBody, step.scope, at);
-      const after = fieldText(walker, step.scope, at);
-      const changed = Math.max(0, after.length - before.length);
-      step.evidence = { baseline: snippet(before, at.position, Math.max(0, before.length - after.length)), current: snippet(after, at.position, changed) };
+  checks.chain = true;
+  checks.effectiveDate = true;
+  outcome.effectiveDate = [...walk.steps[0]!.effectiveDates].sort().at(-1)!;
+  if (walk.steps.at(-1)!.priorClause) outcome.priorAmendment = walk.steps.at(-1)!.priorClause!;
+
+  // 3 – Rücknahme, jüngste Änderung zuerst.
+  let body: NormBodyBlock[] = structuredClone(norm.body);
+  const reversed: Array<{ step: WalkStep; steps: ReturnType<typeof reverseAmendment>['steps']; before: NormBodyBlock[]; after: NormBodyBlock[] }> = [];
+  const multi = walk.steps.length > 1;
+  for (const [index, step] of walk.steps.entries()) {
+    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '');
+    outcome.formulas.push(...reversal.formulas);
+    if (reversal.failures.length > 0) {
+      const structural = reversal.failures.some((failure) => failure.state === 'command-unreadable');
+      checks.block = !structural;
+      checks.formulas = !reversal.failures.some((failure) => ['unsupported-formula', 'non-invertible-amendment', 'asset-missing'].includes(failure.state));
+      if (checks.formulas) checks.roundTrip = false;
+      for (const failure of reversal.failures) failures.push({ ...failure, detail: `${stepLabel(step)}: ${failure.detail}` });
+      return outcome;
     }
-  } catch (error) {
-    const code = error instanceof ReconstructionError ? error.code : 'error';
-    return fail(code === 'target-ambiguous' ? 'ambiguous-target' : 'round-trip-failed', `forward-${code}`, (error as Error).message);
+    reversed.push({ step, steps: reversal.steps, before: reversal.before!, after: body });
+    body = reversal.before!;
   }
-
-  // Rundlauf auf dem Körper: vorwärts muss exakt der heutige Körper herauskommen.
-  if (stableStringify(walker) !== stableStringify(norm.body)) return fail('round-trip-failed', 'round-trip', 'Vorwärts angewandt ergibt der Stichtagskörper nicht den heutigen Körper');
-  if (bodyFingerprint(baselineBody) === bodyFingerprint(norm.body)) return fail('round-trip-failed', 'no-change', 'Rückrechnung ändert nichts');
+  checks.block = true;
+  checks.formulas = true;
   checks.roundTrip = true;
-  if (failures.length > 0) {
-    outcome.roundTripVerified = true;
-    return outcome;
-  }
+  const baselineBody = body;
 
-  // 8 – Beginn der Stichtagsfassung: bei einer vorangehenden Änderung deren belegtes Inkrafttreten, sonst die
-  // eigene Inkrafttretensvorschrift der Stammfassung.
-  const own = priorProof?.ok
-    ? { ok: true, date: priorProof.date, evidence: priorProof.evidence }
-    : ownCommencement(baselineBody, ctx.baselineDate);
-  checks.baselineStart = own.ok;
-  if (!own.ok) {
-    failures.push({ state: 'partial-chain', reason: 'baseline-text-in-force-unproven', detail: `Beginn der Stichtagsfassung (Stammfassung) nicht belegt: ${'reason' in own ? own.reason : ''}`, soft: true });
-    outcome.roundTripVerified = true;
-    return outcome;
+  // 4 – Beginn der Stichtagsfassung.
+  let start: ReconstructionRecipe['baselineTextInForce'] | undefined;
+  if (walk.witnesses.length > 0) {
+    const date = walk.witnesses.flatMap((witness) => witness.effectiveDates).sort().at(-1)!;
+    start = {
+      date,
+      evidence: [
+        'Stand nach der vorangehenden Änderung; ihr Inkrafttreten ist durch ihre eigene Verkündung belegt',
+        ...walk.witnesses.map((witness) => `Vorangehende Änderung ${witness.namedAs}${witness.section && !witness.namedAs.startsWith(witness.section) ? ` (${witness.section})` : ''}: ${witness.effectiveDateEvidence.map((statement) => `„${statement}“`).join(' ')} – ${witness.page.url}, SHA-256 ${witness.page.sha256.slice(0, 16)}…`),
+      ],
+      sources: walk.witnesses.map((witness) => ({ url: witness.page.url, sha256: witness.page.sha256, citation: witness.namedAs, ...(witness.page.retrievedAt ? { retrievedAt: witness.page.retrievedAt } : {}) })),
+    };
+  } else {
+    const oldest = walk.steps.at(-1)!;
+    if (oldest.block?.citation.versionForm || oldest.block?.citation.consolidatedForm) {
+      checks.baselineStart = false;
+      outcome.roundTripVerified = true;
+      return fail('partial-chain', 'baseline-text-in-force-unproven', `Der Befehl zitiert die Norm ${oldest.block.citation.versionForm ? '„in der Fassung der Bekanntmachung“' : 'in der bereinigten Fassung der BayRS'}; die Inkrafttretensvorschrift des Stammgesetzes belegt nicht den Beginn dieser Fassung`, true);
+    }
+    const own = ownCommencement(baselineBody, ctx.baselineDate);
+    if (!own.ok) {
+      checks.baselineStart = false;
+      outcome.roundTripVerified = true;
+      if (own.reason && /nach dem Stichtag/u.test(own.reason)) outcome.stammfassungAfterBaseline = `Rückgerechnete Stammfassung: ${own.reason}`;
+      return fail('partial-chain', 'baseline-text-in-force-unproven', `Beginn der Stichtagsfassung (Stammfassung) nicht belegt: ${own.reason ?? ''}`, true);
+    }
+    start = { date: own.date!, evidence: ['Stammfassung: Der Einleitungssatz der ältesten zurückgenommenen Änderung nennt keine vorangehende, Änderungsverlauf und Fortführungsnachweis führen vor dem Stichtag keine', ...own.evidence] };
   }
+  checks.baselineStart = true;
 
-  const recipe: ReconstructionRecipe = {
-    schemaVersion: RECIPE_SCHEMA,
-    documentId,
-    baselineDate: ctx.baselineDate,
-    method: 'reverse-amendment',
-    source: {
-      url: packageSource.url,
-      sha256: packageSource.sha256,
-      ...(packageSource.retrievedAt ? { retrievedAt: packageSource.retrievedAt } : {}),
-      parserVersion: PARSER_VERSION,
-      inForceFrom: norm.inForceFrom!,
-      ...(norm.fullCitation ? { fullCitation: norm.fullCitation } : {}),
-    },
-    amendment: {
-      eventId: event.id,
-      citation: event.citation,
-      organ: event.organ,
-      publicationAuthority: event.publicationAuthority,
-      digitalRepresentation: event.digitalRepresentation,
-      url: event.sourceUrl,
-      sha256: page.sha256,
-      ...(page.retrievedAt ? { retrievedAt: page.retrievedAt } : {}),
-      ...(event.gazettePdfUrl ? { gazettePdfUrl: event.gazettePdfUrl } : {}),
-      ...(event.gazettePdfSha256Published ? { gazettePdfSha256Published: event.gazettePdfSha256Published } : {}),
-      eventDate: event.eventDate,
-      ...(event.enactmentDate ? { enactmentDate: event.enactmentDate } : {}),
-      effectiveDate: outcome.effectiveDate!,
-      effectiveDateEvidence: commencement.ok ? commencement.applicable.map((statement) => statement.text) : [],
-      ...(block.section ? { section: block.section } : {}),
-      intro: block.intro.text,
-      ...(block.priorAmendmentClause ? { priorAmendment: block.priorAmendmentClause } : {}),
-    },
-    baselineTextInForce: {
-      date: own.date!,
-      evidence: priorProof?.ok
-        ? ['Stand nach der vorangehenden Änderung; ihr Inkrafttreten ist durch ihre eigene Verkündung belegt', ...own.evidence]
-        : [
-            'Stammfassung: Der Einleitungssatz nennt keine vorangehende Änderung, der Änderungsverlauf führt vor dem Stichtag keine',
-            ...own.evidence,
-          ],
-      ...(priorProof?.ok ? { sources: priorProof.sources } : {}),
-    },
-    chain: chain.evidence,
-    steps,
-    whitespace: WHITESPACE_NORMALIZATION,
-    expected: { currentFingerprint: bodyFingerprint(norm.body), baselineFingerprint: bodyFingerprint(baselineBody) },
-  };
-  const problems = recipeProblems(recipe);
-  if (problems.length > 0) return fail('contradictory', 'recipe-invalid', problems.join('; '));
-  const roundTrip = verifyRoundTrip(norm.body, recipe);
+  // 5 – Rezept, Forward-Replay, Serialisierung.
+  const recipe = buildRecipe(ctx, documentId, norm, packageSource, walk, reversed, start, baselineBody);
+  if ('problem' in recipe) return fail('contradictory', 'recipe-invalid', recipe.problem);
+  const roundTrip = verifyRoundTrip(norm.body, recipe.recipe);
   if (!roundTrip.ok) {
     checks.roundTrip = false;
     return fail('round-trip-failed', 'round-trip', roundTrip.detail);
   }
-  // Die Datei wird wie gespeichert wieder gelesen: Auch die JSON-Form muss den Rundlauf bestehen.
-  const reread = JSON.parse(JSON.stringify(recipe)) as ReconstructionRecipe;
+  const reread = JSON.parse(JSON.stringify(recipe.recipe)) as AnyReconstructionRecipe;
   const again = verifyRoundTrip(norm.body, reread);
   if (!again.ok) return fail('round-trip-failed', 'round-trip-serialized', again.detail);
-  outcome.recipe = recipe;
+  outcome.recipe = recipe.recipe;
   return outcome;
+}
+
+function amendmentRecord(step: WalkStep, eventDate: string): RecipeAmendment {
+  const event: LedgerRecord | undefined = step.ledgerEvent as LedgerRecord | undefined;
+  const authority = SOURCE_AUTHORITY[step.ref.organ];
+  const block = step.block!;
+  return {
+    eventId: event?.id ?? `publication:${step.ref.organ}-${step.ref.volume}-${step.ref.position}`,
+    citation: event?.citation ?? publicationCitation(step.ref),
+    organ: event?.organ ?? step.ref.organ,
+    publicationAuthority: event?.publicationAuthority ?? authority.publicationAuthority,
+    digitalRepresentation: event?.digitalRepresentation ?? authority.digitalRepresentation,
+    url: step.page.url,
+    sha256: step.page.sha256,
+    ...(step.page.retrievedAt ? { retrievedAt: step.page.retrievedAt } : {}),
+    ...((event?.gazettePdfUrl ?? step.page.gazettePdfUrl) ? { gazettePdfUrl: (event?.gazettePdfUrl ?? step.page.gazettePdfUrl)! } : {}),
+    ...((event?.gazettePdfSha256Published ?? step.page.gazettePdfSha256Published) ? { gazettePdfSha256Published: (event?.gazettePdfSha256Published ?? step.page.gazettePdfSha256Published)! } : {}),
+    eventDate,
+    ...((event?.enactmentDate ?? step.enactmentDate) ? { enactmentDate: (event?.enactmentDate ?? step.enactmentDate)! } : {}),
+    effectiveDate: [...step.effectiveDates].sort().at(-1)!,
+    effectiveDateEvidence: step.effectiveDateEvidence,
+    ...(block.section ? { section: block.section } : {}),
+    intro: block.intro.text,
+    ...(block.priorAmendmentClause ? { priorAmendment: block.priorAmendmentClause } : {}),
+  };
+}
+
+function buildRecipe(
+  ctx: RunContext,
+  documentId: string,
+  norm: CurrentNorm,
+  packageSource: { url: string; sha256: string; retrievedAt?: string },
+  walk: WalkResult,
+  reversed: Array<{ step: WalkStep; steps: ReturnType<typeof reverseAmendment>['steps']; before: NormBodyBlock[]; after: NormBodyBlock[] }>,
+  start: ReconstructionRecipe['baselineTextInForce'],
+  baselineBody: NormBodyBlock[],
+): { recipe: AnyReconstructionRecipe } | { problem: string } {
+  for (const entry of reversed) if (!entry.step.eventDate) return { problem: `${stepLabel(entry.step)}: Verkündungsdatum nicht belegt` };
+  const source = {
+    url: packageSource.url,
+    sha256: packageSource.sha256,
+    ...(packageSource.retrievedAt ? { retrievedAt: packageSource.retrievedAt } : {}),
+    parserVersion: PARSER_VERSION,
+    inForceFrom: norm.inForceFrom!,
+    ...(norm.fullCitation ? { fullCitation: norm.fullCitation } : {}),
+  };
+  const expected = { currentFingerprint: bodyFingerprint(norm.body), baselineFingerprint: bodyFingerprint(baselineBody) };
+  let recipe: AnyReconstructionRecipe;
+  if (reversed.length === 1) {
+    const only = reversed[0]!;
+    recipe = {
+      schemaVersion: RECIPE_SCHEMA,
+      documentId,
+      baselineDate: ctx.baselineDate,
+      method: 'reverse-amendment',
+      source,
+      amendment: amendmentRecord(only.step, only.step.eventDate!),
+      baselineTextInForce: start,
+      chain: [...walk.evidence, ...walk.notes.map((note) => `Hinweis: ${note}`)],
+      steps: only.steps,
+      whitespace: WHITESPACE_NORMALIZATION,
+      expected,
+    };
+  } else {
+    const amendments: RecipeAmendmentV2[] = reversed.map((entry) => ({
+      ...amendmentRecord(entry.step, entry.step.eventDate!),
+      effectiveDates: [...entry.step.effectiveDates].sort(),
+      steps: entry.steps,
+      expected: { beforeFingerprint: bodyFingerprint(entry.before), afterFingerprint: bodyFingerprint(entry.after) },
+    }));
+    const sources: RecipeSource[] = [
+      ...amendments.map((amendment) => ({ role: 'reversed-amendment' as const, citation: amendment.citation, url: amendment.url, sha256: amendment.sha256, ...(amendment.retrievedAt ? { retrievedAt: amendment.retrievedAt } : {}) })),
+      ...(start.sources ?? []).map((entry) => ({ role: 'baseline-start' as const, citation: entry.citation, url: entry.url, sha256: entry.sha256, ...(entry.retrievedAt ? { retrievedAt: entry.retrievedAt } : {}) })),
+    ];
+    recipe = {
+      schemaVersion: RECIPE_SCHEMA_V2,
+      documentId,
+      baselineDate: ctx.baselineDate,
+      method: 'reverse-amendment',
+      source,
+      amendments,
+      baselineTextInForce: start,
+      chain: [...walk.evidence, ...walk.notes.map((note) => `Hinweis: ${note}`)],
+      sources,
+      whitespace: WHITESPACE_NORMALIZATION,
+      expected,
+    };
+  }
+  const problems = recipeProblems(recipe);
+  if (problems.length > 0) return { problem: problems.join('; ') };
+  return { recipe };
 }
 
 /* -------------------------------------------------------------------- Stichtagsstatus */
@@ -621,7 +530,7 @@ export function applyDecisions(baseline: BaselineFile, entries: readonly QueueEn
           ...decision.evidence,
           {
             kind: 'post-baseline-event' as const,
-            value: `reverse-amendment ${entry.events[0]!.citation}, in Kraft ${entry.effectiveDate}; Rezept ${entry.recipe.path} (${entry.recipe.steps} Schritt(e), Stichtagskörper ${entry.recipe.baselineFingerprint.slice(0, 16)})`,
+            value: `reverse-amendment ${(entry.chain ?? [entry.events[0]?.citation ?? '–']).join(' ← ')}, in Kraft ${entry.effectiveDate}; Rezept ${entry.recipe.path} (${entry.recipe.schema}, ${entry.recipe.amendments} Änderung(en), ${entry.recipe.steps} Schritt(e), Stichtagskörper ${entry.recipe.baselineFingerprint.slice(0, 16)})`,
             source: RECONSTRUCTION_EVIDENCE_SOURCE,
           },
         ],
@@ -630,13 +539,17 @@ export function applyDecisions(baseline: BaselineFile, entries: readonly QueueEn
     }
     return { ...decision, blockers: [...decision.blockers, `${RECONSTRUCTION_BLOCKER}${entry.state} (${entry.reason}) – ${entry.detail}`] };
   });
+  return recountBaseline({ ...baseline, decisions });
+}
+
+export function recountBaseline(baseline: BaselineFile): BaselineFile {
   const byStatus: Record<string, number> = {};
   const byMethod: Record<string, number> = {};
-  for (const decision of decisions) {
+  for (const decision of baseline.decisions) {
     byStatus[decision.status] = (byStatus[decision.status] ?? 0) + 1;
     byMethod[decision.method] = (byMethod[decision.method] ?? 0) + 1;
   }
-  return { ...baseline, totals: { ...baseline.totals, byStatus, byMethod }, decisions };
+  return { ...baseline, totals: { ...baseline.totals, byStatus, byMethod } };
 }
 
 /* ---------------------------------------------------------------------------- Lauf */
@@ -648,68 +561,39 @@ export interface ReconstructionOptions {
   only?: readonly string[];
 }
 
-export async function runReconstruction(root: string, options: ReconstructionOptions = {}): Promise<ReconstructionRun> {
-  const baselineDate = options.baselineDate ?? BASELINE_DATE;
-  const evaluationDate = options.evaluationDate ?? EVALUATION_DATE;
-  const baseline = JSON.parse(await readFile(join(root, BASELINE_PATH), 'utf8')) as BaselineFile;
-  const ledger = await loadLedger(root);
-
-  const postBaseline = ledger.filter((event) => (event.eventDate ?? '') > baselineDate);
-  const postBaselinePublications = new Set<string>();
-  for (const event of postBaseline) {
-    const key = publicationKeyFromCitation(event.citation);
-    if (key) postBaselinePublications.add(publicationKeyString(key));
-  }
-  const registerNotes = new Map<string, string[]>();
-  for (const file of ['enumeration-landesrecht.json', 'enumeration-vwv.json']) {
-    try {
-      const parsed = JSON.parse(await readFile(join(root, IMPORT_DATA_DIR, file), 'utf8')) as { items?: Array<{ documentId?: string; changeNotes?: string[] }> };
-      for (const item of parsed.items ?? []) if (item.documentId && item.changeNotes && item.changeNotes.length > 0) registerNotes.set(item.documentId, item.changeNotes);
-    } catch {
-      // Ohne Enumeration fehlt nur eine der Gegenproben; die übrigen bleiben.
+/** Stand vor der mehrstufigen Rückrechnung: aus der Schlange v1 gelesen, danach fortgeführt. */
+async function readBefore(root: string): Promise<ReconstructionQueue['before']> {
+  try {
+    const previous = JSON.parse(await readFile(join(root, RECONSTRUCTION_QUEUE_PATH), 'utf8')) as { schemaVersion?: string; before?: ReconstructionQueue['before']; totals?: { recipeReady?: number; changedAfterBaseline?: number; byState?: Record<string, number> } };
+    if (previous.schemaVersion === QUEUE_SCHEMA && previous.before) return previous.before;
+    if (previous.totals?.recipeReady !== undefined) {
+      return {
+        recipeReady: previous.totals.recipeReady,
+        reconstructionRequired: (previous.totals.changedAfterBaseline ?? 0) - previous.totals.recipeReady,
+        byState: previous.totals.byState ?? {},
+        source: `Schlange ${previous.schemaVersion ?? '?'} vor der mehrstufigen Rückrechnung`,
+      };
     }
+  } catch {
+    // keine frühere Schlange
   }
-  const ctx: Context = { root, registerNotes, baselineDate, evaluationDate, postBaselinePublications, amendingByPage: new Map(), units: new Map() };
-  for (const url of [...new Set(postBaseline.map((event) => event.sourceUrl).filter((url) => DETAIL_URL.test(url)))].sort()) {
-    const units = await pageUnits(ctx, url);
-    if (!units) continue;
-    ctx.amendingByPage.set(url, amendingCitations(units).map((entry) => entry.citation));
-  }
+  return { recipeReady: 0, reconstructionRequired: 0, byState: {}, source: 'keine frühere Schlange' };
+}
 
-  // Stark zugeordnete Ereignisse nach dem Stichtag je Norm – dieselbe Regel wie die Stichtagsklassifikation.
-  const eventsByDocument = new Map<string, LedgerRecord[]>();
-  for (const event of postBaseline) {
-    const resolution = event.targetResolution;
-    if (resolution?.status !== 'resolved' || resolution.matchStrength !== 'strong' || !resolution.sourceIdentity) continue;
-    const list = eventsByDocument.get(resolution.sourceIdentity) ?? [];
-    list.push(event);
-    eventsByDocument.set(resolution.sourceIdentity, list);
-  }
-
-  const changed = baseline.decisions.filter((decision) => decision.class === 'changed-after-baseline').filter((decision) => !options.only || options.only.includes(decision.documentId));
+export async function runReconstruction(root: string, options: ReconstructionOptions = {}): Promise<ReconstructionRun> {
+  const ctx = await loadRunContext(root, options);
+  const before = await readBefore(root);
+  const changed = ctx.baseline.decisions.filter((decision) => decision.class === 'changed-after-baseline').filter((decision) => !options.only || options.only.includes(decision.documentId));
   const entries: QueueEntry[] = [];
-  const recipes: ReconstructionRecipe[] = [];
+  const recipes: AnyReconstructionRecipe[] = [];
+  const outcomes = new Map<string, NormOutcome>();
   const formulaStats = new Map<FormulaId, { clauses: number; norms: Set<string> }>();
 
   for (const decision of changed) {
-    const events = [...(eventsByDocument.get(decision.documentId) ?? [])].sort((left, right) => (left.eventDate! < right.eventDate! ? -1 : left.eventDate! > right.eventDate! ? 1 : left.id < right.id ? -1 : 1));
+    const events = ctx.eventsByDocument.get(decision.documentId) ?? [];
     const eventSummary = events.map((event) => ({ id: event.id, eventType: event.eventType, eventDate: event.eventDate!, citation: event.citation }));
-    const base = { documentId: decision.documentId, steps: events.length, events: eventSummary, alsoFailed: [] as QueueEntry['alsoFailed'] };
-    const nonInvertible = events.filter((event) => NON_INVERTIBLE_EVENT_TYPES.includes(event.eventType));
-    if (events.length === 0) {
-      entries.push({ ...base, state: 'missing-base', reason: 'no-post-baseline-event', detail: 'Kein stark zugeordnetes Ereignis nach dem Stichtag belegt die Änderung; die Kette ist unbekannt', priority: COMMAND_STATE_PRIORITY['missing-base'] });
-      continue;
-    }
-    if (nonInvertible.length > 0) {
-      entries.push({ ...base, state: 'non-invertible-amendment', reason: 'recast-event', detail: `${nonInvertible.map((event) => `${event.eventType} ${event.eventDate} (${event.citation})`).join(', ')}: Neufassung, der Alttext folgt daraus nicht`, priority: COMMAND_STATE_PRIORITY['non-invertible-amendment'] + events.length });
-      continue;
-    }
-    if (events.length > 1) {
-      entries.push({ ...base, state: 'partial-chain', reason: 'multi-step', detail: `${events.length} belegte Änderungsschritte nach dem Stichtag; nur einschrittige Ketten werden zurückgerechnet`, priority: COMMAND_STATE_PRIORITY['partial-chain'] + events.length });
-      continue;
-    }
-
-    const outcome = await reconstructNorm(ctx, decision.documentId, events[0]!);
+    const outcome = await reconstructNorm(ctx, decision.documentId);
+    outcomes.set(decision.documentId, outcome);
     const seenInNorm = new Set<FormulaId>();
     for (const formula of outcome.formulas) {
       const stat = formulaStats.get(formula) ?? { clauses: 0, norms: new Set<string>() };
@@ -719,79 +603,148 @@ export async function runReconstruction(root: string, options: ReconstructionOpt
       seenInNorm.add(formula);
     }
     const formulas = [...seenInNorm].sort((left, right) => FORMULAS.indexOf(left) - FORMULAS.indexOf(right));
-    const extra = {
+    const base = {
+      documentId: decision.documentId,
+      steps: events.length,
+      amendments: outcome.amendments,
+      events: eventSummary,
+      ...(outcome.chain && outcome.chain.length > 0 ? { chain: outcome.chain } : {}),
       ...(formulas.length > 0 ? { formulas } : {}),
       ...(outcome.effectiveDate ? { effectiveDate: outcome.effectiveDate } : {}),
       ...(outcome.priorAmendment ? { priorAmendment: outcome.priorAmendment } : {}),
       ...(outcome.roundTripVerified ? { roundTripVerified: true } : {}),
       checks: outcome.checks,
+      ...(outcome.needs.length > 0 ? { needs: outcome.needs } : {}),
     };
     if (outcome.recipe) {
+      const recipe = outcome.recipe;
+      const amendments = recipeAmendments(recipe);
       const path = `${RECONSTRUCTION_DIR}/${decision.documentId}.json`;
-      recipes.push(outcome.recipe);
+      recipes.push(recipe);
+      const grouped = assignGroup({ state: 'recipe-ready', reason: 'reverse-amendment-verified', amendments: amendments.length, survey: outcome.survey, failures: [] });
       entries.push({
         ...base,
-        ...extra,
         state: 'recipe-ready',
         reason: 'reverse-amendment-verified',
-        detail: `${outcome.recipe.steps.length} Schritt(e) aus ${outcome.recipe.amendment.citation}, in Kraft ${outcome.recipe.amendment.effectiveDate}; Rundlauf exakt`,
+        detail: `${amendments.reduce((sum, amendment) => sum + amendment.steps.length, 0)} Schritt(e) aus ${amendments.map((amendment) => amendment.citation).join(' ← ')}, in Kraft ${amendments[0]!.effectiveDate}; Rundlauf exakt`,
+        group: grouped.group,
+        reasons: [],
+        alsoFailed: [],
         priority: COMMAND_STATE_PRIORITY['recipe-ready'],
-        recipe: { path, steps: outcome.recipe.steps.length, currentFingerprint: outcome.recipe.expected.currentFingerprint, baselineFingerprint: outcome.recipe.expected.baselineFingerprint },
+        recipe: {
+          path,
+          schema: recipe.schemaVersion,
+          amendments: amendments.length,
+          steps: amendments.reduce((sum, amendment) => sum + amendment.steps.length, 0),
+          currentFingerprint: recipe.expected.currentFingerprint,
+          baselineFingerprint: recipe.expected.baselineFingerprint,
+        },
       });
       continue;
     }
     const failures = [...outcome.failures].sort(byPrecedence);
-    const primary = failures[0]!;
+    const primary = failures[0] ?? { state: 'missing-base' as ReconstructionState, reason: 'unknown', detail: 'kein Befund' };
+    const grouped = assignGroup({
+      state: primary.state,
+      reason: primary.reason,
+      amendments: outcome.amendments,
+      survey: outcome.survey,
+      failures: failures.map((failure): GroupReason => ({ state: failure.state, reason: failure.reason, detail: failure.detail })),
+      ...(outcome.stammfassungAfterBaseline ? { stammfassungAfterBaseline: outcome.stammfassungAfterBaseline } : {}),
+    });
     entries.push({
       ...base,
-      ...extra,
       state: primary.state,
       reason: primary.reason,
       detail: primary.detail,
+      group: grouped.group,
+      reasons: dedupeReasons(grouped.reasons),
       alsoFailed: groupFailures(failures.slice(1).filter((failure) => failure.state !== primary.state || failure.reason !== primary.reason)),
-      priority: COMMAND_STATE_PRIORITY[primary.state] + 1,
+      priority: COMMAND_STATE_PRIORITY[primary.state] + Math.min(outcome.amendments, 9),
     });
   }
 
-  entries.sort((left, right) => (left.priority !== right.priority ? left.priority - right.priority : left.documentId < right.documentId ? -1 : 1));
+  const groupOrder = (group: ReconstructionGroup): number => GROUPS.indexOf(group);
+  entries.sort((left, right) => (left.state === 'recipe-ready') !== (right.state === 'recipe-ready') ? (left.state === 'recipe-ready' ? -1 : 1) : groupOrder(left.group) !== groupOrder(right.group) ? groupOrder(left.group) - groupOrder(right.group) : left.priority !== right.priority ? left.priority - right.priority : left.documentId < right.documentId ? -1 : 1);
+
   const count = (list: readonly QueueEntry[], key: (entry: QueueEntry) => string): Record<string, number> => {
     const output: Record<string, number> = {};
     for (const entry of list) output[key(entry)] = (output[key(entry)] ?? 0) + 1;
     return Object.fromEntries(Object.entries(output).sort((left, right) => right[1] - left[1] || (left[0] < right[0] ? -1 : 1)));
   };
-  const singleStep = entries.filter((entry) => entry.steps === 1 && entry.reason !== 'recast-event');
-  const formulas: ReconstructionQueue['totals']['formulas'] = {};
+  const formulas: QueueTotals['formulas'] = {};
   for (const formula of FORMULAS) {
     const stat = formulaStats.get(formula);
     if (!stat) continue;
     formulas[formula] = { clauses: stat.clauses, norms: stat.norms.size, supported: SUPPORTED_FORMULAS.has(formula), invertible: !NON_INVERTIBLE_FORMULAS.has(formula) };
   }
+  const byGroup: Record<string, number> = {};
+  for (const group of GROUPS) byGroup[group] = entries.filter((entry) => entry.group === group).length;
+  const byGroupReason: Record<string, Record<string, number>> = {};
+  for (const group of GROUPS) byGroupReason[group] = count(entries.filter((entry) => entry.group === group && entry.state !== 'recipe-ready'), (entry) => `${entry.state}/${entry.reason}`);
+  const ready = entries.filter((entry) => entry.state === 'recipe-ready');
   const queue: ReconstructionQueue = {
     schemaVersion: QUEUE_SCHEMA,
-    baselineDate,
-    evaluationDate,
+    baselineDate: ctx.baselineDate,
+    evaluationDate: ctx.evaluationDate,
+    before,
     totals: {
       changedAfterBaseline: entries.length,
-      singleStep: singleStep.length,
-      recipeReady: entries.filter((entry) => entry.state === 'recipe-ready').length,
+      recipeReady: ready.length,
+      recipeReadySingle: ready.filter((entry) => entry.recipe?.amendments === 1).length,
+      recipeReadyMulti: ready.filter((entry) => (entry.recipe?.amendments ?? 0) > 1).length,
+      byGroup,
       byState: count(entries, (entry) => entry.state),
       byReason: count(entries, (entry) => `${entry.state}/${entry.reason}`),
-      singleStepByState: count(singleStep, (entry) => entry.state),
-      singleStepByReason: count(singleStep, (entry) => `${entry.state}/${entry.reason}`),
+      byGroupReason,
       checks: Object.fromEntries(CHECKS.map((check) => [check, {
-        passed: singleStep.filter((entry) => entry.checks?.[check] === true).length,
-        failed: singleStep.filter((entry) => entry.checks?.[check] === false).length,
-        notReached: singleStep.filter((entry) => entry.checks?.[check] === undefined).length,
+        passed: entries.filter((entry) => entry.checks?.[check] === true).length,
+        failed: entries.filter((entry) => entry.checks?.[check] === false).length,
+        notReached: entries.filter((entry) => entry.checks?.[check] === undefined).length,
       }])),
-      roundTripVerifiedWithoutStart: singleStep.filter((entry) => entry.roundTripVerified).length,
+      roundTripVerifiedWithoutStart: entries.filter((entry) => entry.roundTripVerified).length,
       formulas,
     },
     entries,
   };
-  return { queue, recipes: recipes.sort((left, right) => (left.documentId < right.documentId ? -1 : 1)), baseline: options.only ? baseline : applyDecisions(baseline, entries) };
+  recipes.sort((left, right) => (left.documentId < right.documentId ? -1 : 1));
+  const audit = await buildAudit(ctx.root, recipes, ctx.baselineDate);
+  const sources = buildSourceRegister([...outcomes].map(([documentId, outcome]) => ({ documentId, walk: outcome.walk, recipe: outcome.recipe })));
+  const undetermined = options.only ? [] : await recheckUndetermined(ctx);
+  const baseline = options.only ? ctx.baseline : applyUndeterminedDecisions(applyDecisions(ctx.baseline, entries), undetermined);
+  const fetch = await readFetchSummary(root);
+  return { queue, recipes, baseline, audit, sources, undetermined, ...(fetch ? { fetch } : {}) };
 }
 
-/** Schreibt Rezepte (und entfernt veraltete), Schlange, Stichtagsentscheidungen und Bericht. */
+function dedupeReasons(reasons: readonly GroupReason[]): QueueEntry['reasons'] {
+  const seen = new Set<string>();
+  const output: QueueEntry['reasons'] = [];
+  for (const reason of reasons) {
+    const key = `${reason.state}/${reason.reason}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    output.push({ state: reason.state, reason: reason.reason, detail: reason.detail });
+  }
+  return output;
+}
+
+/** Gleichartige Befunde zusammenfassen: je Zustand und Grund der erste Befund und die Anzahl. */
+function groupFailures(failures: readonly Failure[]): QueueEntry['alsoFailed'] {
+  const grouped = new Map<string, QueueEntry['alsoFailed'][number]>();
+  for (const failure of failures) {
+    const key = `${failure.state}/${failure.reason}`;
+    const existing = grouped.get(key);
+    if (existing) existing.count += 1;
+    else grouped.set(key, { state: failure.state, reason: failure.reason, detail: failure.detail, count: 1 });
+  }
+  return [...grouped.values()];
+}
+
+/**
+ * Schreibt Rezepte (und entfernt veraltete), Schlange, Quellenregister, Audit, Stichtagsentscheidungen und Bericht.
+ * `baseline.json` wird **frisch gelesen**: Übernommen werden nur die Entscheidungen dieses Laufs (Klasse
+ * `changed-after-baseline` und die neu geprüften unbestimmten Fälle); alles andere bleibt, wie es auf der Platte steht.
+ */
 export async function writeReconstruction(root: string, run: ReconstructionRun): Promise<string[]> {
   const written: string[] = [];
   const directory = join(root, RECONSTRUCTION_DIR);
@@ -811,142 +764,18 @@ export async function writeReconstruction(root: string, run: ReconstructionRun):
     written.push(`${RECONSTRUCTION_DIR}/${name} (entfernt: kein gültiges Rezept mehr)`);
   }
   if (await writeJsonAtomic(join(root, RECONSTRUCTION_QUEUE_PATH), run.queue)) written.push(RECONSTRUCTION_QUEUE_PATH);
-  if (await writeJsonAtomic(join(root, BASELINE_PATH), run.baseline)) written.push(BASELINE_PATH);
+  if (await writeJsonAtomic(join(root, RECONSTRUCTION_SOURCES_PATH), run.sources)) written.push(RECONSTRUCTION_SOURCES_PATH);
+  if (await writeJsonAtomic(join(root, RECONSTRUCTION_AUDIT_PATH), run.audit)) written.push(RECONSTRUCTION_AUDIT_PATH);
+  const fresh = JSON.parse(await readFile(join(root, BASELINE_PATH), 'utf8')) as BaselineFile;
+  const mine = new Map(run.baseline.decisions.map((decision) => [decision.documentId, decision]));
+  const touched = new Set([...run.queue.entries.map((entry) => entry.documentId), ...run.undetermined.filter((result) => result.decision).map((result) => result.documentId)]);
+  const merged = recountBaseline({ ...fresh, decisions: fresh.decisions.map((decision) => (touched.has(decision.documentId) && mine.has(decision.documentId) && decision.class === mine.get(decision.documentId)!.class ? mine.get(decision.documentId)! : decision)) });
+  if (await writeJsonAtomic(join(root, BASELINE_PATH), merged)) written.push(BASELINE_PATH);
   if (await writeFileAtomic(join(root, RECONSTRUCTION_REPORT_PATH), renderReconstructionReport(run))) written.push(RECONSTRUCTION_REPORT_PATH);
   return written;
 }
 
-/* -------------------------------------------------------------------------- Bericht */
-
-const STATE_LABELS: Readonly<Record<ReconstructionState, string>> = {
-  'recipe-ready': 'sicher zurückgerechnet (Rezept, Rundlauf exakt)',
-  'partial-chain': 'Kette nicht einschrittig',
-  'missing-base': 'Beleg fehlt',
-  'non-invertible-amendment': 'Befehl nicht umkehrbar',
-  'asset-missing': 'Anlage ohne Alttext',
-  contradictory: 'Belege widersprechen einander',
-  'command-unreadable': 'Befehl nicht auffindbar oder nicht lesbar',
-  'unsupported-formula': 'Formel nicht maschinell angewandt',
-  'ambiguous-target': 'Ort oder Wortlaut nicht eindeutig',
-  'effective-date-undetermined': 'Inkrafttreten nicht bestimmbar',
-  'round-trip-failed': 'Rundlauf gescheitert',
-};
-
-const FORMULA_LABELS: Readonly<Record<FormulaId, string>> = {
-  'replace-words': '„… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“',
-  'insert-words': '„… wird nach/vor der Angabe „X“ die Angabe „Y“ eingefügt“',
-  'delete-words-anchored': '„… wird nach/vor der Angabe „X“ die Angabe „Y“ gestrichen“',
-  'append-words': '„Der Überschrift wird die Angabe „Y“ angefügt“',
-  'replace-final-punctuation': '„… wird der Punkt am Ende durch … ersetzt“',
-  'delete-words': '„… wird die Angabe „X“ gestrichen“ (ohne Anker)',
-  recast: '„… wird wie folgt gefasst:“ / „erhält folgende Fassung“',
-  'repeal-unit': '„… wird aufgehoben“ / „Satz 5 wird gestrichen“',
-  'annex-recast': '„… erhalten die aus dem Anhang ersichtliche Fassung“',
-  'insert-unit': '„Folgender Abs. 3 wird angefügt: …“ / „Nach Nr. 4 wird folgende Nr. 5 eingefügt: …“',
-  renumber: '„Der bisherige Abs. 2 wird Abs. 3“ / „Der Wortlaut wird Satz 1“',
-  'replace-by-punctuation': '„… das Wort „oder“ durch ein Komma ersetzt“',
-  container: '„Art. 5 wird wie folgt geändert:“ (Gliederung)',
-  unrecognized: 'nicht erkannt',
-};
-
-const pad = (value: number | string, width = 5): string => String(value).padStart(width);
-
-const CHECK_LABELS: Readonly<Record<CheckName, string>> = {
-  sources: 'Detailseite und heutiges Paket im Cache',
-  block: 'Einleitungssatz genau einmal, Befehlsblock und Orte lesbar',
-  formulas: 'jede Klausel mit unterstützter, rückrechenbarer Formel',
-  effectiveDate: 'Inkrafttreten bestimmt, nach dem Stichtag, = inkraft des Pakets',
-  chain: 'einschrittig: Vollzitat, Änderungsverlauf, Fortführungsnachweis, übrige Verkündungen',
-  roundTrip: 'Orte aufgelöst, Wortlaut je Bereich genau einmal, Rundlauf exakt',
-  baselineStart: 'Beginn der Stichtagsfassung (≤ Stichtag) belegt',
-};
-
-const cell = (value: string): string => value.replace(/\|/gu, '\\|').replace(/\s+/gu, ' ');
-
-export function renderReconstructionReport(run: ReconstructionRun): string {
-  const { queue, recipes } = run;
-  const t = queue.totals;
-  const lines: string[] = [];
-  const push = (...values: string[]): void => {
-    lines.push(...values);
-  };
-  push('# Rückrechnung von Änderungen – BayWü', '');
-  push(`Stichtag **${queue.baselineDate}** · Auswertungsstichtag ${queue.evaluationDate} · erzeugt von \`npm run import:bayernrecht:reconstruction-queue -- --write\` (offline, nur Cache). Methode und Begründungen: \`docs/BAYWUE_RECONSTRUCTION.md\`. Schlange: \`data/imports/bayernrecht/reconstruction-queue.json\`. Rezepte: \`data/imports/bayernrecht/reconstruction/<documentId>.json\`.`, '');
-  push('## Kennzahl', '');
-  push(`Von **${t.changedAfterBaseline}** Normen der Klasse \`changed-after-baseline\` sind **${t.recipeReady} sicher zurückgerechnet** (Methode \`reverse-amendment\`, Status \`active-at-baseline\` ohne Blocker). Die übrigen **${t.changedAfterBaseline - t.recipeReady}** bleiben \`reconstruction-required\` – mit einem Zustand der Rekonstruktionsschlange und Begründung.`, '');
-  push(`Angegangen wurden nur die **${t.singleStep}** Normen mit genau einem stark belegten Änderungsschritt nach dem Stichtag (stark aufgelöstes Ereignis des Registers mit Verkündung nach dem Stichtag – dieselbe Regel wie die Stichtagsklassifikation). Der Auftrag nannte 258; mit dieser Regel sind es ${t.singleStep}. ${t.recipeReady} davon sind zurückgerechnet.`, '');
-  push(`**${t.roundTripVerifiedWithoutStart}** weitere Einschrittkandidaten bestehen Befehl, Inkrafttreten, Kette und den exakten Rundlauf – und bleiben trotzdem draußen, weil der **Beginn der Stichtagsfassung** nicht belegt ist. Entweder fehlt die Verkündung der vorangehenden Änderung (verkündet ist nicht in Kraft; ihr Inkrafttreten belegt nur ihre eigene Verkündung mit Kalenderdatum), oder die Norm begrenzt ihre eigene Geltung. Sie sind die ersten Kandidaten, sobald ein solcher Beleg vorliegt.`, '');
-  push('## Wo die Einschrittkandidaten scheitern', '');
-  push('Jede Prüfung nur für Kandidaten, die die vorherigen erreicht haben; „nicht erreicht“ heißt, eine frühere Prüfung hat die Norm bereits ausgeschlossen.', '');
-  push('| Prüfung | bestanden | nicht bestanden | nicht erreicht |', '| --- | ---: | ---: | ---: |');
-  for (const check of CHECKS) {
-    const counts = t.checks[check]!;
-    push(`| ${CHECK_LABELS[check]} | ${counts.passed} | ${counts.failed} | ${counts.notReached} |`);
-  }
-  push('');
-  push('## Zustände', '');
-  push('| Zustand | alle 519 | davon einschrittig | Bedeutung |', '| --- | ---: | ---: | --- |');
-  for (const [state, value] of Object.entries(t.byState)) push(`| \`${state}\` | ${value} | ${t.singleStepByState[state] ?? 0} | ${STATE_LABELS[state as ReconstructionState] ?? ''} |`);
-  push('');
-  push('## Gründe', '');
-  push('Je Norm zählt der schwerste Grund (Rangfolge: Beleg fehlt → Befehl unlesbar → Anlage → nicht umkehrbar → Kette → Widerspruch → Inkrafttreten → Formel → Mehrdeutigkeit → Rundlauf). Weitere gescheiterte Prüfungen stehen in der Schlange unter `alsoFailed`.', '');
-  push('| Zustand / Grund | Normen |', '| --- | ---: |');
-  for (const [reason, value] of Object.entries(t.byReason)) push(`| \`${reason}\` | ${value} |`);
-  push('');
-  push('## Änderungsformeln', '');
-  push('Erhoben aus den Befehlsblöcken der Einschrittkandidaten, deren Einleitungssatz sich in der Verkündung fand. „Klauseln“ zählt jede Formel je Befehl; eine Norm fällt, sobald **eine** ihrer Klauseln nicht unterstützt ist.', '');
-  push('| Formel | Wortlaut (Beispiel) | Klauseln | Normen | bestimmt Alttext | angewandt |', '| --- | --- | ---: | ---: | :---: | :---: |');
-  for (const [formula, stat] of Object.entries(t.formulas).sort((left, right) => right[1].clauses - left[1].clauses)) {
-    const determines = formula === 'insert-unit' || formula === 'renumber' || formula === 'replace-by-punctuation' || formula === 'unrecognized' || formula === 'container' ? '(ja)' : stat.invertible ? 'ja' : 'nein';
-    push(`| \`${formula}\` | ${FORMULA_LABELS[formula as FormulaId]} | ${stat.clauses} | ${stat.norms} | ${determines} | ${stat.supported ? 'ja' : 'nein'} |`);
-  }
-  push('', '„(ja)“: bestimmt den Alttext grundsätzlich, wird aber nicht maschinell angewandt (strukturelle Änderung, Satzzeichen ohne eindeutige Stelle, nicht erkannte Formel).', '');
-  push('## Zurückgerechnete Normen', '');
-  if (recipes.length === 0) push('Keine.');
-  else {
-    push('| Norm | Verkündung | in Kraft | Beginn Stichtagsfassung | Schritte | Formeln | Stichtagskörper |', '| --- | --- | --- | --- | ---: | --- | --- |');
-    for (const recipe of recipes) {
-      const formulas = [...new Set(recipe.steps.map((step) => step.formula))].join(', ');
-      push(`| \`${recipe.documentId}\` | ${recipe.amendment.citation} | ${recipe.amendment.effectiveDate} | ${recipe.baselineTextInForce.date} | ${recipe.steps.length} | ${formulas} | \`${recipe.expected.baselineFingerprint.slice(0, 16)}\` |`);
-    }
-    push('');
-    for (const recipe of recipes) {
-      push(`### ${recipe.documentId}`, '');
-      push(`- Änderung: ${recipe.amendment.citation} (${recipe.amendment.url}, SHA-256 \`${recipe.amendment.sha256.slice(0, 16)}…\`), verkündet ${recipe.amendment.eventDate}, in Kraft ${recipe.amendment.effectiveDate} („${cell(recipe.amendment.effectiveDateEvidence.join(' '))}“)`);
-      push(`- Beginn der Stichtagsfassung: ${recipe.baselineTextInForce.date} – ${cell(recipe.baselineTextInForce.evidence.slice(1).join(' · '))}`);
-      for (const step of recipe.steps) {
-        push(`- ${step.id} \`${step.formula}\` in ${step.location}: „${cell(step.command)}“`);
-        push(`  - Stichtag: „${cell(step.evidence.baseline)}“`);
-        push(`  - heute: „${cell(step.evidence.current)}“`);
-      }
-      push('');
-    }
-  }
-  push('## Rundlauf bestanden, Beginn der Stichtagsfassung nicht belegt', '');
-  const pending = queue.entries.filter((entry) => entry.roundTripVerified);
-  if (pending.length === 0) push('Keine.');
-  else {
-    push('| Norm | Verkündung | in Kraft | vorangehende Änderung laut Befehl | Grund |', '| --- | --- | --- | --- | --- |');
-    for (const entry of pending) push(`| \`${entry.documentId}\` | ${entry.events[0]!.citation} | ${entry.effectiveDate ?? '–'} | ${cell(entry.priorAmendment ?? '– (Stammfassung)')} | \`${entry.reason}\` |`);
-  }
-  push('');
-  push('## Einschrittige Kandidaten, die nicht zurückgerechnet wurden', '');
-  push('| Norm | Zustand | Grund | Befund |', '| --- | --- | --- | --- |');
-  for (const entry of queue.entries.filter((candidate) => candidate.steps === 1 && candidate.state !== 'recipe-ready' && candidate.reason !== 'recast-event')) {
-    push(`| \`${entry.documentId}\` | \`${entry.state}\` | \`${entry.reason}\` | ${cell(entry.detail).slice(0, 220)} |`);
-  }
-  push('');
-  return `${lines.join('\n')}\n`;
-}
-
-export function reconstructionSummary(run: ReconstructionRun): string[] {
-  const t = run.queue.totals;
-  return [
-    `Rückrechnung BayWü, Stichtag ${run.queue.baselineDate}: ${t.changedAfterBaseline} geänderte Normen, ${t.singleStep} einschrittig, ${t.recipeReady} sicher zurückgerechnet`,
-    ...Object.entries(t.byState).map(([state, count]) => `  ${pad(count)}  ${state}`),
-    '  Formeln (Klauseln / Normen / unterstützt):',
-    ...Object.entries(t.formulas)
-      .sort((left, right) => right[1].clauses - left[1].clauses)
-      .map(([formula, stat]) => `  ${pad(stat.clauses)} ${pad(stat.norms, 4)}  ${formula}${stat.supported ? ' (unterstützt)' : stat.invertible ? '' : ' (nicht umkehrbar)'}`),
-  ];
-}
+import { renderReconstructionReport, reconstructionSummary } from './report.ts';
+export { renderReconstructionReport, reconstructionSummary };
+export type { GazetteUnit };
+export { isRecipeV2 };

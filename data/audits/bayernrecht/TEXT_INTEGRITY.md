@@ -11,20 +11,11 @@ Geprüft: **2342** Dokumente.
 | --- | --- | --- | --- |
 | `exact` | 241 | 10,3 % | dieselbe Wortfolge; es musste nichts normalisiert werden |
 | `normalized-equivalent` | 1305 | 55,7 % | dieselben Wörter nach typografischer Normalisierung (auch neu zusammengesetzt, ohne Verlust) |
-| `explained-difference` | 792 | 33,8 % | Unterschied vollständig durch einen benannten Befund erklärt |
-| `review` | 4 | 0,2 % | bis zu 3 unerklärte Wörter – Einzelfall, von Hand zu entscheiden |
+| `explained-difference` | 796 | 34,0 % | Unterschied vollständig durch einen benannten Befund erklärt |
+| `review` | 0 | 0,0 % | bis zu 3 unerklärte Wörter – Einzelfall, von Hand zu entscheiden |
 | `mismatch` | 0 | 0,0 % | Textverlust oder Verdopplung – Importhindernis |
 
 `@builddate` des Exports geht in keinen Vergleich ein: Das Portal baut den Export täglich neu.
-
-## Wo der Text verloren geht
-
-Die Abweichungen nach der Stelle im Quellmodell, an der sie entstehen – das ist die Arbeitsliste.
-
-| Dokumente | Stelle im Export | Klasse |
-| --- | --- | --- |
-| 3 | `zusätzlicher Text im Zielkörper` | `review` |
-| 1 | `fehlende Wörter ohne zusammenhängenden Abschnitt` | `review` |
 
 ## `mismatch` · 0 Dokumente
 
@@ -32,20 +23,13 @@ Textverlust oder Verdopplung – Importhindernis.
 
 Kein Dokument in dieser Klasse.
 
-## `review` · 4 Dokumente
+## `review` · 0 Dokumente
 
 bis zu 3 unerklärte Wörter – Einzelfall, von Hand zu entscheiden.
 
-- `BayBFSOGesundheit` (byrecht-norm): 16846 Wörter in der Quelle · 16961 kanonisch · 1 zusätzlich · erklärt durch footnote-label-repeats-call-marker
-  - Verdopplungsverdacht: 34 (1× mehr als in der Quelle)
-- `BayFOBOSO` (byrecht-norm): 14932 Wörter in der Quelle · 14987 kanonisch · 1 fehlen · 1 zusätzlich · erklärt durch footnote-label-repeats-call-marker
-  - Verdopplungsverdacht: 456 (1× mehr als in der Quelle)
-- `BayLEP` (byrecht-norm): 8727 Wörter in der Quelle · 8736 kanonisch · 1 zusätzlich · erklärt durch annex-number-repeated-in-source, footnote-marker-substituted
-  - Verdopplungsverdacht: 12 (1× mehr als in der Quelle)
-- `BayVV_7912_0_U_108` (byrecht-vv): 2856 Wörter in der Quelle · 2856 kanonisch · 1 zusätzlich · erklärt durch footnote-label-repeats-call-marker
-  - Verdopplungsverdacht: 11 (1× mehr als in der Quelle)
+Kein Dokument in dieser Klasse.
 
-## `explained-difference` · 792 Dokumente
+## `explained-difference` · 796 Dokumente
 
 Unterschied vollständig durch einen benannten Befund erklärt.
 
@@ -54,7 +38,7 @@ Unterschied vollständig durch einen benannten Befund erklärt.
 - `ApothStV` (byrecht-norm): 1158 Wörter in der Quelle · 1160 kanonisch · erklärt durch footnote-marker-substituted
 - `BAY_110_1984_201` (byrecht-norm): 329 Wörter in der Quelle · 331 kanonisch · erklärt durch footnote-marker-substituted
 - `BAY_110_1990_478` (byrecht-norm): 2563 Wörter in der Quelle · 2557 kanonisch · erklärt durch annex-number-repeated-in-source
-- … und 787 weitere Dokumente dieser Klasse
+- … und 791 weitere Dokumente dieser Klasse
 
 ## `normalized-equivalent` · 1305 Dokumente
 

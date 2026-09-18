@@ -28,6 +28,7 @@ import { readEnumeration } from '../enumerate/enumeration.ts';
 import { cacheEntryPaths, isCorruptCacheEntry, peekCachedPackage } from '../fetch/cache.ts';
 import { zipUrl } from '../parse/addresses.ts';
 import { readInstitutionRegistry } from '../transform/institution-registry.ts';
+import { readSourceCorrections } from '../common/source-corrections.ts';
 import { SCOPE_PATH, type ScopeFile } from '../scope/run.ts';
 import { inventoryDocument, notCachedEntry } from './document.ts';
 import {
@@ -102,6 +103,7 @@ export async function runInventory(options: InventoryRunOptions): Promise<Invent
   const cacheDir = options.cacheDir ?? join(root, CACHE_DIR);
   const candidates = await inventoryCandidates(root, { ...(options.area ? { area: options.area } : {}), ...(options.only ? { only: options.only } : {}) });
   const institutions = await readInstitutionRegistry(root);
+  const sourceCorrections = await readSourceCorrections(root);
   const previous = options.resume ? await readInventory(root) : undefined;
   const earlier = new Map((previous?.entries ?? []).map((entry) => [entry.documentId, entry]));
 
@@ -141,6 +143,7 @@ export async function runInventory(options: InventoryRunOptions): Promise<Invent
       sha256: cached.sha256,
       byteLength: cached.byteLength,
       institutions,
+      sourceCorrections: sourceCorrections.filter((correction) => correction.sourceIdentity === candidate.documentId),
     }));
     processed += 1;
     if (processed % 200 === 0) log(`  ${processed} Dokumente geprüft …`);
@@ -183,6 +186,7 @@ export function inventoryTotals(entries: readonly InventoryEntry[], candidates: 
   let divisionNumberBeforeTitle = 0;
   let imageDocuments = 0;
   let imageWithGraphicFinding = 0;
+  let imageWithFigures = 0;
 
   for (const entry of entries) {
     byOutcome[entry.outcome] += 1;
@@ -204,6 +208,7 @@ export function inventoryTotals(entries: readonly InventoryEntry[], candidates: 
     if ((entry.attachments?.image ?? 0) > 0) {
       imageDocuments += 1;
       if (entry.codes.includes('graphic-not-transferred')) imageWithGraphicFinding += 1;
+      if (entry.codes.includes('figures-transferred')) imageWithFigures += 1;
     }
     if (entry.slug) slugs.set(entry.slug, (slugs.get(entry.slug) ?? 0) + 1);
   }
@@ -220,7 +225,7 @@ export function inventoryTotals(entries: readonly InventoryEntry[], candidates: 
     signals: {
       divisionNumberBeforeTitle,
       normTypeOutOfModel: Object.fromEntries(Object.entries(normTypeOutOfModel).sort(([left], [right]) => (left < right ? -1 : 1))),
-      imageAttachments: { documents: imageDocuments, withGraphicFinding: imageWithGraphicFinding, withoutGraphicFinding: imageDocuments - imageWithGraphicFinding },
+      imageAttachments: { documents: imageDocuments, withFigures: imageWithFigures, withGraphicFinding: imageWithGraphicFinding, withoutGraphicFinding: imageDocuments - imageWithGraphicFinding },
       slugCollisions: [...slugs.values()].filter((count) => count > 1).length,
     },
   };

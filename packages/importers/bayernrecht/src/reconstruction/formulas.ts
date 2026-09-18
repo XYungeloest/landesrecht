@@ -23,14 +23,15 @@
  *   Wortlaut ist bekannt, **die Stelle nicht** – die Streichung lässt keine Spur, an der sich ablesen
  *   ließe, wo er stand. Jede Einfügestelle ergäbe im Rundlauf wieder den heutigen Text; der Rundlauf
  *   beweist hier also nichts.
- * - `insert-unit` („Folgender Abs. 2 wird angefügt: …“), `renumber` („Der bisherige Abs. 2 wird Abs. 3.“):
- *   grundsätzlich umkehrbar, aber strukturelle Änderungen (neue Blöcke, Umnummerierung, Satznummern)
- *   wendet dieses Modell nicht an.
+ * - Strukturelle Befehle (Satz oder Glied einfügen, Umnummerierung, „Der Wortlaut wird Satz 1“, Überschrift einfügen,
+ *   Angabe am Ende ersetzen oder streichen) erkennt und wendet `structural.ts` an – nur, wenn das Eingefügte wörtlich
+ *   und eindeutig im heutigen Text steht. Was dort nicht eindeutig ist, bleibt `insert-unit` bzw. `renumber` mit Grund.
  * - `replace-by-punctuation` („das Wort „oder“ durch ein Komma ersetzt“): Das Komma ist im Text nicht
  *   eindeutig wiederzufinden; nicht unterstützt.
  * - `unrecognized`: Formel nicht erkannt – im Zweifel ausgeschlossen.
  */
 import { formatPath, parseLocation, type LocationPath } from './location.ts';
+import type { StructuralOperation } from './structural.ts';
 
 export const FORMULAS = [
   'replace-words',
@@ -38,6 +39,14 @@ export const FORMULAS = [
   'delete-words-anchored',
   'append-words',
   'replace-final-punctuation',
+  'replace-final-words',
+  'delete-final-words',
+  'insert-sentence',
+  'insert-block',
+  'relabel',
+  'renumber-sentence',
+  'number-sentences',
+  'insert-title',
   'delete-words',
   'recast',
   'repeal-unit',
@@ -51,7 +60,11 @@ export const FORMULAS = [
 export type FormulaId = (typeof FORMULAS)[number];
 
 /** Formeln, deren Rückrechnung dieses Modell ausführt. */
-export const SUPPORTED_FORMULAS: ReadonlySet<FormulaId> = new Set(['replace-words', 'insert-words', 'delete-words-anchored', 'append-words', 'replace-final-punctuation']);
+export const SUPPORTED_FORMULAS: ReadonlySet<FormulaId> = new Set([
+  'replace-words', 'insert-words', 'delete-words-anchored', 'append-words', 'replace-final-punctuation',
+  // Seit der mehrstufigen Rückrechnung, je an echten Befehlen belegt (`structural.ts`):
+  'replace-final-words', 'delete-final-words', 'insert-sentence', 'insert-block', 'relabel', 'renumber-sentence', 'number-sentences', 'insert-title',
+]);
 
 /** Formeln, die die vorherige Fassung grundsätzlich nicht bestimmen. */
 export const NON_INVERTIBLE_FORMULAS: ReadonlySet<FormulaId> = new Set(['recast', 'repeal-unit', 'annex-recast', 'delete-words']);
@@ -62,7 +75,9 @@ export type Operation =
   | { kind: 'insert'; anchor: string; side: 'after' | 'before'; text: string }
   | { kind: 'delete-anchored'; anchor: string; side: 'after' | 'before'; text: string }
   | { kind: 'append'; text: string }
-  | { kind: 'replace-final'; from: string; to: string };
+  | { kind: 'replace-final'; from: string; to: string }
+  /** Strukturelle Operationen (`structural.ts`): Sätze, Glieder, Bezeichnungen, Überschriften, Schluss eines Feldes. */
+  | StructuralOperation;
 
 export interface ParsedOperation {
   formula: FormulaId;
@@ -192,6 +207,19 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
     const from = PUNCT_NAME[final[1]!.replace(/\s+/gu, ' ')]!;
     const to = final[2] ? PUNCT_NAME[final[2].replace(/\s+/gu, ' ')]! : quote(quotes, final[3]!);
     return { formula: 'replace-final-punctuation', operations: [{ kind: 'replace-final', from, to }], each };
+  }
+
+  // „die Angabe „ .“ am Ende durch die Angabe „oder“ ersetzt“ / „das Wort „oder“ am Ende durch einen Punkt ersetzt“:
+  // Die Stelle ist das Ende des Feldes – eindeutig.
+  const finalWords = new RegExp(String.raw`^(?:${OBJ}\s+)?${Q}\s+am\s+Ende\s+${VERB}durch\s+(?:(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon|einen\s+Doppelpunkt)|(?:${OBJ}\s+)?${Q})\s+ersetzt$`, 'u').exec(text);
+  if (finalWords) {
+    const to = finalWords[2] ? PUNCT_NAME[finalWords[2].replace(/\s+/gu, ' ')]! : quote(quotes, finalWords[3]!);
+    return { formula: 'replace-final-words', operations: [{ kind: 'replace-final-words', from: quote(quotes, finalWords[1]!), to }], each };
+  }
+  const finalDelete = new RegExp(String.raw`^(?:(?:${OBJ}\s+)?${Q}|(der\s+Punkt|das\s+Komma|das\s+Semikolon))\s+am\s+Ende\s+${VERB}gestrichen$`, 'u').exec(text);
+  if (finalDelete) {
+    const removed = finalDelete[1] !== undefined ? quote(quotes, finalDelete[1]) : PUNCT_NAME[finalDelete[2]!.replace(/\s+/gu, ' ')]!;
+    return { formula: 'delete-final-words', operations: [{ kind: 'delete-final', text: removed }], each };
   }
 
   if (new RegExp(String.raw`(?:${OBJ}\s+)?${Q}\s+${VERB}durch\s+(?:ein\s+Komma|einen\s+Punkt|ein\s+Semikolon)\s+ersetzt`, 'u').test(text)) {

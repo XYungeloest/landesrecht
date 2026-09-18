@@ -12,7 +12,10 @@
  *      sind das Nullen, und genau das soll die Tabelle zeigen, statt die Frage zu verschweigen.
  *   3. **Was deckt der Beispielkorpus ab?** Je Strukturfall die Zahl der Normen, an deren Paket er
  *      nachgewiesen ist – nicht die Zahl derer, für die er vorgesehen war.
- *   4. **Wie groß ist die Stichtagsfrage?** Anteil der Normen, deren Fortführungsnachweis nach dem
+ *   4. **Was ist aus Verkündungen wiederhergestellt?** Heute fehlende Stichtagsnormen („baseline-only“) stehen nicht
+ *      in der Enumeration, sondern im Bereich `events`; sie werden eigens gezählt und berühren die Erklärung der
+ *      enumerierten Dokumente nicht.
+ *   5. **Wie groß ist die Stichtagsfrage?** Anteil der Normen, deren Fortführungsnachweis nach dem
  *      Stichtag eine Änderung nennt. Für sie ist der heutige Text nicht der Stichtagstext; für die
  *      übrigen ist er es, und das ist ein Beleg aus der Quelle, keine Annahme. Ohne datierte Notiz
  *      bleibt der Fall „unbekannt“ – er wird nicht dem einen oder anderen Lager zugeschlagen.
@@ -34,6 +37,7 @@ import { CORPUS_PATH, type CorpusFile } from '../corpus/run.ts';
 import { readEnumeration, type EnumerationFile } from '../enumerate/enumeration.ts';
 import { STRUCTURE_CASES, type StructureCase } from '../corpus/inspect.ts';
 import { NORM_TYPE_LABELS, type NormType } from '../enumerate/portal.ts';
+import { isBaselineOnlyEntry } from '../baseline-only/recognize.ts';
 
 export const COVERAGE_SCHEMA = 'bayernrecht-coverage/1' as const;
 export const COVERAGE_MARKDOWN_PATH = `${AUDIT_DIR}/COVERAGE.md`;
@@ -65,6 +69,8 @@ export interface CoverageReport {
   generatedAt: string;
   contentFingerprint: string;
   areas: AreaCoverage[];
+  /** Wiederhergestellte heute fehlende Stichtagsnormen (Bereich `events`), je Importstatus. */
+  baselineOnly: { entries: number; byImportStatus: Record<ImportStatus, number> };
   totals: {
     documents: number;
     manifestEntries: number;
@@ -162,12 +168,17 @@ export function computeCoverage(input: CoverageInput): CoverageReport {
       }
     : null;
 
+  const baselineOnlyEntries = input.manifest.entries.filter(isBaselineOnlyEntry);
+  const baselineOnly = { entries: baselineOnlyEntries.length, byImportStatus: emptyImportStatusCounts() };
+  for (const entry of baselineOnlyEntries) baselineOnly.byImportStatus[entry.importStatus] += 1;
+
   const body = {
     schemaVersion: COVERAGE_SCHEMA,
     jurisdiction: TARGET_JURISDICTION,
     sourceSystem: SOURCE_SYSTEM,
     baselineDate: input.baselineDate,
     areas,
+    baselineOnly,
     totals,
     corpus,
   } satisfies Omit<CoverageReport, 'generatedAt' | 'contentFingerprint'>;
@@ -222,6 +233,11 @@ export function renderCoverageMarkdown(report: CoverageReport): string {
     '| Bereich | Einträge | ' + IMPORT_STATUSES.join(' | ') + ' |',
     '| --- | ---: |' + IMPORT_STATUSES.map(() => ' ---: |').join(''),
     ...report.areas.map((area) => `| ${area.area} | ${area.manifest.entries} | ${IMPORT_STATUSES.map((status) => area.manifest.byImportStatus[status]).join(' | ')} |`),
+    `| baseline-only wiederhergestellt | ${report.baselineOnly?.entries ?? 0} | ${IMPORT_STATUSES.map((status) => report.baselineOnly?.byImportStatus[status] ?? 0).join(' | ')} |`,
+    '',
+    'Die Zeile „baseline-only wiederhergestellt“ zählt heute fehlende Stichtagsnormen, die aus amtlichen Verkündungen',
+    'wiederhergestellt sind (Bereich `events`, Rezepte unter `data/imports/bayernrecht/baseline-only/`). Sie stehen in keiner',
+    'Enumeration und ändern die Erklärung der enumerierten Dokumente nicht.',
     '',
     '## Änderungslage relativ zum Stichtag',
     '',
@@ -279,6 +295,7 @@ export function coverageSummary(report: CoverageReport): string[] {
     lines.push(`  ${area.area}: ${area.documents} Dokumente (${area.byNormType.map((type) => `${type.normType} ${type.documents}`).join(', ') || 'keine'}); Manifest ${area.manifest.entries}, geändert nach Stichtag ${area.baseline.changedAfter}, unverändert ${area.baseline.unchanged}, unbekannt ${area.baseline.unknown}`);
   }
   lines.push(`  Manifest gesamt: ${report.totals.manifestEntries} Einträge, davon ${report.totals.imported} übernommen`);
+  lines.push(`  baseline-only wiederhergestellt: ${report.baselineOnly?.entries ?? 0} (übernommen ${(report.baselineOnly?.byImportStatus.imported ?? 0) + (report.baselineOnly?.byImportStatus['imported-with-warnings'] ?? 0)})`);
   lines.push(`  Änderung nach dem Stichtag: ${percent(report.totals.baseline.changedAfterShare)} der datiert beantworteten Fälle`);
   if (report.corpus) lines.push(`  Beispielkorpus: ${report.corpus.entries} Normen, ${report.corpus.byStructureCase.filter((entry) => entry.norms > 0).length} von ${STRUCTURE_CASES.length} Strukturfällen belegt${report.corpus.uncovered.length > 0 ? ` (ohne Beleg: ${report.corpus.uncovered.join(', ')})` : ''}`);
   else lines.push('  Beispielkorpus: nicht vorhanden');

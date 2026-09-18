@@ -113,6 +113,7 @@ export const EVIDENCE_DIR = join(IMPORT_DATA_DIR, 'evidence');
 export const RECONSTRUCTION_DIR = join(IMPORT_DATA_DIR, 'reconstructions');
 export const SLUG_REGISTRY_PATH = posix(join(IMPORT_DATA_DIR, 'slug-registry.json'));
 export const OVERRIDES_PATH = posix(join(IMPORT_DATA_DIR, 'overrides.json'));
+export const SOURCE_CORRECTIONS_PATH = posix(join(IMPORT_DATA_DIR, 'source-corrections.json'));
 /** Reserviert für den Transformationsstrang (Institutionen Bayern → Bayern-Württemberg); noch nicht gelesen. */
 export const INSTITUTION_MAPPING_PATH = posix(join(IMPORT_DATA_DIR, 'institution-mapping.json'));
 export const RECONSTRUCTION_QUEUE_PATH = posix(join(IMPORT_DATA_DIR, 'reconstruction-queue.json'));

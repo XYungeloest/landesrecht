@@ -17,6 +17,7 @@ import { parseBayernRechtPackage } from '../parse/index.ts';
 import type { NormHead } from '../parse/norm.ts';
 import type { VvHead } from '../parse/vv.ts';
 import { readScopeOverrides } from '../scope/run.ts';
+import { isMergedAnnex, type ScopeEntry } from '../scope/decisions.ts';
 import { citationDates } from './citation-dates.ts';
 import { classifyBaseline, type BaselineClass, type BaselineDecision, type BaselineStatus, type RecoveryMethod } from './classify.ts';
 
@@ -119,11 +120,12 @@ export interface BuildBaselineOptions {
 
 export async function buildBaseline(root: string, options: BuildBaselineOptions): Promise<BaselineFile> {
   const scope = JSON.parse(await readFile(join(root, SCOPE_FILE_PATH), 'utf8')) as {
-    entries: Array<{ documentId: string; decision: string }>;
+    entries: Array<ScopeEntry>;
   };
   const overrides = await readScopeOverrides(root);
   const eventsByDocument = await readPostBaselineEvents(root);
-  const candidates = scope.entries.filter((entry) => entry.decision === 'include');
+  // Auch eine zusammengeführte Anlage wird klassifiziert: Ihr Text wird Teil der Stammnorm und muss am Stichtag gelten.
+  const candidates = scope.entries.filter((entry) => entry.decision === 'include' || isMergedAnnex(entry));
   const decisions: BaselineDecision[] = [];
   const issueDateSource: Record<string, number> = { xml: 0, citation: 0, none: 0 };
   let notCached = 0;

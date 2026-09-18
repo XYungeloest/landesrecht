@@ -296,7 +296,9 @@ export function introCandidates(units: readonly GazetteUnit[], identity: NormIde
  */
 export function locationPrefix(head: string): string {
   const text = head.replace(/^\(\d+[a-z]?\)\s*/u, '').trim();
-  const match = /^((?:In\s+)?(?:(?:der|dem|den)\s+)?(?:Überschrift|Inhaltsübersicht|Inhaltsverzeichnis|§§?|Art\.|Artikel|Anlage|Anlagen|Abschnitt|Teil|Nr\.|Nrn\.|Abs\.|Satz|Anhang)[\s\S]*?)\s+(?:der|des|zur|zum|zu)\s+[\p{Lu}„]/u.exec(text);
+  // Auch der Dativ und der Artikel am Satzanfang („Dem Art. 5 des …“, „Die Anlage 1 der …“): Der Ort darf nie
+  // verloren gehen – sonst würden die Befehle in der ganzen Norm statt im genannten Glied gesucht.
+  const match = /^((?:(?:In|Im|Dem|Der|Den|Die|Das)\s+)?(?:(?:der|dem|den)\s+)?(?:Überschrift|Inhaltsübersicht|Inhaltsverzeichnis|§§?|Art\.|Artikel|Anlage|Anlagen|Abschnitt|Teil|Nr\.|Nrn\.|Abs\.|Satz|Anhang)[\s\S]*?)\s+(?:der|des|zur|zum|zu)\s+[\p{Lu}„]/u.exec(text);
   return match ? match[1]!.trim() : '';
 }
 
@@ -311,7 +313,38 @@ export function commandBlock(units: readonly GazetteUnit[], identity: NormIdenti
   if (distinctUnits.length > 1 || candidates.length > 1) {
     return { code: 'intro-ambiguous', detail: `${candidates.length} Zitate der Norm mit Änderungsbefehl (Einheiten ${distinctUnits.join(', ')}); mehrere Änderungsabschnitte in einer Verkündung werden nicht zusammengeführt` };
   }
-  const { unit: intro, citation } = candidates[0]!;
+  return blockFromCandidate(units, candidates[0]!);
+}
+
+/**
+ * Alle Befehlsblöcke der Seite für die Zielnorm, je Einleitungssatz einer, in Seitenreihenfolge – mit dem
+ * Abschnitt, in dem sie stehen. Eine Verkündung kann dieselbe Norm in mehreren Abschnitten ändern („§ 1
+ * Änderung …“, „§ 2 Weitere Änderung …“, jeweils mit eigenem Inkrafttreten); welcher Block gemeint ist,
+ * entscheidet die Kette (`walk.ts`) über den zitierten Abschnitt, nie die Wahrscheinlichkeit.
+ * Mehrere Zitate in **einer** Einheit bleiben mehrdeutig.
+ */
+export function commandBlocks(units: readonly GazetteUnit[], identity: NormIdentity): { blocks: CommandBlock[]; failures: BlockFailure[] } {
+  const candidates = introCandidates(units, identity);
+  const byUnit = new Map<number, IntroCandidate[]>();
+  for (const candidate of candidates) byUnit.set(candidate.unit.index, [...(byUnit.get(candidate.unit.index) ?? []), candidate]);
+  const blocks: CommandBlock[] = [];
+  const failures: BlockFailure[] = [];
+  if (candidates.length === 0) failures.push({ code: 'intro-not-found', detail: 'Kein Einleitungssatz zitiert die Norm mit einem Änderungsbefehl' });
+  for (const [index, list] of [...byUnit].sort((left, right) => left[0] - right[0])) {
+    if (list.length > 1) {
+      failures.push({ code: 'intro-ambiguous', detail: `Einheit ${index} zitiert die Norm ${list.length}-mal mit Änderungsbefehl` });
+      continue;
+    }
+    const block = blockFromCandidate(units, list[0]!);
+    if (isBlockFailure(block)) failures.push(block);
+    else blocks.push(block);
+  }
+  return { blocks, failures };
+}
+
+/** Befehlsblock zu einem bestimmten Einleitungssatz. */
+export function blockFromCandidate(units: readonly GazetteUnit[], candidate: IntroCandidate): CommandBlock | BlockFailure {
+  const { unit: intro, citation } = candidate;
   const parsedCommand = commandAfterCitation(intro.text, citation)!;
   const introCommand = parsedCommand.command;
   const introPrefix = locationPrefix(intro.text.slice(0, citation.anchorStart));
@@ -339,6 +372,11 @@ export function commandBlock(units: readonly GazetteUnit[], identity: NormIdenti
       }
       if (unit.heading) break;
       const last = stack.at(-1);
+      // Tabellenkopf vor einer zitierten Tabellenzeile („Nr. | Aufgabe | Zuständige Behörde“) gehört zum Zitat, nicht zu den Befehlen.
+      if (unit.tag === 'th' && last && /:\s*$/u.test(last.text) && last.quoted.length === 0) {
+        blockUnits.push(unit);
+        continue;
+      }
       if (startsQuoted(unit)) {
         if (!last || !/:\s*$/u.test(last.text)) return { code: 'structure-unreadable', detail: `Einheit ${unit.index}: Zitat ohne vorangehenden Befehl mit Doppelpunkt` };
         last.quoted.push(unit);

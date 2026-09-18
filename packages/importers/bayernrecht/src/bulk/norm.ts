@@ -46,6 +46,7 @@ import {
   writeManifestEntry,
   type ImportStatus,
   type ManifestEntry,
+  type ManifestRawDocument,
   type SourceProvenance,
 } from '../common/manifest.ts';
 import { isBayRsNumber } from '../common/paths.ts';
@@ -65,7 +66,11 @@ import type { CompiledInstitutionRegistry } from '../transform/institution-regis
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
 import { transformToBayWue } from '../transform/transform.ts';
 import { applyReverseRecipe, verifyRoundTrip } from '../reconstruction/apply.ts';
-import { recipeProblems, type ReconstructionRecipe } from '../reconstruction/recipe.ts';
+import { recipeAmendments, recipeProblems, type AnyReconstructionRecipe, type RecipeAmendment, type ReconstructionRecipe } from '../reconstruction/recipe.ts';
+import { applySourceCorrections, type AppliedSourceCorrection, type SourceCorrection } from '../common/source-corrections.ts';
+import { loadMergedAnnexes } from './annex.ts';
+import { figureRawDocuments, type FigurePackage } from './figures.ts';
+import { reversedAmendmentsText } from './trace.ts';
 import { isCachedPackageProblem, readCachedPackage, type CachedPackage } from './cache.ts';
 import { writeNormRecord } from './persist.ts';
 import { baselineGate, type BulkCandidate, type GateVerdict } from './select.ts';
@@ -81,6 +86,8 @@ import { buildDecisionTrace, recoveryMethodFor, type DecisionTrace } from './tra
  */
 export interface BulkManifestEntry extends ManifestEntry {
   decisionTrace: DecisionTrace;
+  /** Angewandte Quellkorrekturen: Original, Korrektur, Feld, Quellkennung, Paket-SHA-256, Grund. */
+  sourceCorrections?: AppliedSourceCorrection[];
 }
 
 export interface ProcessCandidateOptions {
@@ -94,6 +101,8 @@ export interface ProcessCandidateOptions {
   registry: SlugRegistry;
   existingSlugs: ReadonlySet<string>;
   institutions: CompiledInstitutionRegistry;
+  /** Quellkorrekturen **dieses** Dokuments (`source-corrections.json`), an Paket-SHA-256 und Wortlaut gebunden. */
+  sourceCorrections?: readonly SourceCorrection[];
   /** Vorhandene Review-Fälle **dieser** Norm. */
   reviewQueue: ReviewQueue;
   /** Vorhandener Manifesteintrag dieser Norm (Unveränderlichkeit, Regressionsschutz). */
@@ -126,6 +135,7 @@ const errorFindings = (findings: readonly ImportFinding[]): ImportFinding[] => f
 export function reviewCategoryForCode(code: string): ReviewItemInput['category'] {
   switch (code) {
     case 'referenced-file-missing':
+    case 'figure-asset-unbound':
       return 'incomplete-annex';
     // Befunde der Überleitung hängen alle an derselben Frage: Wie wird eine Bezeichnung des
     // Quelllandes auf das Zielland geführt? Restposten, Doppelbildung und ein nicht zuzuordnendes
@@ -133,6 +143,7 @@ export function reviewCategoryForCode(code: string): ReviewItemInput['category']
     case 'post-transform-audit':
     case 'residual-source-state-reference':
     case 'doubled-target-name':
+    case 'historical-name-transformed':
     case 'enacting-body-mapping-required':
       return 'institution-mapping';
     case 'document-identity-mismatch':
@@ -142,6 +153,13 @@ export function reviewCategoryForCode(code: string): ReviewItemInput['category']
       return 'metadata-conflict';
     case 'baseline-evidence-insufficient':
       return 'contradictory-evidence';
+    case 'merged-annex-not-at-baseline':
+    case 'merged-annex-not-cached':
+    case 'merged-annex-identity':
+    case 'merged-annex-unknown-structure':
+    case 'merged-annex-text-integrity':
+    case 'merged-annex-empty':
+      return 'incomplete-annex';
     case 'reconstruction-recipe-mismatch':
     case 'reconstruction-evidence-missing':
     case 'reconstruction-roundtrip-failed':
@@ -237,12 +255,16 @@ export type BaselineTextInForce = ReconstructionRecipe['baselineTextInForce'];
  */
 export function reconstructionEvidenceFor(input: {
   candidate: BulkCandidate;
-  recipe: ReconstructionRecipe;
+  recipe: AnyReconstructionRecipe;
   begin: BaselineTextInForce;
   retrievedAt: string;
   sha256: string;
 }): ValidityEvidence[] {
   const { recipe, begin } = input;
+  // Jüngste zuerst; die älteste Änderung schließt an die Stichtagsfassung an.
+  const amendments = recipeAmendments(recipe);
+  const oldest = amendments.at(-1)!;
+  const several = amendments.length > 1;
   const evidence: ValidityEvidence[] = [
     {
       kind: 'reconstruction',
@@ -250,21 +272,23 @@ export function reconstructionEvidenceFor(input: {
       strength: 'strong',
       statement: `Die Stichtagsfassung gilt seit ${begin.date}: ${begin.evidence.join('; ')}`,
       date: begin.date,
-      citation: recipe.amendment.priorAmendment ?? recipe.source.fullCitation ?? recipe.amendment.citation,
+      citation: oldest.priorAmendment ?? recipe.source.fullCitation ?? oldest.citation,
       // Belegt durch die Verkündung der vorangehenden Änderung, sonst durch die Inkrafttretensvorschrift im Paket.
       sourceUrl: begin.sources?.[0]?.url ?? recipe.source.url,
       ...(begin.sources?.[0] ? { sha256: begin.sources[0].sha256 } : {}),
     },
-    {
+    ...amendments.map((amendment, index): ValidityEvidence => ({
       kind: 'gazette-amendment',
       dimension: 'amendment',
       strength: 'strong',
-      statement: `Geändert durch ${recipe.amendment.citation} mit Wirkung vom ${recipe.amendment.effectiveDate}; die Rücknahme dieser Änderung ergibt die Stichtagsfassung, der Rundlauf bestätigt den heutigen Text`,
-      date: recipe.amendment.effectiveDate,
-      citation: recipe.amendment.citation,
-      sourceUrl: recipe.amendment.url,
-      sha256: recipe.amendment.sha256,
-    },
+      statement: several
+        ? `Geändert durch ${amendment.citation} mit Wirkung vom ${amendment.effectiveDate} (Änderung ${amendments.length - index} von ${amendments.length} nach dem Stichtag); die Rücknahme aller Änderungen in umgekehrter Reihenfolge ergibt die Stichtagsfassung, die Vorwärtsanwendung bestätigt den heutigen Text`
+        : `Geändert durch ${amendment.citation} mit Wirkung vom ${amendment.effectiveDate}; die Rücknahme dieser Änderung ergibt die Stichtagsfassung, der Rundlauf bestätigt den heutigen Text`,
+      date: amendment.effectiveDate,
+      citation: amendment.citation,
+      sourceUrl: amendment.url,
+      sha256: amendment.sha256,
+    })),
     {
       kind: 'portal-version-interval',
       dimension: 'validity',
@@ -287,20 +311,32 @@ export function reconstructionEvidenceFor(input: {
   return evidence;
 }
 
-/** Die Verkündung der zurückgenommenen Änderung als Quellreferenz der Fassung (Änderungsbeleg). */
-export function amendmentSourceReference(recipe: ReconstructionRecipe, retrievedAt: string): SourceReference {
+/** Die Verkündung einer zurückgenommenen Änderung als Quellreferenz der Fassung (Änderungsbeleg). */
+export function amendmentSourceReference(recipe: AnyReconstructionRecipe, amendment: RecipeAmendment & { steps: readonly unknown[] }, retrievedAt: string): SourceReference {
+  const count = recipeAmendments(recipe).length;
   return {
     kind: 'official-gazette',
     system: 'bayernrecht',
-    label: `Zurückgenommene Änderung: ${recipe.amendment.citation}`,
+    label: `Zurückgenommene Änderung: ${amendment.citation}`,
     availability: 'external',
-    url: recipe.amendment.url,
+    url: amendment.url,
     retrievedAt: retrievalDate(retrievedAt),
-    sha256: recipe.amendment.sha256,
+    sha256: amendment.sha256,
     mediaType: 'text/html',
     sourceRole: 'amendment-evidence',
-    note: `Rückrechnung auf ${recipe.baselineDate}: Rezept data/imports/bayernrecht/reconstruction/${recipe.documentId}.json (${recipe.steps.length} Schritt${recipe.steps.length === 1 ? '' : 'e'}, Rundlauf bestanden)`,
+    note: `Rückrechnung auf ${recipe.baselineDate}: Rezept data/imports/bayernrecht/reconstruction/${recipe.documentId}.json (${count > 1 ? `eine von ${count} Änderungen, ` : ''}${amendment.steps.length} Schritt${amendment.steps.length === 1 ? '' : 'e'}, Rundlauf bestanden)`,
   };
+}
+
+/** Rohquellen einer bewiesenen Rückrechnung: je zurückgenommene Änderung und je Beleg des Beginns, je SHA-256 einmal. */
+function reconstructionRawDocuments(reconstruction: { recipe: AnyReconstructionRecipe; gazettes: CachedPackage[]; priorGazettes: CachedPackage[] }): ManifestRawDocument[] {
+  const amendments = recipeAmendments(reconstruction.recipe);
+  const documents: ManifestRawDocument[] = [
+    ...reconstruction.gazettes.map((gazette, index) => ({ role: 'gazette' as const, url: amendments[index]!.url, finalUrl: gazette.url, sha256: gazette.sha256, contentType: gazette.contentType, retrievedAt: gazette.retrievedAt, byteLength: gazette.byteLength })),
+    ...reconstruction.priorGazettes.map((prior) => ({ role: 'gazette' as const, url: prior.url, finalUrl: prior.url, sha256: prior.sha256, contentType: prior.contentType, retrievedAt: prior.retrievedAt, byteLength: prior.byteLength })),
+  ];
+  const seen = new Set<string>();
+  return documents.filter((document) => (seen.has(document.sha256) ? false : (seen.add(document.sha256), true)));
 }
 
 /** Die Verkündung der vorangehenden Änderung als Beleg des Beginns der Stichtagsfassung. */
@@ -365,7 +401,7 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
     return { ...empty, result: 'failed', phase: 'parse', code: 'source-unreadable', message: (error as Error).message };
   }
 
-  const law = document.law;
+  let law = document.law;
   const dates = headDates(document);
   const findings: ImportFinding[] = [...law.findings];
   const reviewItems: ReviewItemInput[] = [];
@@ -424,29 +460,58 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
     }
   }
 
+  /* ------------------------------------------------------------------ Quellkorrekturen */
+  // Zweifelsfreie Tippfehler der Quelle, einzeln entschieden und an genau dieses Paket gebunden. Passt die
+  // Korrektur nicht mehr (neues Paket, anderer Wortlaut), wird nicht still korrigiert, sondern gesperrt.
+  let appliedCorrections: AppliedSourceCorrection[] = [];
+  if (options.sourceCorrections && options.sourceCorrections.length > 0) {
+    const corrected = applySourceCorrections(law, options.sourceCorrections, cached.sha256);
+    if (corrected.ok) {
+      law = corrected.law;
+      appliedCorrections = corrected.applied;
+      findings.push(...corrected.applied.map((entry) => ({ severity: 'info' as const, code: 'source-correction-applied', message: `Quellkorrektur ${entry.id}: „${entry.original}“ → „${entry.corrected}“ (${entry.field})` })));
+    } else if (gate.admit) {
+      block('source-correction-stale', corrected.problem, ['Die Korrektur ist an Paket-SHA-256 und Wortlaut gebunden; sie ist neu zu prüfen.']);
+    }
+  }
+
   /* ------------------------------------------------------------------ Rückrechnung */
   // Der Stichtagskörper entsteht aus dem heutigen, indem das Rezept die einzige spätere Änderung zurücknimmt –
   // aber nur, wenn das Rezept genau dieses Paket beschreibt, der Beginn der Stichtagsfassung belegt ist, der
   // Änderungsbeleg im Cache liegt und der Rundlauf (rückwärts, dann vorwärts) byteidentisch den heutigen Körper
   // ergibt. Alles andere ist ein Review-Fall; der heutige Text wird nie als Stichtagstext übernommen.
   let sourceLaw = law;
-  let reconstruction: { recipe: ReconstructionRecipe; begin: BaselineTextInForce; gazette: CachedPackage; priorGazettes: CachedPackage[] } | undefined;
+  // Mehrstufig (v2): alle Änderungen nach dem Stichtag, jüngste zuerst; jede mit eigenem Beleg im Cache. Die
+  // Stichtagsfassung gilt bis zum Vortag der ältesten zurückgenommenen Änderung.
+  let reconstruction: { recipe: AnyReconstructionRecipe; begin: BaselineTextInForce; gazettes: CachedPackage[]; priorGazettes: CachedPackage[] } | undefined;
   if (gate.admit && gate.reconstruction && blocking.length === 0) {
     const recipe = gate.reconstruction;
     const begin = recipe.baselineTextInForce;
+    const amendments = recipeAmendments(recipe);
+    const newest = amendments[0]!;
+    const oldest = amendments.at(-1)!;
     // Formale Prüfung des Rezepts (recipeProblems) und dann die Übereinstimmung mit genau diesem Paket.
     const mismatch = recipeProblems(recipe)[0]
       ?? (recipe.source.sha256 !== cached.sha256
         ? `Das Rezept gilt für das Paket ${recipe.source.sha256.slice(0, 16)}…, im Cache liegt ${cached.sha256.slice(0, 16)}…`
-        : recipe.amendment.effectiveDate !== law.sourceValidFrom
-          ? `Das Rezept nimmt eine Änderung mit Wirkung vom ${recipe.amendment.effectiveDate} zurück, der heutige Text gilt laut Paket aber ab ${law.sourceValidFrom ?? '?'}`
+        : newest.effectiveDate !== law.sourceValidFrom
+          ? `Das Rezept nimmt als jüngste eine Änderung mit Wirkung vom ${newest.effectiveDate} zurück, der heutige Text gilt laut Paket aber ab ${law.sourceValidFrom ?? '?'}`
           : begin.date > options.baselineDate
             ? `Die Stichtagsfassung gilt laut Rezept erst ab ${begin.date} – nach dem Stichtag`
             : undefined);
     if (mismatch) {
       block('reconstruction-recipe-mismatch', `Rückrechnungsrezept nicht anwendbar: ${mismatch}`, [mismatch, `Rezept: data/imports/bayernrecht/reconstruction/${recipe.documentId}.json`]);
     } else {
-      const gazette = await readCachedPackage(options.cacheDir, recipe.amendment.url);
+      const gazettes: CachedPackage[] = [];
+      let gazetteProblem: { url: string; detail: string } | undefined;
+      for (const amendment of amendments) {
+        const gazette = await readCachedPackage(options.cacheDir, amendment.url);
+        if (!gazette || isCachedPackageProblem(gazette) || gazette.sha256 !== amendment.sha256) {
+          gazetteProblem = { url: amendment.url, detail: gazette && !isCachedPackageProblem(gazette) ? `SHA-256 im Cache ${gazette.sha256.slice(0, 16)}…, im Rezept ${amendment.sha256.slice(0, 16)}…` : 'Kein oder beschädigter Cacheeintrag' };
+          break;
+        }
+        gazettes.push(gazette);
+      }
       // Belege für den Beginn der Stichtagsfassung (Verkündung der vorangehenden Änderung) – ebenfalls unverändert im Cache.
       const priorGazettes: CachedPackage[] = [];
       let priorProblem: string | undefined;
@@ -460,9 +525,9 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
       }
       if (priorProblem) {
         block('reconstruction-evidence-missing', priorProblem, ['Ohne den archivierbaren Beleg wird keine Rückrechnung übernommen.']);
-      } else if (!gazette || isCachedPackageProblem(gazette) || gazette.sha256 !== recipe.amendment.sha256) {
-        block('reconstruction-evidence-missing', `Der Änderungsbeleg ${recipe.amendment.url} liegt nicht unverändert im Cache`, [
-          gazette && !isCachedPackageProblem(gazette) ? `SHA-256 im Cache ${gazette.sha256.slice(0, 16)}…, im Rezept ${recipe.amendment.sha256.slice(0, 16)}…` : 'Kein oder beschädigter Cacheeintrag',
+      } else if (gazetteProblem) {
+        block('reconstruction-evidence-missing', `Der Änderungsbeleg ${gazetteProblem.url} liegt nicht unverändert im Cache`, [
+          gazetteProblem.detail,
           'Ohne den archivierbaren Beleg wird keine Rückrechnung übernommen.',
         ]);
       } else {
@@ -470,20 +535,42 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
         if (!proof.ok) {
           block('reconstruction-roundtrip-failed', 'Der Rundlauf der Rückrechnung ist nicht bestanden', [proof.detail]);
         } else {
-          reconstruction = { recipe, begin, gazette, priorGazettes };
+          reconstruction = { recipe, begin, gazettes, priorGazettes };
           sourceLaw = {
             ...law,
             body: applyReverseRecipe(law.body, recipe),
             sourceValidFrom: begin.date,
-            sourceValidTo: previousDay(recipe.amendment.effectiveDate),
+            sourceValidTo: previousDay(oldest.effectiveDate),
             sourceReferences: [
               ...law.sourceReferences,
-              amendmentSourceReference(recipe, gazette.retrievedAt),
+              ...amendments.map((amendment, index) => amendmentSourceReference(recipe, amendment, gazettes[index]!.retrievedAt)),
               ...(begin.sources ?? []).map((source, index) => beginSourceReference(source, priorGazettes[index]!.retrievedAt, begin.date)),
             ],
           };
         }
       }
+    }
+  }
+
+  /* ------------------------------------------------------------------ Zusammengeführte Anlagen */
+  // Normative Anlagen, die das Portal als eigene Dokumente führt (BayBodSchO → BayEVBodenseeSchO), werden
+  // vollständig als Anlage angehängt – nach eigener Stichtags-, Struktur- und Integritätsprüfung.
+  let annexRaw: ManifestRawDocument[] = [];
+  let annexPackages: FigurePackage[] = [];
+  if (gate.admit && blocking.length === 0 && candidate.mergedAnnexes && candidate.mergedAnnexes.length > 0) {
+    const merged = await loadMergedAnnexes(candidate.mergedAnnexes, options.cacheDir);
+    if (!merged.ok) {
+      block(merged.code, merged.message, merged.details);
+    } else {
+      sourceLaw = {
+        ...sourceLaw,
+        body: [...sourceLaw.body, ...merged.annexes.blocks],
+        sourceReferences: [...sourceLaw.sourceReferences, ...merged.annexes.references],
+        keywords: [...new Set([...sourceLaw.keywords, ...merged.annexes.keywords])],
+      };
+      annexRaw = merged.annexes.raw;
+      annexPackages = merged.annexes.packages;
+      findings.push(...merged.annexes.notes.map((note) => ({ severity: 'info' as const, code: 'annex-merged', message: note })));
     }
   }
 
@@ -503,6 +590,7 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   const reserver = createSlugReserver(options.registry, options.existingSlugs);
   let reservation: SlugReservation | undefined;
   let record: NormRecord | undefined;
+  let figureRaw: ManifestRawDocument[] = [];
   let transformation = { changes: 0, unresolved: 0, detections: 0, postTransformAudit: false };
   // Die Phase benennt, wo die Entscheidung fiel: Bei einem abgelehnten Kandidaten ist das die Auswahl,
   // bei einem zugelassenen frühestens der Parser.
@@ -533,7 +621,7 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
           sourceArea: candidate.sourceArea,
           institutions: options.institutions,
           sourceStatus: reconstruction
-            ? { validity: 'reconstructed', text: 'reconstructed', note: `Stichtagsfassung aus dem heutigen Text durch Rücknahme von ${reconstruction.recipe.amendment.citation} (Wirkung ab ${reconstruction.recipe.amendment.effectiveDate}) zurückgerechnet; Rundlauf bestanden` }
+            ? { validity: 'reconstructed', text: 'reconstructed', note: `Stichtagsfassung aus dem heutigen Text durch Rücknahme von ${reversedAmendmentsText(reconstruction.recipe)} zurückgerechnet; Rundlauf bestanden` }
             : { validity: 'exact', text: 'direct' },
           provenanceNote: recovery.note,
         },
@@ -547,7 +635,19 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
         postTransformAudit: result.report.postTransformAudit.ok,
       };
       phase = 'pruefung';
-      const problems = errorFindings([...result.findings, ...auditRecord(record)]);
+      // Abbildungen: jede Bilddatei als eigene Rohquelle, gebunden an Paket, Pfad und SHA-256.
+      const figures = figureRawDocuments(record, [{ url: candidate.zipUrl, sha256: cached.sha256, retrievedAt: cached.retrievedAt, attachments: document.attachments }, ...annexPackages]);
+      figureRaw = figures.raw;
+      if (figures.unbound.length > 0) block('figure-asset-unbound', `${figures.unbound.length} Abbildungen ohne belegte Bilddatei im Exportpaket: ${figures.unbound.slice(0, 5).join(', ')}`, ['Eine Abbildung wird nur mit Bilddatei aus dem Paket (Pfad und SHA-256) ausgeliefert.']);
+      const audit = auditRecord(record);
+      // Nicht entscheidbare Eigennamen („Bayerisches Konkordat“): Prüffall, nicht blockierend; der Text bleibt.
+      for (const [code, summary] of [['historical-name-uncertain', 'historischer Vertragsname oder heutiger Selbstbezug'], ['proper-name-uncertain', 'Markenname mit Landesbezeichnung']] as const) {
+        const uncertain = audit.filter((finding) => finding.code === code);
+        if (uncertain.length === 0) continue;
+        findings.push({ severity: 'warning', code, message: `${uncertain.length}× ${summary} – nicht entscheidbar: ${uncertain.slice(0, 3).map((finding) => finding.message).join(' · ')}` });
+        reviewItems.push({ category: 'institution-mapping', key: code, severity: 'non-blocking', summary: `${uncertain.length}× ${summary}`, details: [...uncertain.slice(0, 10).map((finding) => finding.message), 'Redaktionelle Entscheidung: Schutzmuster (unverändert) oder Überleitung.'] });
+      }
+      const problems = errorFindings([...result.findings, ...audit]);
       for (const problem of problems) {
         blocking.push(problem.code);
         reviewItems.push({ category: reviewCategoryForCode(problem.code), key: problem.code, severity: 'blocking', summary: problem.message, details: ['Befund der Überleitung bzw. der Restpostenprüfung auf der fertigen Norm.'] });
@@ -636,29 +736,16 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
         retrievedAt: cached.retrievedAt,
         byteLength: cached.byteLength,
       },
-      // Der Beleg der zurückgenommenen Änderung wird mit archiviert: Ohne ihn wäre die Rückrechnung nicht prüfbar.
-      ...(reconstruction
-        ? [{
-            role: 'gazette' as const,
-            url: reconstruction.recipe.amendment.url,
-            finalUrl: reconstruction.gazette.url,
-            sha256: reconstruction.gazette.sha256,
-            contentType: reconstruction.gazette.contentType,
-            retrievedAt: reconstruction.gazette.retrievedAt,
-            byteLength: reconstruction.gazette.byteLength,
-          }, ...reconstruction.priorGazettes.map((prior) => ({
-            role: 'gazette' as const,
-            url: prior.url,
-            finalUrl: prior.url,
-            sha256: prior.sha256,
-            contentType: prior.contentType,
-            retrievedAt: prior.retrievedAt,
-            byteLength: prior.byteLength,
-          }))]
-        : []),
+      // Die Belege der zurückgenommenen Änderungen und des Beginns werden mit archiviert: Ohne sie wäre die
+      // Rückrechnung nicht prüfbar. Dieselbe Verkündung (gleicher SHA-256) nur einmal – der Objektschlüssel ist
+      // inhaltsadressiert.
+      ...(reconstruction ? reconstructionRawDocuments(reconstruction) : []),
+      ...annexRaw,
+      ...figureRaw,
     ],
     versionsConsidered: [{ validFrom: law.sourceValidFrom, validTo: law.sourceValidTo ?? null, url: candidate.zipUrl, selected: true }],
     findings,
+    ...(appliedCorrections.length > 0 ? { sourceCorrections: appliedCorrections } : {}),
     integrity: { fetchParse: cached.sha256 === cached.declaredSha256, sourceCanonical: document.documentId === candidate.documentId },
     transformation,
     decisionTrace: trace,
@@ -671,7 +758,13 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
 
   // Der Eintrag wird **immer** geprüft, auch im Dry-run: Sonst behauptete der Dry-run eine Übernahme,
   // die der Schreiblauf an der Schemaprüfung ablehnte – und die Probe wäre wertlos.
-  const manifestProblems = validateManifestEntry(entry, `Manifesteintrag ${candidate.documentId}`);
+  const manifestProblems = [
+    ...validateManifestEntry(entry, `Manifesteintrag ${candidate.documentId}`),
+    ...(entry.sourceCorrections ?? []).flatMap((correction, index) =>
+      correction.original && correction.corrected && correction.sourceIdentity === candidate.documentId && correction.sourceSha256 === cached.sha256 && correction.reason
+        ? []
+        : [`Manifesteintrag ${candidate.documentId}: sourceCorrections[${index}] unvollständig oder an ein anderes Paket gebunden`]),
+  ];
   if (manifestProblems.length > 0) {
     rollbackSlug();
     return { ...empty, result: 'failed', phase: 'pruefung', code: 'manifest-invalid', message: manifestProblems.join('; '), findings };

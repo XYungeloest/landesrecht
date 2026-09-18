@@ -31,16 +31,19 @@ Von 2 413 enumerierten Dokumenten ist **keines** ohne erklärten Endstatus:
 
 | Endstatus | Zahl |
 | --- | ---: |
-| `imported` – heutiger Text ist der Stichtagstext | 1 569 |
-| `imported` – Stichtagsfassung rückgerechnet (`reverse-amendment`) | 13 |
-| `reconstruction-required` | 506 |
+| `imported` – heutiger Text ist der Stichtagstext (einschl. BayVwV96990 mit Quellkorrektur) | 1 570 |
+| `imported` – Stichtagsfassung rückgerechnet (`reverse-amendment`, 28 einstufig, 5 mehrstufig) | 33 |
+| `reconstruction-required` | 486 |
+| `review` – Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
 | `not-at-baseline` (erst nach dem Stichtag erlassen) | 239 |
 | `excluded` – Tarifvertrag | 56 |
 | `excluded` – bundeseinheitliche Anordnung | 14 |
-| `review` – Geltung unbestimmt | 14 |
-| `review` – Quelltippfehler („Bayerischne“, BayVwV96990) | 1 |
-| `review` – Anhang einer anderen Norm (Bodensee-SchO) | 1 |
+| `excluded` – als Anhang der Stammnorm übernommen (BayBodSchO → EV-BodenseeSchO) | 1 |
+| `review` – Geltung unbestimmt | 13 |
 | **gesamt** | **2 413** |
+
+Dazu 15 heute nicht mehr geführte Stichtagsnormen (Bereich `events`), aus amtlichen Verkündungen
+wiederhergestellt (`docs/BAYWUE_BASELINE_ONLY.md`); übernommen insgesamt **1 618**.
 
 ### Befunde, die der Bulk sonst verfehlt hätte
 
@@ -78,34 +81,38 @@ Vollständige Liste mit Belegen: Abschlussbericht des Laufs, Abschnitt D.
 
 ## 2 Was fehlt
 
-- **506 `reconstruction-required`** – die eigentliche historische Arbeit. Von 239 Normen mit genau einem
-  stark belegten Änderungsschritt sind 13 bewiesen zurückgerechnet; die übrigen scheitern an
-  nicht rückrechenbaren Formeln (Neufassungen, Aufhebungen, strukturelle Befehle), unlesbaren Befehlen oder
-  einer nicht belegbaren Kette. 280 Normen haben mehrere Änderungsschritte. Stand und Gründe je Norm:
-  `data/audits/bayernrecht/RECONSTRUCTION.md`, Schlange `data/imports/bayernrecht/reconstruction-queue.json`.
-- **Heute fehlende Stichtagsnormen**: 436 Aufhebungen/Außerkrafttreten nach dem Stichtag belegt das
-  Ereignisregister (407 stark zugeordnet); ihre Vorgänger stehen nicht mehr im Portal und sind nicht
-  wiederhergestellt.
-- **14 Normen mit unbestimmter Stichtagsgeltung** (8 ohne Ausfertigungsdatum, 6 ohne Registereintrag).
-- **2 Prüffälle**: Bodensee-SchO (eigene Norm oder Anhang), BayVwV96990 (Quell-Tippfehler „Bayerischne“
-  im Kurztitel – eine stille Korrektur wäre erfundener Text).
-- **Kennzeichnung „Teilbestand“ in der Oberfläche** – Darstellungsentscheidung, offen.
+- **486 `reconstruction-required`** in zehn Gruppen (`data/imports/bayernrecht/reconstruction-queue.json`):
+  - Die Gruppen 1–3 (eine, zwei, drei oder mehr Änderungen) sind grundsätzlich umkehrbar. Offen bleiben dort
+    72 Normen, vor allem wegen nicht lesbarer Befehlsblöcke, nicht lesbaren Inkrafttretens und nicht unterstützter
+    Formeln.
+  - Die Gruppen 4–10 sind nicht umkehrbar oder nicht belegt: Neufassung, Anlagen-, Tabellen- oder
+    Bildersetzung, fehlender Vorgängertext (283), heute fehlender Vorgänger und widersprüchliche Belege (35).
+  - Gründe je Norm: `data/audits/bayernrecht/RECONSTRUCTION.md`, maschinenlesbar
+    `data/audits/bayernrecht/reconstruction-audit.json`.
+- **Heute fehlende Stichtagsnormen:** 401 offen von 426 Kandidaten (15 wiederhergestellt, 5 nicht am Stichtag,
+  5 nicht Landesrecht). Die meisten haben keine elektronische Ausgangsverkündung (287). Stand je Kandidat:
+  `data/audits/bayernrecht/BASELINE_ONLY.md`.
+- **13 Normen mit unbestimmter Stichtagsgeltung** und 1 Norm mit belegter Geltung, aber unbelegtem Textbeginn.
+- **Prüffälle ohne Blockade:**
+  - 5 nicht entscheidbare Eigennamen: 4× „Bayerisches Konkordat“, 1× „Zentrum Digitalisierung.Bayern“;
+  - 74 Slugkollisionen, deterministisch aufgelöst;
+  - offene Organzuordnungen: `data/audits/bayernrecht/INSTITUTIONS.md`.
 
 ## 3 GO/No-Go
 
 | Gate | Stand |
 | --- | --- |
 | Enumeration | Fixpunkt: Rebuild beider Bereiche unverändert, zweiter Rebuild ebenso |
-| Vollkorpus-Struktur | 2 342 Kandidaten geprüft, 2 341 ohne Importhindernis (1 Überleitungsfall); ≈ 26 Dokumente/s, 751 MB Spitze (`data/audits/bayernrecht/PERFORMANCE.md`) |
-| Textintegrität | `mismatch` 198 → 28 → **0**; `review` 4 (je ein unerklärtes Zahlwort, sichtbar) |
+| Vollkorpus-Struktur | 2 342 Kandidaten geprüft, **2 342 ohne Importhindernis** (Quellkorrektur BayVwV96990 auch in der Inventur) |
+| Textintegrität | `mismatch` 198 → 28 → **0**; `review` 4 → **0** (verschmolzene Fußnotenzeichen, Parser 0.2.0) |
 | Überleitung | Idempotenz konstruiert; Provenienzschutz aller Blattnamen; Baden-Württemberg-Kollisionen regressionsgeschützt |
-| Rückrechnung | 13 Rezepte, Rundlauf exakt, Beginn der Stichtagsfassung belegt; Bulk prüft Rezept, Paket, Belege und Rundlauf erneut |
-| Bulk | 1 582 übernommen, Audit ohne Abweichung, Slug-Registry = Manifest |
-| Lokale D1 | 1 582 Normen, 30 821 Sucheinheiten, FTS5-Integrität |
-| R2 | 3 212 Objekte unter `baywue/` (1 582 Pakete + 24 Verkündungsbelege, je mit Umschlag), 0 Abweichungen; West-Objekte unverändert |
-| Remote-D1 | inkrementell eingespielt; lokal ↔ remote identisch in 11 Prüfungen, Blocksumme byte-genau |
-| Suche | Vollprüfung grün: 1 582 Titel, 570 Abkürzungen, 598 Strukturadressen, 707 Nummernadressen, 0 Fehler; Golden Set 117 Anfragen (6 rückgerechnete Normen), 0 verletzt; West + BayWü 10/10; Remote-Stichprobe 60 Fälle, 0 verletzt, 0 fremde Treffer |
-| Worker | `cf8c773d`; West 1 482 und BayWü 1 582 Normen ausgeliefert |
+| Rückrechnung | 33 Rezepte (28 v1, 5 v2 mit Forward-Replay), Rundlauf exakt, Beginn der Stichtagsfassung belegt; Bulk prüft Rezept, Paket, jeden Beleg und Rundlauf erneut |
+| Bulk | 1 603 übernommen + 15 baseline-only = 1 618; Audit ohne Abweichung, Slug-Registry = Manifest |
+| Lokale D1 | 1 618 Normen, 31 691 Sucheinheiten, FTS5-Integrität |
+| R2 | 3 928 Objekte unter `baywue/`: 1 603 Pakete, 1 Anhangpaket, 97 Verkündungsbelege und 263 Abbildungs-Assets, je mit Umschlag; 0 Abweichungen; West-Objekte unverändert |
+| Remote-D1 | inkrementell eingespielt (94 Normen); lokal ↔ remote identisch in 11 Prüfungen, Blocksumme byte-genau |
+| Suche | Vollprüfung grün: 1 618 Titel, 596 Abkürzungen, 616 Strukturadressen, 722 Nummernadressen, 0 Fehler; Golden Set 128 Anfragen (11 kuratiert: Anhang, Quellkorrektur, historische Namen, rückgerechnet, baseline-only), 0 verletzt; West + BayWü 10/10; Remote-Stichprobe 60 Fälle, 0 verletzt, 0 fremde Treffer |
+| Worker | `43d211e3`; West 1 482 und BayWü 1 618 Normen ausgeliefert; Asset-Route und Teilbestand-Hinweis im Smoke-Test |
 | West | Fingerabdruck identisch, 1 482 Normen, Readiness READY mit Human Approval, Remote-D1 identisch |
 
 ## 4 Nächste Schritte
@@ -116,6 +123,7 @@ Inkrementelle Runde (nach Parser-, Rezept- oder Scope-Änderungen):
 npm run import:bayernrecht:baseline -- --write            # nur nach Änderungen an Paketen/Register
 npm run import:bayernrecht:reconstruction-queue -- --write # immer nach baseline --write
 npm run import:bayernrecht:bulk -- --write                # ohne --resume, wenn sich der Parser geändert hat
+npm run import:bayernrecht:restore-baseline-only -- --write --offline
 npm run import:bayernrecht:enumerate -- --area landesrecht --offline --write
 npm run import:bayernrecht:enumerate -- --area vwv --offline --write
 npm run import:bayernrecht:inventory -- --write
@@ -135,6 +143,6 @@ Ein erneuter Bulk-Lauf mit `--write` leert die R2-Archivfelder im Manifest; der 
 `r2-sync` stellt sie wieder her, ohne etwas neu hochzuladen. `baseline --write` überschreibt die
 Rückrechnungsentscheidungen in `baseline.json` – deshalb danach immer `reconstruction-queue --write`.
 
-Fachlich nächster Schritt: weitere Belege für die 506 – zuerst die Mehrschrittketten, deren Einzelschritte
-alle rückrechenbare Formeln tragen, und die Wiederherstellung der heute fehlenden Stichtagsnormen aus ihren
-Stammfassungen.
+Fachlich nächster Schritt: die 72 offenen Fälle der Gruppen 1–3 (Befehlsblöcke und Inkrafttreten lesbar
+machen, Formeln `insert-unit`/`renumber` rückrechenbar), dann Neufassungen mit belegtem Alttext aus der
+Vorfassung (Gruppe 8) und heute fehlende Normen mit PDF-Ausgangsverkündung mit Textlayer.

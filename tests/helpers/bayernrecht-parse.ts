@@ -160,8 +160,18 @@ export function imagePackage(): Uint8Array {
     { path: 'mimetype', content: 'bayportalnorm+zip' },
     { path: 'META-INF/manifest.xml', content: manifest },
     { path: 'bayportalnorm/BayBoFiV.xml', content: fixtureBytes('bodenfischerei') },
-    ...images.map((path) => ({ path, content: `GIF89a ${path}` })),
+    ...images.map((path) => ({ path, content: gifBytes(40, 30, path) })),
   ]);
+}
+
+/** Kleinste GIF-Kopfzeile (Signatur, Breite, Höhe) plus Kennung, damit jede Datei einen eigenen SHA-256 hat. */
+export function gifBytes(width: number, height: number, tag: string): Uint8Array {
+  const tail = new TextEncoder().encode(tag);
+  const bytes = new Uint8Array(10 + tail.length);
+  bytes.set(new TextEncoder().encode('GIF89a'), 0);
+  bytes.set([width & 0xff, width >> 8, height & 0xff, height >> 8], 6);
+  bytes.set(tail, 10);
+  return bytes;
 }
 
 /** Exportpaket eines Gesetzes ohne Beilagen. */

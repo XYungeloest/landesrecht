@@ -74,7 +74,7 @@ export interface SourceProvenance {
   note?: string;
 }
 
-export const RAW_DOCUMENT_ROLES = ['version-page', 'stem-page', 'text-document', 'annex', 'pdf', 'gazette', 'event-page'] as const;
+export const RAW_DOCUMENT_ROLES = ['version-page', 'stem-page', 'text-document', 'annex', 'pdf', 'gazette', 'event-page', 'figure'] as const;
 export type RawDocumentRole = (typeof RAW_DOCUMENT_ROLES)[number];
 
 export const ARCHIVE_STATUSES = ['versioned', 'staged', 'uploaded', 'verified'] as const;
@@ -88,6 +88,12 @@ export interface ManifestRawDocument {
   contentType: string;
   retrievedAt: string;
   byteLength: number;
+  /**
+   * Nur `figure`: Die Bilddatei liegt im Exportpaket unter `url` (SHA-256 `packageSha256`) am Pfad `packagePath`;
+   * `sha256`, `byteLength` und `contentType` beschreiben die Bilddatei selbst.
+   */
+  packagePath?: string;
+  packageSha256?: string;
   /** Versionierter Beispielkorpus (nur Stichprobe; im Bulk verboten). */
   localSource?: string;
   /** Bulk: unveränderliches R2-Objekt unter dem Präfix aus `constants.ts`. */
@@ -245,6 +251,10 @@ export function validateManifestEntry(value: unknown, where = 'Manifesteintrag')
       for (const field of ['url', 'finalUrl', 'contentType', 'retrievedAt'] as const) if (typeof document[field] !== 'string' || (document[field] as string) === '') problems.push(`${at}: ${field} fehlt`);
       if (typeof document.sha256 !== 'string' || !SHA256.test(document.sha256)) problems.push(`${at}: sha256 ist kein SHA-256`);
       if (typeof document.byteLength !== 'number' || !Number.isInteger(document.byteLength) || document.byteLength < 0) problems.push(`${at}: byteLength fehlt`);
+      if (document.role === 'figure') {
+        if (typeof document.packagePath !== 'string' || document.packagePath === '') problems.push(`${at}: packagePath fehlt (Abbildung ohne Pfad im Paket)`);
+        if (typeof document.packageSha256 !== 'string' || !SHA256.test(document.packageSha256)) problems.push(`${at}: packageSha256 ist kein SHA-256`);
+      } else if (document.packagePath !== undefined || document.packageSha256 !== undefined) problems.push(`${at}: packagePath/packageSha256 nur für Rolle figure`);
       if (document.archiveStatus !== undefined) oneOf(problems, at, 'archiveStatus', document.archiveStatus, ARCHIVE_STATUSES);
       if (document.archiveStatus !== undefined && document.archiveStatus !== 'versioned' && typeof document.objectKey !== 'string') problems.push(`${at}: Archivstatus ${String(document.archiveStatus)} ohne objectKey`);
       return undefined;

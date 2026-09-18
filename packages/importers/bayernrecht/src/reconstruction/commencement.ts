@@ -53,25 +53,73 @@ export function commencementDate(phrase: string, eventDate: string): string | un
   return undefined;
 }
 
-/** Glieder im Gegenstand eines Satzes („§ 2“, „die §§ 61 bis 73“, „Nr. 1.3“, „die Nrn. 1.2, 1.13“). */
-function subjectRefs(subject: string): string[] | undefined {
+/**
+ * Glieder im Gegenstand eines Satzes („§ 2“, „die §§ 61 bis 73“, „Nr. 1.3“, „die Nrn. 1.2, 1.13“, „§ 1 Nr. 5
+ * Buchst. b“). Ein Glied mit Untergliederung („§ 1 Nr. 5“) bleibt **ein** Verweis – es betrifft nur einen Teil
+ * des Abschnitts, nie den ganzen.
+ */
+export function subjectRefs(subject: string): string[] | undefined {
   const refs: string[] = [];
   const text = subject.replace(/\s+/gu, ' ').trim();
-  for (const match of text.matchAll(/(§§?|Art\.|Nrn?\.)\s*(\d+[a-z]?(?:\.\d+[a-z]?)*)((?:\s*(?:,|und|bis)\s*\d+[a-z]?(?:\.\d+[a-z]?)*)*)/gu)) {
+  const SUB = String.raw`(?:\s+(?:Abs\.|Nrn?\.|Buchst\.|Satz|Sätze|Doppelbuchst\.)\s*[\da-z]+[a-z]?(?:\.\d+[a-z]?)*(?:\s*(?:,|und|bis)\s*[\da-z]+[a-z]?(?:\.\d+[a-z]?)*)*)*`;
+  const pattern = new RegExp(String.raw`(§§?|Art\.|Artikel|Nrn?\.)\s*(\d+[a-z]?(?:\.\d+[a-z]?)*)((?:\s*(?:,|und|bis)\s*\d+[a-z]?(?:\.\d+[a-z]?)*)*)(${SUB})`, 'gu');
+  for (const match of text.matchAll(pattern)) {
     const kind = match[1]!.startsWith('§') ? '§' : match[1]!.startsWith('Art') ? 'Art.' : 'Nr.';
+    const sub = (match[4] ?? '').trim();
+    if (sub !== '') {
+      // Untergliederung nur an einem einzelnen Glied lesbar („§ 1 Nr. 5“), nicht an einer Aufzählung.
+      if ((match[3] ?? '').trim() !== '') return undefined;
+      refs.push(`${kind} ${match[2]} ${sub.replace(/\s+/gu, ' ')}`);
+      continue;
+    }
     if (/bis/u.test(match[3] ?? '')) {
       const bounds = [match[2]!, ...(match[3] ?? '').split(/\s*(?:,|und|bis)\s*/u).filter(Boolean)];
       const range = /(\d+)\s*bis\s*(\d+)/u.exec(`${match[2]}${match[3]}`);
-      if (range && !bounds.some((value) => value.includes('.'))) {
+      if (range && !bounds.some((value) => value.includes('.') || /[a-z]/u.test(value))) {
         for (let value = Number(range[1]); value <= Number(range[2]); value += 1) refs.push(`${kind} ${value}`);
         continue;
       }
-      return undefined;
+      // „die Nrn. 1.1 bis 1.18, 1.20 und 1.21“: Bereich nur mit gleichem Präfix.
+      const parts = `${match[2]}${match[3]}`.split(/\s*(?:,|und)\s*/u).filter(Boolean);
+      const expanded: string[] = [];
+      for (const part of parts) {
+        const dotted = /^((?:\d+\.)+)(\d+)\s*bis\s*((?:\d+\.)+)(\d+)$/u.exec(part);
+        if (dotted && dotted[1] === dotted[3] && Number(dotted[2]) <= Number(dotted[4])) {
+          for (let value = Number(dotted[2]); value <= Number(dotted[4]); value += 1) expanded.push(`${kind} ${dotted[1]}${value}`);
+        } else if (/^\d+[a-z]?(?:\.\d+[a-z]?)*$/u.test(part)) expanded.push(`${kind} ${part}`);
+        else return undefined;
+      }
+      refs.push(...expanded);
+      continue;
     }
     refs.push(`${kind} ${match[2]}`);
     for (const extra of (match[3] ?? '').split(/\s*(?:,|und)\s*/u).filter(Boolean)) refs.push(`${kind} ${extra}`);
   }
   return refs.length > 0 ? refs : undefined;
+}
+
+const DATE_PHRASE = String.raw`(?:rückwirkend\s+)?(?:am|zum|mit\s+Wirkung\s+vom|mit\s+Wirkung\s+zum)\s+\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}`;
+
+/**
+ * Eine Abweichung als Folge „Gegenstand Datum“: „§ 16 am 2. August 2024 und § 20 am 1. Januar 2025“ oder ein
+ * Listenglied „die §§ 11 und 13 am 1. Oktober 2025,“. Jeder Gegenstand muss lesbar sein, sonst `undefined`.
+ */
+function deviationPairs(text: string, eventDate: string): Array<{ refs: string[]; date: string }> | undefined {
+  const cleaned = text.replace(/\s+/gu, ' ').replace(/[,;.]?\s*(?:und|sowie)?\s*$/u, '').trim();
+  const pairs: Array<{ refs: string[]; date: string }> = [];
+  let rest = cleaned;
+  const pattern = new RegExp(String.raw`^(?:(?:,|und|sowie)\s+)?([\s\S]+?)\s+(${DATE_PHRASE})(?=\s*(?:,|und|sowie|$))`, 'u');
+  while (rest !== '') {
+    const match = pattern.exec(rest);
+    if (!match) return undefined;
+    if (/\s(?:am|zum)\s+\d/u.test(match[1]!)) return undefined;
+    const refs = subjectRefs(match[1]!);
+    const date = commencementDate(match[2]!, eventDate);
+    if (!refs || !date) return undefined;
+    pairs.push({ refs, date });
+    rest = rest.slice(match[0].length).trim();
+  }
+  return pairs.length > 0 ? pairs : undefined;
 }
 
 /**
@@ -103,8 +151,9 @@ export function commencementStatements(units: readonly GazetteUnit[], eventDate:
       if (!inside) candidates.push(unit);
     }
   }
-  for (const unit of candidates) {
-    if (!/in\s+Kraft/u.test(unit.text)) continue;
+  for (let position = 0; position < candidates.length; position += 1) {
+    const unit = candidates[position]!;
+    if (!/in\s+Kraft/u.test(unit.text) && !/Abweichend\s+von\s+[^:]{1,60}?\s+(?:tritt|treten)$/u.test(unit.text.trim())) continue;
     // In Sätze zerlegen: an Satznummern, Absatzzeichen und Satzenden vor einem Großbuchstaben.
     const sentences = unit.text
       // Nicht nach „1.“ vor „Januar“ trennen: Satzende ist ein Punkt hinter einem Kleinbuchstaben oder einer Klammer.
@@ -112,28 +161,66 @@ export function commencementStatements(units: readonly GazetteUnit[], eventDate:
       .map((sentence) => sentence.replace(/^[¹²³⁴⁵⁶⁷⁸⁹]+|^\(\d+\)\s*/u, '').trim())
       .filter((sentence) => sentence !== '');
     for (const sentence of sentences) {
+      // Aufzählung über Einheiten: „Abweichend von Satz 1 treten“ – „1. § 8 mit Wirkung vom 1. August 2022,“ – … – „in Kraft.“
+      if (/^Abweichend\s+von\s+[^:]{1,60}?\s+(?:tritt|treten)$/u.test(sentence) && sentence === sentences.at(-1)) {
+        const items: GazetteUnit[] = [];
+        let at = position + 1;
+        while (at < candidates.length && /^(?:\d+\.|[a-z]\))$/u.test(candidates[at]!.label ?? '')) items.push(candidates[at++]!);
+        const closing = candidates[at];
+        if (items.length === 0 || !closing || !/^in\s+Kraft\.?$/u.test(closing.text.trim())) {
+          unreadable.push(sentence);
+          continue;
+        }
+        position = at;
+        for (const item of items) {
+          const pairs = deviationPairs(item.text, eventDate);
+          if (!pairs) {
+            unreadable.push(`${sentence} ${item.label} ${item.text} in Kraft`);
+            continue;
+          }
+          for (const pair of pairs) statements.push({ text: `${sentence} ${item.label} ${item.text} in Kraft.`, refs: pair.refs, date: pair.date });
+        }
+        continue;
+      }
+      // Aufzählung: „Abweichend von Abs. 1 treten in Kraft:“ – die folgenden Listenglieder sind je eine Abweichung.
+      if (/^Abweichend\s+von\s+[^:]{1,60}?\s+(?:tritt|treten)\s+in\s+Kraft\s*:$/u.test(sentence)) {
+        let consumed = 0;
+        let broken = false;
+        while (position + 1 < candidates.length && /^(?:\d+\.|[a-z]\))$/u.test(candidates[position + 1]!.label ?? '')) {
+          const item = candidates[position + 1]!;
+          position += 1;
+          consumed += 1;
+          const pairs = deviationPairs(item.text, eventDate);
+          if (!pairs) {
+            unreadable.push(`${sentence} ${item.label} ${item.text}`);
+            broken = true;
+            continue;
+          }
+          for (const pair of pairs) statements.push({ text: `${sentence} ${item.label} ${item.text}`, refs: pair.refs, date: pair.date });
+        }
+        if (consumed === 0 && !broken) unreadable.push(sentence);
+        continue;
+      }
       // Nur Sätze der Form „… tritt/treten … in Kraft“; „wann sie in Kraft tritt“ ist Normtext, keine Schlussvorschrift.
       if (!/(?:tritt|treten)(?![\p{L}])[\s\S]*\bin\s+Kraft/u.test(sentence)) {
         if (/[Aa]bweichend/u.test(sentence)) unreadable.push(sentence);
         continue;
       }
       if (/außer\s+Kraft/u.test(sentence) && !/(?:^|\s)in\s+Kraft/u.test(sentence.replace(/außer\s+Kraft/gu, ''))) continue;
-      const general = /^(?:Dieses|Diese|Die|Das)\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Änderungssatzung|Statut|Richtlinie|Richtlinien|Verwaltungsvorschrift|Änderungsbekanntmachung|Änderungsverordnung)\s+(?:tritt|treten)\s+([\s\S]+?)\s+in\s+Kraft\.?$/u.exec(sentence);
+      const general = /^(?:Dieses|Diese|Die|Das)\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Änderungssatzung|Statut|Richtlinie|Richtlinien|Verwaltungsvorschrift|Änderungsbekanntmachung|Änderungsverordnung|Änderung\s+der\s+(?:Bekanntmachung|Geschäftsordnung|Verwaltungsvorschrift|Richtlinien?|Satzung))\s+(?:tritt|treten)\s+([\s\S]+?)\s+in\s+Kraft\.?$/u.exec(sentence);
       if (general) {
         const date = commencementDate(general[1]!, eventDate);
         statements.push({ text: sentence, refs: null, ...(date ? { date } : {}) });
         if (!date) unreadable.push(sentence);
         continue;
       }
-      // „Abweichend von Satz 1 tritt § 2 am 1. Januar 2027 in Kraft.“ / „… treten die Nrn. 1.2, 1.13 am … in Kraft.“
-      const deviation = /(?:tritt|treten)\s+([\s\S]+?)\s+((?:rückwirkend\s+)?(?:am|zum|mit\s+Wirkung\s+vom|mit\s+Wirkung\s+zum)\s+\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+in\s+Kraft\.?$/u.exec(sentence);
-      if (deviation && !/\s(?:am|zum)\s+\d/u.test(deviation[1]!)) {
-        const refs = subjectRefs(deviation[1]!);
-        const date = commencementDate(deviation[2]!, eventDate);
-        if (refs && date) {
-          statements.push({ text: sentence, refs, date });
-          continue;
-        }
+      // „Abweichend von Satz 1 tritt § 2 am 1. Januar 2027 in Kraft.“ / „… treten die Nrn. 1.2, 1.13 am … in Kraft.“ /
+      // „… tritt § 16 am 2. August 2024 und § 20 am 1. Januar 2025 in Kraft.“
+      const deviation = /(?:tritt|treten)\s+([\s\S]+?)\s+in\s+Kraft\.?$/u.exec(sentence);
+      const pairs = deviation ? deviationPairs(deviation[1]!, eventDate) : undefined;
+      if (pairs) {
+        for (const pair of pairs) statements.push({ text: sentence, refs: pair.refs, date: pair.date });
+        continue;
       }
       unreadable.push(sentence);
     }
@@ -160,6 +247,7 @@ export function commencementFor(units: readonly GazetteUnit[], eventDate: string
   const generals = statements.filter((statement) => statement.refs === null);
   if (generals.length !== 1) return { ok: false, reason: generals.length === 0 ? 'Keine Grundregel zum Inkrafttreten gefunden' : `${generals.length} Grundregeln zum Inkrafttreten`, statements };
   const applicable: CommencementStatement[] = [generals[0]!];
+  let whole = false;
   for (const statement of statements) {
     if (statement.refs === null) continue;
     if (!mantel) {
@@ -170,7 +258,10 @@ export function commencementFor(units: readonly GazetteUnit[], eventDate: string
     if (!section) return { ok: false, reason: 'Abweichendes Inkrafttreten in einer Mantelverkündung, deren Änderungsabschnitt keine Bezeichnung trägt', statements };
     const touches = statement.refs.some((ref) => ref === section || ref.startsWith(`${section} `) || (section.startsWith('Nr. ') && ref.startsWith(`${section}.`)));
     if (touches) applicable.push(statement);
+    // Nennt die Abweichung den ganzen Abschnitt („treten die §§ 61 bis 73 am … in Kraft“), gilt die Grundregel für ihn nicht.
+    if (statement.refs.includes(section)) whole = true;
   }
+  if (whole) applicable.shift();
   const dates = [...new Set(applicable.map((statement) => statement.date!))].sort();
   return { ok: true, dates, statements, applicable };
 }
@@ -258,7 +349,7 @@ export function ownCommencement(body: readonly NormBodyBlock[], baselineDate: st
   }
   if (general !== 1) return { ok: false, evidence, reason: `${general} Grundregeln zum Inkrafttreten der Stammfassung` };
   const latest = [...dates].sort().at(-1)!;
-  if (latest > baselineDate) return { ok: false, evidence, reason: `Teile der Stammfassung treten erst am ${latest} in Kraft – nach dem Stichtag` };
+  if (latest > baselineDate) return { ok: false, date: latest, evidence, reason: `Teile der Stammfassung treten erst am ${latest} in Kraft – nach dem Stichtag` };
   return { ok: true, date: latest, evidence: [...evidence, ...expiryEvidence] };
 }
 

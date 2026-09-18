@@ -20,6 +20,8 @@ import type { FormulaId, Operation } from './formulas.ts';
 import type { FieldRef } from './location.ts';
 
 export const RECIPE_SCHEMA = 'bayernrecht-reverse-amendment/1' as const;
+/** Mehrstufige Rückrechnung: `amendments` (jüngste zuerst), je Änderung eigene Schritte. */
+export const RECIPE_SCHEMA_V2 = 'bayernrecht-reverse-amendment/2' as const;
 
 /**
  * Leerraumnormalisierung, die zwischen Verkündung und Portaltext gilt – und nur sie. Der Rundlauf selbst
@@ -55,6 +57,35 @@ export interface RecipeStep {
   evidence: { baseline: string; current: string };
 }
 
+/** Eine zurückgenommene Änderung (v1: `amendment`; v2: Eintrag in `amendments`, dort mit eigenen `steps`). */
+export interface RecipeAmendment {
+  /** Ereignis des Registers; bei einer vor dem Stichtag verkündeten Änderung `publication:<organ>-<jahr>-<stelle>`. */
+  eventId: string;
+  citation: string;
+  organ: string;
+  publicationAuthority: string;
+  digitalRepresentation: string;
+  url: string;
+  sha256: string;
+  retrievedAt?: string;
+  gazettePdfUrl?: string;
+  gazettePdfSha256Published?: string;
+  /** Verkündungsdatum. */
+  eventDate: string;
+  enactmentDate?: string;
+  /** Inkrafttreten der Änderung für diese Norm (spätestes, wenn Teile verschieden in Kraft treten). */
+  effectiveDate: string;
+  /** Alle Inkrafttretensdaten der Änderung für diese Norm (v2). */
+  effectiveDates?: string[];
+  /** Wortlaut der Inkrafttretensvorschrift, aus dem das Datum folgt. */
+  effectiveDateEvidence: string[];
+  section?: string;
+  /** Einleitungssatz des Änderungsabschnitts, wörtlich. */
+  intro: string;
+  /** Die im Einleitungssatz genannte vorangehende Änderung („zuletzt durch … geändert“). */
+  priorAmendment?: string;
+}
+
 export interface ReconstructionRecipe {
   schemaVersion: typeof RECIPE_SCHEMA;
   documentId: string;
@@ -70,30 +101,7 @@ export interface ReconstructionRecipe {
     inForceFrom: string;
     fullCitation?: string;
   };
-  amendment: {
-    eventId: string;
-    citation: string;
-    organ: string;
-    publicationAuthority: string;
-    digitalRepresentation: string;
-    url: string;
-    sha256: string;
-    retrievedAt?: string;
-    gazettePdfUrl?: string;
-    gazettePdfSha256Published?: string;
-    /** Verkündungsdatum. */
-    eventDate: string;
-    enactmentDate?: string;
-    /** Inkrafttreten der Änderung für diese Norm. */
-    effectiveDate: string;
-    /** Wortlaut der Inkrafttretensvorschrift, aus dem das Datum folgt. */
-    effectiveDateEvidence: string[];
-    section?: string;
-    /** Einleitungssatz des Änderungsabschnitts, wörtlich. */
-    intro: string;
-    /** Die im Einleitungssatz genannte vorangehende Änderung („zuletzt durch … geändert“). */
-    priorAmendment?: string;
-  };
+  amendment: RecipeAmendment;
   /**
    * Belegter Beginn der Stichtagsfassung (≤ Stichtag): Inkrafttreten der Fassung, die das Rezept
    * herstellt. Ohne diesen Beleg gibt es kein Rezept – verkündet ist nicht in Kraft, und Ausfertigung ist
@@ -117,6 +125,73 @@ export interface ReconstructionRecipe {
   };
 }
 
+/** Eine zurückgenommene Änderung im v2-Rezept: Felder wie im v1-`amendment`, dazu ihre eigenen Schritte. */
+export interface RecipeAmendmentV2 extends RecipeAmendment {
+  steps: RecipeStep[];
+  /** Fingerabdrücke des Körpers vor und nach dieser Änderung (vorwärts gelesen). */
+  expected: { beforeFingerprint: string; afterFingerprint: string };
+}
+
+/** Verkündung, die eine Entscheidung trägt (für Archiv und Bulk): zurückgenommene Änderung oder Beleg des Beginns. */
+export interface RecipeSource {
+  role: 'reversed-amendment' | 'baseline-start';
+  citation: string;
+  url: string;
+  sha256: string;
+  retrievedAt?: string;
+}
+
+/**
+ * Mehrstufiges Rezept: `current → Änderung N → … → Fassung am Stichtag`. `amendments` stehen **jüngste zuerst**;
+ * rückwärts werden sie in dieser Reihenfolge angewandt (je Änderung ihre Schritte in umgekehrter Reihenfolge),
+ * vorwärts in umgekehrter (älteste zuerst, je Änderung in Befehlsreihenfolge).
+ */
+export interface ReconstructionRecipeV2 {
+  schemaVersion: typeof RECIPE_SCHEMA_V2;
+  documentId: string;
+  baselineDate: string;
+  method: 'reverse-amendment';
+  source: ReconstructionRecipe['source'];
+  amendments: RecipeAmendmentV2[];
+  baselineTextInForce: ReconstructionRecipe['baselineTextInForce'];
+  /** Belege für die Vollständigkeit der Kette. */
+  chain: string[];
+  /** Alle Verkündungen des Rezepts mit Adresse und Prüfsumme. */
+  sources: RecipeSource[];
+  whitespace: string;
+  expected: {
+    currentFingerprint: string;
+    baselineFingerprint: string;
+  };
+}
+
+export type AnyReconstructionRecipe = ReconstructionRecipe | ReconstructionRecipeV2;
+
+export const isRecipeV2 = (recipe: AnyReconstructionRecipe): recipe is ReconstructionRecipeV2 => recipe.schemaVersion === RECIPE_SCHEMA_V2;
+
+/**
+ * Die zurückgenommenen Änderungen eines Rezepts, **jüngste zuerst**, je mit ihren Schritten – für v1 und v2
+ * gleich. `[0]` ist die jüngste (ihr Inkrafttreten = `inkraft` des heutigen Pakets), `.at(-1)` die älteste.
+ */
+export function recipeAmendments(recipe: AnyReconstructionRecipe): Array<RecipeAmendment & { steps: RecipeStep[] }> {
+  if (isRecipeV2(recipe)) return recipe.amendments;
+  return [{ ...recipe.amendment, steps: recipe.steps }];
+}
+
+/** Alle Verkündungen eines Rezepts (zurückgenommene Änderungen und Belege des Beginns) mit Adresse und SHA-256. */
+export function recipeSources(recipe: AnyReconstructionRecipe): RecipeSource[] {
+  if (isRecipeV2(recipe)) return recipe.sources;
+  return [
+    { role: 'reversed-amendment', citation: recipe.amendment.citation, url: recipe.amendment.url, sha256: recipe.amendment.sha256, ...(recipe.amendment.retrievedAt ? { retrievedAt: recipe.amendment.retrievedAt } : {}) },
+    ...(recipe.baselineTextInForce.sources ?? []).map((source) => ({ role: 'baseline-start' as const, citation: source.citation, url: source.url, sha256: source.sha256, ...(source.retrievedAt ? { retrievedAt: source.retrievedAt } : {}) })),
+  ];
+}
+
+/** Alle Schritte in Vorwärtsreihenfolge (älteste Änderung zuerst). */
+export function forwardOrder(recipe: AnyReconstructionRecipe): RecipeStep[] {
+  return [...recipeAmendments(recipe)].reverse().flatMap((amendment) => amendment.steps);
+}
+
 /** Kanonischer Fingerabdruck eines Körpers. */
 export function bodyFingerprint(blocks: readonly NormBodyBlock[]): string {
   return createHash('sha256').update(stableStringify(blocks)).digest('hex');
@@ -125,21 +200,49 @@ export function bodyFingerprint(blocks: readonly NormBodyBlock[]): string {
 export { stableStringify };
 
 /**
- * Formale Prüfung eines Rezepts vor jeder Anwendung. Liefert die Liste der Verstöße (leer = gültig):
- * Schema, Methode, Inkrafttreten der Änderung = `inkraft` des heutigen Pakets, beides nach dem Stichtag,
- * belegter Beginn der Stichtagsfassung am oder vor dem Stichtag, mindestens ein Schritt.
+ * Formale Prüfung eines Rezepts (v1 und v2) vor jeder Anwendung. Liefert die Liste der Verstöße (leer = gültig):
+ * Schema, Methode, jede Änderung mit belegtem Inkrafttreten nach dem Stichtag, das jüngste = `inkraft` des heutigen
+ * Pakets, die Inkrafttreten in Kettenreihenfolge, belegter Beginn der Stichtagsfassung am oder vor dem Stichtag,
+ * je Änderung mindestens ein Schritt.
  */
-export function recipeProblems(recipe: ReconstructionRecipe): string[] {
+export function recipeProblems(recipe: AnyReconstructionRecipe): string[] {
   const problems: string[] = [];
   const iso = /^\d{4}-\d{2}-\d{2}$/u;
-  if (recipe.schemaVersion !== RECIPE_SCHEMA) problems.push(`unbekannte Schemaversion ${String(recipe.schemaVersion)}`);
+  const schema = (recipe as { schemaVersion?: unknown }).schemaVersion;
+  if (schema !== RECIPE_SCHEMA && schema !== RECIPE_SCHEMA_V2) {
+    problems.push(`unbekannte Schemaversion ${String(schema)}`);
+    return problems;
+  }
   if (recipe.method !== 'reverse-amendment') problems.push(`Methode ${String(recipe.method)} statt reverse-amendment`);
-  if (!iso.test(recipe.amendment?.effectiveDate ?? '')) problems.push('Inkrafttreten der Änderung fehlt');
-  else if (recipe.amendment.effectiveDate !== recipe.source?.inForceFrom) problems.push(`Inkrafttreten der Änderung (${recipe.amendment.effectiveDate}) ≠ inkraft des heutigen Pakets (${recipe.source?.inForceFrom ?? '–'})`);
-  else if (recipe.amendment.effectiveDate <= recipe.baselineDate) problems.push(`Änderung tritt am ${recipe.amendment.effectiveDate} in Kraft – nicht nach dem Stichtag`);
+  const amendments = isRecipeV2(recipe)
+    ? (Array.isArray(recipe.amendments) ? recipe.amendments : [])
+    : recipe.amendment
+      ? [{ ...recipe.amendment, steps: recipe.steps }]
+      : [];
+  if (amendments.length === 0) problems.push('keine zurückgenommene Änderung');
+  if (isRecipeV2(recipe) && amendments.length < 2) problems.push('v2-Rezept mit weniger als zwei Änderungen (einstufig ist v1)');
+  amendments.forEach((amendment, index) => {
+    const label = amendments.length > 1 ? `Änderung ${index + 1} (${amendment?.citation ?? '?'})` : 'Änderung';
+    if (!iso.test(amendment?.effectiveDate ?? '')) problems.push(`Inkrafttreten der ${label} fehlt`);
+    else if (amendment.effectiveDate <= recipe.baselineDate) problems.push(`${label} tritt am ${amendment.effectiveDate} in Kraft – nicht nach dem Stichtag`);
+    else if ((amendment.effectiveDates ?? []).some((date) => !iso.test(date) || date <= recipe.baselineDate || date > amendment.effectiveDate)) problems.push(`Inkrafttretensdaten der ${label} widersprüchlich (${(amendment.effectiveDates ?? []).join(', ')})`);
+    if (!Array.isArray(amendment?.effectiveDateEvidence) || amendment.effectiveDateEvidence.length === 0) problems.push(`Inkrafttreten der ${label} ohne Wortlaut der Inkrafttretensvorschrift`);
+    if (!amendment?.url || !/^[0-9a-f]{64}$/u.test(amendment.sha256 ?? '')) problems.push(`${label} ohne Verkündungsadresse oder SHA-256`);
+    if (!Array.isArray(amendment?.steps) || amendment.steps.length === 0) problems.push(`keine Schritte (${label})`);
+  });
+  const newest = amendments[0];
+  if (newest && iso.test(newest.effectiveDate ?? '') && newest.effectiveDate !== recipe.source?.inForceFrom) {
+    problems.push(`Inkrafttreten der ${amendments.length > 1 ? 'jüngsten ' : ''}Änderung (${newest.effectiveDate}) ≠ inkraft des heutigen Pakets (${recipe.source?.inForceFrom ?? '–'})`);
+  }
+  for (let index = 1; index < amendments.length; index += 1) {
+    const newer = amendments[index - 1]!;
+    const older = amendments[index]!;
+    const newerEarliest = [...(newer.effectiveDates ?? [newer.effectiveDate])].sort()[0]!;
+    if (older.effectiveDate > newerEarliest) problems.push(`Inkrafttreten nicht in Kettenreihenfolge: ${older.citation} (${older.effectiveDate}) nach ${newer.citation} (${newerEarliest})`);
+  }
   const start = recipe.baselineTextInForce;
   if (!start || !iso.test(start.date ?? '') || !Array.isArray(start.evidence) || start.evidence.length === 0) problems.push('Beginn der Stichtagsfassung nicht belegt (baselineTextInForce)');
   else if (start.date > recipe.baselineDate) problems.push(`Beginn der Stichtagsfassung ${start.date} liegt nach dem Stichtag`);
-  if (!Array.isArray(recipe.steps) || recipe.steps.length === 0) problems.push('keine Schritte');
+  if (!isRecipeV2(recipe) && (!Array.isArray(recipe.steps) || recipe.steps.length === 0) && !problems.some((problem) => problem.startsWith('keine Schritte'))) problems.push('keine Schritte');
   return problems;
 }

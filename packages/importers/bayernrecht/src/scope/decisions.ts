@@ -29,6 +29,7 @@ export const SCOPE_REASONS = [
   'document-class-unexplained',
   'published-without-register-entry',
   'annex-to-another-norm',
+  'annex-merged-into-related-norm',
 ] as const;
 export type ScopeReason = (typeof SCOPE_REASONS)[number];
 
@@ -44,7 +45,14 @@ export const SCOPE_REASON_LABELS: Readonly<Record<ScopeReason, string>> = {
   'published-without-register-entry':
     'Amtlich verkündete Vorschrift des Freistaats, die der Fortführungsnachweis nicht führt; die Registerlücke ist eine Geltungs-, keine Umfangsfrage',
   'annex-to-another-norm': 'Anhang einer anderen bayerischen Vorschrift, im Portal als eigenes Dokument geführt',
+  'annex-merged-into-related-norm':
+    'Normative Anlage einer anderen Vorschrift: wird vollständig als Anlage der Stammnorm übernommen, nicht als eigene Stammnorm (kein Doppelimport)',
 };
+
+/** Anlage, die als Anlage ihrer Stammnorm (`relatedDocumentId`) übernommen wird statt als eigene Norm. */
+export function isMergedAnnex(entry: Pick<ScopeEntry, 'decision' | 'reason' | 'relatedDocumentId'>): boolean {
+  return entry.decision === 'exclude' && entry.reason === 'annex-merged-into-related-norm' && Boolean(entry.relatedDocumentId);
+}
 
 export interface ScopeEntry {
   documentId: string;

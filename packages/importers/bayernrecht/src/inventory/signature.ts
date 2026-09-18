@@ -109,7 +109,7 @@ function classify(finding: ImportFinding, documentId: string): { signature: stri
   }
   // Zählbefunde (Fußnoten, Tabellen, Satznummern, Abbildungen, Anlagen …): Das Muster ist der Code
   // selbst; die Zahl gehört ins Beispiel, nicht in den Schlüssel.
-  if (['footnotes', 'tables', 'sentence-numbers', 'quoted-provisions', 'graphic-not-transferred', 'vv-depth-beyond-model', 'vv-section-address-unresolved', 'vv-section-effective-dates', 'division-number-before-title', 'division-without-heading', 'title-possibly-truncated', 'referenced-file-case-mismatch', 'vv-bayrs-number-absent', 'vv-builddate-present'].includes(code)) {
+  if (['footnotes', 'tables', 'sentence-numbers', 'quoted-provisions', 'graphic-not-transferred', 'figures-transferred', 'graphic-decorative', 'vv-depth-beyond-model', 'vv-section-address-unresolved', 'vv-section-effective-dates', 'division-number-before-title', 'division-without-heading', 'title-possibly-truncated', 'referenced-file-case-mismatch', 'vv-bayrs-number-absent', 'vv-builddate-present'].includes(code)) {
     return { signature: code };
   }
   return { signature: `${code}:${truncate(normalizeMessage(message, documentId), 120)}` };

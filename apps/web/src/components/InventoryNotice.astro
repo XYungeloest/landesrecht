@@ -1,0 +1,30 @@
+---
+/**
+ * Hinweis „Teilbestand“ für Länder, deren Stichtagsbestand noch nicht vollständig veröffentlicht ist. Die Zahlen
+ * stammen aus `@landesrecht/legal-core/config/inventory-status.json` (vom Importer erzeugt); meldet der Importer den
+ * Bestand als vollständig, verschwindet der Hinweis ohne Codeänderung.
+ */
+import { getPartialInventory } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { formatBaselineDate, getJurisdiction, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+
+interface Props {
+  jurisdiction: JurisdictionId;
+  /** `badge`: nur die Kennzeichnung (Übersichten); `full`: Kennzeichnung mit Zahlen (Länderseite, Suche). */
+  variant?: 'badge' | 'full';
+}
+
+const { jurisdiction, variant = 'full' } = Astro.props;
+const status = getPartialInventory(jurisdiction);
+const number = new Intl.NumberFormat('de-DE');
+const outstanding = status ? status.pending.atBaseline + status.pending.baselineOnly : 0;
+const shortName = getJurisdiction(jurisdiction).shortName;
+---
+{status && variant === 'badge' && <span class="tag tag--partial" title={`${shortName}: Teilbestand – weitere Normen zum Stichtag werden ergänzt`}>Teilbestand</span>}
+{status && variant === 'full' && (
+  <aside class="inventory-notice" aria-label={`Hinweis zum Bestand ${shortName}`}>
+    <p>
+      <strong>Teilbestand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist.
+      {outstanding > 0 && <> Für weitere {number.format(outstanding)} Normen, die an diesem Tag galten, wird die Stichtagsfassung noch nachgewiesen; sie werden danach ergänzt.</>}
+    </p>
+  </aside>
+)}

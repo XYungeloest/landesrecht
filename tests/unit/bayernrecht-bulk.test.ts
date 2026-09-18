@@ -18,7 +18,7 @@
  * mit eigenem Cache, eigener Enumeration, eigenem Scope und eigener Stichtagsklassifikation.
  */
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'vitest';
@@ -26,9 +26,9 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { cacheKey } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 import { runAudit } from '@landesrecht/importer-bayernrecht/audit/audit.ts';
 import { classifyBaseline, type BaselineDecision } from '@landesrecht/importer-bayernrecht/baseline/classify.ts';
-import { CACHE_DIR, IMPORT_DATA_DIR, type SourceArea } from '@landesrecht/importer-bayernrecht/common/constants.ts';
+import { CACHE_DIR, IMPORT_DATA_DIR, PARSER_VERSION, type SourceArea } from '@landesrecht/importer-bayernrecht/common/constants.ts';
 import { readManifestEntry } from '@landesrecht/importer-bayernrecht/common/manifest.ts';
-import { identityHash } from '@landesrecht/importer-bayernrecht/common/paths.ts';
+import { identityHash, manifestEntryPath } from '@landesrecht/importer-bayernrecht/common/paths.ts';
 import { readReviewQueue } from '@landesrecht/importer-bayernrecht/common/review.ts';
 import { assertJurisdictionSlug, readSlugRegistry } from '@landesrecht/importer-bayernrecht/common/slug-registry.ts';
 import { enumerationFingerprint, ENUMERATION_SCHEMA, type EnumerationFile, type EnumerationItem } from '@landesrecht/importer-bayernrecht/enumerate/enumeration.ts';
@@ -37,12 +37,13 @@ import { runBulk, type BulkRunOptions, type BulkRunResult } from '@landesrecht/i
 import { readBulkState } from '@landesrecht/importer-bayernrecht/bulk/state.ts';
 import { decisionTraceProblems, type DecisionTrace } from '@landesrecht/importer-bayernrecht/bulk/trace.ts';
 import { RECONSTRUCTION_DIR } from '@landesrecht/importer-bayernrecht/bulk/select.ts';
+import { figureRawDocuments } from '@landesrecht/importer-bayernrecht/bulk/figures.ts';
 import { parseBayernRechtPackage } from '@landesrecht/importer-bayernrecht/parse/index.ts';
 import { reverseSteps } from '@landesrecht/importer-bayernrecht/reconstruction/apply.ts';
 import type { FieldRef } from '@landesrecht/importer-bayernrecht/reconstruction/location.ts';
-import { bodyFingerprint, RECIPE_SCHEMA, WHITESPACE_NORMALIZATION, type ReconstructionRecipe, type RecipeStep } from '@landesrecht/importer-bayernrecht/reconstruction/recipe.ts';
+import { bodyFingerprint, RECIPE_SCHEMA, RECIPE_SCHEMA_V2, WHITESPACE_NORMALIZATION, type ReconstructionRecipe, type ReconstructionRecipeV2, type RecipeStep } from '@landesrecht/importer-bayernrecht/reconstruction/recipe.ts';
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
-import { buildZipArchive, fixture, fixtureBytes } from '../helpers/bayernrecht-parse.ts';
+import { buildZipArchive, fixture, fixtureBytes, gifBytes } from '../helpers/bayernrecht-parse.ts';
 import { cleanupTempRoots, tempRoot } from '../helpers/bayernrecht-state.ts';
 
 afterAll(cleanupTempRoots);
@@ -95,6 +96,9 @@ interface DocumentFixture {
   baseline?: BaselineDecision | 'none';
   /** Paketbytes; fehlen sie, liegt nichts im Cache. */
   bytes?: Uint8Array;
+  /** Scope-Grund und Stammnorm (zusammengeführte Anlage). */
+  scopeReason?: string;
+  relatedDocumentId?: string;
 }
 
 const eligible = (id: string): BaselineDecision => classifyBaseline({ documentId: id, documentDate: '1981-08-06', inForceFrom: '2015-08-01' });
@@ -174,7 +178,7 @@ async function fixtureRoot(documents: readonly DocumentFixture[], prefix = 'land
   for (const document of documents) {
     const area = document.area ?? 'landesrecht';
     byArea.get(area)!.push(enumerationItem(document.id, area));
-    scopeEntries.push({ documentId: document.id, sourceArea: area, normType: area === 'vwv' ? 'vv' : 'ges', title: `Titel ${document.id}`, decision: document.scope ?? 'include', reason: document.scope === 'review' ? 'normativity-review-required' : 'state-law-in-scope', evidence: ['enumeration:facet-hitlist'] });
+    scopeEntries.push({ documentId: document.id, sourceArea: area, normType: area === 'vwv' ? 'vv' : 'ges', title: `Titel ${document.id}`, decision: document.scope ?? 'include', reason: document.scopeReason ?? (document.scope === 'review' ? 'normativity-review-required' : 'state-law-in-scope'), evidence: ['enumeration:facet-hitlist'], ...(document.relatedDocumentId ? { relatedDocumentId: document.relatedDocumentId } : {}) });
     const baseline = document.baseline ?? eligible(document.id);
     if (baseline !== 'none') decisions.push(baseline);
     if (document.bytes) await seedCache(root, zipUrl(document.id), document.bytes);
@@ -345,6 +349,27 @@ describe('Betrieb: Budgets, Resume, Fehlerklassen', () => {
     await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
     const resumed = await run(root, { write: true, resume: true });
     expect(resumed.summary.entries.map((entry) => entry.documentId)).toEqual(['BayVerf']);
+  });
+
+  it('nimmt beim Resume Einträge einer älteren Parserversion wieder auf, ohne unveränderten Inhalt neu zu schreiben', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }, { id: 'BayVerf', bytes: verfassung() }]);
+    await run(root, { write: true });
+    const shardPath = join(root, manifestEntryPath('landesrecht', 'BayAbmG'));
+    await writeFile(shardPath, (await readFile(shardPath, 'utf8')).replace(`"parserVersion": "${PARSER_VERSION}"`, '"parserVersion": "bayernrecht-parser/0.0.1"'), 'utf8');
+    const slug = (await readManifestEntry(root, 'landesrecht', 'BayAbmG'))!.targetSlug;
+    const versionPath = join(root, 'content', 'norms', 'baywue', slug, 'versions', `${BASELINE}.json`);
+    const before = await readFile(versionPath, 'utf8');
+    const mtimeBefore = (await stat(versionPath)).mtimeMs;
+
+    const resumed = await run(root, { write: true, resume: true });
+    // Nur der veraltete Eintrag wird neu bewertet; der aktuelle gilt als erledigt.
+    expect(resumed.summary.entries.map((entry) => entry.documentId)).toEqual(['BayAbmG']);
+    expect(resumed.summary.selection.resumed).toBe(1);
+    expect((await readManifestEntry(root, 'landesrecht', 'BayAbmG'))!.parserVersion).toBe(PARSER_VERSION);
+    // Die Versionsnummer allein schreibt keinen Inhalt neu; nur die Provenienz im Manifest folgt ihr.
+    expect(resultFor(resumed, 'BayAbmG')?.result).toBe('imported');
+    expect(await readFile(versionPath, 'utf8')).toBe(before);
+    expect((await stat(versionPath)).mtimeMs).toBe(mtimeBefore);
   });
 
   it('hält einen normlokalen Fehler fest und arbeitet weiter', async () => {
@@ -646,5 +671,126 @@ describe('Rückrechnung: der Stichtagstext entsteht nur aus einem bewiesenen Rez
 
   it('übernimmt nichts, wenn der Änderungsbeleg nicht im Cache liegt', async () => {
     expect(resultFor(await run(await reconstructionRoot({ recipe: recipe(), gazette: false })), 'BayAbmG')).toMatchObject({ result: 'review', code: 'reconstruction-evidence-missing' });
+  });
+
+  /**
+   * Zweistufig (v2): 2024 wurde „Außerdem“ zu „Zudem“, 2025 „Zudem“ zu „Daneben“. Rückwärts jüngste zuerst, dann
+   * vorwärts älteste zuerst; jede Verkündung liegt im Cache und wird archiviert, die Fassung gilt bis zum Vortag der
+   * älteren Änderung.
+   */
+  const OLDER_URL = 'https://www.verkuendung-bayern.de/gvbl/2024-555/';
+  const olderBytes = new TextEncoder().encode('<html><body>§ 1 In Art. 3 Satz 2 wird das Wort „Außerdem“ durch das Wort „Zudem“ ersetzt. § 2 Dieses Gesetz tritt am 1. Juni 2024 in Kraft.</body></html>');
+
+  function recipeV2(): ReconstructionRecipeV2 {
+    const one = recipe();
+    const bytes = amended();
+    const body = parseBayernRechtPackage({ portal: 'bayernrecht', url: zipUrl('BayAbmG'), retrievedAt: '2026-09-17', mediaType: 'application/zip', sha256: sha(bytes) }, bytes, { unknown: 'report' }).law.body;
+    const fields = locate(body, 'Daneben');
+    const newerSteps: RecipeStep[] = [{ ...one.steps[0]!, command: 'In Art. 3 Satz 2 wird das Wort „Zudem“ durch das Wort „Daneben“ ersetzt.', operation: { kind: 'replace', from: 'Zudem', to: 'Daneben' }, evidence: { baseline: 'Zudem sind die Behörden', current: 'Daneben sind die Behörden' }, scope: { ...one.steps[0]!.scope, fields } }];
+    const middle = reverseSteps(body, newerSteps);
+    const olderSteps: RecipeStep[] = [{ ...one.steps[0]!, command: 'In Art. 3 Satz 2 wird das Wort „Außerdem“ durch das Wort „Zudem“ ersetzt.', operation: { kind: 'replace', from: 'Außerdem', to: 'Zudem' }, evidence: { baseline: 'Außerdem sind die Behörden', current: 'Zudem sind die Behörden' }, scope: { ...one.steps[0]!.scope, fields: locate(middle, 'Zudem') } }];
+    const baseline = reverseSteps(middle, olderSteps);
+    const newer = { ...one.amendment, steps: newerSteps, expected: { beforeFingerprint: bodyFingerprint(middle), afterFingerprint: bodyFingerprint(body) } };
+    const older = { ...one.amendment, eventId: 'gvbl-2024-555', citation: 'Gesetz vom 20. Mai 2024 (GVBl. S. 555)', url: OLDER_URL, sha256: sha(olderBytes), eventDate: '2024-05-25', effectiveDate: '2024-06-01', effectiveDateEvidence: ['§ 2 Dieses Gesetz tritt am 1. Juni 2024 in Kraft.'], steps: olderSteps, expected: { beforeFingerprint: bodyFingerprint(baseline), afterFingerprint: bodyFingerprint(middle) } };
+    return {
+      schemaVersion: RECIPE_SCHEMA_V2, documentId: 'BayAbmG', baselineDate: BASELINE, method: 'reverse-amendment', source: one.source,
+      amendments: [newer, older], baselineTextInForce: one.baselineTextInForce, chain: ['zwei Änderungen nach dem Stichtag, lückenlos'],
+      sources: [{ role: 'reversed-amendment', citation: newer.citation, url: newer.url, sha256: newer.sha256 }, { role: 'reversed-amendment', citation: older.citation, url: older.url, sha256: older.sha256 }],
+      whitespace: WHITESPACE_NORMALIZATION, expected: { currentFingerprint: bodyFingerprint(body), baselineFingerprint: bodyFingerprint(baseline) },
+    };
+  }
+
+  it('rechnet über mehrere Änderungen zurück (v2) und archiviert jeden Beleg', async () => {
+    const root = await reconstructionRoot({ recipe: recipeV2() as unknown as ReconstructionRecipe });
+    await seedCache(root, OLDER_URL, olderBytes);
+    const outcome = await run(root, { write: true });
+    expect(resultFor(outcome, 'BayAbmG')?.result, JSON.stringify(resultFor(outcome, 'BayAbmG'))).toBe('imported');
+    const entry = (await readManifestEntry(root, 'landesrecht', 'BayAbmG'))!;
+    expect(entry).toMatchObject({ sourceValidFrom: '2015-08-01', sourceValidTo: '2024-05-31' });
+    expect(entry.rawDocuments.filter((raw) => raw.role === 'gazette').map((raw) => raw.url)).toEqual([GAZETTE_URL, OLDER_URL]);
+    expect((entry as { decisionTrace?: DecisionTrace }).decisionTrace?.statement).toContain('2-mal geändert');
+    const version = JSON.parse(await readFile(join(root, 'content', 'norms', 'baywue', entry.targetSlug, 'versions', `${BASELINE}.json`), 'utf8'));
+    const text = JSON.stringify(version.body);
+    expect(text).toContain('Außerdem sind die Behörden');
+    expect(text).not.toMatch(/Zudem|Daneben/u);
+    expect(version.sourceReferences.filter((reference: { sourceRole?: string; url?: string }) => reference.sourceRole === 'amendment-evidence').map((reference: { url?: string }) => reference.url)).toEqual([GAZETTE_URL, OLDER_URL]);
+  });
+
+  it('übernimmt eine v2-Kette nicht, wenn der Beleg einer älteren Änderung fehlt', async () => {
+    const root = await reconstructionRoot({ recipe: recipeV2() as unknown as ReconstructionRecipe });
+    expect(resultFor(await run(root), 'BayAbmG')).toMatchObject({ result: 'review', code: 'reconstruction-evidence-missing' });
+  });
+});
+
+/* ------------------------------------------------------------------ Zusammengeführte Anlage */
+
+describe('Normative Anlage als eigenes Portaldokument (BayBodSchO → BayEVBodenseeSchO)', () => {
+  const annexDocument = (baseline?: BaselineDecision | 'none'): DocumentFixture => ({ id: 'BayVerf', scope: 'exclude', scopeReason: 'annex-merged-into-related-norm', relatedDocumentId: 'BayAbmG', bytes: verfassung(), ...(baseline ? { baseline } : {}) });
+
+  it('hängt die Anlage vollständig an die Stammnorm an und importiert sie nicht doppelt', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }, annexDocument()]);
+    const outcome = await run(root, { write: true });
+    expect(resultFor(outcome, 'BayAbmG'), JSON.stringify(resultFor(outcome, 'BayAbmG'))).toMatchObject({ result: 'imported' });
+    expect(resultFor(outcome, 'BayVerf')).toBeUndefined();
+    const entry = await readManifestEntry(root, 'landesrecht', 'BayAbmG');
+    expect(entry!.rawDocuments.map((raw) => raw.role)).toEqual(['text-document', 'annex']);
+    const version = JSON.parse(await readFile(join(root, 'content', 'norms', 'baywue', entry!.targetSlug, 'versions', `${BASELINE}.json`), 'utf8'));
+    const annex = version.body.at(-1);
+    expect(annex).toMatchObject({ type: 'annex', label: 'Anhang' });
+    expect(JSON.stringify(annex.children).length).toBeGreaterThan(1000);
+    expect(version.sourceReferences.some((reference: { label: string }) => reference.label.startsWith('Anhang: '))).toBe(true);
+    expect(await readManifestEntry(root, 'landesrecht', 'BayVerf')).toBeUndefined();
+  });
+
+  it('sperrt die Stammnorm, wenn die Anlage am Stichtag nicht trägt – nie ohne Anlage übernehmen', async () => {
+    const changed = classifyBaseline({ documentId: 'BayVerf', documentDate: '1946-12-02', inForceFrom: '2026-01-01' });
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }, annexDocument(changed)]);
+    const entry = resultFor(await run(root), 'BayAbmG');
+    expect(entry).toMatchObject({ result: 'review', code: 'merged-annex-not-at-baseline' });
+    expect(entry?.reviewCategories).toContain('incomplete-annex');
+  });
+});
+
+describe('Abbildungen: figure-Blöcke mit gebundener Bilddatei', () => {
+  it('übernimmt Abbildungen als Asset-Referenz und bindet jede Bilddatei als Rohquelle an Paket und Pfad', async () => {
+    // Das Fixture-Paket mit Textbeginn vor dem Stichtag (sonst trägt es den Stichtag nicht) und echten GIF-Köpfen.
+    const images = [...fixture('manifestBodenfischerei').matchAll(/full-path="\/(img\/[^"]+)"/gu)].map((match) => match[1]!);
+    const zip = buildZipArchive([
+      { path: 'mimetype', content: 'bayportalnorm+zip' },
+      { path: 'META-INF/manifest.xml', content: fixture('manifestBodenfischerei') },
+      { path: 'bayportalnorm/BayBoFiV.xml', content: fixture('bodenfischerei').replace('<inkraft>2025-12-01</inkraft>', '<inkraft>2015-08-01</inkraft>') },
+      ...images.map((path) => ({ path, content: gifBytes(40, 30, path) })),
+    ]);
+    const root = await fixtureRoot([{ id: 'BayBoFiV', bytes: zip, baseline: eligible('BayBoFiV') }]);
+    const outcome = await run(root, { write: true });
+    const summary = resultFor(outcome, 'BayBoFiV');
+    expect(summary?.result, JSON.stringify(summary)).toMatch(/^imported/u);
+    const entry = (await readManifestEntry(root, 'landesrecht', 'BayBoFiV'))!;
+    const figures = entry.rawDocuments.filter((raw) => raw.role === 'figure');
+    expect(figures.map((raw) => raw.packagePath)).toEqual(['img/BayBoFiV_BayBoFiV-A2-N1.gif', 'img/BayBoFiV_BayBoFiV-A2-N2.gif']);
+    const zipSha = createHash('sha256').update(zip).digest('hex');
+    expect(figures.every((raw) => raw.packageSha256 === zipSha && raw.url === entry.rawDocuments[0]!.url && raw.contentType === 'image/gif')).toBe(true);
+
+    const version = JSON.parse(await readFile(join(root, 'content', 'norms', 'baywue', entry.targetSlug, 'versions', `${BASELINE}.json`), 'utf8')) as { body: NormBodyBlock[] };
+    const blocks: NormBodyBlock[] = [];
+    const walk = (list: readonly NormBodyBlock[]): void => { for (const block of list) { blocks.push(block); walk(block.children ?? []); } };
+    walk(version.body);
+    const assets = blocks.filter((block) => block.type === 'figure').map((block) => block.asset!);
+    expect(assets.map((asset) => asset.sha256)).toEqual(figures.map((raw) => raw.sha256));
+    // Kein Bildinhalt im Norm-JSON, nur die Referenz.
+    expect(JSON.stringify(version)).not.toMatch(/GIF89a|base64/u);
+  });
+
+  it('bindet je SHA-256 einmal und meldet Abbildungen ohne belegte Bilddatei', () => {
+    const sha = (text: string): string => createHash('sha256').update(text).digest('hex');
+    const asset = (name: string) => ({ sha256: sha(name), mediaType: 'image/png' as const, byteLength: 10, sourcePath: `img/${name}` });
+    const record = { versions: [{ body: [
+      { type: 'annex', label: 'Anlage 1', children: [{ type: 'figure', asset: asset('a.png') }, { type: 'figure', asset: asset('a.png') }] },
+      { type: 'figure', asset: asset('fremd.png') },
+    ] }] } as unknown as Parameters<typeof figureRawDocuments>[0];
+    const pkg = { url: 'https://www.gesetze-bayern.de/Content/Zip/BayX', sha256: sha('zip'), retrievedAt: '2026-09-18T00:00:00.000Z', attachments: [{ path: 'img/a.png', fileName: 'a.png', mediaType: 'image/jpg', kind: 'image' as const, byteLength: 10, sha256: sha('a.png') }] };
+    const bound = figureRawDocuments(record, [pkg]);
+    expect(bound.raw).toEqual([{ role: 'figure', url: pkg.url, finalUrl: pkg.url, sha256: sha('a.png'), contentType: 'image/png', retrievedAt: pkg.retrievedAt, byteLength: 10, packagePath: 'img/a.png', packageSha256: sha('zip') }]);
+    expect(bound.unbound).toEqual([`img/fremd.png (${sha('fremd.png').slice(0, 16)}…)`]);
   });
 });

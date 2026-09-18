@@ -27,8 +27,13 @@ nicht weggelassen.
 
 | Bereich | Einträge | imported | imported-with-warnings | dry-run | failed | needs-review | excluded | not-at-baseline |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| landesrecht | 873 | 166 | 388 | 0 | 0 | 305 | 0 | 14 |
-| vwv | 1470 | 116 | 912 | 0 | 0 | 217 | 0 | 225 |
+| landesrecht | 873 | 173 | 398 | 0 | 0 | 287 | 1 | 14 |
+| vwv | 1470 | 119 | 913 | 0 | 0 | 213 | 0 | 225 |
+| baseline-only wiederhergestellt | 15 | 0 | 15 | 0 | 0 | 0 | 0 | 0 |
+
+Die Zeile „baseline-only wiederhergestellt“ zählt heute fehlende Stichtagsnormen, die aus amtlichen Verkündungen
+wiederhergestellt sind (Bereich `events`, Rezepte unter `data/imports/bayernrecht/baseline-only/`). Sie stehen in keiner
+Enumeration und ändern die Erklärung der enumerierten Dokumente nicht.
 
 ## Änderungslage relativ zum Stichtag
 
@@ -68,4 +73,4 @@ Gezählt wird, was am abgelegten Paket nachgewiesen ist – nicht, was vorgesehe
 | leere-metadaten | 19 |
 | kein-builddate | 5 |
 
-Fingerabdruck des Inhalts: `d8f97e26f232317340a3cd8339268febb744c82fdc8c4dea93c8e9ac0dedddef`.
+Fingerabdruck des Inhalts: `6a274e3c74edd602893dc85f4f29d525d08b337676a7b690709414b56e76832d`.

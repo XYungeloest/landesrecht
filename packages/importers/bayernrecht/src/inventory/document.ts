@@ -11,6 +11,7 @@ import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdi
 import type { ImportFinding, TransformContext } from '@landesrecht/importer-common/pipeline.ts';
 
 import { EVALUATION_DATE, type SourceArea } from '../common/constants.ts';
+import { applySourceCorrections, type SourceCorrection } from '../common/source-corrections.ts';
 import { parseBayernRechtDocument, type BayernRechtDocument } from '../parse/index.ts';
 import { readBayernRechtPackage } from '../parse/package.ts';
 import { readXmlDocument } from '../parse/xml.ts';
@@ -32,6 +33,8 @@ export interface InventoryDocumentInput {
   sha256: string;
   byteLength: number;
   institutions?: CompiledInstitutionRegistry;
+  /** Quellkorrekturen dieses Dokuments (`source-corrections.json`) – derselbe Weg wie im Bulk. */
+  sourceCorrections?: readonly SourceCorrection[];
 }
 
 /** Zeilenzugriff auf den XML-Text für den Ausschnitt eines Befundes. */
@@ -155,8 +158,15 @@ export function inventoryDocument(input: InventoryDocumentInput): InventoryEntry
     reserveSlug: (candidate: string) => candidate,
   };
   const transformFindings: ImportFinding[] = [];
+  // Quellkorrekturen wie im Bulk: gebunden an Paket-SHA-256 und Wortlaut; eine veraltete Korrektur ist ein Befund.
+  let law = document.law;
+  if (input.sourceCorrections && input.sourceCorrections.length > 0) {
+    const corrected = applySourceCorrections(law, input.sourceCorrections, input.sha256);
+    if (corrected.ok) law = corrected.law;
+    else transformFindings.push({ severity: 'error', code: 'source-correction-stale', message: corrected.problem });
+  }
   try {
-    const result = transformToBayWue(document.law, transformContext, {
+    const result = transformToBayWue(law, transformContext, {
       sourceArea: input.sourceArea,
       ...(input.institutions ? { institutions: input.institutions } : {}),
     });

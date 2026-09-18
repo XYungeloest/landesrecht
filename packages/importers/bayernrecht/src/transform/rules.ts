@@ -40,7 +40,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { SOURCE_STATE, TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.1.0';
+export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.2.0';
 
 export interface TransformationRule {
   id: string;
@@ -59,7 +59,7 @@ export interface TransformationOptions {
   knownStateLawAbbreviations?: ReadonlySet<string>;
 }
 
-export const PROTECTED_CATEGORIES = ['source-citation', 'external-name'] as const;
+export const PROTECTED_CATEGORIES = ['source-citation', 'external-name', 'historical-name'] as const;
 export type ProtectedCategory = (typeof PROTECTED_CATEGORIES)[number];
 
 export interface ProtectedPattern {
@@ -297,11 +297,37 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
     id: 'ruler-name',
     category: 'external-name',
     // Nutzerentscheidung 2026-09-18: Herrschernamen bleiben unverändert. „Seiner Majestät des Königs Ludwig von
-    // Bayern“, „König Ludwig III. und Königin Marie Therese von Bayern“, „Kurfürstin von Bayern“ sind Namen von
-    // Personen, keine Bezeichnung des Landes. Der Titel muss unmittelbar vor Namen, Ordnungszahlen und „von/in
-    // Bayern“ stehen; „Königreich Bayern“ (Staatsbezeichnung) und „Königssee“ trifft das Muster nicht.
+    // Bayern“, „König Ludwig III. und Königin Marie Therese von Bayern“, „Kurfürstin von Bayern“, „König von Bayern“
+    // sind Namen von Personen bzw. Ämtern des historischen Staates, keine Bezeichnung des heutigen Landes. Der Titel
+    // muss unmittelbar vor Namen, Ordnungszahlen und „von/in Bayern“ stehen; „Königssee“ trifft das Muster nicht.
     pattern: /\b(?:König(?:s|in)?|Prinzregent(?:en)?|Prinz(?:en|essin)?|Herzog(?:s|in)?|Kurfürst(?:en|in)?|Kronprinz(?:en|essin)?)(?:\s+(?:[A-ZÄÖÜ][\p{L}-]*|[IVX]+\.|und)){0,8}\s+(?:von|in)\s+Bayern\b/gu,
     reason: 'Herrschername (Titel, Vorname, „von Bayern“) ist ein Personenname und bleibt unverändert (Nutzerentscheidung)',
+  },
+  {
+    id: 'historical-state',
+    category: 'historical-name',
+    // Nutzerentscheidung 2026-09-18 (zweite Runde): Die Zusammenlegung heutiger Länder verändert keine historischen
+    // Staaten. „Königreich Bayern“, „des Königreichs Bayern“, „den Königreichen Bayern und Württemberg“, „Krone
+    // Bayern“, „Kurfürstentum Bayern“, „Herzogtum Bayern“ – auch im historischen „Regierungs-Blatt für das Königreich
+    // Bayern“ – bleiben unverändert.
+    pattern: /\b(?:Königreich(?:e|es|s|en)?|Kurfürstentum(?:s|er)?|Herzogtum(?:s|er)?|Krone)\s+Bayern(?:\s+und\s+Württemberg)?(?![\p{L}-])/gu,
+    reason: 'Historische Staatsbezeichnung (Königreich, Krone, Kurfürstentum, Herzogtum Bayern) bleibt unverändert (Nutzerentscheidung)',
+  },
+  {
+    id: 'historical-organ',
+    category: 'historical-name',
+    // Organe des Königreichs: „Königl. Bayer. Staatsregierung“, „Königlich Bayerisches Staatsministerium“,
+    // „Kgl. Bayer. …“ – historische Staatsorgane, keine Organe des heutigen Landes.
+    pattern: /\b(?:Königlich|Königl\.|Kgl\.)\s+Bayer(?:isch(?:e[mnrs]?)?\b|\.)/gu,
+    reason: 'Historisches Staatsorgan des Königreichs Bayern bleibt unverändert (Nutzerentscheidung)',
+  },
+  {
+    id: 'historical-treaty-name',
+    category: 'historical-name',
+    // Der Name eines historischen Vertrags nennt die Vertragspartei so, wie sie beim Abschluss hieß: „Konkordat
+    // zwischen Seiner Heiligkeit Papst Pius XI. und dem Staate Bayern“ (1924). Vertragsnamen sind Eigennamen.
+    pattern: /\bKonkordat(?:s|es|e)?\s+zwischen\s+[Ss]einer\s+Heiligkeit\s+Papst\s+Pius\s+XI\.\s+und\s+dem\s+Staate\s+Bayern\b/gu,
+    reason: 'Name eines historischen Vertrags mit der Vertragspartei in ihrer historischen Bezeichnung bleibt unverändert (Nutzerentscheidung)',
   },
   {
     id: 'landscape-proper-name',

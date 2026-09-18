@@ -110,7 +110,7 @@ export function renderStructureReport(file: InventoryFile): string {
   const outOfModel = Object.entries(totals.signals.normTypeOutOfModel);
   lines.push(`- **Normtyp außerhalb des Zielmodells** (\`norm-type-out-of-model\`): ${outOfModel.reduce((sum, [, count]) => sum + count, 0)} Dokumente${outOfModel.length > 0 ? ` – ${outOfModel.map(([doktyp, count]) => `\`@doktyp="${doktyp}"\` ${count}×`).join(', ')}` : ''}.`);
   const images = totals.signals.imageAttachments;
-  lines.push(`- **Bildbeilagen**: ${images.documents} Dokumente; davon ${images.withGraphicFinding} mit Befund \`graphic-not-transferred\` (im XML über \`<graphic>\` referenziert, im Normkörper nicht enthalten) und ${images.withoutGraphicFinding} ohne – dort liegt die Bilddatei im Paket, ohne dass das XML sie über \`<graphic>\` aufruft.`);
+  lines.push(`- **Bildbeilagen**: ${images.documents} Dokumente; ${images.withFigures} davon mit Abbildungen im Normkörper (\`figures-transferred\`: \`figure\`-Block mit Asset-Referenz an der Stelle des \`<graphic>\`-Aufrufs). ${images.withGraphicFinding} mit Befund \`graphic-not-transferred\` (im XML über \`<graphic>\` referenziert, Bilddatei im Paket nicht lesbar) und ${images.withoutGraphicFinding} ohne diesen Befund.`);
   lines.push(`- **Slugkollisionen**: ${totals.signals.slugCollisions} Slugs würden mehrfach vergeben; der Bulk-Lauf muss sie auflösen.`);
   lines.push('');
 

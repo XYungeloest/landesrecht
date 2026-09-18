@@ -1,12 +1,19 @@
 # Quellparser BAYERN.RECHT
 
-Stand: 2026-09-17 · Code: `packages/importers/bayernrecht/src/parse/` · Tests:
+Stand: 2026-09-18 (Parser `bayernrecht-parser/0.2.0`) · Code: `packages/importers/bayernrecht/src/parse/` · Tests:
 `tests/unit/bayernrecht-parse.test.ts` · Fixtures: `tests/fixtures/bayernrecht/`
 
 Spezifikation ist `docs/BAYERN_SOURCE_DISCOVERY.md`, insbesondere Abschnitt 2 (XML-Export),
 Abschnitt 5 (Portal-IDs sind nicht XML-IDs) und Abschnitt 11.2 (zwölf Vorkehrungen für den Parser).
 Dieses Dokument beschreibt, was der Parser daraus umsetzt, welche Annahmen er trifft, wo er
 abbricht und was ungeklärt bleibt.
+
+**Parserversion.** Jede Änderung, die die Ausgabe für übernommene Normen verändern kann, erhöht
+`PARSER_VERSION` (`common/constants.ts`). 0.2.0: `figure`-Blöcke, Bildart in der Quellenreferenz,
+Trennung eines Fußnotenzeichens von unmittelbar folgenden Ziffern. `bulk --resume` nimmt Einträge einer
+älteren Parser- oder Transformerversion wieder auf; neu geschrieben wird der Inhalt aber nur, wenn sich der
+Datensatz tatsächlich ändert – die Versionsnummer allein ändert nur die Provenienz im Manifest
+(Regressionstest in `tests/unit/bayernrecht-bulk.test.ts`).
 
 **Der Parser liefert echtes bayerisches Recht** (`SourceLaw` nach
 `packages/importers/common/src/pipeline.ts`). Die Überleitung nach Bayern-Württemberg ist eine
@@ -128,10 +135,10 @@ Medienarten im Paketmanifest: `application/beck.bayportalnorm.text` ·
 | `annex` | `annex`; `annex.text` als Fließtext darin |
 | `Aenderungsinhalt` | `quotedProvision` (zitierter Normtext, siehe 4.1) |
 | `einleitungssatz` | Fließtext an seiner Stelle im Rumpf |
-| `graphic` | **kein Block** – Datei als Beilage, Befund `graphic-not-transferred` |
+| `graphic` | `figure` mit Asset-Referenz (SHA-256, Medienart, Maße, Pfad im Paket, `@Desc` als Alternativtext); ohne lesbare Bilddatei kein Block und Befund `graphic-not-transferred`, Logo/Zierbild laut `@Desc` Befund `graphic-decorative` |
 | `a` | Text bleibt im Fließtext; das Ziel steht in `resourceLinks` |
 | `hr` | Absatzumbruch, kein Block |
-| `fn.call` | `footnote` als Kind des aufrufenden Blocks, Marke bleibt im Text |
+| `fn.call` | `footnote` als Kind des aufrufenden Blocks, Marke bleibt im Text; folgt unmittelbar eine Ziffer (zweiter Aufruf, `<sup>`), steht ein Leerzeichen dazwischen |
 | `titelangaben` ab Zeile 2 | `heading` (Zeile 1 ist der Titel) |
 | `aenderungsverlauf` | `SourceLaw.changeHistory` (Text, kein Normkörper) |
 | `normzitat` / `<p typ="vollzitat">` | `SourceLaw.fullCitation` und `citation` |
@@ -278,7 +285,7 @@ alphabetisch aufzählt. Daraus bildet der Bulk-Lauf einen Review-Fall der Katego
 `unknown-attribute` · `unknown-attributes` · `vv-level-mismatch` · `vv-paragraph-type-unknown` ·
 `vv-superscript-ambiguous`
 
-`info`: `division-word-unmapped` · `footnotes` · `gazette-page-format` ·
+`info`: `division-word-unmapped` · `figures-transferred` · `footnotes` · `gazette-page-format` · `graphic-decorative` ·
 `gazette-reference-ambiguous` · `norm-type-assumed` · `norm-type-refined` ·
 `provision-graphic-only` · `quoted-provisions` · `referenced-file-case-mismatch` ·
 `repealed-provision` · `sentence-numbers` · `superscript-unmapped` · `tables` ·
@@ -361,19 +368,23 @@ gedeckt – die DTD-Dateien wurden nicht abgerufen.
 16. **`<Aenderungsinhalt>` ist ein Zitat, kein eigener Normtext** – siehe Abschnitt 4.1. Das ist die
     folgenreichste Annahme dieses Parsers: Sie entscheidet, ob fremder Wortlaut im Bestand als
     eigener erscheint.
-17. **Abbildungen kommen nicht in den Normkörper.** `<graphic FileRef="…" Desc="…"/>` erzeugt
-    **keinen** Block: Das Zielmodell kennt keinen Bildblock, und die Bildbeschreibung (`@Desc`, z. B.
-    „Schematische Darstellung“) ist redaktioneller Text, kein Normtext – sie als Fließtext
-    einzusetzen, hieße Normtext zu erfinden. Die Datei liegt als Beilage im Paket, ist mit ihrem
-    SHA-256 als Quellenreferenz geführt und steht in `BayernRechtDocument.graphics` mit Dateiname und
-    Beschreibung. Der Befund `graphic-not-transferred` nennt sie. Eine Vorschrift, die nur eine
-    Abbildung trägt, wird als `provision-graphic-only` gemeldet – sie ist nicht leer, ihr Inhalt
-    liegt nur woanders.
+17. **Abbildungen stehen als `figure`-Block an ihrer Stelle im Normkörper (Parser 0.2.0).**
+    `<graphic FileRef="…" Desc="…"/>` wird ein Block `{ type: 'figure', asset }`: `asset` nennt SHA-256,
+    tatsächliche Medienart (aus den ersten Bytes: GIF, PNG, JPEG), Größe, Maße und den Pfad im Paket – nie
+    die Bytes selbst (kein Base64 im Norm-JSON). Die Bilddatei wird eigenes, inhaltsadressiertes Asset
+    (`r2/archive.ts`, Schlüssel `assets/<sha256>.<ext>`), das der Worker unter
+    `/assets/<land>/<sha256>.<ext>` ausliefert. Die Bildbeschreibung (`@Desc`, z. B. „Übersichtskarte
+    Lärmschutzbereich“) ist Alternativtext am Asset, **kein Normtext**: Der Block trägt keinen `text`
+    (das Schema lehnt ihn ab), die Beschreibung zählt weder in der Textintegrität noch in der Suche und wird
+    nicht übergeleitet – sie beschreibt die Quellabbildung. Ein Logo oder Zierbild (laut `@Desc`) wird
+    nicht übernommen (`graphic-decorative`); eine Abbildung ohne lesbare Datei im Paket bleibt beim Befund
+    `graphic-not-transferred`. Eine Vorschrift, die nur eine Abbildung trägt, meldet weiterhin
+    `provision-graphic-only`.
 18. **Bildbeilagen behalten die deklarierte Medienart.** Das Manifest schreibt `image/jpg` – nicht
     `image/jpeg` – und zwar auch für `.gif`-Dateien. Beides bleibt unverändert; die Abweichung
-    zwischen Deklaration und Endung wird als `package-media-type-mismatch` gemeldet. In der
-    Quellenreferenz bleibt `mediaType` für Bilder leer, weil der Medienartvorrat von `legal-core`
-    keine Bildmedienart kennt und ein anderer Wert eine stillschweigende Umschreibung wäre.
+    zwischen Deklaration und Endung wird als `package-media-type-mismatch` gemeldet. Die
+    Quellenreferenz einer Bildbeilage trägt als `mediaType` die aus den Bytes erkannte Bildart; die
+    Deklaration des Portals steht unverändert in ihrer Notiz.
 19. **Dateiverweise werden ohne Rücksicht auf Groß-/Kleinschreibung abgeglichen.** Das XML schreibt
     `Bay_791_3_150_U_…jpg` und `…-A001.PDF`, das Manifest `BAY_791_3_150_U_…jpg` und `…-a001.pdf`.
     Der Abgleich ignoriert die Schreibweise und meldet die Abweichung eigens
@@ -403,10 +414,11 @@ gedeckt – die DTD-Dateien wurden nicht abgerufen.
    den Bulk-Lauf gedacht: Er sammelt die tatsächlich vorkommenden unbekannten Elemente, statt den
    Lauf an der ersten Abweichung zu beenden. Nach dem ersten Vollabzug sollte der Vorrat aus den
    Befunden ergänzt und der Lauf wieder auf `throw` gestellt werden.
-2. **Was mit den Abbildungen geschehen soll, ist offen.** Sie liegen im Paket, sind identifiziert
-   und referenziert, aber das kanonische Blockmodell hat keinen Bildblock. Entweder bekommt
-   `legal-core` einen – das berührt den eingefrorenen West-Bestand – oder die Abbildungen bleiben
-   dauerhaft Beilage. Das ist keine Parserfrage.
+2. **Abbildungen (entschieden, Parser 0.2.0).** `legal-core` kennt den Block `figure` mit Asset-Referenz;
+   der West-Bestand enthält keinen und bleibt unverändert (Regressionstest über den D1-Fingerabdruck).
+   Im Korpus stehen von 361 Abbildungen in 51 Dokumenten (einschließlich des BodSchO-Anhangs) 360 als Block im
+   Normkörper; eine hat keine lesbare Datei im Paket. Keine ist Logo oder Zierbild. Übernommen und in R2
+   archiviert sind 263 Bilddateien aus 35 Normen; die übrigen Bildnormen warten auf ihre Stichtagsfassung.
 3. **Das numerische Gliederungssuffix der Verwaltungsvorschriften** (`-0`, `-13`, `-19`, …) und die
    Adressierung **innerhalb** von Anlagen. Solange die Regeln nicht belegt sind, gibt es dort keinen
    Permalink, sondern nur den gezählten Positionspfad in `unresolvedAddresses`.

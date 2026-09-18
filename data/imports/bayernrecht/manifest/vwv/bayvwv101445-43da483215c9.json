@@ -4,32 +4,36 @@
     "sourceSystem": "bayernrecht",
     "targetJurisdiction": "baywue",
     "baselineDate": "2023-12-01",
-    "parserVersion": "bayernrecht-parser/0.1.0",
+    "parserVersion": "bayernrecht-parser/0.2.0",
     "validityEvidence": [
       {
-        "kind": "text-in-force-clause",
+        "kind": "reconstruction",
         "dimension": "begin",
         "strength": "strong",
-        "statement": "Der geführte Text gilt laut Quelle ab 2026-04-30",
+        "statement": "Die Stichtagsfassung gilt seit 2020-11-26: Stand nach der vorangehenden Änderung; ihr Inkrafttreten ist durch ihre eigene Verkündung belegt; Vorangehende Änderung vom 12. November 2020 (BayMBl. Nr. 678, Nr. 806) (§ 1): „Diese Änderungssatzung tritt am 26. November 2020 in Kraft.“ – https://www.verkuendung-bayern.de/baymbl/2020-678/, SHA-256 60289c8c5430d552…",
+        "date": "2020-11-26",
+        "citation": "Bekanntmachung vom 12. November 2020 (BayMBl. Nr. 678, Nr. 806)",
+        "sourceUrl": "https://www.verkuendung-bayern.de/baymbl/2020-678/",
+        "sha256": "60289c8c5430d55288e3f8525498686368682d9b561b5e2aca767fae5f993c87"
+      },
+      {
+        "kind": "gazette-amendment",
+        "dimension": "amendment",
+        "strength": "strong",
+        "statement": "Geändert durch BayMBl. 2026 Nr. 167 mit Wirkung vom 2026-04-30; die Rücknahme dieser Änderung ergibt die Stichtagsfassung, der Rundlauf bestätigt den heutigen Text",
         "date": "2026-04-30",
-        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayVwV101445"
+        "citation": "BayMBl. 2026 Nr. 167",
+        "sourceUrl": "https://www.verkuendung-bayern.de/baymbl/2026-167/",
+        "sha256": "f204e627fa4fa22aa0f571685d06cc96c57bc6a6a93e79a4693daf4fa5986ff2"
       },
       {
         "kind": "portal-version-interval",
         "dimension": "validity",
-        "strength": "strong",
-        "statement": "Das Portal führt am 2026-09-18 genau diesen Text als geltende Fassung; ein Fassungsende ist nicht vermerkt",
+        "strength": "supporting",
+        "statement": "Das Portal führt am 2026-09-18 den heutigen Text (gültig ab 2026-04-30); er ist Grundlage der Rückrechnung, nicht der Stichtagstext",
         "date": "2026-09-18",
         "sourceUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV101445",
         "sha256": "591df32ff89d19ebae083647e98c761e0684ace80ec950128efebc17c70adcf0"
-      },
-      {
-        "kind": "gazette-publication",
-        "dimension": "begin",
-        "strength": "supporting",
-        "statement": "Ausgefertigt am 2007-10-02",
-        "date": "2007-10-02",
-        "citation": "Bekanntmachung des Bayerischen Staatsministeriums des Innern über die Satzung der Anstalt für Kommunale Datenverarbeitung in Bayern (AKDB) vom 2. Oktober 2007 (AllMBl. S. 511), die zuletzt durch Bekanntmachung vom 14. April 2026 (BayMBl. Nr. 167) geändert worden ist"
       }
     ],
     "rawDocuments": [
@@ -40,7 +44,34 @@
         "sha256": "591df32ff89d19ebae083647e98c761e0684ace80ec950128efebc17c70adcf0",
         "contentType": "application/zip",
         "retrievedAt": "2026-09-18T01:08:48.340Z",
-        "byteLength": 6796
+        "byteLength": 6796,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv101445-43da483215c9/591df32ff89d19eb-text-document.zip",
+        "archiveStatus": "verified"
+      },
+      {
+        "role": "gazette",
+        "url": "https://www.verkuendung-bayern.de/baymbl/2026-167/",
+        "finalUrl": "https://www.verkuendung-bayern.de/baymbl/2026-167/",
+        "sha256": "f204e627fa4fa22aa0f571685d06cc96c57bc6a6a93e79a4693daf4fa5986ff2",
+        "contentType": "text/html; charset=utf-8",
+        "retrievedAt": "2026-09-18T00:40:59.215Z",
+        "byteLength": 19179,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv101445-43da483215c9/f204e627fa4fa22a-gazette.html",
+        "archiveStatus": "verified"
+      },
+      {
+        "role": "gazette",
+        "url": "https://www.verkuendung-bayern.de/baymbl/2020-678/",
+        "finalUrl": "https://www.verkuendung-bayern.de/baymbl/2020-678/",
+        "sha256": "60289c8c5430d55288e3f8525498686368682d9b561b5e2aca767fae5f993c87",
+        "contentType": "text/html; charset=utf-8",
+        "retrievedAt": "2026-09-18T10:09:16.153Z",
+        "byteLength": 23721,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv101445-43da483215c9/60289c8c5430d552-gazette.html",
+        "archiveStatus": "verified"
       }
     ],
     "versionsConsidered": [
@@ -57,6 +88,11 @@
         "severity": "info",
         "code": "division-number-before-title",
         "message": "BayVwV101445: <titelangaben> stellt die Gliederungsnummer „2003.4-I“ vor den Titel; sie wird als Gliederungsnummer geführt, nicht als Titelbestandteil"
+      },
+      {
+        "severity": "warning",
+        "code": "enacting-body-mapping-required",
+        "message": "Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)"
       }
     ],
     "integrity": {
@@ -64,13 +100,13 @@
       "sourceCanonical": true
     },
     "transformation": {
-      "changes": 0,
-      "unresolved": 0,
-      "detections": 0,
-      "postTransformAudit": false
+      "changes": 30,
+      "unresolved": 26,
+      "detections": 57,
+      "postTransformAudit": true
     },
-    "reviewStatus": "open",
-    "targetSlug": "",
+    "reviewStatus": "resolved",
+    "targetSlug": "satzung-der-anstalt-fuer-kommunale-datenverarbeitung-in-baywue",
     "sourceArea": "vwv",
     "sourceIdentity": "BayVwV101445",
     "sourceTitle": "Satzung der Anstalt für Kommunale Datenverarbeitung in Bayern (AKDB)",
@@ -82,8 +118,8 @@
       "validTo": null
     },
     "selectedVersionUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV101445",
-    "sourceValidFrom": "2026-04-30",
-    "sourceValidTo": null,
+    "sourceValidFrom": "2020-11-26",
+    "sourceValidTo": "2026-04-29",
     "baselineStatus": "active-at-baseline",
     "baselineRecoveryMethod": "reverse-post-baseline-event",
     "sourceProvenance": {
@@ -94,13 +130,13 @@
     "retrievedAt": "2026-09-18T01:08:48.340Z",
     "sha256": "591df32ff89d19ebae083647e98c761e0684ace80ec950128efebc17c70adcf0",
     "contentType": "application/zip",
-    "transformerVersion": "bayernrecht-transformer/1.1.0",
-    "importStatus": "needs-review",
+    "transformerVersion": "bayernrecht-transformer/1.2.0",
+    "importStatus": "imported-with-warnings",
     "decisionTrace": {
       "schemaVersion": "bayernrecht-decision-trace/1",
       "documentId": "BayVwV101445",
       "baselineDate": "2023-12-01",
-      "statement": "Nicht übernommen: text-changed-after-baseline (changed-after-baseline, active-at-baseline).",
+      "statement": "Der heutige Text gilt erst seit 2026-04-30 (BayMBl. 2026 Nr. 167); die Fassung davor galt seit 2020-11-26 und damit am 2023-12-01. Sie wurde durch Rücknahme genau dieser Änderung zurückgerechnet; der Rundlauf ergibt byteidentisch den heutigen Text.",
       "scope": {
         "decision": "include",
         "reason": "state-law-in-scope",
@@ -111,12 +147,9 @@
       "baseline": {
         "class": "changed-after-baseline",
         "status": "active-at-baseline",
-        "method": "undetermined",
-        "reason": "text-changed-after-baseline",
-        "blockers": [
-          "Der gezeigte Text gilt erst ab 2026-04-30; die Fassung vom 2023-12-01 ist zu beschaffen",
-          "Rekonstruktion: partial-chain (prior-amendment-in-force-unproven) – Die vorangehende Änderung (vom 12. November 2020 (BayMBl. Nr. 678, Nr. 806)) ist vor dem Stichtag verkündet, ihr Inkrafttreten vor dem Stichtag aber aus dem Cache nicht belegt; ohne diesen Beleg ist der Beginn der Stichtagsfassung offen (Verkündung der vorangehenden Änderung nicht im Cache: https://www.verkuendung-bayern.de/baymbl/2020-678/)"
-        ],
+        "method": "reverse-amendment",
+        "reason": "reverse-amendment-verified",
+        "blockers": [],
         "evidence": [
           {
             "kind": "issue-date",
@@ -142,12 +175,17 @@
             "kind": "change-note",
             "value": "2026-04-14",
             "source": "citation:zuletzt geändert"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "reverse-amendment BayMBl. 2026 Nr. 167 (§ 1), in Kraft 2026-04-30; Rezept data/imports/bayernrecht/reconstruction/BayVwV101445.json (bayernrecht-reverse-amendment/1, 1 Änderung(en), 1 Schritt(e), Stichtagskörper db65eb6bff0cf11f)",
+            "source": "reconstruction"
           }
         ]
       },
       "recovery": {
         "method": "reverse-post-baseline-event",
-        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
+        "note": "Stichtagsfassung durch Rücknahme der Änderung BayMBl. 2026 Nr. 167 (Wirkung ab 2026-04-30) aus dem heutigen Text zurückgerechnet; Rezept data/imports/bayernrecht/reconstruction/BayVwV101445.json, Rundlauf bestanden."
       },
       "source": {
         "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV101445",
@@ -156,22 +194,23 @@
         "retrievedAt": "2026-09-18T01:08:48.340Z",
         "documentDate": "2007-10-02",
         "textInForceFrom": "2026-04-30",
-        "parserVersion": "bayernrecht-parser/0.1.0",
-        "transformerVersion": "bayernrecht-transformer/1.1.0"
+        "parserVersion": "bayernrecht-parser/0.2.0",
+        "transformerVersion": "bayernrecht-transformer/1.2.0"
       },
       "evidenceChain": [
         "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
-        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – text-changed-after-baseline",
+        "Stichtag: changed-after-baseline / active-at-baseline / reverse-amendment – reverse-amendment-verified",
         "Beleg issue-date: 2007-10-02 (xml:ausfertigungsdatum)",
         "Beleg text-in-force: 2026-04-30 (xml:inkraft)",
         "Beleg version-date: 2007-10-02 (xml:fassungsdatum)",
         "Beleg post-baseline-event: amend 2026-04-29 (BayMBl. 2026 Nr. 167) (event-ledger)",
         "Beleg change-note: 2026-04-14 (citation:zuletzt geändert)",
-        "Offen: Der gezeigte Text gilt erst ab 2026-04-30; die Fassung vom 2023-12-01 ist zu beschaffen",
-        "Offen: Rekonstruktion: partial-chain (prior-amendment-in-force-unproven) – Die vorangehende Änderung (vom 12. November 2020 (BayMBl. Nr. 678, Nr. 806)) ist vor dem Stichtag verkündet, ihr Inkrafttreten vor dem Stichtag aber aus dem Cache nicht belegt; ohne diesen Beleg ist der Beginn der Stichtagsfassung offen (Verkündung der vorangehenden Änderung nicht im Cache: https://www.verkuendung-bayern.de/baymbl/2020-678/)",
+        "Beleg post-baseline-event: reverse-amendment BayMBl. 2026 Nr. 167 (§ 1), in Kraft 2026-04-30; Rezept data/imports/bayernrecht/reconstruction/BayVwV101445.json (bayernrecht-reverse-amendment/1, 1 Änderung(en), 1 Schritt(e), Stichtagskörper db65eb6bff0cf11f) (reconstruction)",
         "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayVwV101445 (SHA-256 591df32ff89d19eb…, abgerufen 2026-09-18T01:08:48.340Z)",
-        "Werkzeuge: bayernrecht-parser/0.1.0, bayernrecht-transformer/1.1.0"
+        "Werkzeuge: bayernrecht-parser/0.2.0, bayernrecht-transformer/1.2.0"
       ]
-    }
+    },
+    "importedAt": "2026-09-18T11:18:32.844Z",
+    "runId": "bayernrecht-bulk-20260918t111626z"
   }
 }

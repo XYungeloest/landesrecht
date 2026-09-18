@@ -93,8 +93,8 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    // 1.1.0: Herrschernamen geschützt (Nutzerentscheidung 2026-09-18).
-    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.1.0');
+    // 1.1.0: Herrschernamen geschützt; 1.2.0: historische Staaten, Organe und Vertragsnamen (Nutzerentscheidungen 2026-09-18).
+    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.2.0');
   });
 
   it('kennt den angehängten Zielteil, auf dem der Idempotenzschutz beruht', () => {
@@ -469,6 +469,16 @@ describe('Erlassorgan nur aus ausdrücklicher Formel', () => {
     expect(mapEnactingBody(withState.enactingBody?.name).enactingBody).toBe(`Landtag des Freistaates ${targetProperName()}`);
   });
 
+  it('erkennt den Ministerpräsidenten auch mit Landesadjektiv als Verfassungsorgan', () => {
+    const mapping = mapEnactingBody('Bayerischer Ministerpräsident');
+    expect(mapping.decision).toBe('safe-auto-transform');
+    expect(mapping.enactingBody).toBe(`${targetAdjective(true)}er Ministerpräsident`);
+    expect(mapEnactingBody('Ministerpräsidentin des Freistaates Bayern').enactingBody).toBe(`Ministerpräsidentin des Freistaates ${targetProperName()}`);
+    // Ressorts und Behörden bleiben Prüffälle, auch mit Adjektiv.
+    expect(mapEnactingBody('Bayerische Staatskanzlei', { institutions: registry }).decision).toBe('manual-review');
+    expect(mapEnactingBody('Bayerisches Staatsministerium', { institutions: registry }).decision).toBe('manual-review');
+  });
+
   it('übernimmt kein Organ aus einer unpersönlichen Formel', () => {
     const organs = extractSourceOrgans({ blocks: [{ type: 'paragraphText', text: 'Auf Grund des Art. 5 Abs. 2 des Bayerischen Straßen- und Wegegesetzes wird verordnet:' }] });
     expect(organs.candidates).toEqual([]);
@@ -616,6 +626,36 @@ describe('Restpostenprüfung auf der fertigen Norm', () => {
     expect(abbreviation?.message).toMatch(/BayTestG/u);
     // Gebündelt: eine Meldung, nicht eine je Vorkommen.
     expect(findings.filter((finding) => finding.code === 'undecidable-source-state-abbreviation')).toHaveLength(1);
+  });
+
+  it('meldet eine übergeleitete historische Bezeichnung als Fehler (Regressionsschutz)', () => {
+    const record = transformed();
+    record.versions[0]!.body[1]!.title = `Übereinkunft des Königreichs ${targetProperName()} mit den Schweizer Kantonen`;
+    const codes = auditRecord(record).filter((finding) => finding.severity === 'error').map((finding) => finding.code);
+    expect(codes).toContain('historical-name-transformed');
+    expect(auditRecord(transformed()).some((finding) => finding.code === 'historical-name-transformed')).toBe(false);
+  });
+
+  it('meldet einen nicht entscheidbaren Vertragsnamen als Prüffall, nicht als Fehler („Bayerisches Konkordat“)', () => {
+    const record = transformed();
+    record.versions[0]!.body[1]!.title = `Art. 5 des ${targetAdjective(true)}en Konkordats vom 29. März 1924`;
+    const findings = auditRecord(record).filter((finding) => finding.code === 'historical-name-uncertain');
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('warning');
+    expect(auditRecord(record).filter((finding) => finding.severity === 'error')).toEqual([]);
+    expect(auditRecord(transformed()).some((finding) => finding.code === 'historical-name-uncertain')).toBe(false);
+  });
+
+  it('meldet einen Markennamen mit Punkt als Prüffall, nicht als Fehler („Zentrum Digitalisierung.Bayern“)', () => {
+    const record = transformed();
+    record.versions[0]!.body[1]!.title = `Zentrum Digitalisierung.${targetProperName()}`;
+    const findings = auditRecord(record).filter((finding) => finding.code === 'proper-name-uncertain');
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('warning');
+    expect(auditRecord(record).filter((finding) => finding.severity === 'error')).toEqual([]);
+    // Ein Satzende vor dem Landesnamen ist kein Markenname.
+    record.versions[0]!.body[1]!.title = `Zuständig ist das Land. ${targetProperName()} regelt das Nähere.`;
+    expect(auditRecord(record).some((finding) => finding.code === 'proper-name-uncertain')).toBe(false);
   });
 
   it('meldet eine verbliebene Quellbezeichnung und eine Doppelbildung als Fehler', () => {
@@ -829,8 +869,31 @@ describe('Herrschernamen bleiben unverändert (Nutzerentscheidung 2026-09-18)', 
     expect(apply(`Stiftung ${value} im Freistaat Bayern`)).toBe(`Stiftung ${value} im Freistaat Bayern-Württemberg`);
   });
 
-  it('überleitet Staatsbezeichnungen weiter, auch historische und in Ortsangaben', () => {
-    expect(apply('Blindenerziehungsanstalt des Königreichs Bayern')).toBe('Blindenerziehungsanstalt des Königreichs Bayern-Württemberg');
+  it('überleitet heutige Selbstbezüge weiter, auch in Ortsangaben', () => {
     expect(apply('am Königssee in Bayern')).toBe('am Königssee in Bayern-Württemberg');
+    expect(apply('Zuständigkeiten des Staates Bayern auf den Gebieten der auswärtigen Beziehungen')).toBe('Zuständigkeiten des Staates Bayern-Württemberg auf den Gebieten der auswärtigen Beziehungen');
+  });
+});
+
+describe('Historische Staaten, Organe und Vertragsnamen bleiben unverändert (Nutzerentscheidung, zweite Runde)', () => {
+  // Die Zusammenlegung heutiger Länder verändert keine historischen Staaten. Belegt an BayBlindenErzAUrk,
+  // BayCHInsBek, StVIllerWasKNutzStVBayWuertt, BayKonk, BayNotHSt, BAY_2220_3_UK.
+  it.each([
+    'Blindenerziehungsanstalt des Königreichs Bayern',
+    'Nr. 36 des Regierungs-Blattes für das Königreich Bayern vom 19. Juli 1834',
+    'Staatsvertrag zwischen den Königreichen Bayern und Württemberg über die Ausnützung der Wasserkräfte der Iller',
+    'Übereinkunft der Königl. Bayer. Staatsregierung mit mehreren Schweizer Kantonen',
+    'das Königlich Bayerische Staatsministerium des Innern',
+    'die Krone Bayern',
+    'Konkordat zwischen seiner Heiligkeit Papst Pius XI. und dem Staate Bayern',
+    'Art. 5 des Konkordats zwischen Seiner Heiligkeit Papst Pius XI. und dem Staate Bayern vom 29. März 1924',
+    'Der König von Bayern',
+  ])('lässt „%s“ stehen', (value) => {
+    expect(apply(value)).toBe(value);
+    expect(apply(apply(value))).toBe(value);
+  });
+
+  it('überleitet den heutigen Freistaat im selben Satz weiter', () => {
+    expect(apply('Übereinkunft des Königreichs Bayern, heute vom Freistaat Bayern fortgeführt')).toBe('Übereinkunft des Königreichs Bayern, heute vom Freistaat Bayern-Württemberg fortgeführt');
   });
 });

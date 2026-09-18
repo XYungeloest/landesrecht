@@ -6,7 +6,7 @@ Der Parser lief dabei meldend (`unknown: 'report'`): Eine unbekannte Struktur br
 
 Kandidaten laut Scope: **2342** · geprüft: **2342** · Paket noch nicht im Cache: **0**.
 
-Dokumente, die einem Bulk-Lauf im Weg stehen: **1** von 2342.
+Dokumente, die einem Bulk-Lauf im Weg stehen: **0** von 2342.
 
 Datengrundlage: `data/imports/bayernrecht/inventory.json` (ein Eintrag je Dokument).
 
@@ -14,37 +14,36 @@ Datengrundlage: `data/imports/bayernrecht/inventory.json` (ein Eintrag je Dokume
 
 | Ausgang | Dokumente | Anteil | Bedeutung |
 | --- | --- | --- | --- |
-| `parsed-with-warnings` | 2152 | 91,9 % | durchgelaufen, mit Hinweisen |
+| `parsed-with-warnings` | 2153 | 91,9 % | durchgelaufen, mit Hinweisen |
 | `parsed` | 189 | 8,1 % | ohne Befund durch den ganzen Weg |
-| `transform-failed` | 1 | 0,0 % | Überleitung gescheitert |
 
 ## Erfolg je DTD
 
 Die beiden Dokumentmodelle teilen den Fließtextvorrat, sonst wenig – sie verhalten sich nicht gleich.
 
-| DTD | geprüft | `parsed` | `parsed-with-warnings` | `transform-failed` |
-| --- | --- | --- | --- | --- |
-| `byrecht-norm` | 1001 | 117 | 884 | 0 |
-| `byrecht-vv` | 1341 | 72 | 1268 | 1 |
+| DTD | geprüft | `parsed` | `parsed-with-warnings` |
+| --- | --- | --- | --- |
+| `byrecht-norm` | 1001 | 115 | 886 |
+| `byrecht-vv` | 1341 | 74 | 1267 |
 
 ## Erfolg je Normtyp
 
-| Normtyp | geprüft | `parsed` | `parsed-with-warnings` | `transform-failed` |
-| --- | --- | --- | --- | --- |
-| `bekanntmachung` | 8 | 0 | 8 | 0 |
-| `gesetz` | 240 | 61 | 179 | 0 |
-| `satzung` | 5 | 1 | 4 | 0 |
-| `staatsvertrag` | 95 | 6 | 89 | 0 |
-| `verfassung` | 1 | 0 | 1 | 0 |
-| `verordnung` | 502 | 45 | 457 | 0 |
-| `verwaltungsabkommen` | 21 | 1 | 20 | 0 |
-| `verwaltungsvorschrift` | 1470 | 75 | 1394 | 1 |
+| Normtyp | geprüft | `parsed` | `parsed-with-warnings` |
+| --- | --- | --- | --- |
+| `bekanntmachung` | 8 | 0 | 8 |
+| `gesetz` | 240 | 61 | 179 |
+| `satzung` | 5 | 1 | 4 |
+| `staatsvertrag` | 95 | 4 | 91 |
+| `verfassung` | 1 | 0 | 1 |
+| `verordnung` | 502 | 45 | 457 |
+| `verwaltungsabkommen` | 21 | 1 | 20 |
+| `verwaltungsvorschrift` | 1470 | 77 | 1393 |
 
 ## Einzelne Kennzahlen
 
 - **Gliederungsnummer vor dem Titel** (`division-number-before-title`): 125 Dokumente. Die Quelle stellt Verwaltungsvorschriften ihre Gliederungsnummer voran; sie wird als Gliederungsnummer geführt, nicht als Titelbestandteil.
 - **Normtyp außerhalb des Zielmodells** (`norm-type-out-of-model`): 26 Dokumente – `@doktyp="bekanntmachung"` 10×, `@doktyp="normsonst"` 16×.
-- **Bildbeilagen**: 59 Dokumente; davon 49 mit Befund `graphic-not-transferred` (im XML über `<graphic>` referenziert, im Normkörper nicht enthalten) und 10 ohne – dort liegt die Bilddatei im Paket, ohne dass das XML sie über `<graphic>` aufruft.
+- **Bildbeilagen**: 59 Dokumente; 49 davon mit Abbildungen im Normkörper (`figures-transferred`: `figure`-Block mit Asset-Referenz an der Stelle des `<graphic>`-Aufrufs). 0 mit Befund `graphic-not-transferred` (im XML über `<graphic>` referenziert, Bilddatei im Paket nicht lesbar) und 59 ohne diesen Befund.
 - **Slugkollisionen**: 29 Slugs würden mehrfach vergeben; der Bulk-Lauf muss sie auflösen.
 
 ## Strukturklassen
@@ -54,9 +53,9 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 
 | Dokumente | Signatur | Stufe | Gewicht |
 | --- | --- | --- | --- |
-| 1552 | `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` | transform | info |
+| 1553 | `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` | transform | info |
 | 1485 | `sentence-numbers` | parse | info |
-| 1462 | `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` | transform | warning |
+| 1459 | `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` | transform | warning |
 | 1143 | `vv-section-address-unresolved` | parse | info |
 | 811 | `tables` | parse | info |
 | 739 | `footnotes` | parse | info |
@@ -85,7 +84,7 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 54 | `undecidable-source-state-abbreviation:BayPVG` | transform | warning |
 | 54 | `undecidable-source-state-abbreviation:BaySchO` | transform | warning |
 | 52 | `undecidable-source-state-abbreviation:BaySchFG` | transform | warning |
-| 50 | `graphic-not-transferred` | parse | warning |
+| 49 | `figures-transferred` | parse | info |
 | 49 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium)…` | transform | warning |
 | 38 | `norm-type-assumed:@doktyp="vertrag"` | parse | info |
 | 37 | `undecidable-source-state-abbreviation:BayWG` | transform | warning |
@@ -229,10 +228,10 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 3 | `empty-provision:Art. #e hat keinen Textinhalt` | parse | warning |
 | 3 | `empty-provision:§ #a hat keinen Textinhalt` | parse | warning |
 | 3 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <p typ=titel> ; ersatzweise als „…“ geführt` | parse | warning |
+| 3 | `historical-name-uncertain:versions[#].body[#].children[#].text: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
 | 3 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium …` | transform | warning |
 | 3 | `repealed-provision:Art. #d ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 3 | `repealed-provision:Art. #e ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
-| 3 | `text-integrity:review:zusätzlicher Text im Zielkörper` | parse | warning |
 | 3 | `undecidable-source-state-abbreviation:BayAnerkV` | transform | warning |
 | 3 | `undecidable-source-state-abbreviation:BayArbZustG` | transform | warning |
 | 3 | `undecidable-source-state-abbreviation:BayBFHG` | transform | warning |
@@ -266,6 +265,8 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 2 | `empty-provision:Art. #k hat keinen Textinhalt` | parse | warning |
 | 2 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <para.titel> ; ersatzweise als „…“ geführt` | parse | warning |
 | 2 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <rumpf> ; ersatzweise als „…“ geführt` | parse | warning |
+| 2 | `historical-name-uncertain:versions[#].body[#].children[#].children[#].children[#].text: „…“ – historischer Vertragsname oder heutiger Selbstbezug?…` | transform | warning |
+| 2 | `historical-name-uncertain:versions[#].body[#].children[#].children[#].text: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…` | transform | warning |
 | 2 | `norm-type-refined:@doktyp="bekanntmachung"` | parse | info |
 | 2 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Umwelt und Gesundheit / Bayerisches Staatsministerium)…` | transform | warning |
 | 2 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Umwelt und Verbraucherschutz / Bayerisches Staatsminis…` | transform | warning |
@@ -352,6 +353,11 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <gliederung G_#> → <gliederung.nr> ; ersatzweise als „…“ geführt` | parse | warning |
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <gliederung ebene=# Position #> → <gliederung.titel> ; ersatzweise als „…“ ge…` | parse | warning |
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <rumpf> → Listenpunkt → Listenpunkt ; ersatzweise als „…“ geführt` | parse | warning |
+| 1 | `graphic-not-transferred` | parse | warning |
+| 1 | `historical-name-uncertain:meta.initialCitation: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
+| 1 | `historical-name-uncertain:meta.title: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
+| 1 | `historical-name-uncertain:versions[#].body[#].title: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
+| 1 | `historical-name-uncertain:versions[#].citation: „…“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „…“)` | transform | warning |
 | 1 | `norm-type-refined:@doktyp="gesetz"` | parse | info |
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium der Finanzen / Staatsministerium der Finanzen); kein Erlas…` | transform | warning |
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium der Finanzen vom / Bayerisches Staatsministerium der Finan…` | transform | warning |
@@ -362,20 +368,18 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Digitales und des Bayerischen Staatsministeriums der F…` | transform | warning |
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen / Bayerisches Staat…` | transform | warning |
 | 1 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Wissenschaft und Kunst / Bayerisches Staatsministerium…` | transform | warning |
-| 1 | `provision-graphic-only:Nummer # enthält nur eine Abbildung; sie liegt als Beilage im Exportpaket und wird nicht in den Normkörper übernommen` | parse | info |
-| 1 | `provision-graphic-only:Nummer #a enthält nur eine Abbildung; sie liegt als Beilage im Exportpaket und wird nicht in den Normkörper übernommen` | parse | info |
+| 1 | `proper-name-uncertain:versions[#].body[#].children[#].children[#].text: „…“ in der vor dem #. Juli # geltenden“ – Markenname mit Landesbezeich…` | transform | warning |
+| 1 | `proper-name-uncertain:versions[#].body[#].children[#].text: „…“ – Markenname mit Landesbezeichnung: Namensbestandteil oder Landesbezug?` | transform | warning |
 | 1 | `repealed-provision:#. ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 1 | `repealed-provision:Art. #g ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 1 | `repealed-provision:Art. #i ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 1 | `repealed-provision:Art. #j ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 1 | `repealed-provision:Art. #k ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
 | 1 | `repealed-provision:Art. #l ist als aufgehobene Vorschrift ein Platzhalter mit leerem Text und bleibt als Block erhalten` | parse | info |
-| 1 | `residual-source-state-reference:„Bayerischne“` | transform | error |
 | 1 | `table-colgroup-mismatch:Tabelle in <rumpf> deklariert # Spalten, das Zellenraster ergibt #` | parse | warning |
 | 1 | `table-flattened-in-text:Tabelle in <rumpf> als # Textzeilen übernommen; die Spaltenform geht verloren` | parse | warning |
 | 1 | `table-ragged:Tabelle in <einzelnorm P_#> → <absatz.text> : # Zeile(n) belegen weniger als # Spalten ; die fehlenden Zellen werden am …` | parse | warning |
 | 1 | `table-ragged:Tabelle in <gliederung ebene=# Position #> : # Zeile(n) belegen weniger als # Spalten ; die fehlenden Zellen werden am Z…` | parse | warning |
-| 1 | `text-integrity:review:fehlende Wörter ohne zusammenhängenden Abschnitt` | parse | warning |
 | 1 | `undecidable-source-state-abbreviation:BayABfG` | transform | warning |
 | 1 | `undecidable-source-state-abbreviation:BayAFWoG` | transform | warning |
 | 1 | `undecidable-source-state-abbreviation:BayAGBAföG` | transform | warning |
@@ -548,15 +552,9 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 
 ### Die Klassen im Einzelnen
 
-Zuerst alle 1 Klassen mit Gewicht `error` (sie halten den Bulk-Lauf auf), danach die 40 größten der übrigen. Alle 491 Klassen stehen in der Tabelle oben und vollständig in `data/imports/bayernrecht/inventory.json`.
+Zuerst alle 0 Klassen mit Gewicht `error` (sie halten den Bulk-Lauf auf), danach die 40 größten der übrigen. Alle 496 Klassen stehen in der Tabelle oben und vollständig in `data/imports/bayernrecht/inventory.json`.
 
-#### `residual-source-state-reference:„Bayerischne“` · 1 Dokument
-
-Stufe transform · Gewicht error
-
-- `BayVwV96990`: meta.shortTitle: „Bayerischne“ blieb unverändert stehen (Kontext: „Geschäftsordnung des Bayerischne Landesbeirats für Familienfragen“)
-
-#### `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` · 1552 Dokumente
+#### `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` · 1553 Dokumente
 
 Stufe transform · Gewicht info
 
@@ -564,8 +562,8 @@ Stufe transform · Gewicht info
 - `BAY_2131_3_7_I`: 1 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
 - `BAY_2131_3_8_I`: 1 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
 - `BAY_2210_2_5_4_WFK`: 1 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
-- `BAY_2220_3_UK`: 3 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
-- … und 1547 weitere Dokumente mit derselben Signatur
+- `BAY_2220_3_UK`: 4 Nennung(en) des Quelllandes stehen in geschützten Bereichen (Quellzitat, Fundstelle oder fremder Eigenname) und bleiben bewusst erhalten
+- … und 1548 weitere Dokumente mit derselben Signatur
 
 #### `sentence-numbers` · 1485 Dokumente
 
@@ -578,7 +576,7 @@ Stufe parse · Gewicht info
 - `BAY_2131_3_7_I`: 12 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)
 - … und 1480 weitere Dokumente mit derselben Signatur
 
-#### `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` · 1462 Dokumente
+#### `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` · 1459 Dokumente
 
 Stufe transform · Gewicht warning
 
@@ -587,7 +585,7 @@ Stufe transform · Gewicht warning
 - `BAY_2237_4_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
 - `BAY_791_3_148_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
 - `BAY_791_3_150_U`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- … und 1457 weitere Dokumente mit derselben Signatur
+- … und 1454 weitere Dokumente mit derselben Signatur
 
 #### `vv-section-address-unresolved` · 1143 Dokumente
 
@@ -897,16 +895,16 @@ Stufe transform · Gewicht warning
 - `BayFAG`: 7 Abkürzung(en) mit dem Landeszusatz „Bay“ stehen außerhalb eines Schutzmusters (BayFAG, BaySchFG, BayVwVfG, BayStrWG); ob sie zu einer amtlichen Kurzbezeichnung gehören, entscheid…
 - … und 47 weitere Dokumente mit derselben Signatur
 
-#### `graphic-not-transferred` · 50 Dokumente
+#### `figures-transferred` · 49 Dokumente
 
-Stufe parse · Gewicht warning
+Stufe parse · Gewicht info
 
-- `BayAGO`: 1 Abbildungen aus <graphic> liegen als Beilage im Exportpaket und werden nicht in den Normkörper übernommen (das Blockmodell kennt keinen Bildblock): BayAGO_BayAGO-A0001-N001.gif
-- `BayAPOLmCh`: 5 Abbildungen aus <graphic> liegen als Beilage im Exportpaket und werden nicht in den Normkörper übernommen (das Blockmodell kennt keinen Bildblock): BayAPOLmCh_BayAPOLmCh-A5-N1.gi…
-- `BayAVJG`: 1 Abbildungen aus <graphic> liegen als Beilage im Exportpaket und werden nicht in den Normkörper übernommen (das Blockmodell kennt keinen Bildblock): BayAVJG_BayAVJG-A0002-N001.gif
-- `BayAbfPV`: 3 Abbildungen aus <graphic> liegen als Beilage im Exportpaket und werden nicht in den Normkörper übernommen (das Blockmodell kennt keinen Bildblock): BayAbfPV_BayAbfPV-Anh1-N1.gif,…
-- `BayBauPAV`: 1 Abbildungen aus <graphic> liegen als Beilage im Exportpaket und werden nicht in den Normkörper übernommen (das Blockmodell kennt keinen Bildblock): BayBauPAV_BayBauPAV-P0002-N001…
-- … und 45 weitere Dokumente mit derselben Signatur
+- `BayAGO`: 1 Abbildungen aus <graphic> als Bildblock mit Asset-Referenz übernommen (Bilddatei als eigenes, inhaltsadressiertes Asset, nicht im Norm-JSON)
+- `BayAPOLmCh`: 5 Abbildungen aus <graphic> als Bildblock mit Asset-Referenz übernommen (Bilddatei als eigenes, inhaltsadressiertes Asset, nicht im Norm-JSON)
+- `BayAVJG`: 1 Abbildungen aus <graphic> als Bildblock mit Asset-Referenz übernommen (Bilddatei als eigenes, inhaltsadressiertes Asset, nicht im Norm-JSON)
+- `BayAbfPV`: 3 Abbildungen aus <graphic> als Bildblock mit Asset-Referenz übernommen (Bilddatei als eigenes, inhaltsadressiertes Asset, nicht im Norm-JSON)
+- `BayBauPAV`: 1 Abbildungen aus <graphic> als Bildblock mit Asset-Referenz übernommen (Bilddatei als eigenes, inhaltsadressiertes Asset, nicht im Norm-JSON)
+- … und 44 weitere Dokumente mit derselben Signatur
 
 #### `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium)…` · 49 Dokumente
 

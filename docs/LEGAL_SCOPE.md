@@ -23,7 +23,7 @@ OstRecht (`../staatsregierung`), das Verwaltungsvorschriften bereits als Teil de
 | Runderlasse mit allgemeiner Wirkung | `runderlass` |
 | Normative Richtlinien, Förderrichtlinien, Vergabe- und Beurteilungsrichtlinien | `richtlinie`, `foerderrichtlinie` |
 | Durchführungserlasse | `durchfuehrungserlass` |
-| Anlagen und Tabellen einer aufgenommenen Vorschrift | Bestandteil der Vorschrift (`annex`, `table`) |
+| Anlagen und Tabellen einer aufgenommenen Vorschrift | Bestandteil der Vorschrift (`annex`, `table`); führt das Portal eine Anlage als eigenes Dokument, wird sie nach redaktioneller Entscheidung als `annex` an die Stammnorm gehängt (`annex-merged-into-related-norm`, z. B. BayBodSchO → EV-BodenseeSchO) |
 | Sonstige abstrakt-generelle, landesweit geltende Regelungen | passender Typ, sonst `verwaltungsvorschrift` |
 
 Kriterien für die Aufnahme: abstrakt-generell (unbestimmter Adressatenkreis oder alle Behörden eines
@@ -193,6 +193,12 @@ Der XML-ZIP-Export enthält die Bilddateien. Sie werden als Asset geführt – R
 gehasht, normbezogen und deterministisch referenziert –, **nicht** als Base64 im Norm-JSON. Geht die
 Bedeutung ohne die Abbildung verloren und ist das Asset nicht verfügbar, gilt die Norm nicht als
 vollständig.
+
+Umsetzung (BayWü, Parser 0.2.0): Block `figure` mit `asset` (SHA-256, Medienart, Größe, Maße, Pfad im Paket,
+Beschreibung als Alternativtext); die Datei ist Rohquelle der Rolle `figure` im Manifest (Paketadresse,
+Paket-SHA-256, Pfad) und liegt inhaltsadressiert in R2 unter `baywue/bayernrecht/2023-12-01/assets/`. Eine
+Abbildung ohne belegte Datei sperrt die Übernahme (`figure-asset-unbound`). Logos und Zierbilder werden nur an
+ihrer ausdrücklichen Beschreibung erkannt (`graphic-decorative`); im BayWü-Bestand gibt es keine.
 
 ### Was damit nicht mehr blockiert
 

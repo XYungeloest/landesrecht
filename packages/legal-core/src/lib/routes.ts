@@ -6,10 +6,12 @@
  *   /<land>/norm/<slug>/                       geltende Fassung (dynamischer Link)
  *   /<land>/norm/<slug>/version/<versionId>/   unveränderliche Fassung
  *   /<land>/norm/<slug>/daten/ | /historie/ | /vergleich/ | /quellen/
+ *   /assets/<land>/<sha256>.<endung>           Asset einer normativen Abbildung (inhaltsadressiert, unveränderlich)
  *
  * `<land>` ist das öffentliche URL-Segment der Jurisdiktion (`bayern-wuerttemberg`, nicht `baywue`).
  */
 import { getJurisdiction, getJurisdictionByPathSegment, type JurisdictionId } from '../config/jurisdictions.ts';
+import { FIGURE_FILE_EXTENSIONS, FIGURE_MEDIA_TYPES, type FigureMediaType, type NormBodyAsset } from './schema.ts';
 
 export const NORM_SUBPAGES = ['daten', 'historie', 'vergleich', 'quellen'] as const;
 export type NormSubpage = (typeof NORM_SUBPAGES)[number];
@@ -33,6 +35,19 @@ export function getJurisdictionUrl(jurisdiction: JurisdictionId): string {
 
 export function getNormUrl(jurisdiction: JurisdictionId, slug: string): string {
   return `/${segment(jurisdiction)}/norm/${slug}/`;
+}
+
+/** Adresse eines Abbildungs-Assets: je Land, inhaltsadressiert über SHA-256, Endung aus der Medienart. */
+export function getNormAssetUrl(jurisdiction: JurisdictionId, asset: Pick<NormBodyAsset, 'sha256' | 'mediaType'>): string {
+  return `/assets/${segment(jurisdiction)}/${asset.sha256}.${FIGURE_FILE_EXTENSIONS[asset.mediaType]}`;
+}
+
+/** Zerlegt einen Asset-Dateinamen („<sha256>.<endung>“); `undefined`, wenn er nicht der Form entspricht. */
+export function parseNormAssetFileName(fileName: string): { sha256: string; mediaType: FigureMediaType; extension: string } | undefined {
+  const match = /^([0-9a-f]{64})\.([a-z]{3,4})$/u.exec(fileName);
+  if (!match) return undefined;
+  const mediaType = FIGURE_MEDIA_TYPES.find((type) => FIGURE_FILE_EXTENSIONS[type] === match[2]);
+  return mediaType ? { sha256: match[1]!, mediaType, extension: match[2]! } : undefined;
 }
 
 export function getNormVersionUrl(jurisdiction: JurisdictionId, slug: string, versionId: string): string {

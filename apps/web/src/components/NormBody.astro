@@ -7,6 +7,8 @@
 import type { AnchorMap } from '@landesrecht/legal-core/lib/body.ts';
 import { anchorSlug } from '@landesrecht/legal-core/lib/body.ts';
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
+import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { getNormAssetUrl } from '@landesrecht/legal-core/lib/routes.ts';
 
 interface Props {
   blocks: NormBodyBlock[];
@@ -17,9 +19,11 @@ interface Props {
   unitAnchor?: string;
   /** Pfad der umgebenden Einheit (Paragraph/Artikel/Anlage), zu der `unitAnchor` gehört. */
   unitPath?: number[];
+  /** Land der Norm – bildet die Adressen der Abbildungs-Assets. */
+  jurisdiction?: JurisdictionId;
 }
 
-const { blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath } = Astro.props;
+const { blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath, jurisdiction } = Astro.props;
 const headingTag = `h${Math.min(Math.max(headingLevel + 1, 3), 6)}` as 'h3' | 'h4' | 'h5' | 'h6';
 const nextLevel = Number.parseInt(headingTag.slice(1), 10);
 
@@ -90,7 +94,7 @@ const HeadingTag = headingTag;
             <div class="norm-item__content">
               {block.text && <p class="norm-text">{block.text}</p>}
               {block.children && block.children.length > 0 && (
-                <Astro.self blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
+                <Astro.self blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
               )}
             </div>
           </li>
@@ -124,7 +128,7 @@ const HeadingTag = headingTag;
           {block.title && <span class="norm-title">{block.title}</span>}
         </HeadingTag>
         {block.text && <p class="norm-text">{block.text}</p>}
-        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
+        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
       </section>
     );
   }
@@ -142,7 +146,7 @@ const HeadingTag = headingTag;
         </div>
         <div class="norm-unit__body">
           {block.text && <p class="norm-text">{block.text}</p>}
-          <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} />
+          <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} jurisdiction={jurisdiction} />
         </div>
       </section>
     );
@@ -151,7 +155,7 @@ const HeadingTag = headingTag;
   if (block.type === 'quotedProvision') {
     return (
       <blockquote class="norm-quoted">
-        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} unitPath={unitPath} />
+        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
       </blockquote>
     );
   }
@@ -164,7 +168,7 @@ const HeadingTag = headingTag;
         <div class="norm-abs__body">
           {block.text && <p class="norm-text">{block.text}</p>}
           {block.children && block.children.length > 0 && (
-            <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
+            <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
           )}
         </div>
       </div>
@@ -176,7 +180,7 @@ const HeadingTag = headingTag;
       <>
         <p class="norm-text">{block.text}</p>
         {block.children && block.children.length > 0 && (
-          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
+          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
         )}
       </>
     );
@@ -188,7 +192,7 @@ const HeadingTag = headingTag;
       <>
         <p class="norm-heading"><strong>{block.title ?? block.text}</strong></p>
         {block.children && block.children.length > 0 && (
-          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
+          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
         )}
       </>
     );
@@ -196,6 +200,13 @@ const HeadingTag = headingTag;
 
   if (block.type === 'footnote') {
     return <p class="norm-footnote"><sup>{block.label}</sup> {block.text}</p>;
+  }
+
+  if (block.type === 'figure' && block.asset) {
+    // Normative Abbildung: eigenes, inhaltsadressiertes Asset; die Bildbeschreibung der Quelle ist Alternativtext.
+    return jurisdiction
+      ? <figure class="norm-figure"><img src={getNormAssetUrl(jurisdiction, block.asset)} alt={block.asset.description ?? 'Abbildung im Normtext'} width={block.asset.width} height={block.asset.height} loading="lazy" decoding="async" /></figure>
+      : null;
   }
 
   if (block.type === 'table') {
@@ -209,9 +220,10 @@ const HeadingTag = headingTag;
                 {(row.children ?? []).map((cell, cellIndex) => cell.type === 'tableHeaderCell'
                   ? <th scope={cell.scope} rowspan={cell.rowspan} colspan={cell.colspan}>{cell.text}</th>
                   : <td rowspan={cell.rowspan} colspan={cell.colspan}>
-                      {cell.children && cell.children.length > 0
-                        ? <Astro.self blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} />
-                        : cell.text}
+                      {cell.text}
+                      {cell.children && cell.children.length > 0 && (
+                        <Astro.self blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} />
+                      )}
                     </td>)}
               </tr>
             ))}

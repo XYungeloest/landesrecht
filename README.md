@@ -91,6 +91,8 @@ npm run import:bayernrecht:scope [-- --write]      # BayWü: Scope-Entscheidung 
 npm run import:bayernrecht:baseline [-- --write]  # BayWü: Stichtagsklassifikation (nur Cache, kein Netz)
 npm run import:bayernrecht:sample [-- --write]    # BayWü: Beispielkorpus (28 Normen)
 npm run import:bayernrecht:search-audit [-- --sample 0] [--write] # BayWü: Suchprüfung und Golden Set (≥ 100 Anfragen)
+npm run import:bayernrecht:restore-baseline-only [-- --write --offline] # BayWü: heute fehlende Stichtagsnormen aus Verkündungen
+npm run r2:seed:dev-assets                        # BayWü: Abbildungs-Assets in die lokale Miniflare-R2 (nur lokal)
 npm run import:juris-sh:events [-- --write]        # NSH: Ereignisregister nach dem Stichtag (nur Cache, kein Netz)
 npm run import:juris-sh:review                    # NSH: offene Review-Fälle
 npm run d1:plan -- --jurisdiction west            # SQL-Batches für Remote-D1 (kein Remote-Zugriff)
@@ -158,7 +160,7 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
 | NSH | juris Schleswig-Holstein | **kein Normbestand – Quelle gesperrt.** Überleitung, Zustandsschicht und Ereignisregister stehen; das konsolidierte Portal untersagt automatisierten Zugriff (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
 | Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
-| BayWü | BAYERN.RECHT | **Deployed (Teilbestand).** 1 582 Normen zum Stichtag (13 davon bewiesen rückgerechnet), R2 und Remote-D1 befüllt. 506 geänderte Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
+| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 618 Normen zum Stichtag: 1 570 unverändert, 33 bewiesen rückgerechnet (5 davon über mehrere Änderungen), 15 heute fehlende aus amtlichen Verkündungen wiederhergestellt; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 486 geänderte und 401 heute fehlende Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
 
 Der NSH-Befund ist kein offener Arbeitsrest, sondern ein Ergebnis: Ohne freigegebene Quelle entsteht
 kein Normtext, und die Sperre wird nicht umgangen.

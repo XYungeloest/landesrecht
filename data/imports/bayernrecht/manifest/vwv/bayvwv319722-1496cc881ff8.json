@@ -4,21 +4,33 @@
     "sourceSystem": "bayernrecht",
     "targetJurisdiction": "baywue",
     "baselineDate": "2023-12-01",
-    "parserVersion": "bayernrecht-parser/0.1.0",
+    "parserVersion": "bayernrecht-parser/0.2.0",
     "validityEvidence": [
       {
-        "kind": "text-in-force-clause",
+        "kind": "reconstruction",
         "dimension": "begin",
         "strength": "strong",
-        "statement": "Der geführte Text gilt laut Quelle ab 2025-01-09",
+        "statement": "Die Stichtagsfassung gilt seit 2022-10-01: Stand nach der vorangehenden Änderung; ihr Inkrafttreten ist durch ihre eigene Verkündung belegt; Vorangehende Änderung vom 30. September 2022 (BayMBl. Nr. 585, Nr. 694) (Nr. 1): „Diese Bekanntmachung tritt am 1. Oktober 2022 in Kraft.“ – https://www.verkuendung-bayern.de/baymbl/2022-585/, SHA-256 410a66d450770cc2…",
+        "date": "2022-10-01",
+        "citation": "Bekanntmachung vom 30. September 2022 (BayMBl. Nr. 585, Nr. 694)",
+        "sourceUrl": "https://www.verkuendung-bayern.de/baymbl/2022-585/",
+        "sha256": "410a66d450770cc2dc8d22cd0f24362921fc75f69872c02d717cdb67b581410a"
+      },
+      {
+        "kind": "gazette-amendment",
+        "dimension": "amendment",
+        "strength": "strong",
+        "statement": "Geändert durch BayMBl. 2025 Nr. 4 mit Wirkung vom 2025-01-09; die Rücknahme dieser Änderung ergibt die Stichtagsfassung, der Rundlauf bestätigt den heutigen Text",
         "date": "2025-01-09",
-        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayVwV319722"
+        "citation": "BayMBl. 2025 Nr. 4",
+        "sourceUrl": "https://www.verkuendung-bayern.de/baymbl/2025-4/",
+        "sha256": "741329ef2fffb6122201059594774a19c6635827431a8487338a788b49f30bd7"
       },
       {
         "kind": "portal-version-interval",
         "dimension": "validity",
-        "strength": "strong",
-        "statement": "Das Portal führt am 2026-09-18 genau diesen Text als geltende Fassung; ein Fassungsende ist nicht vermerkt",
+        "strength": "supporting",
+        "statement": "Das Portal führt am 2026-09-18 den heutigen Text (gültig ab 2025-01-09); er ist Grundlage der Rückrechnung, nicht der Stichtagstext",
         "date": "2026-09-18",
         "sourceUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV319722",
         "sha256": "a42d8feaf0be2fe03a9da9bfe20bfff0fb2a836b7a27d633b0b835e005aa7f47"
@@ -32,7 +44,34 @@
         "sha256": "a42d8feaf0be2fe03a9da9bfe20bfff0fb2a836b7a27d633b0b835e005aa7f47",
         "contentType": "application/zip",
         "retrievedAt": "2026-09-18T01:14:44.470Z",
-        "byteLength": 7801113
+        "byteLength": 7801113,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv319722-1496cc881ff8/a42d8feaf0be2fe0-text-document.zip",
+        "archiveStatus": "verified"
+      },
+      {
+        "role": "gazette",
+        "url": "https://www.verkuendung-bayern.de/baymbl/2025-4/",
+        "finalUrl": "https://www.verkuendung-bayern.de/baymbl/2025-4/",
+        "sha256": "741329ef2fffb6122201059594774a19c6635827431a8487338a788b49f30bd7",
+        "contentType": "text/html; charset=utf-8",
+        "retrievedAt": "2026-09-18T00:49:28.084Z",
+        "byteLength": 19443,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv319722-1496cc881ff8/741329ef2fffb612-gazette.html",
+        "archiveStatus": "verified"
+      },
+      {
+        "role": "gazette",
+        "url": "https://www.verkuendung-bayern.de/baymbl/2022-585/",
+        "finalUrl": "https://www.verkuendung-bayern.de/baymbl/2022-585/",
+        "sha256": "410a66d450770cc2dc8d22cd0f24362921fc75f69872c02d717cdb67b581410a",
+        "contentType": "text/html; charset=utf-8",
+        "retrievedAt": "2026-09-18T10:09:40.201Z",
+        "byteLength": 19919,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/vwv/bayvwv319722-1496cc881ff8/410a66d450770cc2-gazette.html",
+        "archiveStatus": "verified"
       }
     ],
     "versionsConsidered": [
@@ -69,6 +108,11 @@
         "severity": "info",
         "code": "tables",
         "message": "1 Tabellen nach dem Blockmodell übernommen"
+      },
+      {
+        "severity": "warning",
+        "code": "enacting-body-mapping-required",
+        "message": "Erlassorgan der Quelle „Bayerisches Staatsministerium für Umwelt und Verbraucherschutz“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)"
       }
     ],
     "integrity": {
@@ -76,13 +120,13 @@
       "sourceCanonical": true
     },
     "transformation": {
-      "changes": 0,
-      "unresolved": 0,
-      "detections": 0,
-      "postTransformAudit": false
+      "changes": 18,
+      "unresolved": 41,
+      "detections": 60,
+      "postTransformAudit": true
     },
-    "reviewStatus": "open",
-    "targetSlug": "",
+    "reviewStatus": "resolved",
+    "targetSlug": "vollzugshinweise-zur-anwendung-der-bayern-wuerttembergischen-kompensationsverordnung-baywue",
     "sourceArea": "vwv",
     "sourceIdentity": "BayVwV319722",
     "sourceTitle": "Vollzugshinweise zur Anwendung der Bayerischen Kompensationsverordnung",
@@ -94,8 +138,8 @@
       "validTo": null
     },
     "selectedVersionUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV319722",
-    "sourceValidFrom": "2025-01-09",
-    "sourceValidTo": null,
+    "sourceValidFrom": "2022-10-01",
+    "sourceValidTo": "2025-01-08",
     "baselineStatus": "active-at-baseline",
     "baselineRecoveryMethod": "reverse-post-baseline-event",
     "sourceProvenance": {
@@ -106,13 +150,13 @@
     "retrievedAt": "2026-09-18T01:14:44.470Z",
     "sha256": "a42d8feaf0be2fe03a9da9bfe20bfff0fb2a836b7a27d633b0b835e005aa7f47",
     "contentType": "application/zip",
-    "transformerVersion": "bayernrecht-transformer/1.1.0",
-    "importStatus": "needs-review",
+    "transformerVersion": "bayernrecht-transformer/1.2.0",
+    "importStatus": "imported-with-warnings",
     "decisionTrace": {
       "schemaVersion": "bayernrecht-decision-trace/1",
       "documentId": "BayVwV319722",
       "baselineDate": "2023-12-01",
-      "statement": "Nicht übernommen: text-changed-after-baseline (changed-after-baseline, active-at-baseline).",
+      "statement": "Der heutige Text gilt erst seit 2025-01-09 (BayMBl. 2025 Nr. 4); die Fassung davor galt seit 2022-10-01 und damit am 2023-12-01. Sie wurde durch Rücknahme genau dieser Änderung zurückgerechnet; der Rundlauf ergibt byteidentisch den heutigen Text.",
       "scope": {
         "decision": "include",
         "reason": "state-law-in-scope",
@@ -123,12 +167,9 @@
       "baseline": {
         "class": "changed-after-baseline",
         "status": "active-at-baseline",
-        "method": "undetermined",
-        "reason": "text-changed-after-baseline",
-        "blockers": [
-          "Der gezeigte Text gilt erst ab 2025-01-09; die Fassung vom 2023-12-01 ist zu beschaffen",
-          "Rekonstruktion: partial-chain (prior-amendment-in-force-unproven) – Die vorangehende Änderung (vom 30. September 2022 (BayMBl. Nr. 585, Nr. 694)) ist vor dem Stichtag verkündet, ihr Inkrafttreten vor dem Stichtag aber aus dem Cache nicht belegt; ohne diesen Beleg ist der Beginn der Stichtagsfassung offen (Verkündung der vorangehenden Änderung nicht im Cache: https://www.verkuendung-bayern.de/baymbl/2022-585/)"
-        ],
+        "method": "reverse-amendment",
+        "reason": "reverse-amendment-verified",
+        "blockers": [],
         "evidence": [
           {
             "kind": "issue-date",
@@ -154,12 +195,17 @@
             "kind": "change-note",
             "value": "2024-12-12",
             "source": "citation:zuletzt geändert"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "reverse-amendment BayMBl. 2025 Nr. 4 (Nr. 1), in Kraft 2025-01-09; Rezept data/imports/bayernrecht/reconstruction/BayVwV319722.json (bayernrecht-reverse-amendment/1, 1 Änderung(en), 3 Schritt(e), Stichtagskörper 187b881b653ff280)",
+            "source": "reconstruction"
           }
         ]
       },
       "recovery": {
         "method": "reverse-post-baseline-event",
-        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
+        "note": "Stichtagsfassung durch Rücknahme der Änderung BayMBl. 2025 Nr. 4 (Wirkung ab 2025-01-09) aus dem heutigen Text zurückgerechnet; Rezept data/imports/bayernrecht/reconstruction/BayVwV319722.json, Rundlauf bestanden."
       },
       "source": {
         "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV319722",
@@ -167,22 +213,23 @@
         "sha256": "a42d8feaf0be2fe03a9da9bfe20bfff0fb2a836b7a27d633b0b835e005aa7f47",
         "retrievedAt": "2026-09-18T01:14:44.470Z",
         "textInForceFrom": "2025-01-09",
-        "parserVersion": "bayernrecht-parser/0.1.0",
-        "transformerVersion": "bayernrecht-transformer/1.1.0"
+        "parserVersion": "bayernrecht-parser/0.2.0",
+        "transformerVersion": "bayernrecht-transformer/1.2.0"
       },
       "evidenceChain": [
         "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
-        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – text-changed-after-baseline",
+        "Stichtag: changed-after-baseline / active-at-baseline / reverse-amendment – reverse-amendment-verified",
         "Beleg issue-date: 2015-10-14 (xml:ausfertigungsdatum)",
         "Beleg text-in-force: 2025-01-09 (xml:inkraft)",
         "Beleg post-baseline-event: amend 2025-01-08 (BayMBl. 2025 Nr. 4) (event-ledger)",
         "Beleg issue-date: 2015-10-14 (citation:Zitiervorschlag)",
         "Beleg change-note: 2024-12-12 (citation:zuletzt geändert)",
-        "Offen: Der gezeigte Text gilt erst ab 2025-01-09; die Fassung vom 2023-12-01 ist zu beschaffen",
-        "Offen: Rekonstruktion: partial-chain (prior-amendment-in-force-unproven) – Die vorangehende Änderung (vom 30. September 2022 (BayMBl. Nr. 585, Nr. 694)) ist vor dem Stichtag verkündet, ihr Inkrafttreten vor dem Stichtag aber aus dem Cache nicht belegt; ohne diesen Beleg ist der Beginn der Stichtagsfassung offen (Verkündung der vorangehenden Änderung nicht im Cache: https://www.verkuendung-bayern.de/baymbl/2022-585/)",
+        "Beleg post-baseline-event: reverse-amendment BayMBl. 2025 Nr. 4 (Nr. 1), in Kraft 2025-01-09; Rezept data/imports/bayernrecht/reconstruction/BayVwV319722.json (bayernrecht-reverse-amendment/1, 1 Änderung(en), 3 Schritt(e), Stichtagskörper 187b881b653ff280) (reconstruction)",
         "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayVwV319722 (SHA-256 a42d8feaf0be2fe0…, abgerufen 2026-09-18T01:14:44.470Z)",
-        "Werkzeuge: bayernrecht-parser/0.1.0, bayernrecht-transformer/1.1.0"
+        "Werkzeuge: bayernrecht-parser/0.2.0, bayernrecht-transformer/1.2.0"
       ]
-    }
+    },
+    "importedAt": "2026-09-18T11:18:52.913Z",
+    "runId": "bayernrecht-bulk-20260918t111626z"
   }
 }

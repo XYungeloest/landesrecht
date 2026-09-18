@@ -4,32 +4,36 @@
     "sourceSystem": "bayernrecht",
     "targetJurisdiction": "baywue",
     "baselineDate": "2023-12-01",
-    "parserVersion": "bayernrecht-parser/0.1.0",
+    "parserVersion": "bayernrecht-parser/0.2.0",
     "validityEvidence": [
       {
-        "kind": "text-in-force-clause",
+        "kind": "reconstruction",
         "dimension": "begin",
         "strength": "strong",
-        "statement": "Der geführte Text gilt laut Quelle ab 2024-02-01",
+        "statement": "Die Stichtagsfassung gilt seit 2019-05-01: Stand nach der vorangehenden Änderung; ihr Inkrafttreten ist durch ihre eigene Verkündung belegt; Vorangehende Änderung § 1 Abs. 51 der Verordnung vom 26. März 2019 (GVBl. S. 98): „Diese Verordnung tritt am 1. Mai 2019 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2019-98/, SHA-256 cd4c0ab7a010a4f6…",
+        "date": "2019-05-01",
+        "citation": "§ 1 Abs. 51 der Verordnung vom 26. März 2019 (GVBl. S. 98)",
+        "sourceUrl": "https://www.verkuendung-bayern.de/gvbl/2019-98/",
+        "sha256": "cd4c0ab7a010a4f604018e41e35ab15821d3ddb8d34344b4a8fd77e8e7951484"
+      },
+      {
+        "kind": "gazette-amendment",
+        "dimension": "amendment",
+        "strength": "strong",
+        "statement": "Geändert durch GVBl. 2024 S. 21 mit Wirkung vom 2024-02-01; die Rücknahme dieser Änderung ergibt die Stichtagsfassung, der Rundlauf bestätigt den heutigen Text",
         "date": "2024-02-01",
-        "sourceUrl": "https://www.gesetze-bayern.de/Content/Document/BayKommHVDoppik"
+        "citation": "GVBl. 2024 S. 21",
+        "sourceUrl": "https://www.verkuendung-bayern.de/gvbl/2024-21/",
+        "sha256": "ffa4c2b395a7c1077f7abd09caa98df79052d56e168a653c79d1994fcfdcd049"
       },
       {
         "kind": "portal-version-interval",
         "dimension": "validity",
-        "strength": "strong",
-        "statement": "Das Portal führt am 2026-09-18 genau diesen Text als geltende Fassung; ein Fassungsende ist nicht vermerkt",
+        "strength": "supporting",
+        "statement": "Das Portal führt am 2026-09-18 den heutigen Text (gültig ab 2024-02-01); er ist Grundlage der Rückrechnung, nicht der Stichtagstext",
         "date": "2026-09-18",
         "sourceUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKommHVDoppik",
         "sha256": "2641d1497c6825aac6b7e77f5d0a00dc378728d1bb532295504c6bae8801386e"
-      },
-      {
-        "kind": "gazette-publication",
-        "dimension": "begin",
-        "strength": "supporting",
-        "statement": "Ausgefertigt am 2007-10-05",
-        "date": "2007-10-05",
-        "citation": "Kommunalhaushaltsverordnung-Doppik (KommHV-Doppik) vom 5. Oktober 2007 (GVBl. S. 678, BayRS 2023-3-I), die zuletzt durch § 2 der Verordnung vom 4. Januar 2024 (GVBl. S. 21) geändert worden ist"
       },
       {
         "kind": "registry-position",
@@ -47,7 +51,34 @@
         "sha256": "2641d1497c6825aac6b7e77f5d0a00dc378728d1bb532295504c6bae8801386e",
         "contentType": "application/zip",
         "retrievedAt": "2026-09-18T00:35:32.304Z",
-        "byteLength": 41425
+        "byteLength": 41425,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/landesrecht/baykommhvdoppik-42658832e566/2641d1497c6825aa-text-document.zip",
+        "archiveStatus": "verified"
+      },
+      {
+        "role": "gazette",
+        "url": "https://www.verkuendung-bayern.de/gvbl/2024-21/",
+        "finalUrl": "https://www.verkuendung-bayern.de/gvbl/2024-21/",
+        "sha256": "ffa4c2b395a7c1077f7abd09caa98df79052d56e168a653c79d1994fcfdcd049",
+        "contentType": "text/html; charset=utf-8",
+        "retrievedAt": "2026-09-18T00:36:52.074Z",
+        "byteLength": 20215,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/landesrecht/baykommhvdoppik-42658832e566/ffa4c2b395a7c107-gazette.html",
+        "archiveStatus": "verified"
+      },
+      {
+        "role": "gazette",
+        "url": "https://www.verkuendung-bayern.de/gvbl/2019-98/",
+        "finalUrl": "https://www.verkuendung-bayern.de/gvbl/2019-98/",
+        "sha256": "cd4c0ab7a010a4f604018e41e35ab15821d3ddb8d34344b4a8fd77e8e7951484",
+        "contentType": "text/html; charset=utf-8",
+        "retrievedAt": "2026-09-18T08:18:45.316Z",
+        "byteLength": 296599,
+        "bucket": "landesrecht-quellen",
+        "objectKey": "baywue/bayernrecht/2023-12-01/landesrecht/baykommhvdoppik-42658832e566/cd4c0ab7a010a4f6-gazette.html",
+        "archiveStatus": "verified"
       }
     ],
     "versionsConsidered": [
@@ -64,6 +95,11 @@
         "severity": "info",
         "code": "sentence-numbers",
         "message": "339 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)"
+      },
+      {
+        "severity": "warning",
+        "code": "enacting-body-mapping-required",
+        "message": "Erlassorgan der Quelle „Bayerisches Staatsministerium des Innern“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)"
       }
     ],
     "integrity": {
@@ -71,13 +107,13 @@
       "sourceCanonical": true
     },
     "transformation": {
-      "changes": 0,
-      "unresolved": 0,
-      "detections": 0,
-      "postTransformAudit": false
+      "changes": 6,
+      "unresolved": 14,
+      "detections": 24,
+      "postTransformAudit": true
     },
-    "reviewStatus": "open",
-    "targetSlug": "",
+    "reviewStatus": "resolved",
+    "targetSlug": "kommhv-doppik-baywue",
     "sourceArea": "landesrecht",
     "sourceIdentity": "BayKommHVDoppik",
     "bayRsNumber": "2023-3-I",
@@ -90,8 +126,8 @@
       "validTo": null
     },
     "selectedVersionUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKommHVDoppik",
-    "sourceValidFrom": "2024-02-01",
-    "sourceValidTo": null,
+    "sourceValidFrom": "2019-05-01",
+    "sourceValidTo": "2024-01-31",
     "baselineStatus": "active-at-baseline",
     "baselineRecoveryMethod": "reverse-post-baseline-event",
     "sourceProvenance": {
@@ -102,13 +138,13 @@
     "retrievedAt": "2026-09-18T00:35:32.304Z",
     "sha256": "2641d1497c6825aac6b7e77f5d0a00dc378728d1bb532295504c6bae8801386e",
     "contentType": "application/zip",
-    "transformerVersion": "bayernrecht-transformer/1.1.0",
-    "importStatus": "needs-review",
+    "transformerVersion": "bayernrecht-transformer/1.2.0",
+    "importStatus": "imported-with-warnings",
     "decisionTrace": {
       "schemaVersion": "bayernrecht-decision-trace/1",
       "documentId": "BayKommHVDoppik",
       "baselineDate": "2023-12-01",
-      "statement": "Nicht übernommen: text-changed-after-baseline (changed-after-baseline, active-at-baseline).",
+      "statement": "Der heutige Text gilt erst seit 2024-02-01 (GVBl. 2024 S. 21); die Fassung davor galt seit 2019-05-01 und damit am 2023-12-01. Sie wurde durch Rücknahme genau dieser Änderung zurückgerechnet; der Rundlauf ergibt byteidentisch den heutigen Text.",
       "scope": {
         "decision": "include",
         "reason": "state-law-in-scope",
@@ -119,12 +155,9 @@
       "baseline": {
         "class": "changed-after-baseline",
         "status": "active-at-baseline",
-        "method": "undetermined",
-        "reason": "text-changed-after-baseline",
-        "blockers": [
-          "Der gezeigte Text gilt erst ab 2024-02-01; die Fassung vom 2023-12-01 ist zu beschaffen",
-          "Rekonstruktion: unsupported-formula (insert-unit) – 2. „Dem § 99 wird folgender Abs. 5 angefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewandt"
-        ],
+        "method": "reverse-amendment",
+        "reason": "reverse-amendment-verified",
+        "blockers": [],
         "evidence": [
           {
             "kind": "issue-date",
@@ -150,12 +183,17 @@
             "kind": "change-note",
             "value": "2024-01-04",
             "source": "citation:zuletzt geändert"
+          },
+          {
+            "kind": "post-baseline-event",
+            "value": "reverse-amendment GVBl. 2024 S. 21 (§ 2), in Kraft 2024-02-01; Rezept data/imports/bayernrecht/reconstruction/BayKommHVDoppik.json (bayernrecht-reverse-amendment/1, 1 Änderung(en), 2 Schritt(e), Stichtagskörper 0d7d0a39aa41b820)",
+            "source": "reconstruction"
           }
         ]
       },
       "recovery": {
         "method": "reverse-post-baseline-event",
-        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
+        "note": "Stichtagsfassung durch Rücknahme der Änderung GVBl. 2024 S. 21 (Wirkung ab 2024-02-01) aus dem heutigen Text zurückgerechnet; Rezept data/imports/bayernrecht/reconstruction/BayKommHVDoppik.json, Rundlauf bestanden."
       },
       "source": {
         "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayKommHVDoppik",
@@ -164,22 +202,23 @@
         "retrievedAt": "2026-09-18T00:35:32.304Z",
         "documentDate": "2007-10-05",
         "textInForceFrom": "2024-02-01",
-        "parserVersion": "bayernrecht-parser/0.1.0",
-        "transformerVersion": "bayernrecht-transformer/1.1.0"
+        "parserVersion": "bayernrecht-parser/0.2.0",
+        "transformerVersion": "bayernrecht-transformer/1.2.0"
       },
       "evidenceChain": [
         "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
-        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – text-changed-after-baseline",
+        "Stichtag: changed-after-baseline / active-at-baseline / reverse-amendment – reverse-amendment-verified",
         "Beleg issue-date: 2007-10-05 (xml:ausfertigungsdatum)",
         "Beleg text-in-force: 2024-02-01 (xml:inkraft)",
         "Beleg version-date: 2007-10-05 (xml:fassungsdatum)",
         "Beleg post-baseline-event: amend 2024-01-31 (GVBl. 2024 S. 21) (event-ledger)",
         "Beleg change-note: 2024-01-04 (citation:zuletzt geändert)",
-        "Offen: Der gezeigte Text gilt erst ab 2024-02-01; die Fassung vom 2023-12-01 ist zu beschaffen",
-        "Offen: Rekonstruktion: unsupported-formula (insert-unit) – 2. „Dem § 99 wird folgender Abs. 5 angefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewandt",
+        "Beleg post-baseline-event: reverse-amendment GVBl. 2024 S. 21 (§ 2), in Kraft 2024-02-01; Rezept data/imports/bayernrecht/reconstruction/BayKommHVDoppik.json (bayernrecht-reverse-amendment/1, 1 Änderung(en), 2 Schritt(e), Stichtagskörper 0d7d0a39aa41b820) (reconstruction)",
         "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayKommHVDoppik (SHA-256 2641d1497c6825aa…, abgerufen 2026-09-18T00:35:32.304Z)",
-        "Werkzeuge: bayernrecht-parser/0.1.0, bayernrecht-transformer/1.1.0"
+        "Werkzeuge: bayernrecht-parser/0.2.0, bayernrecht-transformer/1.2.0"
       ]
-    }
+    },
+    "importedAt": "2026-09-18T11:16:55.167Z",
+    "runId": "bayernrecht-bulk-20260918t111626z"
   }
 }

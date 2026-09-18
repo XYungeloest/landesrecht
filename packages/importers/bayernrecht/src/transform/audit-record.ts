@@ -19,7 +19,7 @@ import type { NormBodyBlock, NormRecord } from '@landesrecht/legal-core/lib/sche
 
 import {
   isCompoundProperName, DOUBLED_TARGET_NAME, SOURCE_STATE_REFERENCE } from './detection.ts';
-import { BAY_ABBREVIATION, findProtectedSpans } from './rules.ts';
+import { BAY_ABBREVIATION, findProtectedSpans, targetAdjective, targetProperName } from './rules.ts';
 
 export interface RecordAuditField {
   path: string;
@@ -94,6 +94,25 @@ const BAY_ABBREVIATION_EXACT = new RegExp(String.raw`^(?:${BAY_ABBREVIATION})$`,
  *
  * Jede Doppelbildung ist ein Fehler; sie kann nur aus einer fehlerhaften Regel stammen.
  */
+/**
+ * Übergeleitete Eigennamen, bei denen nicht entscheidbar ist, ob sie historisch oder heutiger Selbstbezug sind:
+ * „Bayerisches Konkordat“ ist der Name des Vertrags von 1924 (dessen Volltitel geschützt ist) und zugleich ein heute
+ * für das Land geltender Vertrag. Nicht automatisch entschieden, sondern als Prüffall gemeldet (nicht blockierend).
+ */
+export const HISTORICAL_NAME_UNCERTAIN = new RegExp(`\\b${targetAdjective(true)}(?:e|er|es|en|em)?\\s+Konkordat(?:e?s)?\\b`, 'gu');
+
+/**
+ * Übergeleitete Markennamen mit Punkt („Zentrum Digitalisierung.Bayern“): Ob „.Bayern“ Landesbezeichnung oder fester
+ * Namensbestandteil ist, ist nicht entscheidbar – Prüffall, nicht blockierend; der Text bleibt, wie die Regel ihn bildet.
+ */
+export const PROPER_NAME_UNCERTAIN = new RegExp(`\\p{L}{2}\\.${targetProperName()}(?![\\p{L}])`, 'gu');
+
+/** Übergeleitete historische Bezeichnungen – das Ergebnis der früheren Fehlüberleitung (Regressionsschutz). */
+export const HISTORICAL_NAME_TRANSFORMED = new RegExp(
+  `(?:\\b(?:Königreich(?:e|es|s|en)?|Kurfürstentum(?:s|er)?|Herzogtum(?:s|er)?|Krone|König(?:s|in)?\\s+von|Kurfürstin\\s+von)|Papst\\s+Pius\\s+XI\\.\\s+und\\s+dem\\s+Staate)\\s+${targetProperName()}`,
+  'gu',
+);
+
 export function auditRecord(record: NormRecord): ImportFinding[] {
   const findings: ImportFinding[] = [];
   let protectedResiduals = 0;
@@ -132,6 +151,31 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
         severity: 'error',
         code: 'doubled-target-name',
         message: `${field.path}: Doppelbildung „${match[0]}“ (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)`,
+      });
+    }
+    // Ein historischer Staat, ein Organ des Königreichs oder ein Herrschername darf nie übergeleitet erscheinen.
+    for (const match of field.text.matchAll(HISTORICAL_NAME_UNCERTAIN)) {
+      const start = match.index ?? 0;
+      findings.push({
+        severity: 'warning',
+        code: 'historical-name-uncertain',
+        message: `${field.path}: „${match[0]}“ – historischer Vertragsname oder heutiger Selbstbezug? (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)`,
+      });
+    }
+    for (const match of field.text.matchAll(PROPER_NAME_UNCERTAIN)) {
+      const start = match.index ?? 0;
+      findings.push({
+        severity: 'warning',
+        code: 'proper-name-uncertain',
+        message: `${field.path}: „${contextOf(field.text, start, start + match[0].length)}“ – Markenname mit Landesbezeichnung: Namensbestandteil oder Landesbezug?`,
+      });
+    }
+    for (const match of field.text.matchAll(HISTORICAL_NAME_TRANSFORMED)) {
+      const start = match.index ?? 0;
+      findings.push({
+        severity: 'error',
+        code: 'historical-name-transformed',
+        message: `${field.path}: historische Bezeichnung übergeleitet „${match[0]}“ (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)`,
       });
     }
   }

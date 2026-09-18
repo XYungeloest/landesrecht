@@ -20,7 +20,7 @@ export const BASELINE_DATE = SIMULATION_BASELINE_DATE;
  * Parserversion des Adapters; jede Änderung, die die Parserausgabe für bereits übernommene Normen
  * verändern kann, erhöht die Version (Staleness-Erkennung des Bulk-Runners für alle Status).
  */
-export const PARSER_VERSION = 'bayernrecht-parser/0.1.0';
+export const PARSER_VERSION = 'bayernrecht-parser/0.2.0';
 
 /** Quellbereiche: konsolidiertes Landesrecht, Verwaltungsvorschriften, Verkündungsereignisse. */
 export const SOURCE_AREAS = ['landesrecht', 'vwv', 'events'] as const;

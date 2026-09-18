@@ -22,6 +22,9 @@ import { evaluateReadiness, renderReadiness } from './readiness/evaluate.ts';
 import { auditSummary, runAudit } from './audit/audit.ts';
 import { buildEventLedger, eventsSummary, writeEventLedger, DECEMBER_REPORT_PATH, LEDGER_PATH, REPORT_PATH } from './events/build.ts';
 import { collectCoverage, coverageSummary, writeCoverage, COVERAGE_MARKDOWN_PATH, COVERAGE_PATH } from './audit/coverage.ts';
+import { collectInventoryStatus, INVENTORY_STATUS_PATH, writeInventoryStatus } from './audit/inventory-status.ts';
+import { INSTITUTIONS_REPORT_PATH, writeInstitutionsReport } from './audit/institutions.ts';
+import { readManifest } from './common/manifest.ts';
 import { fetchCorpusSummary, runFetchCorpus, FETCH_MIN_DELAY_MS } from './fetch/run.ts';
 import { writeFetchReport, FETCH_REPORT_PATH } from './fetch/report.ts';
 import { FETCH_STATE_PATH } from './fetch/state.ts';
@@ -38,17 +41,19 @@ import { R2_AUDIT_JSON_PATH, R2_AUDIT_MARKDOWN_PATH } from './r2/report.ts';
 import { DEFAULT_STAGING_DIR, R2_SOURCES_BUCKET } from './common/environment.ts';
 import { BAYWUE_REMOTE_SAMPLE_PATH, runBaywueRemoteSample, CROSS_JURISDICTION_PATH, BAYWUE_GOLDEN_MIN_QUERIES, BAYWUE_GOLDEN_QUERIES_PATH, BAYWUE_GOLDEN_RESULTS_JSON_PATH, BAYWUE_GOLDEN_RESULTS_MD_PATH, BAYWUE_SEARCH_DIR, runBaywueGolden } from './search/golden.ts';
 import { runSearchAudit } from '@landesrecht/importer-recht-nrw/common/search-audit.ts';
+import { acquireSources, FETCH_CHECKPOINT_PATH } from './reconstruction/acquire.ts';
 import { reconstructionSummary, runReconstruction, writeReconstruction } from './reconstruction/run.ts';
+import { baselineOnlySummary, DEFAULT_MAX_REQUESTS as BASELINE_ONLY_MAX_REQUESTS, runBaselineOnly } from './baseline-only/run.ts';
 
 /** Befehle in der Reihenfolge, in der sie in der Übersicht erscheinen. */
-export const COMMANDS = ['enumerate', 'scope', 'sample', 'baseline', 'fetch-corpus', 'inventory', 'bulk', 'audit', 'coverage', 'review', 'readiness', 'search-audit', 'reconstruction-queue', 'r2-sync', 'events'] as const;
+export const COMMANDS = ['enumerate', 'scope', 'sample', 'baseline', 'fetch-corpus', 'inventory', 'bulk', 'audit', 'coverage', 'review', 'readiness', 'search-audit', 'reconstruction-queue', 'r2-sync', 'events', 'restore-baseline-only'] as const;
 export type Command = (typeof COMMANDS)[number];
 
 /**
  * Befehle, die bereits arbeiten. Alles andere endet mit „noch nicht implementiert“ (Exit 2); die
  * Liste wächst mit den Strängen Enumeration, Parser und Transformation.
  */
-export const IMPLEMENTED_COMMANDS: readonly Command[] = ['enumerate', 'scope', 'sample', 'baseline', 'fetch-corpus', 'inventory', 'bulk', 'review', 'readiness', 'audit', 'coverage', 'events', 'r2-sync', 'search-audit', 'reconstruction-queue'];
+export const IMPLEMENTED_COMMANDS: readonly Command[] = ['enumerate', 'scope', 'sample', 'baseline', 'fetch-corpus', 'inventory', 'bulk', 'review', 'readiness', 'audit', 'coverage', 'events', 'r2-sync', 'search-audit', 'reconstruction-queue', 'restore-baseline-only'];
 
 export interface CliOptions {
   command: string;
@@ -91,6 +96,8 @@ export interface CliOptions {
   stageOnly?: boolean;
   /** r2-sync: Staging-Verzeichnis (Standard .cache/bayernrecht-r2-staging). */
   stagingDir?: string;
+  /** reconstruction-queue: fehlende Verkündungen der Ketten gezielt abrufen (mit --max-requests, --offline). */
+  fetch?: boolean;
 }
 
 function positiveInteger(value: string, option: string): number {
@@ -134,6 +141,7 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--sample': options.sample = positiveInteger(take(), '--sample'); break;
       case '--seed': options.seed = take(); break;
       case '--stage-only': options.stageOnly = true; break;
+      case '--fetch': options.fetch = true; break;
       case '--staging-dir': options.stagingDir = take(); break;
       case '--remote-sample': options.remoteSample = take(); break;
       case '--r2-transport': {
@@ -301,14 +309,21 @@ review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>
   --remote-sample url: nur die Remote-Stichprobe (≥ 50 Fälle des Golden Sets, nur lesende GET-Anfragen
   gegen url/api/v1/search?jurisdiction=baywue); prüft zusätzlich, dass kein Treffer aus einem anderen Land kommt.`,
   'reconstruction-queue': `reconstruction-queue [--write] [--json] [--only id,id]
+  reconstruction-queue --fetch [--max-requests n] [--offline] [--only id,id]
   Rückrechnung der Normen, deren Text nach dem Stichtag geändert wurde (changed-after-baseline), aus
-  dem Cache – kein Netz. Nur Normen mit genau einem stark belegten Änderungsschritt werden angegangen;
-  ein Rezept entsteht nur, wenn Befehl, Inkrafttreten, Kette, Beginn der Stichtagsfassung und der
-  exakte Rundlauf belegt sind. Alle übrigen erhalten einen Zustand der Rekonstruktionsschlange.
+  dem Cache – kein Netz. Ein- und mehrstufig: Die Kette folgt vom Vollzitat den amtlichen Verweisen
+  („zuletzt geändert durch …“) bis zur Fassung am Stichtag; ein Rezept entsteht nur, wenn jede Änderung
+  mit belegtem Inkrafttreten nach dem Stichtag eindeutig umkehrbar ist, der Beginn der Stichtagsfassung
+  mit Kalenderdatum belegt ist und das Forward-Replay exakt den heutigen Text ergibt (Rezept v1 für
+  eine, v2 für mehrere Änderungen). Alle übrigen erhalten Zustand, genau eine Gruppe und Gründe.
   Ziele (nur mit --write): data/imports/bayernrecht/reconstruction/<documentId>.json (Rezepte),
-  data/imports/bayernrecht/reconstruction-queue.json, Stichtagsentscheidungen in baseline.json
-  (Methode reverse-amendment), data/audits/bayernrecht/RECONSTRUCTION.md. Nach „baseline --write“
-  erneut ausführen. Methode: docs/BAYWUE_RECONSTRUCTION.md. --only = Probelauf, schreibt nie.`,
+  data/imports/bayernrecht/reconstruction-queue.json, reconstruction-sources.json (Quellenregister),
+  data/audits/bayernrecht/reconstruction-audit.json, RECONSTRUCTION.md und die Entscheidungen in
+  baseline.json (reverse-amendment; neu geprüfte unbestimmte Geltungsfälle). baseline.json wird beim
+  Schreiben frisch gelesen. Nach „baseline --write“ erneut ausführen. --only = Probelauf, schreibt nie.
+  --fetch: fehlende Verkündungen der Ketten gezielt abrufen (sequenziell, Adapter-Fetcher, Cache,
+  Prüfpunkt data/imports/bayernrecht/reconstruction-fetch.json, Standardbudget 1500 Abrufe); mit
+  --offline netzfrei (meldet nur, was fehlt). Methode: docs/BAYWUE_RECONSTRUCTION.md.`,
   'r2-sync': `r2-sync [--write] [--stage-only] [--r2-transport wrangler|wrangler-api] [--concurrency n] [--verify etag|readback] [--limit n] [--sample n] [--seed s] [--staging-dir pfad] [--json]
   Rohquellenarchiv: legt das Exportpaket jeder übernommenen Norm (Manifest imported oder
   imported-with-warnings) unverändert nach ${DEFAULT_STAGING_DIR}/ (nicht in Git), mit Objektschlüssel
@@ -341,6 +356,17 @@ review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>
   Netzdisziplin: sequenziell, mindestens 1,4 s Abstand, identifizierender User-Agent, alles über den
   Cache ${CACHE_DIR}/; mit --offline läuft der Aufbau vollständig netzfrei aus dem Cache.
   Setzt die Enumeration voraus (enumerate --write) – sie ist der Abgleichbestand.`,
+  'restore-baseline-only': `restore-baseline-only [--write] [--only id,id] [--offline] [--max-requests n] [--json]
+  Heute fehlende Stichtagsnormen (Kandidaten des Ereignisregisters, isBaselineOnlyCandidate) aus den amtlichen
+  Verkündungen wiederherstellen: Identität und Ende im Aufhebungsbefehl, Stammverkündung (BayMBl. ab 2019,
+  Amtsblätter 2009–2018, GVBl.), Beginn nur mit Kalenderdatum aus der Inkrafttretensvorschrift, Gegenprobe der
+  Änderungsfolge über die Gliederungsnummern im amtlichen Organ, Änderungen nur mit Rundlauf. Unsichere Fälle
+  bleiben Review mit genau benanntem fehlendem Glied (candidates.json). Methode: docs/BAYWUE_BASELINE_ONLY.md.
+  Quellen über den Adapter-Fetcher und den Cache ${CACHE_DIR}/ (sequenziell, Abrufbudget --max-requests, Standard
+  ${BASELINE_ONLY_MAX_REQUESTS}; Prüfpunkt ${CACHE_DIR}/baseline-only-run.json); mit --offline netzfrei.
+  Ziele (nur mit --write): data/imports/bayernrecht/baseline-only/<id>.json (Rezepte), candidates.json,
+  data/audits/bayernrecht/BASELINE_ONLY.md, je sicherer Norm content/norms/${TARGET_JURISDICTION}/<slug>/, Manifesteintrag
+  im Bereich events (Rohquellen Rolle gazette) und Slug-Reservierung. --only schreibt keine Kandidatenliste.`,
 };
 
 export function renderHelp(command?: string): string {
@@ -361,6 +387,7 @@ export function renderHelp(command?: string): string {
     'reconstruction-queue': 'Rekonstruktionsqueue',
     'r2-sync': 'gestagte Rohquellen nach R2',
     events: 'Verkündungsereignisse als Belege',
+    'restore-baseline-only': 'heute fehlende Stichtagsnormen aus Verkündungen',
   };
   const overview = [
     `BAYERN.RECHT-Importer (${SOURCE_STATE} → Simulationsland ${TARGET_JURISDICTION.toUpperCase()}). Dry-run ist überall Standard.`,
@@ -678,6 +705,11 @@ async function runCoverageCommand(options: CliOptions, root: string, io: Io): Pr
     return 0;
   }
   const { written, unchanged } = await writeCoverage(root, report);
+  // Bestandsstand für den Hinweis „Teilbestand“ im Portal – aus denselben Belegen wie die Kennzahlen.
+  const status = await collectInventoryStatus(root);
+  (await writeInventoryStatus(root, status)) ? written.push(INVENTORY_STATUS_PATH) : unchanged.push(INVENTORY_STATUS_PATH);
+  (await writeInstitutionsReport(root, await readManifest(root))) ? written.push(INSTITUTIONS_REPORT_PATH) : unchanged.push(INSTITUTIONS_REPORT_PATH);
+  io.print(`Bestandsstand: ${status.published} veröffentlicht · offen ${status.pending.atBaseline} am Stichtag belegt geltend, ${status.pending.baselineOnly} heute fehlend, ${status.pending.undetermined} unentschieden · ${status.complete ? 'vollständig' : 'Teilbestand'}`);
   io.print(written.length === 0 ? `Unverändert: keine Datei neu geschrieben (${unchanged.join(', ')}).` : `Geschrieben: ${written.join(', ')}${unchanged.length > 0 ? ` · unverändert: ${unchanged.join(', ')}` : ''}`);
   return 0;
 }
@@ -794,11 +826,23 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
   if (command === 'r2-sync') return runR2SyncCommand(options, root, io);
   if (command === 'search-audit') return runSearchAuditCommand(options, root, io);
   if (command === 'reconstruction-queue') return runReconstructionCommand(options, root, io);
+  if (command === 'restore-baseline-only') return runRestoreBaselineOnlyCommand(options, root, io);
   return notImplemented(command, io);
 }
 
 /** reconstruction-queue: Rückrechnung aus dem Cache; schreibt nur mit `--write` und nie im Probelauf (`--only`). */
 async function runReconstructionCommand(options: CliOptions, root: string, io: Io): Promise<number> {
+  if (options.fetch) {
+    const result = await acquireSources(root, {
+      maxRequests: options.maxRequests ?? 1500,
+      offline: options.offline,
+      ...(options.only.length > 0 ? { only: options.only } : {}),
+      log: options.json ? (): void => undefined : (line) => io.print(line),
+    });
+    if (options.json) io.print(JSON.stringify({ ...result, checkpoint: undefined }, null, 2));
+    else io.print(`Abruf: ${result.rounds} Runde(n), ${result.networkRequests} Netzabruf(e) in diesem Lauf, ${result.fetched} abgerufen, ${result.notFound} belegt nicht vorhanden, ${result.errors} Fehler; noch fehlend: ${result.stillMissing.length}${result.stoppedBy ? ` – Halt: ${result.stoppedBy}` : ''}. Prüfpunkt: ${FETCH_CHECKPOINT_PATH} (insgesamt ${result.checkpoint.networkRequests} Netzabrufe).`);
+    return result.stoppedBy ? 2 : 0;
+  }
   const run = await runReconstruction(root, { baselineDate: options.baseline, evaluationDate: EVALUATION_DATE, ...(options.only.length > 0 ? { only: options.only } : {}) });
   if (options.json) io.print(JSON.stringify(run.queue, null, 2));
   else for (const line of reconstructionSummary(run)) io.print(line);
@@ -813,4 +857,24 @@ async function runReconstructionCommand(options: CliOptions, root: string, io: I
   const written = await writeReconstruction(root, run);
   io.print(written.length === 0 ? 'Unverändert: keine Datei neu geschrieben.' : `Geschrieben: ${written.length} Datei(en)\n  ${written.join('\n  ')}`);
   return 0;
+}
+
+/**
+ * restore-baseline-only: heute fehlende Stichtagsnormen wiederherstellen. Ohne `--write` Dry-run (Quellen werden im
+ * Budget in den Cache geholt, außer mit `--offline`). Exit 1, wenn eine Wiederherstellung an der Überleitung oder am
+ * Schema scheitert, sonst 0 – Review-Fälle sind ein Ergebnis, kein Fehler.
+ */
+async function runRestoreBaselineOnlyCommand(options: CliOptions, root: string, io: Io): Promise<number> {
+  const run = await runBaselineOnly({
+    root,
+    write: options.write,
+    offline: options.offline,
+    baselineDate: options.baseline,
+    ...(options.only.length > 0 ? { only: options.only } : {}),
+    ...(options.maxRequests === undefined ? {} : { maxRequests: options.maxRequests }),
+    log: options.json ? (): void => undefined : (line) => io.print(line),
+  });
+  if (options.json) io.print(JSON.stringify({ jurisdiction: TARGET_JURISDICTION, metrics: run.metrics, network: { ...run.network, pending: [...new Set(run.network.pending)].length }, restored: run.restored, restoreFailures: run.restoreFailures, written: run.written }, null, 2));
+  else for (const line of baselineOnlySummary(run, { write: options.write })) io.print(line);
+  return run.restoreFailures.length === 0 ? 0 : 1;
 }

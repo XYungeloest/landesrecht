@@ -196,7 +196,7 @@ export interface InventoryTotals {
   signals: {
     divisionNumberBeforeTitle: number;
     normTypeOutOfModel: Record<string, number>;
-    imageAttachments: { documents: number; withGraphicFinding: number; withoutGraphicFinding: number };
+    imageAttachments: { documents: number; withFigures: number; withGraphicFinding: number; withoutGraphicFinding: number };
     slugCollisions: number;
   };
 }

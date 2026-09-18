@@ -9,6 +9,11 @@
  * wird gestagt. Eine vorhandene Staging-Datei mit anderem Inhalt wird nie überschrieben (Befund), und ein
  * vorhandener Objektschlüssel im Manifest, der vom berechneten abweicht, ebenfalls nicht.
  *
+ * Abbildungen (Rolle `figure`) liegen nicht selbst im Cache, sondern im gecachten Exportpaket: Das Paket muss den im
+ * Manifest gebundenen SHA-256 (`packageSha256`) tragen, die Datei am Pfad `packagePath` den SHA-256 und die Größe
+ * der Abbildung. Der Schlüssel ist inhaltsadressiert (`assets/<sha256>.<ext>`); dieselbe Abbildung zweimal in
+ * einem Eintrag gibt es nicht (der Bulk bindet je SHA-256 einmal), in zwei Normen wäre sie `duplicate-key`.
+ *
  * Im Manifest erhält die Rohquelle `bucket`, `objectKey` und `archiveStatus: 'staged'` – nur, wenn sie noch keinen
  * Archivstatus trägt; `uploaded` und `verified` werden nie zurückgestuft. Die Normdateien unter
  * `content/norms/baywue/` berührt das Staging nicht: Die Archivierung ist eine Eigenschaft des Manifests.
@@ -21,6 +26,7 @@ import { writeFileAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.t
 import { R2_SOURCES_BUCKET } from '../common/environment.ts';
 import { isImportedStatus, writeManifestEntry, type ImportManifest, type ManifestEntry, type ManifestRawDocument } from '../common/manifest.ts';
 import { cacheEntryPaths } from '../fetch/cache.ts';
+import { readPackageFile } from '../parse/package.ts';
 import { ArchiveError, envelopeBytes, envelopeCoreProblems, envelopeFor, envelopeKey, r2ObjectKey, sha256Hex } from './archive.ts';
 
 export interface ArchiveCandidate {
@@ -152,13 +158,26 @@ export async function stageRawSources(options: StageOptions): Promise<StageResul
       }
       result.alreadyStaged += 1;
     } else {
-      const cached = await readIfExists(cacheEntryPaths(options.cacheDir, raw.url).bytes);
-      if (!cached) {
+      const cachedPackage = await readIfExists(cacheEntryPaths(options.cacheDir, raw.url).bytes);
+      if (!cachedPackage) {
         problem('cache-missing', `Rohpaket ${raw.url} nicht im Cache ${options.cacheDir}`);
         continue;
       }
+      let cached = cachedPackage;
+      if (raw.role === 'figure') {
+        if (sha256Hex(cachedPackage) !== raw.packageSha256) {
+          problem('cache-mismatch', `Paket ${raw.url} im Cache trägt nicht den gebundenen SHA-256 ${raw.packageSha256 ?? '(fehlt)'} – die Abbildung wird nicht daraus entnommen`);
+          continue;
+        }
+        const file = raw.packagePath ? readPackageFile(cachedPackage, raw.packagePath) : undefined;
+        if (!file) {
+          problem('cache-missing', `Abbildung ${raw.packagePath ?? '(ohne Pfad)'} fehlt im Paket ${raw.url}`);
+          continue;
+        }
+        cached = file;
+      }
       if (cached.byteLength !== raw.byteLength || sha256Hex(cached) !== raw.sha256) {
-        problem('cache-mismatch', `Cachebytes für ${raw.url} passen nicht zum Manifest (Größe ${cached.byteLength} statt ${raw.byteLength} oder SHA-256)`);
+        problem('cache-mismatch', `Cachebytes für ${raw.role === 'figure' ? `${raw.packagePath} in ` : ''}${raw.url} passen nicht zum Manifest (Größe ${cached.byteLength} statt ${raw.byteLength} oder SHA-256)`);
         continue;
       }
       if (options.write) await writeFileAtomic(stagedPath, cached);

@@ -14,7 +14,7 @@
  */
 import type { BaselineDecision, BaselineEvidence } from '../baseline/classify.ts';
 import type { BaselineRecoveryMethod } from '../common/manifest.ts';
-import type { ReconstructionRecipe } from '../reconstruction/recipe.ts';
+import { recipeAmendments, type AnyReconstructionRecipe } from '../reconstruction/recipe.ts';
 import type { BulkCandidate } from './select.ts';
 
 export const DECISION_TRACE_SCHEMA = 'bayernrecht-decision-trace/1' as const;
@@ -71,7 +71,12 @@ export const RECOVERY_METHOD_MAPPING: Readonly<Record<BaselineDecision['method']
   undetermined: 'reverse-post-baseline-event',
 };
 
-export function recoveryMethodFor(decision: BaselineDecision | undefined, recipe?: ReconstructionRecipe): { method: BaselineRecoveryMethod; note: string } {
+/** Die zurückgenommenen Änderungen in Klartext, älteste zuerst („A (Wirkung ab …), dann B (…)“). */
+export function reversedAmendmentsText(recipe: AnyReconstructionRecipe): string {
+  return [...recipeAmendments(recipe)].reverse().map((amendment) => `${amendment.citation} (Wirkung ab ${amendment.effectiveDate})`).join(', dann ');
+}
+
+export function recoveryMethodFor(decision: BaselineDecision | undefined, recipe?: AnyReconstructionRecipe): { method: BaselineRecoveryMethod; note: string } {
   if (!decision) {
     return { method: 'reverse-post-baseline-event', note: 'Ohne Stichtagsklassifikation ist kein Weg bestimmt; der Eintrag wird nicht übernommen.' };
   }
@@ -84,7 +89,7 @@ export function recoveryMethodFor(decision: BaselineDecision | undefined, recipe
   if (decision.method === 'reverse-amendment' && recipe) {
     return {
       method,
-      note: `Stichtagsfassung durch Rücknahme der Änderung ${recipe.amendment.citation} (Wirkung ab ${recipe.amendment.effectiveDate}) aus dem heutigen Text zurückgerechnet; Rezept data/imports/bayernrecht/reconstruction/${recipe.documentId}.json, Rundlauf bestanden.`,
+      note: `Stichtagsfassung durch Rücknahme ${recipeAmendments(recipe).length === 1 ? 'der Änderung' : `von ${recipeAmendments(recipe).length} Änderungen`} ${reversedAmendmentsText(recipe)} aus dem heutigen Text zurückgerechnet; Rezept data/imports/bayernrecht/reconstruction/${recipe.documentId}.json, Rundlauf bestanden.`,
     };
   }
   return {
@@ -105,7 +110,7 @@ export interface BuildDecisionTraceInput {
   /** Wurde die Norm in diesem Lauf übernommen? Nur dann behauptet der Satz eine Geltung. */
   imported: boolean;
   /** Bewiesene Rückrechnung (Rundlauf bestanden) und belegter Beginn der Stichtagsfassung. */
-  reconstruction?: { recipe: ReconstructionRecipe; baselineTextFrom: string };
+  reconstruction?: { recipe: AnyReconstructionRecipe; baselineTextFrom: string };
 }
 
 export function buildDecisionTrace(input: BuildDecisionTraceInput): DecisionTrace {
@@ -126,7 +131,9 @@ export function buildDecisionTrace(input: BuildDecisionTraceInput): DecisionTrac
   ];
   const reconstructed = input.reconstruction;
   const statement = input.imported && decision && reconstructed
-    ? `Der heutige Text gilt erst seit ${reconstructed.recipe.amendment.effectiveDate} (${reconstructed.recipe.amendment.citation}); die Fassung davor galt seit ${reconstructed.baselineTextFrom} und damit am ${baselineDate}. Sie wurde durch Rücknahme genau dieser Änderung zurückgerechnet; der Rundlauf ergibt byteidentisch den heutigen Text.`
+    ? recipeAmendments(reconstructed.recipe).length === 1
+      ? `Der heutige Text gilt erst seit ${recipeAmendments(reconstructed.recipe)[0]!.effectiveDate} (${recipeAmendments(reconstructed.recipe)[0]!.citation}); die Fassung davor galt seit ${reconstructed.baselineTextFrom} und damit am ${baselineDate}. Sie wurde durch Rücknahme genau dieser Änderung zurückgerechnet; der Rundlauf ergibt byteidentisch den heutigen Text.`
+      : `Der Text wurde nach dem Stichtag ${recipeAmendments(reconstructed.recipe).length}-mal geändert: ${reversedAmendmentsText(reconstructed.recipe)}. Die Fassung vor der ersten dieser Änderungen galt seit ${reconstructed.baselineTextFrom} und damit am ${baselineDate}. Sie wurde durch Rücknahme aller Änderungen in umgekehrter Reihenfolge zurückgerechnet; die Vorwärtsanwendung ergibt byteidentisch den heutigen Text.`
     : input.imported && decision
     ? `Die Vorschrift wurde am ${input.documentDate ?? '?'} ausgefertigt und ihr gezeigter Text gilt seit ${input.textInForceFrom ?? '?'} unverändert; damit galt genau dieser Text am ${baselineDate}.`
     : decision

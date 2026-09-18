@@ -32,6 +32,7 @@ import { readManifest, type ManifestEntry } from '../common/manifest.ts';
 import { runReportPath } from '../common/paths.ts';
 import { emptyReviewQueue, readReviewQueue, type ReviewQueue } from '../common/review.ts';
 import { emptySlugRegistry, readSlugRegistry, seedSlugRegistryFromManifest, writeSlugRegistry, SLUG_REGISTRY_PATH } from '../common/slug-registry.ts';
+import { readSourceCorrections, type SourceCorrection } from '../common/source-corrections.ts';
 import { readInstitutionRegistry } from '../transform/institution-registry.ts';
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
 import { CacheUnreadableError } from './cache.ts';
@@ -257,6 +258,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
   let registry = emptySlugRegistry();
   const reviewByIdentity = new Map<string, ReviewQueue['items']>();
   let institutions: Awaited<ReturnType<typeof readInstitutionRegistry>>;
+  let sourceCorrections: SourceCorrection[] = [];
   let existingSlugs = new Set<string>();
   try {
     const previousState = await readBulkState(options.root);
@@ -267,6 +269,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
     const reviewQueue = await readReviewQueue(options.root);
     for (const item of reviewQueue.items) reviewByIdentity.set(item.sourceIdentity, [...(reviewByIdentity.get(item.sourceIdentity) ?? []), item]);
     institutions = await readInstitutionRegistry(options.root);
+    sourceCorrections = await readSourceCorrections(options.root);
     existingSlugs = await listExistingSlugs(options.root);
   } catch (error) {
     const systemic = systemicReason(error);
@@ -292,15 +295,23 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
   }
 
   /* ------------------------------------------------------------------ Warteschlange */
+  // Ein mit älterem Parser oder Transformer erledigter Eintrag ist nicht erledigt: `--resume` nimmt ihn wieder
+  // auf. Neu geschrieben wird der Inhalt trotzdem nur, wenn sich der Datensatz tatsächlich ändert – die
+  // Versionsnummer allein ändert nur die Provenienz im Manifest.
   const queue: BulkCandidate[] = [];
+  let staleVersion = 0;
   for (const candidate of selection.queue) {
     const state = stateEntries.get(candidate.documentId)!;
-    if (options.resume && RESUMABLE_DONE.includes(state.status)) {
+    const previous = manifestByIdentity.get(candidate.documentId);
+    const outdated = previous !== undefined && (previous.parserVersion !== PARSER_VERSION || previous.transformerVersion !== TRANSFORMER_VERSION);
+    if (options.resume && RESUMABLE_DONE.includes(state.status) && !outdated) {
       resumed += 1;
       continue;
     }
+    if (options.resume && outdated) staleVersion += 1;
     queue.push(candidate);
   }
+  if (staleVersion > 0) log(`${staleVersion} Einträge mit älterer Parser- oder Transformer-Version werden neu bewertet`);
   const budgeted = options.limit === undefined ? queue : queue.slice(0, options.limit);
   const truncated = options.limit !== undefined && queue.length > options.limit;
   if (budgeted.length === 0) runStatus = 'nothing-to-do';
@@ -337,6 +348,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
         registry,
         existingSlugs,
         institutions,
+        sourceCorrections: sourceCorrections.filter((correction) => correction.sourceIdentity === candidate.documentId),
         reviewQueue: { ...emptyReviewQueue(), items: [...(reviewByIdentity.get(candidate.documentId) ?? [])] },
         ...(manifestByIdentity.has(candidate.documentId) ? { previous: manifestByIdentity.get(candidate.documentId)! } : {}),
         now,

@@ -69,6 +69,39 @@ export interface PackageAttachment {
   kind: 'pdf' | 'image';
   byteLength: number;
   sha256: string;
+  /**
+   * Bildbeilagen: tatsächliche Medienart und Abmessungen aus den ersten Bytes. Das Manifest deklariert alle
+   * Bilder als `image/jpg`, auch GIF und PNG; die Deklaration bleibt in `mediaType` unverändert (Provenienz).
+   */
+  image?: { mediaType: 'image/gif' | 'image/jpeg' | 'image/png'; width?: number; height?: number };
+}
+
+/** Medienart und Abmessungen eines Bildes aus seinen ersten Bytes (GIF, PNG, JPEG); `undefined` bei anderem Format. */
+export function sniffImage(bytes: Uint8Array): PackageAttachment['image'] {
+  const ascii = (start: number, length: number): string => String.fromCharCode(...bytes.subarray(start, start + length));
+  if (bytes.length >= 10 && (ascii(0, 6) === 'GIF87a' || ascii(0, 6) === 'GIF89a')) {
+    return { mediaType: 'image/gif', width: bytes[6]! | (bytes[7]! << 8), height: bytes[8]! | (bytes[9]! << 8) };
+  }
+  if (bytes.length >= 24 && bytes[0] === 0x89 && ascii(1, 3) === 'PNG') {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    return { mediaType: 'image/png', width: view.getUint32(16), height: view.getUint32(20) };
+  }
+  if (bytes.length >= 4 && bytes[0] === 0xff && bytes[1] === 0xd8) {
+    // SOFn-Marker suchen (außer DHT C4, JPG C8, DAC CC); Höhe und Breite stehen dahinter.
+    let offset = 2;
+    while (offset + 9 < bytes.length) {
+      if (bytes[offset] !== 0xff) { offset += 1; continue; }
+      const marker = bytes[offset + 1]!;
+      const length = (bytes[offset + 2]! << 8) | bytes[offset + 3]!;
+      if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+        return { mediaType: 'image/jpeg', height: (bytes[offset + 5]! << 8) | bytes[offset + 6]!, width: (bytes[offset + 7]! << 8) | bytes[offset + 8]! };
+      }
+      if (marker === 0xd9 || marker === 0xda) break;
+      offset += 2 + length;
+    }
+    return { mediaType: 'image/jpeg' };
+  }
+  return undefined;
 }
 
 export interface BayernRechtPackage {
@@ -93,6 +126,14 @@ interface ZipEntry {
 
 function fail(message: string): never {
   throw new ImportPipelineError('parse-source-format', message);
+}
+
+/**
+ * Eine Datei aus einem Exportpaket (Pfad ohne führenden `/`), ohne das Paket als Ganzes zu deuten – für das
+ * R2-Staging der Abbildungs-Assets. `undefined`, wenn der Pfad im Paket fehlt.
+ */
+export function readPackageFile(bytes: Uint8Array, path: string): Uint8Array | undefined {
+  return readZipEntries(bytes).get(path);
 }
 
 function readZipEntries(bytes: Uint8Array): Map<string, Uint8Array> {
@@ -218,6 +259,7 @@ export function readBayernRechtPackage(bytes: Uint8Array): BayernRechtPackage {
         kind: entry.mediaType === PDF_MEDIA_TYPE ? 'pdf' : 'image',
         byteLength: content.length,
         sha256: createHash('sha256').update(content).digest('hex'),
+        ...(entry.mediaType === IMAGE_MEDIA_TYPE && sniffImage(content) ? { image: sniffImage(content)! } : {}),
       });
     } else if (entry !== document) {
       fail(`Unbekannte Medienart ${entry.mediaType} für ${entry.fullPath} im Paketmanifest`);

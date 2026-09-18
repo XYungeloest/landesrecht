@@ -29,12 +29,13 @@ import { join } from 'node:path';
 import { CorruptStateError, readJsonFile } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 
 import { BASELINE_DATE, type SourceArea } from '../common/constants.ts';
-import { RECIPE_SCHEMA, type ReconstructionRecipe } from '../reconstruction/recipe.ts';
+import { RECIPE_SCHEMA, RECIPE_SCHEMA_V2, recipeAmendments, type AnyReconstructionRecipe } from '../reconstruction/recipe.ts';
 import type { ReviewItemInput } from '../common/review.ts';
 import { compareSourceIdentity } from '../common/paths.ts';
 import type { BaselineDecision } from '../baseline/classify.ts';
 import { BASELINE_PATH, type BaselineFile } from '../baseline/run.ts';
 import { SCOPE_PATH, type ScopeFile } from '../scope/run.ts';
+import { isMergedAnnex } from '../scope/decisions.ts';
 import { readEnumeration, type EnumerationItem } from '../enumerate/enumeration.ts';
 import type { BulkResult } from './state.ts';
 
@@ -63,7 +64,21 @@ export interface BulkCandidate {
   latestChange?: string;
   changedAfterBaseline?: boolean;
   /** Rückrechnungsrezept (`reverse-amendment`); nur mit ihm ist dieser Weg überhaupt gangbar. */
-  recipe?: ReconstructionRecipe;
+  recipe?: AnyReconstructionRecipe;
+  /**
+   * Normative Anlagen, die das Portal als eigene Dokumente führt und die als Anlage **dieser** Norm übernommen
+   * werden (Scope `annex-merged-into-related-norm`, z. B. BayBodSchO → BayEVBodenseeSchO).
+   */
+  mergedAnnexes?: MergedAnnex[];
+}
+
+export interface MergedAnnex {
+  documentId: string;
+  title: string;
+  zipUrl: string;
+  sourceUrl: string;
+  /** Eigene Stichtagsentscheidung der Anlage; ohne sie wird die Stammnorm gesperrt. */
+  baseline?: BaselineDecision;
 }
 
 /** Rezepte der Rückrechnung, ein JSON je Dokument (`<documentId>.json`). */
@@ -73,18 +88,19 @@ export const RECONSTRUCTION_DIR = 'data/imports/bayernrecht/reconstruction';
  * Liest alle Rückrechnungsrezepte. Andere JSON-Dateien im Verzeichnis (Berichte, Warteschlangen) werden
  * übergangen; ein Rezept, dessen Kennung nicht zum Dateinamen passt, ist ein Widerspruch im Zustand.
  */
-export async function readReconstructionRecipes(root: string): Promise<Map<string, ReconstructionRecipe>> {
+export async function readReconstructionRecipes(root: string): Promise<Map<string, AnyReconstructionRecipe>> {
   let names: string[];
   try {
     names = await readdir(join(root, RECONSTRUCTION_DIR));
   } catch {
     return new Map();
   }
-  const recipes = new Map<string, ReconstructionRecipe>();
+  const recipes = new Map<string, AnyReconstructionRecipe>();
   for (const name of names.filter((entry) => entry.endsWith('.json')).sort()) {
     const path = `${RECONSTRUCTION_DIR}/${name}`;
-    const recipe = await readJsonFile<ReconstructionRecipe>(join(root, path));
-    if (!recipe || recipe.schemaVersion !== RECIPE_SCHEMA) continue;
+    const recipe = await readJsonFile<AnyReconstructionRecipe>(join(root, path));
+    // Einstufig (v1) und mehrstufig (v2, `amendments` jüngste zuerst) laufen denselben Weg.
+    if (!recipe || (recipe.schemaVersion !== RECIPE_SCHEMA && recipe.schemaVersion !== RECIPE_SCHEMA_V2)) continue;
     if (`${recipe.documentId}.json` !== name) throw new CorruptStateError(path, `Rezept für ${recipe.documentId} liegt unter fremdem Namen`);
     if (recipe.method !== 'reverse-amendment') throw new CorruptStateError(path, `unbekannte Methode ${String(recipe.method)}`);
     recipes.set(recipe.documentId, recipe);
@@ -152,6 +168,19 @@ export async function loadSelection(root: string, options: LoadSelectionOptions 
   const queue: BulkCandidate[] = [];
   const totals = { scopeDocuments: scope.entries.length, include: 0, exclude: 0, scopeReview: 0, withBaselineDecision: 0, eligible: 0 };
 
+  // Zusammengeführte Anlagen: kein eigener Kandidat, sondern Teil ihrer Stammnorm.
+  const mergedByStem = new Map<string, MergedAnnex[]>();
+  for (const entry of scope.entries) {
+    if (!isMergedAnnex(entry)) continue;
+    const found = items.get(entry.documentId);
+    if (!found) {
+      problems.push(`${entry.documentId}: zusammengeführte Anlage ohne Enumerationseintrag`);
+      continue;
+    }
+    const annex: MergedAnnex = { documentId: entry.documentId, title: found.item.title, zipUrl: found.item.zipUrl, sourceUrl: found.item.sourceUrl, ...(decisions.has(entry.documentId) ? { baseline: decisions.get(entry.documentId)! } : {}) };
+    mergedByStem.set(entry.relatedDocumentId!, [...(mergedByStem.get(entry.relatedDocumentId!) ?? []), annex]);
+  }
+
   for (const entry of scope.entries) {
     if (entry.decision === 'include') totals.include += 1;
     else if (entry.decision === 'review') totals.scopeReview += 1;
@@ -183,9 +212,14 @@ export async function loadSelection(root: string, options: LoadSelectionOptions 
       ...(found.item.latestChange ? { latestChange: found.item.latestChange } : {}),
       ...(found.item.changedAfterBaseline === undefined ? {} : { changedAfterBaseline: found.item.changedAfterBaseline }),
       ...(recipes.has(entry.documentId) ? { recipe: recipes.get(entry.documentId)! } : {}),
+      ...(mergedByStem.has(entry.documentId) ? { mergedAnnexes: mergedByStem.get(entry.documentId)! } : {}),
     };
     if (baselineGate(candidate).admit) totals.eligible += 1;
     queue.push(candidate);
+  }
+
+  for (const stem of mergedByStem.keys()) {
+    if (!scope.entries.some((entry) => entry.documentId === stem && entry.decision === 'include')) problems.push(`${stem}: Stammnorm einer zusammengeführten Anlage ist nicht im Scope`);
   }
 
   queue.sort((left, right) => SELECTABLE_AREAS.indexOf(left.sourceArea) - SELECTABLE_AREAS.indexOf(right.sourceArea) || compareSourceIdentity(left.documentId, right.documentId));
@@ -205,7 +239,7 @@ export interface GateRejection {
 }
 
 /** Zulassung; bei `reverse-amendment` mit dem Rezept, das `norm.ts` am geparsten Körper beweisen muss. */
-export type GateVerdict = { admit: true; reconstruction?: ReconstructionRecipe } | GateRejection;
+export type GateVerdict = { admit: true; reconstruction?: AnyReconstructionRecipe } | GateRejection;
 
 const reviewItem = (category: ReviewItemInput['category'], key: string, summary: string, details: string[]): ReviewItemInput => ({
   category,
@@ -315,8 +349,8 @@ export function baselineGate(candidate: BulkCandidate): GateVerdict {
           ? `Rezept rechnet auf ${recipe.baselineDate} zurück, nicht auf ${BASELINE_DATE}`
           : decision.class !== 'changed-after-baseline'
             ? `Klasse ${decision.class} passt nicht zu einer Rückrechnung`
-            : !(recipe.amendment.effectiveDate > BASELINE_DATE)
-              ? `Die Änderung trat am ${recipe.amendment.effectiveDate} in Kraft – nicht nach dem Stichtag; sie gehört zur Stichtagsfassung`
+            : recipeAmendments(recipe).find((amendment) => !(amendment.effectiveDate > BASELINE_DATE))
+              ? `Die Änderung ${recipeAmendments(recipe).find((amendment) => !(amendment.effectiveDate > BASELINE_DATE))!.citation} trat am ${recipeAmendments(recipe).find((amendment) => !(amendment.effectiveDate > BASELINE_DATE))!.effectiveDate} in Kraft – nicht nach dem Stichtag; sie gehört zur Stichtagsfassung`
               : undefined;
     if (problem || !recipe) {
       return {

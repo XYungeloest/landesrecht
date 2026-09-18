@@ -207,9 +207,36 @@ export interface BaywueGoldenRun {
   cross: CrossJurisdictionCase[];
 }
 
+/**
+ * Kuratierte Fälle: Entscheidungen dieses Bestands, die die Suche tragen muss und die ein zufällig erzeugtes Set
+ * nicht zuverlässig trifft. Sie werden in ein vorhandenes Set nachgetragen (fehlende IDs), ohne es neu zu erzeugen.
+ */
+export const BAYWUE_CURATED_QUERIES: readonly GoldenQuery[] = [
+  // BayBodSchO ist Anhang der EV-BodenseeSchO (Scope-Entscheidung): Titel und Inhalt des Anhangs führen zur Stammnorm.
+  { id: 'curated-annex-01', category: 'partial-title', query: 'Bodensee-Schifffahrts-Ordnung', expectedTop: ['ev-bodenseescho-baywue'], acceptable: [], note: 'kuratiert: Anhang (BayBodSchO) in der Stammnorm' },
+  // Quellkorrektur „Bayerischne“ → „Bayerischen“ (BayVwV96990): der korrigierte, übergeleitete Titel ist suchbar.
+  { id: 'curated-correction-01', category: 'vwv-title', query: 'Geschäftsordnung des Bayern-Württembergischen Landesbeirats für Familienfragen', expectedTop: ['geschaeftsordnung-des-bayern-wuerttembergischen-landesbeirats-fuer-familienfragen-baywue'], acceptable: [], note: 'kuratiert: Quellkorrektur obvious-source-typo' },
+  // Historische Staatsbezeichnungen bleiben unverändert (Transformer 1.2.0) und sind so suchbar.
+  { id: 'curated-historical-01', category: 'partial-title', query: 'Königreichen Bayern und Württemberg Iller', expectedTop: ['staatsvertrag-zwischen-den-koenigreichen-bayern-wuerttemberg-und-baywue'], acceptable: [], note: 'kuratiert: historischer Staatsname unverändert' },
+  { id: 'curated-historical-02', category: 'partial-title', query: 'Konkordat Papst Pius XI. Staate Bayern', expectedTop: ['konkordat-baywue'], acceptable: [], note: 'kuratiert: historischer Vertragsname unverändert' },
+  { id: 'curated-historical-03', category: 'partial-title', query: 'Blindenerziehungsanstalt des Königreichs Bayern', expectedTop: ['stiftungsurkunde-baywue-520e35d0'], acceptable: [], note: 'kuratiert: historischer Staatsname unverändert' },
+  // Zurückgerechnete Stichtagsfassungen (einstufig und mehrstufig): Titel und Abkürzung führen zur Norm.
+  { id: 'curated-reconstructed-01', category: 'exact-title', query: 'Bayern-Württembergisches Krebsregistergesetz', expectedTop: ['baykregg-baywue'], acceptable: [], note: 'kuratiert: rückgerechnet (v1)' },
+  { id: 'curated-reconstructed-02', category: 'abbreviation', query: 'BayFEV', expectedTop: ['bayfev-baywue'], acceptable: [], note: 'kuratiert: rückgerechnet über drei Änderungen (v2)' },
+  { id: 'curated-reconstructed-03', category: 'abbreviation', query: 'LGRG', expectedTop: ['lgrg-baywue'], acceptable: [], note: 'kuratiert: rückgerechnet (v2)' },
+  // Heute fehlende Stichtagsnormen, aus amtlichen Verkündungen wiederhergestellt (Bereich events).
+  { id: 'curated-baseline-only-01', category: 'abbreviation', query: 'BHfB', expectedTop: ['bhfb-baywue'], acceptable: [], note: 'kuratiert: baseline-only wiederhergestellt' },
+  { id: 'curated-baseline-only-02', category: 'partial-title', query: 'Leistung des Richtereides durch Berufsrichter', expectedTop: ['leistung-des-richtereides-durch-berufsrichter-und-verpflichtung-der-baywue'], acceptable: [], note: 'kuratiert: baseline-only wiederhergestellt' },
+  { id: 'curated-baseline-only-03', category: 'partial-title', query: 'Bußgeldkatalog Coronavirus-Einreiseverordnung', expectedTop: ['bussgeldkatalog-coronavirus-einreiseverordnung-coronaeinreisev-und-baywue'], acceptable: [], note: 'kuratiert: baseline-only wiederhergestellt' },
+];
+
 export async function runBaywueGolden(root: string, options: { write: boolean; regenerate?: boolean }): Promise<BaywueGoldenRun> {
-  const existing = options.regenerate ? undefined : await readBaywueGolden(root);
-  const set = existing ?? generateBaywueGoldenQueries(await loadJurisdictionNorms('baywue', root));
+  const stored = options.regenerate ? undefined : await readBaywueGolden(root);
+  const missingCurated = BAYWUE_CURATED_QUERIES.filter((query) => !(stored ?? { queries: [] }).queries.some((entry) => entry.id === query.id));
+  // Ein vorhandenes Set gilt als bestehend, solange nur kuratierte Fälle fehlen: Sie werden angehängt und geschrieben.
+  const existing = stored && missingCurated.length > 0 ? undefined : stored;
+  const base = stored ?? generateBaywueGoldenQueries(await loadJurisdictionNorms('baywue', root));
+  const set = { ...base, queries: [...base.queries, ...missingCurated] };
   const corpus = await projectCorpus(root);
   let evaluations: GoldenEvaluation[];
   let cross: CrossJurisdictionCase[];

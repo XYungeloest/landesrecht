@@ -1,4 +1,8 @@
 /**
+ * Hilfen für die Kette (Vollzitat, Änderungsverlauf, Fortführungsnachweis, Fundstellen) und die **einschrittige**
+ * Einzelprüfung `checkChain`. Der Lauf selbst geht die Kette über die amtlichen Verweise (`walk.ts`) und verwendet
+ * von hier `lastAmendmentClause`, `historyEntries`, `registerNote` und `candidateKeys`.
+ *
  * Ist diese Änderung **der einzige Schritt** zwischen Stichtag und heutigem Text?
  *
  * Das Ereignisregister kennt für die Norm genau ein stark zugeordnetes Ereignis nach dem Stichtag. Das
@@ -92,6 +96,12 @@ export function registerNote(note: string): { date?: string; keys: PublicationKe
   if (vv) {
     const date = `${vv[3]}-${vv[2]}-${vv[1]}`;
     return { date, keys: candidateKeys(vv[4]!, date) };
+  }
+  // „(§ 1 V v. 14.05.2021, BayMBl. Nr. 335)“ · „(Urteil v. 19.12.2017; BGBl.I 2018 S. 123)“
+  const dated = /v\.\s*(\d{2})\.(\d{2})\.(\d{4})(?:[,;]\s*((?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl|MABl|StAnz|BGBl)\.?\s*[IV]*\s*(?:\d{4}\s*)?(?:S\.|Nr\.)\s*\d+))?/u.exec(note);
+  if (dated) {
+    const date = `${dated[3]}-${dated[2]}-${dated[1]}`;
+    return { date, keys: dated[4] && !/^BGBl/u.test(dated[4]) ? candidateKeys(dated[4].replace(/\s+/gu, ' '), date) : [] };
   }
   return { keys: [] };
 }

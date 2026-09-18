@@ -344,9 +344,10 @@ describe('Textintegrität: sichtbarer Quelltext gegen kanonischen Text', () => {
     expect([...TEXT_INTEGRITY_CLASSES]).toEqual(['exact', 'normalized-equivalent', 'explained-difference', 'review', 'mismatch']);
   });
 
-  it('hält den Bildbefund aus der Integrität heraus: <graphic> trägt keinen sichtbaren Text', () => {
+  it('hält Abbildungen aus der Integrität heraus: <graphic> trägt keinen sichtbaren Text, die Beschreibung ist kein Normtext', () => {
     const entry = inventory('BayBoFiV', imagePackage());
-    expect(entry.codes).toContain('graphic-not-transferred');
+    expect(entry.codes).toContain('figures-transferred');
+    expect(entry.codes).not.toContain('graphic-not-transferred');
     expect(entry.textIntegrity?.class === 'mismatch').toBe(false);
   });
 });
@@ -514,8 +515,9 @@ describe('Lauf über den Bestand: Cache, Budget, Wiederaufnahme', () => {
     expect(Object.keys(file.totals.byDialect).sort()).toEqual(['byrecht-norm', 'byrecht-vv']);
     expect(file.totals.byNormType['gesetz']).toBeTruthy();
     expect(file.totals.signals.imageAttachments.documents).toBe(1);
-    expect(file.totals.signals.imageAttachments.withGraphicFinding).toBe(1);
-    expect(file.totals.signals.imageAttachments.withoutGraphicFinding).toBe(0);
+    expect(file.totals.signals.imageAttachments.withFigures).toBe(1);
+    expect(file.totals.signals.imageAttachments.withGraphicFinding).toBe(0);
+    expect(file.totals.signals.imageAttachments.withoutGraphicFinding).toBe(1);
   });
 
   it('berichtet die Klassen nach Zahl der Dokumente und die Integritätsklassen mit Beleg', async () => {

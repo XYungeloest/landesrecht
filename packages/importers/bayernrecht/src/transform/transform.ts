@@ -156,6 +156,10 @@ export function transformToBayWue(law: SourceLaw, context: TransformContext, opt
   const detectionFields: DetectionField[] = [{ path: 'meta.title', text: law.title }];
   if (law.shortTitle) detectionFields.push({ path: 'meta.shortTitle', text: law.shortTitle });
   if (law.abbr) detectionFields.push({ path: 'meta.abbr', text: law.abbr });
+  // Schlagwörter und Sachgebiete sind sichtbar und durchsuchbar – sie werden wie Titel erkannt und übergeleitet
+  // (Anlass: Titel und Abkürzung einer zusammengeführten Anlage als Suchbegriffe der Stammnorm).
+  law.keywords.forEach((keyword, index) => detectionFields.push({ path: `meta.keywords[${index}]`, text: keyword }));
+  law.subjects.forEach((subject, index) => detectionFields.push({ path: `meta.subjects[${index}]`, text: subject }));
   if (mapping.decision === 'safe-auto-transform' && organs.enactingBody) detectionFields.push({ path: 'meta.enactingBody', text: organs.enactingBody.name });
   for (const field of bodyFields) {
     const value = field.get();
@@ -173,6 +177,8 @@ export function transformToBayWue(law: SourceLaw, context: TransformContext, opt
   const title = transform(law.title, 'meta.title');
   const shortTitle = law.shortTitle ? transform(law.shortTitle, 'meta.shortTitle') : undefined;
   const abbr = law.abbr ? transform(law.abbr, 'meta.abbr') : undefined;
+  const keywords = law.keywords.map((keyword, index) => transform(keyword, `meta.keywords[${index}]`));
+  const subjects = law.subjects.map((subject, index) => transform(subject, `meta.subjects[${index}]`));
   const enactingBody = mapping.decision === 'safe-auto-transform' && organs.enactingBody ? transform(organs.enactingBody.name, 'meta.enactingBody') : mapping.decision === 'registry-map' ? mapping.enactingBody : undefined;
   for (const field of bodyFields) {
     const value = field.get();
@@ -209,8 +215,8 @@ export function transformToBayWue(law: SourceLaw, context: TransformContext, opt
     status: 'in-force',
     enactingBody,
     originEnactingBody: organs.enactingBody?.name,
-    subjects: law.subjects,
-    keywords: law.keywords,
+    subjects,
+    keywords,
     initialCitation: simulationCitation,
     sourceCitation: law.citation,
     summary: undefined,

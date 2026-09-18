@@ -27,7 +27,7 @@ Verkündungsorgan, Erlassbehörde, Rechtsform, Regelungsgehalt.
 
 | Dokument | Was es ist | Verkündet | Entscheidung | Grund |
 | --- | --- | --- | --- | --- |
-| `BayBodSchO` | Bodensee-Schifffahrts-Ordnung (BSO) | GVBl. 1976 S. 55 | **review** | `annex-to-another-norm` |
+| `BayBodSchO` | Bodensee-Schifffahrts-Ordnung (BSO) | GVBl. 1976 S. 55 | **exclude** (als Anhang übernommen) | `annex-merged-into-related-norm` → `BayEVBodenseeSchO` |
 | `BayVV_237_B_10540` | Richtlinien Sonderförderprogramm Schwimmbadsanierung | BayMBl. 2019 | include | `published-without-register-entry` |
 | `BayVV_282_1_1_1_2_UK_031` | Stiftung „Bildungspakt Bayern“ – Zweck und Förderverfahren | KWMBl. 2001 S. 224 | include | `published-without-register-entry` |
 | `BayVV_631_B_15643` | Richtlinien für die Durchführung von Hochbauaufgaben (RLBau) | BayMBl. 2026 | include | `published-without-register-entry` |
@@ -54,7 +54,7 @@ Die Stichtagsprüfung muss das je Vorschrift auflösen; der Scope tut es nicht u
 Ein Fall ist schon jetzt entschieden: `BayVV_3033_3_J_15366` wurde am **20.11.2025 ausgefertigt** und
 gilt ab 2026-01-01 – beides nach dem Stichtag. Sie wird als `not-at-baseline` geführt.
 
-## Der eine Prüffall
+## Der eine Prüffall – entschieden (2026-09-18)
 
 `BayBodSchO` erklärt sich in einer eigenen Fußnote:
 
@@ -69,10 +69,20 @@ weil sie keine eigene bayerische Vorschrift ist.
 
 Das Gegenstück `BayEVBodenseeSchO` ist als Rechtsverordnung enumeriert.
 
-**Warum Review und keine Entscheidung:** `docs/LEGAL_SCOPE.md` hält Anlagen bei der Stammnorm. Die
-Quelle führt aber zwei Dokumente. Ein Zusammenführen wäre eine Erfindung – die Quelle hat kein
-zusammengesetztes Dokument –, ein stilles Aufnehmen als eigene Norm eine Doppelung des
-Regelungsgehalts. Das ist eine redaktionelle Entscheidung, keine des Importers.
+**Warum zunächst Review:** `docs/LEGAL_SCOPE.md` hält Anlagen bei der Stammnorm. Die Quelle führt aber
+zwei Dokumente. Ein Zusammenführen ohne Entscheidung wäre eine Erfindung, ein stilles Aufnehmen als eigene
+Norm eine Doppelung des Regelungsgehalts.
+
+**Entscheidung (redaktionell, 2026-09-18):** Die BayBodSchO ist **normativer Anhang der
+EV-BodenseeSchO, keine eigene Stammnorm**. Umgesetzt als Scope-Override
+(`data/imports/bayernrecht/scope-overrides.json`): `exclude` mit Grund `annex-merged-into-related-norm` und
+`relatedDocumentId: BayEVBodenseeSchO`. Der Bulk hängt den vollständigen Inhalt als Block `annex`
+(„Anhang“, Titel der BSO) an die EV-BodenseeSchO – mit allen Abbildungen (38, als `figure`-Blöcke),
+navigierbar, durchsuchbar und zitierbar über die Anker der Stammnorm. Es entsteht **keine** zweite Norm.
+Der Anhang trägt nur, wenn er selbst die Prüfungen besteht: eigene Stichtagsentscheidung
+(`unchanged-since-baseline`), Paket im Cache, Identität, Parser ohne Fehler, Textintegrität ohne `mismatch`;
+sonst wird die Stammnorm nicht übernommen (`merged-annex-*`, Kategorie `incomplete-annex`). Das Paket der BSO
+ist als Rohquelle (Rolle `annex`) im Manifest der EV-BodenseeSchO gebunden und archiviert.
 
 ## Zwei Parserbefunde, die dabei auffielen
 

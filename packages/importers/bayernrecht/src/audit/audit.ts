@@ -18,6 +18,9 @@
  *                             und deren SHA-256 gilt für genau diese Bytes – nachgerechnet, nicht geglaubt.
  *   Review ↔ Manifest         Ein Review-Fall gehört zu einer Stammnorm, die das Manifest führt.
  *   Overrides ↔ Manifest      Ein Override greift in einen Eintrag ein, den es geben muss.
+ *   baseline-only ↔ Rezept    Eine wiederhergestellte heute fehlende Stichtagsnorm (Bereich `events`) hat ihr
+ *                             Rezept unter `data/imports/bayernrecht/baseline-only/`, und das Rezept beschreibt
+ *                             genau die Verkündung und die Bytes, die der Eintrag führt – und umgekehrt.
  *
  * **Abweichung oder Hinweis.** Eine Abweichung (`findings`) ist ein Widerspruch im Bestand und führt
  * zu Exit 1. Ein Hinweis (`notices`) ist etwas, das in dieser Arbeitskopie fehlt, ohne dass der
@@ -37,6 +40,7 @@ import { compareSourceIdentity } from '../common/paths.ts';
 import { openReviewItems, readReviewQueue, type ReviewQueue } from '../common/review.ts';
 import { readSlugRegistry, SLUG_REGISTRY_PATH, type SlugRegistry } from '../common/slug-registry.ts';
 import { corpusPackagePath, corpusSidecarPath, CORPUS_PATH, CORPUS_SOURCE_DIR, type CorpusFile, type CorpusSourceRecord } from '../corpus/run.ts';
+import { baselineOnlyMarker, isBaselineOnlyEntry, readRecipeHeads, RECIPE_SCHEMA as BASELINE_ONLY_RECIPE_SCHEMA, type StoredRecipeHead } from '../baseline-only/recognize.ts';
 import { readEnumeration, type EnumerationFile, type EnumerationItem } from '../enumerate/enumeration.ts';
 
 /** Bereiche mit Enumeration; `events` hat keine und kann deshalb nicht gegengeprüft werden. */
@@ -65,6 +69,8 @@ export interface AuditReport {
     reviewItems: number;
     openReviewItems: number;
     overrides: number;
+    /** Wiederhergestellte heute fehlende Stichtagsnormen (Bereich `events`, übernommen). */
+    baselineOnlyRestored: number;
     /** Exportpakete, die in dieser Arbeitskopie unter `sources/bayernrecht/` liegen. */
     sourcePackages: number;
   };
@@ -185,6 +191,33 @@ export function checkOverridesAgainstManifest(overrides: Pick<OverrideRegistry, 
   return findings;
 }
 
+/**
+ * baseline-only ↔ Rezept: Jeder wiederhergestellte Eintrag verweist auf ein vorhandenes Rezept derselben Kennung, das
+ * dieselbe Ausgangsverkündung (Adresse, SHA-256) beschreibt; jedes Rezept hat seinen Eintrag.
+ */
+export function checkBaselineOnly(manifest: Pick<ImportManifest, 'entries'>, recipes: readonly StoredRecipeHead[]): AuditFinding[] {
+  const findings: AuditFinding[] = [];
+  const byId = new Map(recipes.map((recipe) => [recipe.id, recipe]));
+  const entries = manifest.entries.filter(isBaselineOnlyEntry);
+  for (const entry of entries) {
+    const marker = baselineOnlyMarker(entry)!;
+    const recipe = byId.get(entry.sourceIdentity);
+    if (!recipe) {
+      findings.push({ check: 'baseline-only-ohne-rezept', identity: entry.sourceIdentity, detail: `Eintrag verweist auf ${marker.recipe}, das Rezept fehlt` });
+      continue;
+    }
+    if (recipe.path !== marker.recipe) findings.push({ check: 'baseline-only-rezeptpfad', identity: entry.sourceIdentity, detail: `Eintrag verweist auf ${marker.recipe}, das Rezept liegt unter ${recipe.path}` });
+    if (recipe.schemaVersion !== BASELINE_ONLY_RECIPE_SCHEMA) findings.push({ check: 'baseline-only-rezeptschema', identity: entry.sourceIdentity, detail: `Rezept ${recipe.path} hat das Schema ${recipe.schemaVersion || '–'}` });
+    if (recipe.base.url !== entry.sourceUrl || recipe.base.sha256 !== entry.sha256) findings.push({ check: 'baseline-only-rezept-abweichung', identity: entry.sourceIdentity, detail: `Rezept beschreibt ${recipe.base.url} (${recipe.base.sha256.slice(0, 16)}…), der Eintrag ${entry.sourceUrl} (${entry.sha256.slice(0, 16)}…)` });
+    if (!entry.rawDocuments.some((raw) => raw.role === 'gazette' && raw.url === entry.sourceUrl && raw.sha256 === entry.sha256)) findings.push({ check: 'baseline-only-ohne-rohquelle', identity: entry.sourceIdentity, detail: 'Die Ausgangsverkündung fehlt unter den Rohquellen (Rolle gazette) – r2-sync archivierte sie nicht' });
+  }
+  const identities = new Set(entries.map((entry) => entry.sourceIdentity));
+  for (const recipe of recipes) {
+    if (!identities.has(recipe.id)) findings.push({ check: 'baseline-only-rezept-ohne-manifest', identity: recipe.id || recipe.path, detail: `${recipe.path} ohne Manifesteintrag im Bereich events` });
+  }
+  return findings;
+}
+
 /* ------------------------------------------------------------------------------------------ */
 /* Rohquellen: Begleitdatei und nachgerechneter SHA-256                                        */
 
@@ -300,6 +333,8 @@ export async function runAudit(root: string, options: AuditOptions = {}): Promis
     findings.push({ check: 'overrides-ungueltig', identity: 'overrides', detail: (error as Error).message });
   }
 
+  findings.push(...checkBaselineOnly(manifest, await readRecipeHeads(root)));
+
   let sourcePackages = 0;
   if (options.skipRawSources !== true) {
     const raw = await auditRawSources(root, corpus);
@@ -321,6 +356,7 @@ export async function runAudit(root: string, options: AuditOptions = {}): Promis
       reviewItems: queue?.items.length ?? 0,
       openReviewItems: queue ? openReviewItems(queue).length : 0,
       overrides: overrides?.entries.length ?? 0,
+      baselineOnlyRestored: manifest.entries.filter((entry: ManifestEntry) => isBaselineOnlyEntry(entry) && isImportedStatus(entry.importStatus)).length,
       sourcePackages,
     },
     findings,
@@ -338,6 +374,7 @@ export function auditSummary(report: AuditReport): string[] {
     `  Enumeration: ${enumeration}`,
     `  Manifest: ${counts.manifestEntries} Einträge, davon ${counts.imported} übernommen · Slug-Registry ${counts.slugRegistry} · Overrides ${counts.overrides}`,
     `  Review: ${counts.reviewItems} Fälle, offen ${counts.openReviewItems} · Beispielkorpus ${counts.corpusEntries} Normen, ${counts.sourcePackages} Exportpakete lokal`,
+    `  baseline-only wiederhergestellt: ${counts.baselineOnlyRestored} (Bereich events, Rezepte unter data/imports/bayernrecht/baseline-only/)`,
   ];
   for (const finding of report.findings) lines.push(`  [${finding.check}] ${finding.identity}: ${finding.detail}`);
   for (const notice of report.notices) lines.push(`  Hinweis: ${notice}`);

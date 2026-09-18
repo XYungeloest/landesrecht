@@ -87,8 +87,17 @@ npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remo
 Deployment: `npm run deploy` (`wrangler deploy --config dist/server/wrangler.json --env ""`),
 Staging: `wrangler deploy --config apps/web/dist/server/wrangler.json --env staging`.
 
-Der Worker liest nur D1; R2 wird von Normseiten nie gelesen. Nach jeder Änderung unter `apps/web/` ist ein
-Redeploy nötig (`npm run build && npm run deploy`).
+Der Worker liest für Normseiten nur D1; R2 wird von Normseiten nie gelesen. Einzige Ausnahme sind die
+**Abbildungs-Assets** normativer Abbildungen (`figure`-Blöcke): `GET /assets/<land>/<sha256>.<gif|jpg|png>`
+(`apps/web/src/pages/assets/[jurisdiction]/[file].ts`, Logik `apps/web/src/lib/assets.ts`) liest aus dem privaten
+Bucket über `LANDESRECHT_QUELLEN` genau einen Schlüssel unter dem Asset-Präfix des Landes
+(`packages/runtime/src/assets.ts`, BayWü: `baywue/bayernrecht/2023-12-01/assets/`). Zulässig sind nur Dateinamen
+aus einem SHA-256 (Kleinbuchstaben) und einer erlaubten Endung; alles andere ist 404, bevor R2 gefragt wird. Vor
+der Auslieferung wird der Inhalt gegen den SHA-256 der Adresse geprüft (Abweichung: 502, nicht cachebar); die
+Antwort ist `immutable` mit `nosniff`. Der Bucket bleibt privat; Rohpakete, Umschläge und Belege sind über diese
+Route nicht erreichbar. Länder ohne Asset-Präfix (West) haben keine Assets.
+
+Nach jeder Änderung unter `apps/web/` ist ein Redeploy nötig (`npm run build && npm run deploy`).
 
 ### Healthcheck und Fehlermodus
 

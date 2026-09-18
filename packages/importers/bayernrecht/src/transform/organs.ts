@@ -169,7 +169,8 @@ export function extractSourceOrgans(input: { blocks: readonly NormBodyBlock[]; h
   return extraction;
 }
 
-const CONSTITUTIONAL_ORGAN = new RegExp(String.raw`^(?:(?:${ADJECTIVE}\s+)?(?:Landtag|Staatsregierung)|Ministerpräsident(?:in)?)(?:\s+${OF_STATE}${STATE})?$`, 'u');
+// Das Landesadjektiv steht vor jedem der drei Verfassungsorgane („Bayerischer Ministerpräsident“ wie „Bayerischer Landtag“).
+const CONSTITUTIONAL_ORGAN = new RegExp(String.raw`^(?:${ADJECTIVE}\s+)?(?:Landtag|Staatsregierung|Ministerpräsident(?:in)?)(?:\s+${OF_STATE}${STATE})?$`, 'u');
 
 /** Überleitung des Erlassorgans in die Simulationsjurisdiktion – Verfassungsorgane oder zentrale Zuordnung. */
 export function mapEnactingBody(origin: string | undefined, options: { institutions?: CompiledInstitutionRegistry; transformation?: TransformationOptions } = {}): EnactingBodyMapping {

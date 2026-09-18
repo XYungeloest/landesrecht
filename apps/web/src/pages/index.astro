@@ -2,6 +2,7 @@
 import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getJurisdictionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import InventoryNotice from '../components/InventoryNotice.astro';
 import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
@@ -20,7 +21,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       {JURISDICTION_LIST.map((jurisdiction) => (
         <li class="card">
           <h3><a href={getJurisdictionUrl(jurisdiction.id)}>{jurisdiction.name}</a></h3>
-          <p class="card__meta">Kurzbezeichnung: {jurisdiction.shortName}</p>
+          <p class="card__meta">Kurzbezeichnung: {jurisdiction.shortName} <InventoryNotice jurisdiction={jurisdiction.id} variant="badge" /></p>
           <p>{VOCABULARY.baselineLabel}: {formatBaselineDate(jurisdiction.baselineDate)}</p>
           {jurisdiction.externalSourceOfTruth && (
             <p class="muted">Rechtsbestand wird in <a href={jurisdiction.externalSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.externalSourceOfTruth.label}</a> geführt.</p>

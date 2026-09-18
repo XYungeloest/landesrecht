@@ -80,7 +80,7 @@ export interface BayernRechtDocument {
   unresolvedAddresses: UnresolvedAddress[];
   attachments: PackageAttachment[];
   citations: CitationTarget[];
-  /** Abbildungen aus `<graphic>`: als Beilage im Paket, nicht im Normkörper. */
+  /** Abbildungen aus `<graphic>` mit Übernahmestatus (`figure`-Block, fehlende Datei oder Zierbild). */
   graphics: GraphicReference[];
   /** Verweise aus `<a href="resources/…">` auf Dateien des Exportpakets. */
   resourceLinks: ResourceLink[];
@@ -128,12 +128,12 @@ function mainSourceReference(source: ArchivedSource, documentId: string): Source
 
 /**
  * Beilagen als Quellenreferenz. PDF-Beilagen sind unverortet (das XML referenziert sie nicht);
- * Bildbeilagen sind über `graphic@FileRef` bzw. `a@href` verortet, werden aber nicht in den
- * Normkörper übernommen, weil das Blockmodell keinen Bildblock kennt. Für Bilder bleibt `mediaType`
- * leer: Der Vorrat von `legal-core` kennt keine Bildmedienart, und die Deklaration des Portals
- * (`image/jpg`) wird nicht stillschweigend auf einen anderen Wert umgeschrieben.
+ * Bildbeilagen sind über `graphic@FileRef` bzw. `a@href` verortet. Eine über `<graphic>` gesetzte Abbildung
+ * steht als `figure`-Block im Normkörper; ihre Quellenreferenz ist diese Beilage (gleicher SHA-256). Als
+ * `mediaType` gilt die aus den Bytes erkannte Bildart; die Deklaration des Portals (`image/jpg`) bleibt in der
+ * Notiz erhalten.
  */
-function attachmentReferences(attachments: readonly PackageAttachment[], source: ArchivedSource): SourceReference[] {
+function attachmentReferences(attachments: readonly PackageAttachment[], source: ArchivedSource, figureFiles: ReadonlySet<string>): SourceReference[] {
   return attachments.map((attachment) => {
     const reference: SourceReference = {
       kind: 'primary-pdf',
@@ -146,9 +146,12 @@ function attachmentReferences(attachments: readonly PackageAttachment[], source:
       derivedSource: attachment.path,
       note: attachment.kind === 'pdf'
         ? 'Unverortete PDF-Beilage aus dem Exportpaket; das XML referenziert sie nicht, eine Zuordnung zur Textstelle ist aus dem Export nicht herstellbar.'
-        : `Bildbeilage aus dem Exportpaket, im Manifest als ${attachment.mediaType} deklariert; im XML über <graphic>/<a> referenziert, im Normkörper nicht enthalten.`,
+        : figureFiles.has(attachment.fileName.toLowerCase())
+          ? `Bildbeilage aus dem Exportpaket, im Manifest als ${attachment.mediaType} deklariert; im Normkörper als Abbildung (figure-Block) an der Stelle des <graphic>-Verweises.`
+          : `Bildbeilage aus dem Exportpaket, im Manifest als ${attachment.mediaType} deklariert; im XML über <graphic>/<a> referenziert, im Normkörper nicht als Abbildung enthalten.`,
     };
     if (attachment.kind === 'pdf') reference.mediaType = 'application/pdf';
+    else if (attachment.image) reference.mediaType = attachment.image.mediaType;
     return reference;
   });
 }
@@ -209,13 +212,30 @@ function finalizeFindings(ctx: ParseContext, documentId: string, packageWarnings
       message: `${counters.deepSections} Gliederungen liegen unterhalb der zweiten Ebene (größte Tiefe ${counters.maxSectionDepth}); sie werden als „subsection“ geführt, weil das Zielmodell darunter keine eigene Ebene kennt`,
     });
   }
-  if (ctx.graphics.length > 0) {
-    const names = ctx.graphics.map((entry) => entry.fileName || entry.fileRef);
+  const transferred = ctx.graphics.filter((entry) => entry.transferred);
+  const decorative = ctx.graphics.filter((entry) => entry.decorative);
+  const notTransferred = ctx.graphics.filter((entry) => !entry.transferred && !entry.decorative);
+  if (decorative.length > 0) {
+    findings.push({
+      severity: 'info',
+      code: 'graphic-decorative',
+      message: `${decorative.length} Abbildungen aus <graphic> laut Beschreibung Logo oder Zierbild – nicht als Bildblock übernommen: ${decorative.map((entry) => entry.fileName || entry.fileRef).join(', ')}`,
+    });
+  }
+  if (transferred.length > 0) {
+    findings.push({
+      severity: 'info',
+      code: 'figures-transferred',
+      message: `${transferred.length} Abbildungen aus <graphic> als Bildblock mit Asset-Referenz übernommen (Bilddatei als eigenes, inhaltsadressiertes Asset, nicht im Norm-JSON)`,
+    });
+  }
+  if (notTransferred.length > 0) {
+    const names = notTransferred.map((entry) => entry.fileName || entry.fileRef);
     const shown = names.slice(0, 8).join(', ');
     findings.push({
       severity: 'warning',
       code: 'graphic-not-transferred',
-      message: `${ctx.graphics.length} Abbildungen aus <graphic> liegen als Beilage im Exportpaket und werden nicht in den Normkörper übernommen (das Blockmodell kennt keinen Bildblock): ${shown}${names.length > 8 ? ` … (+${names.length - 8})` : ''}`,
+      message: `${notTransferred.length} Abbildungen aus <graphic> ohne lesbare Bilddatei im Exportpaket – nicht als Bildblock übernommen: ${shown}${names.length > 8 ? ` … (+${names.length - 8})` : ''}`,
     });
   }
   if (counters.quotedProvisions > 0) {
@@ -255,6 +275,18 @@ export function parseBayernRechtDocument(source: ArchivedSource, content: string
 
   const ctx = createParseContext(dialect, options.unknown ?? 'throw');
   const attachments = [...(options.attachments ?? [])];
+  // Bildbeilagen mit erkannter Medienart werden zu Assets der `figure`-Blöcke (Abgleich ohne Groß-/Kleinschreibung,
+  // wie bei der Prüfung auf fehlende Beilagen).
+  ctx.figureAssets = new Map(attachments
+    .filter((entry) => entry.kind === 'image' && entry.image)
+    .map((entry) => [entry.fileName.toLowerCase(), {
+      sha256: entry.sha256,
+      mediaType: entry.image!.mediaType,
+      byteLength: entry.byteLength,
+      sourcePath: entry.path,
+      ...(entry.image!.width ? { width: entry.image!.width } : {}),
+      ...(entry.image!.height ? { height: entry.image!.height } : {}),
+    }]));
 
   let documentId: string;
   let documentType: string | undefined;
@@ -359,10 +391,12 @@ export function parseBayernRechtDocument(source: ArchivedSource, content: string
       text: `Das Exportpaket enthält ${pdfAttachments.length} PDF-Beilagen, die das XML nicht referenziert: ${pdfAttachments.map((entry) => entry.path).join(', ')}.`,
     });
   }
-  if (imageAttachments.length > 0) {
+  const figureFiles = new Set(ctx.graphics.filter((entry) => entry.transferred).map((entry) => entry.fileName.toLowerCase()));
+  const imagesOutsideBody = imageAttachments.filter((entry) => !figureFiles.has(entry.fileName.toLowerCase()));
+  if (imagesOutsideBody.length > 0) {
     sourceNotes.push({
       label: 'Abbildungen',
-      text: `Das Exportpaket enthält ${imageAttachments.length} Abbildungen, die das XML über <graphic>/<a> referenziert und die nicht in den Normkörper übernommen werden: ${imageAttachments.map((entry) => entry.path).join(', ')}.`,
+      text: `Das Exportpaket enthält ${imagesOutsideBody.length} Abbildungen, die das XML über <graphic>/<a> referenziert und die nicht als Abbildung im Normkörper stehen: ${imagesOutsideBody.map((entry) => entry.path).join(', ')}.`,
     });
   }
   if (sectionEffectiveDates.length > 0) {
@@ -393,7 +427,7 @@ export function parseBayernRechtDocument(source: ArchivedSource, content: string
     keywords: [],
     body,
     sourceNotes: sourceNotes.length > 0 ? sourceNotes : undefined,
-    sourceReferences: [mainSourceReference(source, documentId), ...attachmentReferences(attachments, source)],
+    sourceReferences: [mainSourceReference(source, documentId), ...attachmentReferences(attachments, source, figureFiles)],
     findings: finalizeFindings(ctx, documentId, options.packageWarnings),
     sourceIdentity: documentId,
     sourceUrl: documentUrl(documentId),

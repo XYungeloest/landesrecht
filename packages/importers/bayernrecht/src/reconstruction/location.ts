@@ -79,7 +79,7 @@ interface Token {
 function tokenize(input: string): Token[] | undefined {
   let rest = input
     .replace(/[  ]/gu, ' ')
-    .replace(/^(?:In|Im|in|im)\s+/u, '')
+    .replace(/^(?:In|Im|in|im|Dem|Der|Den|Die|Das)\s+/u, '')
     .replace(/\s+/gu, ' ')
     .trim();
   const tokens: Token[] = [];
@@ -515,4 +515,94 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
   }
   if (fields.length === 0) return { ok: false, reason: `${formatPath(path)}: kein Textfeld im Bereich` };
   return { ok: true, scope: { fields, ...(sentence !== undefined ? { sentence } : {}), resolved, widened } };
+}
+
+/* ---------------------------------------------------------------------- Glieder als Blöcke */
+
+export type BlockResult = { ok: true; path: number[]; resolved: string[]; widened: string[] } | { ok: false; reason: string };
+
+/**
+ * Löst einen Pfad bis zu einem **Glied** (Block) auf – für strukturelle Befehle (Einfügen, Umnummerieren), die ein
+ * Glied und nicht einen Wortlaut treffen. Nur Stufen, die der Körper auszeichnet; jede muss genau einmal gefunden
+ * werden. Satz-, Halbsatz- und Satzteilangaben sind hier nicht zulässig. Ein leerer Pfad ist die Norm selbst
+ * (`path: []`).
+ */
+export function locateBlock(body: readonly NormBodyBlock[], path: LocationPath): BlockResult {
+  let located: Located = ROOT;
+  const resolved: string[] = [];
+  const widened: string[] = [];
+  for (const step of path) {
+    const label = formatPath([step]);
+    // Ein Satz ist kein Glied des Körpers; Nummern „in Satz 2“ hängen am Absatz. Der Bereich bleibt Obermenge.
+    if (step.kind === 'satz' || step.kind === 'halbsatz') {
+      widened.push(label);
+      continue;
+    }
+    if (step.kind === 'satzteil-vor' || step.kind === 'satzteil-nach' || step.kind === 'ueberschrift') return { ok: false, reason: `${label}: kein Glied` };
+    const hit = step.kind === 'spiegelstrich' ? findDash(step, located, body) : findUnique(step, located, body);
+    if (hit === 'ambiguous') return { ok: false, reason: `${label} mehrfach vorhanden` };
+    if (hit === 'missing') {
+      if (step.kind === 'absatz' && !descendants(located, body).some((entry) => /^\(\d+[a-z]?\)$/u.test(normalizeLabel(entry.block.label)))) {
+        widened.push(label);
+        continue;
+      }
+      return { ok: false, reason: `${label} nicht gefunden` };
+    }
+    located = hit;
+    resolved.push(label);
+  }
+  return { ok: true, path: located.path, resolved, widened };
+}
+
+/** Passt die Bezeichnung eines Blocks zu einer Gliedangabe? (für strukturelle Befehle) */
+export function blockLabelMatches(block: NormBodyBlock, step: LocationStep): boolean {
+  return step.kind === 'spiegelstrich' ? DASH_LABELS.has(normalizeLabel(block.label)) : labelMatches(step, block);
+}
+
+/**
+ * Bezeichnung eines Glieds in der Schreibweise, die der Körper für ein gleichartiges Glied führt: aus „(3)“ wird
+ * für den Wert 4 „(4)“, aus „§ 5“ „§ 6“, aus „3.“ „4.“, aus „a)“ „b)“. `undefined`, wenn die Schreibweise nicht
+ * eindeutig übertragbar ist (römische Zählung, fremde Form).
+ */
+export function relabel(existing: string | undefined, step: LocationStep, value: string): string | undefined {
+  const label = normalizeLabel(existing);
+  if (!labelMatches(step, { type: 'paragraph', label })) return undefined;
+  if (/[IVX]/u.test(step.value) || /[IVX]/u.test(value)) return undefined;
+  switch (step.kind) {
+    case 'absatz':
+      return `(${value})`;
+    case 'paragraph':
+      return label.startsWith('§ ') ? `§ ${value}` : `§${value}`;
+    case 'artikel':
+      return label.startsWith('Artikel ') ? `Artikel ${value}` : `Art. ${value}`;
+    case 'nummer':
+      return label.startsWith('Nr. ') ? `Nr. ${value}` : label.endsWith('.') ? `${value}.` : value;
+    case 'buchstabe':
+    case 'doppelbuchstabe':
+      return label.endsWith(')') ? `${value})` : `${value}.`;
+    case 'teil':
+    case 'abschnitt':
+    case 'unterabschnitt':
+    case 'anlage': {
+      const prefix = label.replace(/\s+\S+$/u, '');
+      return `${prefix} ${value}`;
+    }
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Alle Glieder mit der Bezeichnung `step` auf der flachsten Ebene unter `context` (für die Unterscheidung
+ * gleich bezeichneter Glieder über ihren Wortlaut – etwa ein neu eingefügtes „3.“ neben dem bisherigen „3.“,
+ * bevor dieses umnummeriert ist). `undefined`, wenn der Kontext nicht eindeutig auflösbar ist.
+ */
+export function blockCandidates(body: readonly NormBodyBlock[], context: LocationPath, step: LocationStep): number[][] | undefined {
+  const base = locateBlock(body, context);
+  if (!base.ok) return undefined;
+  const located: Located = base.path.length === 0 ? ROOT : { block: blockAt(body, base.path), path: base.path };
+  const hits = descendants(located, body).filter((entry) => labelMatches(step, entry.block));
+  if (hits.length === 0) return [];
+  const shallowest = Math.min(...hits.map((hit) => hit.depth));
+  return hits.filter((hit) => hit.depth === shallowest).map((hit) => hit.path);
 }

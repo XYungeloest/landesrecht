@@ -77,7 +77,10 @@ export const HISTORY_ENTRY_TYPES = ['initial', 'amendment', 'repeal', 'correctio
 /**
  * Body-Block-Typen. Die ersten 17 sind wörtlich aus OstRecht übernommen; `book`, `preamble`,
  * `heading` und `footnote` ergänzen Bücher, Vorbemerkungen, freistehende Überschriften und
- * Fußnoten im Text. `subparagraph` ist der Absatz („(1)“), `paragraphText` der Fließtext,
+ * Fußnoten im Text. `figure` ist eine normative Abbildung (Karte, Zeichnung, Muster, Formblatt):
+ * Der Block trägt nur die Referenz auf ein eigenes, inhaltsadressiertes Asset (`asset`), nie die
+ * Bilddaten selbst. Eine Bildbeschreibung der Quelle steht als `asset.description` (Alternativtext), nicht
+ * als Normtext. `subparagraph` ist der Absatz („(1)“), `paragraphText` der Fließtext,
  * `item`/`subitem` sind Nummerierungen und Buchstaben.
  */
 export const STRUCTURE_TYPES = [
@@ -102,6 +105,7 @@ export const STRUCTURE_TYPES = [
   'preamble',
   'heading',
   'footnote',
+  'figure',
 ] as const;
 
 /** Gliederungsblöcke, die eine Inhaltsübersicht bilden und Sprungziele erhalten. */
@@ -148,7 +152,31 @@ export const MEDIA_TYPES = [
   'application/json',
   'application/xml',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/gif',
+  'image/jpeg',
+  'image/png',
 ] as const;
+
+/** Medienarten normativer Abbildungen (`figure`); die Endung des ausgelieferten Assets folgt aus ihnen. */
+export const FIGURE_MEDIA_TYPES = ['image/gif', 'image/jpeg', 'image/png'] as const;
+export type FigureMediaType = (typeof FIGURE_MEDIA_TYPES)[number];
+export const FIGURE_FILE_EXTENSIONS: Readonly<Record<FigureMediaType, string>> = { 'image/gif': 'gif', 'image/jpeg': 'jpg', 'image/png': 'png' };
+
+/**
+ * Referenz einer Abbildung auf ihr Asset: eigene Datei, inhaltsadressiert über SHA-256, mit Herkunft im
+ * Quellpaket. Die Auslieferung erfolgt über `getNormAssetUrl` (routes.ts); die Bilddaten stehen nie im Norm-JSON.
+ */
+export interface NormBodyAsset {
+  sha256: string;
+  mediaType: FigureMediaType;
+  byteLength: number;
+  /** Pfad der Datei im Quellpaket (Provenienz). */
+  sourcePath: string;
+  width?: number;
+  height?: number;
+  /** Bildbeschreibung der Quelle (Alternativtext) – kein Normtext, nicht durchsuchbar. */
+  description?: string;
+}
 
 export const NORM_RELATION_TYPES = [
   'amends',
@@ -323,6 +351,8 @@ export interface NormBodyBlock {
   rowspan?: number;
   colspan?: number;
   columns?: number;
+  /** Nur `figure`: Referenz auf das Asset der Abbildung. */
+  asset?: NormBodyAsset;
   children?: NormBodyBlock[];
 }
 
@@ -697,6 +727,13 @@ export function parseBodyBlock(value: unknown, path: string): NormBodyBlock {
   if ((rowspan !== undefined || colspan !== undefined) && type !== 'tableCell' && type !== 'tableHeaderCell') fail(path, 'rowspan und colspan sind nur an Tabellenzellen zulässig');
   if (scope !== undefined && type !== 'tableHeaderCell') fail(`${path}.scope`, 'ist nur an Tabellenkopfzellen zulässig');
   if (columns !== undefined && type !== 'table') fail(path, 'columns ist nur an Tabellen zulässig');
+  const asset = object.asset === undefined ? undefined : parseBodyAsset(object.asset, `${path}.asset`);
+  if (type === 'figure') {
+    if (!asset) fail(`${path}.asset`, 'ist für Blocktyp "figure" erforderlich');
+    if (children) fail(`${path}.children`, 'ist für Blocktyp "figure" nicht zulässig');
+    // Eine Bildbeschreibung ist Alternativtext am Asset, kein Normtext (Suche, Integrität, Zitat).
+    if (text) fail(`${path}.text`, 'ist für Blocktyp "figure" nicht zulässig; die Beschreibung gehört in asset.description');
+  } else if (asset) fail(`${path}.asset`, 'ist nur an Blocktyp "figure" zulässig');
 
   const block: NormBodyBlock = { type };
   if (label !== undefined) block.label = label;
@@ -709,10 +746,30 @@ export function parseBodyBlock(value: unknown, path: string): NormBodyBlock {
   if (rowspan !== undefined) block.rowspan = rowspan;
   if (colspan !== undefined) block.colspan = colspan;
   if (columns !== undefined) block.columns = columns;
+  if (asset !== undefined) block.asset = asset;
   if (children !== undefined) block.children = children;
 
   if (type === 'table') validateTableGrid(block, path);
   return block;
+}
+
+function parseBodyAsset(value: unknown, path: string): NormBodyAsset {
+  const object = expectObject(value, path);
+  const sha256 = expectString(object.sha256, `${path}.sha256`);
+  if (!/^[0-9a-f]{64}$/u.test(sha256)) fail(`${path}.sha256`, 'ist kein SHA-256');
+  const asset: NormBodyAsset = {
+    sha256,
+    mediaType: expectEnumValue(object.mediaType, `${path}.mediaType`, FIGURE_MEDIA_TYPES),
+    byteLength: expectOptionalInteger(object.byteLength, `${path}.byteLength`, { minimum: 1 }) ?? fail(`${path}.byteLength`, 'fehlt'),
+    sourcePath: expectString(object.sourcePath, `${path}.sourcePath`),
+  };
+  const width = expectOptionalInteger(object.width, `${path}.width`, { minimum: 1 });
+  const height = expectOptionalInteger(object.height, `${path}.height`, { minimum: 1 });
+  if (width !== undefined) asset.width = width;
+  if (height !== undefined) asset.height = height;
+  const description = expectOptionalString(object.description, `${path}.description`);
+  if (description !== undefined) asset.description = description;
+  return asset;
 }
 
 export function parseBodyBlocks(value: unknown, path: string): NormBodyBlock[] {

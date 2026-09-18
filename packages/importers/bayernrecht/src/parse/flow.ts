@@ -22,7 +22,7 @@
  * (`¹Die Abmarkung …`). Damit bleibt die Information erhalten, ohne dass das Blockmodell um eine
  * Inline-Auszeichnung erweitert werden müsste, die es nicht kennt.
  */
-import type { NormBodyBlock, TableHeaderScope } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormBodyAsset, NormBodyBlock, TableHeaderScope } from '@landesrecht/legal-core/lib/schema.ts';
 import { ImportPipelineError, type ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
 import { attribute, elementChildren, isElement, type XmlElement, type XmlNode } from './xml.ts';
@@ -37,9 +37,15 @@ export type BayernRechtDialect = 'byrecht-norm' | 'byrecht-vv';
 export type UnknownPolicy = 'throw' | 'report';
 
 /**
- * Eine Abbildung aus `<graphic>`. Das Blockmodell kennt keinen Bildblock – die Bilddatei liegt im
- * Exportpaket und wird als Beilage geführt; im Normkörper entsteht **kein** Block, damit keine
- * Bildbeschreibung als Normtext erscheint. Der Befund `graphic-not-transferred` nennt jede Abbildung.
+ * Zierbilder und Logos sind kein Normbestandteil. Erkannt wird nur die ausdrückliche Beschreibung (`Desc`);
+ * Wappen, Siegel und Zeichen bleiben übernommen, weil sie in Normen regelmäßig selbst Regelungsgegenstand sind.
+ */
+export const DECORATIVE_DESCRIPTION = /\b(?:Logo|Signet|Zierleiste|Zierbild|Dekoration)\b/iu;
+
+/**
+ * Eine Abbildung aus `<graphic>`. Liegt die Bilddatei lesbar im Exportpaket, entsteht an der Aufrufstelle ein
+ * `figure`-Block mit Asset-Referenz (die Datei selbst wird eigenes, inhaltsadressiertes Asset); die
+ * Bildbeschreibung ist Alternativtext, nie Normtext. Ohne Datei oder bei Zierbildern bleibt es beim Befund.
  */
 export interface GraphicReference {
   /** `@FileRef`, wie im XML notiert (teils mit Präfix `resources/`). */
@@ -48,6 +54,10 @@ export interface GraphicReference {
   fileName: string;
   fileFormat?: string;
   description?: string;
+  /** Als `figure`-Block übernommen (Beilage im Paket vorhanden). */
+  transferred?: boolean;
+  /** Nicht übernommen, weil die Beschreibung ein Logo oder Zierbild ausweist (kein Normbestandteil). */
+  decorative?: boolean;
 }
 
 /** Ein Verweis aus `<a href="resources/…">` auf eine Datei des Exportpakets. */
@@ -71,6 +81,11 @@ export interface ParseContext {
   citations: CitationTarget[];
   graphics: GraphicReference[];
   resourceLinks: ResourceLink[];
+  /**
+   * Bildbeilagen des Pakets nach Dateiname (klein geschrieben): Aus `<graphic>` wird an Ort und Stelle ein
+   * `figure`-Block mit der Referenz auf das Asset. Ohne Beilage (Parser ohne Paket) bleibt es beim Befund.
+   */
+  figureAssets?: ReadonlyMap<string, NormBodyAsset>;
   /**
    * Baut `<Aenderungsinhalt>` (zitierter Normtext eines Änderungsbefehls). Das Frontend `norm.ts`
    * setzt den Haken, weil der Aufbau den Vorschriftenbaum und die Adressbuchführung braucht; der
@@ -197,10 +212,21 @@ export function normalizeInline(raw: string): string {
 interface InlineBuffer {
   text: string;
   footnotes: NormBodyBlock[];
+  /** Textlänge direkt nach dem zuletzt angehängten Fußnotenzeichen (Erkennung unmittelbar folgender Aufrufe). */
+  footnoteMarkerEnd?: number;
 }
 
 function newBuffer(): InlineBuffer {
   return { text: '', footnotes: [] };
+}
+
+/**
+ * Ein Fußnotenzeichen verschmilzt nie mit einer unmittelbar folgenden Ziffer: Aus „1“ und „¹“ (BayVV_7912_0_U_108
+ * wiederholt das Zeichen als `<sup>`) oder aus zwei Aufrufen „3“ und „4“ würde sonst eine Zahl, die die Quelle nicht
+ * nennt. Getrennt wird mit einem Leerzeichen – nur zwischen zwei Wortzeichen (auch Hochzahlen), nie mit einem Zeichen.
+ */
+function separateFromFootnoteMarker(buffer: InlineBuffer, next: string): void {
+  if (buffer.footnoteMarkerEnd === buffer.text.length && /[\p{L}\p{N}]$/u.test(buffer.text) && /^\p{N}/u.test(next)) buffer.text += ' ';
 }
 
 /**
@@ -295,6 +321,7 @@ function appendSuperscript(buffer: InlineBuffer, element: XmlElement, ctx: Parse
     addFinding(ctx, 'info', 'superscript-unmapped',
       `Hochstellung ${JSON.stringify(raw.trim())} in ${where} (Zeile ${element.line}) hat keine Unicode-Entsprechung und bleibt unverändert`);
   }
+  separateFromFootnoteMarker(buffer, text);
   buffer.text += text;
 }
 
@@ -304,10 +331,13 @@ function appendSentenceNumber(buffer: InlineBuffer, element: XmlElement, ctx: Pa
   if (!/^\d+$/u.test(raw)) {
     addFinding(ctx, 'warning', 'sentence-number-not-numeric',
       `Satznummer ${JSON.stringify(raw)} in ${where} (Zeile ${element.line}) ist keine Zahl und wird unverändert übernommen`);
+    separateFromFootnoteMarker(buffer, raw);
     buffer.text += raw;
     return;
   }
-  buffer.text += toSuperscript(raw).text;
+  const superscript = toSuperscript(raw).text;
+  separateFromFootnoteMarker(buffer, superscript);
+  buffer.text += superscript;
 }
 
 function appendFootnote(buffer: InlineBuffer, element: XmlElement, ctx: ParseContext, where: string): void {
@@ -334,7 +364,11 @@ function appendFootnote(buffer: InlineBuffer, element: XmlElement, ctx: ParseCon
       `Fußnote ohne Aufrufzeichen (<fn.text/>) in ${where} (Zeile ${element.line}); ersatzweise als „${label}“ geführt`);
     buffer.text += SOFT_BOUNDARY;
   } else {
+    // Folgt ein Aufruf unmittelbar auf einen anderen („Selbstpflege<fn.call>3</fn.call><fn.call>4</fn.call>“),
+    // bleiben die Zeichen getrennt: sonst stünde „Selbstpflege34“ da – eine Zahl, die die Quelle nicht nennt.
+    separateFromFootnoteMarker(buffer, marker);
     buffer.text += marker;
+    buffer.footnoteMarkerEnd = buffer.text.length;
   }
   if (definition === '') {
     addFinding(ctx, 'warning', 'footnote-without-text',
@@ -359,6 +393,7 @@ function rawInlineText(node: XmlNode): string {
 
 export function appendInline(node: XmlNode, buffer: InlineBuffer, ctx: ParseContext, where: string): void {
   if (node.kind === 'text') {
+    separateFromFootnoteMarker(buffer, node.value);
     buffer.text += ctx.preserveLines ? node.value.replace(/\r\n|\r|\n/gu, HARD_BREAK) : node.value;
     return;
   }
@@ -388,16 +423,26 @@ export function appendInline(node: XmlNode, buffer: InlineBuffer, ctx: ParseCont
       for (const child of node.children) appendInline(child, buffer, ctx, where);
       return;
     case 'graphic': {
-      // Das Blockmodell kennt keinen Bildblock. Die Datei liegt als Beilage im Paket; hier entsteht
-      // kein Text, damit keine Bildbeschreibung als Normtext gelesen wird – aber ein Befund.
+      // Hier entsteht nie Text: Eine Bildbeschreibung ist kein Normtext.
       const fileRef = attribute(node, 'FileRef') ?? '';
       const description = attribute(node, 'Desc');
+      const fileName = packageFileName(fileRef);
+      const decorative = description !== undefined && DECORATIVE_DESCRIPTION.test(description);
+      const asset = decorative ? undefined : ctx.figureAssets?.get(fileName.toLowerCase());
       ctx.graphics.push({
         fileRef,
-        fileName: packageFileName(fileRef),
+        fileName,
         fileFormat: attribute(node, 'FileFormat'),
         description: description && description.trim() !== '' ? description.trim() : undefined,
+        transferred: asset !== undefined,
+        ...(decorative ? { decorative: true } : {}),
       });
+      // Normative Abbildung: ein eigener Block mit Asset-Referenz an der Aufrufstelle (wie eine Fußnote an den
+      // Absatz gehängt; steht sie allein, wird sie ein eigener Block). Eine Bildbeschreibung (`Desc`) ist
+      // Alternativtext des Assets, nie Normtext.
+      if (asset) {
+        buffer.footnotes.push({ type: 'figure', asset: { ...asset, ...(description && description.trim() !== '' ? { description: description.trim() } : {}) } });
+      }
       return;
     }
     case 'a': {

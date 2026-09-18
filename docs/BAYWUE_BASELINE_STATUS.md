@@ -1,12 +1,19 @@
 # Stand des Stichtagsbestands Bayern-Württemberg
 
-## Status: DEPLOYED (Teilbestand)
+## Status: DEPLOYED (Teilbestand) · Stand 2026-09-18, Worker `43d211e3`
 
-**1 582 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert
-und ausgeliefert** – 1 569, deren heutiger Text belegt der Stichtagstext ist, und 13, deren Stichtagsfassung
-durch Rücknahme der einzigen späteren Änderung bewiesen zurückgerechnet ist. Der Stichtagsbestand ist damit
-**nicht vollständig**: 506 weitere Normen galten am Stichtag, aber mit einem anderen Wortlaut als heute; sie
-fehlen, bis ihre Stichtagsfassung sicher belegt ist.
+**1 618 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
+ausgeliefert:**
+
+- 1 570, deren heutiger Text belegt der Stichtagstext ist;
+- 33, deren Stichtagsfassung bewiesen zurückgerechnet ist: 28 über eine spätere Änderung, 5 über zwei oder
+  mehr Änderungen mit Vorwärtsprobe;
+- 15 heute nicht mehr geführte Stichtagsnormen, aus amtlichen Verkündungen wiederhergestellt
+  (`docs/BAYWUE_BASELINE_ONLY.md`).
+
+Der Stichtagsbestand ist damit **nicht vollständig**: 487 weitere heute geführte Normen galten am Stichtag
+mit einem anderen oder nicht belegten Wortlaut, und 401 heute fehlende sind noch nicht wiederhergestellt. Die
+Oberfläche kennzeichnet den Bestand als Teilbestand (unten).
 
 Von den fünf Stufen des Auftrags trifft genau eine zu:
 
@@ -33,25 +40,28 @@ am 2023-12-01 noch nicht gab, und er zeigt geänderte Vorschriften im heutigen W
 | --- | ---: |
 | enumerierte Dokumente | 2 413 |
 | davon ausgeschlossen (56 Tarifverträge, 14 bundeseinheitliche Anordnungen) | 70 |
-| davon Scope-Prüffall (Bodensee-SchO: eigene Norm oder Anhang) | 1 |
+| davon als Anhang übernommen (BayBodSchO → EV-BodenseeSchO, redaktionelle Entscheidung) | 1 |
 | davon im Scope | 2 342 |
-| davon am Stichtag geltend | 2 089 |
-| — heutiger Text **ist** der Stichtagstext → **übernommen** | **1 569** |
-| — heutiger Text ist der Stichtagstext, aber an der Überleitung hängend (Quell-Tippfehler „Bayerischne“) | 1 |
-| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **13** |
-| — heutiger Text ist jünger → **Rekonstruktion nötig** | 506 |
-| davon Geltung am Stichtag unbestimmt | 14 |
+| davon am Stichtag geltend | 2 090 |
+| — heutiger Text **ist** der Stichtagstext → **übernommen** (einschließlich BayVwV96990 mit Quellkorrektur) | **1 570** |
+| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **33** |
+| — heutiger Text ist jünger → **Rekonstruktion nötig** | 486 |
+| — Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
+| davon Geltung am Stichtag unbestimmt | 13 |
 | davon erst nach dem Stichtag erlassen | 239 |
 | **Summe der Scope-Dokumente** | **2 342** |
 
-Dazu kommen die **heute fehlenden Stichtagsnormen**: Das Ereignisregister belegt 436 Aufhebungen und
-Außerkrafttreten nach dem Stichtag, deren Vorgänger nicht mehr im Portal steht – 407 davon stark
-zugeordnet. Diese Normen galten am 2023-12-01 und sind im heutigen Bestand gar nicht enthalten. Sie
-sind erfasst, aber noch nicht wiederhergestellt; ihr Text liegt nur in den Verkündungsblättern.
+Dazu kommen die **heute fehlenden Stichtagsnormen**. Das Ereignisregister nennt 426 Kandidaten: Aufhebungen
+und Außerkrafttreten nach dem Stichtag, deren Vorgänger nicht mehr im Portal steht, 395 davon mit starker
+Identität. **15** sind aus den amtlichen Verkündungen sicher wiederhergestellt, 5 erwiesen sich als nicht am
+Stichtag geltend, 5 als nicht Landesrecht. **401** sind offen:
 
-Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 582 von mindestens rund 2 500 Stichtagsnormen.**
-Die Untergrenze ergibt sich aus 2 089 heute geführten plus den belegten heute fehlenden; genauer lässt
-sie sich erst beziffern, wenn die Vorgänger der Aufhebungen einzeln geprüft sind.
+- 287 ohne auffindbare elektronische Ausgangsverkündung (nicht verkündet, nur Papier, Anlage nur als PDF);
+- 104 mit unbestimmtem Glied (Inkrafttreten, Identität, Normativität);
+- 6 mit unvollständiger Änderungskette;
+- 4 widersprüchliche.
+
+Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 618 von mindestens rund 2 500 Stichtagsnormen.**
 
 ## Was jede übernommene Norm vorweisen kann
 
@@ -72,8 +82,9 @@ dazu `sourceStatus` `reconstructed/reconstructed`, die Änderungsverkündung (un
 `docs/BAYWUE_RECONSTRUCTION.md`, Übernahmebedingungen: `docs/BAYWUE_HISTORICAL_BASELINE.md` Abschnitt 4.
 
 Jede übernommene Norm hat die Textintegritätsprüfung bestanden (sichtbarer Quelltext gegen kanonischen Text;
-Bulk und Inventur benutzen dieselbe Prüfung): im ganzen Korpus 0 `mismatch`, 4 Einzelfälle `review` mit je
-einem unerklärten Zahlwort, sichtbar als nicht blockierende Review-Fälle.
+Bulk und Inventur benutzen dieselbe Prüfung): im ganzen Korpus 0 `mismatch`, 0 `review`. Die vier früheren
+Einzelfälle mit je einem unerklärten Zahlwort gingen auf verschmolzene Fußnotenzeichen zurück (Parser 0.2.0,
+`docs/BAYERN_PARSER.md`).
 
 ## Wo die Lücke herkommt
 
@@ -90,7 +101,13 @@ Stammfassung. Beides ist Arbeit an einzelnen Normen, nicht an der Pipeline.
 
 ## Wie der Teilbestand in der Oberfläche erscheint
 
-Die Oberfläche zeigt die übernommenen Normen. Sie behauptet nirgends Vollständigkeit; die Zahl der
-Normen je Land steht auf der Startseite und in der API (`/api/v1/jurisdictions`). Eine ausdrückliche
-Kennzeichnung „Teilbestand“ in der Oberfläche gibt es bisher nicht – sie ist eine Entscheidung über
-die Darstellung und gehört zu den offenen Punkten.
+Die Oberfläche zeigt die übernommenen Normen und kennzeichnet den Bestand sachlich als **Teilbestand**:
+auf der Länderseite und bei Suchen, die BayWü einschließen, mit der Zahl der veröffentlichten Normen und der
+bekannten, noch nicht belegten Stichtagsnormen; auf der Startseite als Kennzeichen an der Länderkarte.
+
+Der Hinweis ist datengetrieben. `bayernrecht coverage --write` schreibt den Bestandsstand nach
+`packages/legal-core/src/config/inventory-status.json` (`published`, `pending.atBaseline`,
+`pending.baselineOnly`, `pending.undetermined`, `complete`). Die Komponente
+`apps/web/src/components/InventoryNotice.astro` zeigt ihn nur, solange `complete` falsch ist; ein Land ohne
+Eintrag (West) bekommt keinen Hinweis. Sobald alle bekannten Stichtagsnormen belegt übernommen sind, meldet der
+Importer `complete: true`, und der Hinweis verschwindet mit dem nächsten Deployment – ohne Codeänderung.

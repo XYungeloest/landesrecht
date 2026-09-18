@@ -48,6 +48,8 @@ export const REFERENCE_CATEGORIES = [
   'institution',
   'source-citation',
   'external-name',
+  /** Historischer Staat, historisches Organ oder historischer Vertragsname (Königreich Bayern, Königl. Bayer. …). */
+  'historical-name',
   'other',
 ] as const;
 export type ReferenceCategory = (typeof REFERENCE_CATEGORIES)[number];

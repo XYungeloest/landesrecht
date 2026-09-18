@@ -212,9 +212,22 @@ Diese Regel ist hart und wird getestet.
   Schutzmuster `landscape-proper-name` und bleiben byteidentisch.
 * **Herrschernamen** (Nutzerentscheidung 2026-09-18, Transformer 1.1.0): „Seiner Majestät des Königs Ludwig
   von Bayern“, „König Ludwig III. und Königin Marie Therese von Bayern“, „Kurfürstin von Bayern“, „Herzog Max
-  in Bayern“ – Titel, Vorname(n), Ordnungszahl und „von/in Bayern“ sind ein Personenname. Schutzmuster
-  `ruler-name`. Staatsbezeichnungen werden weiter übergeleitet, auch historische („Königreich Bayern“ →
-  „Königreich Bayern-Württemberg“).
+  in Bayern“, „König von Bayern“ – Titel, Vorname(n), Ordnungszahl und „von/in Bayern“ sind ein Personenname.
+  Schutzmuster `ruler-name`.
+* **Historische Staaten, Organe und Vertragsnamen** (Nutzerentscheidung 2026-09-18, Transformer 1.2.0): Die
+  Zusammenlegung heutiger Länder verändert keine historischen Staaten. „Königreich Bayern“ in allen Formen (auch
+  „den Königreichen Bayern und Württemberg“, „Regierungs-Blatt für das Königreich Bayern“), „Krone Bayern“,
+  „Kurfürstentum“ und „Herzogtum Bayern“ (`historical-state`), Organe des Königreichs („Königl. Bayer.
+  Staatsregierung“, „Königlich Bayerisches Staatsministerium“; `historical-organ`) und Namen historischer Verträge
+  mit der Vertragspartei in ihrer damaligen Bezeichnung („Konkordat zwischen Seiner Heiligkeit Papst Pius XI. und
+  dem Staate Bayern“; `historical-treaty-name`) bleiben unverändert. Fortgeltende heutige Selbstbezüge werden
+  weiter übergeleitet („Zuständigkeiten des Staates Bayern“ in der geltenden Verfassung, „Freistaat Bayern“ als
+  heutige Vertragspartei). Die frühere Überleitung „Königreich Bayern → Königreich Bayern-Württemberg“ war falsch
+  und ist im Bestand bereinigt; der Prüfschritt `historical-name-transformed` (Fehler) verhindert ihre Rückkehr.
+  **Nicht entscheidbar** ist „Bayerisches Konkordat“: der eingeführte Name des Vertrags von 1924 (dessen Volltitel
+  geschützt ist) und zugleich ein heute für das Land geltender Vertrag. Er wird nicht automatisch geschützt, sondern
+  als Prüffall gemeldet (`historical-name-uncertain`, Kategorie `institution-mapping`, nicht blockierend); die
+  Entscheidung – Schutzmuster oder Überleitung – ist redaktionell.
 * **Wörter, die nur mit „Bay“ beginnen**: „Bayreuth“, „Bayreuther“, „Bayerwald“. Sie sind für keine
   Regel erreichbar und werden zusätzlich als `municipality` bzw. `geography` eingeordnet, damit sie
   nicht als unklare Restform erscheinen.

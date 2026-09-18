@@ -14,9 +14,11 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 import type { Operation } from './formulas.ts';
 import { blockAt, sentenceRange, type FieldRef } from './location.ts';
-import { bodyFingerprint, recipeProblems, stableStringify, type ReconstructionRecipe, type RecipeStep, type ScopeRecord } from './recipe.ts';
+import { bodyFingerprint, forwardOrder, isRecipeV2, recipeAmendments, recipeProblems, stableStringify, type AnyReconstructionRecipe, type RecipeStep, type ScopeRecord } from './recipe.ts';
+import { StructuralError, structuralBackward, structuralForward, STRUCTURAL_KINDS, type StructuralOperation } from './structural.ts';
 
-export type { ReconstructionRecipe } from './recipe.ts';
+export type { AnyReconstructionRecipe, ReconstructionRecipe, ReconstructionRecipeV2 } from './recipe.ts';
+export { recipeAmendments, recipeSources } from './recipe.ts';
 
 export class ReconstructionError extends Error {
   readonly code: string;
@@ -125,8 +127,26 @@ function deleted(text: string, side: 'after' | 'before', step: string): string {
   return `${text.trimEnd()} `;
 }
 
+/** Operationen mit Feld (Satz, Schluss des Feldes) arbeiten auf dem einzigen Textfeld des Bereichs. */
+const FIELD_KINDS: ReadonlySet<string> = new Set(['insert-sentence', 'renumber-sentence', 'number-sentences', 'delete-final', 'replace-final-words']);
+
+function structural(body: NormBodyBlock[], scope: ScopeRecord, operation: StructuralOperation, step: string, direction: 'forward' | 'backward'): { ref: FieldRef; position: number } {
+  const field = FIELD_KINDS.has(operation.kind) ? singleField(scope, step, 'text') : undefined;
+  try {
+    if (direction === 'forward') structuralForward(body, field, operation, step);
+    else structuralBackward(body, field, operation, step);
+  } catch (error) {
+    if (error instanceof StructuralError) throw new ReconstructionError(error.code, error.message);
+    throw error;
+  }
+  if (field) return { ref: field, position: 0 };
+  const path = 'path' in operation ? operation.path : 'parent' in operation ? [...operation.parent, operation.index] : [];
+  return { ref: { path, key: 'text' }, position: 0 };
+}
+
 /** Wendet eine Operation **vorwärts** an (Stichtagstext → heutiger Text). */
 export function applyForward(body: NormBodyBlock[], scope: ScopeRecord, operation: Operation, step: string): { ref: FieldRef; position: number } {
+  if (STRUCTURAL_KINDS.has(operation.kind)) return structural(body, scope, operation as StructuralOperation, step, 'forward');
   switch (operation.kind) {
     case 'replace': {
       const from = surface(operation.from);
@@ -185,11 +205,14 @@ export function applyForward(body: NormBodyBlock[], scope: ScopeRecord, operatio
       writeField(body, ref, `${text.slice(0, at)}${finalReplacement(operation.to)}`);
       return { ref, position: at };
     }
+    default:
+      throw new ReconstructionError('unknown-operation', `${step}: unbekannte Operation ${(operation as { kind: string }).kind}`);
   }
 }
 
 /** Wendet eine Operation **rückwärts** an (heutiger Text → Stichtagstext). */
 export function applyBackward(body: NormBodyBlock[], scope: ScopeRecord, operation: Operation, step: string): { ref: FieldRef; position: number } {
+  if (STRUCTURAL_KINDS.has(operation.kind)) return structural(body, scope, operation as StructuralOperation, step, 'backward');
   switch (operation.kind) {
     case 'replace': {
       const from = surface(operation.from);
@@ -247,6 +270,8 @@ export function applyBackward(body: NormBodyBlock[], scope: ScopeRecord, operati
       writeField(body, ref, `${text.slice(0, at)}${operation.from}`);
       return { ref, position: at };
     }
+    default:
+      throw new ReconstructionError('unknown-operation', `${step}: unbekannte Operation ${(operation as { kind: string }).kind}`);
   }
 }
 
@@ -265,30 +290,39 @@ export function forwardSteps(baselineBody: readonly NormBodyBlock[], steps: read
 }
 
 /**
- * Rechnet den heutigen Körper auf den Stichtag zurück. Wirft, wenn der Körper nicht der ist, für den das
- * Rezept geprüft wurde, wenn eine Operation ihr Ziel nicht eindeutig findet, oder wenn das Ergebnis vom
- * geprüften Stichtagskörper abweicht.
+ * Rechnet den heutigen Körper auf den Stichtag zurück – v1 (eine Änderung) und v2 (mehrere, jüngste zuerst).
+ * Wirft, wenn der Körper nicht der ist, für den das Rezept geprüft wurde, wenn eine Operation ihr Ziel nicht
+ * eindeutig findet, oder wenn das Ergebnis (auch ein Zwischenstand einer v2-Kette) vom geprüften abweicht.
  */
-export function applyReverseRecipe(currentBody: readonly NormBodyBlock[], recipe: ReconstructionRecipe): NormBodyBlock[] {
+export function applyReverseRecipe(currentBody: readonly NormBodyBlock[], recipe: AnyReconstructionRecipe): NormBodyBlock[] {
   const problems = recipeProblems(recipe);
   if (problems.length > 0) throw new ReconstructionError('recipe-invalid', `${recipe.documentId}: Rezept ungültig – ${problems.join('; ')}`);
   const current = bodyFingerprint(currentBody);
   if (current !== recipe.expected.currentFingerprint) {
     throw new ReconstructionError('current-mismatch', `${recipe.documentId}: heutiger Körper (${current.slice(0, 16)}) ist nicht der geprüfte (${recipe.expected.currentFingerprint.slice(0, 16)}); das Rezept gilt nicht`);
   }
-  const baseline = reverseSteps(currentBody, recipe.steps);
-  const result = bodyFingerprint(baseline);
+  let body = structuredClone(currentBody) as NormBodyBlock[];
+  if (isRecipeV2(recipe)) {
+    for (const amendment of recipe.amendments) {
+      if (bodyFingerprint(body) !== amendment.expected.afterFingerprint) throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Stand nach ${amendment.citation} ist nicht der geprüfte`);
+      body = reverseSteps(body, amendment.steps);
+      if (bodyFingerprint(body) !== amendment.expected.beforeFingerprint) throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Stand vor ${amendment.citation} weicht vom geprüften ab`);
+    }
+  } else {
+    body = reverseSteps(body, recipe.steps);
+  }
+  const result = bodyFingerprint(body);
   if (result !== recipe.expected.baselineFingerprint) {
     throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Ergebnis (${result.slice(0, 16)}) weicht vom geprüften Stichtagskörper (${recipe.expected.baselineFingerprint.slice(0, 16)}) ab`);
   }
-  return baseline;
+  return body;
 }
 
 /**
- * Beweis durch Rundlauf: rückwärts, dann vorwärts – das Ergebnis muss **exakt** der heutige Körper sein
- * (kanonisches JSON, ohne jede Normalisierung).
+ * Beweis durch Rundlauf: rückwärts, dann vorwärts (Forward-Replay: Stichtagskörper plus alle Änderungen, älteste
+ * zuerst) – das Ergebnis muss **exakt** der heutige Körper sein (kanonisches JSON, ohne jede Normalisierung).
  */
-export function verifyRoundTrip(currentBody: readonly NormBodyBlock[], recipe: ReconstructionRecipe): { ok: boolean; detail: string } {
+export function verifyRoundTrip(currentBody: readonly NormBodyBlock[], recipe: AnyReconstructionRecipe): { ok: boolean; detail: string } {
   let baseline: NormBodyBlock[];
   try {
     baseline = applyReverseRecipe(currentBody, recipe);
@@ -297,7 +331,7 @@ export function verifyRoundTrip(currentBody: readonly NormBodyBlock[], recipe: R
   }
   let forward: NormBodyBlock[];
   try {
-    forward = forwardSteps(baseline, recipe.steps);
+    forward = forwardSteps(baseline, forwardOrder(recipe));
   } catch (error) {
     return { ok: false, detail: `Vorwärts: ${(error as Error).message}` };
   }
@@ -309,5 +343,7 @@ export function verifyRoundTrip(currentBody: readonly NormBodyBlock[], recipe: R
     return { ok: false, detail: `Rundlauf weicht ab bei Zeichen ${at}: erwartet „${expected.slice(Math.max(0, at - 30), at + 30)}“, erhalten „${actual.slice(Math.max(0, at - 30), at + 30)}“` };
   }
   if (bodyFingerprint(baseline) === recipe.expected.currentFingerprint) return { ok: false, detail: 'Rückrechnung ändert nichts – kein Nachweis einer Änderung' };
-  return { ok: true, detail: `Rundlauf exakt: ${recipe.steps.length} Schritt(e), ${recipe.expected.baselineFingerprint.slice(0, 16)} → ${recipe.expected.currentFingerprint.slice(0, 16)}` };
+  const amendments = recipeAmendments(recipe);
+  const steps = amendments.reduce((sum, amendment) => sum + amendment.steps.length, 0);
+  return { ok: true, detail: `Rundlauf exakt: ${amendments.length} Änderung(en), ${steps} Schritt(e), ${recipe.expected.baselineFingerprint.slice(0, 16)} → ${recipe.expected.currentFingerprint.slice(0, 16)}` };
 }

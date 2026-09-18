@@ -7,6 +7,7 @@ import { formatDate, referenceDateLabel, statusLabel, typeLabel, VOCABULARY } fr
 import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import { NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { parseSearchState } from '@landesrecht/search/query.ts';
+import InventoryNotice from '../components/InventoryNotice.astro';
 import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getStoreRegistry } from '../lib/runtime/context.ts';
@@ -70,6 +71,7 @@ function pageUrl(offset: number): string {
     <section aria-labelledby="treffer-heading">
       <h2 id="treffer-heading">{page.total} {page.total === 1 ? 'Treffer' : 'Treffer'}{state.q && <> für „{state.q}“</>}</h2>
       {state.validOn ? <p class="muted">Fassungen, die am {formatDate(state.validOn)} in der Simulation galten.</p> : <p class="muted">{referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>}
+      {state.jurisdictions.map((jurisdiction) => <InventoryNotice jurisdiction={jurisdiction} />)}
       <ol class="hit-list" start={page.offset + 1}>
         {page.hits.map((hit) => (
           <li class="hit">

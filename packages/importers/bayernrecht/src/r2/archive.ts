@@ -7,6 +7,8 @@
  * deshalb hier neu – feldgleich, soweit es die Quelle erlaubt.
  *
  *   Objekt     `baywue/bayernrecht/2023-12-01/<bereich>/<identität>/<sha256[0..16]>-<rolle>.<ext>`
+ *   Abbildung  `baywue/bayernrecht/2023-12-01/assets/<sha256>.<gif|jpg|png>` (inhaltsadressiert; der Worker liefert
+ *              genau diese Schlüssel über `/assets/<land>/<sha256>.<ext>` aus, siehe `@landesrecht/runtime/assets.ts`)
  *   Umschlag   `<objekt>.envelope.json` (Quell-URL, finale URL, Abrufzeit, Media Type, Bytes, SHA-256,
  *              Quellidentität, Bereich, BayRS-Nummer, Jurisdiktion, Stichtag)
  *
@@ -25,6 +27,7 @@ import { createHash } from 'node:crypto';
 
 import { ArchiveError } from '@landesrecht/importer-recht-nrw/common/archive.ts';
 import type { R2ListedObject, R2Transport } from '@landesrecht/importer-recht-nrw/common/r2-transport.ts';
+import { FIGURE_FILE_EXTENSIONS } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { BASELINE_DATE, R2_PREFIX, SOURCE_AREAS, SOURCE_STATE, SOURCE_SYSTEM, TARGET_JURISDICTION, type SourceArea } from '../common/constants.ts';
 import { R2_SOURCES_BUCKET } from '../common/environment.ts';
@@ -64,8 +67,17 @@ export interface ObjectKeyInput {
   contentType: string;
 }
 
+/** Präfix der Abbildungs-Assets (inhaltsadressiert, normübergreifend). */
+export const ASSET_KEY_PREFIX = `${KEY_PREFIX}assets/`;
+
 /** Deterministischer, inhaltsadressierter Objektschlüssel einer Rohquelle unter dem BayWü-Präfix. */
 export function r2ObjectKey(input: ObjectKeyInput): string {
+  if (input.role === 'figure') {
+    if (!/^[a-f0-9]{64}$/u.test(input.sha256)) throw new ArchiveError('guard', `R2-Objektschlüssel braucht einen SHA-256, nicht ${JSON.stringify(input.sha256)}`);
+    const extension = (FIGURE_FILE_EXTENSIONS as Readonly<Record<string, string>>)[input.contentType];
+    if (!extension) throw new ArchiveError('guard', `R2-Objektschlüssel: Abbildung mit Medienart ${JSON.stringify(input.contentType)} ist nicht zugelassen`);
+    return assertArchiveKey(`${ASSET_KEY_PREFIX}${input.sha256}.${extension}`);
+  }
   if (!(SOURCE_AREAS as readonly string[]).includes(input.sourceArea)) throw new ArchiveError('guard', `R2-Objektschlüssel: unbekannter Quellbereich ${String(input.sourceArea)}`);
   if (!/^[a-f0-9]{64}$/u.test(input.sha256)) throw new ArchiveError('guard', `R2-Objektschlüssel braucht einen SHA-256, nicht ${JSON.stringify(input.sha256)}`);
   if (!/^[a-z]+(?:-[a-z]+)*$/u.test(input.role)) throw new ArchiveError('guard', `R2-Objektschlüssel: Rolle ${JSON.stringify(input.role)} ist nicht kanonisch`);
@@ -146,9 +158,12 @@ export interface ArchiveEnvelope {
   sourceTitle: string;
   jurisdiction: string;
   baselineDate: string;
+  /** Nur Abbildungen: Pfad im Exportpaket `url` und dessen SHA-256. */
+  packagePath?: string;
+  packageSha256?: string;
 }
 
-export function envelopeFor(entry: Pick<ManifestEntry, 'sourceArea' | 'sourceIdentity' | 'bayRsNumber' | 'sourceTitle'>, raw: Pick<ManifestRawDocument, 'sha256' | 'byteLength' | 'contentType' | 'url' | 'finalUrl' | 'retrievedAt' | 'role'>, objectKey: string, bucket: string = R2_SOURCES_BUCKET): ArchiveEnvelope {
+export function envelopeFor(entry: Pick<ManifestEntry, 'sourceArea' | 'sourceIdentity' | 'bayRsNumber' | 'sourceTitle'>, raw: Pick<ManifestRawDocument, 'sha256' | 'byteLength' | 'contentType' | 'url' | 'finalUrl' | 'retrievedAt' | 'role' | 'packagePath' | 'packageSha256'>, objectKey: string, bucket: string = R2_SOURCES_BUCKET): ArchiveEnvelope {
   return {
     schemaVersion: ENVELOPE_SCHEMA,
     bucket,
@@ -168,6 +183,8 @@ export function envelopeFor(entry: Pick<ManifestEntry, 'sourceArea' | 'sourceIde
     sourceTitle: entry.sourceTitle,
     jurisdiction: TARGET_JURISDICTION,
     baselineDate: BASELINE_DATE,
+    ...(raw.packagePath ? { packagePath: raw.packagePath } : {}),
+    ...(raw.packageSha256 ? { packageSha256: raw.packageSha256 } : {}),
   };
 }
 

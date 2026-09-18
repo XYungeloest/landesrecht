@@ -29,6 +29,9 @@ import { auditRemote, auditStaging, inventoryBucket } from '@landesrecht/importe
 import { createOAuthTransport, runR2Sync } from '@landesrecht/importer-bayernrecht/r2/command.ts';
 import { archiveCandidates, assertStagingDir, stageRawSources } from '@landesrecht/importer-bayernrecht/r2/stage.ts';
 import { syncArchive } from '@landesrecht/importer-bayernrecht/r2/sync.ts';
+import { normAssetObjectKey } from '@landesrecht/runtime/assets.ts';
+import { serveNormAsset } from '../../apps/web/src/lib/assets.ts';
+import { buildZipArchive, gifBytes } from '../helpers/bayernrecht-parse.ts';
 import { cleanupTempRoots, sampleManifestEntry, tempRoot } from '../helpers/bayernrecht-state.ts';
 
 afterAll(cleanupTempRoots);
@@ -430,5 +433,72 @@ describe('Befehl r2-sync', () => {
     expect(report.halt.resumeCommand).toContain('npm run import:bayernrecht:r2-sync -- --write --r2-transport wrangler-api --concurrency 32 --verify etag');
     // Das Staging ist geschrieben, der Status bleibt staged – der nächste Lauf setzt fort.
     for (const entry of (await readManifest(f.root)).entries.filter((candidate) => candidate.importStatus !== 'needs-review')) expect(entry.rawDocuments[0]!.archiveStatus).toBe('staged');
+  });
+});
+
+describe('Abbildungs-Assets (Rolle figure)', () => {
+  const url = 'https://www.gesetze-bayern.de/Content/Zip/BayBildV';
+  const image = gifBytes(40, 30, 'Übersichtskarte');
+  const zip = buildZipArchive([
+    { path: 'mimetype', content: 'bayportalnorm+zip' },
+    { path: 'img/Karte.gif', content: image },
+  ]);
+
+  async function figureFixture(options: { tamperPackage?: boolean } = {}): Promise<Fixture & { key: string }> {
+    const root = await tempRoot('landesrecht-bayernrecht-r2-figure-');
+    const cacheDir = join(root, '.cache', 'bayernrecht');
+    const stagingDir = join(root, '.cache', 'bayernrecht-r2-staging');
+    const paths = cacheEntryPaths(cacheDir, url);
+    await mkdir(cacheDir, { recursive: true });
+    const cachedZip = options.tamperPackage ? buildZipArchive([{ path: 'mimetype', content: 'bayportalnorm+zip' }, { path: 'img/Karte.gif', content: image }, { path: 'x', content: 'y' }]) : zip;
+    await writeFile(paths.bytes, cachedZip);
+    await writeFile(paths.metadata, JSON.stringify({ url, finalUrl: url, status: 200, contentType: 'application/zip', retrievedAt: '2026-09-18T00:27:16.668Z', sha256: sha256(cachedZip), byteLength: cachedZip.byteLength }));
+    await writeManifestEntry(root, sampleManifestEntry({
+      sourceIdentity: 'BayBildV', sourceArea: 'landesrecht', importStatus: 'imported', targetSlug: 'baybildv-baywue',
+      sourceUrl: 'https://www.gesetze-bayern.de/Content/Document/BayBildV', sha256: sha256(zip), contentType: 'application/zip',
+      rawDocuments: [
+        { role: 'text-document', url, finalUrl: url, sha256: sha256(zip), contentType: 'application/zip', retrievedAt: '2026-09-18T00:27:16.668Z', byteLength: zip.byteLength },
+        { role: 'figure', url, finalUrl: url, sha256: sha256(image), contentType: 'image/gif', retrievedAt: '2026-09-18T00:27:16.668Z', byteLength: image.byteLength, packagePath: 'img/Karte.gif', packageSha256: sha256(zip) },
+      ],
+    }));
+    return { root, cacheDir, stagingDir, bytes: new Map(), key: `${KEY_PREFIX}assets/${sha256(image)}.gif` };
+  }
+
+  it('bildet inhaltsadressierte Schlüssel, die der Worker genau so liest', () => {
+    const sha = sha256(image);
+    const key = r2ObjectKey({ sourceArea: 'landesrecht', sourceIdentity: 'BayBildV', sha256: sha, role: 'figure', contentType: 'image/gif' });
+    expect(key).toBe(`baywue/bayernrecht/2023-12-01/assets/${sha}.gif`);
+    expect(key).toBe(normAssetObjectKey('baywue', sha, 'gif'));
+    // Unabhängig von Norm und Bereich: dieselbe Datei hat denselben Schlüssel.
+    expect(r2ObjectKey({ sourceArea: 'vwv', sourceIdentity: 'BayAndereV', sha256: sha, role: 'figure', contentType: 'image/gif' })).toBe(key);
+    expect(() => r2ObjectKey({ sourceArea: 'landesrecht', sourceIdentity: 'BayBildV', sha256: sha, role: 'figure', contentType: 'image/jpg' })).toThrow(ArchiveError);
+  });
+
+  it('entnimmt die Bilddatei dem gebundenen Paket, stagt, synchronisiert – und der Worker liefert sie aus', async () => {
+    const f = await figureFixture();
+    const manifest = await readManifest(f.root);
+    const result = await stageRawSources({ root: f.root, manifest, cacheDir: f.cacheDir, stagingDir: f.stagingDir, write: true });
+    expect(result).toMatchObject({ candidates: 2, written: 2, problems: [] });
+    expect(sha256(new Uint8Array(await readFile(join(f.stagingDir, f.key))))).toBe(sha256(image));
+    const envelope = JSON.parse(await readFile(join(f.stagingDir, envelopeKey(f.key)), 'utf8')) as Record<string, unknown>;
+    expect(envelope).toMatchObject({ objectKey: f.key, contentType: 'image/gif', role: 'figure', url, packagePath: 'img/Karte.gif', packageSha256: sha256(zip), sourceIdentity: 'BayBildV' });
+
+    const memory = createMemoryR2Transport();
+    const synced = await syncArchive({ root: f.root, manifest: await readManifest(f.root), transport: memory, stagingDir: f.stagingDir, verification: 'etag', sampleRate: 1 });
+    expect(synced).toMatchObject({ blocked: false, uploaded: 2, verified: 2 });
+    expect(memory.objects.get(f.key)!.contentType).toBe('image/gif');
+    expect((await readManifestEntry(f.root, 'landesrecht', 'BayBildV'))!.rawDocuments.map((raw) => raw.archiveStatus)).toEqual(['verified', 'verified']);
+
+    const bucket = { get: async (key: string) => (memory.objects.has(key) ? { arrayBuffer: async () => memory.objects.get(key)!.bytes.slice().buffer } : null) };
+    const response = await serveNormAsset({ jurisdiction: 'bayern-wuerttemberg', file: `${sha256(image)}.gif` }, bucket);
+    expect(response.status).toBe(200);
+    expect(sha256(new Uint8Array(await response.arrayBuffer()))).toBe(sha256(image));
+  });
+
+  it('entnimmt nichts aus einem Paket, das nicht den gebundenen SHA-256 trägt', async () => {
+    const f = await figureFixture({ tamperPackage: true });
+    const result = await stageRawSources({ root: f.root, manifest: await readManifest(f.root), cacheDir: f.cacheDir, stagingDir: f.stagingDir, write: true });
+    expect(result.problems.map((problem) => `${problem.code}:${problem.objectKey}`)).toEqual(expect.arrayContaining([`cache-mismatch:${f.key}`]));
+    await expect(readFile(join(f.stagingDir, f.key))).rejects.toThrow();
   });
 });

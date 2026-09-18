@@ -11,6 +11,7 @@ import { parseSourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 import { continuedTitle, splitDivisionNumber, stripTrailingMarkers } from '@landesrecht/importer-bayernrecht/parse/norm.ts';
 
 import { ImportPipelineError } from '@landesrecht/importer-common/pipeline.ts';
+import { sniffImage } from '@landesrecht/importer-bayernrecht/parse/package.ts';
 import { parseBodyBlocks, type NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 import type { NormHead } from '@landesrecht/importer-bayernrecht/parse/norm.ts';
@@ -26,7 +27,7 @@ import {
   toSuperscript,
 } from '@landesrecht/importer-bayernrecht/parse/index.ts';
 
-import { archivedSource, buildZipArchive, fixture, fixtureBytes, flatten, imagePackage, normPackage, vvPackage } from '../helpers/bayernrecht-parse.ts';
+import { archivedSource, buildZipArchive, fixture, fixtureBytes, flatten, gifBytes, imagePackage, normPackage, vvPackage } from '../helpers/bayernrecht-parse.ts';
 
 const source = archivedSource();
 
@@ -412,6 +413,22 @@ describe('Weitere Strukturen des Beispielkorpus (28 Pakete)', () => {
     expect(document.law.findings.map((entry) => entry.code)).not.toContain('empty-provision');
   });
 
+  it('lässt Fußnotenzeichen nicht mit folgenden Ziffern verschmelzen (BayBFSOGesundheit, BayVV_7912_0_U_108)', () => {
+    const base = fixture('abmarkungsgesetz');
+    const call = (marker: string, text: string): string => `<fn.call><fn.text>${marker}</fn.text><fn.def><p>${text}</p></fn.def></fn.call>`;
+    // Zwei unmittelbar aufeinanderfolgende Aufrufe: „vollzogen3 4“, nie „vollzogen34“.
+    const adjacent = parseBayernRechtDocument(source, base.replace(/vollzogen\.\s<satz\.nr/u, `vollzogen${call('3', 'Erste Fußnote')}${call('4', 'Zweite Fußnote')}. <satz.nr`));
+    const first = find(adjacent.law.body, (block) => block.text?.includes('Die Abmarkung wird') === true);
+    expect(first.text).toContain('vollzogen3 4.');
+    expect(first.text).not.toContain('vollzogen34');
+    // Die Quelle wiederholt das Zeichen als Hochstellung: „…Umweltfragen1 ¹“, nie „…1¹“ (liest sich als 11).
+    const repeated = parseBayernRechtDocument(source, base.replace(/vollzogen\.\s<satz\.nr/u, `vollzogen${call('1', 'Nunmehr: anderes Ressort')}<span class="i"><sup>1</sup></span>. <satz.nr`));
+    const second = find(repeated.law.body, (block) => block.text?.includes('Die Abmarkung wird') === true);
+    expect(second.text).toContain('vollzogen1 ¹.');
+    // Ein Zeichen vor Satzzeichen oder Wort bleibt unverändert angehängt (kein zusätzlicher Leerraum).
+    expect(find(parse('abmarkungsgesetz').law.body, (block) => block.text?.includes('Katastergesetzes') === true).text).toContain('Katastergesetzes1) Katastervermessungen');
+  });
+
   it('nimmt das Attribut verweis.norm@anfrage hin, ohne es zu deuten (BayBhV, TV_L)', () => {
     const document = parse('beihilfeverordnung');
     expect(document.law.findings.map((entry) => entry.code)).not.toContain('unknown-attribute');
@@ -638,12 +655,69 @@ describe('Exportpaket (ZIP, Manifest, Beilagen)', () => {
 
     const document = parseBayernRechtPackage(source, imagePackage());
     expect(document.law.findings).toContainEqual(expect.objectContaining({ severity: 'warning', code: 'package-media-type-mismatch' }));
-    expect(document.law.sourceNotes).toContainEqual(expect.objectContaining({ label: 'Abbildungen' }));
-    // Bildbeilagen tragen keine mediaType-Angabe: der Vorrat von legal-core kennt keine Bildmedienart.
+    // Die zwei aufgerufenen Bilder stehen als Abbildung im Normkörper; der Hinweis nennt nur die übrigen zehn.
+    const note = (document.law.sourceNotes ?? []).find((entry) => entry.label === 'Abbildungen')!;
+    expect(note.text).toMatch(/^Das Exportpaket enthält 10 Abbildungen/u);
+    expect(note.text).not.toContain('A2-N1.gif');
+    // Die Quellenreferenz trägt die aus den Bytes erkannte Bildart; die Deklaration des Portals steht in der Notiz.
     const images = document.law.sourceReferences.filter((entry) => entry.derivedSource?.startsWith('img/'));
-    expect(images.length).toBeGreaterThan(0);
-    expect(images.every((entry) => entry.mediaType === undefined)).toBe(true);
-    expect(images[0]!.note).toContain('image/jpg');
+    expect(images.length).toBe(12);
+    expect(images.every((entry) => entry.mediaType === 'image/gif')).toBe(true);
+    expect(images.every((entry) => entry.note?.includes('image/jpg'))).toBe(true);
+    expect(images.filter((entry) => entry.note?.includes('figure-Block')).map((entry) => entry.derivedSource)).toEqual(['img/BayBoFiV_BayBoFiV-A2-N1.gif', 'img/BayBoFiV_BayBoFiV-A2-N2.gif']);
+  });
+
+  it('übernimmt Abbildungen als figure-Block mit Asset-Referenz an der Aufrufstelle (BayBoFiV)', () => {
+    const archive = readBayernRechtPackage(imagePackage());
+    const document = parseBayernRechtPackage(source, imagePackage());
+    const figures = flatten(document.law.body).filter((block) => block.type === 'figure');
+    expect(figures).toHaveLength(2);
+    const attachment = archive.attachments.find((entry) => entry.fileName === 'BayBoFiV_BayBoFiV-A2-N1.gif')!;
+    expect(attachment.image).toEqual({ mediaType: 'image/gif', width: 40, height: 30 });
+    expect(figures[0]!.asset).toEqual({
+      sha256: attachment.sha256,
+      mediaType: 'image/gif',
+      byteLength: attachment.byteLength,
+      sourcePath: attachment.path,
+      width: 40,
+      height: 30,
+      description: 'Schematische Darstellung',
+    });
+    // Kein Text, keine Kinder, kein Base64: nur die Referenz auf die Bilddatei.
+    expect(figures.every((block) => block.text === undefined && (block.children ?? []).length === 0)).toBe(true);
+    expect(JSON.stringify(document.law.body)).not.toMatch(/base64|GIF89a/u);
+    // Die Bildbeschreibung ist Alternativtext, kein Normtext.
+    expect(flatten(document.law.body).some((block) => block.text?.includes('Schematische Darstellung') && block.type !== 'figure' && block.label !== 'Nummer 1')).toBe(false);
+    expect(document.law.findings).toContainEqual(expect.objectContaining({ severity: 'info', code: 'figures-transferred' }));
+    expect(document.law.findings.map((entry) => entry.code)).not.toContain('graphic-not-transferred');
+    // Das Ergebnis besteht die Schemaprüfung von legal-core.
+    expect(() => parseBodyBlocks(JSON.parse(JSON.stringify(document.law.body)), 'body')).not.toThrow();
+  });
+
+  it('übernimmt ein als Logo beschriebenes Bild nicht als Abbildung', () => {
+    const xml = fixture('bodenfischerei').replace('Desc="Benennung"', 'Desc="Logo des Ministeriums"');
+    const archive = readBayernRechtPackage(imagePackage());
+    const document = parseBayernRechtDocument(source, xml, { attachments: archive.attachments });
+    const figures = flatten(document.law.body).filter((block) => block.type === 'figure');
+    expect(figures.map((block) => block.asset?.description)).toEqual(['Schematische Darstellung']);
+    expect(document.graphics.find((entry) => entry.description === 'Logo des Ministeriums')).toMatchObject({ transferred: false, decorative: true });
+    expect(document.law.findings).toContainEqual(expect.objectContaining({ severity: 'info', code: 'graphic-decorative' }));
+    expect(document.law.findings.map((entry) => entry.code)).not.toContain('graphic-not-transferred');
+  });
+
+  it('erkennt Bildart und Abmessungen aus den ersten Bytes (GIF, PNG, JPEG)', () => {
+    expect(sniffImage(gifBytes(640, 480, 'x'))).toEqual({ mediaType: 'image/gif', width: 640, height: 480 });
+    const png = new Uint8Array(24);
+    png.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52]);
+    new DataView(png.buffer).setUint32(16, 1200);
+    new DataView(png.buffer).setUint32(20, 900);
+    expect(sniffImage(png)).toEqual({ mediaType: 'image/png', width: 1200, height: 900 });
+    // JPEG: APP0-Segment überspringen, Maße aus SOF0 (Höhe vor Breite).
+    const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x04, 0x00, 0x00, 0xff, 0xc0, 0x00, 0x11, 0x08, 0x01, 0x2c, 0x01, 0x90, 0x03, 0x00, 0x00]);
+    expect(sniffImage(jpeg)).toEqual({ mediaType: 'image/jpeg', height: 300, width: 400 });
+    // Ohne SOF-Marker bleibt es bei der Bildart.
+    expect(sniffImage(new Uint8Array([0xff, 0xd8, 0xff, 0xd9, 0, 0, 0, 0, 0, 0, 0]))).toEqual({ mediaType: 'image/jpeg' });
+    expect(sniffImage(new TextEncoder().encode('%PDF-1.7'))).toBeUndefined();
   });
 
   it('meldet nichts, wenn Medienart und Dateiendung zusammenpassen (BAY_791_3_150_U)', () => {
