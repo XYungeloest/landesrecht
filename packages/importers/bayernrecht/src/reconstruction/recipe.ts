@@ -38,6 +38,8 @@ export interface ScopeRecord {
   fields: FieldRef[];
   /** Eingrenzung auf einen Satz über die Satznummern (¹, ², …) des einzigen Feldes. */
   sentence?: number;
+  /** Lauf 9: innerhalb des Satzes der Halbsatz (Teil zwischen Semikola), wenn der Satz Semikola trägt. */
+  halfSentence?: number;
   /** Strukturell belegte Stufen der Ortsangabe. */
   resolved: string[];
   /** Stufen, die der Körper nicht auszeichnet; der Bereich ist dort Obermenge des zitierten Orts. */
@@ -118,6 +120,14 @@ export interface RecipeRestoration {
    * `restoredSteps` 0 sein – die Stammverkündung ist hier Beleg, nicht Quelle von Text.
    */
   chainChecks?: Array<{ reason: string; detail: string }>;
+  /**
+   * Lauf 9: Wie der Stand am Stichtag belegt ist. `forward`: Stammverkündung, darauf die Änderungen vor dem Stichtag
+   * (`prior-amendment`, ältest zuerst) **vorwärts** angewandt (`forward.ts`); dieser Stand ist Quelle des Alttexts und
+   * Maßstab der Wortlautprobe, sein Fingerabdruck `forwardFingerprint`, die Zahl der angewandten Befehle `priorSteps`.
+   * Fehlt das Feld: Lauf 7 – Rücknahme der Änderungen vor dem Stichtag bis zur Stammfassung (`stammfassungFingerprint`).
+   */
+  derivation?: 'forward';
+  forwardFingerprint?: string;
 }
 
 /** Überschrift der Norm heute und am Stichtag – nur in Rezepten mit Titelschritten. */

@@ -136,21 +136,29 @@ export function runPdftotextBbox(bytes: Uint8Array): string {
   return String(result.stdout);
 }
 
-/** Kleinere Bilder sind Signets (Landeswappen/juris-Logo der Kopfzeile), keine Abbildungen des Normtexts. */
-export const FIGURE_MIN_PIXELS = 150;
+/**
+ * Signets des Dokumentkopfs (Seite 1): Landeswappen 57×40 (alle 5 195 Ausgaben), juris-Schriftzug 75×15 bzw. 94×15.
+ * Nur Vorfilter für `pdftohtml` (Laufzeit); ob ein Bild Signet oder Abbildung ist, entscheidet die Lage
+ * (`placeFigures` in `juris-pdf.ts`).
+ */
+const HEADER_SIGNET_SIZES = new Set(['57x40', '75x15', '94x15']);
 
-/** Anzahl eingebetteter Abbildungen je Seite (`pdfimages -list`, ohne Signets); leer, wenn das Werkzeug fehlt. */
-export function runPdfimagesList(bytes: Uint8Array): Map<number, number> | undefined {
+/** Eingebettete Bilder je Seite (`pdfimages -list`): Seite und Pixelmaße; `undefined`, wenn das Werkzeug fehlt. */
+export function runPdfimagesList(bytes: Uint8Array): Array<{ page: number; width: number; height: number }> | undefined {
   const result = runPoppler('pdfimages', ['-list', '<input>'], bytes, 64 * 1024 * 1024);
   if (result.error || result.status !== 0) return undefined;
-  const counts = new Map<number, number>();
+  const images: Array<{ page: number; width: number; height: number }> = [];
   for (const line of String(result.stdout).split('\n').slice(2)) {
     const match = /^\s*(\d+)\s+\d+\s+(image|smask|mask|stencil)\s+(\d+)\s+(\d+)/u.exec(line);
     if (!match || match[2] !== 'image') continue;
-    if (Number(match[3]) < FIGURE_MIN_PIXELS && Number(match[4]) < FIGURE_MIN_PIXELS) continue;
-    counts.set(Number(match[1]), (counts.get(Number(match[1])) ?? 0) + 1);
+    images.push({ page: Number(match[1]), width: Number(match[3]), height: Number(match[4]) });
   }
-  return counts;
+  return images;
+}
+
+/** Trägt die Ausgabe außer den Kopfsignets Bilder? Dann werden Lage und Bytes gelesen (`runPdfImages`). */
+export function hasNonSignetImages(images: ReadonlyArray<{ page: number; width: number; height: number }>): boolean {
+  return images.some((image) => !(image.page === 1 && HEADER_SIGNET_SIZES.has(`${image.width}x${image.height}`)));
 }
 
 function median(values: number[]): number {

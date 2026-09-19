@@ -72,7 +72,7 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.0.0');
+    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.1.0');
   });
 });
 
@@ -183,6 +183,37 @@ describe('Kürzel „Schl.-H.“ und „SH“', () => {
     expect(abbreviations).toHaveLength(2);
     expect(abbreviations.every((entry) => entry.decision === 'manual-review' && entry.term === 'SH')).toBe(true);
     expect(abbreviations[0]!.reason).toContain('amtlichen Kurzbezeichnung');
+  });
+});
+
+describe('Abkürzungen mit Landeskürzel (Version 1.1.0) und historische Namen', () => {
+  const known = new Set(['MBG Schl.-H.', 'LStVollzG SH', 'GVFG-SH', 'SH AbgG', 'GlüStV 2021 AG SH']);
+  const convert = (value: string, extra: readonly string[] = []): string => transformText(value, 'p', [], { knownStateLawAbbreviations: new Set([...known, ...extra]) });
+
+  it('leitet das abgesetzte Landeskürzel bekannter amtlicher Abkürzungen auf „NSH“ über', () => {
+    expect(targetShortName()).toBe('NSH');
+    expect(convert('nach § 80 MBG Schl.- H., erhöht')).toBe('nach § 80 MBG NSH, erhöht');
+    expect(convert('gemäß MBG Schl.-H. Die Frist')).toBe('gemäß MBG NSH. Die Frist');
+    expect(convert('LStVollzG SH und GVFG-SH, SH AbgG sowie GlüStV 2021 AG SH)')).toBe('LStVollzG NSH und GVFG-NSH, NSH AbgG sowie GlüStV 2021 AG NSH)');
+  });
+
+  it('lässt Fundstellen, Aktenzeichen, verschmolzene und unbekannte Abkürzungen unverändert', () => {
+    for (const text of ['GVOBl. Schl.-H. S. 3, GVOBl.-Schl.-H. S. 79, GS Schl.-H. II, Gl.Nr. 2186-13', 'Amtsblatt Schl.-H. S. 674, NBl. HS MBWK Schl.-H. S. 56', 'JM v. 2. 3. 1993 – V 340 a/5607 – 19 SH –', 'FINISHG und SHBesG', 'nach LBO SH']) {
+      expect(convert(text)).toBe(text);
+    }
+  });
+
+  it('übernimmt im Text eingeführte Abkürzungen einer Bezeichnung mit dem Landesnamen', async () => {
+    const { definedStateAbbreviations } = await import('@landesrecht/importer-juris-sh/transform/rules.ts');
+    const defined = definedStateAbbreviations(['Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH) ist zuständig', '(Mitbestimmungsgesetz Schleswig-Holstein - MBG Schl.-H.)', 'Gesetz (GVOBl. Schl.-H. S. 3)']);
+    expect([...defined].sort()).toEqual(['LVermGeo SH', 'MBG Schl.-H.']);
+    expect(convert('das LVermGeo SH prüft', [...defined])).toBe('das LVermGeo NSH prüft');
+  });
+
+  it('leitet die preußische Provinz nicht über und meldet eine übergeleitete historische Bezeichnung', () => {
+    expect(apply('Reallasten in der Provinz Schleswig-Holstein; Land Schleswig-Holstein')).toBe('Reallasten in der Provinz Schleswig-Holstein; Land Niedersachsen-Holstein');
+    const record = { meta: { title: 'Gesetz über die Ablösung der Reallasten in der Provinz Niedersachsen-Holstein', subjects: [], keywords: [], initialCitation: 'x' }, versions: [{ citation: 'x', body: [] }] } as never;
+    expect(auditRecord(record).map((finding) => finding.code)).toContain('historical-name-transformed');
   });
 });
 
@@ -303,6 +334,12 @@ describe('Prüfung nach der Transformation (fail-closed)', () => {
 
 describe('Transformation einer Norm', () => {
   const { record, report, findings } = transformToNsh(sourceLaw(), context());
+
+  it('leitet eine eigene Abkürzung mit „Schl.-H.“ ohne Satzpunkt über und hält die Quellabkürzung fest', () => {
+    const converted = transformToNsh(sourceLaw({ abbr: 'AGBGB Schl.-H.' }), context()).record;
+    expect(converted.meta.abbr).toBe('AGBGB NSH');
+    expect(converted.meta.externalIdentifiers).toContainEqual({ system: 'amtliche-abkuerzung-sh', value: 'AGBGB Schl.-H.' });
+  });
 
   it('erzeugt eine kanonische Ausgangsfassung der Zieljurisdiktion', () => {
     expect(record.meta.jurisdiction).toBe('nsh');

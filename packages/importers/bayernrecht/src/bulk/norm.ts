@@ -821,7 +821,20 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   // Ein Reimport, der ein schlechteres Ergebnis liefert als der übernommene Stand, ersetzt nichts:
   // Manifest und Inhalt bleiben, wo sie sind, und der Fall wird gemeldet (Gedanke des West-Adapters).
   const previous = options.previous;
-  const regression = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status);
+  // Einzige zugelassene Rücknahme einer übernommenen Norm: Die amtliche Verkündung selbst belegt ein Inkrafttreten nach
+  // dem Stichtag, und sie setzt keinen Vorgänger außer Kraft (Stichtagsklasse `official-commencement-after-baseline`).
+  // Der Slug bleibt der Quellidentität dauerhaft zugeordnet und wird nie neu vergeben.
+  const withdrawal = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
+    && candidate.baseline?.status === 'not-at-baseline' && candidate.baseline.reason === 'official-commencement-after-baseline';
+  const regression = !withdrawal && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status);
+  if (withdrawal && previous) {
+    entry.targetSlug = '';
+    entry.findings = [...(entry.findings ?? []), {
+      severity: 'info',
+      code: 'withdrawn-not-at-baseline',
+      message: `Aus dem Stichtagsbestand genommen: ${candidate.baseline!.evidence.filter((fact) => fact.kind === 'official-commencement').map((fact) => `in Kraft laut amtlicher Verkündung ab ${fact.value}`).join('; ') || 'Inkrafttreten laut amtlicher Verkündung nach dem Stichtag'}; Slug ${previous.targetSlug} bleibt reserviert`,
+    }];
+  }
   if (regression && previous) {
     reviewItems.push({
       category: 'import-regression',
@@ -873,6 +886,20 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
       }
     }
     if (options.write && reserver.changed) await writeSlugRegistry(root, options.registry);
+  }
+
+  if (withdrawal && previous?.targetSlug) {
+    // Die Reservierung wird stillgelegt, nicht freigegeben: kein Nachfolger, keine Umleitung, nie neu vergeben.
+    const index = options.registry.entries.findIndex((reserved) => reserved.sourceIdentity === candidate.documentId);
+    if (index >= 0) options.registry.entries.splice(index, 1);
+    if (!(options.registry.retired ?? []).some((retired) => retired.slug === previous.targetSlug)) {
+      options.registry.retired = [...(options.registry.retired ?? []), { slug: previous.targetSlug, sourceIdentity: candidate.documentId, withdrawn: { reason: candidate.baseline!.reason, date: nowIso.slice(0, 10) } }];
+    }
+    if (options.write) {
+      await writeSlugRegistry(root, options.registry);
+      const removed = await removeRetiredNormDirectory(root, previous.targetSlug, candidate.documentId);
+      if (removed) { written.push(removed); changed = true; }
+    }
   }
 
   if (options.write) {

@@ -288,6 +288,34 @@ describe('Sync', () => {
     expect(memory.calls.filter((call) => call.startsWith('put '))).toEqual([]);
   });
 
+  it('archivierte Objekte einer zurückgenommenen Norm bleiben und sind kein Widerspruch; fremde Schlüssel schon', async () => {
+    const f = await fixture();
+    await staged(f);
+    const memory = createMemoryR2Transport();
+    await syncArchive({ root: f.root, manifest: await readManifest(f.root), transport: memory, stagingDir: f.stagingDir, verification: 'etag' });
+    // Die erste Norm wird aus dem Stichtagsbestand zurückgenommen (amtliche Verkündung: Inkrafttreten nach dem Stichtag).
+    const [first] = archiveCandidates(await readManifest(f.root));
+    for (const entry of (await readManifest(f.root)).entries) {
+      if (entry.sourceIdentity !== first!.entry.sourceIdentity) continue;
+      entry.importStatus = 'not-at-baseline' as ImportStatus;
+      entry.targetSlug = '';
+      entry.findings = [...entry.findings, { severity: 'info', code: 'withdrawn-not-at-baseline', message: 'Aus dem Stichtagsbestand genommen' }];
+      await writeManifestEntry(f.root, entry);
+    }
+    const manifest = await readManifest(f.root);
+    const stagingAudit = await auditStaging({ manifest, stagingDir: f.stagingDir });
+    const remote = await auditRemote({ transport: guardTransport(memory), manifest, local: stagingAudit.local, sampleSize: 150, envelopeSampleSize: 25, seed: '2023-12-01' });
+    expect(remote.unexpected).toEqual([]);
+    expect(remote.retainedWithdrawn).toEqual([first!.objectKey, first!.envelopeKey].sort());
+    expect(remote.ok).toBe(true);
+    // Ein Objekt ohne Bezug bleibt eine Abweichung.
+    const stray = `${KEY_PREFIX}landesrecht/fremd/0123456789abcdef-text-document.zip`;
+    await memory.put(stray, new TextEncoder().encode('x'), { contentType: 'application/zip', metadata: {} });
+    const again = await auditRemote({ transport: guardTransport(memory), manifest, local: stagingAudit.local, sampleSize: 150, envelopeSampleSize: 25, seed: '2023-12-01' });
+    expect(again.unexpected).toEqual([stray]);
+    expect(again.ok).toBe(false);
+  });
+
   it('überschreibt nie: ein vorhandener Schlüssel mit anderem Inhalt ist ein harter Fehler', async () => {
     const f = await fixture();
     await staged(f);

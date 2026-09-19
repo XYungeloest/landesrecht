@@ -80,6 +80,19 @@ interface Hit {
 }
 
 /** Der einzige Treffer im Bereich – sonst ein Fehler mit der Zahl der Treffer. */
+/**
+ * Halbsatz `number` im Satz [start, end): Teile zwischen Semikola. `undefined`: der Satz trägt kein Semikolon (dann gilt der
+ * ganze Satz); `'none'`: so viele Halbsätze hat er nicht.
+ */
+export function halfSentenceRange(text: string, start: number, end: number, number: number): { start: number; end: number } | 'none' | undefined {
+  const cuts: number[] = [];
+  for (let at = text.indexOf(';', start); at >= 0 && at < end; at = text.indexOf(';', at + 1)) cuts.push(at + 1);
+  if (cuts.length === 0) return undefined;
+  const bounds = [start, ...cuts, end];
+  if (number < 1 || number > bounds.length - 1) return 'none';
+  return { start: bounds[number - 1]!, end: bounds[number]! };
+}
+
 function uniqueHit(body: readonly NormBodyBlock[], scope: ScopeRecord, needle: string, step: string, what: string): Hit {
   if (needle === '') throw new ReconstructionError('empty-needle', `${step}: leerer Suchtext (${what})`);
   const hits: Hit[] = [];
@@ -92,6 +105,14 @@ function uniqueHit(body: readonly NormBodyBlock[], scope: ScopeRecord, needle: s
       if (!range) throw new ReconstructionError('sentence-missing', `${step}: Satz ${scope.sentence} im Feld nicht gefunden`);
       start = range.start;
       end = range.end;
+      if (scope.halfSentence !== undefined) {
+        const half = halfSentenceRange(text, start, end, scope.halfSentence);
+        if (half === 'none') throw new ReconstructionError('sentence-missing', `${step}: Halbsatz ${scope.halfSentence} in Satz ${scope.sentence} nicht gefunden`);
+        if (half) {
+          start = half.start;
+          end = half.end;
+        }
+      }
     }
     for (const position of occurrences(text, needle, start, end)) hits.push({ ref, text, position });
   }

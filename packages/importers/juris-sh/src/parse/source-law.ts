@@ -28,17 +28,36 @@ export interface SourceDocument {
 
 export const SYSTEM = 'juris-sh';
 export const GLIEDERUNG_SYSTEM = 'gliederungsnummer-sh';
+/** Amtliche Fundstelle der Stammfassung (strukturiert, amtliche Schreibweise). */
+export const OFFICIAL_CITATION_SYSTEM = 'amtliche-fundstelle-sh';
 
 /** Titel ohne Datumszeile („Vom 18. Juni 2018“), Kurzbezeichnung und Abkürzung aus der Klammer. */
-export function splitTitle(title: string): { title: string; shortTitle?: string; abbrInTitle?: string; dateLine?: string } {
-  const dateMatch = /\s+(Vom\s+\d{1,2}\.\s*\S+\s+\d{4}.*)$/u.exec(title);
-  const main = dateMatch ? title.slice(0, dateMatch.index).trim() : title.trim();
+export function splitTitle(title: string): { title: string; shortTitle?: string; abbrInTitle?: string; dateLine?: string; promulgation?: string } {
+  // Datumszeile der Überschrift („Vom 1. Mai 2000“, „Vom 17.12.1991“, „Vom 11 Juli 2001“, auch mit „i.d.F.d.B.v. …“).
+  const dateMatch = /\s+(Vom\s+(?:\d{1,2}\.\s*\p{L}+\s+\d{4}|\d{1,2}\.\s?\d{1,2}\.\s?\d{4}|\d{1,2}\s+\p{L}+\s+\d{4}).*)$/u.exec(title);
+  let main = dateMatch ? title.slice(0, dateMatch.index).trim() : title.trim();
+  // Bekanntmachungszeile, die die juris-Ausgabe an den VwV-Titel hängt („AV d. JM v. 4. 11. 1969 – V/21/2202 – 69 –
+  // (SchlHA 1969 S. 223)“): Angabe über den Erlass, nicht Teil des Titels.
+  const promulgation = /\s((?:AV|Bek|Beschl|Erl|RdErl|Gem\.\s?Erl|Allg\.\s?Vfg)\.?\s+(?:d\.|des|der)\s+.*|(?:AV|Bek)\.?\s+d\.\s*\p{L}+.*)$/u.exec(main);
+  if (promulgation && promulgation.index >= 15) main = main.slice(0, promulgation.index).trim();
   const paren = /\(([^()]+?)\s+[-–]\s+([^()]+?)(?:\s+[-–])?\s*\)\s*$/u.exec(main);
   return {
     title: main,
     ...(paren ? { shortTitle: paren[1]!.trim(), abbrInTitle: paren[2]!.trim() } : {}),
     ...(dateMatch ? { dateLine: dateMatch[1]! } : {}),
+    ...(promulgation && promulgation.index >= 15 ? { promulgation: promulgation[1]!.trim() } : {}),
   };
+}
+
+/** Datum der Titel-Datumszeile („Vom 15. Juli 1955, i.d.F.d.B.v. 31.12.1971“ → 1955-07-15), wenn eindeutig lesbar. */
+export function dateLineDate(dateLine: string | undefined): string | undefined {
+  if (!dateLine) return undefined;
+  const months = ['januar', 'februar', 'märz', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember'];
+  const numeric = /^Vom\s+(\d{1,2})\.\s?(\d{1,2})\.\s?(\d{4})/u.exec(dateLine);
+  if (numeric) return `${numeric[3]}-${numeric[2]!.padStart(2, '0')}-${numeric[1]!.padStart(2, '0')}`;
+  const verbose = /^Vom\s+(\d{1,2})\.?\s+(\p{L}+)\s+(\d{4})/u.exec(dateLine);
+  const month = verbose ? months.indexOf(verbose[2]!.toLowerCase()) + 1 : 0;
+  return verbose && month > 0 ? `${verbose[3]}-${String(month).padStart(2, '0')}-${verbose[1]!.padStart(2, '0')}` : undefined;
 }
 
 export function normType(parsed: ParsedJurisPdf, isVwv: boolean): NormType {
@@ -109,7 +128,7 @@ export function classifyEdition(parsed: ParsedJurisPdf, isVwv: boolean, baseline
   return { class: 'unchanged-since-baseline', basis: `alle ${parsed.toc.length} Einheiten gültig spätestens ab ${latest}${parsed.edition?.validFrom ? `; Gesamtausgabe gültig ab ${parsed.edition.validFrom}` : ''}${standDate ? `; letzte berücksichtigte Änderung vom ${standDate}` : ''}` };
 }
 
-export function toSourceLaw(parsed: ParsedJurisPdf, document: SourceDocument): { law: SourceLaw; findings: ImportFinding[] } {
+export function toSourceLaw(parsed: ParsedJurisPdf, document: SourceDocument, options: { gazetteVolumes?: readonly GazetteVolume[] } = {}): { law: SourceLaw; findings: ImportFinding[] } {
   const isVwv = document.area === 'vwv';
   const findings: ImportFinding[] = parsed.findings.map((finding) => ({ severity: finding.severity, code: finding.code, message: finding.message }));
   const titleParts = splitTitle(parsed.title || parsed.mainDocument || '');
@@ -121,9 +140,16 @@ export function toSourceLaw(parsed: ParsedJurisPdf, document: SourceDocument): {
   const latestUnit = parsed.toc.map((entry) => entry.validFrom).filter((value): value is string => value !== undefined).sort().at(-1);
   const sourceValidFrom = parsed.edition?.validFrom ?? (isVwv ? isoDate(parsed.header['Gültig ab']) : latestUnit ?? isoDate(parsed.header['Gültig ab']));
   const sourceValidTo = parsed.edition?.validTo ?? isoDate(parsed.header['Gültig bis']);
-  const documentDate = isoDate(parsed.header.Ausfertigungsdatum) ?? isoDate(parsed.header.Neugefasst) ?? isoDate(parsed.header.Erlassdatum);
+  // Ausfertigungsdatum: die Datumszeile der amtlichen Überschrift geht dem juris-Kopf vor. Für Recht der bereinigten
+  // Sammlung (GS Schl.-H. II) setzt juris den Sammlungsstichtag 31.12.1971 als „Ausfertigungsdatum“/„Neugefasst“;
+  // die Überschrift nennt die wirkliche Ausfertigung („Vom 15. Juli 1955, i.d.F.d.B.v. 31.12.1971“).
+  const documentDate = dateLineDate(titleParts.dateLine) ?? isoDate(parsed.header.Ausfertigungsdatum) ?? isoDate(parsed.header.Neugefasst) ?? isoDate(parsed.header.Erlassdatum);
   const fundstelle = parsed.header.Fundstelle ?? parsed.header.Fundstellen;
-  const citation = fundstelle ? `${fundstelle}` : `juris ${document.documentId}`;
+  // Amtliche Fundstelle in amtlicher Schreibweise: bei VwV aus dem Dokument selbst („Fundstelle: Amtsbl. Schl.-H. …“),
+  // sonst aus der juris-Kurzform des Kopfes übertragen. Nicht sicher lesbare Formen bleiben in der Kurzform.
+  const official = (isVwv ? parsed.vwvMetadata?.fundstelle : undefined) ?? officialCitation(fundstelle);
+  const citation = official ?? (fundstelle ? `${fundstelle}` : `juris ${document.documentId}`);
+  const gazetteReference = official ? gazetteVolumeReference(official, options.gazetteVolumes ?? []) : undefined;
   const reference: SourceReference = {
     kind: 'official-portal-snapshot',
     system: SYSTEM,
@@ -141,16 +167,18 @@ export function toSourceLaw(parsed: ParsedJurisPdf, document: SourceDocument): {
     ...(hasGlNr ? { sourceNumber: glNr } : {}),
     note: `Permalink „genau dieses Dokument“: ${permaUrl(document.documentId)}. Abruf über die dokumentierte PDF-Ausgabe mit anonymer Sitzung eines öffentlichen Permalink-Aufrufs.`,
   };
+  // Kanonischer Inhalt ohne juris-redaktionelle Vermerke (Ausgabevermerk, „Stand: letzte berücksichtigte Änderung“):
+  // Sie bleiben Beleg im Manifest (Stichtagsbelege), werden aber nicht als Normbestandteil veröffentlicht.
   const sourceNotes: Array<{ label: string; text: string }> = [];
-  if (parsed.edition) sourceNotes.push({ label: 'Ausgabe (juris)', text: parsed.edition.text });
-  if (parsed.stand) sourceNotes.push({ label: 'Stand (juris)', text: parsed.stand });
   if (isVwv && parsed.header.Normgeber) sourceNotes.push({ label: 'Normgeber (Quelle)', text: parsed.header.Normgeber });
   if (isVwv && parsed.header.Aktenzeichen) sourceNotes.push({ label: 'Aktenzeichen (Quelle)', text: parsed.header.Aktenzeichen });
+  if (titleParts.promulgation) sourceNotes.push({ label: 'Bekanntmachung (Quelle)', text: titleParts.promulgation });
   const law: SourceLaw = {
     portal: 'juris-sh',
     externalIdentifiers: [
       { system: SYSTEM, value: document.documentId, url: permaUrl(document.documentId) },
       ...(hasGlNr ? [{ system: GLIEDERUNG_SYSTEM, value: glNr }] : []),
+      ...(official ? [{ system: OFFICIAL_CITATION_SYSTEM, value: official }] : []),
     ],
     title: titleParts.title,
     ...(titleParts.shortTitle && titleParts.shortTitle !== titleParts.title ? { shortTitle: titleParts.shortTitle } : {}),
@@ -164,13 +192,102 @@ export function toSourceLaw(parsed: ParsedJurisPdf, document: SourceDocument): {
     keywords: [],
     body: parsed.body,
     ...(sourceNotes.length > 0 ? { sourceNotes } : {}),
-    sourceReferences: [reference],
+    sourceReferences: gazetteReference ? [gazetteReference, reference] : [reference],
     findings,
     sourceIdentity: document.documentId,
     sourceUrl: permaUrl(document.documentId),
     pdfUrl: document.url,
     fullCitation: `${titleParts.title}${titleParts.dateLine ? ` ${titleParts.dateLine.replace(/^Vom/u, 'vom')}` : ''} (${citation})`,
-    ...(parsed.stand ? { changeHistory: parsed.stand } : {}),
+    ...(isVwv && parsed.vwvMetadata?.amendmentNote ? { changeHistory: parsed.vwvMetadata.amendmentNote } : {}),
   };
   return { law, findings };
+}
+
+/** Amtliche Blattbezeichnung zur juris-Kurzform der Fundstelle. */
+const GAZETTE_NAMES: ReadonlyArray<[RegExp, string]> = [
+  [/^GVOBl\.$/u, 'GVOBl. Schl.-H.'],
+  [/^Amtsbl\.?(?:\s+SH|\s+Schl\.-H\.)?$/u, 'Amtsbl. Schl.-H.'],
+  [/^SchlHA$/u, 'SchlHA'],
+  [/^GS\.$/u, 'GS.'],
+];
+
+/** Seitenteil „808, ber. 996“ → „S. 808, ber. S. 996“; „Nr. 44“ bleibt. */
+function pagesPart(value: string): string | undefined {
+  const pieces = value.split(/,\s*/u).map((piece) => piece.trim()).filter(Boolean);
+  const out: string[] = [];
+  for (const piece of pieces) {
+    if (/^\d{4}$/u.test(piece) && out.length > 0 && Number(piece) >= 1900) return undefined;
+    if (/^\d+[a-z]?$/u.test(piece)) out.push(out.length === 0 ? `S. ${piece}` : piece);
+    else if (/^ber\.\s*(?:S\.\s*)?\d+$/u.test(piece)) out.push(`ber. S. ${piece.replace(/^ber\.\s*(?:S\.\s*)?/u, '')}`);
+    else if (/^ber\.\s*\d{4}\s+S\.\s*\d+$/u.test(piece)) out.push(piece);
+    else if (/^Nr\.\s*\d+(?:\s*,?\s*S\.\s*\d+)?$/u.test(piece)) out.push(piece);
+    else return undefined;
+  }
+  return out.join(', ');
+}
+
+/**
+ * Amtliche Fundstelle in amtlicher Schreibweise aus der juris-Kurzform des Kopfes: „GVOBl. 1999, 26“ →
+ * „GVOBl. Schl.-H. 1999 S. 26“, „Amtsbl SH 2003, 68“ → „Amtsbl. Schl.-H. 2003 S. 68“, „GVOBl. 1999, 300; 2008, 135“ →
+ * „GVOBl. Schl.-H. 1999 S. 300; 2008 S. 135“. Nicht sicher lesbare Formen ergeben `undefined` (die Kurzform bleibt).
+ */
+export function officialCitation(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  const value = raw.replace(/\s+/gu, ' ').trim();
+  const match = /^(.+?)\s(\d{4}),\s*(.+)$/u.exec(value);
+  if (!match) return undefined;
+  const gazette = GAZETTE_NAMES.find(([pattern]) => pattern.test(match[1]!.trim()))?.[1] ?? (/^NBl\./u.test(match[1]!) ? match[1]!.trim() : undefined);
+  if (!gazette) return undefined;
+  const segments = [`${match[2]}, ${match[3]}`, ...[]].join('').split(/;\s*/u);
+  const rendered: string[] = [];
+  for (const [index, segment] of segments.entries()) {
+    const part = /^(?:(\d{4}),\s*)?(.+)$/u.exec(segment.trim());
+    if (!part) return undefined;
+    const year = part[1] ?? (index === 0 ? match[2] : undefined);
+    const pages = pagesPart(part[2]!.replace(/^ber\.\s*(\d{4}),\s*/u, 'ber. $1 S. '));
+    if (!pages) return undefined;
+    rendered.push(`${year ? `${year} ` : ''}${pages}`);
+  }
+  return `${gazette} ${rendered.join('; ')}`;
+}
+
+/** Jahrgänge des Verkündungsportals mit belegter Adresse und Prüfsumme (Ereignisregister, dort erhoben). */
+export interface GazetteVolume {
+  gazette: 'GVOBl. Schl.-H.' | 'Amtsbl. Schl.-H.';
+  year: string;
+  url: string;
+  sha256: string;
+}
+
+/**
+ * Verweis auf den amtlichen Jahrgangsband, wenn die Fundstelle in einem Jahrgang mit belegter Adresse und Prüfsumme
+ * liegt (Ereignisregister). Die Seite stammt aus der Fundstelle; der Band wird nicht seitenweise geprüft.
+ */
+export function gazetteVolumeReference(official: string, volumes: readonly GazetteVolume[]): SourceReference | undefined {
+  const match = /^(GVOBl\. Schl\.-H\.|Amtsbl\. Schl\.-H\.) (\d{4}) (?:S\. (\d+)|Nr\. (\d+))/u.exec(official);
+  if (!match || official.includes(';')) return undefined;
+  const volume = volumes.find((candidate) => candidate.gazette === match[1] && candidate.year === match[2]);
+  if (!volume) return undefined;
+  return {
+    kind: 'official-gazette',
+    system: 'verkuendungsportal-sh',
+    label: `Verkündung der Stammfassung: ${official}`,
+    availability: 'external',
+    url: volume.url,
+    sha256: volume.sha256,
+    mediaType: 'application/pdf',
+    sourceRole: 'official-snapshot',
+    ...(match[3] ? { pageRange: `S. ${match[3]}` } : {}),
+    note: `Amtlicher Jahrgangsband ${match[1]} ${match[2]} des Verkündungsportals Schleswig-Holstein; Seite laut Fundstelle, Band nicht seitenweise geprüft.`,
+  };
+}
+
+/** Jahrgangsbände aus den Quellen des Ereignisregisters (`gvobl-<jahr>`, `ab-<jahr>`). */
+export function gazetteVolumesFromLedger(sources: ReadonlyArray<{ id: string; url: string; sha256: string }>): GazetteVolume[] {
+  const volumes: GazetteVolume[] = [];
+  for (const source of sources) {
+    const match = /^(gvobl|ab)-(\d{4})$/u.exec(source.id);
+    if (match) volumes.push({ gazette: match[1] === 'gvobl' ? 'GVOBl. Schl.-H.' : 'Amtsbl. Schl.-H.', year: match[2]!, url: source.url, sha256: source.sha256 });
+  }
+  return volumes;
 }

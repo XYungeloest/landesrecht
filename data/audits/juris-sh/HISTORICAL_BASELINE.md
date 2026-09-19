@@ -8,12 +8,12 @@ Je Dokument aus der öffentlichen PDF-Ausgabe (Kopf „Gültig ab/bis“, Ausgab
 
 | Bereich | unchanged-since-baseline | changed-after-baseline | repealed-after-baseline | enacted-after-baseline | repealed-before-baseline | undetermined |
 | --- | --- | --- | --- | --- | --- | --- |
-| landesrecht | 1273 | 247 | 88 | 153 | 962 | 85 |
-| vwv | 1767 | 12 | 0 | 608 | 0 | 2 |
+| landesrecht | 1283 | 250 | 88 | 153 | 962 | 72 |
+| vwv | 1766 | 12 | 0 | 608 | 0 | 3 |
 
-`undetermined` (→ Review): sonstige 85 · nicht im Cache 2
+`undetermined` (→ Review): sonstige 72 · nicht im Cache 2 · Ausgabe ohne Normtext 1
 
-Historische Fassungen: Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: 245; zusammengesetzt, aber aus anderen Gründen im Review: 128. Der heutige Text ersetzt nie die Stichtagsfassung.
+Historische Fassungen: Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: 275; zusammengesetzt, aber aus anderen Gründen im Review: 88. Der heutige Text ersetzt nie die Stichtagsfassung.
 
 Rangfolge für jede Stichtagsfassung (unverändert): 1. öffentlich erreichbare historische juris-Fassung (Einzelfassungen „genau dieses Dokument“ mit Gültigkeitszeitraum) · 2. amtliche vollständige Veröffentlichung · 3. sichere Rekonstruktion · 4. Review. Der heutige Text ersetzt nie die Stichtagsfassung.
 
@@ -23,7 +23,7 @@ Ereignisse gesamt 5857, davon nach dem Stichtag 528. Zuordnung Ereignis → DOKN
 
 ## 3 baseline-only-Kandidaten
 
-Register (Systematische Übersicht) Stand 2024-12-13. Kandidaten **54**: Dubletten 0 · Ende vor dem Registerstand (durch das Register belegt) 21 · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) 33 · einem juris-Dokument zugeordnet 49 · Stichtagsfassung übernahmefähig 28.
+Register (Systematische Übersicht) Stand 2024-12-13. Kandidaten **54**: Dubletten 0 · Ende vor dem Registerstand (durch das Register belegt) 21 · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) 33 · einem juris-Dokument zugeordnet 49 · Stichtagsfassung übernahmefähig 33.
 
 Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen geführt; ihre Stichtagsfassung entsteht aus den Einzelfassungen (sonst Review). Nicht zugeordnete stehen in der Rekonstruktionsqueue.
 
@@ -34,15 +34,15 @@ Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen ge
 | 2023-12-31 | expire | 2020-3-37 | Landesverordnung über die Kassenführung der Gemeinden mit einer Haushaltswirtschaft nach den Grundsä | GVOBl. S. 623 | confirmed-by-register | – | – |
 | 2023-12-31 | expire | 2020-3-41 | Landesverordnung über die Aufstellung und Ausführung eines kameralen Haushaltsplanes der Gemeinden ( | GVOBl. S. 623 | confirmed-by-register | jlr-NNLSH00002DE1 | import-ready |
 | 2023-12-31 | expire | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettungsdienstgesetzes (SHRDG-DVO) | GVOBl. S. 830 | confirmed-by-register | jlr-NNLSH00003088 | review |
-| 2023-12-31 | expire | 2131-2-7 | Landesverordnung über die Entschädigung der Wehrführungen der freiwilligen Feuerwehren und ihrer Ste | GVOBl. S. 832 | confirmed-by-register | jlr-NNLSH00002BCE | review |
+| 2023-12-31 | expire | 2131-2-7 | Landesverordnung über die Entschädigung der Wehrführungen der freiwilligen Feuerwehren und ihrer Ste | GVOBl. S. 832 | confirmed-by-register | jlr-NNLSH00002BCE | import-ready |
 | 2023-12-31 | expire | B 865-1-1 | Landesverordnung über Inhalte des Rahmenvertrags nach § 131 SGB IX zur Erbringung von Leistungen der | GVOBl. S. 1518 | confirmed-by-register | jlr-NNLSH00003283 | review |
 | 2024-01-31 | expire | 2030-16-34 | Landesverordnung über die Laufbahn der Laufbahngruppe 2 in der Fachrichtung Bildung (LVO-Bildung) | GVOBl. S. 32 | confirmed-by-register | jlr-NNLSH00002D66 | review |
 | 2024-01-31 | expire | 223-9-244 | Landesverordnung über die Arbeitszeit von Studienleiterinnen und Studienleitern des Instituts für Qu | GVOBl. S. 26 | confirmed-by-register | – | – |
-| 2024-01-31 | expire | 223-9-246 | Landesverordnung über die Arbeitszeit von Studienleitungen des Schleswig- Holsteinischen Instituts f | GVOBl. S. 26 | confirmed-by-register | jlr-NNLSH00002D63 | review |
+| 2024-01-31 | expire | 223-9-246 | Landesverordnung über die Arbeitszeit von Studienleitungen des Schleswig- Holsteinischen Instituts f | GVOBl. S. 26 | confirmed-by-register | jlr-NNLSH00002D63 | import-ready |
 | 2024-02-26 | expire | 301-11-4 | Landesverordnung über die Ausbildung der Juristinnen und Juristen (Juristenausbildungsverordnung – J | GVOBl. S. 422 | confirmed-by-register | jlr-NNLSH00002F66 | import-ready |
 | 2024-04-04 | expire | 2030-16-28 | Landesverordnung über die Laufbahn, Ausbildung und Prüfung der Laufbahngrupupe 2, zweites Einstiegsa | GVOBl. S. 193 | confirmed-by-register | jlr-NNLSH00002D5C | reconstruction |
 | 2024-05-02 | expire | 100-9 | Geschäftsordnung des Schleswig-Holsteinischen Landesverfassungsgerichts (GO - LVerfG) | GVOBl. S. 342 | confirmed-by-register | jlr-NNLSH00002D2F | reconstruction |
-| 2024-06-01 | expire | 2122-10-1 | Landesverordnung über die Finanzierung der Pflegeberufeausbildung (Schleswig-Holsteinische Pflegeber | GVOBl. S. 418 | confirmed-by-register | jlr-NNLSH00003149 | review |
+| 2024-06-01 | expire | 2122-10-1 | Landesverordnung über die Finanzierung der Pflegeberufeausbildung (Schleswig-Holsteinische Pflegeber | GVOBl. S. 418 | confirmed-by-register | jlr-NNLSH00003149 | import-ready |
 | 2024-06-06 | expire | 221-24-18 | Landesverordnung über die Übertragung von Bauaufgaben auf das Universitätsklinikum Schleswig-Holstei | GVOBl. S. 410 | confirmed-by-register | jlr-NNLSH00002D16 | reconstruction |
 | 2024-06-06 | expire | 753-2-133 | Landesverordnung über die Selbstüberwachung von Abwasseranlagen und Abwassereinleitungen (Selbstüber | GVOBl. S. 414 | confirmed-by-register | jlr-NNLSH00002D19 | reconstruction |
 | 2024-06-30 | expire | 707-4-22 | Landesverordnung über Verwaltungsgebühren für Amtshandlungen der Investitionsbank Schleswig-Holstein | GVOBl. S. 287 | confirmed-by-register | jlr-NNLSH0000327F | import-ready |
@@ -61,11 +61,11 @@ Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen ge
 | 2024-12-31 | expire | 90-1-13 | Landesverordnung über die Kostentragung bei der Verwaltung von Kreisstraßen durch das Land | GVOBl. S. 140 | announced-only | jlr-NNLSH00003023 | import-ready |
 | 2025-01-31 | expire | 2013-2-69 | Landesverordnung über Gebühren des Landesamtes für Vermessung und Geoinformation Schleswig-Holstein  | GVOBl. S. 817 | announced-only | jlr-NNLSH00002BD4 | review |
 | 2025-01-31 | expire | 2124-3-7 | Landesverordnung über die Vergütung für Leistungen der Hebammen und Entbindungspfleger gegenüber Sel | GVOBl. S. 134 | announced-only | jlr-NNLSH00002BB9 | import-ready |
-| 2025-01-31 | expire | 219-8-9 | Landesverordnung über die Vergütung der Öffentlich bestellten Vermessungsingenieurinnen und Öffentli | GVOBl. S. 829 | announced-only | jlr-NNLSH00002BD1 | review |
+| 2025-01-31 | expire | 219-8-9 | Landesverordnung über die Vergütung der Öffentlich bestellten Vermessungsingenieurinnen und Öffentli | GVOBl. S. 829 | announced-only | jlr-NNLSH00002BD1 | import-ready |
 | 2025-02-28 | expire | 2130-14-24 | Landesverordnung über die Überwachung von Tätigkeiten mit Bauprodukten und bei Bauarten (ÜTVO) | GVOBl. S. 20 | announced-only | jlr-NNLSH0000300D | import-ready |
 | 2025-02-28 | expire | 2130-14-25 | Landesverordnung über das Übereinstimmungszeichen (Übereinstimmungszeichen-Verordnung - ÜZVO) | GVOBl. S. 17 | announced-only | jlr-NNLSH00003046 | import-ready |
 | 2025-05-07 | expire | 630-2-1 | Landesverordnung über das Verfahren zur Bestimmung der Konjunkturkomponente nach § 5 des Gesetzes zu | GVOBl. S. 210 | announced-only | jlr-NNLSH00003047 | import-ready |
-| 2025-05-30 | expire | 2011-0-21 | Landesverordnung zur Abwehr von Gefahren für die öffentliche Sicherheit durch Kampfmittel (Kampfmitt | GVOBl. S. 607 | announced-only | jlr-NNLSH00002B66 | review |
+| 2025-05-30 | expire | 2011-0-21 | Landesverordnung zur Abwehr von Gefahren für die öffentliche Sicherheit durch Kampfmittel (Kampfmitt | GVOBl. S. 607 | announced-only | jlr-NNLSH00002B66 | import-ready |
 | 2025-06-25 | expire | 7220-4-3 | Landesverordnung zur Feststellung der repräsentativen Tarifverträge im Bereich des öffentlichen Pers | GVOBl. S. 305 | announced-only | jlr-NNLSH00002B95 | review |
 | 2025-06-29 | expire | 224-11-1 | Landesverordnung über den Denkmalrat (Denkmalratsverordnung) | GVOBl. S. 299 | announced-only | jlr-NNLSH00002B51 | import-ready |
 | 2025-06-29 | expire | 224-11-2 | Landesverordnung über die Vertrauensleute für Kulturdenkmale | GVOBl. S. 300 | announced-only | jlr-NNLSH00002B4A | import-ready |

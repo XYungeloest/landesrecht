@@ -21,7 +21,8 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { BASELINE_DATE } from '../common/constants.ts';
 import { compareIntegrity, type IntegrityResult } from '../parse/integrity.ts';
-import { bodyText, buildBody, isoDate, joinLines, normalizeLabel, parseJurisPdf, type ParsedJurisPdf, type ParseFinding } from '../parse/juris-pdf.ts';
+import { bodyText, buildBody, isoDate, joinLines, normalizeLabel, parseJurisPdf, removeEditorialNotes, type ParsedJurisPdf, type ParseFinding, type PlacedFigure } from '../parse/juris-pdf.ts';
+import { readFigureImages, withoutBytes } from '../parse/pdf-figures.ts';
 import { layoutFromPdf, type PdfLayout, type PdfLine } from '../parse/pdf-layout.ts';
 
 export interface UnitVersion {
@@ -59,7 +60,8 @@ function unitKey(parsed: ParsedJurisPdf, nn: number): string {
 
 export function readUnit(bytes: Uint8Array, documentId: string, raw: UnitVersion['raw']): UnitVersion {
   const layout = layoutFromPdf(bytes);
-  const parsed = parseJurisPdf(layout);
+  // Abbildungen auch in den Einzelfassungen (sonst fiele eine Abbildung der Stichtagsfassung stillschweigend weg).
+  const parsed = parseJurisPdf(layout, { images: readFigureImages(bytes)?.map(withoutBytes) ?? null });
   const nn = unitNumber(documentId);
   // Ältere Fassungen tragen statt „Gültig ab“ den Beginn des juris-Textnachweises (01.01.2003): Die Fassung galt
   // bereits zu diesem Tag; ihr tatsächlicher Beginn liegt davor und ist für den Stichtag 2023 ohne Belang.
@@ -179,21 +181,30 @@ export interface HistoricalAssembly {
   validFrom?: string;
   validTo?: string;
   units: Array<{ documentId: string; key: string; validFrom?: string; validTo?: string }>;
+  /** Herkunft der übernommenen Abbildungen: Einzelfassung (PDF-Ausgabe), aus der das Bild stammt. */
+  figureSources: Array<{ sha256: string; documentId: string; raw: UnitVersion['raw'] }>;
 }
 
 /** Normkörper aus den Zeilen der gewählten Einzelfassungen (Nummernfolge), mit Integritätsprüfung. */
 export function assembleBaseline(selected: readonly UnitVersion[], isVwv = false): HistoricalAssembly {
   const findings: ParseFinding[] = [];
   const reference = [...selected].sort((left, right) => right.parsed.bodyLines.length - left.parsed.bodyLines.length)[0];
-  if (!reference) return { body: [], sourceText: '', integrity: compareIntegrity('', ''), findings: [{ severity: 'error', code: 'no-units', message: 'Keine am Stichtag geltende Einzelfassung' }], units: [] };
+  if (!reference) return { body: [], sourceText: '', integrity: compareIntegrity('', ''), findings: [{ severity: 'error', code: 'no-units', message: 'Keine am Stichtag geltende Einzelfassung' }], units: [], figureSources: [] };
   const lines: PdfLine[] = [];
+  const figures: PlacedFigure[] = [];
+  const figureSources: HistoricalAssembly['figureSources'] = [];
   for (const unit of selected) {
+    for (const figure of unit.parsed.figures ?? []) {
+      figures.push({ ...figure, beforeLine: lines.length + figure.beforeLine });
+      figureSources.push({ sha256: figure.sha256, documentId: unit.documentId, raw: unit.raw });
+    }
     unit.parsed.bodyLines.forEach((line, index) => lines.push({ ...line, gapBefore: index === 0 ? Number.POSITIVE_INFINITY : line.gapBefore }));
     for (const finding of unit.parsed.findings) findings.push({ ...finding, message: `${unit.key}: ${finding.message}` });
   }
-  const body = buildBody(lines, reference.layout, findings, isVwv);
+  const cleaned = removeEditorialNotes(buildBody(lines, reference.layout, findings, isVwv, figures), findings);
+  const body = cleaned.body;
   const sourceText = lines.filter((line) => !/^Fußnoten$/u.test(line.text.trim())).map((line) => line.text).join('\n');
-  const integrity = compareIntegrity(sourceText, bodyText(body), [], joinLines);
+  const integrity = compareIntegrity(sourceText, bodyText(body), cleaned.relocated, joinLines);
   const froms = selected.map((unit) => unit.validFrom).filter((value): value is string => value !== undefined).sort();
   const tos = selected.map((unit) => unit.validTo).filter((value): value is string => value !== undefined).sort();
   return {
@@ -204,5 +215,6 @@ export function assembleBaseline(selected: readonly UnitVersion[], isVwv = false
     ...(froms.length > 0 ? { validFrom: froms.at(-1)! } : {}),
     ...(tos.length > 0 ? { validTo: tos[0]! } : {}),
     units: selected.map((unit) => ({ documentId: unit.documentId, key: unit.key, ...(unit.validFrom ? { validFrom: unit.validFrom } : {}), ...(unit.validTo ? { validTo: unit.validTo } : {}) })),
+    figureSources,
   };
 }

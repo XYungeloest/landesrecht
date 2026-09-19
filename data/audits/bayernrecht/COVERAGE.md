@@ -27,8 +27,8 @@ nicht weggelassen.
 
 | Bereich | Einträge | imported | imported-with-warnings | dry-run | failed | needs-review | excluded | not-at-baseline |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| landesrecht | 873 | 313 | 277 | 0 | 0 | 268 | 1 | 14 |
-| vwv | 1470 | 434 | 609 | 0 | 0 | 195 | 0 | 232 |
+| landesrecht | 873 | 314 | 279 | 0 | 0 | 265 | 1 | 14 |
+| vwv | 1470 | 434 | 608 | 0 | 0 | 195 | 0 | 233 |
 | baseline-only wiederhergestellt | 61 | 15 | 46 | 0 | 0 | 0 | 0 | 0 |
 
 Die Zeile „baseline-only wiederhergestellt“ zählt heute fehlende Stichtagsnormen, die aus amtlichen Verkündungen
@@ -73,4 +73,4 @@ Gezählt wird, was am abgelegten Paket nachgewiesen ist – nicht, was vorgesehe
 | leere-metadaten | 19 |
 | kein-builddate | 5 |
 
-Fingerabdruck des Inhalts: `5a41bf86b83bd2ef8af0e0a62ed13bea4046f229cbfe0e0ad49b484fab5c945b`.
+Fingerabdruck des Inhalts: `9e31029b98a731bcf9219e2031193d38ce9d950e6a2b554f76522f749ded72b1`.

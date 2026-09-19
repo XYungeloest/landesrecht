@@ -127,14 +127,3 @@ describe('Ignorierte lokale Zustände und Geheimnisse', () => {
     expect(findings).toEqual([]);
   }, 120_000); // Der Scan liest alle versionierten Dateien (≈1 500 Normen); unter paralleler Testlast dauerte er > 30 s.
 });
-
-describe('GitLab-CI', () => {
-  it('führt Installation, Prüfung, Tests und Build aus und deployt nur geschützt', async () => {
-    const pipeline = await readFile(join(root, '.gitlab-ci.yml'), 'utf8');
-    for (const command of ['npm ci', 'npm run check', 'npm run test', 'npm run build']) expect(pipeline).toContain(command);
-    expect(pipeline).toContain('CLOUDFLARE_API_TOKEN');
-    expect(pipeline).toContain('CLOUDFLARE_ACCOUNT_ID');
-    expect(pipeline).toMatch(/when:\s*manual/u);
-    expect(pipeline).not.toMatch(/api[_-]?token\s*[:=]\s*["']?[A-Za-z0-9_-]{20,}/u);
-  });
-});

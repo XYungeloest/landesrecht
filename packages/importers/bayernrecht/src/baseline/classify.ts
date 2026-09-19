@@ -52,7 +52,7 @@ export const RECOVERY_METHODS = [
 export type RecoveryMethod = (typeof RECOVERY_METHODS)[number];
 
 export interface BaselineEvidence {
-  kind: 'issue-date' | 'issue-year' | 'text-in-force' | 'version-date' | 'register-absent' | 'post-baseline-event' | 'change-note' | 'publication-date';
+  kind: 'issue-date' | 'issue-year' | 'text-in-force' | 'version-date' | 'register-absent' | 'post-baseline-event' | 'change-note' | 'publication-date' | 'official-commencement';
   value: string;
   source: string;
 }
@@ -95,10 +95,21 @@ export interface BaselineInput {
    * Verkündung der Norm selbst (ihre eigene Fundstelle), soweit das amtliche Verkündungsverzeichnis sie datiert.
    * Eine erst nach dem Stichtag verkündete Norm galt am Stichtag nicht – auch wenn sie davor ausgefertigt wurde.
    */
-  publication?: { date: string; citation: string };
+  publication?: OwnPublication;
   /** Verwaltungsvorschrift (VwV-DTD): Ihre Veröffentlichung ist nicht notwendig konstitutiv – anders als die Verkündung einer Rechtsnorm. */
   administrative?: boolean;
   baselineDate?: string;
+}
+
+/** Eigene Fundstelle einer Norm laut Verkündungsverzeichnis (Ereignisregister). */
+export interface OwnPublication {
+  date: string;
+  citation: string;
+  url?: string;
+  /** Inkrafttreten laut Inkrafttretensvorschrift der amtlichen Verkündung selbst (nicht laut Portalmetadaten). */
+  officialEffectiveDate?: string;
+  /** Vorschriften, die dieselbe Verkündung außer Kraft setzt (möglicher Vorgänger derselben Normidentität). */
+  repeals?: string[];
 }
 
 const evidence = (kind: BaselineEvidence['kind'], value: string, source: string): BaselineEvidence => ({ kind, value, source });
@@ -124,6 +135,9 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
   }
 
   if (input.publication) facts.push(evidence('publication-date', `${input.publication.date} (${input.publication.citation})`, 'event-ledger:eigene Fundstelle'));
+  if (input.publication?.officialEffectiveDate) {
+    facts.push(evidence('official-commencement', `${input.publication.officialEffectiveDate} (${input.publication.citation}${input.publication.repeals?.length ? `; hebt auf: ${input.publication.repeals.join('; ')}` : ''})`, 'amtliche Verkündung:Inkrafttretensvorschrift'));
+  }
   const base = { documentId: input.documentId, evidence: facts };
 
   // 1 – Ohne Ausfertigungsdatum ist die Existenz am Stichtag nicht belegt. Die Textgeltung allein
@@ -177,9 +191,44 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
         blockers: [],
       };
     }
+    // Die Portalmetadaten (`inkraft`) entscheiden nicht allein: Nennt die amtliche Verkündung selbst ein Inkrafttreten
+    // nach dem Stichtag und setzt sie keine andere Vorschrift außer Kraft (kein Vorgänger derselben Normidentität), gab es
+    // am Stichtag keine Fassung – BayMBl. 2023 Nr. 598: Portal „inkraft 2023-11-15“, Verkündung „mit Wirkung vom
+    // 15. Dezember 2023“.
+    const official = input.publication.officialEffectiveDate;
+    if (official && official > baseline && !input.publication.repeals?.length) {
+      return {
+        ...base,
+        class: 'enacted-after-baseline',
+        status: 'not-at-baseline',
+        method: 'undetermined',
+        reason: 'official-commencement-after-baseline',
+        blockers: [],
+      };
+    }
+    if (official && official > baseline) {
+      return {
+        ...base,
+        class: 'identity-or-validity-uncertain',
+        status: 'undetermined',
+        method: 'undetermined',
+        reason: 'published-after-baseline-validity-open',
+        blockers: [`Veröffentlicht erst am ${input.publication.date} (${input.publication.citation}), in Kraft laut amtlicher Verkündung ab ${official}; sie setzt außer Kraft: ${input.publication.repeals!.join('; ')} – ein Vorgänger derselben Normidentität ist möglich und zu prüfen`],
+      };
+    }
     // Verwaltungsvorschrift mit Textgeltung vor dem Stichtag (rückwirkend oder ab Erlass), aber erst danach
     // veröffentlicht: Ob sie am Stichtag schon wirkte, entscheidet ihre Bekanntgabe an die Behörden – das belegt die
-    // Quelle nicht. Nicht geraten: Review.
+    // Quelle nicht. Nicht geraten: Review. Eine aufgehobene Vorgängerin wird als Beleg genannt.
+    if (official) {
+      return {
+        ...base,
+        class: 'identity-or-validity-uncertain',
+        status: 'undetermined',
+        method: 'undetermined',
+        reason: 'published-after-baseline-validity-open',
+        blockers: [`Veröffentlicht erst am ${input.publication.date} (${input.publication.citation}), laut amtlicher Verkündung rückwirkend in Kraft ab ${official}${input.publication.repeals?.length ? `; sie setzt außer Kraft: ${input.publication.repeals.join('; ')} (Vorgänger derselben Normidentität, am Stichtag noch nicht aufgehoben verkündet)` : ''}; welche Fassung am ${baseline} galt, entscheidet der Mensch`],
+      };
+    }
     return {
       ...base,
       class: 'identity-or-validity-uncertain',

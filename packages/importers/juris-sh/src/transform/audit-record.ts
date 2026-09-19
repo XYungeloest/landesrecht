@@ -67,6 +67,12 @@ function contextOf(value: string, start: number, end: number): string {
   return value.slice(Math.max(0, start - 40), Math.min(value.length, end + 40)).replace(/\s+/gu, ' ').trim();
 }
 
+/**
+ * Übergeleitete historische Bezeichnung: Die preußische „Provinz Schleswig-Holstein“ ist ein Schutzmuster und darf
+ * nie als „Provinz Niedersachsen-Holstein“ erscheinen (Regel wie BayWü).
+ */
+export const HISTORICAL_NAME_TRANSFORMED = /\b(?:Provinz(?:en)?|Provinzial(?:verband|landtag|verwaltung)\p{L}*|Herzogt(?:um|ums|ümer))\s+(?:der\s+|des\s+)?Niedersachsen-Holstein/gu;
+
 /** Bloßes Landeskürzel ohne umgebende Bezeichnung (z. B. das „SH“ in „LVwG SH“). */
 const BARE_ABBREVIATION = /^SH$/u;
 
@@ -112,6 +118,10 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
         code: 'residual-source-state-reference',
         message: `${field.path}: „${match[0]}“ blieb unverändert stehen (Kontext: „${contextOf(field.text, start, end)}“)`,
       });
+    }
+    for (const match of field.text.matchAll(new RegExp(HISTORICAL_NAME_TRANSFORMED.source, HISTORICAL_NAME_TRANSFORMED.flags))) {
+      const start = match.index ?? 0;
+      findings.push({ severity: 'error', code: 'historical-name-transformed', message: `${field.path}: historische Bezeichnung übergeleitet „${match[0]}“ (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)` });
     }
     for (const match of field.text.matchAll(new RegExp(DOUBLED_TARGET_NAME.source, DOUBLED_TARGET_NAME.flags))) {
       const start = match.index ?? 0;

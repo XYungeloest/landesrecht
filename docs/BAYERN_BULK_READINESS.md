@@ -32,8 +32,8 @@ Von 2 413 enumerierten Dokumenten ist **keines** ohne erklärten Endstatus:
 | Endstatus | Zahl |
 | --- | ---: |
 | `imported` – heutiger Text ist der Stichtagstext (einschl. BayVwV96990 mit Quellkorrektur) | 1 570 |
-| `imported` – Stichtagsfassung rückgerechnet (`reverse-amendment`, 52 einstufig, 11 mehrstufig; 15 mit Alttext aus der Stammverkündung) | 63 |
-| `reconstruction-required` | 449 |
+| `imported` – Stichtagsfassung rückgerechnet (`reverse-amendment`, 54 einstufig, 12 mehrstufig; 17 mit Alttext aus der Stammverkündung, 5 davon vorwärts) | 66 |
+| `reconstruction-required` | 446 |
 | `review` – Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
 | `not-at-baseline` (erst nach dem Stichtag erlassen) | 239 |
 | `excluded` – Tarifvertrag | 56 |
@@ -43,7 +43,7 @@ Von 2 413 enumerierten Dokumenten ist **keines** ohne erklärten Endstatus:
 | **gesamt** | **2 413** |
 
 Dazu 61 heute nicht mehr geführte Stichtagsnormen (Bereich `events`), aus amtlichen Verkündungen
-wiederhergestellt (`docs/BAYWUE_BASELINE_ONLY.md`); übernommen insgesamt **1 694** (einschließlich zweier VwV, die nach
+wiederhergestellt (`docs/BAYWUE_BASELINE_ONLY.md`); übernommen insgesamt **1 696** (einschließlich zweier VwV, die nach
 der Neueinstufung „veröffentlicht nach dem Stichtag, Geltung vorher“ bis zur Entscheidung im Bestand bleiben).
 Neu `not-at-baseline` (Run 6): sieben Vorschriften, deren eigene Fundstelle erst nach dem Stichtag verkündet ist,
 darunter BayVV_2230_1_1_1_0_K_14216 und BayVV_2330_B_14207.
@@ -112,15 +112,15 @@ Vollständige Liste mit Belegen: Abschlussbericht des Laufs, Abschnitt D.
 | Vollkorpus-Struktur | 2 342 Kandidaten geprüft, **2 342 ohne Importhindernis** (Quellkorrektur BayVwV96990 auch in der Inventur) |
 | Textintegrität | `mismatch` 198 → 28 → **0**; `review` 4 → **0** (verschmolzene Fußnotenzeichen, Parser 0.2.0) |
 | Überleitung | Idempotenz konstruiert; Provenienzschutz aller Blattnamen; Baden-Württemberg-Kollisionen regressionsgeschützt |
-| Rückrechnung | 63 Rezepte (52 v1, 11 v2 mit Forward-Replay, 2 mit Titelschritt; 15 mit Alttext aus der Stammverkündung und Wortlautvergleich), Rundlauf exakt, Beginn der Stichtagsfassung belegt; Bulk prüft Rezept, Paket, jeden Beleg (auch Stammverkündung und Änderungen vor dem Stichtag, SHA-256 im Cache) und Rundlauf (Körper und Titel) erneut |
+| Rückrechnung | 66 Rezepte (54 v1, 12 v2 mit Forward-Replay, 2 mit Titelschritt; 17 mit Alttext aus der Stammverkündung und Wortlautvergleich), Rundlauf exakt, Beginn der Stichtagsfassung belegt; Bulk prüft Rezept, Paket, jeden Beleg (auch Stammverkündung und Änderungen vor dem Stichtag, SHA-256 im Cache) und Rundlauf (Körper und Titel) erneut |
 | Klassifikation | Verkündung der eigenen Fundstelle nach dem Stichtag ⇒ `not-at-baseline` (Rechtsnorm oder Textgeltung danach) bzw. Review (VwV mit Textgeltung davor); Regressionstest |
-| Bulk | 1 631 übernommen + 61 baseline-only + 2 behaltene VwV in Review = 1 694; Audit ohne Abweichung, Slug-Registry = Manifest |
-| Organe | 447 offene Zuordnungen (Portal 400, baseline-only 47); 579 Befunde belegt historischer Erlassorgane nur Provenienz |
-| Lokale D1 | 1 694 Normen, 32 484 Sucheinheiten, FTS5-Integrität |
-| R2 | 4 646 Objekte unter `baywue/`; 0 Abweichungen; West-Objekte unverändert (Fingerabdruck `37d6a6d9f304fb79…`) |
-| Remote-D1 | Run 7/8 inkrementell (30 + 2 neue Normen), Zielfingerabdruck `1393ec41` am Remote-Stand nachgeprüft; lokal ↔ remote identisch in 11 Prüfungen |
-| Suche | Vollprüfung grün: 1 694 Normen, 0 Fehler (Nummernadresse „Nr. 1.1 FüR“ nach Kandidatenordnung für Adressanfragen, `docs/SEARCH.md`); Golden Set 128 Anfragen, 0 verletzt; West + BayWü 10/10; Remote-Stichprobe 60 Fälle, 0 verletzt, 0 fremde Treffer |
-| Worker | `786d0f86`; West 1 482 und BayWü 1 694 Normen ausgeliefert; Asset-Route, Teilbestand-Hinweis und Slug-Umleitung (301) im Smoke-Test |
+| Bulk | 1 634 übernommen + 61 baseline-only + 1 behaltene VwV in Review = 1 696 (MStrVerbR amtlich belegt zurückgenommen); Audit ohne Abweichung, Slug-Registry = Manifest |
+| Organe | 447 offene Zuordnungen; 580 Befunde belegt historischer Erlassorgane nur Provenienz |
+| Lokale D1 | 1 696 Normen, 32 503 Sucheinheiten, FTS5-Integrität |
+| R2 | 4 672 Objekte unter `baywue/` (2 davon archiviert zu einer zurückgenommenen Norm, kein Widerspruch); 0 Abweichungen; West-Objekte unverändert (Fingerabdruck `37d6a6d9f304fb79…`) |
+| Remote-D1 | Run 7–9 inkrementell (30 + 2 + 3 neue, 1 entfernte Norm), Zielfingerabdruck `68a8f4b4` am Remote-Stand nachgeprüft; lokal ↔ remote identisch in 11 Prüfungen |
+| Suche | Vollprüfung grün: 1 696 Normen, 0 Fehler (Nummernadresse „Nr. 1.1 FüR“ nach Kandidatenordnung für Adressanfragen, `docs/SEARCH.md`); Golden Set 128 Anfragen, 0 verletzt; West + BayWü 10/10; Remote-Stichprobe 60 Fälle, 0 verletzt, 0 fremde Treffer |
+| Worker | `0f603027`; West 1 482 und BayWü 1 696 Normen ausgeliefert; Asset-Route, Teilbestand-Hinweis und Slug-Umleitung (301) im Smoke-Test |
 | West | Fingerabdruck identisch, 1 482 Normen, Readiness READY mit Human Approval, Remote-D1 identisch |
 
 ## 4 Nächste Schritte

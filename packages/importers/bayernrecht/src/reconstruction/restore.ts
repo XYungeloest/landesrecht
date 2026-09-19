@@ -85,7 +85,12 @@ export interface PublicationBase {
 }
 
 /** Was ein nicht umkehrbarer Befehl über seinen Ort sagt. */
-export type RestoreRequest =
+export type RestoreRequest = RestoreRequestCore & {
+  /** Lauf 9: dieselbe Anfrage in der bisherigen Zählung (Umnummerierung im selben Befehl) – für die Suche in der Verkündung. */
+  source?: RestoreRequest;
+};
+
+type RestoreRequestCore =
   | { kind: 'delete-words'; words: string[]; locations: LocationPath[]; each: boolean }
   | { kind: 'repeal-sentences'; location: string; path: LocationPath; sentences: number[] }
   | { kind: 'recast-sentences'; location: string; path: LocationPath; sentences: number[]; text: string }
@@ -109,7 +114,7 @@ const RECAST_PATTERNS: readonly RegExp[] = [
   // „Teil 1 Nr. 17.1 wird durch folgende Nr. 17.1 ersetzt:“, „In Abs. 2 wird Satz 3 durch die folgenden Sätze 3 bis 6 ersetzt:“
   /^(.+?)\s+durch\s+(?:(?:die|den|das)\s+)?folgenden?\s+[^„]*?\s+ersetzt\s*[:.]?$/u,
 ];
-const REPEAL_PATTERNS: readonly RegExp[] = [/^(.+?)\s+(?:aufgehoben|gestrichen)\s*\.?$/u];
+const REPEAL_PATTERNS: readonly RegExp[] = [/^(.+?)\s+(?:aufgehoben|gestrichen|gelöscht)\s*\.?$/u];
 
 /** „Nrn. 1 bis 5“ → „Nrn. 1, 2, 3, 4 und 5“ (Zahlen, Dezimalstufen, Buchstaben) – sonst unverändert. */
 function expandRanges(location: string): string {
@@ -281,7 +286,7 @@ function sentenceSpan(text: string, sentences: readonly number[]): { start: numb
 }
 
 /** Vorwärts: Wie wird aus dem Feld der Verkündung das heutige? `undefined`, wenn der Befehl dort nicht passt. */
-function forwardSentences(before: string, request: Extract<RestoreRequest, { kind: 'repeal-sentences' | 'recast-sentences' }>): string | undefined {
+export function forwardSentences(before: string, request: Extract<RestoreRequest, { kind: 'repeal-sentences' | 'recast-sentences' }>): string | undefined {
   if (request.kind === 'repeal-sentences') {
     // Je Satz von hinten; nicht zusammenhängende Sätze einzeln.
     let text = before;
@@ -451,8 +456,9 @@ function restoreTitle(working: readonly NormBodyBlock[], base: PublicationBase, 
   if (!portal.ok || portal.path.length === 0) throw new RestoreError('location-unresolved', `${where}: im heutigen Text nicht eindeutig`);
   const current = blockAt(working, portal.path)!;
   if (typeof current.title !== 'string' || typography(current.title) !== typography(request.groups[0]!)) throw new RestoreError('restore-new-mismatch', `${where}: die heutige Überschrift ist nicht wörtlich die zitierte`);
-  const publication = locateBlock(base.body, request.path);
-  if (!publication.ok || publication.path.length === 0) throw notFound(base, request.path, where);
+  const sourcePath = request.source?.kind === 'recast-title' ? request.source.path : request.path;
+  const publication = locateBlock(base.body, sourcePath);
+  if (!publication.ok || publication.path.length === 0) throw notFound(base, sourcePath, where);
   const old = blockAt(base.body, publication.path)!;
   const before = typeof old.title === 'string' ? old.title : typeof old.text === 'string' && textClass(old.text) === '|überschriftartig' ? old.text : undefined;
   if (before === undefined) throw new RestoreError('restore-not-found', `${where}: das Glied der Verkündung trägt keine Überschrift`);
@@ -635,7 +641,7 @@ function portalShape(old: NormBodyBlock, pairs: ReadonlyArray<{ publication: Nor
   return undefined;
 }
 
-const PLACEHOLDER = /^\(?(?:aufgehoben|weggefallen|gestrichen|entfallen|außer\s+Kraft)\)?\.?$/u;
+export const PLACEHOLDER = /^\(?(?:aufgehoben|weggefallen|gestrichen|entfallen|außer\s+Kraft)\)?\.?$/u;
 
 /** Kinder unter `parent` (Indexpfad; `[]` = oberste Ebene). */
 const childrenAt = (body: readonly NormBodyBlock[], parent: readonly number[]): readonly NormBodyBlock[] => (parent.length === 0 ? body : (blockAt(body, parent)?.children ?? []));
@@ -705,16 +711,20 @@ function parentOf(body: readonly NormBodyBlock[], context: LocationPath, first: 
 
 function restoreBlocks(working: readonly NormBodyBlock[], base: PublicationBase, request: Extract<RestoreRequest, { kind: 'recast-blocks' | 'repeal-blocks' }>, label: string): RestoredStep {
   const where = `${label} ${request.location}`;
-  // Verkündung: die bisherigen Glieder, aufeinanderfolgend unter einem Eltern-Glied.
-  const publicationParent = parentOf(base.body, request.context, request.targets[0]!) ?? parentByTitle(working, base.body, request.context, request.targets[0]!);
-  if (!publicationParent) throw notFound(base, [...request.context, request.targets[0]!], where);
-  const publicationIndices = request.targets.map((target) => childIndex(base.body, publicationParent, target));
+  // Verkündung: die bisherigen Glieder, aufeinanderfolgend unter einem Eltern-Glied – in der bisherigen Zählung, wenn
+  // derselbe Befehl umnummeriert (`source`).
+  const source = request.source && (request.source.kind === 'recast-blocks' || request.source.kind === 'repeal-blocks') && request.source.targets.length === request.targets.length ? request.source : request;
+  const publicationParent = parentOf(base.body, source.context, source.targets[0]!) ?? parentByTitle(working, base.body, request.context, source.targets[0]!);
+  if (!publicationParent) throw notFound(base, [...source.context, source.targets[0]!], where);
+  const publicationIndices = source.targets.map((target) => childIndex(base.body, publicationParent, target));
   if (publicationIndices.some((index) => index === undefined) || publicationIndices.some((index, position) => position > 0 && index !== publicationIndices[position - 1]! + 1)) throw new RestoreError('restore-not-found', `${where}: die Glieder stehen in der Verkündung nicht aufeinanderfolgend`);
   const publicationSiblings = childrenAt(base.body, publicationParent);
   const old = publicationIndices.map((index) => publicationSiblings[index!]!);
 
   // Portal: Eltern-Glied und Stelle.
-  const portalParent = parentOf(working, request.context, request.targets[0]!) ?? mirrorParent(base.body, publicationParent, working) ?? (() => {
+  // Über die Bezeichnungen der Vorfahren nur, wenn Verkündung und heutiger Text dieselbe Zählung tragen (sonst führte die
+  // bisherige Bezeichnung im heutigen Text zu einem anderen Glied).
+  const portalParent = parentOf(working, request.context, request.targets[0]!) ?? (source === request ? mirrorParent(base.body, publicationParent, working) : undefined) ?? (() => {
     const located = locateBlock(working, request.context);
     return located.ok ? located.path : undefined;
   })();
@@ -850,6 +860,10 @@ function wordingOf(blocks: readonly NormBodyBlock[]): string {
   const parts: string[] = [];
   const visit = (entries: readonly NormBodyBlock[]): void => {
     for (const block of entries) {
+      // Lauf 9: nicht Wortlaut der Vorschrift – die Inhaltsübersicht und Platzhalter aufgehobener Glieder („3. (aufgehoben)“,
+      // „§ 1a (außer Kraft)“); die Verkündungen führen das aufgehobene Glied nicht, die Stammverkündung keine Übersicht.
+      if (/^Inhalts(?:übersicht|verzeichnis)$/u.test(String(block.title ?? '').trim())) continue;
+      if ((block.children ?? []).length === 0 && [block.text, block.title].some((value) => typeof value === 'string' && PLACEHOLDER.test(value.trim())) && [block.text, block.title].every((value) => typeof value !== 'string' || PLACEHOLDER.test(value.trim()))) continue;
       for (const value of [block.label, block.title, block.text]) if (typeof value === 'string') parts.push(value);
       if (block.children) visit(block.children);
     }
@@ -1348,10 +1362,12 @@ function siblingPairs(publicationSiblings: readonly NormBodyBlock[], portalSibli
  * Probe im Wortlaut das Ergebnis trägt (Stammfassung am Stichtag, Rücknahme nach dem Stichtag) – nie bei der Rücknahme
  * der Änderungen vor dem Stichtag selbst.
  */
-export function restoreUnit(working: readonly NormBodyBlock[], base: PublicationBase, unit: { steps: LocationPath; blockPath: number[] }, label: string): RestoredStep {
+export function restoreUnit(working: readonly NormBodyBlock[], base: PublicationBase, unit: { steps: LocationPath; blockPath: number[]; sourceSteps?: LocationPath }, label: string): RestoredStep {
   const where = `${label} ${formatPath(unit.steps)}`;
-  const located = locateBlock(base.body, unit.steps);
-  if (!located.ok || located.path.length === 0) throw notFound(base, unit.steps, where);
+  // In der Verkündung in der bisherigen Zählung, wenn derselbe Befehl umnummeriert.
+  const lookup = unit.sourceSteps ?? unit.steps;
+  const located = locateBlock(base.body, lookup);
+  if (!located.ok || located.path.length === 0) throw notFound(base, lookup, where);
   const old = blockAt(base.body, located.path)!;
   const current = blockAt(working, unit.blockPath)!;
   const parent = unit.blockPath.slice(0, -1);

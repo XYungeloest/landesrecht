@@ -43,7 +43,16 @@ describe('Sucheinheiten', () => {
     expect(metadata).toContain('BayRS 2034.4-F');
     // Nicht gelistete Systeme bleiben draußen: Sonst änderte jede neue Kennung still den Suchbestand ihres Landes.
     expect(metadata).not.toContain('223');
-    expect(SEARCHABLE_IDENTIFIER_SYSTEMS).toEqual({ bayrs: 'BayRS' });
+    expect(SEARCHABLE_IDENTIFIER_SYSTEMS).toEqual({ bayrs: 'BayRS', 'gliederungsnummer-sh': 'Gl.Nr.' });
+  });
+
+  it('macht die NSH-Gliederungsnummer als „Gl.Nr. …“ suchbar; West-Kennungen bleiben draußen', () => {
+    const west = norms.find((record) => record.meta.jurisdiction === 'west')!;
+    const version = west.versions.at(-1)!;
+    const nsh = { ...west, meta: { ...west.meta, externalIdentifiers: [{ system: 'gliederungsnummer-sh', value: '2134.12' }, { system: 'recht-nrw', value: '2020-1' }] } };
+    const metadata = buildSearchDocument(nsh, version, FIXTURE_REFERENCE_DATE).units.at(-1)!.body;
+    expect(metadata).toContain('Gl.Nr. 2134.12');
+    expect(metadata).not.toContain('2020-1');
   });
 });
 

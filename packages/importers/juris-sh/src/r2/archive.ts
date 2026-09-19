@@ -41,6 +41,27 @@ export function r2ObjectKey(input: { sourceArea: SourceArea; sourceIdentity: str
   return `${KEY_PREFIX}${input.sourceArea}/${identityFileName(input.sourceIdentity)}/${input.role}-${input.sha256}.${extensionFor(input.contentType)}`;
 }
 
+/**
+ * Abbildungen (`figure`-Blöcke) liegen normübergreifend inhaltsadressiert unter `nsh/juris-sh/2023-12-01/assets/` –
+ * genau dem Präfix, aus dem der Worker `/assets/nsh/<sha256>.<endung>` ausliefert
+ * (`@landesrecht/runtime/assets.ts`).
+ */
+export const ASSET_KEY_PREFIX = `${KEY_PREFIX}assets/`;
+const FIGURE_EXTENSIONS: Readonly<Record<string, string>> = { 'image/png': 'png', 'image/jpeg': 'jpg' };
+
+export function assetObjectKey(sha256: string, mediaType: string): string {
+  if (!/^[0-9a-f]{64}$/u.test(sha256)) throw new ArchiveError('guard', `Asset-Schlüssel ohne gültigen SHA-256`);
+  const extension = FIGURE_EXTENSIONS[mediaType];
+  if (!extension) throw new ArchiveError('guard', `Asset-Schlüssel: Medienart ${JSON.stringify(mediaType)} ist nicht zugelassen`);
+  return `${ASSET_KEY_PREFIX}${sha256}.${extension}`;
+}
+
+/** Objektschlüssel einer Rohquelle: Abbildungen unter `assets/`, alles andere je Norm. */
+export function rawObjectKey(entry: Pick<ManifestEntry, 'sourceArea' | 'sourceIdentity'>, raw: Pick<ManifestRawDocument, 'role' | 'sha256' | 'contentType'>): string {
+  if (raw.role === 'figure') return assetObjectKey(raw.sha256, raw.contentType);
+  return r2ObjectKey({ sourceArea: entry.sourceArea, sourceIdentity: entry.sourceIdentity, role: raw.role, sha256: raw.sha256, contentType: raw.contentType });
+}
+
 export function envelopeKey(objectKey: string): string {
   return `${objectKey}${ENVELOPE_SUFFIX}`;
 }

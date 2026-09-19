@@ -14,6 +14,8 @@ import { readInstitutionRegistry } from '../transform/institution-registry.ts';
 import { processDocument, type DocumentResult } from './document.ts';
 import { createJurisShFetcher } from '../common/fetcher.ts';
 import { loadUnits, sitemapUnits } from './units.ts';
+import { readKnownStateAbbreviations } from './abbreviations.ts';
+import { gazetteVolumesFromLedger } from '../parse/source-law.ts';
 
 /** Stichprobe: Einzelfassungen nur für Rahmendokumente bis zu dieser Zahl von Einheiten (große folgen im Vollkorpus). */
 export const SAMPLE_UNIT_LIMIT = 100;
@@ -107,17 +109,20 @@ export async function runSample(options: SampleOptions): Promise<{ report: Sampl
   };
   const results: DocumentResult[] = [];
   const norms: SampleReport['norms'] = [];
+  const knownStateAbbreviations = await readKnownStateAbbreviations(options.root);
+  const ledger = await readJsonFile<{ sources: Array<{ id: string; url: string; sha256: string }> }>(join(options.root, 'data/imports/juris-sh/events/ledger.json'));
+  const gazetteVolumes = gazetteVolumesFromLedger(ledger?.sources ?? []);
   const unitsByFrame = await sitemapUnits(createJurisShFetcher({ root: options.root, offline: options.offline, ...(options.cacheDir ? { cacheDir: options.cacheDir } : {}) }));
   for (const norm of SAMPLE_NORMS) {
     let result: DocumentResult;
     try {
       const pdf = await client.pdf(norm.id, 'gesamtausgabe');
       const document = { documentId: norm.id, area: norm.area, url: pdfExportUrl(norm.id, 'gesamtausgabe'), sha256: pdf.sha256, retrievedAt: pdf.retrievedAt, byteLength: pdf.bytes.byteLength } as const;
-      result = processDocument(pdf.bytes, document, { institutions, context });
+      result = processDocument(pdf.bytes, document, { institutions, context, knownStateAbbreviations, gazetteVolumes });
       const unitIds = unitsByFrame.get(norm.id) ?? [];
       if (result.outcome === 'reconstruction' && unitIds.length > 0 && unitIds.length <= SAMPLE_UNIT_LIMIT) {
         reserved.delete(result.slug ?? '');
-        result = processDocument(pdf.bytes, document, { institutions, context, units: await loadUnits(client, unitIds) });
+        result = processDocument(pdf.bytes, document, { institutions, context, units: await loadUnits(client, unitIds), knownStateAbbreviations, gazetteVolumes });
       }
     } catch (error) {
       if (!(error instanceof ExportError)) throw error;

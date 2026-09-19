@@ -1,28 +1,22 @@
 # Deployment
 
-Stand: Der Worker `landesrecht` läuft unter workers.dev, zuletzt deployt 2026-09-19 als Version
-`786d0f86-1c3f-453a-92b1-faa74bee788c` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
-`landesrecht-baywue` mit 1 694 Normen, inkrementell eingespielt und am Ziel nachgeprüft; R2 `landesrecht-quellen`
+Stand: Der Worker `landesrecht` läuft unter workers.dev und der eigenen Domain `landesrecht-online.de` (Custom Domain,
+in `wrangler.jsonc` unter `routes` eingetragen – ein Deploy mit leerer Liste löst sie vom Worker; öffentlich erreichbar,
+sobald die Nameserver der Domain auf Cloudflare zeigen), zuletzt deployt 2026-09-19 als Version
+`8a7a8d5c-fd44-47d4-ab4a-6432a4a48801` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
+`landesrecht-baywue` mit 1 696 Normen, inkrementell eingespielt und am Ziel nachgeprüft; R2 `landesrecht-quellen`
 privat mit den Rohquellen beider Länder). NSH: D1 `landesrecht-nsh` ohne Schema und ohne Bestand; der lokale
 Bestand (1 910 Normen) ist projiziert (`data/runtime/d1-batches/landesrecht-nsh`, 52 Dateien) und wartet auf die
 Entscheidung zum TDM-Vorbehalt (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
 manuelle, einzeln freigegebene Schritte; Wrangler-Anmeldung nur per OAuth (`npx wrangler login`).
 
-## GitLab-CI (`.gitlab-ci.yml`)
+## Keine CI-Pipeline
 
-Stufen: `install` (npm ci) → `check` (`npm run check`, `content:check`, `d1:schema:check`) →
-`test` (`npm run test`, JUnit-Report) → `build` (`npm run build`, Artefakt `apps/web/dist/`) →
-`deploy` (nur Produktionsbranch `main`, nur manuell, nur nach erfolgreichen Prüfungen).
-
-Deploy-Jobs brechen kontrolliert ab, wenn die Zugangsdaten fehlen. Es werden keine
-GitHub-Actions-Workflows verwendet.
-
-### CI/CD-Variablen (Projekt-Settings → CI/CD → Variables, maskiert + geschützt)
-
-| Variable | Zweck |
-| --- | --- |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare-Konto für Wrangler |
-| `CLOUDFLARE_API_TOKEN` | Token mit Rechten für Workers Scripts, D1 und R2 (Schreiben) |
+Die GitLab-CI (`.gitlab-ci.yml`) ist seit 2026-09-19 entfernt: Sie lief seit vielen Commits nicht grün, hat nie
+deployt und verbrauchte nur CI-Minuten. Prüfen und Ausliefern geschieht lokal und einzeln freigegeben:
+`npm run check`, `npm run content:check`, `npm run d1:schema:check`, `npm run test`, `npm run build`,
+`npm run deploy` – Cloudflare nur über die Wrangler-OAuth-Anmeldung (`npx wrangler login`), ohne API-Token.
+Es werden weder GitHub-Actions- noch GitLab-CI-Workflows verwendet.
 
 Optional: `SITE_URL` (öffentliche Origin für Canonical-Links; Standard in `astro.config.mjs`).
 Keine Secrets im Repository (`.env` ist ignoriert, `.env.example` dokumentiert die Namen).

@@ -87,7 +87,7 @@ export function buildR2AuditReport(input: R2AuditReportInput): Record<string, un
       ? { blocked: sync.blocked, blockReasons: sync.blockReasons, verification: sync.verification, concurrency: sync.concurrency, pending: sync.pending, processed: sync.processed, uploaded: sync.uploaded, alreadyPresent: sync.alreadyPresent, envelopesUploaded: sync.envelopesUploaded, envelopesPresent: sync.envelopesPresent, envelopesAdopted: sync.envelopesAdopted, bytesUploaded: sync.bytesUploaded, verifiedByListing: sync.verifiedByListing, readbacks: sync.readbacks, listingCalls: sync.listingCalls, verified: sync.verified, durationSeconds: Math.round(sync.durationMs / 1000) }
       : null,
     remote: remote
-      ? { ok: remote.ok, listedObjects: remote.listedObjects, listedBytes: remote.listedBytes, expectedObjects: remote.expectedObjects, rawObjects: remote.rawObjects, rawBytes: remote.rawBytes, envelopeObjects: remote.envelopeObjects, missing: remote.missing.length, pending: remote.pending.length, sizeMismatch: remote.sizeMismatch.length, md5Mismatch: remote.md5Mismatch.length, unexpected: remote.unexpected.length, notVerified: remote.notVerified.length, sample: { seed: remote.sample.seed, requested: remote.sample.requested, checked: remote.sample.checked, bytes: remote.sample.bytes, failures: remote.sample.failures.length }, envelopeSample: { requested: remote.envelopeSample.requested, checked: remote.envelopeSample.checked, failures: remote.envelopeSample.failures.length, descriptive: remote.envelopeSample.descriptive } }
+      ? { ok: remote.ok, listedObjects: remote.listedObjects, listedBytes: remote.listedBytes, expectedObjects: remote.expectedObjects, rawObjects: remote.rawObjects, rawBytes: remote.rawBytes, envelopeObjects: remote.envelopeObjects, missing: remote.missing.length, pending: remote.pending.length, sizeMismatch: remote.sizeMismatch.length, md5Mismatch: remote.md5Mismatch.length, unexpected: remote.unexpected.length, retainedWithdrawn: remote.retainedWithdrawn.length, notVerified: remote.notVerified.length, sample: { seed: remote.sample.seed, requested: remote.sample.requested, checked: remote.sample.checked, bytes: remote.sample.bytes, failures: remote.sample.failures.length }, envelopeSample: { requested: remote.envelopeSample.requested, checked: remote.envelopeSample.checked, failures: remote.envelopeSample.failures.length, descriptive: remote.envelopeSample.descriptive } }
       : null,
     bucketBefore: input.bucketBefore ?? null,
     bucketAfter: input.bucketAfter ?? null,
@@ -103,7 +103,7 @@ export function buildR2AuditReport(input: R2AuditReportInput): Record<string, un
       stagingOnly: head(staging.stagingOnly),
       nonImportedWithArchive: head(staging.nonImportedWithArchive),
       ...(remote
-        ? { remoteMissing: head(remote.missing), remotePending: head(remote.pending), remoteSizeMismatch: head(remote.sizeMismatch), remoteMd5Mismatch: head(remote.md5Mismatch), remoteUnexpected: head(remote.unexpected), remoteNotVerified: head(remote.notVerified), sampleKeys: remote.sample.keys, sampleFailures: remote.sample.failures, envelopeSampleFailures: remote.envelopeSample.failures }
+        ? { remoteMissing: head(remote.missing), remotePending: head(remote.pending), remoteSizeMismatch: head(remote.sizeMismatch), remoteMd5Mismatch: head(remote.md5Mismatch), remoteUnexpected: head(remote.unexpected), remoteRetainedWithdrawn: head(remote.retainedWithdrawn), remoteNotVerified: head(remote.notVerified), sampleKeys: remote.sample.keys, sampleFailures: remote.sample.failures, envelopeSampleFailures: remote.envelopeSample.failures }
         : {}),
     },
   };
@@ -276,6 +276,7 @@ export function renderR2AuditMarkdown(input: R2AuditReportInput, runs: readonly 
       `| fehlend / noch offen | ${n(remote.missing.length)} / ${n(remote.pending.length)} |`,
       `| Größe abweichend / Etag (MD5) abweichend | ${n(remote.sizeMismatch.length)} / ${n(remote.md5Mismatch.length)} |`,
       `| unerwartet unter dem Präfix | ${n(remote.unexpected.length)} |`,
+      `| archiviert, Norm aus dem Stichtagsbestand zurückgenommen (bleibt, kein Widerspruch) | ${n(remote.retainedWithdrawn.length)} |`,
       `| Manifest nicht verified | ${n(remote.notVerified.length)} |`,
       `| deterministische Byte-Stichprobe (Saat \`${remote.sample.seed}\`, SHA-256 nach Download) | ${n(remote.sample.checked)} von ${n(remote.sample.requested)} geprüft, ${n(remote.sample.failures.length)} Fehler, ${mib(remote.sample.bytes)} |`,
       `| Umschlag-Stichprobe (Kernfelder; bytegleich außer archiviertem Stand mit abweichendem Titel) | ${n(remote.envelopeSample.checked)} geprüft, ${n(remote.envelopeSample.failures.length)} Fehler, ${n(remote.envelopeSample.descriptive)} mit archiviertem Titel |`,

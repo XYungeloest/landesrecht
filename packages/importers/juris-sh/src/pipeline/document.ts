@@ -15,15 +15,16 @@
  *   failed          Parser- oder Schemafehler.
  */
 import type { ImportFinding, TransformContext } from '@landesrecht/importer-common/pipeline.ts';
-import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormBodyBlock, NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { auditRecord } from '../transform/audit-record.ts';
 import type { CompiledInstitutionRegistry } from '../transform/institution-registry.ts';
 import { transformToNsh } from '../transform/transform.ts';
 import { compareIntegrity, type IntegrityResult } from '../parse/integrity.ts';
 import { bodyText, isoDate, joinLines, parseJurisPdf, type ParsedJurisPdf } from '../parse/juris-pdf.ts';
-import { layoutFromPdf, runPdfimagesList } from '../parse/pdf-layout.ts';
-import { classifyEdition, standAmendmentDate, toSourceLaw, SYSTEM, type EditionBaseline, type SourceDocument } from '../parse/source-law.ts';
+import { readFigureImages, withoutBytes } from '../parse/pdf-figures.ts';
+import { layoutFromPdf } from '../parse/pdf-layout.ts';
+import { classifyEdition, standAmendmentDate, toSourceLaw, SYSTEM, type EditionBaseline, type GazetteVolume, type SourceDocument } from '../parse/source-law.ts';
 import { permaUrl } from '../access/policy.ts';
 import { retrievalDate } from '@landesrecht/importer-common/pipeline.ts';
 import type { SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
@@ -36,11 +37,12 @@ import { assembleBaseline, consistencyProblems, selectBaselineUnits, type Histor
  */
 export const STAND_UNDETERMINED = /letzte berücksichtigte Änderung vom \d{4}-\d{2}-\d{2} \(nach dem Stichtag|kein Verzeichnis mit Gültigkeitsdaten|Verzeichniseinträge ohne Gültigkeitsdatum|Ausgabe ohne Normtext/u;
 
-export const DOCUMENT_OUTCOMES = ['import-ready', 'review', 'reconstruction', 'not-at-baseline', 'failed'] as const;
+/** `part-of-main`: Anlage einer VwV als eigenes juris-Dokument, der Stammnorm angehängt (`annexes.ts`) – keine eigene Norm. */
+export const DOCUMENT_OUTCOMES = ['import-ready', 'review', 'reconstruction', 'not-at-baseline', 'failed', 'part-of-main'] as const;
 export type DocumentOutcome = (typeof DOCUMENT_OUTCOMES)[number];
 
 /** Parserbefunde, die eine Übernahme sperren (Review). */
-export const REVIEW_PARSE_CODES: readonly string[] = ['table-layout', 'figure', 'toc-unit-missing', 'body-unit-not-in-toc', 'toc-order', 'vwv-annex-document', 'empty-footnote'];
+export const REVIEW_PARSE_CODES: readonly string[] = ['table-layout', 'figure', 'toc-unit-missing', 'body-unit-not-in-toc', 'toc-order', 'vwv-annex-document', 'empty-footnote', 'incomplete-source-text'];
 export const ACCEPTED_INTEGRITY: readonly IntegrityResult['class'][] = ['exact', 'normalized-equivalent', 'explained-difference'];
 
 /**
@@ -77,8 +79,34 @@ export interface DocumentResult {
   /** VwV-Anlage als eigenes Dokument: Titel des Hauptdokuments („Zum Hauptdokument : …“). */
   mainDocument?: string;
   /** Stichtagsfassung aus historischen Einzelfassungen (nur bei geänderten bzw. nach dem Stichtag aufgehobenen Normen). */
-  historical?: { units: number; selected: number; omitted: number; problems: string[]; validFrom?: string; validTo?: string; integrity: HistoricalAssembly['integrity']['class'] };
+  historical?: { units: number; selected: number; omitted: number; problems: string[]; validFrom?: string; validTo?: string; integrity: HistoricalAssembly['integrity']['class']; selectedUnitIds: string[] };
   raw: Pick<SourceDocument, 'url' | 'sha256' | 'byteLength' | 'retrievedAt'>;
+  /** Abbildungen der übernommenen Fassung (`figure`-Blöcke) mit der PDF-Ausgabe, aus der jedes Bild stammt. */
+  figures?: DocumentFigure[];
+  /** Angehängte Anlagendokumente (VwV-Anlagen als eigene juris-Dokumente), je mit ihrer PDF-Ausgabe. */
+  annexDocuments?: Array<{ documentId: string; raw: Pick<SourceDocument, 'url' | 'sha256' | 'byteLength' | 'retrievedAt'> }>;
+  /** Nur `part-of-main`: Stammnorm, der diese Anlage angehängt ist. */
+  partOf?: string;
+}
+
+export interface DocumentFigure {
+  sha256: string;
+  mediaType: 'image/png' | 'image/jpeg';
+  byteLength: number;
+  /** Lage in der PDF-Ausgabe (`seite-<n>/bild-<k>.<endung>`). */
+  sourcePath: string;
+  /** Dokument (Rahmen oder Einzelfassung), dessen PDF-Ausgabe das Bild trägt. */
+  sourceDocumentId: string;
+  pdf: Pick<SourceDocument, 'url' | 'sha256' | 'byteLength' | 'retrievedAt'>;
+}
+
+/** Alle `figure`-Assets eines Normkörpers, je SHA-256 einmal, in Dokumentreihenfolge. */
+export function figureAssets(blocks: readonly NormBodyBlock[], into: NonNullable<NormBodyBlock['asset']>[] = []): NonNullable<NormBodyBlock['asset']>[] {
+  for (const block of blocks) {
+    if (block.type === 'figure' && block.asset && !into.some((asset) => asset.sha256 === block.asset!.sha256)) into.push(block.asset);
+    if (block.children) figureAssets(block.children, into);
+  }
+  return into;
 }
 
 export const BLOCKER_KINDS = ['parse', 'parse-units', 'integrity', 'baseline', 'historical', 'units-missing', 'transform', 'schema'] as const;
@@ -149,9 +177,30 @@ export interface ProcessOptions {
   context: TransformContext;
   /** Einzelfassungen des Rahmendokuments (für die Stichtagsfassung geänderter Normen). */
   units?: readonly UnitVersion[];
+  /** Amtliche Abkürzungen des Bestands mit abgesetztem Landeskürzel (`pipeline/abbreviations.ts`). */
+  knownStateAbbreviations?: ReadonlySet<string>;
+  /** Amtliche Jahrgangsbände mit belegter Adresse (Ereignisregister) für Verweise auf die Verkündung. */
+  gazetteVolumes?: readonly GazetteVolume[];
 }
 
-function unitReference(unit: UnitVersion): SourceReference {
+function frameHistoricalReference(document: SourceDocument, units: number, validFrom: string | undefined, validTo: string | undefined): SourceReference {
+  return {
+    kind: 'official-portal-snapshot',
+    system: SYSTEM,
+    label: `Bürgerservice Schleswig-Holstein (juris), Stichtagsfassung aus ${units} Einzelfassungen (${document.documentId})`,
+    availability: 'external',
+    url: permaUrl(document.documentId),
+    retrievedAt: retrievalDate(document.retrievedAt),
+    externalId: document.documentId,
+    mediaType: 'application/pdf',
+    sourceRole: 'structure-bearing',
+    ...(validFrom ? { sourceValidFrom: validFrom } : {}),
+    ...(validTo ? { sourceValidTo: validTo } : {}),
+    note: 'Je Einheit die am Stichtag geltende Fassung aus der PDF-Ausgabe „genau dieses Dokument“; Einzelfassungen mit Prüfsummen im Importmanifest.',
+  };
+}
+
+export function unitReference(unit: UnitVersion): SourceReference {
   return {
     kind: 'official-portal-snapshot',
     system: SYSTEM,
@@ -176,15 +225,15 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
   let parsed: ParsedJurisPdf;
   try {
     const layout = layoutFromPdf(bytes);
-    const images = runPdfimagesList(bytes);
-    parsed = parseJurisPdf(layout, images ? { imagesByPage: images } : {});
+    parsed = parseJurisPdf(layout, { images: readFigureImages(bytes)?.map(withoutBytes) ?? null });
   } catch (error) {
     return { ...base, outcome: 'failed', reasons: [`Parser: ${(error as Error).message}`], blockers: [{ kind: 'schema', code: 'parser-error', detail: (error as Error).message.slice(0, 300) }], warnings: [], findings: [] };
   }
   const isVwv = document.area === 'vwv';
-  const integrity = compareIntegrity(parsed.sourceText, bodyText(parsed.body), [], joinLines);
+  // Als Metadaten übernommene Zeilen (VwV: wiederholter Titel, „Gl.Nr.“, „Fundstelle:“) sind erklärt, nicht verloren.
+  const integrity = compareIntegrity(parsed.sourceText, bodyText(parsed.body), parsed.relocated, joinLines);
   const baseline = classifyEdition(parsed, isVwv);
-  const { law, findings } = toSourceLaw(parsed, document);
+  const { law, findings } = toSourceLaw(parsed, document, options.gazetteVolumes ? { gazetteVolumes: options.gazetteVolumes } : {});
   const result: DocumentResult = {
     ...base,
     outcome: 'import-ready',
@@ -208,6 +257,7 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
   const reasons: string[] = [];
   const blockers: DocumentBlocker[] = [];
   let sourceStatus: { validity: 'exact'; text: 'direct'; note?: string } = { validity: 'exact', text: 'direct' };
+  let figureSources: Array<{ sha256: string; documentId: string; raw: DocumentFigure['pdf'] }> = parsed.figures.map((figure) => ({ sha256: figure.sha256, documentId: document.documentId, raw }));
   let provenanceNote: string | undefined;
   // Unbestimmte Einordnung, die die Einzelfassungen entscheiden können (siehe STAND_UNDETERMINED), sofern geladen.
   const standUndetermined = baseline.class === 'undetermined' && STAND_UNDETERMINED.test(baseline.basis);
@@ -218,16 +268,19 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
     const selection = { ...rawSelection, problems: [...rawSelection.problems, ...consistencyProblems(rawSelection.selected, { title: parsed.title, ...(parsed.header['Gliederungs-Nr'] ? { gliederungsnummer: parsed.header['Gliederungs-Nr'] } : {}) })] };
     const unitErrors = options.units.filter((unit) => unit.parsed.findings.some((finding) => finding.severity === 'error')).map((unit) => `${unit.documentId}: ${unit.parsed.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code).join(', ')}`);
     const assembly = assembleBaseline(selection.selected, isVwv);
-    result.historical = { units: options.units.length, selected: selection.selected.length, omitted: selection.omitted.length, problems: [...selection.problems, ...unitErrors], ...(assembly.validFrom ? { validFrom: assembly.validFrom } : {}), ...(assembly.validTo ? { validTo: assembly.validTo } : {}), integrity: assembly.integrity.class };
+    result.historical = { units: options.units.length, selected: selection.selected.length, omitted: selection.omitted.length, problems: [...selection.problems, ...unitErrors], ...(assembly.validFrom ? { validFrom: assembly.validFrom } : {}), ...(assembly.validTo ? { validTo: assembly.validTo } : {}), integrity: assembly.integrity.class, selectedUnitIds: selection.selected.map((unit) => unit.documentId) };
     result.integrity = assembly.integrity;
     if (selection.problems.length > 0 || unitErrors.length > 0) return { ...result, outcome: 'reconstruction', reasons: [`${baseline.class}: Einzelfassungen nicht eindeutig: ${[...selection.problems, ...unitErrors].slice(0, 3).join('; ')}`], blockers: [...selection.problems, ...unitErrors].map((problem) => ({ kind: 'historical' as const, code: 'unit-selection', detail: problem })) };
     if (selection.selected.length === 0) return { ...result, outcome: 'not-at-baseline', reasons: ['keine Einzelfassung galt am Stichtag'] };
     law.body = assembly.body;
+    figureSources = assembly.figureSources;
     law.sourceValidFrom = assembly.validFrom;
     law.sourceValidTo = assembly.validTo;
     if (!law.sourceValidFrom) delete law.sourceValidFrom;
     if (!law.sourceValidTo) delete law.sourceValidTo;
-    law.sourceReferences = selection.selected.map(unitReference);
+    // Öffentlich genügt die Dokumentnummer der Norm als Provenienzkennung; die einzelnen juris-Einzelfassungen
+    // (Einheiten-Segmentierung der Datenbank) stehen nur im Manifest (Audit B9).
+    law.sourceReferences = [...law.sourceReferences.filter((reference) => reference.kind === 'official-gazette'), frameHistoricalReference(document, selection.selected.length, assembly.validFrom, assembly.validTo)];
     law.sourceNotes = [...(law.sourceNotes ?? []).filter((note) => note.label !== 'Ausgabe (juris)'), { label: 'Stichtagsfassung', text: `Zusammengesetzt aus ${selection.selected.length} am ${options.context.baselineDate} geltenden Einzelfassungen der juris-Historie${selection.omitted.length ? `; ${selection.omitted.length} Einheit(en) galten am Stichtag nicht (${selection.omitted.slice(0, 3).map((entry) => `${entry.key}: ${entry.reason}`).join('; ')})` : ''}.` }];
     sourceStatus = { validity: 'exact', text: 'direct', note: 'Stichtagsfassung aus den am Stichtag geltenden Einzelfassungen der juris-Historie (Fassung je Einheit mit Gültigkeitszeitraum).' };
     provenanceNote = `Stichtagsfassung aus ${selection.selected.length} historischen Einzelfassungen (juris), nicht aus dem heutigen Text.`;
@@ -257,11 +310,23 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
   }
 
   try {
-    const transformed = transformToNsh(law, options.context, { sourceArea: document.area, institutions: options.institutions, sourceStatus, ...(provenanceNote ? { provenanceNote } : {}) });
+    const transformed = transformToNsh(law, options.context, { sourceArea: document.area, institutions: options.institutions, sourceStatus, ...(provenanceNote ? { provenanceNote } : {}), ...(options.knownStateAbbreviations ? { transformation: { knownStateLawAbbreviations: options.knownStateAbbreviations } } : {}) });
     const audit = auditRecord(transformed.record);
     result.findings.push(...transformed.findings, ...audit);
     result.record = transformed.record;
     result.slug = transformed.record.meta.slug;
+    const figures: DocumentFigure[] = [];
+    for (const asset of transformed.record.versions.flatMap((version) => figureAssets(version.body))) {
+      const source = figureSources.find((candidate) => candidate.sha256 === asset.sha256);
+      if (!source) {
+        reasons.push(`Abbildung ${asset.sourcePath} ohne belegte Herkunft`);
+        blockers.push({ kind: 'parse', code: 'figure-unbound', detail: `${asset.sourcePath} (${asset.sha256.slice(0, 16)}…)` });
+        continue;
+      }
+      if (figures.some((figure) => figure.sha256 === asset.sha256)) continue;
+      figures.push({ sha256: asset.sha256, mediaType: asset.mediaType as DocumentFigure['mediaType'], byteLength: asset.byteLength, sourcePath: asset.sourcePath, sourceDocumentId: source.documentId, pdf: source.raw });
+    }
+    if (figures.length > 0) result.figures = figures;
     result.transform = { changes: transformed.report.changes.length, unresolved: transformed.report.unresolved.length, auditOk: transformed.report.postTransformAudit.ok };
     const transformProblems = [...transformed.findings, ...audit].filter((finding) => finding.severity !== 'info');
     const blockingTransform = transformProblems.filter((finding) => !NON_BLOCKING_TRANSFORM_CODES.includes(finding.code));

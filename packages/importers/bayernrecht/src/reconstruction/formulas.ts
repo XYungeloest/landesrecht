@@ -167,13 +167,14 @@ export function maskQuotes(text: string): MaskedText | undefined {
 
 // „die Worte“ / „den Worten“: ältere Befehle (GVBl. 2014 S. 286, 2015 S. 243) – dieselbe Formel wie „die Wörter“.
 // „der Klammerzusatz „(A)““ (BayMBl. 2019 Nr. 423) ist eine Angabe.
-const OBJ = String.raw`(?:die\s+Angaben?|das\s+Wort|die\s+Wörter|die\s+Worte|die\s+Zahlen?|das\s+Zeichen|die\s+Zeichen|der\s+Klammerzusatz|den\s+Klammerzusatz)`;
-const ANCHOR_OBJ = String.raw`(?:der\s+Angabe|dem\s+Wort|den\s+Wörtern|den\s+Worten|der\s+Zahl|den\s+Angaben|dem\s+Klammerzusatz)`;
+// Lauf 9: auch „der Betrag“, „die Jahreszahl“, „das Datum“, „die Wortfolge“ (FMBl. 2010 S. 178; BayMBl. 2023 Nr. 513).
+const OBJ = String.raw`(?:die\s+Angaben?|das\s+Wort|die\s+Wörter|die\s+Worte|die\s+Zahlen?|das\s+Zeichen|die\s+Zeichen|der\s+Klammerzusatz|den\s+Klammerzusatz|der\s+Betrag|den\s+Betrag|die\s+Beträge|die\s+Jahreszahl|das\s+Datum|die\s+Wortfolge)`;
+const ANCHOR_OBJ = String.raw`(?:der\s+Angabe|dem\s+Wort|den\s+Wörtern|den\s+Worten|der\s+Zahl|den\s+Angaben|dem\s+Klammerzusatz|dem\s+Betrag|der\s+Jahreszahl|dem\s+Datum|der\s+Wortfolge)`;
 const Q = String.raw`⟦(\d+)⟧`;
 const VERB = String.raw`(?:(?:wird|werden)\s+)?`;
 const EACH = String.raw`(?:jeweils\s+)?`;
 const PUNCT_NAME: Readonly<Record<string, string>> = {
-  'der Punkt': '.', 'das Komma': ',', 'das Semikolon': ';', 'der Doppelpunkt': ':',
+  'der Punkt': '.', 'das Komma': ',', 'das Semikolon': ';', 'der Doppelpunkt': ':', 'der Schlusspunkt': '.',
   'ein Komma': ',', 'einen Punkt': '.', 'ein Semikolon': ';', 'einen Doppelpunkt': ':',
 };
 
@@ -233,7 +234,8 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
     return { formula: 'replace-words', operations, each };
   }
 
-  const final = new RegExp(String.raw`^(der\s+Punkt|das\s+Komma|das\s+Semikolon|der\s+Doppelpunkt)\s+am\s+(?:Ende(?:\s+des\s+Satzes)?|Satzende)\s+${VERB}durch\s+(?:(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon|einen\s+Doppelpunkt)|(?:${OBJ}\s+)?${Q})\s+ersetzt$`, 'u').exec(text);
+  // „Der Schlusspunkt wird durch ein Komma ersetzt.“ (GVBl. 2014 S. 208) ist „der Punkt am Ende“.
+  const final = new RegExp(String.raw`^(der\s+Punkt|das\s+Komma|das\s+Semikolon|der\s+Doppelpunkt|der\s+Schlusspunkt)(?:\s+am\s+(?:Ende(?:\s+des\s+Satzes)?|Satzende)|(?<=Schlusspunkt))\s+${VERB}durch\s+(?:(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon|einen\s+Doppelpunkt)|(?:${OBJ}\s+)?${Q})\s+ersetzt$`, 'u').exec(text);
   if (final) {
     const from = PUNCT_NAME[final[1]!.replace(/\s+/gu, ' ')]!;
     const to = final[2] ? PUNCT_NAME[final[2].replace(/\s+/gu, ' ')]! : quote(quotes, final[3]!);
@@ -418,18 +420,16 @@ export function parseCommand(text: string, context: readonly LocationPath[]): Pa
       } else otherReason ??= parsed.reason ?? 'nicht unterstützt';
       continue;
     }
-    if (paths.length > 1 && !parsed.each && !enumerated) {
-      reason ??= `Mehrere Orte (${ownPaths.map(formatPath).join('; ')}) ohne „jeweils“`;
-      otherReason ??= reason;
-      continue;
-    }
+    // Lauf 9: Mehrere Orte ohne „jeweils“ („In § 13 Abs. 1 und 2 werden nach dem Wort „Finanzen“ die Worte … eingefügt.“,
+    // GVBl. 2014 S. 286) gelten je Ort – wie mit „jeweils“: In jedem muss der Wortlaut dann genau einmal stehen.
+    const eachPlace = paths.length > 1 && !parsed.each && !enumerated;
     if (parsed.each && paths.length < 2) {
       reason ??= '„jeweils“ an nur einem Ort: der Befehl behauptet mehrere Vorkommen, deren Herkunft im heutigen Text nicht zu unterscheiden ist';
       otherReason ??= reason;
       continue;
     }
     for (const operation of parsed.operations) {
-      const item = { formula: parsed.formula, operation, locations: paths, each: parsed.each };
+      const item = { formula: parsed.formula, operation, locations: paths, each: parsed.each || eachPlace };
       operations.push(item);
       sequence.push(item);
     }

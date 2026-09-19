@@ -151,7 +151,7 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/BAYWUE_SOURCE_MODEL.md` | Quellenmodell: amtlich, nachrichtlich, nichtamtlich – und wo das im Datenmodell steht |
 | `docs/BAYERN_BULK_READINESS.md` | Bereitschaft des BayWü-Ausgangsimports: NOT READY, offene Punkte, GO/No-Go |
 | `docs/SEARCH.md` | Suchplan (and-first), Golden Set, Fast-/Full-Audit |
-| `docs/DEPLOYMENT.md` | GitLab-CI, Cloudflare-Ressourcen, D1-Projektion, Variablen |
+| `docs/DEPLOYMENT.md` | Lokale Prüf- und Deployschritte (keine CI), Cloudflare-Ressourcen, D1-Projektion, Variablen |
 
 ## Stand der Quelladapter
 
@@ -160,7 +160,7 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
 | NSH | juris Schleswig-Holstein | **Teilbestand lokal (nicht deployt).** Normtext über die öffentliche PDF-Ausgabe (anonyme Sitzung eines Permalinks, keine interne Schnittstelle); 1 910 Normen zum Stichtag übernommen (245 davon als Stichtagsfassung aus den historischen Einzelfassungen), 1 561 im Review (Tabellen, Abbildungen, VwV-Anlagen, Landeskürzel in Abkürzungen). TDM-Vorbehalt des Portals dokumentiert, Bewertung offen (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
 | Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
-| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 694 Normen zum Stichtag: 1 568 unverändert, 63 bewiesen rückgerechnet (11 davon über mehrere Änderungen, 15 mit Alttext aus der Stammverkündung), 61 heute fehlende aus amtlichen Verkündungen wiederhergestellt, 2 VwV in Review; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 449 geänderte und die übrigen heute fehlenden Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
+| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 696 Normen zum Stichtag: 1 568 unverändert, 66 bewiesen rückgerechnet (12 davon über mehrere Änderungen, 17 mit Alttext aus der Stammverkündung), 61 heute fehlende aus amtlichen Verkündungen wiederhergestellt, 1 VwV in Review; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 446 geänderte und die übrigen heute fehlenden Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
 
 Der NSH-Bestand entsteht ausschließlich über öffentliche Ausgabewege des Portals; die interne
 Sitzungs-/CSRF-Schnittstelle wird nicht benutzt.

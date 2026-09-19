@@ -60,7 +60,7 @@ export interface SourceProvenance {
   note?: string;
 }
 
-export const RAW_DOCUMENT_ROLES = ['version-page', 'stem-page', 'text-document', 'annex', 'pdf', 'gazette', 'event-page'] as const;
+export const RAW_DOCUMENT_ROLES = ['version-page', 'stem-page', 'text-document', 'annex', 'pdf', 'gazette', 'event-page', 'figure'] as const;
 export type RawDocumentRole = (typeof RAW_DOCUMENT_ROLES)[number];
 
 export const ARCHIVE_STATUSES = ['versioned', 'staged', 'uploaded', 'verified'] as const;
@@ -76,6 +76,12 @@ export interface ManifestRawDocument {
   byteLength: number;
   /** Versionierter Beispielkorpus (nur Stichprobe; im Bulk verboten). */
   localSource?: string;
+  /**
+   * Nur `figure`: Bild aus einer PDF-Ausgabe (`url` = Adresse dieser Ausgabe). `packageSha256` ist der SHA-256 der
+   * PDF-Ausgabe, `packagePath` die Lage des Bildes darin (`seite-<n>/bild-<k>.<endung>`); `sha256` gilt dem Bild.
+   */
+  packagePath?: string;
+  packageSha256?: string;
   /** Bulk: unveränderliches R2-Objekt unter dem Präfix aus `constants.ts`. */
   bucket?: string;
   objectKey?: string;
@@ -225,6 +231,7 @@ export function validateManifestEntry(value: unknown, where = 'Manifesteintrag')
       for (const field of ['url', 'finalUrl', 'contentType', 'retrievedAt'] as const) if (typeof document[field] !== 'string' || (document[field] as string) === '') problems.push(`${at}: ${field} fehlt`);
       if (typeof document.sha256 !== 'string' || !SHA256.test(document.sha256)) problems.push(`${at}: sha256 ist kein SHA-256`);
       if (typeof document.byteLength !== 'number' || !Number.isInteger(document.byteLength) || document.byteLength < 0) problems.push(`${at}: byteLength fehlt`);
+      if (document.role === 'figure' && (typeof document.packagePath !== 'string' || typeof document.packageSha256 !== 'string' || !SHA256.test(document.packageSha256))) problems.push(`${at}: Abbildung ohne packagePath/packageSha256 (PDF-Ausgabe)`);
       if (document.archiveStatus !== undefined) oneOf(problems, at, 'archiveStatus', document.archiveStatus, ARCHIVE_STATUSES);
       if (document.archiveStatus !== undefined && document.archiveStatus !== 'versioned' && typeof document.objectKey !== 'string') problems.push(`${at}: Archivstatus ${String(document.archiveStatus)} ohne objectKey`);
       return undefined;

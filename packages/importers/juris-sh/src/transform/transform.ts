@@ -21,7 +21,7 @@ import { SOURCE_STATE, TARGET_JURISDICTION, type SourceArea } from '../common/co
 import { auditTransformation, detectReferences, summarizeDecisions, type DetectedReference, type DetectionField, type PostTransformAudit, type ReferenceCategory, type ReferenceDecision } from './detection.ts';
 import type { CompiledInstitutionRegistry } from './institution-registry.ts';
 import { extractSourceOrgans, mapEnactingBody, type EnactingBodyMapping, type OrganEvidence } from './organs.ts';
-import { applySegments, planTransformation, targetProperName, transformationRules, TRANSFORMER_VERSION, type TransformationOptions } from './rules.ts';
+import { applySegments, definedStateAbbreviations, isStateAbbreviation, planTransformation, targetProperName, transformationRules, TRANSFORMER_VERSION, type TransformationOptions } from './rules.ts';
 
 export interface TransformationChange {
   path: string;
@@ -111,6 +111,15 @@ function collectBodyFields(blocks: NormBodyBlock[], path: string, fields: TextFi
   });
 }
 
+function collectTexts(blocks: readonly NormBodyBlock[], into: string[] = []): string[] {
+  for (const block of blocks) {
+    if (block.type === 'footnote') continue;
+    for (const value of [block.label, block.title, block.text]) if (typeof value === 'string' && value) into.push(value);
+    if (block.children) collectTexts(block.children, into);
+  }
+  return into;
+}
+
 /** Deterministischer Slug: Abkürzung (transformiert) oder Kurzbezeichnung, sonst Titel. */
 export function deriveSlug(transformedAbbr: string | undefined, transformedShortTitle: string | undefined, transformedTitle: string): string {
   const base = transformedAbbr ? slugify(transformedAbbr) : transformedShortTitle ? slugify(transformedShortTitle) : truncateSlug(slugify(transformedTitle), 72);
@@ -123,7 +132,11 @@ export function deriveSlug(transformedAbbr: string | undefined, transformedShort
 export function transformToNsh(law: SourceLaw, context: TransformContext, options: TransformOptions = {}): TransformResult {
   const changes: TransformationChange[] = [];
   const findings: ImportFinding[] = [];
-  const ruleOptions = options.transformation ?? {};
+  // Bekannte Abkürzungen mit Landeskürzel: amtliche Abkürzungen des Bestands (Aufrufer), die eigene amtliche
+  // Abkürzung und im Text selbst eingeführte Abkürzungen (Version 1.1.0).
+  const localTexts: string[] = [law.title, ...(law.shortTitle ? [law.shortTitle] : []), ...collectTexts(law.body)];
+  const known = new Set<string>([...(options.transformation?.knownStateLawAbbreviations ?? []), ...definedStateAbbreviations(localTexts), ...(law.abbr && isStateAbbreviation(law.abbr) ? [law.abbr] : [])]);
+  const ruleOptions: TransformationOptions = { ...(options.transformation ?? {}), knownStateLawAbbreviations: known };
   if (context.targetJurisdiction !== TARGET_JURISDICTION) throw new Error(`Der juris-SH-Transformer bedient nur ${TARGET_JURISDICTION}, nicht ${context.targetJurisdiction}`);
   if (context.baselineDate !== SIMULATION_BASELINE_DATE) throw new Error(`Ausgangsrechtsstand ${context.baselineDate} weicht von ${SIMULATION_BASELINE_DATE} ab`);
 
@@ -156,7 +169,9 @@ export function transformToNsh(law: SourceLaw, context: TransformContext, option
   };
   const title = transform(law.title, 'meta.title');
   const shortTitle = law.shortTitle ? transform(law.shortTitle, 'meta.shortTitle') : undefined;
-  const abbr = law.abbr ? transform(law.abbr, 'meta.abbr') : undefined;
+  // Im Feld „Abkürzung“ ist der Punkt von „Schl.-H.“ Teil des Kürzels, kein Satzpunkt: „AGBGB Schl.-H.“ → „AGBGB NSH“.
+  const transformedAbbr = law.abbr ? transform(law.abbr, 'meta.abbr') : undefined;
+  const abbr = transformedAbbr && /Schl\.\s?-\s?H\.$/u.test(law.abbr!) ? transformedAbbr.replace(/NSH\.$/u, 'NSH') : transformedAbbr;
   const enactingBody = mapping.decision === 'safe-auto-transform' && organs.enactingBody ? transform(organs.enactingBody.name, 'meta.enactingBody') : mapping.decision === 'registry-map' ? mapping.enactingBody : undefined;
   for (const field of bodyFields) {
     const value = field.get();
@@ -204,7 +219,8 @@ export function transformToNsh(law: SourceLaw, context: TransformContext, option
     predecessor: null,
     successor: null,
     relations: [],
-    externalIdentifiers: law.externalIdentifiers,
+    // Quellabkürzung bleibt als Kennung erhalten, wenn die Überleitung sie verändert hat („MBG Schl.-H.“ → „MBG NSH“).
+    externalIdentifiers: law.abbr && abbr && abbr !== law.abbr ? [...law.externalIdentifiers, { system: 'amtliche-abkuerzung-sh', value: law.abbr }] : law.externalIdentifiers,
     sourceReferences: law.sourceReferences,
   }, `${slug}/meta.json`);
 
@@ -259,7 +275,7 @@ export function transformToNsh(law: SourceLaw, context: TransformContext, option
     postTransformAudit,
     organs: organReport,
     citations: { source: law.citation, sourceVersion: sourceVersionCitation, simulation: simulationCitation },
-    protectedFields: ['meta.sourceReferences', 'meta.sourceCitation', 'meta.originEnactingBody', 'meta.externalIdentifiers', 'version.sourceReferences', 'version.sourceNotes', 'version.sourceValidFrom', 'version.sourceValidTo', 'version.sourceCitation', 'history.entries[0].note'],
+    protectedFields: ['meta.sourceReferences', 'meta.sourceCitation', 'meta.originEnactingBody', 'meta.externalIdentifiers (Quellabkürzung amtliche-abkuerzung-sh)', 'version.sourceReferences', 'version.sourceNotes', 'version.sourceValidFrom', 'version.sourceValidTo', 'version.sourceCitation', 'history.entries[0].note'],
   };
   return { record, report, findings };
 }

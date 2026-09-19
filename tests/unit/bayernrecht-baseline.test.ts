@@ -65,6 +65,24 @@ describe('Stichtagsklassifikation', () => {
     expect(classifyBaseline({ documentId: 'A', documentDate: '2023-11-21', inForceFrom: '2023-11-08', administrative: true }).status).toBe('active-at-baseline');
   });
 
+  it('entscheidet nach dem Inkrafttreten der amtlichen Verkündung, nicht nach den Portalmetadaten', () => {
+    // BayMBl. 2023 Nr. 598 (MStrVerbR): Portal „inkraft 2023-11-15“, Verkündung „mit Wirkung vom 15. Dezember 2023“, hebt
+    // nichts auf → keine Fassung am Stichtag.
+    const mstr = classifyBaseline({ documentId: 'BayVV_7840_L_14146', documentDate: '2023-11-17', inForceFrom: '2023-11-15', administrative: true, publication: { date: '2023-12-06', citation: 'BayMBl. 2023 Nr. 598', officialEffectiveDate: '2023-12-15' } });
+    expect(mstr).toMatchObject({ class: 'enacted-after-baseline', status: 'not-at-baseline', reason: 'official-commencement-after-baseline' });
+    expect(mstr.evidence).toContainEqual(expect.objectContaining({ kind: 'official-commencement', value: '2023-12-15 (BayMBl. 2023 Nr. 598)' }));
+    // Setzt die Verkündung eine andere Vorschrift außer Kraft, ist ein Vorgänger derselben Identität möglich: Review.
+    const replacing = classifyBaseline({ documentId: 'X', documentDate: '2023-11-17', inForceFrom: '2023-11-15', administrative: true, publication: { date: '2023-12-06', citation: 'BayMBl. 2023 Nr. 9', officialEffectiveDate: '2023-12-15', repeals: ['Richtlinie vom 1. Januar 2020 (BayMBl. Nr. 1)'] } });
+    expect(replacing).toMatchObject({ status: 'undetermined', reason: 'published-after-baseline-validity-open' });
+    // BayMBl. 2023 Nr. 585 (StRVertrBek): rückwirkend ab 2023-11-08, hebt den Erlass von 2021 auf → Review mit Beleg.
+    const stell = classifyBaseline({ documentId: 'BayVV_1102_S_14148', documentDate: '2023-11-21', inForceFrom: '2023-11-08', administrative: true, publication: { date: '2023-12-06', citation: 'BayMBl. 2023 Nr. 585', officialEffectiveDate: '2023-11-08', repeals: ['Stellvertretererlass (StRVertrBek) des Bayerischen Ministerpräsidenten vom 11. Februar 2021 (BayMBl. Nr. 164)'] } });
+    expect(stell).toMatchObject({ status: 'undetermined', reason: 'published-after-baseline-validity-open' });
+    expect(stell.blockers[0]).toContain('rückwirkend in Kraft ab 2023-11-08');
+    expect(stell.blockers[0]).toContain('StRVertrBek');
+    // Eine Rechtsnorm bleibt bei der konstitutiven Verkündung: nach dem Stichtag verkündet → nicht am Stichtag.
+    expect(classifyBaseline({ documentId: 'G', documentDate: '2023-11-20', inForceFrom: '2023-11-01', publication: { date: '2023-12-15', citation: 'GVBl. 2023 S. 700', officialEffectiveDate: '2023-11-01' } }).reason).toBe('published-after-baseline');
+  });
+
   it('lässt den Jahrgang der Fundstelle entscheiden, wo er den Stichtag nicht umschließt', () => {
     // Die VwV-DTD führt kein Ausfertigungsdatum. Ein Jahrgang ist keines – aber eine Vorschrift im
     // AllMBl. 2000 ist zweifelsfrei vor dem 2023-12-01 erlassen.

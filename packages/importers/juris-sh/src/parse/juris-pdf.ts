@@ -20,6 +20,7 @@
  */
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
+import type { PdfImage } from './pdf-figures.ts';
 import { isCentered, type PdfLayout, type PdfLine } from './pdf-layout.ts';
 
 export interface ParseFinding {
@@ -61,6 +62,99 @@ export interface ParsedJurisPdf {
   editorialNotes?: string[];
   findings: ParseFinding[];
   pages: number;
+  /** VwV: Metadatenzeilen am Anfang des Dokuments (Gliederungsnummer, Fundstelle), aus dem Normkörper genommen. */
+  vwvMetadata?: VwvLeadMetadata;
+  /** Aus dem Normkörper genommene, als Metadaten erklärte Zeilen (Textintegrität: `explained-difference`). */
+  relocated: Array<{ reason: string; text: string }>;
+  /** Als `figure`-Block übernommene Abbildungen des Normkörpers (Lage: vor Zeile `beforeLine` von `bodyLines`). */
+  figures: PlacedFigure[];
+}
+
+/** Übernommene Abbildung: vor der Zeile `beforeLine` des Normkörpers (Index in `bodyLines`; Länge = am Ende). */
+export interface PlacedFigure extends PdfImage {
+  beforeLine: number;
+}
+
+export interface VwvLeadMetadata {
+  gliederungsnummer?: string;
+  /** Amtliche Fundstelle in der Schreibweise des Dokuments („Amtsbl. Schl.-H. 2010 S. 199“). */
+  fundstelle?: string;
+  /** Änderungsvermerk hinter der Fundstelle („Geändert durch Verwaltungsvorschrift vom …“). */
+  amendmentNote?: string;
+  /** Wiederholter Titel am Anfang des Dokuments. */
+  repeatedTitle?: boolean;
+}
+
+const VWV_GL_LINE = /^Gl\.\s?-?\s?Nrn?\.?:?\s*([0-9][0-9A-Za-z.\-–]*(?:(?:\s(?:und|u\.)\s|,\s?|\s)[0-9][0-9A-Za-z.\-–]*)*)\*?\s*(.*)$/u;
+const VWV_FUNDSTELLE_LINE = /^Fundstellen?:\s*(.+)$/u;
+const AMENDMENT_NOTE = /\s((?:Geändert|Zuletzt geändert|Ergänzt|Berichtigt|Neugefasst|Neu gefasst)\b.*)$/u;
+
+/**
+ * VwV-Kopfzeilen im Dokument: Die juris-Ausgabe setzt unter den Titel „Gl.Nr. …“ und „Fundstelle: …“ (bei Dokumenten
+ * mit Inhaltsverzeichnis zusätzlich den Titel noch einmal). Das sind Metadaten, kein Vorschriftentext. Genommen wird
+ * nur ein geschlossener Vorspann am Anfang des Normkörpers: der wörtlich wiederholte Titel, eine Zeile „Gl.Nr.“ und eine
+ * Zeile „Fundstelle:“ (auch zusammen in einem Block). Alles andere – auch die Bekanntmachungszeile – bleibt Normtext.
+ */
+export function extractVwvLeadMetadata(body: NormBodyBlock[], title: string): { body: NormBodyBlock[]; metadata: VwvLeadMetadata; relocated: Array<{ reason: string; text: string }> } {
+  const metadata: VwvLeadMetadata = {};
+  const relocated: Array<{ reason: string; text: string }> = [];
+  // Titel im Kopf und im Dokument unterscheiden sich in der Typografie (Bindestrich/Halbgeviertstrich).
+  const normalize = (value: string): string => value.replace(/[\s\u00ad]+/gu, ' ').replace(/[\u2010-\u2015]/gu, '-').replace(/-\s/gu, '-').trim();
+  const lead = (block: NormBodyBlock | undefined): boolean => block !== undefined && (block.type === 'heading' || block.type === 'paragraphText') && !block.children?.length && typeof block.text === 'string';
+  let index = 0;
+  // Wiederholter Titel: aufeinanderfolgende Blöcke, deren Text zusammen genau den Titel ergibt.
+  if (title) {
+    let joined = '';
+    for (let probe = 0; probe < 6 && lead(body[probe]); probe += 1) {
+      joined = joined ? joinLines(joined, body[probe]!.text!) : body[probe]!.text!;
+      if (normalize(joined) === normalize(title)) {
+        for (const block of body.slice(0, probe + 1)) relocated.push({ reason: 'Titel (Metadatum, wiederholt)', text: block.text! });
+        metadata.repeatedTitle = true;
+        index = probe + 1;
+        break;
+      }
+      if (!normalize(title).startsWith(normalize(joined))) break;
+    }
+  }
+  // „Gl.Nr.“- und „Fundstelle:“-Zeilen im Vorspann (bis zu sechs Blöcke; ältere Bekanntmachungen setzen die
+  // Bekanntmachungszeile davor). Genommen wird nur die Metadatenzeile selbst: Hängt an der Fundstelle ohne Absatzabstand
+  // weiterer Text (Bekanntmachungszeile), bleibt er Normtext; trägt der Block Unterpunkte, bleiben sie an seiner Stelle.
+  const replaced = new Map<number, NormBodyBlock[]>();
+  const leadText = (block: NormBodyBlock | undefined): boolean => block !== undefined && (block.type === 'heading' || block.type === 'paragraphText') && typeof block.text === 'string';
+  for (let probe = index; probe < Math.min(body.length, index + 6); probe += 1) {
+    if (!leadText(body[probe])) break;
+    const block = body[probe]!;
+    const text = block.text!.trim();
+    const gl = VWV_GL_LINE.exec(text);
+    const rest = gl ? gl[2]!.trim() : text;
+    const fundstelle = VWV_FUNDSTELLE_LINE.exec(rest);
+    if (!gl && !fundstelle) continue;
+    if (gl && rest && !fundstelle) continue;
+    if (fundstelle && metadata.fundstelle) continue;
+    // Mehrere Gliederungsnummern (Änderungs- und Sammelbekanntmachungen: „Gl.Nr. 2030.32“, „Gl.Nr. 2030.35“) werden gesammelt.
+    if (gl) metadata.gliederungsnummer = metadata.gliederungsnummer ? `${metadata.gliederungsnummer}, ${gl[1]!.trim()}` : gl[1]!.trim();
+    let remainder = '';
+    if (fundstelle) {
+      const note = AMENDMENT_NOTE.exec(fundstelle[1]!);
+      if (note) {
+        // Mit Änderungsvermerk: Fundstelle(n) davor, Vermerk dahinter (Metadaten, wie bisher).
+        metadata.fundstelle = fundstelle[1]!.slice(0, note.index).trim().replace(/[,;]$/u, '');
+        metadata.amendmentNote = note[1]!.trim();
+      } else {
+        // Ohne Vermerk endet die Fundstelle mit der (letzten) Seitenangabe („… S. 1961“, „…, S. 37; SchlHA … S. 11“);
+        // ohne Absatzabstand angehängter Text (Bekanntmachungszeile) bleibt Normtext.
+        const cited = /^(.*?\bS\.?\s*\d+(?:\s*ff?\.)?(?:\s*;\s*[^;]*?\bS\.?\s*\d+(?:\s*ff?\.)?)*)(?=[\s,;]|$)\s*[,;]?\s*([\s\S]*)$/u.exec(fundstelle[1]!);
+        metadata.fundstelle = (cited ? cited[1]! : fundstelle[1]!).trim().replace(/[,;]$/u, '');
+        remainder = cited ? cited[2]!.trim() : '';
+      }
+    }
+    const metadataText = remainder ? text.slice(0, text.length - remainder.length).trim() : text;
+    relocated.push({ reason: gl && fundstelle ? 'Gliederungsnummer und Fundstelle (Metadaten)' : gl ? 'Gliederungsnummer (Metadatum)' : 'Fundstelle (Metadatum)', text: metadataText });
+    if (remainder) replaced.set(probe, [{ ...block, text: remainder }]);
+    else replaced.set(probe, block.children ?? []);
+  }
+  if (!metadata.gliederungsnummer && !metadata.fundstelle) return { body, metadata: {}, relocated: [] };
+  return { body: body.slice(index).flatMap((block, offset) => replaced.get(index + offset) ?? [block]), metadata, relocated };
 }
 
 const DATE = /(\d{2})\.(\d{2})\.(\d{4})/u;
@@ -159,6 +253,9 @@ function parseHeader(lines: PdfLine[], findings: ParseFinding[], paragraphGap: n
   return { header, next: index };
 }
 
+/** Titelzeile, die mit einem Anschlusswort endet und deshalb fortgesetzt wird. */
+const TITLE_CONTINUATION = /\s(?:nach|gemäß|und|oder|sowie|zu|zum|zur|zu den|des|der|den|dem|die|das|für|über|im|in|vom|von|mit|auf|bei|aus|gegen)$/u;
+
 /** Redaktionelle Anhänge der juris-Einzelfassung. */
 export const EDITORIAL_TRAILER = /^(?:Weitere Fassungen dieser Norm|Redaktionelle Hinweise)$/u;
 
@@ -167,7 +264,15 @@ const STATUS_NOTE = /^(?:[A-Z]{1,3}\s+)?(?:aufgeh\.|aufgehoben|außer Kraft|gege
 
 const EDITION = /^(?:Gesamtausgabe in der Gültigkeit vom\s+(\d{2}\.\d{2}\.\d{4})(?:\s+bis\s+(\d{2}\.\d{2}\.\d{4}))?|Zum\s+(\d{2}\.\d{2}\.\d{4})\s+aktuellste verfügbare Fassung der Gesamtausgabe)$/u;
 
-export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<number, number> } = {}): ParsedJurisPdf {
+export interface ParseOptions {
+  /**
+   * Eingebettete Bilder der Ausgabe (`runPdfImages`). `null`: Bilder vorhanden, aber nicht auslesbar – Befund.
+   * Fehlt die Angabe, prüft der Parser keine Abbildungen (Einheitentests ohne PDF).
+   */
+  images?: readonly PdfImage[] | null;
+}
+
+export function parseJurisPdf(layout: PdfLayout, options: ParseOptions = {}): ParsedJurisPdf {
   const findings: ParseFinding[] = [];
   const all = layout.lines.filter((line) => !line.furniture);
   const { header, next } = parseHeader(all, findings, layout.paragraphGap);
@@ -190,14 +295,19 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     }
   }
   const titleTaken = titleLines.length > 0;
-  while (!titleTaken && cursor < all.length && (isCentered(all[cursor]!, layout) || wideCentered(all[cursor]!)) && !EDITION.test(all[cursor]!.text) && !(isVwv && VWV_NUMBER_LINE.test(all[cursor]!.text)) && !(titleLines.length > 0 && (unitFor(all[cursor]!.text.trim()) || containerFor(all[cursor]!.text.trim()) || /^Inhaltsübersicht:?$/u.test(all[cursor]!.text.trim())))) {
+  // Endet die bisherige Titelzeile mit einem Anschlusswort („… nach“, „… gemäß“, „… und“), setzt die nächste Zeile den
+  // Titel fort – auch wenn sie mit einer Bezeichnung beginnt („§ 76 SGB XI“).
+  const continues = (): boolean => titleLines.length > 0 && TITLE_CONTINUATION.test(titleLines.at(-1)!) && all[cursor]!.gapBefore < layout.paragraphGap + layout.bodyHeight;
+  while (!titleTaken && cursor < all.length && (isCentered(all[cursor]!, layout) || wideCentered(all[cursor]!)) && !EDITION.test(all[cursor]!.text) && !(isVwv && VWV_NUMBER_LINE.test(all[cursor]!.text)) && (continues() || !(titleLines.length > 0 && (unitFor(all[cursor]!.text.trim()) || containerFor(all[cursor]!.text.trim()) || /^Inhaltsübersicht:?$/u.test(all[cursor]!.text.trim()))))) {
     // Titel ohne Fußnotenzeichen (hochgestellt oder als „*“ am Zeilenende).
     titleLines.push(all[cursor]!.plainText.replace(/\s*\*+\)?$/u, ''));
     cursor += 1;
   }
-  // Anlage einer Verwaltungsvorschrift als eigenes Dokument („Zum Hauptdokument : …“).
+  // Anlage einer Verwaltungsvorschrift als eigenes Dokument („Zum Hauptdokument : …“) – mit oder ohne eigenen Titel
+  // („Musterbetriebssatzung für Eigenbetriebe - Anlage 2: …“), vor oder nach dem Verzeichnis.
   let mainDocument: string | undefined;
-  if (titleLines.length === 0 && cursor < all.length && /^Zum Hauptdokument\s*:/u.test(all[cursor]!.text)) {
+  const takeMainDocument = (): void => {
+    if (mainDocument !== undefined || cursor >= all.length || !/^Zum Hauptdokument\s*:/u.test(all[cursor]!.text)) return;
     let value = all[cursor]!.text.replace(/^Zum Hauptdokument\s*:\s*/u, '');
     cursor += 1;
     while (cursor < all.length && all[cursor]!.gapBefore < layout.paragraphGap && !isCentered(all[cursor]!, layout)) {
@@ -206,7 +316,8 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     }
     mainDocument = value;
     findings.push({ severity: 'warning', code: 'vwv-annex-document', message: `Anlage einer Verwaltungsvorschrift als eigenes Dokument (Hauptdokument „${value.slice(0, 80)}“) – gehört zum Hauptdokument, keine eigene Norm` });
-  }
+  };
+  takeMainDocument();
   if (titleLines.length === 0 && !mainDocument) findings.push({ severity: 'error', code: 'title-missing', message: 'Kein zentrierter Titel nach dem Kopf' });
   const title = titleLines.reduce((text, line) => joinLines(text, line), '');
 
@@ -275,9 +386,17 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     cursor += 1;
     if (isVwv) {
       // Verzeichnis der VwV: ein geschlossener Zeilenblock ohne Datum direkt unter der Überschrift.
+      // Über einen Seitenumbruch läuft das Verzeichnis weiter, wenn die erste Zeile der neuen Seite in derselben
+      // Einrückung wie die Verzeichniszeilen steht (Normtext beginnt am Satzspiegel oder mit dem zentrierten Titel).
       let first = true;
-      while (cursor < all.length && !isCentered(all[cursor]!, layout) && (first || all[cursor]!.gapBefore < layout.paragraphGap)) {
+      const tocStarts: number[] = [];
+      const continuesAcrossPage = (line: PdfLine): boolean => !Number.isFinite(line.gapBefore) && line.x0 >= layout.left + layout.bodyHeight * 1.5 && tocStarts.some((start) => Math.abs(start - line.x0) <= 2);
+      // Eine lange Verzeichniszeile kann zufällig mittig stehen: Sie zählt zum Verzeichnis, wenn sie die erste ist oder in
+      // der Einrückung der übrigen Verzeichniszeilen beginnt.
+      const tocIndent = (line: PdfLine): boolean => tocStarts.some((start) => Math.abs(start - line.x0) <= 2);
+      while (cursor < all.length && (first || ((!isCentered(all[cursor]!, layout) || tocIndent(all[cursor]!)) && (all[cursor]!.gapBefore < layout.paragraphGap || continuesAcrossPage(all[cursor]!))))) {
         toc.push({ title: all[cursor]!.text });
+        tocStarts.push(all[cursor]!.x0);
         cursor += 1;
         first = false;
       }
@@ -334,6 +453,8 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     }
   }
 
+  takeMainDocument();
+
   // Redaktionelle Anhänge der Einzelfassungen („Weitere Fassungen dieser Norm“, „Redaktionelle Hinweise“):
   // juris-Satz, kein Normtext – benannt ausgenommen und getrennt festgehalten.
   const rest = all.slice(cursor);
@@ -352,13 +473,25 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     if (editorialSection === 'Weitere Fassungen dieser Norm') otherVersions.push(text);
     else editorialNotes.push(text);
   }
-  const imagesByPage = options.imagesByPage;
-  if (imagesByPage) {
-    for (const [page, count] of imagesByPage) {
-      if (page >= (bodyLines[0]?.page ?? 1)) findings.push({ severity: 'warning', code: 'figure', message: `Seite ${page}: ${count} Abbildung(en) – nicht im Textlayer, Inhalt nicht übernehmbar`, page });
+  let figures: PlacedFigure[] = [];
+  if (options.images === null) findings.push({ severity: 'warning', code: 'figure', message: 'Eingebettete Bilder nicht auslesbar (pdftohtml) – Abbildungen nicht prüfbar' });
+  else if (options.images) figures = placeFigures(options.images, { before: all[cursor - 1], bodyLines, after: editorialLines[0], layout, findings });
+  let body = dropEmptyFootnotes([...titleFootnotes, ...buildBody(bodyLines, layout, findings, isVwv, figures)], findings);
+  let vwvMetadata: VwvLeadMetadata | undefined;
+  let relocated: Array<{ reason: string; text: string }> = [];
+  {
+    const cleaned = removeEditorialNotes(body, findings);
+    body = cleaned.body;
+    relocated.push(...cleaned.relocated);
+  }
+  if (isVwv) {
+    const extracted = extractVwvLeadMetadata(body, title);
+    if (extracted.relocated.length > 0) {
+      body = extracted.body;
+      vwvMetadata = extracted.metadata;
+      relocated = [...relocated, ...extracted.relocated];
     }
   }
-  const body = dropEmptyFootnotes([...titleFootnotes, ...buildBody(bodyLines, layout, findings, isVwv)], findings);
   if (statusNote && bodyLines.length > 0) findings.push({ severity: 'warning', code: 'status-note-with-text', message: `Aufhebungsvermerk „${statusNote.slice(0, 80)}“ neben Normtext – Zuordnung unsicher` });
   checkTocAgainstBody(toc, body, findings, isVwv);
   // Sichtbarer Normtext: Titelfußnoten und Normkörper. Ausgenommen (benannt): die Zwischenüberschrift
@@ -368,6 +501,8 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     header,
     title,
     titleLines,
+    ...(vwvMetadata ? { vwvMetadata } : {}),
+    relocated,
     ...(edition ? { edition } : {}),
     ...(statusNote ? { statusNote } : {}),
     ...(stand ? { stand } : {}),
@@ -382,7 +517,112 @@ export function parseJurisPdf(layout: PdfLayout, options: { imagesByPage?: Map<n
     ...(editorialNotes.length > 0 ? { editorialNotes } : {}),
     findings,
     pages: layout.pages.length,
+    figures,
   };
+}
+
+/* ------------------------------------------------------------------------------------------------ */
+/* Tabellen                                                                                         */
+
+/** Zeile mit mehreren Spalten, deren erste Spalte keine Aufzählungsnummer, kein Fußnotenzeichen, keine Einheitenbezeichnung ist. */
+function isMultiColumnLine(line: PdfLine): boolean {
+  return line.segments.length >= 2 && !ITEM_LABEL.test(line.segments[0]!.text) && !FOOTNOTE_MARKER.test(line.segments[0]!.text) && !/^(?:§\s*\d|Art(?:ikel|\.)\s*(?:\d|[IVX]+\b))/u.test(line.segments[0]!.text);
+}
+
+/** Tabellen mit mehr Spalten sind im Textlayer nicht mehr sicher von Satzspiegel-Artefakten zu trennen. */
+const TABLE_MAX_COLUMNS = 12;
+
+/**
+ * Strukturierte Tabelle aus einem Block aufeinanderfolgender Mehrspaltenzeilen – nur für das sicher erkennbare
+ * Raster: Jede Zeile hat genau dieselbe Zahl k ≥ 2 von Spalten, zwischen Spalte i und i+1 liegt über alle Zeilen ein
+ * gemeinsamer Zwischenraum (größtes rechtes Ende von i < kleinster Anfang von i+1; gilt für links-, rechtsbündige und
+ * zentrierte Spalten), keine Zelle ist leer, keine endet mit einer Worttrennung (sonst liefe eine Zelle über mehrere
+ * Zeilen) und keine Zeile trägt hochgestellte Zeichen. Jede Zeile ist eine Tabellenzeile. Kopfzeilen werden nicht
+ * geraten (alle Zellen `tableCell`). Alles andere bleibt Befund `table-layout` (Review).
+ */
+export function gridTable(rows: readonly PdfLine[]): NormBodyBlock | undefined {
+  const columns = rows[0]?.segments.length ?? 0;
+  if (rows.length < 2 || columns < 2 || columns > TABLE_MAX_COLUMNS) return undefined;
+  if (rows.some((row) => row.segments.length !== columns || row.superscripts.length > 0)) return undefined;
+  if (rows.some((row) => row.segments.some((segment) => segment.text.trim() === '' || /\p{L}-$/u.test(segment.text.trim())))) return undefined;
+  for (let column = 0; column < columns - 1; column += 1) {
+    const rightEdge = Math.max(...rows.map((row) => row.segments[column]!.x1));
+    const nextStart = Math.min(...rows.map((row) => row.segments[column + 1]!.x0));
+    if (!(rightEdge < nextStart)) return undefined;
+  }
+  return {
+    type: 'table',
+    columns,
+    children: rows.map((row) => ({ type: 'tableRow', children: row.segments.map((segment) => ({ type: 'tableCell', text: segment.text.trim() })) })),
+  };
+}
+
+/* ------------------------------------------------------------------------------------------------ */
+/* Abbildungen                                                                                      */
+
+/** juris-Vermerk zu einer nicht in die Ausgabe aufgenommenen PDF-Anlage (mit Symbolbild davor). */
+export const PDF_ATTACHMENT_NOTE = /^Es ist Text als PDF-Datei vorhanden\.?/u;
+/** Zulässige Abweichung des Seitenverhältnisses zwischen Bild (Pixel) und Lage in der Ausgabe. */
+const FIGURE_ASPECT_TOLERANCE = 1.25;
+/** Bilder unter dieser Fläche (Punkt²) sind Satzmittel (Abstandshalter, Linien), keine Abbildung. */
+const FIGURE_MIN_AREA = 16;
+
+const before = (page: number, y: number, other: { page: number; y: number }): boolean => page < other.page || (page === other.page && y < other.y);
+
+/**
+ * Ordnet die Bilder der Ausgabe dem Normkörper zu. Übernommen (als `figure`) wird ein Bild im Bereich des Normkörpers
+ * (nach Kopf, Titel und Verzeichnis, vor den redaktionellen Anhängen), das keinen Text überdeckt und unverzerrt
+ * gesetzt ist. Nicht übernommen, aber benannt: Signets im Kopf, das juris-Symbol einer nicht aufgenommenen
+ * PDF-Anlage (der Vermerk selbst ist ein technischer Hinweis, siehe `removeEditorialNotes`) und Abstandshalter.
+ * Alles andere ist ein Befund `figure` (Review) – eine Abbildung wird nie stillschweigend verworfen.
+ */
+export function placeFigures(images: readonly PdfImage[], context: { before?: PdfLine; bodyLines: readonly PdfLine[]; after?: PdfLine; layout: PdfLayout; findings: ParseFinding[] }): PlacedFigure[] {
+  const { bodyLines, layout, findings } = context;
+  const start = context.before ? { page: context.before.page, y: context.before.y1 - 1 } : { page: 1, y: Number.NEGATIVE_INFINITY };
+  const end = context.after ? { page: context.after.page, y: context.after.y0 } : { page: Number.POSITIVE_INFINITY, y: 0 };
+  const placed: PlacedFigure[] = [];
+  const sorted = [...images].sort((left, right) => left.page - right.page || left.y0 - right.y0 || left.x0 - right.x0);
+  for (const image of sorted) {
+    const where = `Seite ${image.page}, Bild ${image.index}`;
+    // Kopf (Signets: Landeswappen, juris-Logo) und redaktionelle Anhänge.
+    if (before(image.page, image.y0, start) || !before(image.page, image.y0, end)) continue;
+    const placedWidth = image.x1 - image.x0;
+    const placedHeight = image.y1 - image.y0;
+    if (placedWidth * placedHeight < FIGURE_MIN_AREA) continue;
+    const pageLines = bodyLines.filter((line) => line.page === image.page);
+    // juris-Symbol vor „Es ist Text als PDF-Datei vorhanden“.
+    const next = pageLines.find((line) => line.y0 >= image.y1 - 2);
+    if (next && next.y0 - image.y1 < 30 && PDF_ATTACHMENT_NOTE.test(next.text.trim())) continue;
+    const geometry = layout.pages.find((page) => page.page === image.page);
+    if (geometry && (image.x0 < -1 || image.y0 < -1 || image.x1 > geometry.width + 1 || image.y1 > geometry.height + 1)) {
+      findings.push({ severity: 'warning', code: 'figure', message: `${where}: Abbildung ragt über die Seite hinaus – Lage nicht belegt`, page: image.page });
+      continue;
+    }
+    const within = (value: number): boolean => value <= FIGURE_ASPECT_TOLERANCE && value >= 1 / FIGURE_ASPECT_TOLERANCE;
+    const ratio = (placedWidth / placedHeight) / (image.width / image.height);
+    // Um 90° gedreht gesetzt (Querformat-Karte auf Hochformatseite): Das Bild selbst liegt aufrecht vor und wird so übernommen.
+    const rotated = !within(ratio) && within((placedWidth / placedHeight) / (image.height / image.width));
+    if (!within(ratio) && !rotated) {
+      findings.push({ severity: 'warning', code: 'figure', message: `${where}: Abbildung in der Ausgabe verzerrt gesetzt (${image.width}×${image.height} Pixel auf ${Math.round(placedWidth)}×${Math.round(placedHeight)} pt) – Darstellung der Quelle nicht verlässlich`, page: image.page });
+      continue;
+    }
+    const covered = pageLines.find((line) => Math.min(line.y1, image.y1) - Math.max(line.y0, image.y0) > 2 && Math.min(line.x1, image.x1) - Math.max(line.x0, image.x0) > 2);
+    if (covered) {
+      findings.push({ severity: 'warning', code: 'figure', message: `${where}: Abbildung überdeckt Text („${covered.text.slice(0, 50)}“) – Zuordnung nicht sicher`, page: image.page });
+      continue;
+    }
+    // Vor der ersten Zeile, die nicht vollständig über dem Bild endet (Legendensymbol neben seiner Beschreibung: davor).
+    let beforeLine = bodyLines.findIndex((line) => line.page > image.page || (line.page === image.page && line.y1 > image.y0 + 1));
+    if (beforeLine < 0) beforeLine = bodyLines.length;
+    placed.push({ ...image, beforeLine });
+    findings.push({ severity: 'info', code: 'figure-asset', message: `${where}: Abbildung als Asset übernommen (${image.width}×${image.height} Pixel, ${image.mediaType}${rotated ? ', in der Ausgabe um 90° gedreht gesetzt' : ''}, SHA-256 ${image.sha256.slice(0, 12)}…)`, page: image.page });
+  }
+  return placed;
+}
+
+/** `figure`-Block einer übernommenen Abbildung. */
+export function figureBlock(figure: PdfImage): NormBodyBlock {
+  return { type: 'figure', asset: { sha256: figure.sha256, mediaType: figure.mediaType, byteLength: figure.byteLength, sourcePath: figure.sourcePath, width: figure.width, height: figure.height } };
 }
 
 /* ------------------------------------------------------------------------------------------------ */
@@ -397,8 +637,9 @@ interface OpenBlock {
   lastLine: PdfLine;
 }
 
-export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFinding[], isVwv: boolean): NormBodyBlock[] {
+export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFinding[], isVwv: boolean, figures: readonly PlacedFigure[] = []): NormBodyBlock[] {
   const root: NormBodyBlock[] = [];
+  const pendingFigures = [...figures].sort((left, right) => left.beforeLine - right.beforeLine || left.page - right.page || left.y0 - right.y0 || left.x0 - right.x0);
   /** Offene Gliederungsebenen (book … subsection), innerste zuletzt. */
   const containers: Array<{ block: NormBodyBlock; level: number }> = [];
   let unit: NormBodyBlock | undefined;
@@ -451,7 +692,17 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
     heading.title = heading.title ? joinLines(heading.title, text) : text;
   };
 
+  // Abbildungen an ihrer Stelle im Normkörper: in der offenen Einzelnorm bzw. Anlage, als eigener Block.
+  const emitFigures = (upTo: number): void => {
+    while (pendingFigures.length > 0 && pendingFigures[0]!.beforeLine <= upTo) {
+      closeText();
+      previousCentered = false;
+      target().push(figureBlock(pendingFigures.shift()!));
+    }
+  };
+
   for (let index = 0; index < lines.length; index += 1) {
+    emitFigures(index);
     const line = lines[index]!;
     const text = line.text.trim();
     const newPage = !Number.isFinite(line.gapBefore);
@@ -499,7 +750,8 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
     // Überschriften beginnen nach einem Abstand (oder setzen eine Überschrift fort); eine zufällig symmetrische
     // Fortsetzungszeile mitten im Absatz ist keine Überschrift.
     const previousText = lines[index - 1]?.text.trim() ?? '';
-    const continuesSentence: boolean = open !== undefined && newPage && !/[.:;]$/u.test(previousText);
+    // Eine Fußnote setzt sich nie in einer zentrierten Überschrift der nächsten Seite fort („§ 2“ nach „… getreten.]“).
+    const continuesSentence: boolean = open !== undefined && open.block.type !== 'footnote' && newPage && !/[.:;]$/u.test(previousText);
     const centered: boolean = isCentered(line, layout) && (previousCentered || (breakBefore && !continuesSentence) || (newPage && !continuesSentence));
     previousCentered = centered;
     const standaloneAnnex = unitType === 'annex' && line.segments.length === 1 && text.length < 40 && (breakBefore || newPage);
@@ -537,7 +789,22 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
 
     // Tabellenlayout: mehrere Spalten, erste Spalte keine Aufzählungsnummer.
     // Einheitenbezeichnung mit abgesetzter Überschrift („§ 3   Zweck“, „Artikel 2   Finanzkorrekturen“) ist keine Tabellenzeile.
-    const multiColumn = line.segments.length >= 2 && !ITEM_LABEL.test(line.segments[0]!.text) && !FOOTNOTE_MARKER.test(line.segments[0]!.text) && !/^(?:§\s*\d|Art(?:ikel|\.)\s*(?:\d|[IVX]+\b))/u.test(line.segments[0]!.text);
+    const multiColumn = isMultiColumnLine(line);
+    // Beginnt hier ein sicher rekonstruierbares Raster (siehe `gridTable`), wird es als Tabelle übernommen.
+    if (multiColumn && tableRun === 0) {
+      let end = index + 1;
+      while (end < lines.length && isMultiColumnLine(lines[end]!) && !unitFor(lines[end]!.text.trim()) && !containerFor(lines[end]!.text.trim())) end += 1;
+      const figureInside = pendingFigures.some((figure) => figure.beforeLine > index && figure.beforeLine < end);
+      const table = end - index >= 2 && !figureInside ? gridTable(lines.slice(index, end)) : undefined;
+      if (table) {
+        closeText();
+        target().push(table);
+        findings.push({ severity: 'info', code: 'table-structured', message: `Tabelle (${table.columns} Spalten, ${table.children!.length} Zeilen) ab „${text.slice(0, 60)}“ aus dem Spaltenraster übernommen`, page: line.page });
+        previousCentered = false;
+        index = end - 1;
+        continue;
+      }
+    }
     if (multiColumn) {
       tableRun += 1;
       if (tableRun === 2) findings.push({ severity: 'warning', code: 'table-layout', message: `Tabellenlayout (mehrere Spalten) ab „${text.slice(0, 60)}“ – Struktur aus dem Textlayer nicht sicher rekonstruierbar`, page: line.page });
@@ -598,11 +865,77 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
     open = { block, textX: line.x0, labelX: line.x0, lastLine: line };
     holderBlock = open;
   }
+  emitFigures(Number.POSITIVE_INFINITY);
   if (!isVwv && root.length === 0) findings.push({ severity: 'info', code: 'empty-body', message: 'Kein Normtext (Ausgabe ohne Einheiten)' });
   return root;
 }
 
 /** Jede Einheit des Verzeichnisses (§, Artikel, Anlage) muss als Überschrift im Normtext stehen – in derselben Reihenfolge. */
+/** juris-Vermerk „Verkündet als Artikel … des Gesetzes …“ (nicht im Verkündungsblatt; je Einzelnorm wiederholt). */
+const PROMULGATED_AS = /^Verkündet als\b/u;
+/** juris-Anmerkungen. */
+const JURIS_ANNOTATION = /^(?:Anm\.\s*juris|[Rr]edakt(?:ionelle)?\.?\s*Anm(?:erkung)?\.?)\s*:?/u;
+/** Technische Vermerke der juris-Ausgabe; sie zeigen zugleich an, dass Text fehlt. */
+const TECHNICAL_NOTE = /aus technischen Gründen[^.]*nicht (?:ab)?gespeichert|(?:sind|ist|wird|werden) (?:hier |daher )?(?:im Intra-\/Internet )?nicht (?:ab)?gespeichert|sind nicht abgedruckt|in gespeicherter Form unleserlich|^Es ist Text als PDF-Datei vorhanden\b|^\[?\s*hier nicht (?:ab)?gespeichert\s*\]?\s*!?$/u;
+/** Vermerk eines fehlenden Teils mitten im Text („(Gleichung nicht gespeichert)“, „… hier nicht gespeichert!“): Text bleibt, Befund. */
+const INLINE_MISSING = /\((?:[A-ZÄÖÜ][\p{L}-]*\s)?nicht (?:ab)?gespeichert\)|\[[^\]]{0,60}nicht (?:ab)?gespeichert\]|hier nicht (?:ab)?gespeichert\s*!/u;
+/** juris-Verzeichnis der Anlagen am Ende einer VwV („Anlagen (nichtamtliches Verzeichnis) Anlage 1: …“) – redaktionell. */
+const ANNEX_LIST = /^Anlagen?\s*\(nichtamtliches Verzeichnis\)/u;
+const ANNEX_LIST_INLINE = /\s+Anlagen?\s*\(nichtamtliches Verzeichnis\)[\s\S]*$/u;
+
+/**
+ * Entfernt juris-redaktionelle Zusätze aus dem Normkörper (Audit „NSH-Audit“, Klasse B5/B6): „Verkündet als …“-Fußnoten,
+ * juris-Anmerkungen und technische Vermerke. Sie werden als erklärte Zeilen festgehalten (Textintegrität), nicht
+ * verworfen. Ein technischer Vermerk („… aus technischen Gründen nicht gespeichert“) belegt zugleich, dass Normtext
+ * fehlt: Befund `incomplete-source-text` (Review).
+ */
+export function removeEditorialNotes(blocks: NormBodyBlock[], findings: ParseFinding[]): { body: NormBodyBlock[]; relocated: Array<{ reason: string; text: string }> } {
+  const relocated: Array<{ reason: string; text: string }> = [];
+  const walk = (list: NormBodyBlock[]): NormBodyBlock[] => {
+    const kept: NormBodyBlock[] = [];
+    for (const block of list) {
+      const text = (block.text ?? '').trim();
+      const leaf = !block.children?.length;
+      if (leaf && block.type === 'footnote' && PROMULGATED_AS.test(text)) {
+        relocated.push({ reason: 'juris-Vermerk „Verkündet als …“', text: `${block.label ?? ''} ${text}`.trim() });
+        continue;
+      }
+      if (leaf && (block.type === 'footnote' || block.type === 'paragraphText') && JURIS_ANNOTATION.test(text)) {
+        relocated.push({ reason: 'juris-Anmerkung', text: `${block.label ?? ''} ${text}`.trim() });
+        continue;
+      }
+      if (leaf && block.type === 'paragraphText' && ANNEX_LIST.test(text)) {
+        relocated.push({ reason: 'juris-Verzeichnis der Anlagen (nichtamtlich)', text });
+        continue;
+      }
+      // Verzeichnis ohne Absatzabstand an den letzten Absatz angehängt („… außer Kraft. Anlagen (nichtamtliches
+      // Verzeichnis) Anlage 1: …“): Der Absatz bleibt, das Verzeichnis (bis zum Blockende) wird herausgenommen.
+      const inline = block.type === 'paragraphText' || block.type === 'heading' ? ANNEX_LIST_INLINE.exec(block.text ?? '') : null;
+      if (inline && inline.index > 0) {
+        relocated.push({ reason: 'juris-Verzeichnis der Anlagen (nichtamtlich)', text: inline[0].trim() });
+        const trimmed = { ...block, text: block.text!.slice(0, inline.index).trimEnd() };
+        kept.push(block.children ? { ...trimmed, children: walk(block.children) } : trimmed);
+        continue;
+      }
+      if (leaf && (block.type === 'footnote' || block.type === 'paragraphText' || block.type === 'heading') && TECHNICAL_NOTE.test(text) && text.length <= 300) {
+        relocated.push({ reason: 'technischer Vermerk der juris-Ausgabe', text: `${block.label ?? ''} ${text}`.trim() });
+        // „Es ist Text als PDF-Datei vorhanden. Bitte gesondert ausdrucken.“: Der Inhalt (meist eine Anlage, Karte oder
+        // Tabelle) liegt in juris als eigene PDF-Datei vor, die die Gesamtausgabe nicht enthält.
+        const attachment = PDF_ATTACHMENT_NOTE.test(text);
+        findings.push({ severity: 'warning', code: 'incomplete-source-text', message: attachment ? `juris-Vermerk „${text.slice(0, 80)}“ – Inhalt liegt nur als gesonderte PDF-Datei vor, nicht in der Ausgabe` : `Technischer Vermerk der Ausgabe: „${text.slice(0, 120)}“ – Normtext unvollständig` });
+        continue;
+      }
+      for (const value of [block.title, block.text]) {
+        const missing = value ? INLINE_MISSING.exec(value) : null;
+        if (missing) findings.push({ severity: 'warning', code: 'incomplete-source-text', message: `Vermerk „${missing[0]}“ im Text – ein Teil der Vorschrift fehlt in der Ausgabe` });
+      }
+      kept.push(block.children ? { ...block, children: walk(block.children) } : block);
+    }
+    return kept;
+  };
+  return { body: walk(blocks), relocated };
+}
+
 /**
  * Fußnotenzeichen ohne Fußnotentext (Quelle: „*)“ allein) ergeben keinen gültigen Block. Sie werden nicht
  * erfunden oder aufgefüllt, sondern entfernt und als Befund `empty-footnote` gemeldet (führt in den Review).

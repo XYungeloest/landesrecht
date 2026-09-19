@@ -104,7 +104,7 @@ function tokenize(input: string): Token[] | undefined {
     [/^(?:Art\.|Artikeln|Artikels|Artikel)(?![\p{L}])\s*/u, 'artikel'],
     [/^(?:Abs\.|Absätzen|Absätze|Absatzes|Absatz)(?![\p{L}])\s*/u, 'absatz'],
     [/^(?:Sätzen|Sätze|Satzes|Satz)(?![\p{L}])\s*/u, 'satz'],
-    [/^(?:Halbsatzes|Halbsatz)(?![\p{L}])\s*/u, 'halbsatz'],
+    [/^(?:Halbsätzen|Halbsätze|Halbsatzes|Halbsatz)(?![\p{L}])\s*/u, 'halbsatz'],
     [/^(?:Nrn\.|Nr\.|Nummern|Nummer)(?![\p{L}])\s*/u, 'nummer'],
     [/^(?:Dreifachbuchst\.|Dreifachbuchstaben|Dreifachbuchstabe)(?![\p{L}])\s*/u, 'dreifachbuchstabe'],
     [/^(?:Doppelbuchst\.|Doppelbuchstaben|Doppelbuchstabe)(?![\p{L}])\s*/u, 'doppelbuchstabe'],
@@ -132,13 +132,19 @@ function tokenize(input: string): Token[] | undefined {
       continue;
     }
     // „Einleitungsformel“ (Richtlinien), „Prolog“: ebenfalls der unbezeichnete Text vor dem ersten Glied.
-    if ((match = /^(?:der\s+|die\s+|dem\s+|den\s+)?(?:Vorbemerkung|Einleitungsformel|Einleitung|Präambel|Prologs?)(?![\p{L}])\s*/u.exec(rest))) {
+    if ((match = /^(?:der\s+|die\s+|dem\s+|den\s+|des\s+)?(?:Vorbemerkung|Einleitungsformel|Einleitung|Präambel|Prologs?|Vorspanns?)(?![\p{L}])\s*/u.exec(rest))) {
       tokens.push({ kind: 'vorspann', value: '' });
       rest = rest.slice(match[0].length);
       continue;
     }
     if ((match = /^(?:der|dem|den|des|die|das)\s+Überschrift(?:\s+(?:des|der|zu))?\s*/u.exec(rest)) || (match = /^Überschrift(?:\s+(?:des|der|zu))?\s*/u.exec(rest))) {
       tokens.push({ kind: 'ueberschrift', value: '' });
+      rest = rest.slice(match[0].length);
+      continue;
+    }
+    // „einleitender Satzteil“ (GVBl. 2014 S. 286): der Wortlaut vor der ersten Unterstufe des Glieds.
+    if ((match = /^(?:(?:im|in\s+dem|dem|der|den)\s+)?einleitende[nr]?\s+Satzteil(?:s)?(?![\p{L}])\s*/u.exec(rest))) {
+      tokens.push({ kind: 'satzteil-vor', value: '' });
       rest = rest.slice(match[0].length);
       continue;
     }
@@ -282,7 +288,8 @@ export function parseLocation(input: string): LocationPath[] | undefined {
     }
     if (token.kind === 'value') {
       const last = (pendingJoin ? paths.at(-1) : current)?.at(-1);
-      if (!last || !pendingJoin || TERMINAL.has(last.kind)) return undefined;
+      // „Halbsätze 1 und 2“: der Halbsatz ist die letzte Stufe, aber aufzählbar.
+      if (!last || !pendingJoin || (TERMINAL.has(last.kind) && last.kind !== 'halbsatz')) return undefined;
       current = [...paths.at(-1)!.slice(0, -1), { kind: last.kind, value: token.value }];
       pendingJoin = false;
       continue;
@@ -350,7 +357,7 @@ export const formatPath = (path: LocationPath): string =>
             case 'abschnitt': return `Abschnitt ${step.value}`;
             case 'unterabschnitt': return `Unterabschnitt ${step.value}`;
             case 'anlage': return step.value === '' ? 'Anlage' : `Anlage ${step.value}`;
-            case 'satzteil-vor': return `Satzteil vor ${step.value}`;
+            case 'satzteil-vor': return step.value === '' ? 'einleitender Satzteil' : `Satzteil vor ${step.value}`;
             case 'satzteil-nach': return `Satzteil nach ${step.value}`;
             case 'ueberschrift': return 'Überschrift';
             case 'vorspann': return 'Vorbemerkung';
@@ -562,6 +569,7 @@ export function sentenceRange(text: string, number: number): { start: number; en
 export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath): ScopeResult {
   let located: Located = ROOT;
   let sentence: number | undefined;
+  let halfSentence: number | undefined;
   let mode: 'all' | 'leading' | 'heading' | 'vorspann' = 'all';
   const resolved: string[] = [];
   const widened: string[] = [];
@@ -580,6 +588,13 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
     if (mode !== 'all') return { ok: false, reason: `Nach „${mode === 'heading' ? 'Überschrift' : 'Satzteil vor'}“ folgt keine weitere Stufe (${label})` };
     switch (step.kind) {
       case 'halbsatz':
+        // Lauf 9: Halbsatz = Teil des Satzes zwischen Semikola; nur innerhalb eines bestimmten Satzes eingegrenzt
+        // (`apply.ts`: trägt der Satz kein Semikolon, bleibt der ganze Satz – wie bisher).
+        if (sentence !== undefined) {
+          halfSentence = Number(step.value);
+          resolved.push(label);
+        } else widened.push(label);
+        continue;
       case 'satzteil-nach':
         widened.push(label);
         continue;
@@ -711,7 +726,7 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
     fields = located.block && typeof located.block.text === 'string' ? [{ path: located.path, key: 'text' }] : [];
   }
   if (fields.length === 0) return { ok: false, reason: `${formatPath(path)}: kein Textfeld im Bereich` };
-  return { ok: true, scope: { fields, ...(sentence !== undefined ? { sentence } : {}), resolved, widened } };
+  return { ok: true, scope: { fields, ...(sentence !== undefined ? { sentence } : {}), ...(sentence !== undefined && halfSentence !== undefined ? { halfSentence } : {}), resolved, widened } };
 }
 
 /* ---------------------------------------------------------------------- Glieder als Blöcke */

@@ -15,7 +15,8 @@ import { applyReverseRecipeToLaw, verifyRoundTripLaw } from './apply.ts';
 import { bodyFingerprint, isRecipeV2, recipeAmendments, recipeSources, type AnyReconstructionRecipe } from './recipe.ts';
 import { gazetteUnits } from './gazette.ts';
 import { cachePlatform, loadPublicationBase, proveRestoration, type PriorAmendment } from './publication.ts';
-import type { FormConventions } from './restore.ts';
+import { wordingAgreement, type FormConventions } from './restore.ts';
+import { forwardPublicationBase } from './forward.ts';
 import { commandBlocks } from './structure.ts';
 import { titleState } from './title.ts';
 import { packageUrl, parseCurrentNorm, readCached } from './source.ts';
@@ -155,6 +156,14 @@ async function recheckRestoration(root: string, recipe: AnyReconstructionRecipe,
       prior.push({ label: source.citation, block, url: source.url, sha256: source.sha256, authority: source.authority, representation: source.representation });
     }
     const baseline = applyReverseRecipeToLaw(norm.document.law, recipe, { restorationChecked: true });
+    if (restoration.derivation === 'forward') {
+      // Lauf 9: Stand am Stichtag vorwärts neu gewonnen (Quellen in Reihenfolge ältest zuerst), dann die Wortlautprobe.
+      const state = forwardPublicationBase(loaded.base, [...prior].reverse());
+      if (!state.ok) return { ok: false, detail: state.detail };
+      if (bodyFingerprint(state.base.body) !== restoration.forwardFingerprint) return { ok: false, detail: 'Vorwärts gewonnener Stand am Stichtag weicht vom Rezept ab' };
+      const agreement = wordingAgreement(baseline.body, state.base);
+      return agreement.ok ? { ok: true, detail: `vorwärts über ${prior.length} Änderung(en): ${agreement.detail}` } : { ok: false, detail: agreement.detail };
+    }
     // Wie im Lauf: Portalgestalt aus dem heutigen Portalkörper und den Konventionen des Amtsblatts.
     const proof = proveRestoration(baseline.body, titleState(baseline), prior, { ...loaded.base, portal: norm.body, ...(conventions ? { conventions } : {}) });
     if (!proof.ok) return { ok: false, detail: proof.detail };

@@ -28,7 +28,8 @@ export function buildNshInventoryStatus(report: InventoryReport, manifest: Pick<
   let atBaseline = 0;
   let undetermined = 0;
   for (const entry of report.entries) {
-    if (imported.has(entry.documentId) || entry.outcome === 'not-at-baseline' || entry.baselineStatus === 'not-active-at-baseline') continue;
+    // Anlagen einer Stammnorm (`part-of-main`) sind keine eigenen Normen.
+    if (imported.has(entry.documentId) || entry.outcome === 'not-at-baseline' || entry.outcome === 'part-of-main' || entry.baselineStatus === 'not-active-at-baseline') continue;
     const contradicted = entry.ledger.contradictions > 0;
     if (entry.baselineStatus === 'active-at-baseline' || (!contradicted && AT_BASELINE_CLASSES.has(entry.baselineClass ?? ''))) atBaseline += 1;
     else undetermined += 1;

@@ -19,6 +19,7 @@ import type { R2ListedObject, R2Transport } from '@landesrecht/importer-recht-nr
 
 import { R2_SOURCES_BUCKET } from '../common/environment.ts';
 import type { ImportManifest } from '../common/manifest.ts';
+import { identityFileName } from '../common/paths.ts';
 import { deterministicSample, envelopeBytes, envelopeCoreProblems, envelopeFor, isArchiveKey, JURISDICTION_PREFIX, KEY_PREFIX, md5Hex, sha256Hex } from './archive.ts';
 import { archiveCandidates, readIfExists } from './stage.ts';
 
@@ -188,6 +189,11 @@ export interface RemoteAudit {
   md5Mismatch: string[];
   /** Unter dem Präfix, aber zu keiner übernommenen Norm gehörig. */
   unexpected: string[];
+  /**
+   * Archivierte Objekte einer aus dem Stichtagsbestand zurückgenommenen Quellidentität (Befund
+   * `withdrawn-not-at-baseline`): Das Archiv bleibt unverändert – R2-Objekte werden nie gelöscht –, kein Widerspruch.
+   */
+  retainedWithdrawn: string[];
   notVerified: string[];
   sample: { seed: string; requested: number; checked: number; bytes: number; keys: string[]; failures: string[] };
   /** `descriptive`: Kernfelder gleich, beschreibende Felder abweichend – archivierter Stand bleibt, kein Fehler. */
@@ -245,6 +251,7 @@ export async function auditRemote(options: RemoteAuditOptions): Promise<RemoteAu
     sizeMismatch: [],
     md5Mismatch: [],
     unexpected: [],
+    retainedWithdrawn: [],
     notVerified: [],
     sample: { seed: options.seed, requested: options.sampleSize, checked: 0, bytes: 0, keys: [], failures: [] },
     envelopeSample: { requested: options.envelopeSampleSize ?? 25, checked: 0, failures: [], descriptive: 0 },
@@ -274,8 +281,16 @@ export async function auditRemote(options: RemoteAuditOptions): Promise<RemoteAu
     }
   }
   const expectedKeys = new Set(candidates.flatMap((candidate) => [candidate.objectKey, candidate.envelopeKey]));
-  for (const key of listed.keys()) if (!expectedKeys.has(key)) audit.unexpected.push(key);
+  const withdrawnPrefixes = options.manifest.entries
+    .filter((entry) => (entry.findings ?? []).some((finding) => finding.code === 'withdrawn-not-at-baseline'))
+    .map((entry) => `${KEY_PREFIX}${entry.sourceArea}/${identityFileName(entry.sourceIdentity)}/`);
+  for (const key of listed.keys()) {
+    if (expectedKeys.has(key)) continue;
+    if (withdrawnPrefixes.some((prefix) => key.startsWith(prefix))) audit.retainedWithdrawn.push(key);
+    else audit.unexpected.push(key);
+  }
   audit.unexpected.sort();
+  audit.retainedWithdrawn.sort();
 
   // Deterministische Byte-Stichprobe: Rohobjekte nach sha256(seed:schlüssel), die ersten N; SHA-256 nach Download.
   const rawPresent = candidates.filter((candidate) => listed.has(candidate.objectKey));

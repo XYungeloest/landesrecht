@@ -1,130 +1,138 @@
 # Bereitschaft und Stand des NSH-Ausgangsimports
 
-**Stand 2026-09-19 (Run 6) · Readiness: READY · Bestand: 1 910 Normen unter `content/norms/nsh` (lokal, nicht
-committet, nicht deployt) · R2: gestagt, nicht hochgeladen.**
+**Stand 2026-09-19 (Run 7) · Readiness: TECHNICALLY READY · Remote: REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION ·
+Bestand: 2 383 Normen unter `content/norms/nsh` (lokal, nicht committet, nicht deployt) · R2: gestagt, nicht
+hochgeladen · D1: lokal projiziert, Remote-Batches vorbereitet, nicht eingespielt.**
 
-Maschinelle Prüfung: `npm run import:juris-sh:readiness` (`data/audits/juris-sh/READINESS.md`). Kennzahlen je
-Dokument: `data/audits/juris-sh/CORPUS_INVENTORY.md`, `corpus-inventory.json`. Zugriffslage und TDM-Vorbehalt:
-`docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md`.
+Maschinelle Prüfung: `npm run import:juris-sh:readiness` (`data/audits/juris-sh/READINESS.md`). Die Readiness trennt
+zwei Aussagen: `TECHNICALLY READY` (Zugriffsweg, Vollkorpus, Stichtag, Integrität, Bestand) und die Remote-Freigabe
+`REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION`. Der Rechtsvorbehalt ist **kein** Parser-, Coverage- oder
+Integritätsfehler, sondern eine offene menschliche Entscheidung (`docs/NSH_SOURCE_RIGHTS_AND_PROVENANCE.md`). Bis dahin
+verweigert `r2-sync --write` den Upload; vorbereitete Remote-Schritte: `docs/NSH_REMOTE_RELEASE_PLAN.md`.
 
 ## 1 Quelle und Zugriffsweg
 
-- **Normtext:** öffentliche PDF-Ausgabe des Bürgerservice Schleswig-Holstein (juris), `GET
-  /jportal/recherche3doc/<Name>.pdf?json={format: pdf, docPart: X, docId, portalId: bssh}`, mit der anonymen
-  Sitzung, die der öffentliche Permalink-Aufruf `/perma?d=…` selbst setzt. Kein Login, kein CSRF-Token; die interne
-  Schnittstelle `/jportal/wsrest/` wurde in keinem Lauf aufgerufen.
-- **Stichtagsfassung geänderter, nach dem Stichtag aufgehobener und unbestimmter Normen:** dieselbe Ausgabe ohne
-  `docPart` liefert jede Einzelfassung („genau dieses Dokument“) mit „Fassung vom“, „Gültig ab“, „Gültig bis“. Je
-  Einheit gilt die Fassung mit Gültig ab ≤ 2023-12-01 ≤ Gültig bis; führt juris eine abgelöste Fassung ohne Ende
-  weiter, trägt die später erlassene. Übernommen wird nur, wenn jede Einheit eindeutig ist, die Reihenfolge der
-  Paragraphen aufsteigt, Titel (jüngste gewählte Fassung) und Gliederungsnummer dem Rahmendokument entsprechen, keine
-  gewählte Fassung rückwirkend nach dem Stichtag erlassen wurde und die Textintegrität gegen genau diese Zeilen
-  stimmt. Sonst Review mit Grund. Der heutige Text ersetzt nie die Stichtagsfassung.
-- **Belege:** Ausgabe (Kopf, Ausgabevermerk, „Stand: letzte berücksichtigte Änderung“, Gültigkeit je Einheit) und das
-  bestehende Ereignisregister (5 857 Ereignisse, weiterverwendet, nicht neu gebaut) nach den Regeln A/B/C
-  (`common/evidence.ts`). Registeränderung nach dem Stichtag, die die Ausgabe nicht zeigt → Widerspruch → Review.
+Unverändert gegenüber Run 6: öffentliche PDF-Ausgabe des Bürgerservice Schleswig-Holstein (juris) mit der anonymen
+Sitzung des öffentlichen Permalinks; kein Login, kein CSRF-Token, `/jportal/wsrest/` in keinem Lauf aufgerufen. Run 7
+war vollständig netzfrei (Cache). Stichtagsfassungen geänderter Normen aus den am Stichtag geltenden Einzelfassungen
+(„genau dieses Dokument“), nie aus dem heutigen Text.
 
-## 2 Vollkorpus
+## 2 Ergebnis (`bulk --write`, Run 7)
 
-| Schritt | Ergebnis |
+| Ausgang | Run 6 | Run 7 |
+| --- | --- | --- |
+| übernommen (`imported` / `imported-with-warnings`) | 1 910 | **2 383** (516 / 1 867): 1 340 Landesrecht (852 Verordnungen, 445 Gesetze, 42 Zustimmungsgesetze, Verfassung), 1 043 Verwaltungsvorschriften |
+| davon Stichtagsfassung aus Einzelfassungen | 245 | 275 |
+| Review (`needs-review`) | 1 561 | 642 (darunter 56 Rekonstruktion offen) |
+| Anlage einer VwV, der Stammnorm angehängt (`excluded`, keine eigene Norm) | – | 523 |
+| nicht am Stichtag | 1 720 | 1 643 |
+| fehlgeschlagen / ohne PDF | 4 / 2 | 4 / 2 |
+
+Neu übernommen: 569 Normen; zurückgenommen: 96 (88 in den Review, jeweils mit konkretem Sperrgrund – vor allem
+„Es ist Text als PDF-Datei vorhanden“, d. h. Inhalt fehlt in der Ausgabe –, 8 als Anlage ihrer Stammnorm).
+`1 910 − 96 + 569 = 2 383`.
+
+## 3 Was Run 7 geändert hat
+
+| Punkt | Umsetzung | Wirkung |
+| --- | --- | --- |
+| Landeskürzel in amtlichen Abkürzungen (Transformer 1.1.0) | belegte Normabkürzungen „… SH“/„… Schl.-H.“ → „… NSH“; Verkündungsblätter, Aktenzeichen, Fundstellen, historische Titel geschützt; Quellabkürzung als `amtliche-abkuerzung-sh` | 300 Normen frei, deren Review (auch) daran hing, 257 davon ausschließlich; Rest (76 + 27 Fälle) ohne Beleg im Bestand (Einrichtungs-, Programm-, Regionskürzel) bleibt Review |
+| Historische Eigennamen | Schutzmuster `historical-state`, Fehler `historical-name-transformed` | keine rückwirkende Überleitung („Provinz Schleswig-Holstein“ bleibt) |
+| VwV-Metadaten im Normkörper | wiederholter Titel, „Gl.Nr.“ (auch mehrere, „Gl.Nrn.“), „Fundstelle:“ samt Änderungsvermerk → Metadaten; angehängte Bekanntmachungszeile bleibt Normtext; Rohquelle unverändert; Integrität `explained-difference` | 989 übernommene VwV bereinigt: Fundstelle 887, Gliederungsnummer 897, wiederholter Titel 226, Änderungsvermerk 38 |
+| juris-redaktionelle Zusätze (Audit B) | „Verkündet als …“ (134 Normen), juris-Anmerkungen (12), nichtamtliches Anlagenverzeichnis (97 Normen), „Ausgabe/Stand (juris)“ aus den Quellhinweisen | aus dem kanonischen Inhalt genommen, als erklärte Zeilen festgehalten |
+| Technische Vermerke | „Es ist Text als PDF-Datei vorhanden“, „[hier nicht gespeichert]“, „(Gleichung nicht gespeichert)“ → Befund `incomplete-source-text` | 94 Review-Fälle; zuvor stillschweigend übernommen (u. a. 60 Normen mit leerer Anlage) |
+| Abbildungen | `figure`-Blöcke mit inhaltsadressiertem Asset (SHA-256, Pixelmaße, Lage „seite-n/bild-k“ in der PDF-Ausgabe), nie Base64; verzerrt gesetzte oder Text überdeckende Bilder bleiben Review; auch in Einzelfassungen geprüft | 406 Abbildungen in 215 Normen, 405 Assets (222 MB); 114 davon ganzseitige Bildseiten (Formulare, Karten – als Bild übernommen, ihr Inhalt ist nicht durchsuchbar); 202 der neu übernommenen Normen hatten zuvor den Befund Abbildung |
+| Tabellen | strukturierte Tabelle nur für das sichere Spaltenraster (gleiche Spaltenzahl, durchgehender Zwischenraum, keine Worttrennung, keine Hochzeichen) | 276 Tabellen in 132 Normen; 124 der neu übernommenen Normen hatten zuvor Tabellenbefunde; 245 + 63 Tabellenfälle bleiben Review |
+| VwV-Anlagen als eigene juris-Dokumente | eindeutige Zuordnung zur Stammnorm (Titel, Gliederungsnummer), als `annex` angehängt, Sperrgründe der Anlage werden Sperrgründe der Stammnorm | 523 Anlagendokumente zugeordnet; 295 davon in 19 übernommenen Stammnormen (übrige Stammnormen im Review, meist wegen Tabellen der Anlage); 38 Anlagen ohne eindeutige Stammnorm und 46 mehrdeutige Stammnormen bleiben Review |
+| Amtliche Fundstelle | „GVOBl. 1999, 26“ → „GVOBl. Schl.-H. 1999 S. 26“ als `amtliche-fundstelle-sh`; VwV aus der Fundstellenzeile; Verkündungsblatt-Quellreferenz, wo das Blatt im Ledger liegt | 2 374 von 2 383 Normen |
+| Titel und Datum | Fortsetzungszeilen („… nach“), Datumszeile, Bekanntmachungszusatz („AV d. …“) abgetrennt; `documentDate` aus der Titeldatumszeile statt Sammlungsdatum 1971-12-31 | 1971-12-31 nur noch 1 Norm (vorher 75) |
+| Parser | VwV-Verzeichnis mit mittiger erster Zeile; „Zum Hauptdokument“ nach dem Verzeichnis; Fußnote verschluckt keine Einheitenüberschrift der Folgeseite | Verzeichnisreste im Normkörper beseitigt |
+
+## 4 Review vorher/nachher (offene Fälle je Kategorie)
+
+| Kategorie | Run 6 | Run 7 |
+| --- | ---: | ---: |
+| unknown-structure (Tabellen, Verzeichnis/Normkörper) | 561 | 351 |
+| institution-mapping (Kürzel, Erlassformeln) | 547 | 133 |
+| incomplete-annex (Anlagen als eigene Dokumente, fehlende PDF-Anlagen) | 478 | 162 |
+| pdf-only (Abbildungen, technische Vermerke) | 271 | 30 |
+| historical-gap | 44 | 44 |
+| import-regression | 38 | 0 |
+| validity | 13 | 17 |
+| reconstruction-required | 12 | 12 |
+| contradictory-evidence | 7 | 3 |
+| **offen gesamt** | **1 971** (1 565 Dokumente) | **752** (653 Dokumente) |
+
+Verschwunden sind nur Fälle, deren Ursache behoben ist (Regel, Parser, Zuordnung). Neu sind nur belegte Lücken
+(`incomplete-source-text` 94). Kein Fall automatisch entschieden, kein Human Approval.
+
+## 5 Zweite Quelle (amtliche Register)
+
+Abgleich über `packages/importers/juris-sh/src/audit/register-crosscheck.ts` (stabile Kennungen über das ganze Register,
+Zählbasis Registerköpfe, nicht Ereignisse). **Titelähnlichkeit zählt nie als gefunden** (Falsch-positiv-Raten 37 % und
+81 %). Die Prozentzahl ist Indikator, kein Gate; die feste 95-%-Schwelle ist entfallen. Sperrend wäre nur, wenn
+Titeltreffer ungeprüft zählten oder fehlende Einträge unklassifiziert blieben.
+
+| Register | nur Gliederungsnummer, Teilmenge | nur Gliederungsnummer, vollständig | streng | nicht gefunden (klassifiziert) |
+| --- | --- | --- | --- | --- |
+| GVOBl. Systematische Übersicht (Stand 2024-12-13) | 94,4 % (847/897) | **88,1 %** (1 521/1 727) | 89,5 % | 181 |
+| Amtsblatt Erlassverzeichnis (Stand 2024-09-30) | 82,5 % (193/234) | **80,2 %** (655/817) | 80,2 % | 162 |
+
+Die früheren Kopfzahlen 96,9 % / 96,2 % zählten Titelähnlichkeit und Ereignisse mit und sind ersetzt. Zusätzlich: 25 VwV,
+deren Nummer juris nur am Änderungsvermerk führt; 182 Registereinträge ohne erkanntes Datum. Ein Fehler des früheren
+Abgleichs (Titel eines Änderungsgesetzes auf das geänderte Gesetz übertragen, 19 Stammgesetze fälschlich als
+„Änderungsgesetz“ ausgeschlossen) betraf nur den Indikator; keine Norm fiel dadurch aus Scope oder Stichtagsbestand.
+
+## 6 Kanonischer Inhalt: Entscheidungen zu den C-Fällen des Audits
+
+| Fall | Entscheidung Run 7 |
 | --- | --- |
-| Enumeration (Sitemap, Fixpunkt) | 2 808 Rahmendokumente Landesrecht, 2 389 Verwaltungsvorschriften |
-| PDF-Gesamtausgaben | 5 195 / 5 197 (2 × HTTP 500 des Portals, wiederholt, bleiben draußen) |
-| Einzelfassungen | 18 636 für 417 Rahmendokumente (nach dem Stichtag geändert oder aufgehoben, dazu unbestimmte, die die Einzelfassungen entscheiden können); vollständig, 0 Fehler |
-| Netzabrufe Vollkorpus | 5 169 (Gesamtausgaben) + 15 782 + 2 486 (Einzelfassungen) = 23 437; 0 Sperrantworten, 14 Wiederholungen, 6 anonyme Sitzungen; Cache 1,4 GB |
-| Textintegrität | exact 5 193, review 1, mismatch 1 (beide im Review); alle 1 910 übernommenen Normen exact |
-| Zweite Quelle (amtliche Register) | Systematische Übersicht GVOBl. 96,9 %, Erlassverzeichnis Amtsbl. 96,2 % (Gliederungsnummer oder Titel; Änderungs-/Mantelgesetze und Tarifverträge ausgenommen); Rest in der Rekonstruktionsqueue (`register-only-not-in-juris`) |
+| C1 Quellgeltung | als Provenienz behalten |
+| C2 „Gl.Nr.“ im VwV-Normkörper | entfernt, Nummer als Kennung (`gliederungsnummer-sh`), als „Gl.Nr. …“ suchbar |
+| C3 „Ändert … Gl.Nr. …“-Fußnoten | behalten (teils amtlich gedruckt), bis je Norm geprüft |
+| C4 „GS Schl.-H. II, Gl.Nr. …“ | behalten (für Mantelgesetzartikel amtlich belegt) |
+| C5 Bereinigungsvermerke GS Schl.-H. II | behalten |
+| C6 sonstige Fußnoten | behalten |
+| C7 Titeltypografie | juris-Typografie („ - “) behalten; juris-Zusätze („AV d. …“) abgetrennt (Quellhinweis „Bekanntmachung (Quelle)“) |
+| C8 `documentDate` 1971-12-31 | aus der Titeldatumszeile belegt; 1 Norm ohne Datumszeile behält das Sammlungsdatum |
+| C9 Gliederungsnummer | als Kennung behalten |
+| C10 Normgeber der VwV | als Quellhinweis behalten |
 
-## 3 Ergebnis (`bulk --write`)
+Amtliche Inhaltsübersichten (Audit A) bleiben Normtext; nichtamtliche juris-Verzeichnisse sind entfernt.
 
-| Ausgang | Anzahl |
-| --- | --- |
-| übernommen (`imported` / `imported-with-warnings`) | **1 910** (436 / 1 474): 1 089 Landesrecht (655 Verordnungen, 395 Gesetze, 38 Zustimmungsgesetze, Verfassung), 821 Verwaltungsvorschriften |
-| davon Stichtagsfassung aus Einzelfassungen | 245 (148 nach dem Stichtag geändert, 44 nach dem Stichtag aufgehoben, 53 zuvor unbestimmt) |
-| Review (`needs-review`) | 1 561 (darunter 56 Rekonstruktion offen) |
-| nicht am Stichtag | 1 720 |
-| fehlgeschlagen (Titel nicht erkennbar: zwei Erlassregister, zwei VwV) | 4 |
-| ohne PDF (Portalfehler) | 2 |
-
-`imported-with-warnings`: Übernahme mit offener, nicht sperrender Entscheidung (Erlassorgan ohne gesicherte
-NSH-Entsprechung, Institutionsbezeichnungen mit Kategoriestandard review). Slugkollisionen sind akzeptierte technische
-Kollisionen (eindeutiger Slug mit Kennungssuffix, Registry stabil) – Befund `info` im Manifest, kein Review-Fall.
-Die Oberfläche weist NSH als **Teilbestand** aus (`packages/legal-core/src/config/inventory-status.json`, Eintrag `nsh`:
-veröffentlicht 1 910, offen am Stichtag 1 547, baseline-only 5, unentschieden 20).
-
-**baseline-only (54 Kandidaten des Registers):** 49 einem juris-Dokument zugeordnet – 28 übernommen (Stichtagsfassung
-aus den Einzelfassungen), 13 Review, 6 Rekonstruktion offen, 2 widerlegt (Norm erst nach dem Stichtag in Kraft);
-5 ohne juris-Dokument (Rekonstruktionsqueue).
-
-**Unbestimmt (85):** 53 über die Einzelfassungen entschieden und übernommen, 13 Einzelfassungen nicht eindeutig,
-19 Review (u. a. Befristungsfußnote „Fristablauf 31.12.2004“ ohne Ende im Kopf, VwV ohne „Fassung vom“).
-
-## 4 Sperrgründe (Review, keine Übernahme)
-
-| Grund | Normen |
-| --- | --- |
-| Anlage einer VwV als eigenes Dokument (437) bzw. VwV, deren Anlage als eigenes Dokument geführt wird (38) | 475 |
-| Tabellenlayout (Textlayer trägt die Tabellenstruktur nicht sicher) | 422 (+95 in Einzelfassungen) |
-| Kürzel „SH“ in amtlichen Abkürzungen (z. B. „LVwG SH“) – Überleitungsregel offen | 350 |
-| Abbildungen (Karten, Pläne) – keine Asset-Pipeline für NSH in diesem Lauf | 271 |
-| Restvorkommen „Schl.-H.“ in Normabkürzungen („MBG Schl.-H.“) – Überleitungsregel offen | 167 |
-| Einzelfassungen am Stichtag nicht eindeutig (Überlappung mit eigenem Ende, Reihenfolge, Titel, Rückwirkung) | 44 |
-| widersprüchliche Erlassformeln | 30 |
-| Verzeichnis und Normkörper stimmen nicht überein | 35 |
-| geänderte VwV ohne Einzelfassungen in juris | 12 |
-| Register belegt Änderung nach dem Stichtag, Ausgabe nicht | 7 |
-
-Review-Fälle: 2 200 (offen 1 971) unter `data/imports/juris-sh/review/`; kein Fall automatisch entschieden, kein Human
-Approval, kein Freeze.
-
-## 5 Gates (Stand dieses Laufs)
+## 7 Gates (Stand dieses Laufs)
 
 | Gate | Ergebnis |
 | --- | --- |
-| `readiness` | READY (13/13) |
-| `audit` | konsistent; Bestand = Manifest (1 910 / 5 730 Dateien), 6 098 Rohquellen im Cache nachgerechnet |
-| `inventory` / Textintegrität | alle übernommenen exact |
-| `search-audit --full` | GRÜN (1 910 Normen, alle Prüfungen bestanden) |
-| `npm run content:check` | gültig (NSH 1 910 Normen), Unveränderlichkeit ok |
-| `npm run d1:schema:check` | gültig |
-| D1-Plan (`project-d1.ts --target plan --jurisdiction nsh`) | 1 910 Normen, 14 274 Sucheinheiten, 59 105 Anweisungen |
-| R2-Staging (`r2-sync --stage-only`) | 6 098 Objekte (302 MB) + Umschläge unter `.cache/juris-sh-r2-staging/`, Manifest `staged`; 0 Konflikte |
+| `readiness` | TECHNICALLY READY (13/13); REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION |
+| `audit` | konsistent; Bestand = Manifest (2 383 / 7 149 Dateien); 7 322 Rohquellen im Cache nachgerechnet, 405 Abbildungen aus ihrer PDF-Ausgabe reproduziert |
+| Textintegrität Vollkorpus | exact 3 118, explained-difference 2 075, review 1, mismatch 1 (beide Review); alle übernommenen exact oder erklärt |
+| `search-audit --full` | GRÜN (2 383 Normen); Golden Set 125 Anfragen, beide Suchmodi 0 verletzt, Top-1 1,0, Recall@10 0,957; West + BayWü + NSH 12/12 |
+| West/BayWü | inkrementeller Plan gegen den Remote-Zustand: `noop`, unverändert 1 482 bzw. 1 696 |
+| Lokale D1 | 2 383 Normen, 18 441 Sucheinheiten, 70 083 Anweisungen |
+| D1-Batches | 63 Dateien, 91 530 Anweisungen, Zielfingerabdruck `2566c89c` |
+| R2-Staging | 7 727 Objekte (705 MB) mit Umschlägen, darunter 405 Abbildungs-Assets unter `assets/`; 0 Konflikte, 0 ohne Cache (`data/audits/juris-sh/R2_STAGING.md`) |
 
-## 6 Befehle
+## 8 Befehle
 
 ```bash
-# Beschaffung (resumierbar, 1 Anfrage/s, Cache)
-npm run import:juris-sh:fetch-corpus -- --phase gesamtausgaben
-npm run import:juris-sh:fetch-corpus -- --phase units
-# Verarbeitung (netzfrei)
 npm run import:juris-sh:inventory -- --write
 npm run import:juris-sh:readiness -- --write
-npm run import:juris-sh:bulk -- --write            # nur bei READY; idempotent
+npm run import:juris-sh:bulk -- --write            # idempotent
 npm run import:juris-sh:audit -- --write
 npm run import:juris-sh:search-audit -- --full --write
 npm run import:juris-sh:r2-sync -- --stage-only    # kein Netz
+node scripts/project-d1.ts --target local --reset --jurisdiction nsh
+npm run d1:seed:dev -- --jurisdiction nsh
+node scripts/project-d1.ts --target remote-batches --jurisdiction nsh
 ```
 
-Cloudflare (nicht in diesem Lauf; nach Freigabe):
+Remote-Schritte (Schema zuerst, dann Batches, R2, Deploy) und Smoke-Plan: `docs/NSH_REMOTE_RELEASE_PLAN.md`.
 
-```bash
-npm run import:juris-sh:r2-sync -- --write                     # Upload nach landesrecht-quellen/nsh/juris-sh/2023-12-01/ (Wrangler-OAuth), fortsetzbar
-npm run d1:plan -- --jurisdiction nsh                          # data/runtime/d1-batches/landesrecht-nsh/
-npm run d1:apply:batches -- --database landesrecht-nsh         # Dry-run
-npm run d1:apply:batches -- --database landesrecht-nsh --local --execute
-npm run d1:apply:batches -- --database landesrecht-nsh --execute --confirm-remote landesrecht-nsh --resume
-npm run build && npm run deploy
-```
+## 9 Offen
 
-Falls die Remote-Datenbank `landesrecht-nsh` noch kein Schema hat, zuerst (aus `apps/web`):
-`npx wrangler d1 execute landesrecht-nsh --remote --config wrangler.jsonc --file ../../data/d1/0001_landesrecht.sql --yes`
-(Reihenfolge wie `docs/DEPLOYMENT.md`).
-
-## 7 Offen (Entscheidung beim Menschen)
-
-1. **TDM-Vorbehalt** (`tdm-reservation: 1`) und Weiterveröffentlichung der konsolidierten juris-Fassungen:
-   dokumentiert, nicht bewertet. Vor Commit, R2-Upload oder Deploy zu entscheiden.
-2. **Überleitung amtlicher Abkürzungen mit Landeskürzel** („LVwG SH“, „MBG Schl.-H.“): Regel beschließen – dann
-   werden rund 500 Normen übernahmefähig.
-3. **Tabellen, Abbildungen, VwV-Anlagen als eigene Dokumente:** Tabellenrekonstruktion, Asset-Pipeline wie BayWü,
-   Zusammenführung von Anlage und Hauptdokument.
+1. **Quellenrechte** (TDM-Vorbehalt, Weiterveröffentlichung der juris-Konsolidierung): menschliche Entscheidung;
+   einzige Voraussetzung der Remote-Freigabe.
+2. **Fachliche Review-Fälle** (752 offen): Tabellen ohne sicheres Raster (308), Anlagen nur als gesonderte PDF-Datei
+   in juris (94), Anlagendokumente ohne eindeutige Stammnorm (84), Kürzel ohne Beleg (103), widersprüchliche
+   Erlassformeln (30), Einzelfassungen nicht eindeutig (44), Rekonstruktion (56).

@@ -49,6 +49,9 @@ ae/oe/ue-Transliteration sowie – bei Eingaben mit ae/oe/ue oder ss – die Rü
    normalisiert einem Funktionswort gleicht („FüR“ → „für“, 302 Treffereinheiten in BayWü), an der
    Kandidatengrenze, obwohl die Bewertung im Speicher sie voranstellen würde. Seit 2026-09-19 so; West-Voll-Audit
    und Golden Set danach unverändert (1 482/0, Recall@10 94,1 %, MRR 0,933).
+   Verglichen werden neben den gefalteten Varianten auch die rohe Schreibung (`identityRaw`/`subjectRaw`), in SQL mit
+   vorher ersetztem Ä/Ö/Ü, weil `lower()` in SQLite nur ASCII absenkt: Die Abkürzung „FüR“ („für“ in 1 652 Treffern)
+   stand sonst hinter der Identitäts-Nachsuche (500 Zeilen) und fiel bei `limit 20` heraus.
 2. Gesamtzahl: im Plan `and-first` über den MATCH-Ausdruck (nur wenn Kandidaten vorliegen); im Plan `or-prefix`
    ohne treibenden MATCH allein über die AND-Unterabfragen je Wort (die Menge ist dadurch vollständig bestimmt;
    ergibt sie 0, entfällt die Kandidatenabfrage – Nulltreffer kosten wenige Millisekunden).

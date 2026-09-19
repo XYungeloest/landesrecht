@@ -529,18 +529,19 @@ export function parseStructural(input: string, context: readonly LocationPath[],
   let match: RegExpExecArray | null;
 
   // „Der Wortlaut wird Satz 1.“
-  if (/^Der\s+Wortlaut\s+wird\s+Satz\s+1\.?$/u.test(text)) return { formula: 'number-sentences', templates: [{ kind: 'number-sentences', context: flat(context) }] };
+  if (/^Der\s+(?:bisherige\s+)?Wortlaut\s+wird\s+Satz\s+1\.?$/u.test(text)) return { formula: 'number-sentences', templates: [{ kind: 'number-sentences', context: flat(context) }] };
   // „In Satz 1 wird die Satznummerierung „¹“ gestrichen.“ (GVBl. 2019 S. 380; BayMBl. 2022 Nr. 694), auch mit weiterem Befehl
   // am selben Ort („… gestrichen und die Angabe „2022“ durch die Angabe „2025“ ersetzt.“ – danach ausgeführt).
-  const unnumber = /^(?:(?:In|Im)\s+(.+?)\s+wird\s+die\s+Satznummerierung\s+[„"]¹[“"]\s+gestrichen|Die\s+Satznummerierung\s+[„"]¹[“"]\s+wird\s+gestrichen)(?:\s+und\s+([\s\S]+?))?\.?$/u.exec(text);
+  // Auch „Die Satznummerierung in Satz 1 wird gestrichen.“ (BayMBl. 2020 Nr. 350) und ohne Zitat der Nummer.
+  const unnumber = /^(?:(?:In|Im)\s+(.+?)\s+wird\s+die\s+Satznummerierung(?:\s+[„"]¹[“"])?\s+gestrichen|Die\s+Satznummerierung(?:\s+[„"]¹[“"]|\s+(?:in|im)\s+(.+?))?\s+wird\s+gestrichen)(?:\s+und\s+([\s\S]+?))?\.?$/u.exec(text);
   if (unnumber) {
-    const where = locationOf(unnumber[1] ?? '', context);
+    const where = locationOf(unnumber[1] ?? unnumber[2] ?? '', context);
     if (!where) return { formula: 'renumber', reason: 'Satznummerierung gestrichen: Ort nicht lesbar' };
     // „In Satz 1 …“: gemeint ist das Feld, dessen einziger Satz die Nummer verliert.
     const field = where.at(-1)?.kind === 'satz' && where.at(-1)?.value === '1' ? where.slice(0, -1) : where;
     const parsed: StructuralParse = { formula: 'unnumber-sentences', templates: [{ kind: 'unnumber-sentences', context: field }] };
-    if (!unnumber[2]) return parsed;
-    const rest = unnumber[2].trim();
+    if (!unnumber[3]) return parsed;
+    const rest = unnumber[3].trim();
     return { ...parsed, followUp: { text: `${rest.charAt(0).toUpperCase()}${rest.slice(1)}.`, context: field } };
   }
   // „In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“ (GVBl. 2022 S. 680): Der einzige Absatz verliert seine Bezeichnung.
@@ -562,7 +563,7 @@ export function parseStructural(input: string, context: readonly LocationPath[],
     return { formula: 'number-sentences', templates: [{ kind: 'number-sentences', context: flat(context) }], followUp: { text: `${rest.charAt(0).toUpperCase()}${rest.slice(1)}.`, context: flat(context) } };
   }
   // „Der Wortlaut wird Abs. 1.“ (GVBl. 2024 S. 562, 2026 S. 190)
-  if (/^Der\s+Wortlaut\s+wird\s+Abs\.\s*1\.?$/u.test(text)) return { formula: 'number-paragraph', templates: [{ kind: 'number-paragraph', context: flat(context) }] };
+  if (/^Der\s+(?:bisherige\s+)?Wortlaut\s+wird\s+Abs\.\s*1\.?$/u.test(text)) return { formula: 'number-paragraph', templates: [{ kind: 'number-paragraph', context: flat(context) }] };
 
   // Umnummerierung mit weiterem Befehl: „Der bisherige Satz 3 wird Satz 4 und nach der Angabe „Bei dem“ … eingefügt.“,
   // „Nr. 6 wird Nr. 5 und in Buchst. c wird die Angabe „Nrn.“ durch die Angabe „Nr.“ ersetzt.“
@@ -693,7 +694,7 @@ export interface RealizedStep {
   note?: string;
 }
 
-function singleTextField(body: readonly NormBodyBlock[], path: LocationPath, step: string): { field: FieldRef; resolved: string[]; widened: string[] } {
+export function singleTextField(body: readonly NormBodyBlock[], path: LocationPath, step: string): { field: FieldRef; resolved: string[]; widened: string[] } {
   const scope = resolvePath(body, path);
   if (!scope.ok) throw new StructuralError('location-unresolved', `${step} ${formatPath(path)}: ${scope.reason}`);
   if (scope.scope.sentence !== undefined) throw new StructuralError('location-unresolved', `${step}: Satzangabe als Ort eines Satzbefehls`);
@@ -749,7 +750,7 @@ function listFrame(body: readonly NormBodyBlock[], path: LocationPath): { first:
 
 const markersIn = (body: readonly NormBodyBlock[], fields: readonly FieldRef[]): number => fields.reduce((sum, field) => sum + sentenceNumbers(String(blockAt(body, field.path)?.[field.key] ?? '')).length, 0);
 
-const SAME_KIND: Readonly<Partial<Record<StepKind, RegExp>>> = {
+export const SAME_KIND: Readonly<Partial<Record<StepKind, RegExp>>> = {
   absatz: /^\(\d+[a-z]?\)$/u,
   nummer: /^(?:Nr\.\s*)?\d+[a-z]?(?:\.\d+[a-z]?)*\.?$/u,
   buchstabe: /^[a-z]{1,2}[).]$/u,
@@ -971,7 +972,7 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
 }
 
 /** Rahmen einer Aufzählung nur, wenn der Bereich nicht ohnehin genau ein Textfeld hat. */
-function listFrameOrUndefined(body: readonly NormBodyBlock[], path: LocationPath, step: string): ReturnType<typeof listFrame> {
+export function listFrameOrUndefined(body: readonly NormBodyBlock[], path: LocationPath, step: string): ReturnType<typeof listFrame> {
   try {
     singleTextField(body, path, step);
     return undefined;

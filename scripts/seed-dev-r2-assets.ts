@@ -4,7 +4,7 @@
  *
  * Die Worker-Route `/assets/<land>/<sha256>.<ext>` liest aus dem Binding `LANDESRECHT_QUELLEN`; im Dev-Server
  * zeigt es auf eine lokale, zunächst leere R2 unter apps/web/.wrangler/state. Dieses Skript legt die bereits
- * gestagten, inhaltsadressierten Assets (`.cache/bayernrecht-r2-staging/<präfix>assets/`) dort ab – nur lokal, nie
+ * gestagten, inhaltsadressierten Assets (`.cache/<adapter>-r2-staging/<präfix>assets/`) dort ab – nur lokal, nie
  * remote (kein Transport, keine Zugangsdaten). Jede Datei wird vorher gegen den SHA-256 ihres Namens geprüft.
  *
  *   node scripts/seed-dev-r2-assets.ts
@@ -20,7 +20,8 @@ import { R2_SOURCES_BINDING } from '@landesrecht/runtime/bindings.ts';
 import { NORM_ASSET_PREFIXES } from '@landesrecht/runtime/assets.ts';
 
 const root = resolveRepositoryRoot();
-const stagingDir = join(root, '.cache', 'bayernrecht-r2-staging');
+/** Staging je Land (BayWü: bayernrecht, NSH: juris-sh); der Schlüssel unter dem Staging ist der R2-Schlüssel. */
+const STAGING_DIRS: Readonly<Record<string, string>> = { baywue: 'bayernrecht-r2-staging', nsh: 'juris-sh-r2-staging' };
 /** Nur die hier genutzte Methode des R2-Bindings (die Worker-Typen stehen Node-Skripten nicht zur Verfügung). */
 interface LocalBucket {
   put(key: string, value: Uint8Array, options: { httpMetadata: { contentType: string } }): Promise<unknown>;
@@ -34,7 +35,7 @@ try {
   const bucket = proxy.env[R2_SOURCES_BINDING];
   if (!bucket) throw new Error(`Binding ${R2_SOURCES_BINDING} fehlt in apps/web/wrangler.jsonc`);
   for (const [jurisdiction, prefix] of Object.entries(NORM_ASSET_PREFIXES)) {
-    const directory = join(stagingDir, prefix!);
+    const directory = join(root, '.cache', STAGING_DIRS[jurisdiction] ?? `${jurisdiction}-r2-staging`, prefix!);
     const files = (await readdir(directory).catch(() => [] as string[])).filter((name) => /^[0-9a-f]{64}\.(?:gif|jpg|png)$/u.test(name));
     let written = 0;
     for (const name of files) {

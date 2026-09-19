@@ -5,13 +5,13 @@ Erzeugt von `bayernrecht coverage --write` aus den Manifestbefunden `enacting-bo
 Eingetragen sind nur Verfassungsorgane mit unstrittiger Entsprechung (Landtag, Staatsregierung, Ministerpräsident). Staatsministerien und Behörden bleiben Prüffälle, weil ihr Zuschnitt im Freistaat Bayern-Württemberg nicht festgelegt ist – es werden keine Behörden erfunden.
 
 - Befunde: **447**
-- Unterschiedliche Bezeichnungen: **19**
-- Ressortgruppen: **13**
-- Historische Erlassorgane (am Stichtag nicht mehr bestehend, Beleg StRGVV § 2; nur Provenienz, kein Prüffall): **579** Befunde, 34 Bezeichnungen
+- Unterschiedliche Bezeichnungen: **18**
+- Ressortgruppen: **12**
+- Historische Erlassorgane (am Stichtag nicht mehr bestehend, Beleg StRGVV § 2; nur Provenienz, kein Prüffall): **580** Befunde, 34 Bezeichnungen
 
 | Ressortgruppe | Befunde | Bezeichnungen |
 | --- | ---: | ---: |
-| Unterricht, Kultus, Bildung | 138 | 1 |
+| Unterricht, Kultus, Bildung | 139 | 1 |
 | Justiz | 110 | 1 |
 | Arbeit, Soziales, Familie | 37 | 1 |
 | Wohnen, Bau, Verkehr | 37 | 1 |
@@ -23,11 +23,10 @@ Eingetragen sind nur Verfassungsorgane mit unstrittiger Entsprechung (Landtag, S
 | Mehrere Ressorts oder Zusatz in der Formel | 7 | 6 |
 | Staatskanzlei, Ministerpräsident, ohne Ressort | 6 | 2 |
 | Digitales | 1 | 1 |
-| Ernährung, Landwirtschaft, Forsten | 1 | 1 |
 
-## Unterricht, Kultus, Bildung (138)
+## Unterricht, Kultus, Bildung (139)
 
-- 138 × Bayerisches Staatsministerium für Unterricht und Kultus
+- 139 × Bayerisches Staatsministerium für Unterricht und Kultus
 
 ## Justiz (110)
 
@@ -79,15 +78,11 @@ Eingetragen sind nur Verfassungsorgane mit unstrittiger Entsprechung (Landtag, S
 
 - 1 × Bayerisches Staatsministerium für Digitales
 
-## Ernährung, Landwirtschaft, Forsten (1)
-
-- 1 × Bayerisches Staatsministerium für Ernährung, Landwirtschaft, Forsten und Tourismus
-
 ## Historische Erlassorgane (nur Provenienz)
 
 `historical-source-only` in `institution-mapping.json`: kein Simulationsorgan, Quellorgan bleibt `originEnactingBody`, Normtext unverändert.
 
-- Inneres: 205 (177 × Bayerisches Staatsministerium des Innern; 25 × Bayerisches Staatsministerium des Innern, für Bau und Verkehr; 2 × Bayerisches Staatsministerium des Innern und für Integration; 1 × Staatsministerium des Innern)
+- Inneres: 206 (178 × Bayerisches Staatsministerium des Innern; 25 × Bayerisches Staatsministerium des Innern, für Bau und Verkehr; 2 × Bayerisches Staatsministerium des Innern und für Integration; 1 × Staatsministerium des Innern)
 - Ernährung, Landwirtschaft, Forsten: 84 (47 × Bayerisches Staatsministerium für Ernährung, Landwirtschaft und Forsten; 32 × Bayerisches Staatsministerium für Landwirtschaft und Forsten; 5 × Bayerisches Staatsministerium für Gesundheit, Ernährung und Verbraucherschutz)
 - Finanzen: 84 (66 × Bayerisches Staatsministerium der Finanzen; 18 × Bayerisches Staatsministerium der Finanzen, für Landesentwicklung und Heimat)
 - Umwelt, Landesentwicklung: 48 (26 × Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen; 14 × Bayerisches Staatsministerium für Umwelt, Gesundheit und Verbraucherschutz; 8 × Bayerisches Staatsministerium für Umwelt und Gesundheit)

@@ -11,7 +11,7 @@ Nordrhein-Westfalen → Land Westdeutschland (`docs/RECHT_NRW_IMPORT.md`,
 | --- | --- |
 | Quellland (Provenienz, nie transformiert) | Schleswig-Holstein (`SOURCE_STATE`) |
 | Zieljurisdiktion | `nsh` – „Land Niedersachsen-Holstein“, Kurzform „NSH“, Verkündungsblatt „GVOBl. NSH“ |
-| Transformerversion | `juris-sh-transformer/1.0.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`) |
+| Transformerversion | `juris-sh-transformer/1.1.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen |
 | Reportschema | `juris-sh-transformation-report/1` |
 | Institutionen-Zuordnung | `data/imports/juris-sh/institution-mapping.json` (`juris-sh-institution-mapping/1`) |
 | Tests | `tests/unit/juris-sh-transform.test.ts` |
@@ -58,6 +58,7 @@ sind nie Gegenstand einer Regel. Daraus folgt beides zugleich:
 | `jurisdiction-name-upper` | Versalschreibung „SCHLESWIG-HOLSTEIN“ aus Überschriften und Titelblättern | „NIEDERSACHSEN-HOLSTEIN“ |
 | `jurisdiction-abbreviation-dotted` | „Schl.-H.“ **nur** nach „Land“, „Landes“, „Lande“ | „NSH“ (Satzpunkt bleibt erhalten) |
 | `jurisdiction-abbreviation` | „SH“ **nur** nach „Land“, „Landes“, „Lande“ | „NSH“ |
+| `jurisdiction-abbreviation-known-law` (1.1.0) | Landeskürzel „SH“/„Schl.-H.“ **nur** an einer bekannten Normabkürzung des Bestands („LVwG SH“, „MBG Schl.-H.“, „LDSG-SH“, auch vorangestellt „SH-…“) | „LVwG NSH“, „MBG NSH“, „LDSG-NSH“ (Satzpunkt bleibt) |
 
 **Schreibvarianten.** Zwischen den Namensteilen werden Bindestrich, geschützter Bindestrich,
 Gedankenstriche (U+2010–U+2015), Minuszeichen, Leerzeichen und Zeilenumbruch erkannt
@@ -80,8 +81,37 @@ wird. Es wird kein umgelauteter Stamm erfunden („niedersächsisch-holsteinisch
 redaktionelle Entscheidung, keine mechanische Ableitung – siehe offene Fragen).
 
 **Kürzel.** „Schl.-H.“ und „SH“ werden nur übergeleitet, wenn ihnen unmittelbar eine Staatsform
-vorausgeht; dann bezeichnen sie eindeutig das Land. Alle übrigen Vorkommen bleiben unverändert und
-werden gemeldet (`manual-review`). Im Zweifel wird nicht ersetzt.
+vorausgeht oder wenn sie Landeskürzel einer **bekannten Normabkürzung** sind (1.1.0, unten). Alle übrigen
+Vorkommen bleiben unverändert und werden gemeldet (`manual-review`). Im Zweifel wird nicht ersetzt.
+
+**Bekannte Normabkürzungen (1.1.0).** Zielkonvention ist die des Projekts für Landeskürzel: „NSH“ – wie
+„VwVfG NRW“ → „VwVfG West“ im West-Bestand und wie die bestehenden Regeln „Land SH“ → „Land NSH“. Die Menge
+der bekannten Abkürzungen ist kein Muster, sondern eine belegte Liste (`pipeline/abbreviations.ts`,
+versioniert unter `data/imports/juris-sh/official-abbreviations.json`, je Dokument SHA-256 der Ausgabe):
+
+* amtliche Abkürzungen des Bestands (Kopf „Amtliche Abkürzung“) mit abgesetztem Landeskürzel,
+* im Bestand eingeführte Abkürzungen einer Bezeichnung mit dem Landesnamen („… Schleswig-Holstein
+  (LVermGeo SH)“, auch „– LVermGeo SH –“), auch im Dokument selbst,
+* amtliche Abkürzungen ohne Kürzel mit angehängtem Kürzel im Text („LBG“ → „LBG SH“), sofern der Stamm als
+  Abkürzung erkennbar ist.
+
+Aufgenommen wird nur, was `isStateAbbreviation` besteht: abgesetztes Kürzel (Leerzeichen oder Bindestrich,
+nie zusammengeschrieben: „SHBesG“, „FINISHG“ bleiben), höchstens drei Wörter, kein Verkündungsblatt, kein
+Aktenzeichen, kein „ - “ oder „/“. Stand Run 7: 1 184 amtliche Abkürzungen, 777 bekannte Abkürzungen mit
+Landeskürzel. Die Quellabkürzung bleibt erhalten: `meta.externalIdentifiers` `amtliche-abkuerzung-sh`
+(sobald die eigene Abkürzung übergeleitet wurde), Quellreferenzen und Rohquelle unverändert.
+
+Nicht übergeleitet werden weiterhin: Verkündungsblätter („GVOBl. Schl.-H.“, „Amtsbl. Schl.-H.“, „NBl. …
+Schl.-H.“, auch mit Ministeriumskürzel), Aktenzeichen, Fundstellen, historische Titel und Zitate anderer
+Normen in Fundstellen (Schutzmuster `gazette-dotted`, `file-reference`). Kein globales Ersetzen: Jede
+Anwendung ist eine Erkennung mit Regel, Fundstelle und `from`/`to` im Report.
+
+**Historische Eigennamen (1.1.0).** Historische Staaten, Organe und Namen werden nie rückwirkend
+übergeleitet (BayWü-Regel): „Provinz Schleswig-Holstein“, „Provinzialverband“, „Provinziallandtag“,
+„Oberpräsident der Provinz“, „Herzogtum Schleswig-Holstein“ sind Schutzmuster `historical-state`
+(Kategorie `historical-name`). Die Nachprüfung meldet eine dennoch übergeleitete Form („Provinz
+Niedersachsen-Holstein“) als Fehler `historical-name-transformed`. Nur fortbestehende Selbstbezeichnungen
+des Landes werden Niedersachsen-Holstein.
 
 ## Was nie transformiert wird
 
@@ -97,9 +127,10 @@ Diese Regel ist hart und wird getestet.
   Bundesfundstellen („BGBl. I S. …“).
 * **Fußnoten** (`type: footnote`) als Quellhinweise – sie werden gar nicht erst als Textfeld erfasst.
 * **Adressen, Prüfsummen, Dateinamen** der archivierten Rohquellen.
-* **Amtliche Kurzbezeichnungen mit Landeszusatz** („LVwG SH“, „LBO SH“). Sie bleiben byteidentisch
-  und erscheinen als Erkennung der Kategorie `official-abbreviation` mit Entscheidung
-  `manual-review`. Version 1.0.0 leitet Normabkürzungen grundsätzlich nicht über.
+* **Amtliche Kurzbezeichnungen mit Landeszusatz, die nicht als Normabkürzung des Bestands belegt sind**
+  (Programm-, Einrichtungs- und Regionskürzel ohne Definition: „Hügelland SH“, „SH.LVO“). Sie bleiben
+  byteidentisch und erscheinen als Erkennung der Kategorie `official-abbreviation` mit Entscheidung
+  `manual-review`. Belegte Normabkürzungen leitet 1.1.0 über (oben).
 * **Normgeber-, Ministeriums- und Behördennamen der Quelle** als Bezeichnung. Innerhalb eines
   Institutionsnamens wird nur die Landesbezeichnung übergeleitet („Ärztekammer Schleswig-Holstein“ →
   „Ärztekammer Niedersachsen-Holstein“); der Organ- oder Behördenbegriff selbst bleibt unangetastet
@@ -191,10 +222,9 @@ Falschbefund. Scheitert die Nachprüfung, entsteht der Befund `post-transform-au
 1. **Adjektivform.** Mechanisch gebildet wird „niedersachsen-holsteinisch“. Redaktionell denkbar
    wäre „niedersächsisch-holsteinisch“. Eine Änderung beträfe jede Fundstelle des Adjektivs und
    erforderte eine neue Transformerversion.
-2. **Amtliche Kurzbezeichnungen.** „LVwG SH“ bleibt unverändert und geht in den Review. Ob der
-   Landeszusatz in Normabkürzungen übergeleitet werden soll (NRW-Muster: nur für Abkürzungen aus der
-   Enumeration, `knownStateLawAbbreviations`), ist offen. Die Option ist in
-   `TransformationOptions` vorgesehen, aber in 1.0.0 wirkungslos.
+2. **Amtliche Kurzbezeichnungen.** Entschieden in 1.1.0 (Run 7): Landeskürzel belegter Normabkürzungen
+   werden „NSH“ (`knownStateLawAbbreviations`, NRW-Muster). Offen bleiben Kürzel ohne Beleg im Bestand
+   (Einrichtungen, Programme, Regionen) – sie bleiben Review.
 3. **Kommunen und Geographie.** Ortsnamen, Kreise, Inseln und Gewässer bleiben unverändert und
    erzeugen Review-Einträge. Ob die Simulation eigene Ortsnamen führt, ist nicht entschieden.
 4. **Ressortzuschnitt.** Ohne festgelegte Ministerien im Land Niedersachsen-Holstein bleibt jedes

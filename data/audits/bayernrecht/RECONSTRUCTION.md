@@ -7,11 +7,11 @@ Stichtag **2023-12-01** · Auswertungsstichtag 2026-09-18 · erzeugt von `npm ru
 | | vorher | nachher |
 | --- | ---: | ---: |
 | Normen `changed-after-baseline` | 519 | 512 |
-| sicher zurückgerechnet | 13 | **63** |
-| davon einstufig (Rezept v1) | 13 | 52 |
-| davon mehrstufig (Rezept v2) | 0 | 11 |
-| davon mit Alttext aus der Stammverkündung (`restoration`, `forward-from-publication`) | 0 | 15 |
-| `reconstruction-required` | 506 | 449 |
+| sicher zurückgerechnet | 13 | **66** |
+| davon einstufig (Rezept v1) | 13 | 54 |
+| davon mehrstufig (Rezept v2) | 0 | 12 |
+| davon mit Alttext aus der Stammverkündung (`restoration`, `forward-from-publication`) | 0 | 17 |
+| `reconstruction-required` | 506 | 446 |
 
 „vorher“: Schlange bayernrecht-reconstruction-queue/1 vor der mehrstufigen Rückrechnung. Jede zurückgerechnete Norm hat in `baseline.json` Methode `reverse-amendment`, Status `active-at-baseline`, keine Blocker.
 
@@ -21,8 +21,8 @@ Alttext für Neufassung, Aufhebung und Streichung ohne Anker kommt aus der Stamm
 
 | Stammverkündung | offene Normen |
 | --- | ---: |
-| verfügbar – die Norm scheitert an anderem (Grund in der Schlange) (`available`) | 188 |
-| nur PDF-Ausgabe des GVBl. (ohne HTML-Detailseite) (`base-pdf-only`) | 144 |
+| verfügbar – die Norm scheitert an anderem (Grund in der Schlange) (`available`) | 186 |
+| nur PDF-Ausgabe des GVBl. (ohne HTML-Detailseite) (`base-pdf-only`) | 143 |
 | keine Stammverkündung (Neubekanntmachung, Fundstelle fehlt oder nicht lesbar) (`base-none`) | 38 |
 | nur auf Papier (`base-paper-only`) | 34 |
 | HTML nicht sicher umsetzbar (`baseline-only/html.ts`) (`base-unconvertible`) | 16 |
@@ -30,20 +30,33 @@ Alttext für Neufassung, Aufhebung und Streichung ohne Anker kommt aus der Stamm
 | Seite gehört nicht zur Norm (`base-mismatch`) | 12 |
 | nicht erreicht (Paket fehlt oder unlesbar) (`not-reached`) | 2 |
 
+### Stammverkündung nur als PDF: Textlayer (Lauf 9)
+
+Nur Textlayer, nie OCR; Quelle wird er nur mit eindeutigen Wortgrenzen und eindeutiger Gestalt (`src/reconstruction/pdfbase.ts`, `docs/BAYWUE_RECONSTRUCTION.md`, Abschnitt 21).
+
+| Textlayer | offene Normen |
+| --- | ---: |
+| Textlayer aus Texterkennung oder Scan – keine Quelle (`pdf-ocr`) | 73 |
+| Schrift oder Inhaltsstrom nicht sicher dekodierbar (`pdf-undecodable`) | 34 |
+| Textlayer mehrdeutig (Unterschneidung, Trennstrich am Zeilenende, Satznummern als Ziffern) (`pdf-ambiguous`) | 30 |
+| Ausgabe noch nicht abgerufen (`pdf-not-cached`) | 3 |
+| nicht geprüft (keine GVBl.-Seitenfundstelle) (`not-assessed`) | 2 |
+| Ausfertigungsdatum nicht auf der Anfangsseite (`pdf-not-located`) | 1 |
+
 ## Gruppen
 
 Jede Norm hat **genau eine** Gruppe (Vorrang und Regeln: `src/reconstruction/groups.ts`), dazu beliebig viele Gründe (`reasons` in der Schlange). Die Gruppen 1–3 sind die Fälle, deren Befehle grundsätzlich exakt umkehrbar sind; die übrigen sind nach der schwersten zutreffenden Lage eingeordnet.
 
 | # | Gruppe | Normen | zurückgerechnet | offen | häufigste offene Gründe |
 | ---: | --- | ---: | ---: | ---: | --- |
-| 1 | genau 1 Änderung nach dem Stichtag (`single-amendment`) | 65 | 52 | 13 | `unsupported-formula/unrecognized` 3, `ambiguous-target/reverse-location-unresolved` 1, `ambiguous-target/reverse-target-ambiguous` 1, `command-unreadable/location-unreadable` 1 |
-| 2 | 2 Änderungen (`two-amendments`) | 13 | 10 | 3 | `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/location-unreadable` 1, `partial-chain/chain-ledger-unexplained` 1 |
+| 1 | genau 1 Änderung nach dem Stichtag (`single-amendment`) | 67 | 54 | 13 | `unsupported-formula/unrecognized` 3, `ambiguous-target/reverse-location-unresolved` 1, `ambiguous-target/reverse-target-ambiguous` 1, `command-unreadable/location-unreadable` 1 |
+| 2 | 2 Änderungen (`two-amendments`) | 14 | 11 | 3 | `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/location-unreadable` 1, `partial-chain/chain-ledger-unexplained` 1 |
 | 3 | 3 oder mehr Änderungen (`three-or-more-amendments`) | 5 | 1 | 4 | `missing-base/prior-source-unavailable` 1, `partial-chain/chain-ledger-unexplained` 1, `unsupported-formula/renumber` 1, `unsupported-formula/unrecognized` 1 |
 | 4 | vollständige Neufassung (`full-recast`) | 6 | 0 | 6 | `non-invertible-amendment/recast` 2, `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/chain-block-not-found` 1, `missing-base/prior-treaty-without-reference` 1 |
-| 5 | Anlagenersetzung (`annex-replacement`) | 81 | 0 | 81 | `asset-missing/annex-recast` 27, `non-invertible-amendment/restore-annex-attachment` 11, `command-unreadable/location-unreadable` 7, `non-invertible-amendment/repeal-unit` 5 |
+| 5 | Anlagenersetzung (`annex-replacement`) | 81 | 0 | 81 | `asset-missing/annex-recast` 27, `non-invertible-amendment/restore-annex-attachment` 11, `command-unreadable/location-unreadable` 7, `command-unreadable/chain-block-not-found` 4 |
 | 6 | Tabellenersetzung (`table-replacement`) | 14 | 0 | 14 | `non-invertible-amendment/recast` 5, `partial-chain/chain-commencement-order` 2, `command-unreadable/chain-block-not-found` 1, `command-unreadable/location-unreadable` 1 |
 | 7 | Bildersetzung (`image-replacement`) | 5 | 0 | 5 | `non-invertible-amendment/recast` 2, `command-unreadable/location-unreadable` 1, `non-invertible-amendment/repeal-unit` 1, `non-invertible-amendment/restoration-disagrees` 1 |
-| 8 | fehlender Vorgängertext (`missing-predecessor-text`) | 287 | 0 | 287 | `non-invertible-amendment/recast` 65, `non-invertible-amendment/repeal-unit` 42, `non-invertible-amendment/delete-words` 27, `non-invertible-amendment/restore-not-found` 18 |
+| 8 | fehlender Vorgängertext (`missing-predecessor-text`) | 284 | 0 | 284 | `non-invertible-amendment/recast` 69, `non-invertible-amendment/repeal-unit` 35, `non-invertible-amendment/delete-words` 27, `non-invertible-amendment/restore-not-found` 16 |
 | 9 | baseline-only predecessor (`baseline-only-predecessor`) | 3 | 0 | 3 | `missing-base/no-post-baseline-event` 3 |
 | 10 | contradictory evidence (`contradictory-evidence`) | 33 | 0 | 33 | `contradictory/portal-in-force-mismatch` 16, `contradictory/chain-prior-history-mismatch` 6, `contradictory/chain-history-mismatch` 3, `contradictory/chain-no-post-baseline-amendment` 3 |
 
@@ -56,23 +69,23 @@ Jede Prüfung zählt nur Normen, die sie erreicht haben; „nicht erreicht“ he
 | alle genannten Verkündungen verfügbar (Cache, HTML oder PDF-Textlayer) | 491 | 19 | 2 |
 | Kette belegt: Vollzitat, Verweise, Register, Verlauf, Fortführungsnachweis, übrige Verkündungen | 390 | 105 | 17 |
 | Inkrafttreten je Änderung bestimmt, in Kettenreihenfolge, jüngstes = inkraft | 393 | 15 | 104 |
-| Befehlsblock und Orte lesbar | 373 | 20 | 119 |
-| jede Klausel mit unterstützter, eindeutig umkehrbarer Formel | 123 | 270 | 119 |
-| Orte aufgelöst, Wortlaut eindeutig, Vorwärtsprobe je Änderung exakt | 67 | 56 | 389 |
-| Beginn der Stichtagsfassung (≤ Stichtag) mit Kalenderdatum belegt | 63 | 1 | 448 |
+| Befehlsblock und Orte lesbar | 374 | 19 | 119 |
+| jede Klausel mit unterstützter, eindeutig umkehrbarer Formel | 126 | 267 | 119 |
+| Orte aufgelöst, Wortlaut eindeutig, Vorwärtsprobe je Änderung exakt | 70 | 56 | 386 |
+| Beginn der Stichtagsfassung (≤ Stichtag) mit Kalenderdatum belegt | 66 | 1 | 445 |
 
 ## Zustände
 
 | Zustand | Normen | Bedeutung |
 | --- | ---: | --- |
-| `non-invertible-amendment` | 229 | Befehl nicht umkehrbar (Alttext fehlt) |
-| `recipe-ready` | 63 | sicher zurückgerechnet (Rezept, Forward-Replay exakt) |
+| `non-invertible-amendment` | 223 | Befehl nicht umkehrbar (Alttext fehlt) |
+| `recipe-ready` | 66 | sicher zurückgerechnet (Rezept, Forward-Replay exakt) |
 | `partial-chain` | 46 | Kette nicht vollständig belegt |
 | `contradictory` | 33 | Belege widersprechen einander |
-| `command-unreadable` | 30 | Befehl nicht auffindbar oder nicht lesbar |
+| `command-unreadable` | 29 | Befehl nicht auffindbar oder nicht lesbar |
 | `asset-missing` | 27 | Anlage oder Abbildung ohne Alttext |
-| `ambiguous-target` | 23 | Ort oder Wortlaut nicht eindeutig |
-| `unsupported-formula` | 22 | Formel nicht maschinell angewandt |
+| `unsupported-formula` | 25 | Formel nicht maschinell angewandt |
+| `ambiguous-target` | 24 | Ort oder Wortlaut nicht eindeutig |
 | `missing-base` | 19 | Quelle fehlt |
 | `effective-date-undetermined` | 15 | Inkrafttreten nicht bestimmbar |
 | `round-trip-failed` | 5 | Rundlauf gescheitert |
@@ -83,30 +96,30 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 
 | Zustand / Grund | Normen |
 | --- | ---: |
-| `non-invertible-amendment/recast` | 78 |
-| `recipe-ready/reverse-amendment-verified` | 63 |
-| `non-invertible-amendment/repeal-unit` | 48 |
+| `non-invertible-amendment/recast` | 82 |
+| `recipe-ready/reverse-amendment-verified` | 66 |
+| `non-invertible-amendment/repeal-unit` | 40 |
 | `non-invertible-amendment/delete-words` | 29 |
 | `asset-missing/annex-recast` | 27 |
 | `partial-chain/chain-commencement-order` | 21 |
-| `command-unreadable/location-unreadable` | 20 |
-| `non-invertible-amendment/restore-not-found` | 20 |
+| `command-unreadable/location-unreadable` | 19 |
+| `non-invertible-amendment/restore-not-found` | 18 |
 | `contradictory/portal-in-force-mismatch` | 16 |
-| `non-invertible-amendment/restoration-prior-reverse` | 16 |
 | `effective-date-undetermined/commencement-unreadable` | 15 |
+| `non-invertible-amendment/restoration-disagrees` | 13 |
+| `non-invertible-amendment/restoration-prior-reverse` | 13 |
+| `unsupported-formula/unrecognized` | 13 |
 | `non-invertible-amendment/restore-annex-attachment` | 12 |
-| `unsupported-formula/unrecognized` | 12 |
 | `ambiguous-target/reverse-location-unresolved` | 11 |
-| `non-invertible-amendment/restoration-disagrees` | 11 |
 | `command-unreadable/chain-block-not-found` | 10 |
+| `non-invertible-amendment/restore-shape` | 10 |
 | `partial-chain/chain-ledger-unexplained` | 10 |
-| `non-invertible-amendment/restore-shape` | 9 |
 | `unsupported-formula/insert-unit` | 8 |
 | `contradictory/chain-prior-history-mismatch` | 6 |
 | `missing-base/prior-source-not-on-platform` | 6 |
 | `missing-base/prior-treaty-without-reference` | 6 |
 | `ambiguous-target/reverse-end-not-determined` | 5 |
-| `ambiguous-target/reverse-target-ambiguous` | 4 |
+| `ambiguous-target/reverse-target-ambiguous` | 5 |
 | `missing-base/no-post-baseline-event` | 4 |
 | `non-invertible-amendment/restore-new-mismatch` | 4 |
 | `partial-chain/chain-other-publication` | 4 |
@@ -116,10 +129,10 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 | `missing-base/prior-source-unavailable` | 3 |
 | `partial-chain/chain-partially-in-force` | 3 |
 | `partial-chain/chain-register-undated` | 3 |
+| `unsupported-formula/renumber` | 3 |
 | `contradictory/portal-in-force-lag` | 2 |
 | `contradictory/portal-in-force-unexplained` | 2 |
 | `partial-chain/chain-delayed-predecessor` | 2 |
-| `unsupported-formula/renumber` | 2 |
 | `ambiguous-target/forward-target-ambiguous` | 1 |
 | `ambiguous-target/reverse-anchor-mismatch` | 1 |
 | `ambiguous-target/reverse-sentence-ambiguous` | 1 |
@@ -130,6 +143,7 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 | `partial-chain/chain-parallel-order` | 1 |
 | `partial-chain/chain-split-commencement` | 1 |
 | `round-trip-failed/reverse-overlapping-locations` | 1 |
+| `unsupported-formula/container` | 1 |
 
 ## Änderungsformeln
 
@@ -137,23 +151,23 @@ Erhoben aus allen Befehlsblöcken der Ketten und des Registers; „Klauseln“ z
 
 | Formel | Wortlaut (Beispiel) | Klauseln | Normen | bestimmt Alttext | angewandt |
 | --- | --- | ---: | ---: | :---: | :---: |
-| `replace-words` | „… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“ | 1789 | 266 | ja | ja |
-| `recast` | „… wird wie folgt gefasst:“ / „erhält folgende Fassung“ | 811 | 236 | nein | nein |
+| `replace-words` | „… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“ | 1792 | 266 | ja | ja |
+| `recast` | „… wird wie folgt gefasst:“ / „erhält folgende Fassung“ | 809 | 236 | nein | nein |
 | `relabel` | „Der bisherige Abs. 3 wird Abs. 4.“ / „Die bisherigen Nrn. 5 bis 7 werden die Nrn. 6 bis 8.“ (neu) | 604 | 138 | ja | ja |
-| `repeal-unit` | „… wird aufgehoben“ / „Satz 5 wird gestrichen“ | 438 | 175 | nein | nein |
+| `repeal-unit` | „… wird aufgehoben“ / „Satz 5 wird gestrichen“ | 428 | 169 | nein | nein |
 | `insert-words` | „… wird nach/vor der Angabe „X“ die Angabe „Y“ eingefügt“ | 419 | 141 | ja | ja |
 | `delete-words` | „… wird die Angabe „X“ gestrichen“ (ohne Anker) | 389 | 143 | nein | nein |
-| `unrecognized` | nicht erkannt | 357 | 105 | ja | nein |
+| `unrecognized` | nicht erkannt | 346 | 105 | ja | nein |
 | `insert-sentence` | „Folgender Satz 2 wird angefügt: „²…““ / „Nach Satz 1 wird folgender Satz 2 eingefügt“ (neu) | 335 | 135 | ja | ja |
 | `insert-block` | „Nach Nr. 4 wird folgende Nr. 5 eingefügt: „5. …““ / „Folgender Abs. 3 wird angefügt“ (neu) | 280 | 144 | ja | ja |
 | `renumber-sentence` | „Der bisherige Satz 2 wird Satz 3.“ (neu) | 223 | 85 | ja | ja |
-| `renumber` | Umnummerierung, die nicht eindeutig lesbar ist | 130 | 48 | ja | nein |
-| `insert-unit` | Einfügung eines Glieds, die nicht eindeutig zuzuordnen ist | 125 | 69 | ja | nein |
-| `number-sentences` | „Der Wortlaut wird Satz 1.“ (neu) | 56 | 42 | ja | ja |
+| `renumber` | Umnummerierung, die nicht eindeutig lesbar ist | 128 | 46 | ja | nein |
+| `insert-unit` | Einfügung eines Glieds, die nicht eindeutig zuzuordnen ist | 121 | 69 | ja | nein |
+| `number-sentences` | „Der Wortlaut wird Satz 1.“ (neu) | 57 | 43 | ja | ja |
 | `insert-title` | „In § 5 wird folgende Überschrift eingefügt: „…““ (neu) | 45 | 9 | ja | ja |
 | `replace-final-punctuation` | „… wird der Punkt am Ende durch … ersetzt“ | 37 | 29 | ja | ja |
 | `annex-recast` | „… erhalten die aus dem Anhang ersichtliche Fassung“ | 36 | 35 | nein | nein |
-| `unnumber-sentences` | „In Satz 1 wird die Satznummerierung „¹“ gestrichen.“ (Lauf 7) | 30 | 25 | ja | ja |
+| `unnumber-sentences` | „In Satz 1 wird die Satznummerierung „¹“ gestrichen.“ (Lauf 7) | 31 | 26 | ja | ja |
 | `replace-final-words` | „… wird die Angabe „X“ am Ende durch die Angabe „Y“ ersetzt“ (neu) | 29 | 22 | ja | ja |
 | `append-words` | „Der Überschrift wird die Angabe „Y“ angefügt“ | 27 | 23 | ja | ja |
 | `unnumber-paragraph` | „In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“ (Lauf 8) | 22 | 22 | ja | ja |
@@ -164,9 +178,9 @@ Erhoben aus allen Befehlsblöcken der Ketten und des Registers; „Klauseln“ z
 
 ## Quellen
 
-Das Quellenregister führt **882** Verkündungen (877 HTML-Detailseiten, 5 PDF-Ausgaben), davon 106 für ein Rezept entscheidend; Amtlichkeit: `electronic-official` 389, `printed-official` 493. Je Quelle: Adresse, Fundstelle, Verkündungs- und Ausfertigungsdatum, Amtlichkeit, SHA-256, Rolle je Fall, Abschnitt und Wortlaut der Inkrafttretensvorschrift.
+Das Quellenregister führt **884** Verkündungen (879 HTML-Detailseiten, 5 PDF-Ausgaben), davon 112 für ein Rezept entscheidend; Amtlichkeit: `electronic-official` 389, `printed-official` 495. Je Quelle: Adresse, Fundstelle, Verkündungs- und Ausfertigungsdatum, Amtlichkeit, SHA-256, Rolle je Fall, Abschnitt und Wortlaut der Inkrafttretensvorschrift.
 
-Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayernrecht/reconstruction-fetch.json`): **857** Netzabrufe (697 Seiten bzw. PDF abgerufen, 160 belegt nicht vorhanden – 404, 0 Fehler), sequenziell über den Adapter-Fetcher mit Cache und identifizierendem User-Agent. Ein Wiederholungslauf mit `--offline` braucht kein Netz.
+Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayernrecht/reconstruction-fetch.json`): **998** Netzabrufe (835 Seiten bzw. PDF abgerufen, 160 belegt nicht vorhanden – 404, 3 Fehler), sequenziell über den Adapter-Fetcher mit Cache und identifizierendem User-Agent. Ein Wiederholungslauf mit `--offline` braucht kein Netz.
 
 ## Zurückgerechnete Normen
 
@@ -175,6 +189,7 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
 | `BayAGBBiG` | v2 | GVBl. 2025 S. 695 ← GVBl. 2024 S. 98 | 2026-01-01 ← 2024-07-01 | 2021-04-01 | 25 | replace-words, insert-words, insert-block, relabel | `46edda4f9986b897` |
 | `BayAPO` | v1 | GVBl. 2024 S. 605 | 2025-01-01 | 2023-10-01 | 1 | replace-words | `ca050c225ea27877` |
 | `BayAVWaffBeschR` | v1 | GVBl. 2024 S. 562 | 2024-11-30 | 2019-05-01 | 2 | number-paragraph, insert-block | `c9880415f6c41316` |
+| `BayAgrG` | v1 | GVBl. 2024 S. 619 | 2025-01-01 | 2023-01-01 | 5 | delete-words, unnumber-paragraph, repeal-unit, number-paragraph, insert-block | `cd00e759a960d8a8` |
 | `BayAltersGewV` | v1 | GVBl. 2024 S. 98 | 2024-07-01 | 2019-11-01 | 1 | replace-words | `7acb6cd43bc5de64` |
 | `BayArchivGl` | v1 | GVBl. 2026 S. 61 | 2025-12-15 | 2019-05-01 | 7 | append-words, insert-title, replace-words | `58fc106c9f9e3b93` |
 | `BayAufbewV` | v1 | GVBl. 2025 S. 178 | 2025-07-01 | 2017-07-01 | 1 | replace-words | `fce1607475039ed3` |
@@ -226,6 +241,7 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
 | `BayVwV101445` | v1 | BayMBl. 2026 Nr. 167 | 2026-04-30 | 2020-11-26 | 1 | insert-block | `db65eb6bff0cf11f` |
 | `BayVwV319722` | v1 | BayMBl. 2025 Nr. 4 | 2025-01-09 | 2022-10-01 | 3 | insert-block, relabel | `187b881b653ff280` |
 | `BayWoBindG` | v1 | GVBl. 2024 S. 265 | 2024-08-01 | 2019-05-01 | 9 | replace-words, insert-words, insert-block, relabel | `3c0f728025384eb5` |
+| `BayZALS` | v2 | GVBl. 2026 S. 520 ← GVBl. 2026 S. 425 | 2026-08-01 ← 2026-08-01 | 2019-05-01 | 6 | replace-words | `2c0a4d539f53b455` |
 | `BayZAPOhGesD` | v1 | GVBl. 2024 S. 98 | 2024-07-01 | 2021-01-01 | 1 | replace-words | `40ae9b65bb4eb63b` |
 | `BayZEPRV` | v1 | GVBl. 2026 S. 75 | 2026-04-01 | 2015-08-01 | 2 | replace-words, recast | `6db36be23dfd8a9a` |
 | `BayZGAusland` | v1 | GVBl. 2024 S. 247 | 2024-08-01 | 2019-05-01 | 2 | insert-block, relabel | `ea34f0048f6c4c87` |
@@ -233,6 +249,7 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
 | `BayZuVSchfw` | v1 | GVBl. 2025 S. 149 | 2025-06-01 | 2018-11-01 | 1 | replace-words | `67396d66ca0d65af` |
 | `BayZustVAM` | v1 | GVBl. 2024 S. 98 | 2024-07-01 | 2019-05-01 | 1 | replace-words | `802602d50e319027` |
 | `BayZustVBM` | v1 | GVBl. 2024 S. 485 | 2024-11-01 | 2021-01-01 | 1 | recast | `4a4fc3f2c0891a45` |
+| `BayZustWaffVIM` | v1 | BayMBl. 2024 Nr. 508 | 2024-11-01 | 2019-05-01 | 7 | insert-title, insert-block, relabel, unnumber-paragraph, repeal-unit | `83881730d8a7624b` |
 | `BayZweckVermG` | v1 | GVBl. 2024 S. 585 | 2024-12-17 | 2019-05-01 | 5 | insert-title, insert-sentence | `d8e7336a5c68b600` |
 | `BayeAktVArbSozG` | v2 | GVBl. 2026 S. 75 ← GVBl. 2025 S. 461 | 2026-04-01 ← 2026-01-01 | 2023-05-17 | 5 | recast, delete-words, unnumber-paragraph, repeal-unit | `1a9d6e7c71152be1` |
 
@@ -307,6 +324,21 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
   - s02 `insert-block` in § 4 Abs. 2: „Folgender Abs. 2 wird angefügt: „(2) Für die Kontrollen aufgrund des § 42c WaffG ist die Polizei im Sinne des Art. 1 des Polizeiaufgabengesetzes zuständig, soweit nicht Bundesbehörden zuständig sind.““
     - Stichtag: „(Glied fehlt)“ · heute: „(2) Für die Kontrollen aufgrund des § 42c WaffG ist die Polizei im Sinne des Art. 1 des Polizeiaufgabengesetzes zuständig, soweit nicht Bundesbehörden zuständig sind.“
 - Beginn der Stichtagsfassung: 2019-05-01 – Vorangehende Änderung § 1 Abs. 177 der Verordnung vom 26. März 2019 (GVBl. S. 98): „Diese Verordnung tritt am 1. Mai 2019 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2019-98/, SHA-256 cd4c0ab7a010a4f6…
+
+### BayAgrG
+
+- Änderung GVBl. 2024 S. 619 (https://www.verkuendung-bayern.de/gvbl/2024-619/, SHA-256 `3a65bd64362d3f43…`), verkündet 2024-12-30, in Kraft 2025-01-01 („Dieses Gesetz tritt am 1. Januar 2025 in Kraft.“)
+  - s01 `delete-words` in Art. 1: „In Art. 1 werden die Wörter „und des Landpachtverkehrsgesetzes (LPachtVG)“ gestrichen.“
+    - Stichtag: „…es Grundstückverkehrsgesetzes (GrdstVG) und des Landpachtverkehrsgesetzes (LPachtVG) sind die Kreisverwaltungsbehörden.“ · heute: „…es Grundstückverkehrsgesetzes (GrdstVG) sind die Kreisverwaltungsbehörden.“
+  - s02 `unnumber-paragraph` in Art. 2 Abs. 1: „In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“
+    - Stichtag: „(1)“ · heute: „(Wortlaut ohne Absatzbezeichnung)“
+  - s03 `repeal-unit` in Art. 2 Abs. 2 (Portalgestalt nach Konvention des Amtsblatts: article>subparagraph (29 Normen)): „Abs. 2 wird aufgehoben.“
+    - Stichtag: „(2) Landpachtverträge über landwirtschaftliche Betriebe oder Grundstücke unterliegen nicht der Anzeigepflicht nach § 2 Abs. 1 LPachtVG, wenn die Pachtfläche weniger als zwei Hektar beträgt.“ · heute: „(aufgehoben)“
+  - s04 `number-paragraph` in Art. 4 Abs. 1: „Der Wortlaut wird Abs. 1.“
+    - Stichtag: „(Wortlaut ohne Absatzbezeichnung)“ · heute: „(1)“
+  - s05 `insert-block` in Art. 4 Abs. 2: „Folgender Abs. 2 wird angefügt: „(2) Das Landpachtverkehrsgesetz (LPachtVG) vom 8. November 1985 (BGBl. I S. 2075), das zuletzt durch Art. 15 des Gesetzes vom 13. April 2006 (BGBl. I S. 855) geändert worden ist, tritt für das Gebiet des Freistaates Bayern mit Ablauf des 31. Dezember 2024 außer Kraft“
+    - Stichtag: „(Glied fehlt)“ · heute: „(2) Das Landpachtverkehrsgesetz (LPachtVG) vom 8. November 1985 (BGBl. I S. 2075), das zuletzt durch Art. 15 des Gesetzes vom 13. April 2006 (BGBl. I S. 855) geändert worden ist, tritt für das Gebiet “
+- Beginn der Stichtagsfassung: 2023-01-01 – Vorangehende Änderung Art. 17a Abs. 5 des Gesetzes vom 23. Dezember 2022 (GVBl. S. 695): „Dieses Gesetz tritt am 1. Januar 2023 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2022-695/, SHA-256 eb0b71b845c53870…
 
 ### BayAltersGewV
 
@@ -1034,6 +1066,24 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
     - Stichtag: „… zu benennen. ³Bei der Benennung sind ungeachtet des Satzes 7 insbesondere schwangere Frauen, Familien und andere Hausha…“ · heute: „… zu benennen. ³Bei der Benennung sind ungeachtet des Satzes 6 insbesondere schwangere Frauen, Familien und andere Hausha…“
 - Beginn der Stichtagsfassung: 2019-05-01 – Vorangehende Änderung § 1 Abs. 267 der Verordnung vom 26. März 2019 (GVBl. S. 98): „Diese Verordnung tritt am 1. Mai 2019 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2019-98/, SHA-256 cd4c0ab7a010a4f6…
 
+### BayZALS
+
+- Änderung GVBl. 2026 S. 520 (https://www.verkuendung-bayern.de/gvbl/2026-520/, SHA-256 `b3a24282c299eef8…`), verkündet 2026-07-30, in Kraft 2026-08-01 („Abweichend von Satz 1 treten in Kraft: 2. die §§ 3 bis 10 am 1. August 2026.“)
+  - a1-s01 `replace-words` in § 4 Abs. 2 Satz 2: „In § 4 Abs. 2 Satz 2 wird die Angabe „Staatsanzeiger“ durch die Angabe „Bayerischen Ministerialblatt“ ersetzt.“
+    - Stichtag: „…ereitungsdienstes erfolgen. ²Der Termin des Beginns wird im Staatsanzeiger veröffentlicht. ³Im Fall des Nichtbestehens d…“ · heute: „…ereitungsdienstes erfolgen. ²Der Termin des Beginns wird im Bayerischen Ministerialblatt veröffentlicht. ³Im Fall des Nichtbestehens d…“
+- Änderung GVBl. 2026 S. 425 (https://www.verkuendung-bayern.de/gvbl/2026-425/, SHA-256 `e6ba532d1b2747b4…`), verkündet 2026-07-30, in Kraft 2026-08-01 („Diese Verordnung tritt am 1. August 2026 in Kraft.“)
+  - a2-s01 `replace-words` in § 2 Abs. 1 Satz 2: „In § 2 Abs. 1 Satz 2, § 13 Abs. 3, § 15 Abs. 3 Nr. 3 Buchst. b Doppelbuchst. hh und Nr. 6 Buchst. a Doppelbuchst. aa sowie § 18 Abs. 2 wird jeweils die Angabe „30a und 30b“ durch die Angabe „29 und 30“ ersetzt.“
+    - Stichtag: „…ie in den Tätigkeitsfeldern gemäß Art. 19 Abs. 2 sowie Art. 30a und 30b des Bayerischen Gesetzes über das Erziehungs- und …“ · heute: „…ie in den Tätigkeitsfeldern gemäß Art. 19 Abs. 2 sowie Art. 29 und 30 des Bayerischen Gesetzes über das Erziehungs- und …“
+  - a2-s02 `replace-words` in § 13 Abs. 3: „In § 2 Abs. 1 Satz 2, § 13 Abs. 3, § 15 Abs. 3 Nr. 3 Buchst. b Doppelbuchst. hh und Nr. 6 Buchst. a Doppelbuchst. aa sowie § 18 Abs. 2 wird jeweils die Angabe „30a und 30b“ durch die Angabe „29 und 30“ ersetzt.“
+    - Stichtag: „… insbesondere im Rahmen von schulischen Angeboten nach Art. 30a und 30b BayEUG, der Mobilen Sonderpädagogischen Hilfe, der…“ · heute: „… insbesondere im Rahmen von schulischen Angeboten nach Art. 29 und 30 BayEUG, der Mobilen Sonderpädagogischen Hilfe, der…“
+  - a2-s03 `replace-words` in § 15 Abs. 3 Nr. 3 Buchst. b Doppelbuchst. hh: „In § 2 Abs. 1 Satz 2, § 13 Abs. 3, § 15 Abs. 3 Nr. 3 Buchst. b Doppelbuchst. hh und Nr. 6 Buchst. a Doppelbuchst. aa sowie § 18 Abs. 2 wird jeweils die Angabe „30a und 30b“ durch die Angabe „29 und 30“ ersetzt.“
+    - Stichtag: „spezifische Beratungsfelder nach Art. 30a und 30b BayEUG“ · heute: „spezifische Beratungsfelder nach Art. 29 und 30 BayEUG“
+  - a2-s04 `replace-words` in § 15 Abs. 3 Nr. 6 Buchst. a Doppelbuchst. aa: „In § 2 Abs. 1 Satz 2, § 13 Abs. 3, § 15 Abs. 3 Nr. 3 Buchst. b Doppelbuchst. hh und Nr. 6 Buchst. a Doppelbuchst. aa sowie § 18 Abs. 2 wird jeweils die Angabe „30a und 30b“ durch die Angabe „29 und 30“ ersetzt.“
+    - Stichtag: „…enarbeit von Förderschule und allgemeiner Schule gemäß Art. 30a und 30b BayEUG“ · heute: „…enarbeit von Förderschule und allgemeiner Schule gemäß Art. 29 und 30 BayEUG“
+  - a2-s05 `replace-words` in § 18 Abs. 2: „In § 2 Abs. 1 Satz 2, § 13 Abs. 3, § 15 Abs. 3 Nr. 3 Buchst. b Doppelbuchst. hh und Nr. 6 Buchst. a Doppelbuchst. aa sowie § 18 Abs. 2 wird jeweils die Angabe „30a und 30b“ durch die Angabe „29 und 30“ ersetzt.“
+    - Stichtag: „…n Ganztagsangeboten sowie im Rahmen von Maßnahmen nach Art. 30a und 30b BayEUG kennen lernen.“ · heute: „…n Ganztagsangeboten sowie im Rahmen von Maßnahmen nach Art. 29 und 30 BayEUG kennen lernen.“
+- Beginn der Stichtagsfassung: 2019-05-01 – Vorangehende Änderung § 1 Abs. 114 der Verordnung vom 26. März 2019 (GVBl. S. 98): „Diese Verordnung tritt am 1. Mai 2019 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2019-98/, SHA-256 cd4c0ab7a010a4f6…
+
 ### BayZAPOhGesD
 
 - Änderung GVBl. 2024 S. 98 (https://www.verkuendung-bayern.de/gvbl/2024-98/, SHA-256 `39a30d715faa4cf3…`), verkündet 2024-06-14, in Kraft 2024-07-01 („Diese Verordnung tritt am 1. Juli 2024 in Kraft.“)
@@ -1096,6 +1146,25 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
     - Stichtag: „§ 7 Leistungsbezüge ¹Die Befugnis zur Entscheidung über die …“ · heute: „§ 7 Leistungsbezüge und Zuschläge zur Gewinnung von IT-Fachkräften (1) ¹Die Entscheidung über die Gewährung von IT-Fachkräftegewinnungszuschlägen gemäß Art. 60a BayBesG wird den Leitungen der in § 1 genannten Behörden für die bei ihnen beschäftigten Beamten und Beamtinnen übertragen. ²Bei abgeordneten Beamten und Beamtinnen entscheidet die Beschäftigungsdienststelle. (2) ¹Die Befugnis zur Entschei……“
 - Beginn der Stichtagsfassung: 2021-01-01 – Vorangehende Änderung § 1 der Verordnung vom 30. November 2020 (GVBl. S. 705): „Diese Verordnung tritt am 1. Januar 2021 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2020-705/, SHA-256 e7bf06a27b0a1bec…
 
+### BayZustWaffVIM
+
+- Änderung BayMBl. 2024 Nr. 508 (https://www.verkuendung-bayern.de/baymbl/2024-508/, SHA-256 `7671c83272bd43a3…`), verkündet 2024-10-31, in Kraft 2024-11-01 („Diese Verordnung tritt am 1. November 2024 in Kraft.“)
+  - s01 `insert-title` in § 1: „In § 1 wird folgende Überschrift eingefügt: „Ausstellung von Bescheinigungen, Ausnahmegenehmigungen und Entgegennahme von Verlustanzeigen“.“
+    - Stichtag: „(ohne Überschrift)“ · heute: „Ausstellung von Bescheinigungen, Ausnahmegenehmigungen und Entgegennahme von Verlustanzeigen“
+  - s02 `insert-title` in § 2: „In § 2 wird folgende Überschrift eingefügt: „Erlaubnis zum Schusswaffen- und Munitionserwerb“.“
+    - Stichtag: „(ohne Überschrift)“ · heute: „Erlaubnis zum Schusswaffen- und Munitionserwerb“
+  - s03 `insert-block` in § 3: „Nach § 2 wird folgender § 3 eingefügt: „§ 3 Waffen- und Messerverbotszonen Die Befugnis nach § 42 Abs. 5 Satz 1 in Verbindung mit Satz 2 des Waffengesetzes wird den Gemeinden, Landratsämtern und Regierungen übertragen.““
+    - Stichtag: „(Glied fehlt)“ · heute: „§ 3 Waffen- und Messerverbotszonen Die Befugnis nach § 42 Abs. 5 Satz 1 in Verbindung mit Satz 2 des Waffengesetzes wird den Gemeinden, Landratsämtern und Regierungen übertragen.“
+  - s04 `relabel` in § 3 → § 4: „Der bisherige § 3 wird § 4 und wie folgt geändert:“
+    - Stichtag: „§ 3“ · heute: „§ 4“
+  - s05 `insert-title` in § 4: „Folgende Überschrift wird eingefügt: „Inkrafttreten“.“
+    - Stichtag: „(ohne Überschrift)“ · heute: „Inkrafttreten“
+  - s06 `unnumber-paragraph` in § 4 Abs. 1: „In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“
+    - Stichtag: „(1)“ · heute: „(Wortlaut ohne Absatzbezeichnung)“
+  - s07 `repeal-unit` in § 4 Abs. 2 (Portalgestalt nach Konvention des Amtsblatts: paragraph>subparagraph (46 Normen)): „Abs. 2 wird aufgehoben.“
+    - Stichtag: „(2) Mit Ablauf des 28. Februar 2011 tritt die Verordnung über waffenrechtliche Zuständigkeiten im Geschäftsbereich des Bayerischen Staatsministeriums des Innern (WaffVIM) vom 29. Juni 1976 (BayRS 2186-1-1-I) außer Kraft.“ · heute: „(aufgehoben)“
+- Beginn der Stichtagsfassung: 2019-05-01 – Vorangehende Änderung § 1 Abs. 178 der Verordnung vom 26. März 2019 (GVBl. S. 98): „Diese Verordnung tritt am 1. Mai 2019 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2019-98/, SHA-256 cd4c0ab7a010a4f6…
+
 ### BayZweckVermG
 
 - Änderung GVBl. 2024 S. 585 (https://www.verkuendung-bayern.de/gvbl/2024-585/, SHA-256 `a639b5ad5f272ba1…`), verkündet 2024-12-16, in Kraft 2024-12-17 („Dieses Gesetz tritt am 17. Dezember 2024 in Kraft.“)
@@ -1137,7 +1206,7 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
 
 Geprüft mit dem Ereignisregister und allen Detailseiten nach dem Stichtag: gesucht war eine Verkündung, die die Norm **stark** zitiert (zwei unabhängige Merkmale, eines davon Ausfertigungsdatum oder BayRS-Nummer) und einen Änderungs- oder Aufhebungsbefehl an sie richtet. Eine solche Verkündung setzt die Geltung der Norm an ihrem Tag voraus; gilt der heutige Text laut Paket seit einem Tag vor dem Stichtag und nennt die Verkündung keine Änderung dazwischen, galt die Norm am Stichtag. Nur die Geltung wird so entschieden; hat die Verkündung den Text geändert, bleibt die Methode unbestimmt.
 
-Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
+Ergebnis: **15** Fälle geprüft, **1** neu entschieden, 14 bleiben unbestimmt.
 
 | Norm | vorher | nachher | Befund |
 | --- | --- | --- | --- |
@@ -1155,7 +1224,6 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayVV_282_1_1_1_2_UK_031` | undetermined / undetermined (register-absent-validity-open) | undetermined / undetermined (register-absent-validity-open) | Keine Verkündung nach dem Stichtag zitiert die Norm stark mit einem Änderungs- oder Aufhebungsbefehl; kein stark zugeordnetes Ereignis – bleibt unbestimmt |
 | `BayVV_3101_J_039` | undetermined / undetermined (no-issue-date) | undetermined / undetermined (no-issue-date) | Keine Verkündung nach dem Stichtag zitiert die Norm stark mit einem Änderungs- oder Aufhebungsbefehl; kein stark zugeordnetes Ereignis – bleibt unbestimmt |
 | `BayVV_3121_0_J_081` | undetermined / undetermined (no-issue-date) | undetermined / undetermined (no-issue-date) | Keine Verkündung nach dem Stichtag zitiert die Norm stark mit einem Änderungs- oder Aufhebungsbefehl; kein stark zugeordnetes Ereignis – bleibt unbestimmt |
-| `BayVV_7840_L_14146` | undetermined / undetermined (published-after-baseline-validity-open) | undetermined / undetermined (published-after-baseline-validity-open) | Keine Verkündung nach dem Stichtag zitiert die Norm stark mit einem Änderungs- oder Aufhebungsbefehl; kein stark zugeordnetes Ereignis – bleibt unbestimmt |
 | `BayVwV96713` | undetermined / undetermined (no-issue-date) | undetermined / undetermined (no-issue-date) | Keine Verkündung nach dem Stichtag zitiert die Norm stark mit einem Änderungs- oder Aufhebungsbefehl; kein stark zugeordnetes Ereignis – bleibt unbestimmt |
 
 ## Offene Fälle je Gruppe
@@ -1166,7 +1234,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | --- | ---: | --- | --- | --- |
 | `BayHG2021` | 1 | `partial-chain/baseline-text-in-force-unproven` | Beginn der Stichtagsfassung (Stammfassung) nicht belegt: Die Norm begrenzt ihre eigene Geltung („gelten bis zum Tag der Bekanntmachung des Haushaltsgesetzes des folgenden Haushaltsjahres weiter“); ob  |  |
 | `BayVV_2154_I_2270` | 1 | `partial-chain/chain-partially-in-force` | BayMBl. 2026 Nr. 80 (Nr. 1) tritt teils bis, teils erst nach dem Auswertungsstichtag in Kraft (2026-02-28, 2027-01-01); der heutige Text enthält nur einen Teil der Änderung |  |
-| `BayEBekMiZi` | 1 | `unsupported-formula/insert-unit` | BayMBl. 2024 Nr. 666 (Nr. 1): 1.2 1.2.1 „Dem Inhaltsverzeichnis zu Nr. XVII. wird folgende Angabe angefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung,  |  |
+| `BayEBekMiZi` | 1 | `unsupported-formula/insert-unit` | BayMBl. 2024 Nr. 666 (Nr. 1): 1.2 1.2.2 „Der Nr. XVII. wird folgende Nr. 2 angefügt:“: Eingefügtes Glied: Ort, Bezeichnung oder Zitat nicht lesbar |  |
 | `BayVV_2025_I_11358` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2025 Nr. 318 (Nr. 1): 1.3 1.3.2 „In Fußnote 4 zu § 9 wird das Wort „Zustellung“ durch das Wort „Bekanntgabe“ ersetzt.“: Ortsangabe nicht lesbar: „Fußnote 4 zu § 9“ |  |
 | `BayVV_2230_7_UK_459` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2025 Nr. 145 (Nr. 1): 1.1 „In der Kopfzeile der Tabelle wird das Wort „Kommunaler“ gestrichen.“: Ortsangabe nicht lesbar: „der Kopfzeile der Tabelle“ |  |
 | `BayVV_2232_2_K_11648` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2026 Nr. 271 (Nr. 1): 1.1 „In Anlage 5 wird in der Kopfzeile die Angabe „Jahrgangsstufen 3 und 4“ durch die Angabe „Jahrgangsstufe 3“ ersetzt.“: Klausel nicht erkannt: „wird in der Kopfzeile d | `renumber` |
@@ -1222,6 +1290,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayBeamtVG` | 8 | `partial-chain/chain-commencement-order` | Die vorangehende Änderung GVBl. 2024 S. 151 (§ 2) tritt erst am 2024-07-01 in Kraft – nach dem Stichtag, aber vor einer jüngeren Änderung, die schon vorher galt | `annex-replacement`, `missing-predecessor-text` |
 | `BayBhV` | 8 | `partial-chain/chain-ledger-unexplained` | Das Register führt GVBl. 2025 S. 344 (correction) für die Norm; die Kette der amtlichen Verweise enthält diese Veröffentlichung nicht | `annex-replacement`, `table-replacement`, `missing-predecessor-text` |
 | `BayVV_2230_1_3_UK_494` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2024 Nr. 367 (Nr. 1): 1.2 „Die Anlagen 1 und 2 werden durch folgende Anlagen ersetzt:“: Befehl mit eigener Änderung und Untergliederung | `annex-replacement`, `missing-predecessor-text` |
+| `BayWeinRAV` | 1 | `unsupported-formula/renumber` | GVBl. 2023 S. 629 (§ 1): 8. „Die Anlagen 3 und 4 werden die Anlagen 2 und 3.“: Umnummerierung: strukturelle Änderung, von diesem Modell nicht angewandt | `annex-replacement`, `missing-predecessor-text` |
 | `BayVV_2230_7_K_13917` | 2 | `unsupported-formula/unrecognized` | BayMBl. 2026 Nr. 381 (Nr. 1): 1.12 1.12.3 „Im Abschnitt „Zuwendungsvoraussetzungen“ wird in Nr. 1 Satz 2 die Angabe „10. Februar 2020, BayMBl. Nr. 86“ durch die Angabe „23. Januar 202“: Klausel nicht  | `annex-replacement`, `missing-predecessor-text` |
 | `BayDONot` | 3 | `unsupported-formula/unrecognized` | BayMBl. 2025 Nr. 454 (Nr. 1): 1.1 „Anlage 7 (Dienstordnung für Notarinnen und Notare (DoNot)) wird wie folgt geändert:“: Befehl mit eigener Änderung und Untergliederung | `annex-replacement`, `image-replacement`, `missing-predecessor-text` |
 | `BayBFSOGesundheit` | 6 | `unsupported-formula/insert-unit` | GVBl. 2025 S. 298 (§ 6): 3. „Dem § 17 Abs. 6 und 7 wird jeweils folgender Satz 3 angefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell | `annex-replacement`, `missing-predecessor-text` |
@@ -1247,14 +1316,13 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayVV_2232_3_K_11645` | 1 | `non-invertible-amendment/restore-annex-attachment` | BayMBl. 2026 Nr. 24 (Nr. 1): 1.3 Anlage 15: die Anlage steht in der Verkündung (BayMBl. 2020 Nr. 747) nur als PDF-Anhang („Anlage 1: Zwischenzeugnis für die Jahrgangsstufen 5 und 6“, „Anlage 2: Jahres | `annex-replacement`, `missing-predecessor-text` |
 | `BayVwV288385` | 1 | `non-invertible-amendment/restore-not-found` | BayMBl. 2025 Nr. 347 (Nr. 1): Rückfall Nr. III: in der Verkündung (KWMBl. 2014 S. 109) nicht eindeutig gefunden | `annex-replacement`, `image-replacement`, `missing-predecessor-text` |
 | `BayVwV96486` | 1 | `non-invertible-amendment/repeal-unit` | BayMBl. 2025 Nr. 587 (Nr. 2): 2.1 2.1.1 „Spiegelstrich 1 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `renumber`, `unrecognized`, `annex-replacement`, `missing-predecessor-text` |
-| `BayWeinRAV` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2023 S. 629 (§ 1): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl – aus der Verkündung nicht wiederherstellbar: Ortsangabe „Inhaltsübersi | `renumber`, `annex-replacement`, `missing-predecessor-text` |
 | `BayAVOGFRG` | 2 | `non-invertible-amendment/recast` | GVBl. 2025 S. 78 (§ 1): 2. a) aa) „Satz 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `annex-replacement`, `missing-predecessor-text` |
 | `BayHZV` | 2 | `non-invertible-amendment/restore-annex-attachment` | GVBl. 2026 S. 175 (§ 1): Rückfall Anlage 5: die Anlage steht in der Verkündung (GVBl. 2020 S. 87) nur als PDF-Anhang („Anlage 3, 4 und 5 zu 2010-8-2-1-1-WK“) – kein Text der Seite | `annex-replacement`, `missing-predecessor-text` |
 | `BayVV_2012_4_5_I_10532` | 2 | `non-invertible-amendment/restore-annex-attachment` | BayMBl. 2025 Nr. 300 (Nr. 1): 1.3 Anlage: die Anlage steht in der Verkündung (BayMBl. 2019 Nr. 302) nur als PDF-Anhang („Anlage: Vertrag (Muster)“) – kein Text der Seite | `annex-replacement`, `missing-predecessor-text` |
 | `BayVV_2230_7_K_11816` | 2 | `non-invertible-amendment/recast` | BayMBl. 2025 Nr. 288 (Nr. 1): 1.2 „Die Anlage 3 wird durch folgende Anlage ersetzt:“: Ersetzung durch neuen Wortlaut ohne Alttext – aus der Verkündung nicht wiederherstellbar: Neufassung ohne lesbares | `annex-replacement`, `missing-predecessor-text` |
 | `BayVV_2235_1_1_2_K_1005` | 2 | `non-invertible-amendment/repeal-unit` | BayMBl. 2025 Nr. 523 (Nr. 1): 1.2 „Nr. 3 Satz 3 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `recast`, `delete-words`, `unrecognized`, `annex-replacement`, `table-replacement`, `missing-predecessor-text` |
 | `BayVV_2236_9_1_K_10781` | 2 | `non-invertible-amendment/restore-annex-attachment` | BayMBl. 2026 Nr. 145 (Nr. 1): Anlage 2: die Anlage steht in der Verkündung (BayMBl. 2019 Nr. 496) nur als PDF-Anhang („Anlage 2: Stundentafel“) – kein Text der Seite | `annex-replacement`, `missing-predecessor-text` |
-| `BayVV_2239_K_12604` | 2 | `non-invertible-amendment/recast` | BayMBl. 2024 Nr. 9 (Nr. 1): 1.6 „Die Anlagen 6, 8 und 14 werden durch folgende Anlagen ersetzt:“: Ersetzung durch neuen Wortlaut ohne Alttext – aus der Verkündung nicht wiederherstellbar: Neufassung o | `insert-unit`, `unrecognized`, `renumber`, `annex-replacement`, `missing-predecessor-text` |
+| `BayVV_2239_K_12604` | 2 | `non-invertible-amendment/recast` | BayMBl. 2024 Nr. 9 (Nr. 1): 1.6 „Die Anlagen 6, 8 und 14 werden durch folgende Anlagen ersetzt:“: Ersetzung durch neuen Wortlaut ohne Alttext – aus der Verkündung nicht wiederherstellbar: Neufassung o | `insert-unit`, `unrecognized`, `annex-replacement`, `missing-predecessor-text` |
 | `BayVwV233866` | 2 | `non-invertible-amendment/restore-annex-attachment` | BayMBl. 2025 Nr. 529 (Nr. 1): 1.4 Anlage 3, Anlage 4, Anlage 5: die Anlage steht in der Verkündung (KWMBl. 2009 S. 400) nur als PDF-Anhang („Anlage 3: Zeugnis über den Ausbildungsabschnitt II/1“) – ke | `annex-replacement`, `table-replacement`, `missing-predecessor-text` |
 | `BayVwV235144` | 2 | `non-invertible-amendment/restore-annex-attachment` | BayMBl. 2025 Nr. 526 (Nr. 1): 1.4 Anlage 3, Anlage 4, Anlage 5: die Anlage steht in der Verkündung (KWMBl. 2010 S. 25) nur als PDF-Anhang („Anlage 3: Zeugnis über den Ausbildungsabschnitt“) – kein Tex | `annex-replacement`, `table-replacement`, `missing-predecessor-text` |
 | `BayAVFiG` | 4 | `non-invertible-amendment/delete-words` | GVBl. 2025 S. 126 (§ 1): 2. „In § 3 Satz 1 Nr. 4 Buchst. a Doppelbuchst. aa und bb wird jeweils die Angabe „v. H.“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `repeal-unit`, `annex-replacement`, `missing-predecessor-text` |
@@ -1321,7 +1389,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayVV_2253_D_12831` | 2 | `non-invertible-amendment/recast` | BayMBl. 2026 Nr. 247 (§ 1): 21. c) „Die Sätze 4 und 5 werden die Nr. 5.2.4 Satz 1 und 2 und Satz 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl – aus der Verkündung nicht wi | `insert-unit`, `unrecognized`, `relabel`, `image-replacement`, `missing-predecessor-text` |
 | `BayVwVfG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 599 (§ 1): 1. a) „Abs. 2 Satz 4 und 5 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `delete-words`, `recast`, `insert-unit`, `image-replacement`, `missing-predecessor-text` |
 
-### fehlender Vorgängertext (287)
+### fehlender Vorgängertext (284)
 
 | Norm | Änderungen | Zustand / Grund | Befund | weitere Gründe |
 | --- | ---: | --- | --- | --- |
@@ -1352,18 +1420,20 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayZustVVerk` | 8 | `partial-chain/chain-commencement-order` | GVBl. 2025 S. 523 (§ 1) tritt am 2026-01-01 in Kraft, die jüngere GVBl. 2025 S. 535 (§ 1) schon am 2025-10-16; die Reihenfolge der Fassungen ist nicht die der Verkündungen | `missing-predecessor-text` |
 | `BayBO` | 12 | `partial-chain/chain-commencement-order` | GVBl. 2024 S. 605 (§ 13) tritt am 2025-10-01 in Kraft, die jüngere GVBl. 2024 S. 619 (§ 4) schon am 2025-01-01; die Reihenfolge der Fassungen ist nicht die der Verkündungen | `missing-predecessor-text` |
 | `BayDelV` | 17 | `partial-chain/chain-parallel-order` | Eine parallele Änderung lässt sich nicht eindeutig in die Kette einordnen (Reihenfolge nach Inkrafttreten weicht von der Kette ab) | `missing-predecessor-text` |
+| `BayGnO` | 1 | `unsupported-formula/container` | GVBl. 2023 S. 600 (Nr. 1): 1.2 „§ 31 Abs. 2 wird wie folgt geändert:“: Gliederungsbefehl ohne eigene Änderung | `unrecognized`, `missing-predecessor-text` |
 | `BayVV_2013_1_F_11403` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2024 Nr. 456 (§ 2): 2. „In der Präambel Satz 1 werden nach dem Wort „die“ die Wörter „dem Freistaat Bayern,“ eingefügt, die Angabe „BayFoG“ durch die Wörter „Bayern“: Klausel nicht erkannt: „, | `missing-predecessor-text` |
 | `BayVV_2013_2_F_13526` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2026 Nr. 258 (§ 1): 34. „Die bisherige Nr. 20.2 wird Nr. 21.2 und Satz 1 Buchst. b wird wie folgt gefasst:“: Befehlsrest ohne Schlussverb: „Satz 1 Buchst. b wird wie folgt gefasst:“ | `missing-predecessor-text` |
 | `BayVV_2038_3_11_G_13478` | 1 | `unsupported-formula/insert-unit` | BayMBl. 2025 Nr. 391 (Nr. 1): 1.8 „Nach Nr. 14.2 wird folgende Überschrift eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nich | `missing-predecessor-text` |
 | `BayVV_2235_1_1_1_K_12238` | 1 | `unsupported-formula/renumber` | BayMBl. 2024 Nr. 327 (Nr. 1): 1.3 „Die bisherigen Nrn. 4 und 5 werden die Nrn. 2.2 und 2.3 und die Wörter „des Ministerialbeauftragten“ werden jeweils durch die Wörter „der bz“: Umnummerierung: strukt | `unrecognized`, `missing-predecessor-text` |
 | `BayVV_7815_L_11779` | 1 | `unsupported-formula/insert-unit` | BayMBl. 2026 Nr. 86 (Nr. 1): 1.8 1.8.1 „Es wird folgender neuer Satz 1 eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht an | `renumber`, `unrecognized`, `missing-predecessor-text` |
+| `BayVwV231141` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2024 Nr. 84 (§ 1): 2. b) „In Satz 2 Spiegelstrich 2 und Satz 3 Spiegelstrich 2 werden ersetzt:“: Befehl mit eigener Änderung und Untergliederung | `replace-words`, `missing-predecessor-text` |
 | `BayVwV294820` | 1 | `unsupported-formula/unrecognized` | BayMBl. 2026 Nr. 92 (§ 1): 5. „Nr. 2.1.6 wird Nr. 2.1.5 und in Satz 1 die Angabe „Nrn. 2.1.4 und 2.1.5 nicht erfüllt sind“ durch die Angabe „Nr. 2.1.4 nicht erfüllt ist“ e“: Klausel nicht erkannt: „In | `missing-predecessor-text` |
 | `BayVV_2126_0_G_11745` | 2 | `unsupported-formula/insert-unit` | BayMBl. 2025 Nr. 206 (Nr. 1): 1.3 „Nach der Vorbemerkung wird folgende Überschrift eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Mod | `renumber`, `missing-predecessor-text` |
 | `BayVV_2330_I_1190` | 2 | `unsupported-formula/insert-unit` | BayMBl. 2024 Nr. 6 (Nr. 1): 1.1 „Folgende Vorbemerkung wird vorangestellt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewandt | `unrecognized`, `missing-predecessor-text` |
 | `BayKommZG` | 4 | `unsupported-formula/insert-unit` | GVBl. 2026 S. 374 (§ 8): 2. „Nach dem Sechsten Teil wird folgender Siebter Teil eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell | `renumber`, `missing-predecessor-text` |
 | `BayVV_7071_W_10524` | 4 | `unsupported-formula/unrecognized` | BayMBl. 2025 Nr. 278 (Nr. 1): 1.1 „In der Überschrift der Bekanntmachung wird die Angabe „4.0“ gestrichen.“: Ortsangabe nicht lesbar: „der Überschrift der Bekanntmachung“ | `insert-unit`, `missing-predecessor-text` |
 | `BayDiG` | 5 | `unsupported-formula/insert-unit` | GVBl. 2024 S. 474 (§ 1): 5. „Nach Art. 49 wird folgendes Kapitel 4 eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewa | `missing-predecessor-text` |
-| `BayEzG2021` | 1 | `ambiguous-target/reverse-location-unresolved` | GVBl. 2026 S. 306 (§ 1): 5. Art. 7: Art. 7 mehrfach vorhanden | `missing-predecessor-text` |
+| `BayGSG` | 1 | `ambiguous-target/reverse-location-unresolved` | GVBl. 2024 S. 254 (§ 1): 9. b) Art. 11: kein unbezeichneter Wortlaut vor den bezeichneten Absätzen | `missing-predecessor-text` |
 | `BayVV_2126_0_G_11762` | 1 | `ambiguous-target/reverse-sentence-ambiguous` | BayMBl. 2024 Nr. 512 (Nr. 1): 1.3 1.3.3: Satznummer ³ steht 2-mal im Feld (erwartet: genau einmal) | `missing-predecessor-text` |
 | `BayVV_2126_0_G_12665` | 1 | `ambiguous-target/reverse-target-ambiguous` | BayMBl. 2025 Nr. 528 (Nr. 1): 1.4 1.4.2 Nr. 7 Satz 4: Anker mit eingefügtem Wortlaut „schriftlich oder elektronisch“ kommt im Bereich 3-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
 | `BayVV_2126_0_G_13305` | 1 | `ambiguous-target/reverse-end-not-determined` | BayMBl. 2025 Nr. 390 (Nr. 1): 1.4 1.4.3 Nr. 2.5.2: genau ein Textfeld verlangt, der Bereich hat 6 | `missing-predecessor-text` |
@@ -1376,6 +1446,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BaySvVollzG` | 2 | `ambiguous-target/reverse-location-unresolved` | GVBl. 2025 S. 178 (§ 2): 6. b) bb) Art. 70 Teil <unbestimmt>: Teil <unbestimmt> nicht gefunden | `missing-predecessor-text` |
 | `BayVV_2230_1_3_K_14015` | 2 | `ambiguous-target/reverse-location-unresolved` | BayMBl. 2024 Nr. 392 (Nr. 1): 1.3 Nr. 5 Nr. 5.4: Nr. 5.4 nicht gefunden | `missing-predecessor-text` |
 | `BayVV_3122_2_0_J_10825` | 2 | `ambiguous-target/reverse-location-unresolved` | BayMBl. 2024 Nr. 573 (Nr. 1): 1.10 Nr. 62 Satz 1: Nr. 62 mehrfach vorhanden | `missing-predecessor-text` |
+| `BayVermGeoLEV_4QE` | 2 | `ambiguous-target/reverse-target-ambiguous` | GVBl. 2025 S. 543 (§ 1): 6. § 16 Abs. 1: neuer Wortlaut „und“ kommt im Bereich 3-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
 | `BayZustVAuslR` | 2 | `ambiguous-target/reverse-anchor-mismatch` | GVBl. 2026 S. 362 (§ 1): 3.: Nr. 6 ist nicht das letzte Glied seiner Art | `missing-predecessor-text` |
 | `BayZustVKM` | 2 | `ambiguous-target/reverse-location-unresolved` | GVBl. 2026 S. 425 (§ 2): § 8 Abs. 1 Satz 1 Nr. 2 Buchst. a: Nr. 2 mehrfach vorhanden | `missing-predecessor-text` |
 | `BayVV_7072_F_13921` | 3 | `ambiguous-target/reverse-target-ambiguous` | BayMBl. 2024 Nr. 350 (§ 1): 1. Satz 1: Anker mit eingefügtem Wortlaut „(eBAnz AT 17.05.2023 B6) in der jeweils geltenden Fassung“ kommt im Bereich 2-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
@@ -1385,8 +1456,8 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayVV_73_W_11032` | 1 | `round-trip-failed/reverse-target-not-found` | BayMBl. 2024 Nr. 665 (Nr. 1): 1.7 1.7.2 Nr. 2.2: eingefügter Satz „2Bei einem Direktauftrag sind in geeigneten Fällen auch KMU und Existenzgründung“ steht 0-mal an der genannten Stelle (erwartet: gena | `missing-predecessor-text` |
 | `BayVV_2231_A_13823` | 2 | `round-trip-failed/reverse-target-not-found` | BayMBl. 2024 Nr. 639 (Nr. 1): 1.7 Nr. 10 Satz 2: neuer Wortlaut „den Bewilligungszeitraum 2025“ kommt im Bereich 0-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
 | `BayVV_2231_A_13834` | 2 | `round-trip-failed/reverse-target-not-found` | BayMBl. 2024 Nr. 634 (Nr. 1): 1.5 Nr. 5.1 Satz 5: neuer Wortlaut „2025“ kommt im Bereich 0-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
-| `BayAbhGertArbV` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 1988 S. 329: PDF-Seite 1 trägt nicht Seitenzahl 329 mit Kopfzeile des GVBl. | `missing-predecessor-text` |
-| `BayArchivG` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 1999 S. 521 (§ 16a): PDF-Seite 6 trägt nicht Seitenzahl 524 mit Kopfzeile des GVBl. | `missing-predecessor-text` |
+| `BayAbhGertArbV` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 1988 S. 329: Textlayer nicht verwertbar: Textlayer aus Texterkennung (Erzeuger); OCR ist keine Rechtsquelle | `missing-predecessor-text` |
+| `BayArchivG` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 1999 S. 521 (§ 16a): Textlayer nicht verwertbar: Textlayer aus Texterkennung (Erzeuger); OCR ist keine Rechtsquelle | `missing-predecessor-text` |
 | `BayEbFoeG` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 2023 S. 501: Textlayer nicht verwertbar: Schrift – auf Seite 1 ohne sicher dekodierbare Kodierung | `missing-predecessor-text` |
 | `BayGLKrWG` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 2021 S. 74 (§ 5): Inkrafttretensvorschrift nicht lesbar: „Abweichend von Abs. 1 treten“ | `missing-predecessor-text` |
 | `BayLKrSitzV` | 1 | `effective-date-undetermined/commencement-unreadable` | GVBl. 2002 S. 987: Textlayer nicht verwertbar: Inhaltsstrom der Seite 1 nicht lesbar | `missing-predecessor-text` |
@@ -1400,9 +1471,8 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayFoStS` | 1 | `command-unreadable/location-unreadable` | GVBl. 2025 S. 122 (§ 1): Ortsangabe des Einleitungssatzes nicht lesbar: „Die Satzung“ | `recast`, `unrecognized`, `replace-words`, `missing-predecessor-text` |
 | `BayVV_2272_UK_207` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2025 Nr. 6 (Nr. 1): Ortsangabe „Spiegelstrich 1 „Fahrtkosten““ nicht lesbar (1.10 1.10.1) | `recast`, `repeal-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayVV_61_02_03_01_F_13270` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 296 (§ 1): Ortsangabe „Beispiel 1“ nicht lesbar (8. a)) | `repeal-unit`, `recast`, `unrecognized`, `insert-unit`, `missing-predecessor-text` |
-| `BayVwV159082` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 144 (Nr. 1): Ortsangabe „Inhaltsübersicht“ nicht lesbar (1.1) | `recast`, `unrecognized`, `insert-unit`, `missing-predecessor-text` |
+| `BayVwV159082` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 144 (Nr. 1): Ortsangabe „Abschnitt „Zu § 38 LPO I Didaktiken einer Fächergruppe der Hauptschule““ nicht lesbar (1.3) | `recast`, `unrecognized`, `insert-unit`, `missing-predecessor-text` |
 | `BayVwV252304` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2024 Nr. 474 (Nr. 1): Ortsangabe „Strafvollstreckungsordnung“ nicht lesbar (1.2) | `unrecognized`, `missing-predecessor-text` |
-| `BayLTGO` | 2 | `command-unreadable/location-unreadable` | GVBl. 2024 S. 316 (§ 1): Ortsangabe „Inhaltsübersicht“ nicht lesbar (1.) | `recast`, `delete-words`, `repeal-unit`, `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayVFprF` | 2 | `command-unreadable/location-unreadable` | GVBl. 2025 S. 4 (§ 1): Ortsangabe „Zweite Teil“ nicht lesbar (3.) | `recast`, `missing-predecessor-text` |
 | `BayALFV` | 3 | `command-unreadable/location-unreadable` | GVBl. 2026 S. 58 (§ 1): Ortsangabe „Lfd. Nr. 16“ nicht lesbar (2. d)) | `recast`, `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayGSO` | 3 | `command-unreadable/chain-block-not-found` | GVBl. 2026 S. 425 (§ 11): kein eindeutig lesbarer Änderungsbefehl für die Norm (structure-unreadable: Ein Zitat wird bis zum Ende der Seite nicht geschlossen); die Änderung tritt nach dem Stichtag in  | `missing-predecessor-text` |
@@ -1427,7 +1497,6 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayAbfAlG` | 1 | `non-invertible-amendment/delete-words` | GVBl. 2026 S. 75 (§ 52): 1. „In Art. 3 Abs. 6 wird die Angabe „nach dem Stand der Technik“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `missing-predecessor-text` |
 | `BayAbfZustV` | 1 | `non-invertible-amendment/restore-annex-attachment` | GVBl. 2024 S. 458 (§ 2): Rückfall Anlage: die Anlage steht in der Verkündung (GVBl. 2022 S. 226) nur als PDF-Anhang („Anlage: Besondere Zuständigkeiten“) – kein Text der Seite | `missing-predecessor-text` |
 | `BayAbgrG` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 619 (§ 6): „Art. 7 Abs. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
-| `BayAgrG` | 1 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2022 S. 695 (Art. 17a): 2. b) Art. 4 Satz 2: aufgehobener Satz über den Nachbarsatz der Verkündung nicht gefunden | `missing-predecessor-text` |
 | `BayAufbauG` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 190 (§ 8): 2. b) „Abs. 2 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayAuswVAM` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 406 (§ 1): 5. „Die Überschrift des bisherigen Teils 2 wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl – aus der Verkündung nicht wiederherstellbar: Aufhebu | `recast`, `insert-unit`, `missing-predecessor-text` |
 | `BayBFSOMusik` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2025 S. 298 (§ 7): 2. „§ 10 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `recast`, `renumber`, `missing-predecessor-text` |
@@ -1436,7 +1505,8 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayBodSchG` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 649 (§ 1): „Art. 15 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayBoersV` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 231 (§ 1): 3. a) „Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `repeal-unit`, `missing-predecessor-text` |
 | `BayDVVersoG` | 1 | `non-invertible-amendment/delete-words` | GVBl. 2026 S. 75 (§ 14): 2. „In § 5 Abs. 2 Nr. 2 und § 9 Abs. 2 Satz 1 wird die Angabe „Abs. 1“ jeweils gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `missing-predecessor-text` |
-| `BayEBV` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 573 (§ 5): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `recast`, `missing-predecessor-text` |
+| `BayEBV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 573 (§ 5): 3. „§ 20 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `missing-predecessor-text` |
+| `BayEzG2021` | 1 | `non-invertible-amendment/restore-not-found` | GVBl. 2026 S. 306 (§ 1): 3. a) Art. 3 Abs. 2 Satz 1: kein Feld der Verkündung (GVBl. 2021 S. 38) wird durch Neufassen von Art. 3 Abs. 2 Satz 1 zeichengleich zum heutigen Feld | `missing-predecessor-text` |
 | `BayFBV` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 254 (§ 6): 1. „§ 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `renumber`, `missing-predecessor-text` |
 | `BayFPO_II` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 472 (§ 2): 1. a) „Abs. 1 Satz 2 Nr. 1 und 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `missing-predecessor-text` |
 | `BayFPrAgrHwV` | 1 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2021 S. 689 (§ 1): 7. „Die aus dem Anhang ersichtliche Anlage 4 wird angefügt.“: Anlage oder Anhang in neuer Fassung aus einer beigefüg | `missing-predecessor-text` |
@@ -1444,8 +1514,6 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayFlbQualiV` | 1 | `non-invertible-amendment/restore-not-found` | GVBl. 2026 S. 302 (§ 1): 2. § 1 Abs. 4 Satz 1: kein Feld der Verkündung (GVBl. 2011 S. 35) wird durch Neufassen von § 1 Abs. 4 Satz 1 zeichengleich zum heutigen Feld | `missing-predecessor-text` |
 | `BayFoG` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 114 (Art. 11): 1. b) „Abs. 3 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `missing-predecessor-text` |
 | `BayFwHOEzG` | 1 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2018 S. 257 (§ 1): 3. b) „Abs. 1 wird wie folgt gefasst:“: Befehl mit eigener Änderung und Untergliederung | `missing-predecessor-text` |
-| `BayGSG` | 1 | `non-invertible-amendment/restore-not-found` | GVBl. 2024 S. 254 (§ 1): 9. c) Art. 11 Abs. 2: in der Verkündung (GVBl. 2010 S. 314) nicht eindeutig gefunden | `missing-predecessor-text` |
-| `BayGnO` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2023 S. 600 (Nr. 1): 1.1 „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `container`, `unrecognized`, `missing-predecessor-text` |
 | `BayGrKrV` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 47 (§ 1): 1. „Die Überschrift wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayGrStG` | 1 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: nach Rücknahme von 2 Änderung(en) vor dem Stichtag: Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (GVBl. 2021 S. 638) weichen ab Zeichen 3517 ab | `missing-predecessor-text` |
 | `BayHZG` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 28): 1. „Abs. 4 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
@@ -1455,7 +1523,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayIVUAbwWPBV` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 59): 1. b) „Satz 2 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `renumber`, `missing-predecessor-text` |
 | `BayKUV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 573 (§ 7): 2. „§ 22 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayKommHV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 21 (§ 1): 2. „§ 79 Abs. 2 Satz 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
-| `BayKommPrV` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 365 (§ 1): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `recast`, `missing-predecessor-text` |
+| `BayKommPrV` | 1 | `non-invertible-amendment/recast` | GVBl. 2026 S. 365 (§ 1): 2. a) „Abs. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayKrVerguetV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 94 (§ 1): 1. a) „Abs. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayKraSO` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 425 (§ 9): 5. c) bb) „Halbsatz 2 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `recast`, `delete-words`, `unrecognized`, `replace-words`, `renumber`, `missing-predecessor-text` |
 | `BayLGLV` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 30 (§ 2): 1. „Die Überschrift wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `replace-by-punctuation`, `missing-predecessor-text` |
@@ -1466,12 +1534,12 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayMaxOG` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2025 S. 633 (§ 1): 10. c) „Abs. 2 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayMaxOStat` | 1 | `non-invertible-amendment/recast` | GVBl. 2026 S. 538 (§ 1): 2. b) „Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `repeal-unit`, `missing-predecessor-text` |
 | `BayMediend_StVAG` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 584 (§ 3): 2. „Art. 1 Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
-| `BayMfG2008` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 11): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
+| `BayMfG2008` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 11): 2. „Art. 19 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayNatLandAkV` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 337 (§ 1): 1. b) „Satz 2 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `recast`, `missing-predecessor-text` |
 | `BayPolBilG` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 254 (§ 7): „Art. 1 Abs. 1 Satz 3 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayPrVProfV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 402 (§ 1): 1. c) „Der Satzteil vor Nr. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayPsychKHG` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 24): „Art. 4 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
-| `BayRiStAG` | 1 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2021 S. 654 (§ 3): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl – aus der Ve | `missing-predecessor-text` |
+| `BayRiStAG` | 1 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2018 S. 545 (§ 5): 8. b) „Es wird folgender Abs. 2 angefügt:“: Befehl mit eigener Änderung und Untergliederung | `missing-predecessor-text` |
 | `BaySchallzVO` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 25 (§ 1): 1. a) „Abs. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BaySchiffSvEV` | 1 | `non-invertible-amendment/recast` | GVBl. 2025 S. 88 (§ 1): 1. a) aa) „Satz 1 Nr. 1 bis 5 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayStudAkkV` | 1 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (GVBl. 2018 S. 264) weichen ab Zeichen 23907 ab: Portal „…rQualitätsmanagementsystemeisteineSystem | `missing-predecessor-text` |
@@ -1513,7 +1581,6 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayVergV_LPO_I` | 1 | `non-invertible-amendment/delete-words` | GVBl. 2026 S. 153 (§ 1): 2. a) aa) „Im Satzteil vor Nr. 1 wird die Angabe „ , Didaktik der Naturwissenschaft und Technik“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nich | `recast`, `repeal-unit`, `missing-predecessor-text` |
 | `BayVwV152073` | 1 | `non-invertible-amendment/recast` | BayMBl. 2026 Nr. 25 (Nr. 1): 1.2 „Nrn. 1.2 und 1.3 werden wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayVwV154359` | 1 | `non-invertible-amendment/recast` | BayMBl. 2025 Nr. 273 (Nr. 1): 1.1 „Nr. 1.1.1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `missing-predecessor-text` |
-| `BayVwV231141` | 1 | `non-invertible-amendment/repeal-unit` | BayMBl. 2024 Nr. 84 (§ 1): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `unrecognized`, `replace-words`, `missing-predecessor-text` |
 | `BayVwV251529` | 1 | `non-invertible-amendment/recast` | BayMBl. 2024 Nr. 198 (§ 1): 1. „Der Wortlaut vor Nr. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayVwV257002` | 1 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag BayMBl. 2023 Nr. 439 (§ 1): 8. Nr. 9 Satz 2: aufgehobener Satz über den Nachbarsatz der Verkündung nicht gefunden | `missing-predecessor-text` |
 | `BayVwV257012` | 1 | `non-invertible-amendment/restore-not-found` | BayMBl. 2024 Nr. 362 (§ 1): 13. Nr. 8 Satz 2: aufgehobener Satz über den Nachbarsatz der Verkündung nicht gefunden | `missing-predecessor-text` |
@@ -1524,7 +1591,6 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayVwZVG` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 599 (§ 2): 4. „Art. 15 Abs. 1 Satz 1 Nr. 3 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayWkKV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 573 (§ 6): 1. „Die Sätze 1 und 2 werden wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayWkPV` | 1 | `non-invertible-amendment/recast` | GVBl. 2024 S. 573 (§ 8): 1. „Die Sätze 1 und 2 werden wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
-| `BayZustWaffVIM` | 1 | `non-invertible-amendment/restore-not-found` | BayMBl. 2024 Nr. 508 (§ 1): 4. c) § 4 Abs. 2: in der Verkündung (GVBl. 2011 S. 74) nicht eindeutig gefunden | `missing-predecessor-text` |
 | `BayZwEWG2008` | 1 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 110 (§ 1): 3. b) „Satz 5 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `renumber`, `missing-predecessor-text` |
 | `BayeAktVV` | 1 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (GVBl. 2023 S. 13) weichen ab Zeichen 132 ab: Portal „…19.März1991(BGBl.IS.686),diezuletztdurchdes | `missing-predecessor-text` |
 | `BayAGO` | 2 | `non-invertible-amendment/recast` | GVBl. 2026 S. 259 (§ 1): 3. b) bb) „Satz 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
@@ -1547,6 +1613,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayKG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2025 S. 254 (§ 1): 1. a) „Abs. 2 Satz 4 und 5 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `delete-words`, `missing-predecessor-text` |
 | `BayKVzKG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 311 (§ 2): 1. „Die Tarif-Nr. 4.II.1/ wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `unrecognized`, `missing-predecessor-text` |
 | `BayKWBG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 170 (§ 14): 2. „Art. 54 Abs. 3 Satz 4 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
+| `BayLTGO` | 2 | `non-invertible-amendment/recast` | GVBl. 2024 S. 316 (§ 1): 2. „§ 2 Abs. 2 Satz 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `repeal-unit`, `toc-command`, `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayLandStG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 474 (§ 2): 1. a) „Satz 2 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `delete-words`, `missing-predecessor-text` |
 | `BayLandesBG` | 2 | `non-invertible-amendment/recast` | GVBl. 2024 S. 585 (§ 3): 1. a) „Satz 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `repeal-unit`, `missing-predecessor-text` |
 | `BayNV` | 2 | `non-invertible-amendment/delete-words` | GVBl. 2025 S. 559 (§ 1): 3. a) „In Abs. 1 wird die Angabe „schriftlichen“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `recast`, `missing-predecessor-text` |
@@ -1555,35 +1622,33 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayStatG` | 2 | `non-invertible-amendment/recast` | GVBl. 2026 S. 374 (§ 9): 2. „Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayUVollzG` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2022 S. 642 (§ 2): 3. Art. 36 Nr. 2: neuer Wortlaut „Satz“ kommt im Bereich 2-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
 | `BayVV_2030_2_2_U_13853` | 2 | `non-invertible-amendment/restore-not-found` | BayMBl. 2026 Nr. 301 (Nr. 1): Rückfall Nr. 3.1.2 Buchst. m: in der Verkündung (BayMBl. 2023 Nr. 311) nicht eindeutig gefunden | `missing-predecessor-text` |
-| `BayVV_2126_0_G_11619` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag BayMBl. 2022 Nr. 590 (§ 1): 2. 2.3 Nr. 11 Sätze 2, 3: kein Feld der Verkündung (BayMBl. 2020 Nr. 729) wird durch Aufheben von Nr. 11 Sätze 2, | `missing-predecessor-text` |
+| `BayVV_2126_0_G_11619` | 2 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: gegen den Stand am Stichtag (Stammverkündung und 1 Änderung(en) vorwärts): Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (BayMBl. 2020 Nr. 729)  | `missing-predecessor-text` |
 | `BayVV_2160_A_11301` | 2 | `non-invertible-amendment/restore-not-found` | BayMBl. 2026 Nr. 280 (Nr. 1): 1.7 1.7.3 Nr. 7.1 Satz 5: aufgehobener Satz über den Nachbarsatz der Verkündung nicht gefunden | `missing-predecessor-text` |
 | `BayVV_2236_4_K_10479` | 2 | `non-invertible-amendment/delete-words` | BayMBl. 2026 Nr. 194 (Nr. 1): 1.2 1.2.1 „Im ersten Spiegelstrich wird die Angabe „Altenpflege,“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `unrecognized`, `missing-predecessor-text` |
 | `BayVV_7070_W_10427` | 2 | `non-invertible-amendment/restore-new-mismatch` | BayMBl. 2024 Nr. 243 (Nr. 1): 1.4 Nr. 3: das neu gefasste Glied im heutigen Text ist nicht wörtlich der zitierte Wortlaut | `missing-predecessor-text` |
 | `BayVV_7070_W_11463` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag BayMBl. 2023 Nr. 357 (Nr. 1): 1.4 1.4.2 „In Nr. 8.1 wird die Angabe „2023“ durch die Angabe „2026“ ersetzt und die Gliederungsnummer „8.1“ ge | `missing-predecessor-text` |
 | `BayVV_7071_W_10442` | 2 | `non-invertible-amendment/recast` | BayMBl. 2025 Nr. 540 (Nr. 1): 1.1 „Nr. 6.2.1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `insert-unit`, `missing-predecessor-text` |
 | `BayVV_787_L_13956` | 2 | `non-invertible-amendment/restore-shape` | BayMBl. 2025 Nr. 376 (Nr. 1): Rückfall Nr. 6.3: Gestalt im Portal nicht belegt – kein Geschwisterglied mit gleicher Darstellung oder gleicher Gestalt und gleichem Wortlaut; item>table\|\|{}\|\|geglied | `missing-predecessor-text` |
-| `BayVermGeoLEV_4QE` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2025 S. 543 (§ 1): 2. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl – aus der Verkündung nicht wiederherstellbar: Ortsangabe „Inhaltsübersi | `missing-predecessor-text` |
-| `BayVfGHG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 246 (§ 1): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `recast`, `delete-words`, `missing-predecessor-text` |
+| `BayVfGHG` | 2 | `non-invertible-amendment/recast` | GVBl. 2024 S. 246 (§ 1): 2. „Art. 4 Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `missing-predecessor-text` |
 | `BayVwV153983` | 2 | `non-invertible-amendment/recast` | BayMBl. 2026 Nr. 363 (Nr. 1): „VV zu Art. 96 BayStVollzG wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayVwV153994` | 2 | `non-invertible-amendment/recast` | BayMBl. 2025 Nr. 294 (Nr. 1): 1.1 „Nr. 2.1 wird wie folgt neu gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayVwV232531` | 2 | `non-invertible-amendment/recast` | BayMBl. 2025 Nr. 400 (§ 1): „Abschnitt II Nr. 3.9 Abs. 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayVwV294809` | 2 | `non-invertible-amendment/delete-words` | BayMBl. 2025 Nr. 311 (Nr. 1): 1.2 1.2.1 „In Satz 1 wird die Angabe „(www.stmgp.bayern.de/meine-themen/fuer-fach-und-pflegekraefte/)“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die  | `repeal-unit`, `recast`, `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayVwV96746` | 2 | `non-invertible-amendment/recast` | BayMBl. 2025 Nr. 524 (Nr. 1): „Nr. 5 erhält folgenden Wortlaut:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
-| `BayZALS` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 425 (§ 18): 1. „Die Inhaltsübersicht wird gestrichen.“: Streichung eines Glieds; der Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayZAPOFI` | 2 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (GVBl. 2022 S. 553) weichen ab Zeichen 23369 ab: Portal „…folgtunterBeachtungdesAnonymitätsprinzip | `missing-predecessor-text` |
 | `BayZAPOJ` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2022 S. 680 (§ 2): 7. c) § 56 Abs. 2: Stelle des aufgehobenen Glieds im heutigen Text nicht bestimmt (kein gleichlautendes Nachbarglied | `missing-predecessor-text` |
 | `BayZustG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 190 (§ 1): 1. „Art. 9 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayZustVFM` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2022 S. 400 (§ 1): 4. § 4 Nr. 3: neuer Wortlaut „Nr. 2 bis 5“ kommt im Bereich 0-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
-| `BayZustVWFKM` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2018 S. 835: 1. Überschrift der Norm: Geänderte Überschrift „Verordnung über dienstrechtliche Zuständigkeiten im Geschäftsbereich des B | `missing-predecessor-text` |
+| `BayZustVWFKM` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2021 S. 568 (§ 1): 1. § 1 Nr. 4: Stelle von „Generaldirektion der“ über den umgebenden Wortlaut der Verkündung nicht gefunden | `missing-predecessor-text` |
 | `BayAVPfleWoqG` | 3 | `non-invertible-amendment/restore-shape` | GVBl. 2024 S. 662 (§ 1): Rückfall § 66: Gestalt im Portal nicht belegt – kein Geschwisterglied mit gleicher Darstellung oder gleicher Gestalt und gleichem Wortlaut; subparagraph>table\|\|{}\|\|geglied | `missing-predecessor-text` |
 | `BayBFHG` | 3 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 20): „Art. 15 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
-| `BayFachVVermGeo` | 3 | `non-invertible-amendment/restore-not-found` | GVBl. 2026 S. 2 (§ 1): Rückfall § 59 Abs. 5: in der Verkündung (GVBl. 2012 S. 493) nicht eindeutig gefunden | `missing-predecessor-text` |
+| `BayFachVVermGeo` | 3 | `non-invertible-amendment/restore-shape` | GVBl. 2026 S. 2 (§ 1): Rückfall § 13 Abs. 1: Gestalt im Portal nicht belegt – kein Geschwisterglied mit gleicher Darstellung oder gleicher Gestalt und gleichem Wortlaut; subparagraph>table\|\|{}\|\|ge | `missing-predecessor-text` |
 | `BayHO` | 3 | `non-invertible-amendment/recast` | GVBl. 2025 S. 254 (§ 8): 2. b) „Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `missing-predecessor-text` |
-| `BayHeilvfV` | 3 | `non-invertible-amendment/restore-not-found` | GVBl. 2023 S. 577 (§ 1): Rückfall § 16 Abs. 2: in der Verkündung (GVBl. 2010 S. 865) nicht eindeutig gefunden | `missing-predecessor-text` |
+| `BayHeilvfV` | 3 | `non-invertible-amendment/restore-not-found` | GVBl. 2023 S. 577 (§ 1): 9. a) bb) § 16 Abs. 1 Satz 2: aufgehobener Satz über den Nachbarsatz der Verkündung nicht gefunden | `missing-predecessor-text` |
 | `BayImSchG` | 3 | `non-invertible-amendment/restore-not-found` | GVBl. 2024 S. 619 (§ 3): 3. b) cc) Art. 12 Abs. 1 Satz 2: aufgehobener Satz über den Nachbarsatz der Verkündung nicht gefunden | `missing-predecessor-text` |
 | `BayKrG` | 3 | `non-invertible-amendment/delete-words` | GVBl. 2025 S. 98 (§ 1): 1. a) „In Satz 1 werden die Wörter „auf Antrag“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `recast`, `repeal-unit`, `replace-by-punctuation`, `missing-predecessor-text` |
 | `BayLfLV` | 3 | `non-invertible-amendment/recast` | GVBl. 2026 S. 58 (§ 2): 1. „§ 3 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `missing-predecessor-text` |
-| `BayLplG` | 3 | `non-invertible-amendment/restore-not-found` | GVBl. 2026 S. 75 (§ 7): Rückfall Art. 21 Abs. 4 Nr. 2: in der Verkündung (GVBl. 2012 S. 254) nicht eindeutig gefunden | `missing-predecessor-text` |
+| `BayLplG` | 3 | `non-invertible-amendment/restore-not-found` | GVBl. 2026 S. 75 (§ 7): 28. Art. 33: in der Verkündung (GVBl. 2012 S. 254) nicht eindeutig gefunden | `missing-predecessor-text` |
 | `BayNatSchG` | 3 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 15): 1. „Art. 3a wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayOePNVG` | 3 | `non-invertible-amendment/delete-words` | GVBl. 2026 S. 75 (§ 38): 1. „In Art. 4 Abs. 3 Satz 1 wird die Angabe „dem Stand der Technik und“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `repeal-unit`, `missing-predecessor-text` |
 | `BayPOG` | 3 | `non-invertible-amendment/recast` | GVBl. 2026 S. 139 (§ 6): „Art. 7 Abs. 1 Satz 3 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
@@ -1602,7 +1667,7 @@ Ergebnis: **16** Fälle geprüft, **1** neu entschieden, 15 bleiben unbestimmt.
 | `BayDSchG` | 4 | `non-invertible-amendment/delete-words` | GVBl. 2025 S. 657 (§ 1): 2. a) aa) „Die Angabe „(1)“ wird gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `repeal-unit`, `recast`, `unrecognized`, `missing-predecessor-text` |
 | `BayFAG` | 4 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 250 (§ 1): 3. „Art. 6 Satz 3 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayFAGDV02` | 4 | `non-invertible-amendment/delete-words` | GVBl. 2024 S. 153 (§ 3): 2. „In Abs. 2 wird die Angabe „ , 13a und 13b Abs. 1“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `repeal-unit`, `missing-predecessor-text` |
-| `BayGDG` | 4 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2023 S. 431 (§ 2): 2. b) Art. 17 Abs. 1: Anker mit eingefügtem Wortlaut „Hebammen, § 8 Abs. 1 Satz 1 Nr. 4 der MT-Ausbildungs- und Prüf | `missing-predecessor-text` |
+| `BayGDG` | 4 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: gegen den Stand am Stichtag (Stammverkündung und 4 Änderung(en) vorwärts): Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (GVBl. 2022 S. 182) wei | `missing-predecessor-text` |
 | `BayUrlMV` | 4 | `non-invertible-amendment/delete-words` | GVBl. 2025 S. 561 (§ 1): 1. a) „In Nr. 4 wird die Angabe „für Zwecke der Landesverteidigung sowie“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `missing-predecessor-text` |
 | `BayVV_787_L_13932` | 4 | `non-invertible-amendment/restore-shape` | BayMBl. 2025 Nr. 361 (Nr. 1): Rückfall Nr. 4.2: Gestalt im Portal nicht belegt – kein Geschwisterglied mit gleicher Darstellung oder gleicher Gestalt und gleichem Wortlaut; section>item\|label+text\|{ | `missing-predecessor-text` |
 | `BayVwV233801` | 4 | `non-invertible-amendment/repeal-unit` | BayMBl. 2026 Nr. 215 (§ 2): 1. „Die Nrn. 16.4 bis 16.4.4 werden aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |

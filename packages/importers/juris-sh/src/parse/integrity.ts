@@ -66,6 +66,20 @@ export function compareIntegrity(sourceText: string, canonicalText: string, expl
   const canonical = characterStream(canonicalText);
   const base: IntegrityResult = { class: 'exact', sourceCharacters: source.length, canonicalCharacters: canonical.length, sourceTokens: 0, canonicalTokens: 0, missing: 0, extra: 0, explanations: [] };
   if (source === canonical) return base;
+  // Benannt übernommene Zeilen (z. B. VwV-Metadaten): Zeichenfolge der Quelle ohne sie – stimmt der Rest genau, ist
+  // der Unterschied vollständig erklärt, ohne auf den Wortvergleich auszuweichen.
+  if (explained.length > 0) {
+    let reduced = source;
+    const used: string[] = [];
+    for (const explanation of explained) {
+      const stream = characterStream(explanation.text);
+      const at = stream ? reduced.indexOf(stream) : -1;
+      if (at < 0) continue;
+      reduced = `${reduced.slice(0, at)}${reduced.slice(at + stream.length)}`;
+      used.push(explanation.reason);
+    }
+    if (reduced === canonical) return { ...base, class: 'explained-difference', explanations: [...new Set(used)].sort() };
+  }
   let offset = 0;
   while (offset < source.length && offset < canonical.length && source[offset] === canonical[offset]) offset += 1;
   base.firstDivergence = { offset, source: source.slice(Math.max(0, offset - 30), offset + 50), canonical: canonical.slice(Math.max(0, offset - 30), offset + 50) };

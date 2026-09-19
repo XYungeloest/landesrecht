@@ -30,7 +30,7 @@ import { CACHE_DIR, IMPORT_DATA_DIR, PARSER_VERSION, type SourceArea } from '@la
 import { readManifestEntry } from '@landesrecht/importer-bayernrecht/common/manifest.ts';
 import { identityHash, manifestEntryPath } from '@landesrecht/importer-bayernrecht/common/paths.ts';
 import { readReviewQueue } from '@landesrecht/importer-bayernrecht/common/review.ts';
-import { assertJurisdictionSlug, readSlugRegistry } from '@landesrecht/importer-bayernrecht/common/slug-registry.ts';
+import { assertJurisdictionSlug, readSlugRegistry, SLUG_REGISTRY_PATH } from '@landesrecht/importer-bayernrecht/common/slug-registry.ts';
 import { enumerationFingerprint, ENUMERATION_SCHEMA, type EnumerationFile, type EnumerationItem } from '@landesrecht/importer-bayernrecht/enumerate/enumeration.ts';
 import { documentUrl, zipUrl } from '@landesrecht/importer-bayernrecht/enumerate/portal.ts';
 import { runBulk, type BulkRunOptions, type BulkRunResult } from '@landesrecht/importer-bayernrecht/bulk/run.ts';
@@ -588,6 +588,48 @@ describe('Unveränderlichkeit: ein zweiter Lauf ändert nichts still', () => {
     expect(manifest?.targetSlug).toBe(slug);
     expect(manifest?.importStatus === 'imported' || manifest?.importStatus === 'imported-with-warnings').toBe(true);
     expect(manifest?.reviewStatus).toBe('open');
+  });
+});
+
+describe('Rücknahme: nur bei amtlich belegtem Inkrafttreten nach dem Stichtag', () => {
+  const rewriteBaseline = async (root: string, decision: BaselineDecision): Promise<void> => {
+    await writeFile(join(root, IMPORT_DATA_DIR, 'baseline.json'), `${JSON.stringify({ schemaVersion: 'bayernrecht-baseline/1', baselineDate: BASELINE, evaluationDate: '2026-09-18', totals: { candidates: 1, examined: 1, notCached: 0, unreadable: 0, byClass: {}, byStatus: {}, byMethod: {}, issueDateSource: {} }, decisions: [decision] }, null, 2)}\n`, 'utf8');
+  };
+  const notAtBaseline = (reason: string): BaselineDecision => ({
+    documentId: 'BayAbmG',
+    evidence: [{ kind: 'official-commencement', value: '2023-12-15 (BayMBl. 2023 Nr. 598)', source: 'amtliche Verkündung:Inkrafttretensvorschrift' }],
+    class: 'enacted-after-baseline',
+    status: 'not-at-baseline',
+    method: 'undetermined',
+    reason,
+    blockers: [],
+  } as BaselineDecision);
+
+  it('nimmt eine übernommene Norm heraus, wenn die amtliche Verkündung ein späteres Inkrafttreten belegt; der Slug bleibt reserviert', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }]);
+    const slug = resultFor(await run(root, { write: true }), 'BayAbmG')!.targetSlug!;
+    await rewriteBaseline(root, notAtBaseline('official-commencement-after-baseline'));
+    const second = await run(root, { write: true });
+    expect(resultFor(second, 'BayAbmG')?.result).not.toBe('kept-existing');
+    await expect(readFile(join(root, 'content', 'norms', 'baywue', slug, 'meta.json'), 'utf8')).rejects.toThrow();
+    const manifest = await readManifestEntry(root, 'landesrecht', 'BayAbmG');
+    expect(manifest?.importStatus === 'imported' || manifest?.importStatus === 'imported-with-warnings').toBe(false);
+    expect(manifest?.targetSlug).toBe('');
+    expect(manifest?.findings.map((finding) => finding.code)).toContain('withdrawn-not-at-baseline');
+    // Der Slug ist stillgelegt (ohne Nachfolger, ohne Umleitung) und wird nie neu vergeben.
+    const registry = JSON.parse(await readFile(join(root, SLUG_REGISTRY_PATH), 'utf8')) as { entries: Array<{ sourceIdentity: string }>; retired?: Array<{ slug: string; successor?: string; withdrawn?: unknown }> };
+    expect(registry.entries.some((reserved) => reserved.sourceIdentity === 'BayAbmG')).toBe(false);
+    expect(registry.retired).toContainEqual(expect.objectContaining({ slug, withdrawn: expect.anything() }));
+    expect(registry.retired?.find((retired) => retired.slug === slug)?.successor).toBeUndefined();
+  });
+
+  it('jede andere Verschlechterung behält den übernommenen Stand (Review)', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }]);
+    const slug = resultFor(await run(root, { write: true }), 'BayAbmG')!.targetSlug!;
+    await rewriteBaseline(root, notAtBaseline('published-after-baseline'));
+    const second = await run(root, { write: true });
+    expect(resultFor(second, 'BayAbmG')?.result).toBe('kept-existing');
+    expect(await readFile(join(root, 'content', 'norms', 'baywue', slug, 'meta.json'), 'utf8')).toContain('BayAbmG');
   });
 });
 

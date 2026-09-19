@@ -67,12 +67,20 @@ describe('Asset-Adressen', () => {
     }
   });
 
-  it('kennt ein Asset-Präfix nur für BayWü; West und andere Länder haben keine Assets', () => {
+  it('kennt Asset-Präfixe nur für BayWü und NSH; West und andere Länder haben keine Assets', () => {
     expect(normAssetObjectKey('baywue', sha256, 'gif')).toBe(`baywue/bayernrecht/2023-12-01/assets/${sha256}.gif`);
+    expect(normAssetObjectKey('nsh', sha256, 'png')).toBe(`nsh/juris-sh/2023-12-01/assets/${sha256}.png`);
     expect(normAssetObjectKey('west', sha256, 'gif')).toBeUndefined();
     expect(normAssetObjectKey('baywue', 'x', 'gif')).toBeUndefined();
     expect(normAssetObjectKey('baywue', sha256, 'svg')).toBeUndefined();
-    expect(Object.keys(NORM_ASSET_PREFIXES)).toEqual(['baywue']);
+    expect(Object.keys(NORM_ASSET_PREFIXES)).toEqual(['baywue', 'nsh']);
+  });
+
+  it('NSH: das Asset-Präfix des Workers ist genau das Asset-Präfix des NSH-R2-Stagings', async () => {
+    const { ASSET_KEY_PREFIX, assetObjectKey } = await import('@landesrecht/importer-juris-sh/r2/archive.ts');
+    expect(NORM_ASSET_PREFIXES.nsh).toBe(ASSET_KEY_PREFIX);
+    expect(assetObjectKey(sha256, 'image/png')).toBe(normAssetObjectKey('nsh', sha256, 'png'));
+    expect(assetObjectKey(sha256, 'image/jpeg')).toBe(normAssetObjectKey('nsh', sha256, 'jpg'));
   });
 });
 
@@ -93,6 +101,14 @@ describe('Auslieferung /assets/<land>/<datei>', () => {
     const response = await serveNormAsset({ jurisdiction: 'bayern-wuerttemberg', file: `${sha256}.gif` }, fakeBucket({ [key]: new TextEncoder().encode('anderes Bild') }));
     expect(response.status).toBe(502);
     expect(response.headers.get('cache-control')).toBe('no-store');
+  });
+
+  it('liefert NSH-Assets aus dem NSH-Präfix, nie aus dem BayWü-Präfix', async () => {
+    const nshKey = `nsh/juris-sh/2023-12-01/assets/${sha256}.gif`;
+    const bucket = fakeBucket({ [key]: bytes, [nshKey]: bytes });
+    const response = await serveNormAsset({ jurisdiction: 'nsh', file: `${sha256}.gif` }, bucket);
+    expect(response.status).toBe(200);
+    expect(bucket.requested).toEqual([nshKey]);
   });
 
   it('liest nur Schlüssel unter dem Asset-Präfix des Landes und fragt sonst gar nicht erst', async () => {

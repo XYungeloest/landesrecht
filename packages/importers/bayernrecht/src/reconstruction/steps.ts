@@ -19,8 +19,9 @@ import { containerLocation, isParsedDeletion, NON_INVERTIBLE_FORMULAS, parseComm
 import { blockAt, formatPath, parseLocation, resolvePath, type LocationPath } from './location.ts';
 import { stableStringify, type RecipeStep, type ScopeRecord } from './recipe.ts';
 import { commandUnitPath, deletionRequest, realizeRestore, RestoreError, restoreRequest, restoreUnit, unitFor, type PublicationBase, type RestoreRequest } from './restore.ts';
-import { parseStructural, realize, StructuralError, structuralEvidence, type StructuralOperation, type StructuralParse, type StructuralTemplate } from './structural.ts';
+import { parseStructural, quoteGroups, realize, StructuralError, structuralEvidence, type StructuralOperation, type StructuralParse, type StructuralTemplate } from './structural.ts';
 import type { CommandBlock, CommandNode } from './structure.ts';
+import type { GazetteUnit } from './gazette.ts';
 import { sameTitle, TITLE_FIELD, TitleError, titleText, type RecipeTitle } from './title.ts';
 
 export interface StepFailure {
@@ -29,7 +30,7 @@ export interface StepFailure {
   detail: string;
 }
 
-interface Leaf {
+export interface Leaf {
   node: CommandNode;
   context: LocationPath[];
   labels: string[];
@@ -39,7 +40,44 @@ interface Leaf {
   hasChildren?: boolean;
   /** Nur für die Formelstatistik gelesen (Ort nicht bestimmbar). */
   statisticsOnly?: boolean;
+  /**
+   * Lauf 9: Ort in der **bisherigen** Zählung, wenn ein übergeordneter Befehl umnummeriert („Der bisherige § 3 wird § 4
+   * und wie folgt geändert:“). Die Rücknahme arbeitet im heutigen Text unter der neuen Bezeichnung; in der Stammverkündung
+   * und im Stand am Stichtag trägt das Glied die bisherige.
+   */
+  sourceContext?: LocationPath[];
+  /**
+   * Lauf 9: Befehl an der Inhaltsübersicht („In der Inhaltsübersicht wird …“, „Die Inhaltsübersicht wird gestrichen.“,
+   * Unterbefehle von „Die Inhaltsübersicht wird wie folgt geändert:“). Die Inhaltsübersicht ist nicht Wortlaut der
+   * Vorschrift; führt der Körper keine, betrifft der Befehl ihn nicht.
+   */
+  toc?: boolean;
 }
+
+/** Unterbefehle, die in Wahrheit zitierter Wortlaut sind (siehe `commandLeaves`); sonst `undefined`. */
+function quotedChildren(node: CommandNode): GazetteUnit[] | undefined {
+  if (node.children.length === 0 || !/:\s*$/u.test(node.text.trim())) return undefined;
+  const units: GazetteUnit[] = [];
+  const visit = (entry: CommandNode): void => {
+    units.push(entry.unit, ...entry.quoted);
+    entry.children.forEach(visit);
+  };
+  node.children.forEach(visit);
+  const ordered = [...new Map(units.map((unit) => [unit.index, unit])).values()].sort((left, right) => left.index - right.index);
+  const first = ordered[0];
+  if (!first || !/^[„‚]/u.test(`${first.label ?? ''}${first.text}`.trim())) return undefined;
+  const groups = quoteGroups(ordered);
+  return groups && groups.length > 0 ? ordered : undefined;
+}
+
+/** Führt der Körper eine Inhaltsübersicht (Glied mit Überschrift „Inhaltsübersicht“/„Inhaltsverzeichnis“)? */
+export function hasTableOfContents(body: readonly NormBodyBlock[]): boolean {
+  const visit = (blocks: readonly NormBodyBlock[]): boolean => blocks.some((block) => /^Inhalts(?:übersicht|verzeichnis)$/u.test(String(block.title ?? block.text ?? '').trim()) || visit(block.children ?? []));
+  return visit(body);
+}
+
+/** Ort ist die Inhaltsübersicht (Inhaltsverzeichnis) der Norm. */
+export const TOC_COMMAND = /^(?:(?:In|Im|Der|Die|Dem|Den)\s+(?:der\s+)?)?Inhalts(?:übersicht|verzeichnis)(?![\p{L}])/u;
 
 /** Unbestimmter Ort für Unterbefehle, deren Bezug nicht auflösbar ist (nur Statistik). */
 const UNDETERMINED: LocationPath = [{ kind: 'teil', value: '<unbestimmt>' }];
@@ -62,8 +100,9 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
       else base.push(scoped[0]!);
     }
   }
-  const walk = (nodes: readonly CommandNode[], context: LocationPath[], labels: string[], statisticsOnly: boolean): void => {
-    for (const node of nodes) {
+  const walk = (nodes: readonly CommandNode[], context: LocationPath[], labels: string[], statisticsOnly: boolean, source: LocationPath[] = context): void => {
+    const sourceOf = (): Partial<Leaf> => (stableStringify(source) === stableStringify(context) ? {} : { sourceContext: source });
+    for (let node of nodes) {
       const nodeLabels = node.label ? [...labels, node.label] : labels;
       const listed = listedReplacement(node);
       if (listed !== undefined) {
@@ -74,6 +113,19 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
         continue;
       }
       const container = containerLocation(node.text);
+      if (TOC_COMMAND.test(node.text.trim())) {
+        // Inhaltsübersicht: der Befehl und alle Unterbefehle betreffen sie (nur markiert, nicht gelesen).
+        const mark = (entries: readonly CommandNode[], labelsOf: string[]): void => {
+          for (const entry of entries) {
+            const entryLabels = entry.label ? [...labelsOf, entry.label] : labelsOf;
+            if (entry.children.length > 0) mark(entry.children, entryLabels);
+            else leaves.push({ node: entry, context, labels: entryLabels, command: entry.text, toc: true, ...(statisticsOnly ? { statisticsOnly } : {}) });
+          }
+        };
+        if (node.children.length > 0) mark(node.children, nodeLabels);
+        else leaves.push({ node, context, labels: nodeLabels, command: node.text, toc: true, ...(statisticsOnly ? { statisticsOnly } : {}) });
+        continue;
+      }
       if (container !== undefined && node.children.length > 0) {
         const paths = parseLocation(container);
         if (!paths || paths.length !== 1) {
@@ -81,20 +133,25 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
           walk(node.children, [...context, UNDETERMINED], nodeLabels, true);
           continue;
         }
-        walk(node.children, [...context, paths[0]!], nodeLabels, statisticsOnly);
+        walk(node.children, [...context, paths[0]!], nodeLabels, statisticsOnly, [...source, paths[0]!]);
         continue;
       }
+      // Lauf 9: Zitierter Wortlaut mit eigenen Gliederungszeichen („Nr. 1.1.10 erhält folgende Fassung:“ – „„1.1.10 …“ –
+      // „a) …“), den die Befehlsstruktur als Unterbefehle las: Beginnt das erste Unterglied mit dem öffnenden
+      // Anführungszeichen und schließen die Unterglieder das Zitat, sind sie Zitat, keine Befehle.
+      const inner = quotedChildren(node);
+      if (inner) node = { ...node, quoted: [...node.quoted, ...inner], children: [] };
       const quoted = node.quoted.map((unit) => `${unit.label ? `${unit.label} ` : ''}${unit.text}`).join(' ');
       // „Nach Nr. 1.2 wird folgende Nr. 1.3 angefügt.“ mit folgendem Zitat: für die Erkennung wie mit Doppelpunkt.
       const parseText = node.quoted.length > 0 ? node.text.replace(/\.\s*$/u, ':') : node.text;
       const structural = parseStructural(parseText, context, node.quoted);
-      const leaf: Leaf = { node: parseText === node.text ? node : { ...node, text: parseText }, context, labels: nodeLabels, command: quoted === '' ? node.text : `${node.text} ${quoted}`, ...(structural ? { structural } : {}), ...(statisticsOnly ? { statisticsOnly } : {}) };
+      const leaf: Leaf = { node: parseText === node.text ? node : { ...node, text: parseText }, context, labels: nodeLabels, command: quoted === '' ? node.text : `${node.text} ${quoted}`, ...(structural ? { structural } : {}), ...(statisticsOnly ? { statisticsOnly } : {}), ...sourceOf() };
       if (node.children.length > 0) {
         // „Der bisherige § 5 wird § 6 und wie folgt geändert:“ – Unterbefehle am Glied unter neuer Bezeichnung.
         const template = structural?.templates?.[0];
         if (structural?.formula === 'relabel' && template?.kind === 'relabel' && template.pairs.length === 1 && /wie\s+folgt\s+geändert\s*:\s*$/u.test(node.text)) {
           leaves.push(leaf);
-          walk(node.children, [...context, [template.pairs[0]![1]]], nodeLabels, statisticsOnly);
+          walk(node.children, [...context, [template.pairs[0]![1]]], nodeLabels, statisticsOnly, [...source, [template.pairs[0]![0]]]);
           continue;
         }
         // „Satz 3 wird Satz 2 und wie folgt geändert:“ (BayMBl. 2025 Nr. 315): Unterbefehle am Satz unter neuer Nummer.
@@ -153,7 +210,7 @@ function relabelRuns(parsed: ReadonlyArray<{ leaf: Leaf; parsed: Parsed }>): num
  * Ein Befehl als Folge von Vorlagen (strukturell), Operationen mit Orten (Wortlaut) oder – mit dem Stand der
  * Verkündungen am Stichtag – Wiederherstellungen (`restore`: Alttext aus der Stammverkündung, `restore.ts`).
  */
-type Parsed = { formulas: FormulaId[]; items?: Array<{ formula: FormulaId; template?: StructuralTemplate; parsed?: ParsedOperation; restore?: RestoreRequest }>; reason?: string };
+export type Parsed = { formulas: FormulaId[]; items?: Array<{ formula: FormulaId; template?: StructuralTemplate; parsed?: ParsedOperation; restore?: RestoreRequest }>; reason?: string };
 
 /** Nicht umkehrbarer Befehl → Wiederherstellung aus den Verkündungen, soweit er dafür lesbar ist. */
 function restorableLeaf(leaf: Leaf, command: Parsed & { restorable?: ReturnType<typeof parseCommand>['restorable'] }): Parsed | undefined {
@@ -171,6 +228,12 @@ function restorableLeaf(leaf: Leaf, command: Parsed & { restorable?: ReturnType<
     const head = parseStructural(`${combined[1]!}.`, leaf.context, []);
     const template = head?.templates?.[0];
     const request = restoreRequest(`${combined[2]!} ${/\s(?:und|bis)\s|,/u.test(combined[2]!) ? 'werden' : 'wird'} wie folgt gefasst:`, leaf.context, leaf.node.quoted, 'recast');
+    // In der Stammverkündung trägt das Glied die bisherige Bezeichnung.
+    if (template?.kind === 'relabel' && !('error' in request)) {
+      const olds = template.pairs.map(([from]) => formatPath([from]));
+      const source = restoreRequest(`${olds.join(', ').replace(/, ([^,]*)$/u, ' und $1')} ${olds.length > 1 ? 'werden' : 'wird'} wie folgt gefasst:`, leaf.sourceContext ?? leaf.context, leaf.node.quoted, 'recast');
+      if (!('error' in source) && source.kind === request.kind) request.source = source;
+    }
     if (head && template && (template.kind === 'relabel' || template.kind === 'renumber-sentences') && !('error' in request)) {
       return { formulas: [head.formula as FormulaId, 'recast'], items: [{ formula: head.formula as FormulaId, template }, { formula: 'recast', restore: request }] };
     }
@@ -181,10 +244,14 @@ function restorableLeaf(leaf: Leaf, command: Parsed & { restorable?: ReturnType<
   if (formula !== 'recast' && formula !== 'repeal-unit') return undefined;
   const request = restoreRequest(leaf.node.text, leaf.context, leaf.node.quoted, formula);
   if ('error' in request) return { formulas: command.formulas, reason: `${command.reason ?? ''} – aus der Verkündung nicht wiederherstellbar: ${request.error}` };
+  if (leaf.sourceContext) {
+    const source = restoreRequest(leaf.node.text, leaf.sourceContext, leaf.node.quoted, formula);
+    if (!('error' in source) && source.kind === request.kind) request.source = source;
+  }
   return { formulas: command.formulas, items: [{ formula, restore: request }] };
 }
 
-function parseLeaf(leaf: Leaf, restore?: PublicationBase): Parsed {
+export function parseLeaf(leaf: Leaf, restore?: PublicationBase | true): Parsed {
   const parsed = parseLeafPlain(leaf);
   if (parsed.items || !restore) return parsed;
   // Umnummerierung mit weiterem Befehl ohne Alttext („Nr. 4.4.4 wird Nr. 4.4.3 und in Satz 2 werden die Wörter „…“
@@ -260,7 +327,7 @@ const defectOf = (leaf: Leaf, note?: string): { sourceDefect?: string } => {
 };
 
 /** Ort „Überschrift“ ohne übergeordnetes Glied: die Überschrift der Norm selbst. */
-const isNormTitle = (path: LocationPath): boolean => path.length === 1 && path[0]!.kind === 'ueberschrift';
+export const isNormTitle = (path: LocationPath): boolean => path.length === 1 && path[0]!.kind === 'ueberschrift';
 
 /**
  * Nimmt eine Änderung zurück: `after` ist der Körper mit der Änderung (bei der jüngsten der heutige). `idPrefix`
@@ -285,7 +352,13 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
   const restore = options?.base;
   const { leaves, failures: structureFailures } = commandLeaves(block);
   for (const message of structureFailures) result.failures.push({ state: 'command-unreadable', reason: 'location-unreadable', detail: message });
-  let parsed = leaves.map((leaf, index) => ({ leaf, index, parsed: parseLeaf(leaf, restore) }));
+  let parsed = leaves.map((leaf, index) => ({ leaf, index, parsed: leaf.toc ? { formulas: ['container' as FormulaId] } : parseLeaf(leaf, restore) }));
+  // Befehle an der Inhaltsübersicht: Führt der heutige Körper keine, betreffen sie ihn nicht (kein Schritt); sonst sind sie
+  // nicht umgesetzt.
+  if (parsed.some(({ leaf }) => leaf.toc)) {
+    if (hasTableOfContents(after)) for (const { leaf } of parsed.filter((entry) => entry.leaf.toc)) result.failures.push({ state: 'unsupported-formula', reason: 'toc-command', detail: `${leaf.labels.join(' ')} „${leaf.node.text.slice(0, 140)}“: Befehl an der Inhaltsübersicht, die der Körper führt – nicht umgesetzt` });
+    parsed = parsed.filter(({ leaf }) => !leaf.toc);
+  }
   const failing: Array<{ leaf: Leaf; failure: StepFailure }> = [];
   for (const { leaf, index, parsed: command } of parsed) {
     result.formulas.push(...command.formulas);
@@ -305,10 +378,11 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
     }
   }
   // Rückfall (nur mit Stammverkündung und nur wo zulässig): ganze Glieder aus der Verkündung für die nicht lesbaren Befehle.
-  const units: Array<{ steps: LocationPath; blockPath: number[] }> = [];
+  const units: Array<{ steps: LocationPath; blockPath: number[]; sourceSteps?: LocationPath }> = [];
   if (failing.length > 0 && restore && options?.fallback && structureFailures.length === 0) {
     for (const { leaf } of failing) {
-      const unit = unitFor(after, commandUnitPath(leaf.node.text, leaf.context));
+      const unit: (ReturnType<typeof unitFor> & { sourceSteps?: LocationPath }) | undefined = unitFor(after, commandUnitPath(leaf.node.text, leaf.context));
+      if (unit && leaf.sourceContext) unit.sourceSteps = commandUnitPath(leaf.node.text, leaf.sourceContext).filter((step) => !['satz', 'halbsatz', 'satzteil-vor', 'satzteil-nach', 'ueberschrift', 'vorspann', 'zeile', 'spalte'].includes(step.kind)).slice(0, unit.steps.length);
       if (!unit) {
         units.length = 0;
         break;
@@ -399,7 +473,7 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
       for (const [position, scope] of scopes.entries()) {
         for (const field of scope.fields) {
           const key = `${targets[position] ?? 'body'}:${field.path.join('.')}:${field.key}`;
-          const sentence = scope.sentence === undefined ? '*' : String(scope.sentence);
+          const sentence = scope.sentence === undefined ? '*' : `${scope.sentence}${scope.halfSentence !== undefined ? `/${scope.halfSentence}` : ''}`;
           const taken = seen.get(key) ?? new Set<string>();
           if (taken.has(sentence) || (taken.size > 0 && (sentence === '*' || taken.has('*')))) throw new ReconstructionError('overlapping-locations', `${leaf.labels.join(' ')}: die Orte von „jeweils“ überschneiden sich`);
           taken.add(sentence);

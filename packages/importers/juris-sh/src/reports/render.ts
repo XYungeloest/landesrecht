@@ -230,7 +230,9 @@ export function renderReviewSummary(audit: AuditResult): string {
 export function renderReadiness(result: ReadinessResult): string {
   const lines = [
     ...HEADER('Readiness juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts readiness --write'),
-    `**${result.ready ? 'READY' : 'NOT READY'}**`,
+    `**${result.status}**`,
+    '',
+    `**${result.remoteRelease.status}** – ${result.remoteRelease.reason} (Entscheidungsgrundlage: \`${result.remoteRelease.decisionDocument}\`). Das ist kein Parser- oder Coveragefehler: Der Import ist technisch vollständig; nur die Remote-Veröffentlichung (R2, D1, Deploy) wartet auf die Entscheidung.`,
     '',
     ...(result.blockers.length > 0 ? ['Systemische Blocker:', '', ...result.blockers.map((blocker) => `- ${blocker}`), ''] : []),
     ...table(['Prüfung', 'Status', 'Detail'], result.checks.map((check) => [`${check.label} (\`${check.id}\`)`, check.status === 'pass' ? 'pass' : check.blocker ? '**FAIL (Blocker)**' : 'fail', check.detail])),
@@ -378,12 +380,13 @@ export function renderCorpusInventory(report: InventoryReport): string {
     '',
     '## 3 Zweite Quelle: amtliche Register',
     '',
-    ...table(['Register', 'Bereich', 'Stand', 'Gl.Nr. im Register (Normen)', 'im Bestand', 'Abdeckung', 'ausgenommen (Änderungs-/Mantelgesetze, Tarifverträge)'], report.registerCrosscheck.map((check) => [check.source, check.area, check.asOf ?? '–', check.registerNumbers, check.found, `${(check.coverage * 100).toFixed(1)} %`, check.excludedAmendingOrAgreement ?? 0])),
+    ...table(['Register', 'Bereich', 'Stand', 'Registerköpfe (nach Ausschluss)', 'ausgenommen', 'nur Gliederungsnummer', 'streng (Kennung oder Titel mit Datum)', 'je Stufe'], report.registerCrosscheck.map((check) => [check.source, check.area, check.asOf ?? '–', check.registerNumbers, check.excludedAmendingOrAgreement, `${check.idOnly.found} = ${(check.idOnly.rate * 100).toFixed(1)} %`, `${check.found} = ${(check.coverage * 100).toFixed(1)} %`, Object.entries(check.byTier).filter(([, count]) => count > 0).map(([tier, count]) => `${tier} ${count}`).join(' · ')])),
     '',
-    ...report.registerCrosscheck.flatMap((check) => check.missing.length === 0 ? [] : [`**${check.source}: im Register, in keinem enumerierten juris-Dokument (${check.missing.length})**`, '', ...table(['Gl.Nr.', 'Titel laut Register'], check.missing.map((entry) => [entry.gliederungsnummer, entry.title])), '']),
+    'Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“, `audit/register-crosscheck.ts`), nicht Änderungsereignisse. Ein bloßer Titeltreffer zählt nie als gefunden (Handprüfung: 37 % bzw. 81 % Falschtreffer). Die Quote ist ein Indikator, kein Gate; jeder nicht gefundene Kopf ist klassifiziert und steht in der Rekonstruktionsqueue.',
     '',
-    'Die Register führen die zum Registerstand geltenden Vorschriften mit ihren Änderungen (Systematische Übersicht GVOBl., Erlassverzeichnis Amtsbl.). Eine fehlende Gliederungsnummer heißt: Die Vorschrift steht im Register, aber in keinem enumerierten juris-Dokument mit dieser Nummer (andere Schreibung, Sammelnummer, nicht in juris geführt oder nach dem Registerstand aufgehoben und entfernt).',
+    ...report.registerCrosscheck.flatMap((check) => check.missing.length === 0 ? [] : [`**${check.source}: nicht streng gefunden (${check.missing.length})**`, '', ...table(['Gl.Nr.', 'Titel laut Register', 'Stufe', 'Einordnung'], check.missing.map((entry) => [entry.gliederungsnummer, entry.title, entry.tier, entry.classification])), '']),
     '',
+
     '## 4 baseline-only-Kandidaten des Ereignisregisters',
     '',
     `${report.baselineOnly.candidates} Kandidaten (Vorschrift endete nach dem Stichtag), ${report.baselineOnly.matched} einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: ${counts(report.baselineOnly.byOutcome)}.`,

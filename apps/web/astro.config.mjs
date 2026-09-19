@@ -1,7 +1,7 @@
 import { defineConfig, sessionDrivers } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 
-const DEFAULT_SITE_URL = 'https://landesrecht.example';
+const DEFAULT_SITE_URL = 'https://landesrecht-online.de';
 
 export default defineConfig({
   adapter: cloudflare({

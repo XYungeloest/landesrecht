@@ -367,6 +367,12 @@ export function pdfText(bytes: Uint8Array): PdfText {
   if (inspection.encrypted) return { ok: false, reason: 'PDF verschlüsselt', pages: [] };
   if (!inspection.textLayer || inspection.scanLike) return { ok: false, reason: `kein verwertbarer Textlayer (${inspection.extractable}); OCR ist keine Rechtsquelle`, pages: [] };
   const byId = objects(bytes);
+  // Lauf 9: Ein Textlayer aus Texterkennung ist keine Quelle („keine OCR“) – erkennbar am unsichtbaren Text über einem
+  // Seitenbild (Darstellungsmodus 3 Tr, GVBl. 1983 und 1998: „Paper Capture“) oder am Erzeuger.
+  if (/\/Producer\s*\([^)]*(?:Paper\s+Capture|ABBYY|OCR|Tesseract|ClearScan)/iu.test(latin1(bytes))) return { ok: false, reason: 'Textlayer aus Texterkennung (Erzeuger); OCR ist keine Rechtsquelle', pages: [] };
+  for (const object of byId.values()) {
+    if (object.stream && /(?:^|\s)3\s+Tr(?:\s|$)/u.test(latin1(object.stream))) return { ok: false, reason: 'Textlayer aus Texterkennung (unsichtbarer Text, 3 Tr); OCR ist keine Rechtsquelle', pages: [] };
+  }
   const catalog = [...byId.values()].find((object) => /\/Type\s*\/Catalog/u.test(object.body));
   const rootPages = catalog ? refs(entry(catalog.body, 'Pages') ?? '')[0] : undefined;
   if (rootPages === undefined) return { ok: false, reason: 'Seitenbaum nicht lesbar', pages: [] };

@@ -128,8 +128,8 @@ describe('Überschrift der Norm: Titelschritte', () => {
     const command = 'In der Überschrift und in § 2 Abs. 5 werden die Wörter „und Forsten“ durch die Wörter „ , Forsten und Tourismus“ ersetzt.';
     const parsed = parseCommand(command, []);
     expect(parsed.operations?.[0]?.locations).toEqual([[{ kind: 'ueberschrift', value: '' }], [{ kind: 'paragraph', value: '2' }, { kind: 'absatz', value: '5' }]]);
-    // Ohne zweite Präposition bleibt „jeweils“ verlangt.
-    expect(parseCommand('In der Überschrift und § 2 Abs. 5 werden die Wörter „und Forsten“ durch die Wörter „ , Forsten und Tourismus“ ersetzt.', []).reason).toMatch(/ohne „jeweils“/u);
+    // Seit Lauf 9 gelten mehrere Orte auch ohne zweite Präposition und ohne „jeweils“ je Ort (in jedem genau ein Vorkommen).
+    expect(parseCommand('In der Überschrift und § 2 Abs. 5 werden die Wörter „und Forsten“ durch die Wörter „ , Forsten und Tourismus“ ersetzt.', []).operations?.[0]).toMatchObject({ each: true, locations: [[{ kind: 'ueberschrift', value: '' }], [{ kind: 'paragraph', value: '2' }, { kind: 'absatz', value: '5' }]] });
     const fixture = portal('BayLFBPO');
     const title = titleState(lawOf(fixture));
     const reversal = reverseAmendment(fixture.body, blockOf('gvbl-2024-98-parallel', fixture.identity), '', title);

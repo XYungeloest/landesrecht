@@ -105,6 +105,24 @@ export function renderReconstructionReport(run: ReconstructionRun): string {
     push('');
   }
 
+  if (t.byPdfLayer && Object.keys(t.byPdfLayer).length > 0) {
+    push('### Stammverkündung nur als PDF: Textlayer (Lauf 9)', '');
+    push('Nur Textlayer, nie OCR; Quelle wird er nur mit eindeutigen Wortgrenzen und eindeutiger Gestalt (`src/reconstruction/pdfbase.ts`, `docs/BAYWUE_RECONSTRUCTION.md`, Abschnitt 21).', '');
+    const labels: Record<string, string> = {
+      'pdf-ocr': 'Textlayer aus Texterkennung oder Scan – keine Quelle',
+      'pdf-undecodable': 'Schrift oder Inhaltsstrom nicht sicher dekodierbar',
+      'pdf-ambiguous': 'Textlayer mehrdeutig (Unterschneidung, Trennstrich am Zeilenende, Satznummern als Ziffern)',
+      'pdf-unconverted': 'ohne erkennbare Mehrdeutigkeit, Umsetzung in das Blockmodell nicht belegt',
+      'pdf-not-located': 'Ausfertigungsdatum nicht auf der Anfangsseite',
+      'pdf-checksum-mismatch': 'SHA-256 ≠ veröffentlichte Prüfsumme',
+      'pdf-not-cached': 'Ausgabe noch nicht abgerufen',
+      'not-assessed': 'nicht geprüft (keine GVBl.-Seitenfundstelle)',
+    };
+    push('| Textlayer | offene Normen |', '| --- | ---: |');
+    for (const [state, count] of Object.entries(t.byPdfLayer)) push(`| ${labels[state] ?? state} (\`${state}\`) | ${count} |`);
+    push('');
+  }
+
   push('## Gruppen', '');
   push('Jede Norm hat **genau eine** Gruppe (Vorrang und Regeln: `src/reconstruction/groups.ts`), dazu beliebig viele Gründe (`reasons` in der Schlange). Die Gruppen 1–3 sind die Fälle, deren Befehle grundsätzlich exakt umkehrbar sind; die übrigen sind nach der schwersten zutreffenden Lage eingeordnet.', '');
   push('| # | Gruppe | Normen | zurückgerechnet | offen | häufigste offene Gründe |', '| ---: | --- | ---: | ---: | ---: | --- |');

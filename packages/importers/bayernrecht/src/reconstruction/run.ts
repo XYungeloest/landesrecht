@@ -62,7 +62,9 @@ import {
   type RecipeTitleChange,
 } from './recipe.ts';
 import { buildSourceRegister, RECONSTRUCTION_SOURCES_PATH, type SourceRegister } from './register.ts';
-import { cachePlatform, loadPublicationBase, proveRestoration, type PriorAmendment } from './publication.ts';
+import { cachePlatform, loadPublicationBase, proveRestoration, type PriorAmendment, type UsedPriorAmendment } from './publication.ts';
+import { forwardPublicationBase } from './forward.ts';
+import { assessPdfBase, type PdfBaseState } from './pdfbase.ts';
 import { formConventions, TYPOGRAPHY_NORMALIZATION, wordingAgreement, type FormConventions, type PublicationBase } from './restore.ts';
 import { packageUrl, parseCurrentNorm, readCached, type CurrentNorm } from './source.ts';
 import { commandLeaves, reverseAmendment } from './steps.ts';
@@ -109,7 +111,7 @@ export interface QueueEntry {
    * Lauf 7, nur offene Normen: Stammverkündung für Alttext – `available`, `available-chain-incomplete` (Kette bis zur Stammfassung
    * nicht lückenlos) oder der Grund, warum sie fehlt (`base-pdf-only`, `base-paper-only`, `base-none`, …), mit Beleg.
    */
-  restorationBase?: { state: string; detail?: string };
+  restorationBase?: { state: string; detail?: string; pdfLayer?: PdfBaseState };
   recipe?: { path: string; schema: string; amendments: number; steps: number; currentFingerprint: string; baselineFingerprint: string };
 }
 
@@ -128,6 +130,8 @@ export interface QueueTotals {
   formulas: Record<string, { clauses: number; norms: number; supported: boolean; invertible: boolean }>;
   /** Lauf 7: offene Normen je Verfügbarkeit der Stammverkündung. */
   byRestorationBase?: Record<string, number>;
+  /** Lauf 9: Befund zum PDF-Textlayer der Normen, deren Stammverkündung nur als PDF-Ausgabe vorliegt. */
+  byPdfLayer?: Record<string, number>;
 }
 
 export interface ReconstructionQueue {
@@ -275,6 +279,10 @@ interface NormOutcome {
   restoreNote?: string;
   /** Lauf 7: Stammverkündung verfügbar (`available`), Kette bis zu ihr unvollständig, oder der Grund, warum nicht (`base-…`). */
   restorationBase?: string;
+  /** Lauf 9: warum der Stand am Stichtag nicht vorwärts gewonnen wurde. */
+  forwardNote?: string;
+  /** Lauf 9: Befund zum Textlayer einer Stammverkündung, die nur als PDF-Ausgabe vorliegt (`pdfbase.ts`). */
+  pdfLayer?: PdfBaseState;
 }
 
 const stepLabel = (step: Pick<WalkStep, 'citation' | 'section'>): string => `${step.citation}${step.section ? ` (${step.section})` : ''}`;
@@ -337,6 +345,14 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   const loadedBase = await loadPublicationBase((ctx.platform ??= cachePlatform(ctx.root)), norm);
   if (!loadedBase.ok) outcome.restoreNote = `Stammverkündung nicht verfügbar (${loadedBase.code}): ${loadedBase.detail}`;
   outcome.restorationBase = loadedBase.ok ? 'available' : loadedBase.code;
+  // Lauf 9: nur als PDF-Ausgabe – Befund zum Textlayer (Quelle wird er nie ohne eindeutige Wortgrenzen und Gestalt).
+  if (!loadedBase.ok && loadedBase.code === 'base-pdf-only') {
+    const assessment = await assessPdfBase(ctx.root, norm);
+    if (assessment) {
+      outcome.pdfLayer = assessment.state;
+      outcome.restoreNote += ` · PDF-Textlayer (${assessment.state}): ${assessment.detail}`;
+    }
+  }
 
   // 2 – Kette.
   const walk = await walkChain({ ...walkInputFor(ctx, documentId, norm), deep: loadedBase.ok, provisional: loadedBase.ok });
@@ -365,8 +381,31 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   let restoreBase: PublicationBase | undefined;
   const oldestStep = walk.steps.at(-1)!;
   const stammfassungAtBaseline = walk.witnesses.length === 0 && !oldestStep.priorClause;
-  if (loadedBase.ok && !oldestStep.block?.citation.versionForm && !oldestStep.block?.citation.consolidatedForm && (stammfassungAtBaseline || walk.prior)) restoreBase = { ...loadedBase.base, portal: norm.body, ...(ctx.conventions ? { conventions: ctx.conventions } : {}) };
-  else if (loadedBase.ok && walk.priorFailure) {
+  // Lauf 9: Reicht die Kette bis zur Stammfassung, wird der Stand am Stichtag **vorwärts** gewonnen (Stammverkündung und
+  // Änderungen vor dem Stichtag, `forward.ts`) – Quelle des Alttexts und Maßstab der Probe. Gelingt das nicht, gilt Lauf 7
+  // (Stammverkündung als Quelle, Probe durch Rücknahme bis zur Stammfassung).
+  const priorAmendments = (walk.prior ?? []).map((step): PriorAmendment => ({
+    label: stepLabel(step),
+    ...(step.block ? { block: step.block } : {}),
+    url: step.page.url,
+    sha256: step.page.sha256,
+    ...(step.page.retrievedAt ? { retrievedAt: step.page.retrievedAt } : {}),
+    ...(step.eventDate ? { publishedAt: step.eventDate } : {}),
+    authority: SOURCE_AUTHORITY[step.ref.organ].publicationAuthority,
+    representation: SOURCE_AUTHORITY[step.ref.organ].digitalRepresentation,
+    ...(step.section ? { section: step.section } : {}),
+  }));
+  let forward: { used: UsedPriorAmendment[]; commands: number } | undefined;
+  const eligible = loadedBase.ok && !oldestStep.block?.citation.versionForm && !oldestStep.block?.citation.consolidatedForm;
+  if (loadedBase.ok && eligible && !stammfassungAtBaseline && walk.prior) {
+    const state = forwardPublicationBase(loadedBase.base, priorAmendments);
+    if (state.ok) {
+      forward = { used: state.used, commands: state.commands };
+      restoreBase = { ...state.base, portal: norm.body, ...(ctx.conventions ? { conventions: ctx.conventions } : {}) };
+    } else outcome.forwardNote = state.detail;
+  }
+  if (!restoreBase && loadedBase.ok && eligible && (stammfassungAtBaseline || walk.prior)) restoreBase = { ...loadedBase.base, portal: norm.body, ...(ctx.conventions ? { conventions: ctx.conventions } : {}) };
+  else if (!restoreBase && loadedBase.ok && walk.priorFailure) {
     outcome.restoreNote = `Kette bis zur Stammfassung: ${walk.priorFailure.detail}`;
     outcome.restorationBase = 'available-chain-incomplete';
   }
@@ -414,18 +453,16 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   const restoredSteps = reversed.flatMap((entry) => entry.steps).filter((recipeStep) => recipeStep.restoredFrom !== undefined).length;
   let restoration: RecipeRestoration | undefined;
   if ((restoredSteps > 0 || provisional.length > 0) && restoreBase) {
-    const prior: PriorAmendment[] = (stammfassungAtBaseline ? [] : walk.prior ?? []).map((step) => ({
-      label: stepLabel(step),
-      ...(step.block ? { block: step.block } : {}),
-      url: step.page.url,
-      sha256: step.page.sha256,
-      ...(step.page.retrievedAt ? { retrievedAt: step.page.retrievedAt } : {}),
-      ...(step.eventDate ? { publishedAt: step.eventDate } : {}),
-      authority: SOURCE_AUTHORITY[step.ref.organ].publicationAuthority,
-      representation: SOURCE_AUTHORITY[step.ref.organ].digitalRepresentation,
-      ...(step.section ? { section: step.section } : {}),
-    }));
-    const proof = proveRestoration(baselineBody, title, prior, restoreBase);
+    const prior: PriorAmendment[] = stammfassungAtBaseline ? [] : priorAmendments;
+    // Vorwärts: der ganze Stichtagskörper gleicht im Wortlaut dem vorwärts gewonnenen Stand; sonst Lauf 7.
+    const proof: ReturnType<typeof proveRestoration> = forward
+      ? (() => {
+        const agreement = wordingAgreement(baselineBody, restoreBase!);
+        return agreement.ok
+          ? { ok: true as const, agreement, prior: forward.used, stammfassungFingerprint: '' }
+          : { ok: false as const, reason: 'restoration-disagrees', detail: `gegen den Stand am Stichtag (Stammverkündung und ${forward.used.length} Änderung(en) vorwärts): ${agreement.detail}` };
+      })()
+      : proveRestoration(baselineBody, title, prior, restoreBase);
     if (!proof.ok && restoredSteps === 0) {
       // Nur die vorläufigen Befunde waren zu prüfen: Sie bleiben der Grund, die Probe ist der Beleg, warum.
       checks.chain = false;
@@ -455,8 +492,10 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
       ],
       converter: restoreBase.converter,
       pageTextSha256: restoreBase.pageTextSha256,
-      publicationFingerprint: bodyFingerprint(restoreBase.body),
-      ...(proof.prior.length > 0 ? { stammfassungFingerprint: proof.stammfassungFingerprint, priorSteps: proof.prior.reduce((sum, entry) => sum + entry.steps, 0) } : {}),
+      publicationFingerprint: bodyFingerprint(loadedBase.ok ? loadedBase.base.body : restoreBase.body),
+      ...(forward
+        ? { derivation: 'forward' as const, forwardFingerprint: bodyFingerprint(restoreBase.body), priorSteps: forward.commands }
+        : proof.prior.length > 0 ? { stammfassungFingerprint: proof.stammfassungFingerprint, priorSteps: proof.prior.reduce((sum, entry) => sum + entry.steps, 0) } : {}),
       agreement: { normalization: TYPOGRAPHY_NORMALIZATION, characters: proof.agreement.characters, detail: proof.agreement.detail },
       restoredSteps,
       ...(provisional.length > 0 ? { chainChecks: provisional.map((entry) => ({ reason: entry.reason, detail: entry.detail })) } : {}),
@@ -807,7 +846,7 @@ export async function runReconstruction(root: string, options: ReconstructionOpt
       reasons: dedupeReasons(grouped.reasons),
       alsoFailed: groupFailures(failures.slice(1).filter((failure) => failure.state !== primary.state || failure.reason !== primary.reason)),
       priority: COMMAND_STATE_PRIORITY[primary.state] + Math.min(outcome.amendments, 9),
-      ...(outcome.restorationBase ? { restorationBase: { state: outcome.restorationBase, ...(outcome.restoreNote ? { detail: outcome.restoreNote } : {}) } } : {}),
+      ...(outcome.restorationBase ? { restorationBase: { state: outcome.restorationBase, ...(outcome.pdfLayer ? { pdfLayer: outcome.pdfLayer } : {}), ...(outcome.restoreNote || outcome.forwardNote ? { detail: [outcome.restoreNote, outcome.forwardNote].filter(Boolean).join(' · ') } : {}) } } : {}),
     });
   }
 
@@ -852,6 +891,7 @@ export async function runReconstruction(root: string, options: ReconstructionOpt
       roundTripVerifiedWithoutStart: entries.filter((entry) => entry.roundTripVerified).length,
       formulas,
       byRestorationBase: count(entries.filter((entry) => entry.state !== 'recipe-ready'), (entry) => entry.restorationBase?.state ?? 'not-reached'),
+      byPdfLayer: count(entries.filter((entry) => entry.state !== 'recipe-ready' && entry.restorationBase?.state === 'base-pdf-only'), (entry) => entry.restorationBase?.pdfLayer ?? 'not-assessed'),
     },
     entries,
   };

@@ -61,7 +61,8 @@ entscheidet.
 | `changed-after-baseline` | Ausfertigung ≤ Stichtag, Textgeltung > Stichtag | `active-at-baseline` | Stichtagsfassung beschaffen |
 | `enacted-after-baseline` | Ausfertigung > Stichtag | `not-at-baseline` | nicht aufnehmen |
 | `enacted-after-baseline` (`published-after-baseline`) | Ausfertigung ≤ Stichtag, aber eigene Fundstelle erst nach dem Stichtag verkündet; Rechtsnorm oder Textgeltung > Stichtag | `not-at-baseline` | nicht aufnehmen |
-| `identity-or-validity-uncertain` (`published-after-baseline-validity-open`) | Verwaltungsvorschrift erst nach dem Stichtag veröffentlicht, Textgeltung laut Quelle aber davor (rückwirkend oder ab Erlass) | `undetermined` | Review |
+| `enacted-after-baseline` (`official-commencement-after-baseline`) | Verwaltungsvorschrift erst nach dem Stichtag veröffentlicht; die **amtliche Verkündung selbst** nennt ein Inkrafttreten nach dem Stichtag und hebt keine andere Vorschrift auf (die Portalangabe `inkraft` entscheidet nicht allein). Beleg: Ereignis „neu“ der Verkündung im Register (`effectiveDate`) | `not-at-baseline` | nicht aufnehmen; eine bereits übernommene Norm wird zurückgenommen (Slug stillgelegt, R2-Archiv bleibt) |
+| `identity-or-validity-uncertain` (`published-after-baseline-validity-open`) | Verwaltungsvorschrift erst nach dem Stichtag veröffentlicht, Textgeltung laut Quelle aber davor (rückwirkend oder ab Erlass), oder amtlich später in Kraft, aber mit aufgehobenem Vorgänger | `undetermined` | Review; der Befund nennt amtliches Inkrafttreten und aufgehobenen Vorgänger |
 | `identity-or-validity-uncertain` | Datum fehlt oder widersprüchlich | `undetermined` | Review |
 
 **Verkündung nach dem Stichtag (Run 6).** Das Verkündungsdatum der eigenen Fundstelle – aus dem Kopf oder, bei

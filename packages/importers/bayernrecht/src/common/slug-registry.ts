@@ -55,8 +55,11 @@ export interface SlugRegistryEntry {
 export interface RetiredSlug {
   slug: string;
   sourceIdentity: string;
-  successor: string;
-  migration: string;
+  /** Nachfolger nach einer Slug-Migration (permanente Umleitung). Fehlt bei einer Rücknahme aus dem Bestand. */
+  successor?: string;
+  migration?: string;
+  /** Rücknahme aus dem Stichtagsbestand (amtlich belegt nicht am Stichtag): kein Nachfolger, keine Umleitung. */
+  withdrawn?: { reason: string; date: string };
 }
 
 export interface SlugRegistry {
@@ -165,6 +168,11 @@ export function validateSlugRegistry(registry: SlugRegistry, path = SLUG_REGISTR
   }
   for (const entry of registry.retired ?? []) {
     const current = registry.entries.find((candidate) => candidate.sourceIdentity === entry.sourceIdentity);
+    if (entry.withdrawn) {
+      if (entry.successor || current) throw new Error(`${path}: zurückgenommener Slug ${entry.slug} darf weder Nachfolger noch aktive Reservierung für ${entry.sourceIdentity} haben`);
+      continue;
+    }
+    if (!entry.successor || !entry.migration) throw new Error(`${path}: stillgelegter Slug ${entry.slug} ohne Nachfolger und Migration`);
     if (!current || current.slug !== entry.successor) throw new Error(`${path}: stillgelegter Slug ${entry.slug} verweist auf ${entry.successor}, ${entry.sourceIdentity} führt ${current?.slug ?? '(keinen Slug)'}`);
   }
 }

@@ -4,10 +4,10 @@ Erzeugt von `node scripts/import-juris-sh.ts r2-sync --stage-only`. Bucket `land
 
 | Kennzahl | Wert |
 | --- | --- |
-| übernommene Normen | 1910 |
-| Rohquellen (PDF) | 6098 (302 MB) |
-| neu gestagt | 0 |
-| bereits gestagt | 6098 |
+| übernommene Normen | 2383 |
+| Rohquellen (PDF) | 7727 (705 MB) |
+| neu gestagt | 5 |
+| bereits gestagt | 7722 |
 | bereits in R2 (uploaded/verified) | 0 |
 | ohne Cache | 0 |
 | Konflikte | 0 |

@@ -1,6 +1,6 @@
 # Rückrechnung von Änderungen – BayWü (`reverse-amendment`, ein- und mehrstufig)
 
-Stand 2026-09-18. Stichtag **2023-12-01**. Kennzahlen, Gruppen und alle offenen Fälle: `data/audits/bayernrecht/RECONSTRUCTION.md`
+Stand 2026-09-19. Stichtag **2023-12-01**. Kennzahlen, Gruppen und alle offenen Fälle: `data/audits/bayernrecht/RECONSTRUCTION.md`
 (vom Lauf erzeugt). Maschinenlesbar: Schlange `data/imports/bayernrecht/reconstruction-queue.json`, Rezepte
 `data/imports/bayernrecht/reconstruction/<documentId>.json`, Quellenregister `data/imports/bayernrecht/reconstruction-sources.json`,
 Audit `data/audits/bayernrecht/reconstruction-audit.json`, Abrufprüfpunkt `data/imports/bayernrecht/reconstruction-fetch.json`.
@@ -17,7 +17,8 @@ Code: `packages/importers/bayernrecht/src/reconstruction/` – `walk.ts` (Kette)
 `pdf.ts` (Textlayer älterer Ausgaben), `acquire.ts` (gezielter Abruf), `steps.ts` (Rücknahme einer Änderung),
 `structural.ts` (Satz-, Glied- und Nummernbefehle), `formulas.ts`, `location.ts`, `commencement.ts`, `chain.ts`, `structure.ts`,
 `gazette.ts`, `apply.ts`, `recipe.ts`, `title.ts` (Überschrift der Norm, Lauf 6), `groups.ts`, `undetermined.ts`, `register.ts`,
-`audit.ts`, `report.ts`, `context.ts`, `run.ts`.
+`audit.ts`, `report.ts`, `context.ts`, `run.ts`; seit Lauf 9 `forward.ts` (Stand am Stichtag vorwärts) und `pdfbase.ts`
+(Befund zum PDF-Textlayer der Stammverkündung).
 Tests: `tests/unit/bayernrecht-reconstruction.test.ts`, (Lauf 5, Gruppen 1–3) `tests/unit/bayernrecht-reconstruction-groups13.test.ts`
 und (Lauf 6) `tests/unit/bayernrecht-reconstruction-run6.test.ts` mit echten, gekürzten Verkündungsausschnitten und echtem Portaltext
 (`tests/fixtures/bayernrecht/verkuendung-*-excerpt.html`, `portal-*-excerpt.json` – seit Lauf 6 mit den Kopffeldern `law.title`/
@@ -40,13 +41,15 @@ an (Abschnitt 11).
 
 ## 2 Ergebnis (Stand dieses Laufs)
 
-| | vor Lauf 4 | nach Lauf 4 | nach Lauf 5 | nach Lauf 6 | nach Lauf 7 | nach Lauf 8 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| sicher zurückgerechnet | 13 (alle einstufig) | 33 (28 einstufig, 5 mehrstufig) | 44 (37 einstufig, 7 mehrstufig) | 48 (39 einstufig, 9 mehrstufig) | 61 (50 einstufig, 11 mehrstufig) | **63** (52 einstufig, 11 mehrstufig) |
-| davon mit Stammverkündung (`restoration`) | – | – | – | – | 13 | **15** |
-| `reconstruction-required` | 506 | 486 | 475 | 464 | 451 | **449** |
+| | vor Lauf 4 | nach Lauf 4 | nach Lauf 5 | nach Lauf 6 | nach Lauf 7 | nach Lauf 8 | nach Lauf 9 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| sicher zurückgerechnet | 13 (alle einstufig) | 33 (28 einstufig, 5 mehrstufig) | 44 (37 einstufig, 7 mehrstufig) | 48 (39 einstufig, 9 mehrstufig) | 61 (50 einstufig, 11 mehrstufig) | 63 (52 einstufig, 11 mehrstufig) | **66** |
+| davon mit Stammverkündung (`restoration`) | – | – | – | – | 13 | 15 | **17** |
+| davon Stand am Stichtag vorwärts (`restoration.derivation: "forward"`) | – | – | – | – | – | – | **5** |
+| `reconstruction-required` | 506 | 486 | 475 | 464 | 451 | 449 | **446** |
 
-Lauf 7 (Alttext aus der Stammverkündung, `forward-from-publication`): Abschnitt 19; Lauf 8 (Reichweite): Abschnitt 20.
+Lauf 7 (Alttext aus der Stammverkündung, `forward-from-publication`): Abschnitt 19; Lauf 8 (Reichweite): Abschnitt 20; Lauf 9
+(Stand am Stichtag vorwärts, PDF-Textlayer): Abschnitt 21.
 
 Von 475 auf 464: 4 neue Rezepte, 7 Normen nicht mehr `changed-after-baseline` (die Stichtagsklassifikation stuft Normen mit eigener
 Fundstelle nach dem Stichtag seit Lauf 6 als `not-at-baseline` ein; 519 → 512). Gruppenverteilung, Gründe und jede offene Norm:
@@ -950,3 +953,98 @@ dem Stichtag eingefügtes oder geändertes Glied nach dem Stichtag neu gefasst o
 Bulk-Schnittstelle: unverändert (Abschnitt 11). Neu ist nur, dass ein Rezept mit `restoration` auch `restoredSteps: 0` tragen kann,
 wenn `restoration.chainChecks` die ausgeräumten Befunde nennt (`BayZustVBM`); für den Bulk gilt dasselbe wie bisher – Quellen aus
 `restoration.sources` mit SHA-256 prüfen, dann `restorationChecked: true`.
+
+## 21 Lauf 9: Stand am Stichtag vorwärts aus Stammverkündung und Änderungen davor
+
+Ausgangspunkt (Stand nach Lauf 8, Commit `b1e3b9c40`): 63 Rezepte (48 reine Rückrechnung, 15 mit `restoration`), 449
+`reconstruction-required`. Auftrag: den in Abschnitt 20.2 benannten Hebel bauen – die Änderungen **vor** dem Stichtag vorwärts auf
+die Stammverkündung anwenden und den so gewonnenen Stand als Quelle des Alttexts und Maßstab der Wortlautprobe nehmen; PDFs mit
+Textlayer (nie OCR) prüfen. Beweisregeln unverändert.
+
+Ergebnis: **66 Rezepte**, **446** `reconstruction-required`.
+
+| Methode | nach Lauf 8 | nach Lauf 9 |
+| --- | ---: | ---: |
+| reine Rückrechnung (Befehle tragen den Alttext) | 48 | 49 |
+| Alttext aus der Stammverkündung, Probe durch Rücknahme bis zur Stammfassung (Lauf 7) | 15 | 12 |
+| Alttext aus dem **Vorwärtsstand** (Stammverkündung + Änderungen vor dem Stichtag), Probe gegen diesen Stand | – | 5 |
+| aus einem PDF-Textlayer | 0 | 0 |
+
+Neu: `BayAgrG` (vorwärts: GVBl. 2016 S. 347 ← 2022 S. 695), `BayZustWaffVIM` (vorwärts: GVBl. 2011 S. 74 ← 2014 S. 286 ← 2019
+S. 98), `BayZALS` (mehrere Orte ohne „jeweils“). Auf den Vorwärtsstand umgestellt, Stichtagskörper unverändert:
+`BayVV_2244_F_13266`, `BayZEPRV`, `BayZustVBM`. Kein Rezept aus Lauf 8 ging verloren; alle Stichtagsfingerabdrücke gleich.
+Audit 66/66, Wiederherstellungen 17/17 nachgerechnet. Netz: 150 Abrufe über `acquireSources` (Prüfpunkt 857 → 998) und rund 250
+gezielte Abrufe (Ketten bis zur Stammfassung, PDF-Ausgaben) über `createBayernRechtFetcher` (Cache/Resume, ~1 req/s).
+
+### 21.1 Verfahren (`forward.ts`)
+
+1. Die Kette reicht bis zur Stammfassung (`walk.ts`, `deep`), die Stammverkündung liegt digital als HTML vor (Abschnitt 19).
+2. Jede Änderung vor dem Stichtag wird, älteste zuerst, **vorwärts** auf das Blockmodell der Verkündung angewandt: dieselben Befehlsparser
+   wie rückwärts (`parseLeaf`, Vorlagen aus `structural.ts`, Wortlautoperationen, Neufassung/Aufhebung/Streichung als
+   `RestoreRequest`), aber mit strenger Eindeutigkeit – jede Stelle genau einmal, kein Weiten, keine Portalgestalt. Umnummerierungen
+   einer Ebene gelten gleichzeitig. Zitierte Glieder werden wie die Verkündung gegliedert (`quoteBlocks`, GVBl. über `nestLaw`).
+   Befehle zur Inhaltsübersicht bleiben vorwärts ohne Wirkung (die Probe lässt die Inhaltsübersicht aus); rückwärts sind sie nur dann
+   ohne Wirkung, wenn das Portal keine Inhaltsübersicht führt, sonst Befund `toc-command`.
+3. Scheitert ein Befehl, gilt der Weg aus Lauf 7 (Stammverkündung als Quelle, Probe durch Rücknahme bis zur Stammfassung); der Grund
+   steht in der Schlange (`restorationBase.detail`, „Vorwärts bis zum Stichtag: …“ – 69 offene Normen).
+4. Beweis wie bisher, nur gegen den Vorwärtsstand: Forward-Replay vom Stichtagskörper über alle Änderungen nach dem Stichtag
+   byteidentisch zum heutigen Portalkörper **und** Wortlaut des ganzen Stichtagskörpers gleich dem Vorwärtsstand (ohne
+   Inhaltsübersicht und Platzhalter „(aufgehoben)“). Beispiel `BayZustWaffVIM`: Ohne die Änderungen von 2014 und 2019 weicht der
+   Wortlaut ab Zeichen 521 ab („Staatsministerium des Innern, für Sport und Integration“ gibt es erst seit 2014).
+5. Rezept: `restoration.derivation: "forward"`, `restoration.forwardFingerprint` (Fingerabdruck des Vorwärtsstands),
+   `restoration.priorSteps` = die vorwärts angewandten Befehle; `publicationFingerprint` bleibt der der Stammverkündung. Das Audit
+   (`audit.ts`) rechnet den Vorwärtsstand aus den Quellen nach und vergleicht beide Fingerabdrücke.
+
+Weitere Befehlsformen (je mit Test): alte Nummerierung im übergeordneten Befehl („Der bisherige § 3 wird § 4 und wie folgt
+geändert:“ – Alttext unter der alten Bezeichnung), Halbsätze (Teil eines Satzes zwischen Semikola; „Halbsätze 1 und 2“), „einleitender
+Satzteil“, „Vorspann“, „der Betrag“, „die Jahreszahl“, „das Datum“, „die Wortfolge“, „der Schlusspunkt“, „wird gelöscht“, „Der
+bisherige Wortlaut wird Satz 1“, „Die Satznummerierung in Satz 1 wird gestrichen“; mehrere Orte ohne „jeweils“ gelten je Ort (jeder
+Ort eindeutig).
+
+### 21.2 PDF-Textlayer (`pdf.ts`, `pdfbase.ts`)
+
+Für jede offene Norm, deren Stammverkündung nur als PDF-Ausgabe des GVBl. vorliegt, prüft der Lauf den Textlayer der Ausgabe
+(SHA-256 gegen die veröffentlichte Prüfsumme, Anfangsseite laut Fundstelle, Ausfertigungsdatum auf der Seite). Ein Textlayer aus
+Texterkennung wird nicht gelesen: unsichtbarer Text über dem Seitenbild (`3 Tr`) oder ein OCR-Erzeuger (`Paper Capture`, ABBYY, …)
+– belegt für GVBl. 1983 und 1998. Aus einem gesetzten Textlayer entsteht kein Wortlaut, wenn Wortgrenzen oder Satzgestalt nicht
+eindeutig sind: Unterschneidung („T eil“, „V om“, „W issenschaft“), Trennstrich am Zeilenende vor Kleinbuchstaben
+(„Finanzausgleichs- änderungsgesetz“ – Trennung oder Bindestrich?), Satznummern als gewöhnliche Ziffern.
+
+| Textlayer der Stammverkündung (offene Normen, `restorationBase.pdfLayer`) | Normen |
+| --- | ---: |
+| aus Texterkennung oder Scan (`pdf-ocr`) | 73 |
+| Schrift oder Inhaltsstrom nicht sicher dekodierbar (`pdf-undecodable`, u. a. GVBl. 2008) | 34 |
+| mehrdeutig: Unterschneidung, Trennstrich am Zeilenende, Satznummern (`pdf-ambiguous`, GVBl. 2002–2008) | 30 |
+| Ausgabe nicht abrufbar (Zeitüberschreitung, `pdf-not-cached`) | 3 |
+| keine GVBl.-Seitenfundstelle (nicht geprüft) | 2 |
+| Ausfertigungsdatum nicht auf der Anfangsseite (`pdf-not-located`) | 1 |
+
+Kein Fall ohne erkennbare Mehrdeutigkeit (`pdf-unconverted` 0): **kein Rezept aus einem PDF-Textlayer**. Das Ausgabenverzeichnis
+eines Jahrgangs ohne eigene Ausgaben (etwa 1908) zeigt andere Jahrgänge – solche Ausgaben zählen nicht mehr (`pages.ts`).
+
+### 21.3 Offen, mit Grund
+
+| Stammverkündung der offenen Normen | Lauf 8 | Lauf 9 |
+| --- | ---: | ---: |
+| verfügbar – die Norm scheitert an anderem | 188 | 186 |
+| verfügbar, Kette bis zur Stammfassung lückenhaft | 15 | 15 |
+| nur PDF-Ausgabe des GVBl. (Textlayer: Abschnitt 21.2) | 144 | 143 |
+| keine (Neubekanntmachung, Fundstelle fehlt) | 38 | 38 |
+| nur Papier | 34 | 34 |
+| HTML nicht sicher umsetzbar | 16 | 16 |
+| Seite gehört nicht zur Norm | 12 | 12 |
+
+Die Vorwärtsauflösung scheitert bei 69 der 186 Normen mit Stammverkündung an einem Befehl vor dem Stichtag (Anlagen, die nur als
+PDF-Anhang vorliegen, Stellen, die nur als Bereich auflösbar sind, Einfügen ganzer Glieder vor einer Umnummerierung, Neufassungen
+ohne lesbaren Alttext der Vorfassung); bei den übrigen ist die Stammfassung die Fassung am Stichtag oder die Norm scheitert an
+Befehlen nach dem Stichtag (Anlagen, Tabellen, Befunde der Kette).
+
+Tests: `tests/unit/bayernrecht-reconstruction-run9.test.ts` (17 Fälle; Fixtures `portal-BayZustWaffVIM-full.json`,
+`portal-BayAgrG-full.json`, `verkuendung-gvbl-2011-74-stamm.html`, `verkuendung-gvbl-2014-286-zustwaff-excerpt.html`,
+`verkuendung-gvbl-2019-98-zustwaff-excerpt.html`, `verkuendung-baymbl-2024-508.html`, `verkuendung-gvbl-2016-347-stamm.html`,
+`verkuendung-gvbl-2022-695-agrg-excerpt.html`; synthetische PDF für die OCR-Erkennung).
+
+Bulk-Schnittstelle: unverändert (Abschnitt 11) – Quellen aus `restoration.sources` mit SHA-256 prüfen, dann `restorationChecked: true`.
+Neu und optional: `restoration.derivation: "forward"` und `restoration.forwardFingerprint` (Beleg, kein Eingang für den Bulk; der
+Stichtagskörper ergibt sich wie bisher aus dem Rezept). In der Schlange neu:
+`restorationBase.pdfLayer` und `totals.byPdfLayer`.

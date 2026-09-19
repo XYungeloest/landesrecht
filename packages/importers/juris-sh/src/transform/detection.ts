@@ -31,6 +31,7 @@ export const REFERENCE_CATEGORIES = [
   'institution',
   'source-citation',
   'external-name',
+  'historical-name',
   'other',
 ] as const;
 export type ReferenceCategory = (typeof REFERENCE_CATEGORIES)[number];

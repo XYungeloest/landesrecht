@@ -1,6 +1,12 @@
 {
   "schemaVersion": "juris-sh-readiness/1",
   "ready": true,
+  "status": "TECHNICALLY READY",
+  "remoteRelease": {
+    "status": "REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION",
+    "reason": "TDM-Vorbehalt (tdm-reservation: 1) und Weiterveröffentlichung der juris-Ausgaben sind menschlich zu entscheiden; bis dahin kein R2-Upload, kein Remote-D1-Apply, kein Deploy für NSH.",
+    "decisionDocument": "docs/NSH_SOURCE_RIGHTS_AND_PROVENANCE.md"
+  },
   "checks": [
     {
       "id": "zugriffspolitik",
@@ -36,7 +42,7 @@
       "id": "stichprobe-vollweg",
       "label": "Stichprobe Vollweg (Parser, Stichtag, Überleitung, Validierung) mit Textintegrität",
       "status": "pass",
-      "detail": "38 Normen: import-ready 13 · reconstruction 3 · review 14 · not-at-baseline 8; Integrität exact 38"
+      "detail": "38 Normen: import-ready 19 · reconstruction 3 · review 8 · not-at-baseline 8; Integrität exact 31 · explained-difference 7"
     },
     {
       "id": "vollkorpus-abruf",
@@ -48,19 +54,19 @@
       "id": "vollkorpus-inventur",
       "label": "Vollkorpus-Inventur (Strukturinventur mit Textintegrität je Dokument)",
       "status": "pass",
-      "detail": "5197/5197 Dokumente: not-at-baseline 1720 · import-ready 1910 · reconstruction 56 · review 1505 · not-cached 2 · failed 4; Integrität exact 5193 · review 1 · mismatch 1"
+      "detail": "5197/5197 Dokumente: not-at-baseline 1643 · import-ready 2383 · reconstruction 56 · review 586 · not-cached 2 · part-of-main 523 · failed 4; Integrität exact 3118 · explained-difference 2075 · review 1 · mismatch 1"
     },
     {
       "id": "stichtagsklassifikation",
       "label": "Stichtagsklassifikation aller Normen (Ausgabe, Einzelfassungen, Register nach A/B/C)",
       "status": "pass",
-      "detail": "landesrecht: unchanged-since-baseline 1273, changed-after-baseline 247, repealed-after-baseline 88, enacted-after-baseline 153, repealed-before-baseline 962, undetermined 85 · vwv: unchanged-since-baseline 1767, changed-after-baseline 12, repealed-after-baseline 0, enacted-after-baseline 608, repealed-before-baseline 0, undetermined 2; undetermined → Review (sonstige 85 · nicht im Cache 2); Regeln C-undetermined 795 · B-strong-begin-and-continuity 3434 · A-strong-end-before-baseline 962"
+      "detail": "landesrecht: unchanged-since-baseline 1283, changed-after-baseline 250, repealed-after-baseline 88, enacted-after-baseline 153, repealed-before-baseline 962, undetermined 72 · vwv: unchanged-since-baseline 1766, changed-after-baseline 12, repealed-after-baseline 0, enacted-after-baseline 608, repealed-before-baseline 0, undetermined 3; undetermined → Review (sonstige 72 · nicht im Cache 2 · Ausgabe ohne Normtext 1); Regeln C-undetermined 796 · B-strong-begin-and-continuity 3433 · A-strong-end-before-baseline 962"
     },
     {
       "id": "zweite-quelle",
-      "label": "Abgleich mit amtlichen Registern (Gliederungsnummern, Abdeckung ≥ 95 %)",
+      "label": "Abgleich mit den amtlichen Registern (Registerköpfe, stabile Kennungen; Quote nur Indikator)",
       "status": "pass",
-      "detail": "gvobl-systematische-uebersicht (Stand 2024-12-13): 869/897 = 96.9 % · ab-erlassverzeichnis (Stand 2024-09-30): 225/234 = 96.2 %; fehlende Nummern in CORPUS_INVENTORY.md"
+      "detail": "gvobl-systematische-uebersicht (Stand 2024-12-13): 1727 Köpfe, nur Gliederungsnummer 88.1 %, streng 89.5 %, nicht gefunden 181 · ab-erlassverzeichnis (Stand 2024-09-30): 817 Köpfe, nur Gliederungsnummer 80.2 %, streng 80.2 %, nicht gefunden 162; jeder nicht gefundene Kopf eingeordnet (CORPUS_INVENTORY.md, Rekonstruktionsqueue)"
     },
     {
       "id": "scope-dokumentebene",
@@ -72,13 +78,13 @@
       "id": "baseline-only",
       "label": "baseline-only-Kandidaten mit dem Bestand abgeglichen",
       "status": "pass",
-      "detail": "54 Kandidaten: 49 einem juris-Dokument zugeordnet (import-ready 28 · review 13 · not-matched 5 · reconstruction 6 · not-at-baseline 2), übernahmefähig 28; nicht zugeordnete in der Rekonstruktionsqueue"
+      "detail": "54 Kandidaten: 49 einem juris-Dokument zugeordnet (import-ready 33 · review 8 · not-matched 5 · reconstruction 6 · not-at-baseline 2), übernahmefähig 33; nicht zugeordnete in der Rekonstruktionsqueue"
     },
     {
       "id": "bestand-konsistent",
       "label": "Bestand content/norms/nsh deckt sich mit den übernommenen Manifesteinträgen",
       "status": "pass",
-      "detail": "1910 Normen, 5195 Manifesteinträge, 2200 Review-Fälle"
+      "detail": "2383 Normen, 5195 Manifesteinträge, 2475 Review-Fälle"
     }
   ],
   "blockers": []

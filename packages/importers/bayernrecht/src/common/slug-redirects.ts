@@ -15,7 +15,7 @@ export const SLUG_REDIRECTS_PATH = 'packages/legal-core/src/config/slug-redirect
 export async function writeSlugRedirects(root: string, registry: Pick<SlugRegistry, 'retired'>): Promise<boolean> {
   const path = join(root, SLUG_REDIRECTS_PATH);
   const stored = await readJsonFile<{ schemaVersion: string; jurisdictions: Record<string, Record<string, string>> }>(path);
-  const own = Object.fromEntries([...(registry.retired ?? [])].sort((left, right) => left.slug.localeCompare(right.slug)).map((entry) => [entry.slug, entry.successor]));
+  const own = Object.fromEntries([...(registry.retired ?? [])].filter((entry) => entry.successor).sort((left, right) => left.slug.localeCompare(right.slug)).map((entry) => [entry.slug, entry.successor!]));
   const jurisdictions = { ...(stored?.jurisdictions ?? {}) };
   if (Object.keys(own).length > 0) jurisdictions[TARGET_JURISDICTION] = own;
   else delete jurisdictions[TARGET_JURISDICTION];

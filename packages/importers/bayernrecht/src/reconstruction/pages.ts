@@ -224,7 +224,8 @@ export async function lookupPage(root: string, refs: readonly PublicationRef[], 
         continue;
       }
       const issue = issueForPage(parseGvblIssueIndex(new TextDecoder().decode(index.bytes)), ref.position);
-      if (!issue) continue;
+      // Das Verzeichnis eines Jahrgangs ohne eigene Ausgaben (etwa 1908) zeigt andere Jahrgänge – nur Ausgaben des Jahrgangs zählen.
+      if (!issue || Number(issue.volume) !== ref.volume) continue;
       const pdfUrl = `${PLATFORM}${issue.pdfPath}`;
       tried.push(pdfUrl);
       const pdf = await readCached(root, pdfUrl);

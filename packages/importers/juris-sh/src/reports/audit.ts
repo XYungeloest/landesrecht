@@ -83,16 +83,37 @@ export async function runAudit(root: string, snapshot: AdapterSnapshot, cacheDir
   // Rohquellen der übernommenen Normen: SHA-256 im Cache nachrechnen (Gesamtausgabe bzw. Einzelfassungen).
   {
     let verified = 0;
+    let figures = 0;
     const problems: string[] = [];
+    // Abbildungen: die gebundene PDF-Ausgabe im Cache nachrechnen und das Bild an seiner Lage neu entnehmen (poppler).
+    const { runPdfImages } = await import('../parse/pdf-figures.ts');
+    const extracted = new Map<string, Array<{ sourcePath: string; sha256: string; byteLength: number }> | undefined>();
     for (const entry of importedEntries) {
       for (const raw of entry.rawDocuments) {
+        if (raw.role === 'figure') {
+          const bytes = await readFile(join(cacheDir, `${cacheKey(raw.url)}.bin`)).catch(() => undefined);
+          if (!bytes) {
+            problems.push(`${entry.sourceIdentity}: PDF-Ausgabe der Abbildung ${raw.packagePath ?? ''} nicht im Cache`);
+            continue;
+          }
+          const pdfSha = sha256Hex(new Uint8Array(bytes));
+          if (pdfSha !== raw.packageSha256) {
+            problems.push(`${entry.sourceIdentity}: PDF-Ausgabe der Abbildung ${raw.packagePath ?? ''} weicht vom Manifest ab`);
+            continue;
+          }
+          if (!extracted.has(pdfSha)) extracted.set(pdfSha, runPdfImages(new Uint8Array(bytes))?.map(({ sourcePath, sha256, byteLength }) => ({ sourcePath, sha256, byteLength })));
+          const image = extracted.get(pdfSha)?.find((candidate) => candidate.sourcePath === raw.packagePath);
+          if (!image || image.sha256 !== raw.sha256 || image.byteLength !== raw.byteLength) problems.push(`${entry.sourceIdentity}: Abbildung ${raw.packagePath ?? ''} nicht aus der PDF-Ausgabe reproduzierbar`);
+          else figures += 1;
+          continue;
+        }
         const sha = await cachedSha(cacheDir, raw.url);
         if (sha === undefined) problems.push(`${entry.sourceIdentity}: ${raw.url.slice(0, 80)} nicht im Cache`);
         else if (sha !== raw.sha256) problems.push(`${entry.sourceIdentity}: Cache weicht vom Manifest ab`);
         else verified += 1;
       }
     }
-    checks.push({ id: 'rohquellen', ok: problems.length === 0, detail: problems.length === 0 ? `${verified} Rohquellen (PDF) übernommener Normen im Cache nachgerechnet` : `${problems.length} Abweichungen: ${problems.slice(0, 5).join('; ')}` });
+    checks.push({ id: 'rohquellen', ok: problems.length === 0, detail: problems.length === 0 ? `${verified} Rohquellen (PDF) übernommener Normen im Cache nachgerechnet, ${figures} Abbildungen aus ihrer PDF-Ausgabe reproduziert` : `${problems.length} Abweichungen: ${problems.slice(0, 5).join('; ')}` });
   }
 
   const categories = new Map<string, number>();

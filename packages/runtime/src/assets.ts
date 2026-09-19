@@ -9,6 +9,7 @@ import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdiction
 /** Präfix der Abbildungs-Assets je Land; Länder ohne Eintrag haben keine Assets. */
 export const NORM_ASSET_PREFIXES: Readonly<Partial<Record<JurisdictionId, string>>> = {
   baywue: 'baywue/bayernrecht/2023-12-01/assets/',
+  nsh: 'nsh/juris-sh/2023-12-01/assets/',
 };
 
 const SHA256 = /^[0-9a-f]{64}$/u;

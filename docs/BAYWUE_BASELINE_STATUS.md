@@ -1,22 +1,29 @@
 # Stand des Stichtagsbestands Bayern-Württemberg
 
-## Status: DEPLOYED (Teilbestand) · Stand 2026-09-19 (Run 8)
+## Status: DEPLOYED (Teilbestand) · Stand 2026-09-19 (Run 9)
 
-**1 694 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
+**1 696 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
 ausgeliefert:**
 
 - 1 568, deren heutiger Text belegt der Stichtagstext ist;
-- 63, deren Stichtagsfassung bewiesen zurückgerechnet ist: 52 über eine spätere Änderung, 11 über zwei oder
-  mehr Änderungen mit Vorwärtsprobe (zwei davon mit Titeländerung); bei 15 davon (Run 7/8) nennen die
+- 66, deren Stichtagsfassung bewiesen zurückgerechnet ist: 54 über eine spätere Änderung, 12 über zwei oder
+  mehr Änderungen mit Vorwärtsprobe (zwei davon mit Titeländerung); bei 17 davon (Run 7–9) nennen die
   Änderungsbefehle den alten Wortlaut nicht, er stammt aus der Stammverkündung und ist im Wortlaut gegen sie
   geprüft (`docs/BAYWUE_RECONSTRUCTION.md` §19);
 - 61 heute nicht mehr geführte Stichtagsnormen, aus amtlichen Verkündungen wiederhergestellt
   (`docs/BAYWUE_BASELINE_ONLY.md`);
-- 2 Verwaltungsvorschriften, die erst nach dem Stichtag veröffentlicht wurden, deren Text laut Quelle aber davor gilt
-  (BayVV_1102_S_14148, BayVV_7840_L_14146): Sie sind jetzt `undetermined` und bleiben bis zur menschlichen Entscheidung
-  veröffentlicht (blockierender Review-Fall `import-regression`, Schutz gegen automatisches Entfernen).
+- 1 Verwaltungsvorschrift, die erst nach dem Stichtag veröffentlicht wurde, laut amtlicher Verkündung aber
+  rückwirkend ab 2023-11-08 gilt und einen Vorgänger derselben Normidentität aufhebt (BayVV_1102_S_14148,
+  StRVertrBek; Vorgänger vom 11. Februar 2021, BayMBl. Nr. 164): bleibt bis zur menschlichen Entscheidung
+  veröffentlicht (blockierender Review-Fall `import-regression`).
 
-Der Stichtagsbestand ist damit **nicht vollständig**: 449 weitere heute geführte Normen galten am Stichtag
+**Zurückgenommen (Run 9):** BayVV_7840_L_14146 (MStrVerbR). Die amtliche Verkündung BayMBl. 2023 Nr. 598 setzt sie
+„mit Wirkung vom 15. Dezember 2023“ in Kraft und hebt keinen Vorgänger auf; die Portalangabe „inkraft 2023-11-15“
+ist widerlegt. Stichtagsklasse `official-commencement-after-baseline`; der Slug `mstrverbr-baywue` ist stillgelegt
+(ohne Nachfolger, nie neu vergeben), das archivierte Rohpaket bleibt in R2. Der Bulk nimmt eine übernommene Norm nur
+mit genau dieser amtlich belegten Klasse zurück; jede andere Verschlechterung bleibt `import-regression`.
+
+Der Stichtagsbestand ist damit **nicht vollständig**: 446 weitere heute geführte Normen galten am Stichtag
 mit einem anderen oder nicht belegten Wortlaut, und heute fehlende Stichtagsnormen sind nur zum Teil
 wiederhergestellt. Die
 Oberfläche kennzeichnet den Bestand als Teilbestand (unten).
@@ -50,8 +57,8 @@ am 2023-12-01 noch nicht gab, und er zeigt geänderte Vorschriften im heutigen W
 | davon im Scope | 2 342 |
 | davon am Stichtag geltend | 2 090 |
 | — heutiger Text **ist** der Stichtagstext → **übernommen** (einschließlich BayVwV96990 mit Quellkorrektur) | **1 570** |
-| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **63** |
-| — heutiger Text ist jünger → **Rekonstruktion nötig** | 449 |
+| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **66** |
+| — heutiger Text ist jünger → **Rekonstruktion nötig** | 446 |
 | — Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
 | davon Geltung am Stichtag unbestimmt | 13 |
 | davon erst nach dem Stichtag erlassen | 239 |
@@ -65,7 +72,7 @@ aus den amtlichen Verkündungen sicher wiederhergestellt (Stand Run 7), 12 erwie
 Ausgangsverkündung (295: 140 nur gedruckt, 136 nie verkündet, 17 Anlage nur als PDF, 2 Stammfassung nur als PDF),
 32 mit unbestimmtem Glied und 6 mit unvollständiger Änderungskette.
 
-Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 694 von mindestens rund 2 500 Stichtagsnormen.**
+Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 696 von mindestens rund 2 500 Stichtagsnormen.**
 
 ## Was jede übernommene Norm vorweisen kann
 
@@ -83,7 +90,7 @@ Fassung trägt stattdessen etwa:
 
 dazu `sourceStatus` `reconstructed/reconstructed`, die Änderungsverkündung (und bei einer vorangehenden
 Änderung deren Verkündung) als Quellreferenz und als in R2 archiviertes Rohdokument. Stammt Alttext aus der
-Stammverkündung (15 Normen), sind auch sie und etwa vor dem Stichtag vorwärts angewandte Änderungen Quellreferenz
+Stammverkündung (17 Normen, 5 davon über die Vorwärtsrekonstruktion Stammverkündung + alle Änderungen bis zum Stichtag), sind auch sie und etwa vor dem Stichtag vorwärts angewandte Änderungen Quellreferenz
 und archiviertes Rohdokument; der Bulk übernimmt ein solches Rezept nur, wenn jede dieser Verkündungen mit der
 SHA-256 des Rezepts im Cache liegt (`restorationChecked`). Methode:
 `docs/BAYWUE_RECONSTRUCTION.md`, Übernahmebedingungen: `docs/BAYWUE_HISTORICAL_BASELINE.md` Abschnitt 4.

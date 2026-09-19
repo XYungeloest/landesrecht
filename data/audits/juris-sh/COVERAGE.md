@@ -13,11 +13,11 @@ Erzeugt von `node scripts/import-juris-sh.ts coverage --write`. Stichtag **2023-
 | ausgeschlossen: portal-page | 1 |
 | Rohquellen im Cache (PDF-Gesamtausgaben; R2 nicht in diesem Lauf) | 5195 |
 | geparst | 5191 |
-| Textintegrität exact / normalisiert / erklärt / review / mismatch | 5193 / 0 / 0 / 1 / 1 |
-| transformiert (SH → NSH) | 3415 |
-| übernommen | 1910 |
-| Review | 1561 |
-| nicht am Stichtag | 1720 |
+| Textintegrität exact / normalisiert / erklärt / review / mismatch | 3118 / 0 / 2075 / 1 / 1 |
+| transformiert (SH → NSH) | 2969 |
+| übernommen | 2383 |
+| Review | 642 |
+| nicht am Stichtag | 1643 |
 | Manifesteinträge | 5195 |
-| Dateien unter content/norms/nsh | 5730 |
+| Dateien unter content/norms/nsh | 7149 |
 

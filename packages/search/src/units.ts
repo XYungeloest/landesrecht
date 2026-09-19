@@ -23,7 +23,11 @@ export const SYNTHETIC_UNIT_TYPES = ['metadata', 'supplement'] as const;
  * „BayRS 2011-I“). Nur ausdrücklich gelistete Systeme: Jede weitere Kennung verändert den Suchbestand ihres
  * Landes und damit dessen D1-Projektion – sie gehört bewusst hierher, nicht über eine Wildcard.
  */
-export const SEARCHABLE_IDENTIFIER_SYSTEMS: Readonly<Record<string, string>> = { bayrs: 'BayRS' };
+export const SEARCHABLE_IDENTIFIER_SYSTEMS: Readonly<Record<string, string>> = {
+  bayrs: 'BayRS',
+  // NSH (Run 7): Gliederungsnummer „Gl.Nr. 2134.12“ – bei VwV aus dem Normkörper in die Metadaten verlegt, damit weiter suchbar.
+  'gliederungsnummer-sh': 'Gl.Nr.',
+};
 
 function searchableIdentifiers(record: NormRecord): string[] {
   return record.meta.externalIdentifiers.flatMap((entry) => {

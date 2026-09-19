@@ -4,6 +4,10 @@
  *   Staging   Für jede übernommene Norm jede Rohquelle aus dem Abrufcache (`.cache/juris-sh/<schlüssel>.bin`)
  *             nachgerechnet (SHA-256, Größe) nach `.cache/juris-sh-r2-staging/<objektschlüssel>` legen, daneben den
  *             Umschlag; im Manifest `bucket`, `objectKey`, `archiveStatus: 'staged'`. Kein Netz.
+ *             Abbildungen (Rolle `figure`) liegen nicht selbst im Cache: Sie werden aus der gebundenen PDF-Ausgabe
+ *             (`packageSha256`) an ihrer Lage (`packagePath`) neu entnommen und gegen SHA-256 und Größe des Manifests
+ *             geprüft; Schlüssel `nsh/juris-sh/2023-12-01/assets/<sha256>.<endung>` (normübergreifend, inhaltsadressiert;
+ *             dieselbe Abbildung in zwei Normen ist ein Objekt mit dem Umschlag der ersten Norm).
  *   Sync      Gestagte Objekte hochladen (`uploadVerified`: vorhanden und gleich → nichts; anders → harter Fehler;
  *             neu → Upload und Rücklesen), Umschlag unveränderlich, dann `archiveStatus: 'verified'`. Nach jeder
  *             Norm wird ihr Manifesteintrag geschrieben – ein Abbruch ist fortsetzbar.
@@ -22,7 +26,8 @@ import type { R2Transport } from '@landesrecht/importer-recht-nrw/common/r2-tran
 import { CACHE_DIR } from '../common/constants.ts';
 import { DEFAULT_STAGING_DIR, R2_SOURCES_BUCKET } from '../common/environment.ts';
 import { isImportedStatus, writeManifestEntry, type ImportManifest, type ManifestEntry } from '../common/manifest.ts';
-import { ArchiveError, envelopeBytes, envelopeFor, envelopeKey, objectMetadata, r2ObjectKey, sha256Hex } from './archive.ts';
+import { runPdfImages, type PdfImageWithBytes } from '../parse/pdf-figures.ts';
+import { ArchiveError, envelopeBytes, envelopeFor, envelopeKey, objectMetadata, rawObjectKey, sha256Hex } from './archive.ts';
 
 export interface StageResult {
   entries: number;
@@ -58,6 +63,8 @@ export async function stageRawSources(options: { root: string; manifest: ImportM
   const stagingDir = assertStagingDir(options.root, options.stagingDir ?? DEFAULT_STAGING_DIR);
   const cacheDir = resolve(options.root, options.cacheDir ?? CACHE_DIR);
   const result: StageResult = { entries: 0, objects: 0, bytes: 0, staged: 0, alreadyStaged: 0, alreadyArchived: 0, missingCache: [], conflicts: [], entriesUpdated: 0 };
+  /** Entnommene Bilder je PDF-Ausgabe (SHA-256) – eine Ausgabe wird je Lauf höchstens einmal gelesen. */
+  const extracted = new Map<string, PdfImageWithBytes[] | undefined>();
   for (const entry of options.manifest.entries) {
     if (!isImportedStatus(entry.importStatus)) continue;
     result.entries += 1;
@@ -65,7 +72,7 @@ export async function stageRawSources(options: { root: string; manifest: ImportM
     for (const raw of entry.rawDocuments) {
       result.objects += 1;
       result.bytes += raw.byteLength;
-      const key = r2ObjectKey({ sourceArea: entry.sourceArea, sourceIdentity: entry.sourceIdentity, role: raw.role, sha256: raw.sha256, contentType: raw.contentType });
+      const key = rawObjectKey(entry, raw);
       if (raw.objectKey && raw.objectKey !== key) {
         result.conflicts.push(`${entry.sourceIdentity}: Manifest führt Objektschlüssel ${raw.objectKey}, berechnet ${key}`);
         continue;
@@ -74,10 +81,26 @@ export async function stageRawSources(options: { root: string; manifest: ImportM
         result.alreadyArchived += 1;
         continue;
       }
-      const bytes = await readIfExists(join(cacheDir, `${cacheKey(raw.url)}.bin`));
-      if (!bytes) {
+      const cached = await readIfExists(join(cacheDir, `${cacheKey(raw.url)}.bin`));
+      if (!cached) {
         result.missingCache.push(`${entry.sourceIdentity}: ${raw.url}`);
         continue;
+      }
+      let bytes = cached;
+      if (raw.role === 'figure') {
+        // Abbildung: aus der gebundenen PDF-Ausgabe neu entnommen (deterministisch, poppler) und nachgerechnet.
+        const pdfSha = sha256Hex(cached);
+        if (pdfSha !== raw.packageSha256) {
+          result.conflicts.push(`${entry.sourceIdentity}: PDF-Ausgabe ${raw.url.slice(0, 80)} im Cache trägt nicht den gebundenen SHA-256 – Abbildung ${raw.packagePath ?? ''} wird nicht entnommen`);
+          continue;
+        }
+        if (!extracted.has(pdfSha)) extracted.set(pdfSha, runPdfImages(cached));
+        const image = extracted.get(pdfSha)?.find((candidate) => candidate.sourcePath === raw.packagePath);
+        if (!image) {
+          result.missingCache.push(`${entry.sourceIdentity}: Abbildung ${raw.packagePath ?? '(ohne Lage)'} in ${raw.url}`);
+          continue;
+        }
+        bytes = image.bytes;
       }
       if (bytes.byteLength !== raw.byteLength || sha256Hex(bytes) !== raw.sha256) {
         result.conflicts.push(`${entry.sourceIdentity}: Cache weicht vom Manifest ab (${raw.url.slice(0, 80)})`);

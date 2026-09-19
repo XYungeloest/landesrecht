@@ -261,8 +261,12 @@ describe('juris-PDF: Fußnotenzeichen, leere Fußnoten, Satzspiegel', () => {
   it('hält Aufzählungen mit „a.“, „(b)“, Dezimalgliederung und Artikelüberschriften nicht für Tabellen', () => {
     const parsed = footnoteNorm('*) Test', { labels: ['a.', 'b.', 'aa.', '(c)', '8.2', '1.1.1.', 'Artikel 2'], continuation: false });
     expect(parsed.findings.filter((finding) => finding.code === 'table-layout')).toEqual([]);
+    // Ein sauberes Raster (gleiche Spaltenzahl, durchgehender Zwischenraum) wird Tabelle (Run 7), kein Befund.
     const table = footnoteNorm('*) Test', { labels: ['HB', 'HH', 'BY'], continuation: false });
-    expect(table.findings.map((finding) => finding.code)).toContain('table-layout');
+    expect(table.findings.map((finding) => finding.code)).toContain('table-structured');
+    expect(table.findings.map((finding) => finding.code)).not.toContain('table-layout');
+    const structured = JSON.stringify(table.body);
+    expect(structured).toContain('"type":"table"');
   });
 
   it('nimmt bei listenlastigen Normen den Satzspiegel der Ausgabe als linken Rand', () => {
@@ -298,18 +302,60 @@ describe('juris-PDF: Titel von Verwaltungsvorschriften', () => {
   });
 });
 
+describe('juris-PDF: VwV-Metadatenzeilen', () => {
+  it('nimmt wiederholten Titel, „Gl.Nr.“ und „Fundstelle:“ aus dem Normkörper und lässt die Bekanntmachungszeile', async () => {
+    const { extractVwvLeadMetadata } = await import('@landesrecht/importer-juris-sh/parse/juris-pdf.ts');
+    const title = 'Richtlinie zur Förderung des Freiwilligen ökologischen Jahres in Schleswig-Holstein (FÖJ-Förderrichtlinie)';
+    const body = [
+      { type: 'paragraphText', text: 'Richtlinie zur Förderung des Freiwilligen ökologischen Jahres in' },
+      { type: 'paragraphText', text: 'Schleswig-Holstein (FÖJ-Förderrichtlinie)' },
+      { type: 'heading', text: 'Gl.Nr. 6611.36' },
+      { type: 'paragraphText', text: 'Fundstelle: Amtsbl. Schl.-H. 2023 Nr. 28, S. 1660 Geändert durch Bekanntmachung vom 1. März 2024 (Amtsbl. Schl.-H. S. 9)' },
+      { type: 'paragraphText', text: 'Bekanntmachung des Ministeriums vom 11. Juni 2023 – V 12 – 597.03' },
+    ] as ParsedJurisPdf['body'];
+    const extracted = extractVwvLeadMetadata(body, title);
+    expect(extracted.metadata).toEqual({ repeatedTitle: true, gliederungsnummer: '6611.36', fundstelle: 'Amtsbl. Schl.-H. 2023 Nr. 28, S. 1660', amendmentNote: 'Geändert durch Bekanntmachung vom 1. März 2024 (Amtsbl. Schl.-H. S. 9)' });
+    expect(extracted.body.map((block) => block.text)).toEqual(['Bekanntmachung des Ministeriums vom 11. Juni 2023 – V 12 – 597.03']);
+    expect(extracted.relocated.map((entry) => entry.reason)).toEqual(['Titel (Metadatum, wiederholt)', 'Titel (Metadatum, wiederholt)', 'Gliederungsnummer (Metadatum)', 'Fundstelle (Metadatum)']);
+    // Integrität: die übernommenen Zeilen sind erklärt, nicht verloren.
+    const sourceText = body.map((block) => block.text).join('\n');
+    const integrity = compareIntegrity(sourceText, extracted.body.map((block) => block.text).join('\n'), extracted.relocated);
+    expect(integrity.class).toBe('explained-difference');
+    // Kein Vorspann: nichts wird genommen, auch keine echte Nummerierung.
+    const plain = [{ type: 'paragraphText', text: '1. Zuwendungszweck' }] as ParsedJurisPdf['body'];
+    expect(extractVwvLeadMetadata(plain, title)).toEqual({ body: plain, metadata: {}, relocated: [] });
+  });
+});
+
 describe('juris-PDF: SH-Modell und Stichtag', () => {
   const document = { documentId: 'jlr-NNLSH0000TEST', area: 'landesrecht' as const, url: pdfExportUrl('jlr-NNLSH0000TEST', 'gesamtausgabe'), sha256: 'a'.repeat(64), retrievedAt: '2026-09-18T12:00:00.000Z', byteLength: 1000 };
 
   it('übernimmt nur Metadaten, die die Ausgabe nennt; Quellidentität DOKNR, Permalink als stabile Adresse', () => {
     const { law } = toSourceLaw(parsedNorm(), document);
-    expect(law).toMatchObject({ title: 'Landesverordnung über Testfälle (Testverordnung - TestVO)', shortTitle: 'Testverordnung', abbr: 'TestVO', type: 'verordnung', documentDate: '2020-02-01', citation: 'GVOBl. 2020, 1', sourceIdentity: 'jlr-NNLSH0000TEST' });
+    expect(law).toMatchObject({ title: 'Landesverordnung über Testfälle (Testverordnung - TestVO)', shortTitle: 'Testverordnung', abbr: 'TestVO', type: 'verordnung', documentDate: '2020-02-01', citation: 'GVOBl. Schl.-H. 2020 S. 1', sourceIdentity: 'jlr-NNLSH0000TEST' });
     expect(law.externalIdentifiers).toEqual([
       { system: 'juris-sh', value: 'jlr-NNLSH0000TEST', url: 'https://www.gesetze-rechtsprechung.sh.juris.de/perma?d=jlr-NNLSH0000TEST' },
       { system: 'gliederungsnummer-sh', value: '2000-1-1' },
+      { system: 'amtliche-fundstelle-sh', value: 'GVOBl. Schl.-H. 2020 S. 1' },
     ]);
+    // Keine juris-redaktionellen Vermerke (Ausgabe, Stand) im kanonischen Inhalt.
+    expect((law.sourceNotes ?? []).map((note) => note.label)).toEqual([]);
+    expect(law.changeHistory).toBeUndefined();
+    // Jahrgangsband mit belegter Adresse → amtliche Verkündung als Quelle.
+    const withVolume = toSourceLaw(parsedNorm(), document, { gazetteVolumes: [{ gazette: 'GVOBl. Schl.-H.', year: '2020', url: 'https://example.invalid/gvobl-2020.pdf', sha256: 'b'.repeat(64) }] }).law;
+    expect(withVolume.sourceReferences[0]).toMatchObject({ kind: 'official-gazette', label: 'Verkündung der Stammfassung: GVOBl. Schl.-H. 2020 S. 1', pageRange: 'S. 1', url: 'https://example.invalid/gvobl-2020.pdf' });
     expect(law.sourceReferences[0]).toMatchObject({ kind: 'official-portal-snapshot', mediaType: 'application/pdf', sourceRole: 'structure-bearing', retrievedAt: '2026-09-18', externalId: 'jlr-NNLSH0000TEST', sourceNumber: '2000-1-1' });
     expect(splitTitle('Gesetz über X (Beispielgesetz - BspG -) Vom 1. Mai 2000')).toMatchObject({ title: 'Gesetz über X (Beispielgesetz - BspG -)', shortTitle: 'Beispielgesetz', abbrInTitle: 'BspG' });
+  });
+
+  it('überträgt die juris-Kurzform der Fundstelle in die amtliche Schreibweise, sonst nicht', async () => {
+    const { officialCitation } = await import('@landesrecht/importer-juris-sh/parse/source-law.ts');
+    expect(officialCitation('GVOBl. 1999, 26')).toBe('GVOBl. Schl.-H. 1999 S. 26');
+    expect(officialCitation('Amtsbl SH 2003, 68')).toBe('Amtsbl. Schl.-H. 2003 S. 68');
+    expect(officialCitation('GVOBl. 2020, 808, ber. 996')).toBe('GVOBl. Schl.-H. 2020 S. 808, ber. S. 996');
+    expect(officialCitation('GVOBl. 1999, 300; 2008, 135')).toBe('GVOBl. Schl.-H. 1999 S. 300; 2008 S. 135');
+    expect(officialCitation('GVOBl. 2015, 419; ber. 2016, 27, 2017, 195')).toBeUndefined();
+    expect(officialCitation('RAnz. Nr. 161 1922,')).toBeUndefined();
   });
 
   it('ordnet den Stichtag aus Kopf, Ausgabevermerk und Verzeichnis ein', () => {

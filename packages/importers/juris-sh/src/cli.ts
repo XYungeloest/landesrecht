@@ -473,7 +473,8 @@ async function runReadinessCommand(options: CliOptions, root: string, io: Io): P
   const result = evaluateReadiness(await readSnapshot(root));
   if (options.json) io.print(JSON.stringify(result, null, 2));
   else {
-    io.print(result.ready ? 'READY' : 'NOT READY');
+    io.print(result.status);
+    io.print(`${result.remoteRelease.status} – ${result.remoteRelease.reason}`);
     for (const check of result.checks) io.print(`  ${check.status === 'pass' ? 'pass' : check.blocker ? 'FAIL!' : 'fail'} ${check.id}: ${check.detail}`);
     if (result.blockers.length > 0) io.print(`Systemische Blocker: ${result.blockers.length}`);
   }
@@ -518,18 +519,31 @@ async function runSearchAuditCommand(options: CliOptions, root: string, io: Io):
     ...(options.sample !== undefined ? { sample: options.sample } : {}),
     ...(options.seed ? { seed: options.seed } : {}),
   });
-  if (options.json) io.print(JSON.stringify({ jurisdiction: TARGET_JURISDICTION, ok: audit.ok, norms: audit.norms, searchUnits: audit.searchUnits, checks: audit.checks, failures: audit.failures }, null, 2));
+  // Golden Set (NSH) und länderübergreifende Prüfung West + BayWü + NSH (`search/golden.ts`).
+  const { runNshGolden, NSH_GOLDEN_QUERIES_PATH, NSH_GOLDEN_RESULTS_MD_PATH, NSH_CROSS_JURISDICTION_PATH } = await import('./search/golden.ts');
+  const golden = await runNshGolden(root, { write: options.write });
+  const goldenFailed = golden.evaluations.reduce((sum, evaluation) => sum + evaluation.overall.failed, 0);
+  const crossFailed = golden.cross.filter((entry) => !entry.ok).length;
+  if (options.json) io.print(JSON.stringify({ jurisdiction: TARGET_JURISDICTION, ok: audit.ok, norms: audit.norms, searchUnits: audit.searchUnits, checks: audit.checks, failures: audit.failures, golden: { queries: golden.set.queries.length, evaluations: golden.evaluations.map(({ outcomes: _outcomes, ...rest }) => rest) }, crossJurisdiction: golden.cross }, null, 2));
   else {
     io.print(`Suchprüfung NSH (${audit.profile.mode}): ${audit.ok ? 'GRÜN' : 'ROT'} · ${audit.norms} Normen · ${audit.searchUnits} Sucheinheiten`);
     for (const [check, counts] of Object.entries(audit.checks)) if (counts.passed || counts.failed) io.print(`  ${check.padEnd(20)} bestanden ${String(counts.passed).padStart(6)} · gescheitert ${String(counts.failed).padStart(4)}${counts.skipped ? ` · übersprungen ${counts.skipped}` : ''}`);
     for (const failure of audit.failures.slice(0, 15)) io.print(`  ✗ ${failure.check} ${failure.slug}: ${failure.detail.slice(0, 140)}`);
+    io.print(`Golden Set: ${golden.set.queries.length} Anfragen${golden.generated ? ' (aus dem Bestand erzeugt)' : ''}`);
+    for (const evaluation of golden.evaluations) {
+      const m = evaluation.overall;
+      io.print(`  ${evaluation.matchMode}: Recall@10 ${m.recallAt10}, MRR ${m.mrr}, Top-1 ${m.top1}, Sprungziel ${m.anchorOk}, Nulltreffer ${m.nullOk}, verletzt ${m.failed}, p95 ${m.latencyMs.p95} ms`);
+      for (const outcome of evaluation.outcomes.filter((entry) => entry.failed)) io.print(`    ! ${outcome.id} „${outcome.query}“: Rang ${outcome.rank ?? '–'}, ${outcome.total} Treffer, erste: ${outcome.hits.slice(0, 3).join(', ') || '–'}`);
+    }
+    io.print(`West + BayWü + NSH: ${golden.cross.length - crossFailed}/${golden.cross.length} gemeinsame Titelbruchstücke richtig gefiltert`);
+    for (const entry of golden.cross.filter((candidate) => !candidate.ok)) io.print(`    ! „${entry.fragment}“: ohne Filter ${entry.unfiltered.join('+')}, gefiltert ${JSON.stringify(entry.filtered)}, Typ ${entry.typeFilter.type} ${entry.typeFilter.ok}`);
   }
   if (options.write) {
     const path = `${AUDIT_DIR}/search/search-audit-${audit.profile.mode}.json`;
     await writeFileAtomic(join(root, path), `${JSON.stringify(audit, null, 2)}\n`);
-    if (!options.json) io.print(`Geschrieben: ${path}`);
+    if (!options.json) io.print(`Geschrieben: ${path}, ${golden.generated ? `${NSH_GOLDEN_QUERIES_PATH}, ` : ''}${NSH_GOLDEN_RESULTS_MD_PATH}, ${NSH_CROSS_JURISDICTION_PATH}`);
   }
-  return audit.ok ? 0 : 1;
+  return audit.ok && goldenFailed === 0 && crossFailed === 0 ? 0 : 1;
 }
 
 async function runR2SyncCommand(options: CliOptions, root: string, io: Io): Promise<number> {
@@ -552,6 +566,12 @@ async function runR2SyncCommand(options: CliOptions, root: string, io: Io): Prom
       io.print(`Gestagt (kein Netz). Bericht: ${written.join(', ')}. Upload: npm run import:juris-sh:r2-sync -- --write`);
     } else io.print('Dry-run: nichts geschrieben, kein Netz. --stage-only stagt, --write stagt und lädt hoch.');
     return 0;
+  }
+  // Remote-Upload nur nach menschlicher Freigabe der Quellenrechte (Readiness: REMOTE RELEASE PENDING …).
+  const release = evaluateReadiness(await readSnapshot(root)).remoteRelease;
+  if (release.status !== 'REMOTE RELEASE APPROVED') {
+    io.error(`${release.status}: ${release.reason} Freigabevermerk: data/imports/juris-sh/source-rights-approval.json. Gestagt ist alles; kein Upload.`);
+    return 1;
   }
   const transport = guardTransport(createOAuthTransport(options.r2Transport ?? 'wrangler', root));
   const sync = await syncStaged({ root, manifest, transport, ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}), ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}) });
@@ -588,7 +608,7 @@ async function runBulkCommand(command: 'inventory' | 'bulk', options: CliOptions
       io.print(`${command}: ${totals.processed}/${totals.enumerated} Dokumente · ${Object.entries(totals.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
       io.print(`  Manifeststatus: ${Object.entries(totals.byManifestStatus).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
       io.print(`  Integrität: ${Object.entries(totals.byIntegrity).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
-      for (const check of result.report.registerCrosscheck) io.print(`  Register ${check.source}: ${check.found}/${check.registerNumbers} Gl.Nr. im Bestand (${(check.coverage * 100).toFixed(1)} %)`);
+      for (const check of result.report.registerCrosscheck) io.print(`  Register ${check.source}: ${check.registerNumbers} Registerköpfe · nur Gliederungsnummer ${check.idOnly.found} (${(check.idOnly.rate * 100).toFixed(1)} %) · streng ${check.found} (${(check.coverage * 100).toFixed(1)} %) · nicht gefunden ${check.missing.length} (klassifiziert)`);
       io.print(`  baseline-only: ${result.report.baselineOnly.matched}/${result.report.baselineOnly.candidates} zugeordnet · ${Object.entries(result.report.baselineOnly.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
       io.print(`  Normen: ${command === 'bulk' && options.write ? 'geschrieben' : 'würden geschrieben'} ${result.normsWritten} · unverändert ${result.normsUnchanged} · zurückgenommen ${result.normsRemoved}${result.stop ? ` · Halt: ${result.stop}` : ''}`);
     }

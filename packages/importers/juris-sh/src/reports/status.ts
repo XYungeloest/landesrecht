@@ -40,6 +40,8 @@ export interface AdapterSnapshot {
   corpusInventory?: InventoryReport;
   /** Normverzeichnisse unter content/norms/nsh. */
   contentSlugs: string[];
+  /** Menschliche Freigabe der Quellenrechte (optional). */
+  sourceRightsApproval?: { decision: 'approved' | 'rejected'; decidedAt?: string; decidedBy?: string; reason?: string };
   manifest: ImportManifest;
   review: ReviewQueue;
   ledger?: { registerAsOf?: string; events: LedgerEvent[] };
@@ -87,6 +89,7 @@ export async function readSnapshot(root: string): Promise<AdapterSnapshot> {
   const sample = await readJsonFile<SampleReport>(join(root, SAMPLE_PATH));
   const corpus = await readCorpusState(root);
   const corpusInventory = await readJsonFile<InventoryReport>(join(root, INVENTORY_JSON_PATH));
+  const sourceRightsApproval = await readJsonFile<NonNullable<AdapterSnapshot['sourceRightsApproval']>>(join(root, 'data/imports/juris-sh/source-rights-approval.json'));
   const contentSlugs = (await readdir(join(root, CONTENT_DIR), { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name).sort();
   const accessDoc = await readText(join(root, ACCESS_CONSTRAINT_DOC));
   return {
@@ -99,6 +102,7 @@ export async function readSnapshot(root: string): Promise<AdapterSnapshot> {
     ...(Object.keys(corpus.documents).length > 0 ? { corpus } : {}),
     ...(corpusInventory ? { corpusInventory } : {}),
     contentSlugs,
+    ...(sourceRightsApproval ? { sourceRightsApproval } : {}),
     manifest: await readManifest(root),
     review: await readReviewQueue(root),
     ...(ledger?.events ? { ledger: { events: ledger.events, ...(ledger.sources?.find((source) => source.id === 'gvobl-systematische-uebersicht')?.asOf ? { registerAsOf: ledger.sources.find((source) => source.id === 'gvobl-systematische-uebersicht')!.asOf! } : {}) } } : {}),
@@ -297,7 +301,7 @@ export function buildReconstructionQueue(snapshot: AdapterSnapshot, baselineDate
     const organ: LedgerEvent['organ'] = check.area === 'vwv' ? 'amtsblatt' : 'gvobl';
     for (const missing of check.missing) {
       const key = `${organ}:${missing.gliederungsnummer}`;
-      const existing = [...byTarget.values()].find((item) => item.organ === organ && item.gliederungsnummer?.replace(/\s+/gu, '').toUpperCase() === missing.gliederungsnummer);
+      const existing = [...byTarget.values()].find((item) => item.organ === organ && item.gliederungsnummer?.replace(/\s+/gu, '').toUpperCase() === missing.gliederungsnummer.replace(/\s+/gu, '').toUpperCase());
       if (existing || byTarget.has(key)) continue;
       byTarget.set(key, {
         targetKey: key,
@@ -307,7 +311,7 @@ export function buildReconstructionQueue(snapshot: AdapterSnapshot, baselineDate
         sourceIdentity: null,
         reason: 'register-only-not-in-juris',
         events: [],
-        detail: `im Register ${check.source}${check.asOf ? ` (Stand ${check.asOf})` : ''}, in keinem enumerierten juris-Dokument (Gliederungsnummer und Titel geprüft)`,
+        detail: `im Register ${check.source}${check.asOf ? ` (Stand ${check.asOf})` : ''}; Abgleichsstufe ${missing.tier ?? 'none'}, Einordnung ${missing.classification ?? 'nicht-in-juris'}`,
         path: [
           { step: 'historische juris-Fassung', status: 'blocked', note: 'in juris nicht geführt' },
           { step: 'amtliche vollständige Veröffentlichung', status: 'open', note: 'Stammfassung und Änderungen aus GVOBl./Amtsbl. bis zum Stichtag' },
@@ -397,16 +401,32 @@ export interface ReadinessCheck {
 
 export interface ReadinessResult {
   schemaVersion: 'juris-sh-readiness/1';
+  /** Technisch bereit: alle Prüfungen bestanden (Parser, Stichtag, Integrität, Register, Bestand). */
   ready: boolean;
+  /**
+   * Freigabestatus: `TECHNICALLY READY` (Import technisch vollständig) und getrennt davon die Freigabe der
+   * Remote-Veröffentlichung (R2, D1, Deploy), die an der offenen Quellenrechtsfrage hängt – kein Parser- oder
+   * Coveragefehler.
+   */
+  status: 'TECHNICALLY READY' | 'NOT READY';
+  remoteRelease: { status: 'REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION' | 'REMOTE RELEASE APPROVED'; reason: string; decisionDocument: string };
   checks: ReadinessCheck[];
   blockers: string[];
 }
 
+/** Entscheidung über die Quellenrechte (TDM-Vorbehalt, Datenbankschutz); ohne sie keine Remote-Veröffentlichung. */
+export const SOURCE_RIGHTS_DECISION_DOC = 'docs/NSH_SOURCE_RIGHTS_AND_PROVENANCE.md';
+/** Freigabevermerk der menschlichen Entscheidung (fehlt ⇒ pending). */
+export const SOURCE_RIGHTS_APPROVAL_PATH = 'data/imports/juris-sh/source-rights-approval.json';
+
 const pass = (id: string, label: string, detail: string): ReadinessCheck => ({ id, label, status: 'pass', detail });
 const fail = (id: string, label: string, detail: string, blocker = false): ReadinessCheck => ({ id, label, status: 'fail', detail, ...(blocker ? { blocker } : {}) });
 
-/** Mindestabdeckung der Registerabgleiche (Gliederungsnummern des Registers, die der Bestand führt). */
-export const REGISTER_COVERAGE_MINIMUM = 0.95;
+/**
+ * Registerabgleich: Die Quote ist Indikator, kein Gate (Audit „NSH-Audit“, Abschnitt 6.7). Die frühere feste
+ * 95-%-Schwelle entfällt: Sie wurde erst nach der ersten Messung durch Ausnahmen und Titeltreffer erreicht.
+ */
+export const REGISTER_COVERAGE_MINIMUM = undefined;
 export const ACCEPTED_INTEGRITY_CLASSES: readonly string[] = ['exact', 'normalized-equivalent', 'explained-difference'];
 
 export function evaluateReadiness(snapshot: AdapterSnapshot, options: { forBulkWrite?: boolean } = {}): ReadinessResult {
@@ -530,12 +550,17 @@ export function evaluateReadiness(snapshot: AdapterSnapshot, options: { forBulkW
   // 10. Zweite Quelle: amtliche Register gegen den Bestand.
   {
     const id = 'zweite-quelle';
-    const label = `Abgleich mit amtlichen Registern (Gliederungsnummern, Abdeckung ≥ ${REGISTER_COVERAGE_MINIMUM * 100} %)`;
+    const label = 'Abgleich mit den amtlichen Registern (Registerköpfe, stabile Kennungen; Quote nur Indikator)';
     if (!inventory) checks.push(fail(id, label, 'Vollkorpus-Inventur fehlt'));
     else {
-      const detail = inventory.registerCrosscheck.map((check) => `${check.source} (Stand ${check.asOf ?? '?'}): ${check.found}/${check.registerNumbers} = ${(check.coverage * 100).toFixed(1)} %`).join(' · ');
-      const low = inventory.registerCrosscheck.filter((check) => check.registerNumbers > 0 && check.coverage < REGISTER_COVERAGE_MINIMUM);
-      checks.push(low.length > 0 ? fail(id, label, `${detail}; unter der Mindestabdeckung: ${low.map((check) => check.source).join(', ')}`) : pass(id, label, `${detail}; fehlende Nummern in CORPUS_INVENTORY.md`));
+      const checksByRegister = inventory.registerCrosscheck;
+      const detail = checksByRegister.map((check) => `${check.source} (Stand ${check.asOf ?? '?'}): ${check.registerNumbers} Köpfe, nur Gliederungsnummer ${((check.idOnly?.rate ?? 0) * 100).toFixed(1)} %, streng ${(check.coverage * 100).toFixed(1)} %, nicht gefunden ${check.missing.length}`).join(' · ');
+      const problems: string[] = [];
+      if (checksByRegister.length < 2) problems.push('Register nicht vollständig ausgewertet (Discovery-Cache der Register fehlt?)');
+      if (checksByRegister.some((check) => check.titleOnlyCounted !== false)) problems.push('Titeltreffer ungeprüft als gefunden gezählt');
+      const unclassified = checksByRegister.flatMap((check) => check.missing.filter((entry) => !entry.classification));
+      if (unclassified.length > 0) problems.push(`${unclassified.length} fehlende Registerköpfe ohne Einordnung`);
+      checks.push(problems.length > 0 ? fail(id, label, `${detail}; ${problems.join('; ')}`, true) : pass(id, label, `${detail}; jeder nicht gefundene Kopf eingeordnet (CORPUS_INVENTORY.md, Rekonstruktionsqueue)`));
     }
   }
 
@@ -573,7 +598,18 @@ export function evaluateReadiness(snapshot: AdapterSnapshot, options: { forBulkW
 
   void options;
   const blockers = checks.filter((check) => check.status === 'fail' && check.blocker).map((check) => `${check.id}: ${check.detail}`);
-  return { schemaVersion: 'juris-sh-readiness/1', ready: checks.every((check) => check.status === 'pass'), checks, blockers };
+  const ready = checks.every((check) => check.status === 'pass');
+  const approved = snapshot.sourceRightsApproval?.decision === 'approved';
+  return {
+    schemaVersion: 'juris-sh-readiness/1',
+    ready,
+    status: ready ? 'TECHNICALLY READY' : 'NOT READY',
+    remoteRelease: approved
+      ? { status: 'REMOTE RELEASE APPROVED', reason: `Freigabe ${snapshot.sourceRightsApproval?.decidedAt ?? ''} durch ${snapshot.sourceRightsApproval?.decidedBy ?? '?'}`, decisionDocument: SOURCE_RIGHTS_DECISION_DOC }
+      : { status: 'REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION', reason: 'TDM-Vorbehalt (tdm-reservation: 1) und Weiterveröffentlichung der juris-Ausgaben sind menschlich zu entscheiden; bis dahin kein R2-Upload, kein Remote-D1-Apply, kein Deploy für NSH.', decisionDocument: SOURCE_RIGHTS_DECISION_DOC },
+    checks,
+    blockers,
+  };
 }
 
 export { RECONSTRUCTION_QUEUE_PATH };

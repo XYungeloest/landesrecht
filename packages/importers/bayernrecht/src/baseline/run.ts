@@ -20,7 +20,7 @@ import { readScopeOverrides } from '../scope/run.ts';
 import { isMergedAnnex, type ScopeEntry } from '../scope/decisions.ts';
 import { referenceKey, referencesIn } from '../reconstruction/structure.ts';
 import { citationDates } from './citation-dates.ts';
-import { classifyBaseline, type BaselineClass, type BaselineDecision, type BaselineStatus, type RecoveryMethod } from './classify.ts';
+import { classifyBaseline, type OwnPublication, type BaselineClass, type BaselineDecision, type BaselineStatus, type RecoveryMethod } from './classify.ts';
 
 export const BASELINE_PATH = join(IMPORT_DATA_DIR, 'baseline.json');
 export const SCOPE_FILE_PATH = join(IMPORT_DATA_DIR, 'scope.json');
@@ -51,6 +51,12 @@ interface LedgerEvent {
   eventType: string;
   eventDate?: string;
   citation?: string;
+  sourceId?: string;
+  sourceUrl?: string;
+  /** Inkrafttreten laut amtlicher Verkündung (Inkrafttretensvorschrift der Veröffentlichung). */
+  effectiveDate?: string;
+  targetTitle?: string;
+  excerpt?: string;
   evidenceStrength?: string;
   targetResolution?: { status?: string; sourceIdentity?: string; matchStrength?: string };
 }
@@ -67,19 +73,42 @@ interface LedgerEvent {
  * amtliches Verkündungsdatum. Das Register beginnt am Tag nach dem Stichtag – eine Fundstelle darin ist also nach dem
  * Stichtag verkündet.
  */
-export async function readPublicationDates(root: string): Promise<Map<string, { date: string; citation: string }>> {
-  const dates = new Map<string, { date: string; citation: string }>();
+export async function readPublicationDates(root: string): Promise<Map<string, OwnPublication>> {
+  const dates = new Map<string, OwnPublication>();
   let raw: string;
   try {
     raw = await readFile(join(root, EVENT_LEDGER_PATH), 'utf8');
   } catch {
     return dates;
   }
-  for (const event of (JSON.parse(raw) as { events?: LedgerEvent[] }).events ?? []) {
+  const events = (JSON.parse(raw) as { events?: LedgerEvent[] }).events ?? [];
+  // Außerkraftsetzungen je Veröffentlichung: Hebt die Verkündung eine andere Vorschrift auf, gab es womöglich einen
+  // Vorgänger derselben Normidentität – dann entscheidet nicht die Regel, sondern der Mensch.
+  const repealsBySource = new Map<string, string[]>();
+  for (const event of events) {
+    if (!event.sourceId || !/^(?:expire|repeal)/u.test(event.eventType)) continue;
+    const list = repealsBySource.get(event.sourceId) ?? [];
+    // Die Wendung der Verkündung („Stellvertretererlass (StRVertrBek) … vom 11. Februar 2021 (BayMBl. Nr. 164) …“) ist
+    // aussagekräftiger als der extrahierte Zieltitel.
+    const phrase = event.excerpt?.replace(/\s*außer\s+Kraft[\s\S]*$/u, '').replace(/[\s,]+$/u, '').trim();
+    list.push(phrase && phrase.length <= 300 ? phrase : (event.targetTitle ?? event.citation ?? event.sourceId));
+    repealsBySource.set(event.sourceId, list);
+  }
+  for (const event of events) {
     const key = event.citation ? referenceKey(event.citation) : undefined;
     if (!key || !event.eventDate) continue;
     const known = dates.get(key);
-    if (!known || event.eventDate < known.date) dates.set(key, { date: event.eventDate, citation: event.citation ?? key });
+    if (!known || event.eventDate < known.date) {
+      dates.set(key, {
+        date: event.eventDate,
+        citation: event.citation ?? key,
+        ...(event.sourceUrl ? { url: event.sourceUrl } : {}),
+        ...(event.sourceId && repealsBySource.has(event.sourceId) ? { repeals: repealsBySource.get(event.sourceId)! } : {}),
+      });
+    }
+    // Inkrafttreten der Veröffentlichung selbst: nur aus dem Ereignis „neue Vorschrift“ dieser Verkündung.
+    const entry = dates.get(key)!;
+    if (event.eventType === 'new' && event.effectiveDate && event.eventDate === entry.date && !entry.officialEffectiveDate) entry.officialEffectiveDate = event.effectiveDate;
   }
   return dates;
 }
@@ -90,7 +119,7 @@ export async function readPublicationDates(root: string): Promise<Map<string, { 
  * Ohne Jahrgang zählt das Jahr der Ausfertigung (bei Ausfertigung im Dezember auch das folgende); getroffen wird nur eine im
  * Verzeichnis datierte Fundstelle.
  */
-export function ownPublication(gazette: { organ?: string; year?: string; page?: string; pageKind?: string } | undefined, documentDate: string | undefined, dates: ReadonlyMap<string, { date: string; citation: string }>, citation?: string): { date: string; citation: string } | undefined {
+export function ownPublication(gazette: { organ?: string; year?: string; page?: string; pageKind?: string } | undefined, documentDate: string | undefined, dates: ReadonlyMap<string, OwnPublication>, citation?: string): OwnPublication | undefined {
   const candidates: Array<{ organ: string; year?: string; position: string }> = [];
   if (gazette?.organ && gazette.page) candidates.push({ organ: gazette.organ.replace(/\.$/u, ''), ...(gazette.year ? { year: gazette.year } : {}), position: `${gazette.pageKind === 'nummer' ? 'Nr.' : 'S.'} ${gazette.page}` });
   const own = citation ? /\bvom\s+\d{1,2}\.\s*\p{L}+\s+\d{4}[^(]{0,80}\(([^)]*)\)/u.exec(citation) : undefined;

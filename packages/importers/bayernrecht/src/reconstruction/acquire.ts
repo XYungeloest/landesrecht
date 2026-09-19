@@ -21,6 +21,7 @@ import { IMPORT_DATA_DIR } from '../common/constants.ts';
 import { createBayernRechtFetcher, RUN_STOPPING_FETCH_ERRORS } from '../common/fetcher.ts';
 import { RECONSTRUCTION_QUEUE_PATH } from '../common/paths.ts';
 import { loadRunContext, type RunContext } from './context.ts';
+import { assessPdfBase } from './pdfbase.ts';
 import { cachePlatform, loadPublicationBase } from './publication.ts';
 import { packageUrl, parseCurrentNorm, readCached } from './source.ts';
 import { walkChain, type WalkInput } from './walk.ts';
@@ -84,13 +85,17 @@ export async function collectNeeds(ctx: RunContext, only?: readonly string[]): P
     // Lauf 7: Liegt die Stammverkündung vor, geht die Kette bis zu ihr zurück (`deep`) – ihre Seiten sind dann Bedarf.
     const open = !recipeReady.has(decision.documentId);
     const base = open ? await loadPublicationBase(cachePlatform(ctx.root), norm) : undefined;
-    const walk = await walkChain({ ...walkInputFor(ctx, decision.documentId, norm), deep: base?.ok === true, provisional: base?.ok === true });
+    const walk = await walkChain({ ...walkInputFor(ctx, decision.documentId, norm), deep: base?.ok === true || (base !== undefined && !base.ok && base.code === "base-pdf-only"), provisional: base?.ok === true });
     for (const url of walk.needs) needs.set(url, new Set([...(needs.get(url) ?? []), decision.documentId]));
     // Stammverkündung (Alttext für nicht umkehrbare Befehle) – seit Lauf 8 auch, wenn die Kette noch scheitert (ihre
     // Prüfung bis zur Stammfassung braucht sie); über die Adresse, die die Auflösung als nächste braucht (Amtsblätter:
     // Jahrgang → Ausgabe → Dokument).
     if (base && !base.ok && base.code === 'base-not-cached' && base.urls && base.urls.length > 0) {
       needs.set(base.urls.at(-1)!, new Set([...(needs.get(base.urls.at(-1)!) ?? []), decision.documentId]));
+    }
+    // Lauf 9: Stammverkündung nur als PDF-Ausgabe – Ausgabenverzeichnis und Ausgabe für die Prüfung ihres Textlayers.
+    if (base && !base.ok && base.code === 'base-pdf-only') {
+      for (const url of (await assessPdfBase(ctx.root, norm))?.needs ?? []) needs.set(url, new Set([...(needs.get(url) ?? []), decision.documentId]));
     }
   }
   return needs;

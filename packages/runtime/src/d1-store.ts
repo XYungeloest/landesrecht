@@ -398,12 +398,15 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     // Kandidatenordnung nach Bezeichnung: bei Adressanfragen („Nr. 1.1 FüR“) die Bezeichnung ohne Adresse, damit die
     // Norm, die die Bewertung im Speicher ohnehin voranstellt, nicht an der Kandidatengrenze scheitert – eine
     // Abkürzung, die normalisiert einem Funktionswort gleicht („FüR“ → „für“), träfe sonst hunderte Einheiten.
+    // Neben den gefalteten Varianten die rohe Schreibung („für“ zu „FüR“): SQLite senkt in lower() nur ASCII ab, deshalb
+    // werden Ä/Ö/Ü vorher ersetzt. Ohne sie fände die Kandidatenordnung eine Abkürzung mit Umlaut nie als Bezeichnung.
     const poolIdentity = plan.identityVariants.length > 0
-      ? plan.identityVariants
+      ? [...new Set([plan.identityRaw, ...plan.identityVariants])]
       : plan.references.length > 0 && plan.subjectRaw !== '' ? [...new Set([plan.subjectRaw, ...plan.subjectVariants])] : [];
     const identityParams = poolIdentity.length > 0 ? poolIdentity : [''];
+    const folded = (column: string): string => `lower(replace(replace(replace(${column}, 'Ä', 'ä'), 'Ö', 'ö'), 'Ü', 'ü'))`;
     const identityExpression = poolIdentity.length > 0
-      ? `(lower(n.abbr) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.short_title) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.title) IN (${identityParams.map(() => '?').join(', ')}))`
+      ? `(${folded('n.abbr')} IN (${identityParams.map(() => '?').join(', ')}) OR ${folded('n.short_title')} IN (${identityParams.map(() => '?').join(', ')}) OR ${folded('n.title')} IN (${identityParams.map(() => '?').join(', ')}))`
       : '0';
     const identityBinds = poolIdentity.length > 0 ? [...identityParams, ...identityParams, ...identityParams] : [];
 

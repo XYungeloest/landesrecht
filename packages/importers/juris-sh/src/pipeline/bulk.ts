@@ -35,8 +35,11 @@ import { isBaselineOnlyCandidate, type LedgerEvent } from '../events/ledger.ts';
 import { createExportClient, ExportError, pdfExportUrl } from '../export/client.ts';
 import { readInstitutionRegistry } from '../transform/institution-registry.ts';
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
+import { assignSeparateAnnexes, attachAnnexes, titleKey } from './annexes.ts';
 import { baselineEvidence, buildLedgerIndex, eventTargetDate, matchLedgerEvents, normalizeGliederungsnummer, type BaselineEvidenceResult } from './baseline-evidence.ts';
+import { collectOfficialAbbreviations, OFFICIAL_ABBREVIATIONS_PATH } from './abbreviations.ts';
 import { readCorpusState } from './corpus.ts';
+import { gazetteVolumesFromLedger } from '../parse/source-law.ts';
 import { processDocument, STAND_UNDETERMINED, type DocumentBlocker, type DocumentResult } from './document.ts';
 import { listExistingSlugs, recoverInterruptedNormWrites, removeOwnNormDirectory, writeNormRecord } from './persist.ts';
 import { loadUnits, sitemapUnits } from './units.ts';
@@ -90,9 +93,73 @@ export interface InventoryReport {
     evidenceRules: Record<string, number>;
   };
   /** Zweite Quelle: Gliederungsnummern der amtlichen Register (Systematische Übersicht GVOBl., Erlassverzeichnis Amtsbl.) im Bestand. */
-  registerCrosscheck: Array<{ source: string; area: EnumerableArea; asOf?: string; registerNumbers: number; found: number; coverage: number; missing: Array<{ gliederungsnummer: string; title: string }>; excludedAmendingOrAgreement: number }>;
+  registerCrosscheck: RegisterCrosscheckSummary[];
   baselineOnly: { candidates: number; matched: number; byOutcome: Record<string, number>; entries: Array<{ eventId: string; eventDate: string; gliederungsnummer?: string; title: string; documentIds: string[]; outcomes: string[] }> };
   entries: InventoryEntry[];
+}
+
+/**
+ * Zweite Quelle je Register (Audit „NSH-Audit“, `audit/register-crosscheck.ts`): Zählbasis sind die **Registerköpfe**
+ * des vollen amtlichen Registers, nicht Änderungsereignisse. Gefunden zählt nur eine stabile Kennung (Gliederungsnummer,
+ * Variante, Fundstelle mit Datum) oder Titel **mit** gleichem Datum; ein bloßer Titeltreffer zählt nie. Die Quote ist
+ * Indikator, kein Gate; jeder nicht gefundene Kopf ist klassifiziert.
+ */
+export interface RegisterCrosscheckSummary {
+  source: string;
+  area: EnumerableArea;
+  asOf?: string;
+  /** Registerköpfe nach Ausschluss (Änderungs-/Aufhebungs-/Mantelakte, Tarifverträge). */
+  registerNumbers: number;
+  excludedAmendingOrAgreement: number;
+  /** Streng gefunden (gl, gl-variant, fundstelle, title-date). */
+  found: number;
+  coverage: number;
+  /** Nur Gliederungsnummer (ehrliche Untergrenze). */
+  idOnly: { found: number; rate: number };
+  byTier: Record<string, number>;
+  /** Titeltreffer werden nie als gefunden gezählt. */
+  titleOnlyCounted: false;
+  missing: Array<{ gliederungsnummer: string; title: string; tier: string; classification: 'nicht-in-juris' | 'nur-aenderungsakt-in-juris' | 'nur-titelaehnlichkeit-ungeprueft' }>;
+}
+
+/** Registerabgleich über die vollen Registerköpfe mit den Stufen des Audit-Moduls. */
+export async function computeRegisterCrosscheck(root: string, ledger: { events: LedgerEvent[]; sources: Array<{ id: string; asOf?: string }> }, documents: ReadonlyArray<{ id: string; area: EnumerableArea; gl?: string | undefined; dates?: string[]; title?: string | undefined; fundstelle?: string | undefined; outcome?: string }>): Promise<RegisterCrosscheckSummary[]> {
+  const { buildDocumentIndex, coverage, matchRegisterEntry, glKey } = await import('../audit/register-crosscheck.ts');
+  const { fullRegisterRecords } = await import('../audit/register-crosscheck-run.ts');
+  const jurisDocuments = documents.map((document) => ({ id: document.id, area: document.area, ...(document.title ? { title: document.title } : {}), ...(document.gl ? { gliederungsnummer: document.gl } : {}), dates: document.dates ?? [], ...(document.fundstelle ? { fundstelle: document.fundstelle } : {}), ...(document.outcome ? { outcome: document.outcome } : {}) }));
+  const summaries: RegisterCrosscheckSummary[] = [];
+  for (const [source, area] of [['gvobl-systematische-uebersicht', 'landesrecht'], ['ab-erlassverzeichnis', 'vwv']] as const) {
+    const ledgerNumbers = new Set(ledger.events.filter((event) => event.sourceId === source && event.targetGliederungsnummer).map((event) => glKey(event.targetGliederungsnummer!)));
+    let records;
+    try {
+      records = await fullRegisterRecords(root, source, ledgerNumbers);
+    } catch {
+      continue; // Register im Discovery-Cache nicht lesbar: kein Abgleich (Readiness meldet das)
+    }
+    const index = buildDocumentIndex(jurisDocuments, area);
+    const matches = records.map((record) => matchRegisterEntry(record, index));
+    const figures = coverage(matches);
+    const classify = (tier: string): RegisterCrosscheckSummary['missing'][number]['classification'] => (tier === 'gl-amendment-only' ? 'nur-aenderungsakt-in-juris' : tier === 'title-only' ? 'nur-titelaehnlichkeit-ungeprueft' : 'nicht-in-juris');
+    const missing = matches
+      .filter((match) => !match.exclusion && (match.tier === 'none' || match.tier === 'title-only' || match.tier === 'gl-amendment-only'))
+      .map((match) => ({ gliederungsnummer: match.record.gliederungsnummer, title: match.record.title.slice(0, 120), tier: match.tier, classification: classify(match.tier) }))
+      .sort((left, right) => left.gliederungsnummer.localeCompare(right.gliederungsnummer));
+    const asOf = ledger.sources.find((entry) => entry.id === source)?.asOf;
+    summaries.push({
+      source,
+      area,
+      ...(asOf ? { asOf } : {}),
+      registerNumbers: figures.considered,
+      excludedAmendingOrAgreement: matches.filter((match) => match.exclusion).length,
+      found: figures.strict.found,
+      coverage: figures.strict.rate,
+      idOnly: figures.idOnly,
+      byTier: figures.byTier,
+      titleOnlyCounted: false,
+      missing,
+    });
+  }
+  return summaries;
 }
 
 export interface BulkStateFile {
@@ -107,6 +174,8 @@ export interface BulkOptions {
   mode: BulkMode;
   write: boolean;
   only?: readonly string[];
+  /** Beobachter je verarbeitetem Dokument (Diagnose einzelner Dokumente mit `--only`). */
+  onResult?: (result: DocumentResult) => void;
   limit?: number;
   now?: string;
   log?: (line: string) => void;
@@ -134,7 +203,11 @@ export function reviewInputsFor(result: DocumentResult, evidence: BaselineEviden
     switch (blocker.kind) {
       case 'parse':
       case 'parse-units':
-        if (blocker.code === 'figure') inputs.push({ ...base, category: 'pdf-only', summary: 'Abbildung (Karte, Grafik) in der PDF-Ausgabe – als Text nicht vollständig darstellbar' });
+        if (blocker.code === 'figure') inputs.push({ ...base, category: 'pdf-only', summary: 'Abbildung der PDF-Ausgabe nicht sicher übernehmbar (verzerrt gesetzt, Text überdeckt oder nicht auslesbar)' });
+        else if (blocker.code === 'annex-separate-document') inputs.push({ ...base, category: 'incomplete-annex', summary: 'Anlage(n) als eigenes juris-Dokument geführt, Stammnorm nicht eindeutig – ohne Zusammenführung unvollständig' });
+        else if (blocker.code === 'annex-document-unusable') inputs.push({ ...base, category: 'incomplete-annex', summary: 'Angehängtes Anlagendokument nicht verwendbar (Stichtagsfassung offen oder Parserfehler)' });
+        else if (blocker.code === 'figure-unbound') inputs.push({ ...base, category: 'pdf-only', summary: 'Abbildung ohne belegte Herkunft in einer PDF-Ausgabe' });
+        else if (blocker.code === 'incomplete-source-text') inputs.push({ ...base, category: /PDF-Datei/u.test(blocker.detail) ? 'incomplete-annex' : 'pdf-only', summary: /PDF-Datei/u.test(blocker.detail) ? 'Inhalt (meist Anlage) liegt in juris nur als gesonderte PDF-Datei vor, nicht in der Gesamtausgabe' : 'Technischer Vermerk der Ausgabe: Normtext unvollständig' });
         else if (blocker.code === 'vwv-annex-document') inputs.push({ ...base, category: 'incomplete-annex', summary: 'Anlage einer Verwaltungsvorschrift als eigenes Dokument – Zuordnung zum Hauptdokument offen' });
         else if (blocker.code === 'table-layout') inputs.push({ ...base, category: 'unknown-structure', summary: 'Tabellenlayout – Zeilen-/Spaltenstruktur aus der Textebene nicht sicher rekonstruierbar' });
         else inputs.push({ ...base, category: 'unknown-structure', summary: `Struktur: ${blocker.code} (Verzeichnis und Normkörper stimmen nicht überein)` });
@@ -171,6 +244,8 @@ export function reviewInputsFor(result: DocumentResult, evidence: BaselineEviden
 
 function manifestStatusFor(result: DocumentResult, reviewBlocking: boolean): ImportStatus {
   if (result.outcome === 'not-at-baseline') return 'not-at-baseline';
+  // Anlage einer Stammnorm: keine eigene Norm (dort angehängt).
+  if (result.outcome === 'part-of-main') return 'excluded';
   if (result.outcome === 'failed') return 'failed';
   if (result.outcome === 'import-ready' && !reviewBlocking) return result.warnings.length > 0 ? 'imported-with-warnings' : 'imported';
   return 'needs-review';
@@ -217,7 +292,8 @@ function manifestEntryFor(result: DocumentResult, status: ImportStatus, evidence
     targetSlug: isImportedStatus(status) && slug ? slug : '',
     importStatus: status,
     reviewStatus,
-    rawDocuments: [pdf(result.raw), ...unitRaw.map(pdf)],
+    // Abbildungen: je Bild eine Rohquelle (Bytes aus der genannten PDF-Ausgabe, Lage darin), inhaltsadressiert archiviert.
+    rawDocuments: [pdf(result.raw), ...unitRaw.map(pdf), ...(result.annexDocuments ?? []).map((annex) => ({ ...pdf(annex.raw), role: 'annex' as const })), ...(result.figures ?? []).map((figure) => ({ role: 'figure' as const, url: figure.pdf.url, finalUrl: figure.pdf.url, sha256: figure.sha256, contentType: figure.mediaType, retrievedAt: figure.pdf.retrievedAt, byteLength: figure.byteLength, packagePath: figure.sourcePath, packageSha256: figure.pdf.sha256 }))],
     versionsConsidered: result.historical
       ? [{ validFrom: result.historical.validFrom ?? validFrom, validTo: result.historical.validTo ?? null, url: permaUrl(result.documentId), selected: true }, { validFrom: result.source?.editionValidFrom ?? result.source?.latestUnitFrom ?? validFrom, validTo: result.source?.editionValidTo ?? null, url: result.raw.url, selected: false }]
       : [{ validFrom, validTo, url: result.raw.url, selected: status !== 'not-at-baseline' && status !== 'failed' }],
@@ -244,6 +320,10 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
   const ledgerFile = await readJsonFile<{ events: LedgerEvent[]; sources: Array<{ id: string; asOf?: string }> }>(join(root, LEDGER_PATH));
   if (!ledgerFile) throw new Error(`${LEDGER_PATH} fehlt – das Ereignisregister wird weiterverwendet, nicht neu gebaut`);
   const ledgerIndex = buildLedgerIndex(ledgerFile.events);
+  const abbreviations = await collectOfficialAbbreviations(root, { write: options.write });
+  const knownStateAbbreviations = abbreviations.known;
+  const gazetteVolumes = gazetteVolumesFromLedger(ledgerFile.sources as Array<{ id: string; url: string; sha256: string }>);
+  log(`${options.mode}: ${knownStateAbbreviations.size} amtliche Abkürzungen mit Landeskürzel im Bestand`);
 
   const items: Array<{ id: string; area: EnumerableArea }> = [];
   for (const area of ENUMERABLE_AREAS) {
@@ -304,7 +384,7 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
         return reserver.preview(item.id, candidate);
       },
     };
-    let result = processDocument(pdf.bytes, document, { institutions, context });
+    let result = processDocument(pdf.bytes, document, { institutions, context, knownStateAbbreviations, gazetteVolumes });
     let unitRaw: Array<{ url: string; sha256: string; byteLength: number; retrievedAt: string }> = [];
     const unitDecidable = result.baseline?.class === 'undetermined' && STAND_UNDETERMINED.test(result.baseline.basis) && result.outcome === 'review';
     if (result.outcome === 'reconstruction' || unitDecidable) {
@@ -318,14 +398,16 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
       } else {
         try {
           const units = await loadUnits(client, unitIds);
-          result = processDocument(pdf.bytes, document, { institutions, context, units });
-          unitRaw = units.filter((unit) => result.record?.meta.sourceReferences?.some((reference) => reference.externalId === unit.documentId) ?? false).map((unit) => unit.raw);
+          result = processDocument(pdf.bytes, document, { institutions, context, units, knownStateAbbreviations, gazetteVolumes });
+          const selectedIds = new Set(result.historical?.selectedUnitIds ?? []);
+          unitRaw = units.filter((unit) => selectedIds.has(unit.documentId)).map((unit) => unit.raw);
         } catch (error) {
           if (!(error instanceof ExportError) && !(error instanceof RechtNrwFetchError)) throw error;
           result.reasons.push(`Einzelfassungen nicht vollständig im Cache (${unitIds.length} Einheiten; npm run import:juris-sh:fetch-corpus -- --phase units)`);
         }
       }
     }
+    options.onResult?.(result);
     results.push({ item, result, unitRaw });
     if (processed % 250 === 0) log(`${options.mode}: ${processed}/${selected.length} Dokumente verarbeitet`);
   }
@@ -339,20 +421,40 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
     glCount.set(key, (glCount.get(key) ?? 0) + 1);
   }
 
-  // VwV, deren Anlage juris als eigenes Dokument führt („Zum Hauptdokument : <Titel>“): Ohne Zusammenführung wäre
-  // die übernommene VwV unvollständig – Review statt Teiltext.
-  const annexMainTitles = new Map<string, string[]>();
-  for (const { item, result } of results) {
-    if (!result?.mainDocument) continue;
-    const key = titleKey(result.mainDocument);
-    annexMainTitles.set(key, [...(annexMainTitles.get(key) ?? []), item.id]);
+  // VwV-Anlagen, die juris als eigenes Dokument führt („Zum Hauptdokument : <Titel>“): der Stammnorm anhängen
+  // (`annexes.ts`). Nur eindeutige Zuordnungen; die Anlage ist danach keine eigene Norm.
+  const annexAssignment = assignSeparateAnnexes(results.map(({ item, result }) => ({ id: item.id, area: item.area, result })));
+  const resultById = new Map(results.map(({ item, result }) => [item.id, result]));
+  for (const [mainId, annexIds] of annexAssignment.annexesOf) {
+    const main = resultById.get(mainId);
+    if (!main) continue;
+    const annexes = annexIds.map((id) => ({ id, result: resultById.get(id)! })).filter((entry) => entry.result);
+    const attached = attachAnnexes(main, annexes);
+    if (main.record && attached.length > 0) main.record = validateNormRecord(main.record, `${TARGET_JURISDICTION}/${main.record.meta.slug}`);
+    for (const id of annexIds) {
+      const annex = resultById.get(id);
+      if (!annex) continue;
+      const attachedHere = attached.includes(id);
+      annex.outcome = 'part-of-main';
+      annex.partOf = mainId;
+      annex.reasons = [attachedHere ? `Anlage der Stammnorm ${mainId} (dort angehängt)` : `Anlage der Stammnorm ${mainId}; am Stichtag nicht geltend oder nicht verwendbar (${annex.baseline?.class ?? annex.outcome})`];
+      annex.blockers = [];
+      annex.findings.push({ severity: 'info', code: 'annex-of-main', message: `Bestandteil der Stammnorm ${mainId}${attachedHere ? ' (als Anlage angehängt)' : ''}` });
+      delete annex.record;
+      delete annex.slug;
+    }
   }
-  const separateAnnexesOf = (title: string | undefined): string[] => {
-    if (!title) return [];
-    const key = titleKey(title);
-    if (key.length < 20) return [];
-    return [...annexMainTitles.entries()].filter(([main]) => main.length >= 20 && (main.startsWith(key) || key.startsWith(main))).flatMap(([, ids]) => ids);
-  };
+  for (const [mainId, annexIds] of annexAssignment.ambiguousMains) {
+    const main = resultById.get(mainId);
+    if (!main) continue;
+    main.blockers.push({ kind: 'parse', code: 'annex-separate-document', detail: `Anlagendokument(e) ${annexIds.slice(0, 5).join(', ')} mehreren Stammnormen zuzuordnen` });
+    main.reasons.push(`Anlagendokument(e) ${annexIds.slice(0, 5).join(', ')} nicht eindeutig zuzuordnen`);
+    if (main.outcome === 'import-ready') main.outcome = 'review';
+  }
+  for (const [annexId, reason] of annexAssignment.unresolved) {
+    const annex = resultById.get(annexId);
+    if (annex) annex.findings.push({ severity: 'info', code: 'annex-unassigned', message: `Stammnorm nicht eindeutig: ${reason}` });
+  }
 
   const entries: InventoryEntry[] = [];
   const written: string[] = [];
@@ -367,14 +469,8 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
     }
     const matches = result.source ? matchLedgerEvents(ledgerIndex, { area: item.area, ...(result.source.gliederungsnummer ? { gliederungsnummer: result.source.gliederungsnummer } : {}), documentDates: result.source.documentDates }, glCount) : [];
     const evidence = result.outcome === 'failed' ? undefined : baselineEvidence(result, matches);
-    const inputs = reviewInputsFor(result, evidence);
-    if (item.area === 'vwv' && !result.mainDocument && result.outcome === 'import-ready') {
-      const annexes = separateAnnexesOf(result.title);
-      if (annexes.length > 0) {
-        inputs.push({ category: 'incomplete-annex', key: 'annex-separate-document', severity: 'blocking', summary: `Anlage(n) als eigenes juris-Dokument geführt (${annexes.length}); ohne Zusammenführung unvollständig`, details: annexes.slice(0, 10) });
-        result.blockers.push({ kind: 'parse', code: 'annex-separate-document', detail: annexes.slice(0, 5).join(', ') });
-      }
-    }
+    // Anlage einer Stammnorm: Review-Fälle gehören zur Stammnorm (dort übernommen), nicht zur Anlage.
+    const inputs = result.outcome === 'part-of-main' ? [] : reviewInputsFor(result, evidence);
     const reviewBlocking = inputs.some((input) => input.severity === 'blocking');
     const status = manifestStatusFor(result, reviewBlocking);
     const outcome = result.outcome === 'import-ready' && reviewBlocking ? 'review' : result.outcome;
@@ -419,7 +515,7 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
       // Archivstand (Staging/R2) gleicher Rohquellen bleibt erhalten – ein Bulk-Lauf stuft nie zurück.
       if (entry && previous) {
         for (const raw of entry.rawDocuments) {
-          const archived = previous.rawDocuments.find((candidate) => candidate.url === raw.url && candidate.sha256 === raw.sha256 && candidate.archiveStatus);
+          const archived = previous.rawDocuments.find((candidate) => candidate.role === raw.role && candidate.url === raw.url && candidate.sha256 === raw.sha256 && candidate.archiveStatus);
           if (archived) Object.assign(raw, { ...(archived.bucket ? { bucket: archived.bucket } : {}), ...(archived.objectKey ? { objectKey: archived.objectKey } : {}), archiveStatus: archived.archiveStatus });
         }
       }
@@ -456,9 +552,12 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
     });
   }
 
-  const report = buildInventoryReport(entries, items.length, ledgerFile, results.map(({ item, result }) => ({ id: item.id, area: item.area, ...(result?.source ? { gl: result.source.gliederungsnummer, dates: result.source.documentDates } : {}), ...(result?.title ? { title: result.title } : {}) })));
+  const documentFacts = results.map(({ item, result }) => ({ id: item.id, area: item.area, ...(result?.source ? { gl: result.source.gliederungsnummer, dates: result.source.documentDates, fundstelle: result.source.fundstelle } : {}), ...(result?.title ? { title: result.title } : {}), ...(result ? { outcome: result.outcome } : {}) }));
+  const registerCrosscheck = options.only?.length ? [] : await computeRegisterCrosscheck(root, ledgerFile, documentFacts);
+  const report = buildInventoryReport(entries, items.length, ledgerFile, documentFacts, registerCrosscheck);
 
   if (options.write) {
+    if (abbreviations.written) written.push(OFFICIAL_ABBREVIATIONS_PATH);
     if (writeNorms) {
       if (reserver.changed && (await writeSlugRegistry(root, registry))) written.push('data/imports/juris-sh/slug-registry.json');
       // Teilbestand in der Oberfläche ausweisen (ein Land ohne Eintrag gälte als vollständig) – nur nach einem Vollauf.
@@ -481,11 +580,9 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
 export const REGISTER_NON_CONSOLIDATED = /^(?:(?:Erstes|Zweites|Drittes|Viertes|Fünftes|Sechstes|\d+\.)\s+)?(?:Gesetz|Landesverordnung|Verordnung)\s+(?:zur|über die)\s+(?:Änderung|Aufhebung|Bereinigung|Neuregelung|Neuordnung|Anpassung|Neufassung)\b|^(?:Tarifvertr|Bundes-Angestelltentarifvertrag|Manteltarifvertrag|Lohngruppenverzeichnis|Änderungstarifvertrag)/u;
 
 /** Titelvergleich Register ↔ Bestand: Kleinbuchstaben, nur Buchstaben und Ziffern (Registertitel sind oft gekürzt). */
-export function titleKey(title: string): string {
-  return title.toLowerCase().replace(/ß/gu, 'ss').replace(/[^a-z0-9äöü]+/gu, '');
-}
+export { titleKey };
 
-export function buildInventoryReport(entries: InventoryEntry[], enumerated: number, ledger: { events: LedgerEvent[]; sources: Array<{ id: string; asOf?: string }> }, documents: Array<{ id: string; area: EnumerableArea; gl?: string | undefined; dates?: string[]; title?: string | undefined }>): InventoryReport {
+export function buildInventoryReport(entries: InventoryEntry[], enumerated: number, ledger: { events: LedgerEvent[]; sources: Array<{ id: string; asOf?: string }> }, documents: Array<{ id: string; area: EnumerableArea; gl?: string | undefined; dates?: string[]; title?: string | undefined }>, registerCrosscheck: RegisterCrosscheckSummary[] = []): InventoryReport {
   const totals: InventoryReport['totals'] = { enumerated, processed: entries.length, byOutcome: {}, byArea: {}, byBaselineClass: {}, byIntegrity: {}, byType: {}, byManifestStatus: {}, blockers: {}, evidenceRules: {} };
   for (const entry of entries) {
     increment(totals.byOutcome, entry.outcome);
@@ -497,33 +594,6 @@ export function buildInventoryReport(entries: InventoryEntry[], enumerated: numb
     if (entry.manifestStatus) increment(totals.byManifestStatus, entry.manifestStatus);
     if (entry.rule) increment(totals.evidenceRules, entry.rule);
     for (const blocker of new Set(entry.blockers.map((item) => `${item.kind}:${item.code}`))) increment(totals.blockers, blocker);
-  }
-  // Zweite Quelle: amtliche Register mit Gliederungsnummern der zum Registerstand geltenden Vorschriften.
-  const numbersIn = (area: EnumerableArea): Set<string> => new Set(documents.filter((document) => document.area === area && document.gl).map((document) => normalizeGliederungsnummer(document.gl!)));
-  const registerCrosscheck: InventoryReport['registerCrosscheck'] = [];
-  for (const [source, area] of [['gvobl-systematische-uebersicht', 'landesrecht'], ['ab-erlassverzeichnis', 'vwv']] as const) {
-    const register = new Map<string, string>();
-    for (const event of ledger.events) if (event.sourceId === source && event.targetGliederungsnummer) register.set(normalizeGliederungsnummer(event.targetGliederungsnummer), event.targetTitle);
-    // Änderungs- und Mantelgesetze sowie Tarifverträge stehen mit eigener Nummer im Register, sind aber keine
-    // konsolidierten Normen (juris arbeitet sie in die geänderten Normen ein bzw. führt sie nicht als VwV).
-    let excluded = 0;
-    for (const [number, title] of [...register.entries()]) {
-      if (REGISTER_NON_CONSOLIDATED.test(title)) {
-        register.delete(number);
-        excluded += 1;
-      }
-    }
-    const own = numbersIn(area);
-    // Zweites Merkmal: gleicher Titel (Anfang). Wiederkehrende Normen erhalten je Neuerlass eine neue Nummer; das
-    // Register führt dann oft die Nummer eines Vorgängers oder Nachfolgers.
-    const titles = documents.filter((document) => document.area === area && document.title).map((document) => titleKey(document.title!));
-    const byTitle = (title: string): boolean => {
-      const key = titleKey(title);
-      return key.length >= 25 && titles.some((candidate) => candidate.startsWith(key) || key.startsWith(candidate));
-    };
-    const missing = [...register.entries()].filter(([number, title]) => !own.has(number) && !byTitle(title)).map(([number, title]) => ({ gliederungsnummer: number, title: title.slice(0, 120) })).sort((left, right) => left.gliederungsnummer.localeCompare(right.gliederungsnummer));
-    const asOf = ledger.sources.find((entry) => entry.id === source)?.asOf;
-    registerCrosscheck.push({ source, area, ...(asOf ? { asOf } : {}), registerNumbers: register.size, found: register.size - missing.length, coverage: register.size === 0 ? 0 : Math.round(((register.size - missing.length) / register.size) * 10_000) / 10_000, missing, excludedAmendingOrAgreement: excluded });
   }
   // baseline-only-Kandidaten des Registers gegen den Bestand.
   const byId = new Map(entries.map((entry) => [entry.documentId, entry]));
