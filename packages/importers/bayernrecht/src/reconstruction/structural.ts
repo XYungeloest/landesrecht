@@ -201,7 +201,8 @@ export function structuralForward(body: NormBodyBlock[], field: FieldRef | undef
       if (!field) throw new StructuralError('field-missing', `${step}: kein Feld`);
       const text = fieldText(body, field, step);
       const markers = sentenceNumbers(text);
-      if (markers.length !== 1 || markers[0]!.value !== 1 || markers[0]!.start !== 0) throw new StructuralError('sentence-ambiguous', `${step}: der Wortlaut trägt nicht genau die Satznummer ¹ am Anfang`);
+      // Lauf 10: Weitere Sätze (²…) dürfen folgen, wenn dieselbe Änderung sie danach aufhebt (GVBl. 2023 S. 577).
+      if (markers.length === 0 || markers[0]!.value !== 1 || markers[0]!.start !== 0 || markers.slice(1).some((marker, index) => marker.value !== index + 2)) throw new StructuralError('sentence-ambiguous', `${step}: der Wortlaut trägt nicht die Satznummer ¹ am Anfang`);
       writeText(body, field, text.slice(markers[0]!.end), step);
       return;
     }
@@ -316,7 +317,8 @@ export function structuralBackward(body: NormBodyBlock[], field: FieldRef | unde
     case 'unnumber-sentences': {
       if (!field) throw new StructuralError('field-missing', `${step}: kein Feld`);
       const text = fieldText(body, field, step);
-      if (sentenceNumbers(text).length > 0) throw new StructuralError('sentence-ambiguous', `${step}: der Wortlaut trägt schon Satznummern`);
+      const markers = sentenceNumbers(text);
+      if (markers.length > 0 && (markers[0]!.start === 0 || markers.some((marker, index) => marker.value !== index + 2))) throw new StructuralError('sentence-ambiguous', `${step}: der Wortlaut trägt schon Satznummern`);
       writeText(body, field, `¹${text}`, step);
       return;
     }
@@ -525,11 +527,15 @@ function locationOf(text: string, context: readonly LocationPath[]): LocationPat
  * `quoted`: die Einheiten mit dem zitierten Wortlaut hinter „…:“.
  */
 export function parseStructural(input: string, context: readonly LocationPath[], quoted: readonly GazetteUnit[]): StructuralParse | undefined {
-  const text = input.trim().replace(/\s+/gu, ' ');
+  // Lauf 11: Satzfehler „die Nrn. 6.1. bis 6.3.“ (BayMBl. 2022 Nr. 702) – ein Schlusspunkt einer mehrstufigen
+  // Dezimalbezeichnung vor „bis“/„und“/Komma gehört nicht zur Bezeichnung (bewiesen erst durch Vorwärtsprobe und Wortlaut).
+  const text = input.trim().replace(/\s+/gu, ' ').replace(/(?<![„\d.])(\d+(?:\.\d+)+)\.(?=\s*(?:bis|und|,)\s)/gu, '$1')
+    // „die folgenden Nrn. 4.5 bis Nr. 4.7“ (BayMBl. 2022 Nr. 702): die wiederholte Einheit.
+    .replace(/\b(Nrn\.\s+\d+(?:\.\d+)*)\s+(bis|und)\s+Nr\.\s+(?=\d)/gu, '$1 $2 ');
   let match: RegExpExecArray | null;
 
   // „Der Wortlaut wird Satz 1.“
-  if (/^Der\s+(?:bisherige\s+)?Wortlaut\s+wird\s+Satz\s+1\.?$/u.test(text)) return { formula: 'number-sentences', templates: [{ kind: 'number-sentences', context: flat(context) }] };
+  if (/^Der\s+(?:bisherige\s+)?Wortlaut\s+wird\s+Satz\s+1(?:\.|\s+und\s+(?:wird\s+)?wie\s+folgt\s+geändert\s*:)?$/u.test(text)) return { formula: 'number-sentences', templates: [{ kind: 'number-sentences', context: flat(context) }] };
   // „In Satz 1 wird die Satznummerierung „¹“ gestrichen.“ (GVBl. 2019 S. 380; BayMBl. 2022 Nr. 694), auch mit weiterem Befehl
   // am selben Ort („… gestrichen und die Angabe „2022“ durch die Angabe „2025“ ersetzt.“ – danach ausgeführt).
   // Auch „Die Satznummerierung in Satz 1 wird gestrichen.“ (BayMBl. 2020 Nr. 350) und ohne Zitat der Nummer.
@@ -642,9 +648,22 @@ export function parseStructural(input: string, context: readonly LocationPath[],
 
   // Glied: „Nach Nr. 4 wird folgende Nr. 5 eingefügt:“, „Folgender Abs. 6 wird angefügt:“, „Dem § 3 wird folgender Abs. 4 angefügt:“,
   // „Nach Abs. 2 werden die folgenden Abs. 3 und 4 eingefügt:“, „Vor Nr. 1 wird folgende Nr. 1 eingefügt:“
-  const blockPattern = new RegExp(String.raw`^(?:(?:(?:In|Im)\s+(.+?)\s+(?:wird|werden)\s+)|(?:(?:Dem|Der|Den)\s+(.+?)\s+(?:wird|werden)\s+)|(?:Es\s+(?:wird|werden)\s+))?(?:(nach|vor|Nach|Vor)\s+(?:dem\s+|der\s+)?${UNIT}\s+${VALUE}\s+(?:(?:wird|werden)\s+)?)?(?:die\s+)?[Ff]olgende[nrs]?\s+(?:neuen?\s+)?${UNIT}\s+${VALUES}\s+(?:(?:wird|werden)\s+)?(eingefügt|angefügt)\s*:$`, 'u');
+  const blockPattern = new RegExp(String.raw`^(?:(?:(?:In|Im)\s+(.+?)\s+(?:wird|werden)\s+)|(?:(?:Dem|Der|Den)\s+(.+?)\s+(?:wird|werden)\s+)|(?:Es\s+(?:wird|werden)\s+))?(?:(nach|vor|Nach|Vor)\s+(?:dem\s+|der\s+)?${UNIT}\s+${VALUE}\s+(?:(?:wird|werden)\s+)?)?(?:die\s+)?[Ff]olgende[nrs]?\s+(?:neue[nrs]?\s+)?${UNIT}\s+${VALUES}\s+(?:(?:wird|werden)\s+)?(eingefügt|angefügt)\s*:$`, 'u');
   const blockAppendFirst = new RegExp(String.raw`^(?:Die\s+)?[Ff]olgende[nrs]?\s+${UNIT}\s+${VALUES}\s+(?:wird|werden)\s+(angefügt|eingefügt)\s*:$`, 'u');
-  if ((match = blockPattern.exec(text))) {
+  // Lauf 10: „Nach § 2 Abs. 2 wird folgender Abs. 2a eingefügt:“ (GVBl. 2020 S. 511) – Anker mit mehrstufigem Ort: der
+  // Ort ohne letzte Stufe ist der Bereich, die letzte Stufe der Anker. „Es werden folgende Nr. 4 und folgende neue Nrn. 5
+  // bis 7 eingefügt:“ (GVBl. 2012 S. 12) – eine lückenlose Folge.
+  let blockText = text;
+  const deepAnchor = new RegExp(String.raw`^(Nach|Vor)\s+(.+?)\s+((?:wird|werden)\s+(?:die\s+)?[Ff]olgende[nrs]?\s+(?:neue[nrs]?\s+)?${UNIT}\s+[\s\S]+)$`, 'u').exec(text);
+  if (deepAnchor) {
+    const paths = parseLocation(deepAnchor[2]!);
+    if (paths && paths.length === 1 && paths[0]!.length > 1) blockText = `In ${formatPath(paths[0]!.slice(0, -1))} ${deepAnchor[3]!.replace(/^(wird|werden)\s+/u, `$1 ${deepAnchor[1]!.toLowerCase()} ${formatPath(paths[0]!.slice(-1))} `)}`;
+  }
+  // „Art. 1 wird folgender Abs. 3 angefügt:“ (GVBl. 2014 S. 117) – ohne Artikel, sonst wie „Dem Art. 1 wird …“.
+  if (/^(?:Art\.|§|Nr\.|Abs\.|Anlage|Teil|Abschnitt)\s*\d[\w.]*(?:\s+(?:Abs\.|Nr\.|Buchst\.)\s*\w[\w.]*)*\s+(?:wird|werden)\s+(?:die\s+)?folgende[nrs]?\s[\s\S]*angefügt\s*:$/u.test(blockText)) blockText = `Dem ${blockText}`;
+  const joinedRun = /folgende\s+Nr\.\s+(\d+)\s+und\s+folgende\s+(?:neue\s+)?Nrn\.\s+(\d+)\s+bis\s+(\d+)/u.exec(blockText);
+  if (joinedRun && Number(joinedRun[2]) === Number(joinedRun[1]) + 1) blockText = blockText.replace(joinedRun[0], `folgende Nrn. ${joinedRun[1]} bis ${joinedRun[3]}`);
+  if ((match = blockPattern.exec(blockText))) {
     const where = locationOf(match[1] ?? match[2] ?? '', context);
     const anchorKind = match[4] ? kindOf(match[4]) : undefined;
     const targetKind = kindOf(match[6]!);
@@ -839,7 +858,10 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
         return [{ operation: { kind: 'unnumber-sentences' }, field: frame.first, location: `${formatPath(template.context)} (Text vor der Aufzählung)`, resolved: frame.resolved, widened: frame.widened }];
       }
       const { field, resolved, widened } = singleTextField(body, template.context, step);
-      if (sentenceNumbers(fieldText(body, field, step)).length > 0) throw new StructuralError('sentence-ambiguous', `${step} ${formatPath(template.context)}: der Wortlaut trägt noch Satznummern`);
+      // Rückwärts: kein ¹, keine Nummer am Anfang; folgen ², ³ … lückenlos (ein später aufgehobener Satz ist schon
+      // zurückgenommen), erhält der Anfang ¹.
+      const numbers = sentenceNumbers(fieldText(body, field, step));
+      if (numbers.length > 0 && (numbers[0]!.start === 0 || numbers.some((marker, index) => marker.value !== index + 2))) throw new StructuralError('sentence-ambiguous', `${step} ${formatPath(template.context)}: der Wortlaut trägt noch Satznummern`);
       return [{ operation: { kind: 'unnumber-sentences' }, field, location: formatPath(template.context), resolved, widened }];
     }
     case 'number-sentences': {
@@ -930,6 +952,19 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
           // Das eingefügte ist genau das, dessen Wortlaut das Zitat ist.
           const candidates = (blockCandidates(body, template.context, target) ?? []).filter((path) => squash(blockWording(blockAt(body, path)!).text) === squash(template.quotes[position]!));
           if (candidates.length === 1) located = { ok: true, path: candidates[0]!, resolved: [`${formatPath([target])} (nach Wortlaut unterschieden)`], widened: [] };
+        } else if (!located.ok && /mehrfach/u.test(located.reason)) {
+          // Lauf 10: ein Zitat für mehrere Glieder („Nach § 7 werden die folgenden §§ 8 und 9 eingefügt:“ vor „Die bisherigen
+          // §§ 8 bis 10 werden die §§ 10 bis 12.“, GVBl. 2023 S. 577): das Glied, dessen Wortlaut im Zitat steht und das
+          // unmittelbar auf den Anker (oder das vorige eingefügte Glied) folgt.
+          const all = squash(template.quotes.join(' '));
+          const candidates = (blockCandidates(body, template.context, target) ?? []).filter((path) => {
+            if (!all.includes(squash(blockWording(blockAt(body, path)!).text))) return false;
+            const index = path.at(-1)!;
+            const siblings = path.length === 1 ? body : (blockAt(body, path.slice(0, -1))?.children ?? []);
+            if (parent !== undefined) return path.slice(0, -1).join(',') === parent.join(',') && index === previousIndex! + 1;
+            return !template.anchor || template.anchor.side !== 'after' || (siblings[index - 1] !== undefined && blockLabelMatches(siblings[index - 1]!, template.anchor.step));
+          });
+          if (candidates.length === 1) located = { ok: true, path: candidates[0]!, resolved: [`${formatPath([target])} (nach Wortlaut und Stelle unterschieden)`], widened: [] };
         }
         if (!located.ok) throw new StructuralError('location-unresolved', `${step} ${formatPath([...template.context, target])}: ${located.reason}`);
         const path = located.path;

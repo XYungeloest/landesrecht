@@ -216,7 +216,8 @@ const PRIOR_CLAUSE_TREATY = /^\s*,\s*zuletzt\s+geändert\s+durch\s+([^,()]{1,200
  * Befehlsform für die **Erkennung** (nie für Wortlaut oder Rezept): Ein Zeilenumbruch mit Trennstrich mitten im
  * Befehlsverb („wird wie folgt ge- ändert:“, GVBl. 2023 S. 626) wird zusammengezogen.
  */
-export const commandForm = (text: string): string => text.replace(/\bge-\s+ändert\b/gu, 'geändert');
+// Lauf 11: Eine Berichtigung des Normtexts („…, wird wie folgt berichtigt:“, BayMBl. 2026 Nr. 114) liest sich wie eine Änderung.
+export const commandForm = (text: string): string => text.replace(/\bge-\s+ändert\b/gu, 'geändert').replace(/\b(wird|werden)\s+wie\s+folgt\s+berichtigt\s*:\s*$/u, '$1 wie folgt geändert:');
 
 /** Label ohne einleitendes Anführungszeichen. */
 const cleanLabel = (label: string | undefined): string | undefined => label?.replace(/^[„‚"]+/u, '').trim() || undefined;
@@ -365,12 +366,20 @@ export interface IntroCandidate {
 }
 
 /** Alle Einleitungssätze der Seite, deren Zitat die Zielnorm stark bezeichnet und einen Befehl trägt. */
+/**
+ * Lauf 11: Zitat als Urheber einer früheren Änderung einer anderen Norm („Das Gesetz über … , zuletzt geändert durch
+ * Art. 10 Abs. 2 Nr. 2 des Gesetzes vom 7. Mai 2013 (GVBl S. 246), wird wie folgt geändert:“, GVBl. 2014 S. 286 – das
+ * ZustG hat andere Gesetze geändert): Der Befehl dahinter gilt der anderen Norm, nicht der zitierten.
+ */
+export const citedAsAmender = (cited: NormCitation): boolean => /(?:geändert|aufgehoben|neu\s+gefasst|ersetzt)\s+(?:durch|mit)\s+(?:(?:Art\.|Artikel|§|Nr\.|Abs\.|Absatz|Satz|Buchst\.)\s*[\w.]+\s+)*(?:des|der|dem|die|das)\s+(?:Gesetzes|Gesetz|Verordnung|Bekanntmachung)\s*$/u.test(cited.head.trim());
+
 export function introCandidates(units: readonly GazetteUnit[], identity: NormIdentity): IntroCandidate[] {
   const found: IntroCandidate[] = [];
   for (const unit of units) {
     if (unit.heading) continue;
     for (const cited of normCitations(unit.text)) {
       if (commandAfterCitation(unit.text, cited) === undefined) continue;
+      if (citedAsAmender(cited)) continue;
       const matched = citationMatches(cited, identity);
       if (isStrongMatch(matched)) found.push({ unit, citation: cited, matched });
     }

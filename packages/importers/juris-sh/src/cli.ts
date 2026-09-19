@@ -76,6 +76,8 @@ export interface CliOptions {
   stagingDir?: string;
   r2Transport?: 'wrangler' | 'wrangler-api';
   concurrency?: number;
+  /** r2-sync: `etag` prüft nach dem Upload über das Listing (Größe + MD5) statt jedes Objekt zurückzulesen. */
+  verify?: 'readback' | 'etag';
   /** search-audit: Stichprobe, Seed, Vollprüfung. */
   sample?: number;
   seed?: string;
@@ -133,6 +135,12 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
         break;
       }
       case '--concurrency': options.concurrency = positiveInteger(take(), '--concurrency'); break;
+      case '--verify': {
+        const verify = take();
+        if (verify !== 'readback' && verify !== 'etag') throw new Error('--verify erwartet readback|etag');
+        options.verify = verify;
+        break;
+      }
       case '--sample': options.sample = positiveInteger(take(), '--sample'); break;
       case '--seed': options.seed = take(); break;
       case '--full': options.full = true; break;
@@ -225,7 +233,7 @@ review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>
   Kandidaten des Ereignisregisters und Arbeitsliste der Normen mit Änderungen nach dem Stichtag.
   Ziele: data/imports/juris-sh/reconstruction-queue.json, data/audits/juris-sh/HISTORICAL_BASELINE.md,
          data/audits/juris-sh/RECONSTRUCTION_QUEUE.md`,
-  'r2-sync': `r2-sync [--stage-only | --write] [--r2-transport wrangler|wrangler-api] [--concurrency n] [--limit n] [--staging-dir pfad]
+  'r2-sync': `r2-sync [--stage-only | --write] [--r2-transport wrangler|wrangler-api] [--concurrency n] [--verify readback|etag] [--limit n] [--staging-dir pfad]
   Rohquellen (PDF) der übernommenen Normen nach R2, Bucket landesrecht-quellen, Präfix nsh/juris-sh/2023-12-01/.
   ohne Option   Dry-run: rechnet das Staging durch, schreibt nichts, kein Netz
   --stage-only  Staging nach .cache/juris-sh-r2-staging/ (nachgerechnet, mit Umschlag), Manifest archiveStatus
@@ -529,7 +537,7 @@ async function runSearchAuditCommand(options: CliOptions, root: string, io: Io):
     io.print(`Suchprüfung NSH (${audit.profile.mode}): ${audit.ok ? 'GRÜN' : 'ROT'} · ${audit.norms} Normen · ${audit.searchUnits} Sucheinheiten`);
     for (const [check, counts] of Object.entries(audit.checks)) if (counts.passed || counts.failed) io.print(`  ${check.padEnd(20)} bestanden ${String(counts.passed).padStart(6)} · gescheitert ${String(counts.failed).padStart(4)}${counts.skipped ? ` · übersprungen ${counts.skipped}` : ''}`);
     for (const failure of audit.failures.slice(0, 15)) io.print(`  ✗ ${failure.check} ${failure.slug}: ${failure.detail.slice(0, 140)}`);
-    io.print(`Golden Set: ${golden.set.queries.length} Anfragen${golden.generated ? ' (aus dem Bestand erzeugt)' : ''}`);
+    io.print(`Golden Set: ${golden.set.queries.length} Anfragen${golden.generated ? ' (aus dem Bestand erzeugt)' : ''}${golden.retired.length ? `, ${golden.retired.length} stillgelegt (erwartete Norm zurückgenommen: ${golden.retired.join(', ')})` : ''}`);
     for (const evaluation of golden.evaluations) {
       const m = evaluation.overall;
       io.print(`  ${evaluation.matchMode}: Recall@10 ${m.recallAt10}, MRR ${m.mrr}, Top-1 ${m.top1}, Sprungziel ${m.anchorOk}, Nulltreffer ${m.nullOk}, verletzt ${m.failed}, p95 ${m.latencyMs.p95} ms`);
@@ -574,7 +582,7 @@ async function runR2SyncCommand(options: CliOptions, root: string, io: Io): Prom
     return 1;
   }
   const transport = guardTransport(createOAuthTransport(options.r2Transport ?? 'wrangler', root));
-  const sync = await syncStaged({ root, manifest, transport, ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}), ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}) });
+  const sync = await syncStaged({ root, manifest, transport, ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}), ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}), ...(options.verify ? { verification: options.verify } : {}) });
   const written = await writeR2Report(root, { mode: 'write', stage, sync });
   io.print(`R2: offen ${sync.pending} · hochgeladen ${sync.uploaded} · vorhanden ${sync.alreadyPresent} · Normen geprüft ${sync.entriesVerified} · Staging fehlt ${sync.missingStaging.length}. Bericht: ${written.join(', ')}`);
   return sync.missingStaging.length === 0 ? 0 : 1;

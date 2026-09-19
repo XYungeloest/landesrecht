@@ -9,6 +9,7 @@ import {
   JURISDICTIONS,
   SIMULATION_BASELINE_DATE,
   formatBaselineDate,
+  jurisdictionGenitive,
 } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getJurisdictionUrl, getNormUrl, getNormVersionUrl, getNormSubpageUrl, resolveJurisdictionSegment } from '@landesrecht/legal-core/lib/routes.ts';
 
@@ -49,5 +50,17 @@ describe('Jurisdiktionsregister', () => {
   it('kennt OstRecht als externe Source of Truth nur für Ost', () => {
     expect(JURISDICTIONS.ost.externalSourceOfTruth?.system).toBe('ostrecht');
     for (const id of ['west', 'nsh', 'baywue'] as const) expect(JURISDICTIONS[id].externalSourceOfTruth).toBeUndefined();
+  });
+});
+
+describe('Genitiv der Landesbezeichnung', () => {
+  it('bildet „des Landes …“ bzw. „des Freistaats …“ aus der Staatsform, für jedes Land', () => {
+    expect(JURISDICTION_LIST.map((jurisdiction) => jurisdictionGenitive(jurisdiction))).toEqual([
+      'Landes Westdeutschland',
+      'Landes Niedersachsen-Holstein',
+      'Freistaats Ostdeutschland',
+      'Freistaats Bayern-Württemberg',
+    ]);
+    expect(() => jurisdictionGenitive({ name: 'Westdeutschland', stateForm: 'Land' })).toThrow(/Staatsform/u);
   });
 });

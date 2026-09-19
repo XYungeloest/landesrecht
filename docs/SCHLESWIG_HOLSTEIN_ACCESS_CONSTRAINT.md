@@ -117,6 +117,25 @@ redaktionelle Aufbereitung, Datenbankschutz) bleibt dem Menschen vorbehalten.
 - Vollkorpus: 5 195 Gesamtausgaben und 18 636 Einzelfassungen über diesen Weg (23 437 Netzabrufe, 0 Sperrantworten);
   Inventur und Bulk: `docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`, `data/audits/juris-sh/CORPUS_INVENTORY.md`.
 
+## 8a Run 8: Versuch mit verknüpften Anlagen auf `www.juris.de` (zurückgenommen)
+
+94 Ausgaben tragen statt einer Anlage den Vermerk „Es ist Text als PDF-Datei vorhanden. Bitte gesondert ausdrucken.“;
+77 davon verlinken per PDF-Annotation auf `http://www.juris.de/jportal/docs/anlage/norm/sh/<uuid>-<Name>.pdf`. Die
+Zugriffspolitik (`access/policy.ts`) wurde am 2026-09-19 kurz und eng erweitert: nur Host `www.juris.de`, nur das
+Präfix `/jportal/docs/anlage/norm/sh/` und `robots.txt`, nur GET, nur Adressen aus den Link-Annotationen gecachter
+Portal-PDFs, über den Adapter-Fetcher (1 Anfrage/s, ehrlicher User-Agent).
+
+Ergebnis: **6 Abrufe, kein Inhalt** – 4 an `www.juris.de` (`robots.txt` und 3 Anlagenadressen, davon eine in der
+Schreibvariante `%20` statt `+`) und 2 an den Portalhost `www.gesetze-rechtsprechung.sh.juris.de` (gleicher Pfad). Alle
+Anlagenadressen antworteten mit HTTP 404. `robots.txt` leitete auf `/jportal/cms/technik/media/static/robots.txt` um;
+der Fetcher folgte der Weiterleitung, das Ergebnis wurde als Verstoß gegen die Politik verworfen. Die Erweiterung wurde noch am selben Tag
+**zurückgenommen** (`git checkout packages/importers/juris-sh/src/access/policy.ts`); die Politik ist wieder die aus
+Abschnitt 2. Nicht versucht: `portal.juris.de`, die interne Schnittstelle `/jportal/wsrest/`, Suchmaschinen-Caches,
+andere Hosts.
+
+Die 94 Normen bleiben im Review (`incomplete-source-text`). Der amtliche Weg über die Verkündungsblätter ist nur für
+digital erzeugte Jahrgänge (ab 2017) ohne OCR gangbar; rund 71 der Fälle stammen aus früheren, nur gescannten Jahrgängen.
+
 ## 9 Hinweis zu anderen Ländern
 
 `https://www.gesetze-bayern.de/robots.txt` erlaubt ausdrücklich `User-agent: * / Allow: /`; der BayWü-Adapter ist

@@ -62,7 +62,7 @@ function fakeApi(options: { validTokens?: string[]; accounts?: Array<{ id: strin
   return { objects, requests, fetchImplementation };
 }
 
-function transportWith(api: ReturnType<typeof fakeApi>, extra: { readToken?: () => Promise<WranglerAuthConfig>; refreshToken?: () => Promise<void>; env?: Record<string, string | undefined>; accountId?: string; debug?: string[] }) {
+function transportWith(api: ReturnType<typeof fakeApi>, extra: { readToken?: () => Promise<WranglerAuthConfig>; refreshToken?: () => Promise<void>; env?: Record<string, string | undefined>; accountId?: string; debug?: string[]; now?: () => number }) {
   return createWranglerApiR2Transport({
     bucket: 'landesrecht-quellen',
     fetchImplementation: api.fetchImplementation,
@@ -70,6 +70,7 @@ function transportWith(api: ReturnType<typeof fakeApi>, extra: { readToken?: () 
     ...(extra.accountId ? { accountId: extra.accountId } : {}),
     readToken: extra.readToken ?? (async () => ({ oauthToken: TOKEN_A, expirationTime: FUTURE })),
     refreshToken: extra.refreshToken ?? (async () => undefined),
+    ...(extra.now ? { now: extra.now } : {}),
     retry: { sleep: noSleep },
     ...(extra.debug ? { debugLog: (line: string) => extra.debug!.push(line) } : {}),
   });
@@ -188,6 +189,21 @@ describe('Wrangler-API-R2-Transport (bestehende OAuth-Anmeldung ohne Prozessstar
     expect(api.requests.map((request) => `${request.method}:${request.token === TOKEN_B ? 'B' : 'A'}`)).toEqual(['PUT:B', 'PUT:B']);
     expect(await transport.get('k')).toEqual(new Uint8Array([1]));
     expect(refreshes).toBe(1);
+  });
+
+  it('verwendet ein Token innerhalb der Sicherheitsmarge bis zum echten Ablauf weiter (whoami erneuert erst danach)', async () => {
+    const api = fakeApi({ validTokens: [TOKEN_A, TOKEN_B] });
+    let clock = Date.parse('2026-09-19T12:00:00.000Z');
+    let current = { oauthToken: TOKEN_A, expirationTime: new Date(clock + 30_000).toISOString() };
+    let refreshes = 0;
+    const transport = transportWith(api, { accountId: 'acc-1', now: () => clock, readToken: async () => current, refreshToken: async () => { refreshes += 1; if (clock > Date.parse(current.expirationTime)) current = { oauthToken: TOKEN_B, expirationTime: new Date(clock + 3_600_000).toISOString() }; } });
+    await transport.put('k', new Uint8Array([1]), { contentType: 'application/octet-stream', metadata: {} });
+    await transport.put('k2', new Uint8Array([2]), { contentType: 'application/octet-stream', metadata: {} });
+    expect(refreshes).toBe(1);
+    clock += 60_000; // jetzt wirklich abgelaufen: Erneuerung liefert ein neues Token
+    await transport.put('k3', new Uint8Array([3]), { contentType: 'application/octet-stream', metadata: {} });
+    expect(refreshes).toBe(2);
+    expect(api.requests.map((request) => request.token === TOKEN_B ? 'B' : 'A')).toEqual(['A', 'A', 'B']);
   });
 
   it('bricht nach erfolgloser Erneuerung mit klarer Meldung ab – keine Endlosschleife, kein weiterer Prozessstart', async () => {

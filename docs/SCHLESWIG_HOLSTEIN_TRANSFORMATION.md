@@ -11,7 +11,7 @@ Nordrhein-Westfalen → Land Westdeutschland (`docs/RECHT_NRW_IMPORT.md`,
 | --- | --- |
 | Quellland (Provenienz, nie transformiert) | Schleswig-Holstein (`SOURCE_STATE`) |
 | Zieljurisdiktion | `nsh` – „Land Niedersachsen-Holstein“, Kurzform „NSH“, Verkündungsblatt „GVOBl. NSH“ |
-| Transformerversion | `juris-sh-transformer/1.1.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen |
+| Transformerversion | `juris-sh-transformer/1.2.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen |
 | Reportschema | `juris-sh-transformation-report/1` |
 | Institutionen-Zuordnung | `data/imports/juris-sh/institution-mapping.json` (`juris-sh-institution-mapping/1`) |
 | Tests | `tests/unit/juris-sh-transform.test.ts` |
@@ -105,6 +105,23 @@ Nicht übergeleitet werden weiterhin: Verkündungsblätter („GVOBl. Schl.-H.�
 Schl.-H.“, auch mit Ministeriumskürzel), Aktenzeichen, Fundstellen, historische Titel und Zitate anderer
 Normen in Fundstellen (Schutzmuster `gazette-dotted`, `file-reference`). Kein globales Ersetzen: Jede
 Anwendung ist eine Erkennung mit Regel, Fundstelle und `from`/`to` im Report.
+
+**Erweiterung 1.2.0 (Run 8), nur mit Beleg.**
+
+* Das Kürzel darf auch in der Mitte stehen („IZG-SH-KostenVO“, „SoVerm KI SH ErG“, „StBauFR SH 2015“) oder in Punktform
+  vorn („Schl.-H. BHV1-VO“); übergeleitet wird genau dieses eine Vorkommen. Voraussetzung bleibt der Beleg: amtliche
+  Abkürzung, Einführung im Text nach dem Landesnamen oder Kurzbezeichnung im Titel.
+* Amtliche Kurzbezeichnungen aus dem Klammerzusatz eines Normtitels („… Schleswig-Holstein (Studienakkreditierungs-
+  verordnung SH)“) dürfen lange Wörter tragen (`isStateShortTitle`); der Titel belegt sie als Bezeichnung der Norm. Sie
+  stammen aus der eigenen Norm und – über die erste Seite jeder Ausgabe – aus dem ganzen Bestand
+  (`official-abbreviations.json`, Schema /3, Feld `shortTitles`).
+* Vor einer bekannten Abkürzung genügt eine Grenze gegen Buchstaben („Abs. 1MBG Schl.-H.“: fehlendes Leerzeichen der
+  Quelle).
+* Geschützt (unverändert, kein Befund): Fundstellen ohne Blattnamen („(Schl.-H. S. 31)“, „Schl.-H. 2010 S. 415“), der
+  Rest „OBl. Schl.-H.“ einer Trennung „GV-/OBl.“, Aktenzeichen „– 90 SH – 5 – SH –“ und „II 178/ 3200 125g SH –“.
+* Weiter Review (kein Beleg): Einrichtungs-, System- und Regionskürzel ohne Einführung („Krankenhausgesellschaft SH“,
+  „Landesnetz SH“, „SH-Tarif“, „Helgoland SH“), Kurzformen fremder Titel („Mitbestimmungsgesetz Schl.-H.“) und
+  Tippfehler der Quelle („Schleswig-Holsteinigen“).
 
 **Historische Eigennamen (1.1.0).** Historische Staaten, Organe und Namen werden nie rückwirkend
 übergeleitet (BayWü-Regel): „Provinz Schleswig-Holstein“, „Provinzialverband“, „Provinziallandtag“,

@@ -30,6 +30,7 @@ import type { FormulaId, ParsedDeletion } from './formulas.ts';
 import { blockAt, blockCandidates, blockLabelMatches, formatPath, locateBlock, parseLocation, resolvePath, sentenceRange, type FieldRef, type LocationPath, type LocationStep } from './location.ts';
 import { stableStringify, type ScopeRecord } from './recipe.ts';
 import { quoteGroups, squash, textDelta, blockWording, type StructuralOperation } from './structural.ts';
+import { surface } from './apply.ts';
 
 export class RestoreError extends Error {
   readonly code: string;
@@ -288,13 +289,14 @@ function sentenceSpan(text: string, sentences: readonly number[]): { start: numb
 /** Vorwärts: Wie wird aus dem Feld der Verkündung das heutige? `undefined`, wenn der Befehl dort nicht passt. */
 export function forwardSentences(before: string, request: Extract<RestoreRequest, { kind: 'repeal-sentences' | 'recast-sentences' }>): string | undefined {
   if (request.kind === 'repeal-sentences') {
-    // Je Satz von hinten; nicht zusammenhängende Sätze einzeln.
+    // Je Satz von hinten; nicht zusammenhängende Sätze einzeln. Die Bereiche gelten im Wortlaut vor der Aufhebung
+    // (Lauf 10: nach Streichen von Satz 5 endete die Folge der Nummern bei ⁴ – Satz 4 reichte dann bis zum Ende).
+    const spans = request.sentences.map((number) => sentenceRange(before, number));
+    if (spans.some((span) => span === undefined)) return undefined;
     let text = before;
-    for (const number of [...request.sentences].reverse()) {
-      const span = sentenceRange(text, number);
-      if (!span) return undefined;
-      const head = text.slice(0, span.start);
-      const tail = text.slice(span.end);
+    for (const span of [...spans].sort((left, right) => right!.start - left!.start)) {
+      const head = text.slice(0, span!.start);
+      const tail = text.slice(span!.end);
       text = tail === '' ? head.trimEnd() : `${head}${tail}`;
     }
     return text;
@@ -404,8 +406,8 @@ export function realizeRestore(working: readonly NormBodyBlock[], base: Publicat
       try {
         restoreField(request.location, request.path, (before, current) => forwardSentences(before, request) === current, what);
       } catch (error) {
-        if (!(error instanceof RestoreError) || error.code !== 'restore-not-found' || request.kind !== 'repeal-sentences' || request.sentences.length !== 1) throw error;
-        steps.push(anchoredSentence(working, base, request, label));
+        if (!(error instanceof RestoreError) || error.code !== 'restore-not-found' || request.sentences.length !== 1) throw error;
+        steps.push(request.kind === 'repeal-sentences' ? anchoredSentence(working, base, request, label) : locatedRecastSentence(working, base, request, label));
       }
       return steps;
     }
@@ -531,6 +533,123 @@ function anchoredDeletion(working: readonly NormBodyBlock[], base: PublicationBa
 }
 
 /**
+ * Lauf 10: Wortersetzung, deren neuer Wortlaut im Bereich mehrfach steht („In Nr. 4.1 Satz 2 wird die Angabe „FEl-…“
+ * durch die Angabe „FEI-…“ ersetzt.“, BayMBl. 2025 Nr. 495 – ein Satzfehler der Vorfassung): Gemeint ist die Stelle, an der
+ * die Rücknahme den Wortlaut der Verkündungen ergibt – genau ein Kandidat muss wörtlich ein Feld des Stands vor der
+ * Änderung sein.
+ */
+export function disambiguatedReplacement(working: readonly NormBodyBlock[], base: PublicationBase, scope: ScopeRecord, rawFrom: string, rawTo: string, location: string): RestoredStep | undefined {
+  // Schreibweise wie bei der Rücknahme (`apply.ts`): anschließende Satzzeichen („ , “) ohne das Leerzeichen davor.
+  const fromSurface = surface(rawFrom);
+  const toSurface = surface(rawTo);
+  const from = fromSurface.text;
+  const to = toSurface.text;
+  if (to === '' || from === to) return undefined;
+  const known = new Set(allFields(base.body).map((field) => field.text));
+  // Mit Satzangabe genügt der Satz: Andere Sätze des Felds können andere Befehle derselben Änderung tragen.
+  const sentences = new Set<string>();
+  if (scope.sentence !== undefined) {
+    for (const field of allFields(base.body)) {
+      for (let number = 1; number < 40; number += 1) {
+        const range = sentenceRange(field.text, number);
+        if (!range) {
+          if (number > 1) break;
+          continue;
+        }
+        sentences.add(field.text.slice(range.start, range.end).trim());
+      }
+    }
+  }
+  const found: Array<{ field: FieldRef; current: string; before: string }> = [];
+  const windows: Array<{ field: FieldRef; current: string; before: string }> = [];
+  for (const field of scope.fields) {
+    const current = readText(working, field);
+    if (current === undefined) continue;
+    let start = 0;
+    let end = current.length;
+    if (scope.sentence !== undefined) {
+      const range = sentenceRange(current, scope.sentence);
+      if (!range) continue;
+      start = range.start;
+      end = range.end;
+    }
+    for (let at = current.indexOf(to, start); at >= 0 && at + to.length <= end; at = current.indexOf(to, at + 1)) {
+      let head = current.slice(0, at);
+      if (toSurface.attached && !fromSurface.attached) {
+        if (head === '' || head.endsWith(' ')) continue;
+        head = `${head} `;
+      }
+      if (fromSurface.attached && !toSurface.attached) {
+        if (!head.endsWith(' ')) continue;
+        head = head.slice(0, -1);
+      }
+      const before = `${head}${from}${current.slice(at + to.length)}`;
+      const sentence = scope.sentence === undefined ? undefined : sentenceRange(before, scope.sentence);
+      if (known.has(before) || (sentence && sentences.has(before.slice(sentence.start, sentence.end).trim()))) found.push({ field, current, before });
+      else {
+        // Sonst die Umgebung: der Alttext mit je bis zu 40 Zeichen davor und danach (auf ganze Wörter gekürzt) steht
+        // wörtlich in einem Feld der Verkündungen.
+        const cut = head.length;
+        const left = trimToWords(before.slice(Math.max(0, cut - 40), cut), 'left');
+        const right = trimToWords(before.slice(cut + from.length, cut + from.length + 40), 'right');
+        const window = `${left}${from}${right}`;
+        if (window.trim().length >= from.length + 12 && [...known].some((text) => text.includes(window))) windows.push({ field, current, before });
+      }
+    }
+  }
+  if (found.length === 0 && windows.length === 1) found.push(windows[0]!);
+  if (found.length !== 1) return undefined;
+  const { field, current, before } = found[0]!;
+  return {
+    location: `${location} (Stelle nach dem Wortlaut der Verkündungen)`,
+    scope: { fields: [field], resolved: scope.resolved, widened: scope.widened },
+    operation: { kind: 'replace-text', path: field.path, key: field.key, before, after: current },
+    evidence: textDelta(before, current),
+  };
+}
+
+/**
+ * Lauf 10: Neu gefasster Satz in einem Feld, das noch andere Änderungen derselben Änderung trägt („In Satz 1 wird …
+ * ersetzt. – Satz 2 wird wie folgt gefasst:“, BayMBl. 2024 Nr. 644): Der Alttext ist Satz N des Glieds, das die
+ * Ortsangabe (in der bisherigen Zählung) in der Verkündung bezeichnet – genau ein Feld dort trägt Satz N; im heutigen
+ * Feld wird Satz N durch ihn ersetzt, und die Neufassung vorwärts ergibt wieder das heutige Feld.
+ */
+function locatedRecastSentence(working: readonly NormBodyBlock[], base: PublicationBase, request: Extract<RestoreRequest, { kind: 'recast-sentences' }>, label: string): RestoredStep {
+  const number = request.sentences[0]!;
+  const scope = scopeFields(working, request.path, label);
+  const sourcePath = request.source?.kind === 'recast-sentences' ? request.source.path : request.path;
+  const located = locateBlock(base.body, sourcePath);
+  let sources = located.ok && located.path.length > 0 ? allFields([blockAt(base.body, located.path)!]).filter((source) => sentenceRange(source.text, number) !== undefined) : [];
+  // Vorbemerkung (unbezeichneter Text vor dem ersten Glied): ihre Felder in der Verkündung.
+  if (!located.ok && sourcePath[0]?.kind === 'vorspann') {
+    const scopeInBase = resolvePath(base.body, sourcePath.filter((step) => step.kind !== 'satz'));
+    sources = scopeInBase.ok ? scopeInBase.scope.fields.map((field) => ({ ...field, text: readText(base.body, field) ?? '' })).filter((source) => sentenceRange(source.text, number) !== undefined) : [];
+  }
+  const found: Array<{ field: FieldRef; current: string; before: string }> = [];
+  if (sources.length === 1) {
+    const old = sources[0]!.text;
+    const oldSpan = sentenceRange(old, number)!;
+    const oldSentence = old.slice(oldSpan.start, oldSpan.end).trim();
+    for (const field of scope.fields) {
+      const current = readText(working, field);
+      const span = current === undefined ? undefined : sentenceRange(current, number);
+      if (current === undefined || !span) continue;
+      const tail = current.slice(span.end);
+      const before = `${current.slice(0, span.start)}${oldSentence}${tail === '' ? '' : ` ${tail.replace(/^\s+/u, '')}`}`;
+      if (before !== current && forwardSentences(before, request) === current) found.push({ field, current, before });
+    }
+  }
+  if (found.length !== 1) throw new RestoreError(found.length === 0 ? 'restore-not-found' : 'restore-ambiguous', `${label} ${request.location}: neu gefasster Satz über das Glied der Verkündung ${found.length === 0 ? 'nicht gefunden' : 'nicht eindeutig'}`);
+  const { field, current, before } = found[0]!;
+  return {
+    location: `${request.location} (Satz des Glieds in der Verkündung)`,
+    scope: { fields: [field], resolved: scope.resolved, widened: scope.widened },
+    operation: { kind: 'replace-text', path: field.path, key: field.key, before, after: current },
+    evidence: textDelta(before, current),
+  };
+}
+
+/**
  * Aufgehobener Satz in einem Feld, das noch andere Änderungen trägt: Der Satz kommt aus dem Feld der Verkündung, dessen
  * Satz davor (oder danach) im heutigen Feld wörtlich steht; eingesetzt wird er vor der Satznummer des folgenden Satzes
  * (oder am Ende).
@@ -546,15 +665,18 @@ function anchoredSentence(working: readonly NormBodyBlock[], base: PublicationBa
   for (const field of scope.fields) {
     const current = readText(working, field);
     if (current === undefined) continue;
-    const previous = number > 1 ? sentenceText(current, number - 1) : undefined;
-    const nextMarker = sentenceRange(current, number + 1);
-    if (sentenceRange(current, number)) continue;
+    // Lauf 10: Hat dieselbe Änderung die Nummer von Satz 1 gestrichen („In Satz 1 wird die Satznummerierung „¹“
+    // gestrichen. – Satz 2 wird aufgehoben.“, GVBl. 2023 S. 577), ist der ganze unnummerierte Wortlaut Satz 1.
+    const unnumbered = number === 2 && !/[¹²³⁴⁵⁶⁷⁸⁹⁰]/u.test(current);
+    const previous = unnumbered ? current.trim() : number > 1 ? sentenceText(current, number - 1) : undefined;
+    const nextMarker = unnumbered ? undefined : sentenceRange(current, number + 1);
+    if (!unnumbered && sentenceRange(current, number)) continue;
     for (const source of allFields(base.body)) {
       const repealed = sentenceText(source.text, number);
       if (!repealed) continue;
       const sourcePrevious = number > 1 ? sentenceText(source.text, number - 1) : undefined;
       const sourceNext = sentenceText(source.text, number + 1);
-      const anchoredBefore = previous !== undefined && sourcePrevious !== undefined && previous === sourcePrevious;
+      const anchoredBefore = previous !== undefined && sourcePrevious !== undefined && (previous === sourcePrevious || (unnumbered && sourcePrevious.replace(/^¹\s*/u, '') === previous));
       const anchoredAfter = nextMarker !== undefined && sourceNext !== undefined && current.slice(nextMarker.start, nextMarker.end).trim() === sourceNext;
       if (!anchoredBefore && !anchoredAfter) continue;
       let before: string;
@@ -569,7 +691,8 @@ function anchoredSentence(working: readonly NormBodyBlock[], base: PublicationBa
     // Der Nachbarsatz ist selbst geändert (ein älterer Befehl derselben Änderung, erst danach zurückgenommen): War der
     // aufgehobene Satz der letzte seines Glieds in der Verkündung und trägt das Glied heute genau die Sätze davor, steht er
     // am Ende. Das Glied der Verkündung ergibt sich aus der Ortsangabe, nicht aus dem Wortlaut.
-    const located = locateBlock(base.body, request.path);
+    // Unter der alten Bezeichnung, wenn der übergeordnete Befehl das Glied umnummeriert (Lauf 10, BayMBl. 2024 Nr. 644).
+    const located = locateBlock(base.body, request.source?.kind === 'repeal-sentences' ? request.source.path : request.path);
     const sources = located.ok && located.path.length > 0 ? allFields([blockAt(base.body, located.path)!]).filter((source) => sentenceText(source.text, number) !== undefined && sentenceRange(source.text, number + 1) === undefined) : [];
     const targets = scope.fields.map((field) => ({ field, current: readText(working, field) })).filter((entry): entry is { field: FieldRef; current: string } => entry.current !== undefined && number > 1 && sentenceRange(entry.current, number - 1) !== undefined && sentenceRange(entry.current, number) === undefined);
     if (sources.length === 1 && targets.length === 1) {
@@ -709,6 +832,30 @@ function parentOf(body: readonly NormBodyBlock[], context: LocationPath, first: 
   return candidates[0]!.slice(0, -1);
 }
 
+/**
+ * Lauf 10: Eltern-Glied im heutigen Text über die Nachbarn in der Verkündung – das Glied davor und das danach, je
+ * genau einmal mit derselben mehrstufigen Dezimalbezeichnung („4.4.1“; „(1)“ oder „1.“ sind nicht eindeutig) im heutigen
+ * Text und unter demselben Eltern-Glied (BayMBl. 2024 Nr. 644:
+ * „Nr. 4.4.2 wird aufgehoben.“ – heute stehen Nr. 4.4.1 und die umnummerierte Nr. 4.4.2 in einem anders gegliederten Nr. 4.4).
+ */
+function neighbourParent(working: readonly NormBodyBlock[], siblings: readonly NormBodyBlock[], indices: readonly number[]): number[] | undefined {
+  const labelled = (label: string): number[][] => {
+    const hits: number[][] = [];
+    const visit = (blocks: readonly NormBodyBlock[], path: number[]): void => blocks.forEach((block, index) => {
+      if (typeof block.label === 'string' && block.label.trim() === label) hits.push([...path, index]);
+      visit(block.children ?? [], [...path, index]);
+    });
+    visit(working, []);
+    return hits;
+  };
+  const parents = [siblings[indices[0]! - 1], siblings[indices.at(-1)! + 1]]
+    .filter((block): block is NormBodyBlock => block !== undefined && typeof block.label === 'string' && /^\d+(?:\.\d+)+\.?$/u.test(block.label.trim()))
+    .map((block) => labelled(String(block.label).trim()))
+    .map((hits) => (hits.length === 1 ? hits[0]!.slice(0, -1).join(',') : undefined));
+  if (parents.length === 0 || parents.some((parent) => parent === undefined) || new Set(parents).size !== 1) return undefined;
+  return parents[0] === '' ? [] : parents[0]!.split(',').map(Number);
+}
+
 function restoreBlocks(working: readonly NormBodyBlock[], base: PublicationBase, request: Extract<RestoreRequest, { kind: 'recast-blocks' | 'repeal-blocks' }>, label: string): RestoredStep {
   const where = `${label} ${request.location}`;
   // Verkündung: die bisherigen Glieder, aufeinanderfolgend unter einem Eltern-Glied – in der bisherigen Zählung, wenn
@@ -724,7 +871,7 @@ function restoreBlocks(working: readonly NormBodyBlock[], base: PublicationBase,
   // Portal: Eltern-Glied und Stelle.
   // Über die Bezeichnungen der Vorfahren nur, wenn Verkündung und heutiger Text dieselbe Zählung tragen (sonst führte die
   // bisherige Bezeichnung im heutigen Text zu einem anderen Glied).
-  const portalParent = parentOf(working, request.context, request.targets[0]!) ?? (source === request ? mirrorParent(base.body, publicationParent, working) : undefined) ?? (() => {
+  const portalParent = parentOf(working, request.context, request.targets[0]!) ?? neighbourParent(working, publicationSiblings, publicationIndices as number[]) ?? (source === request ? mirrorParent(base.body, publicationParent, working) : undefined) ?? (() => {
     const located = locateBlock(working, request.context);
     return located.ok ? located.path : undefined;
   })();

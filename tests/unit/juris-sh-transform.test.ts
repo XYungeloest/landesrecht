@@ -72,7 +72,7 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.1.0');
+    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.2.0');
   });
 });
 
@@ -186,7 +186,7 @@ describe('Kürzel „Schl.-H.“ und „SH“', () => {
   });
 });
 
-describe('Abkürzungen mit Landeskürzel (Version 1.1.0) und historische Namen', () => {
+describe('Abkürzungen mit Landeskürzel (Version 1.1.0/1.2.0) und historische Namen', () => {
   const known = new Set(['MBG Schl.-H.', 'LStVollzG SH', 'GVFG-SH', 'SH AbgG', 'GlüStV 2021 AG SH']);
   const convert = (value: string, extra: readonly string[] = []): string => transformText(value, 'p', [], { knownStateLawAbbreviations: new Set([...known, ...extra]) });
 
@@ -208,6 +208,29 @@ describe('Abkürzungen mit Landeskürzel (Version 1.1.0) und historische Namen',
     const defined = definedStateAbbreviations(['Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH) ist zuständig', '(Mitbestimmungsgesetz Schleswig-Holstein - MBG Schl.-H.)', 'Gesetz (GVOBl. Schl.-H. S. 3)']);
     expect([...defined].sort()).toEqual(['LVermGeo SH', 'MBG Schl.-H.']);
     expect(convert('das LVermGeo SH prüft', [...defined])).toBe('das LVermGeo NSH prüft');
+  });
+
+  it('1.2.0: Kürzel in der Mitte oder als Punktform vorn, fehlendes Leerzeichen vor der Abkürzung', () => {
+    expect(convert('die IZG-SH-KostenVO und die SoVerm KI SH ErG', ['IZG-SH-KostenVO', 'SoVerm KI SH ErG'])).toBe('die IZG-NSH-KostenVO und die SoVerm KI NSH ErG');
+    expect(convert('nach der StBauFR SH 2015 gilt', ['StBauFR SH 2015'])).toBe('nach der StBauFR NSH 2015 gilt');
+    expect(convert('Die Schl.-H. BHV1-VO tritt', ['Schl.-H. BHV1-VO'])).toBe('Die NSH BHV1-VO tritt');
+    expect(convert('§ 8 Abs. 1MBG Schl.-H. findet')).toBe('§ 8 Abs. 1MBG NSH findet');
+  });
+
+  it('1.2.0: Kurzbezeichnungen aus dem Normtitel dürfen lange Wörter tragen, freie Abkürzungen nicht', async () => {
+    const { titleShortTitles, isStateAbbreviation, isStateShortTitle } = await import('@landesrecht/importer-juris-sh/transform/rules.ts');
+    expect([...titleShortTitles('Landesverordnung über die Studienakkreditierung in Schleswig-Holstein (Studienakkreditierungsverordnung SH)')]).toEqual(['Studienakkreditierungsverordnung SH']);
+    expect(isStateAbbreviation('Studienakkreditierungsverordnung SH')).toBe(false);
+    expect(isStateShortTitle('Studienakkreditierungsverordnung SH')).toBe(true);
+    expect(isStateShortTitle('GVOBl. Schl.-H.')).toBe(false);
+    expect(isStateShortTitle('Krebsregister SH und SH-Netz')).toBe(false);
+    expect(convert('nach der Studienakkreditierungsverordnung SH', ['Studienakkreditierungsverordnung SH'])).toBe('nach der Studienakkreditierungsverordnung NSH');
+  });
+
+  it('1.2.0: Fundstellen ohne Blattnamen und Aktenzeichen bleiben unverändert', () => {
+    for (const text of ['vom 25. Februar 1975 (Schl.-H. S. 31)', 'vom 12. Mai 2010 (GVOBl. Schl.-H. S. 415) und (Schl.-H. 2010 S. 415)', '(GV- OBl. Schl.-H. S. 162)', 'Erl. v. 10.12.2001 – II 142/1510 E – 90 SH – 5 – SH –', 'MJAE vom 07.02.2007 – II 178/ 3200 125g SH –']) {
+      expect(convert(text)).toBe(text);
+    }
   });
 
   it('leitet die preußische Provinz nicht über und meldet eine übergeleitete historische Bezeichnung', () => {

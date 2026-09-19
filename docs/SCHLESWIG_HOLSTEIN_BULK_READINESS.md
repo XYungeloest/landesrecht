@@ -1,8 +1,9 @@
 # Bereitschaft und Stand des NSH-Ausgangsimports
 
-**Stand 2026-09-19 (Run 7) · Readiness: TECHNICALLY READY · Remote: REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION ·
-Bestand: 2 383 Normen unter `content/norms/nsh` (lokal, nicht committet, nicht deployt) · R2: gestagt, nicht
-hochgeladen · D1: lokal projiziert, Remote-Batches vorbereitet, nicht eingespielt.**
+**Stand 2026-09-19 (Release) · Readiness: TECHNICALLY READY · Remote: REMOTE RELEASE APPROVED (Nutzungsfreigabe von
+juris laut Nutzer; Release vom Nutzer freigegeben; Raw-/Provenienzregeln unverändert) · Bestand: 2 450 Normen live
+(Worker `3d606854`, Run 8) · R2: `nsh/` 17 024 Objekte, über das Listing verifiziert · D1 `landesrecht-nsh`:
+eingespielt, Fingerabdruck `6cf5aa27`, lokal ↔ remote identisch · Smoke 25/25.**
 
 Maschinelle Prüfung: `npm run import:juris-sh:readiness` (`data/audits/juris-sh/READINESS.md`). Die Readiness trennt
 zwei Aussagen: `TECHNICALLY READY` (Zugriffsweg, Vollkorpus, Stichtag, Integrität, Bestand) und die Remote-Freigabe
@@ -128,6 +129,35 @@ node scripts/project-d1.ts --target remote-batches --jurisdiction nsh
 ```
 
 Remote-Schritte (Schema zuerst, dann Batches, R2, Deploy) und Smoke-Plan: `docs/NSH_REMOTE_RELEASE_PLAN.md`.
+
+## 8a Run 8 (2026-09-19, nach dem Remote-Release)
+
+| Status (Vollkorpus 5 197) | Run 7 (c15135929) | Run 8 |
+| --- | ---: | ---: |
+| übernommen | 2 383 | **2 450** |
+| nicht am Stichtag | 1 643 | 1 720 (davon 77 Anlagendokumente, deren eigene Fassung am Stichtag nicht galt) |
+| Review | 586 | 499 |
+| Rekonstruktion offen | 56 | 46 |
+| Anlage einer Stammnorm | 523 | 476 |
+| fehlgeschlagen / ohne PDF | 4 / 2 | 4 / 2 |
+| baseline-only ohne juris-Dokument | 5 | 5 |
+
+Offene Review-Fälle 752 → 613 (Dokumente 653 → 551). Neu übernommen 77, zurückgenommen 10 (veröffentlichte Fassungen
+mit nicht belegter Tabellenstruktur, Befund `withdrawn-after-import`, Freigaben in
+`data/content-immutability-exceptions.json`, Basis `c15135929`).
+
+- **Tabellen:** Längstes sicheres Raster statt ganzer Block; mehrzeilige Zellen nur bei abgesetzten, gleichmäßigen
+  Tabellenzeilen und zeichengleicher Prüfung (Integrität: `explained-difference` mit Umordnung); Kopfzeile über einer
+  leeren Zelle; Tabellenzeile statt zufällig mittiger Überschrift; Zeile vor der Tabelle ohne Spaltenzuordnung →
+  Befund `row-before-table`.
+- **Anlagen:** Stammnorm gleichnamiger Änderungsbekanntmachungen über das gemeinsame Erlassdatum. Die 94 juris-PDF-
+  Anlagen bleiben Review (Links tot, `SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` Abschnitt 8a).
+- **Abkürzungen:** Transformer 1.2.0 (`SCHLESWIG_HOLSTEIN_TRANSFORMATION.md`).
+- **Einzelfassungen:** Paragraphenfolge nach Nummer (nur reine Paragraphenfolgen), wortgleiche Doppelfassungen,
+  undatierte Fassungen nach dem Stichtag, Parserfehler nur gewählter Einheiten.
+- Such-Audit `--full` GRÜN (2 450), Golden 124 Anfragen (1 stillgelegt: Norm zurückgenommen), beide Modi 0 verletzt;
+  West + BayWü + NSH 12/12. D1-Batches inkrementell (neu 77, entfernt 10, geändert 97; 6 Dateien, Fingerabdruck
+  `6cf5aa27`). R2-Staging 8 339 Objekte, davon 774 neu.
 
 ## 9 Offen
 

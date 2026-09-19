@@ -273,7 +273,20 @@ Tarifvertrags-Ausschluss ist plausibel (1/29 in juris). Neue Ausschlüsse wurden
 5. Registerparser (NSH-main): Artikelzeilen „Art. 1 vom …“ als Ausfertigung lesen (182 Köpfe), Ressortspalte nicht
    in den Titel ziehen (224-1-39).
 
-## 7 Offene Rechtsfrage (Tatsachen für die menschliche Entscheidung)
+## 7 Entscheidung (2026-09-19)
+
+- **Nutzungsfreigabe:** Für die geplante Nutzung des Schleswig-Holstein/juris-Landesrechtsbestands liegt nach
+  Bestätigung des Nutzers eine Nutzungsfreigabe von juris vor. Die Freigabe selbst liegt nicht im Repository; ihre
+  Bedingungen sind hier nicht wiedergegeben und werden nicht angenommen.
+- **Release:** vom Nutzer freigegeben. Vermerk `data/imports/juris-sh/source-rights-approval.json`; die Readiness
+  meldet `REMOTE RELEASE APPROVED`. Der TDM-Vorbehalt (`tdm-reservation: 1`) ist für dieses Projekt und den
+  freigegebenen Nutzungsumfang kein Release-Blocker mehr.
+- **Unverändert:** Raw- und Provenienzregeln (Abschnitte 1–5): amtlicher Rechtsinhalt als kanonischer Inhalt,
+  juris-redaktionelle Zusätze nicht öffentlich, juris-Abruf als Konsolidierungs-/Fassungsquelle dokumentiert.
+
+Der folgende Abschnitt hält die Tatsachen fest, die vor der Entscheidung vorlagen.
+
+## 7a Tatsachen vor der Entscheidung
 
 Neutral zusammengestellt; keine Schlussfolgerung.
 

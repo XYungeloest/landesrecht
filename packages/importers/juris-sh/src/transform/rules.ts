@@ -32,7 +32,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'juris-sh-transformer/1.1.0';
+export const TRANSFORMER_VERSION = 'juris-sh-transformer/1.2.0';
 
 export interface TransformationRule {
   id: string;
@@ -125,8 +125,13 @@ const STATE_FORM_BEFORE = String.raw`(?<=\b(?:Land|Landes|Lande)\s)`;
 /** Nach „… Schl.-H.“ beginnt ein neuer Satz (Großbuchstabe, Anführungszeichen) oder der Text endet. */
 const SENTENCE_CONTINUATION_AFTER_DOT = /^(?:\s*$|\s+[A-ZÄÖÜ„"])/u;
 
-/** Abgesetztes Landeskürzel in einer Abkürzung: „SH“ am Anfang, „SH“ oder „Schl.-H.“ am Ende, getrennt durch Leerzeichen oder Bindestrich. */
-export const ABBREVIATION_STATE_MARKER = new RegExp(String.raw`(?:^SH(?=[\s.-])|(?<=[\s-])(?:SH|${DOTTED_ABBREVIATION})$)`, 'u');
+/**
+ * Abgesetztes Landeskürzel in einer Abkürzung: „SH“ bzw. „Schl.-H.“ als eigener Teil, getrennt durch Leerzeichen oder
+ * Bindestrich – am Anfang („SH-BeamtVG“, „Schl.-H. BHV1-VO“), am Ende („MBG Schl.-H.“) oder, seit 1.2.0, in der Mitte
+ * („IZG-SH-KostenVO“, „SoVerm KI SH ErG“, „StBauFR SH 2015“).
+ */
+export const ABBREVIATION_STATE_MARKER = new RegExp(String.raw`(?:(?<=^|[\s-])SH(?=$|[\s.-])|(?<=^|[\s-])${DOTTED_ABBREVIATION}(?=$|[\s-]))`, 'u');
+const MARKER_TOKEN = new RegExp(String.raw`(^|[\s-])(SH|${DOTTED_ABBREVIATION})(?=$|[\s.-])`, 'u');
 /** Landeskürzel in beiden Schreibweisen (Kurzform „SH“, Punktform „Schl.-H.“). */
 const STATE_MARKER_VARIANTS = String.raw`(?:SH|${DOTTED_ABBREVIATION})`;
 
@@ -134,17 +139,39 @@ const STATE_MARKER_VARIANTS = String.raw`(?:SH|${DOTTED_ABBREVIATION})`;
 export function isStateAbbreviation(abbreviation: string): boolean {
   const normalized = abbreviation.replace(/\s+/gu, ' ').trim();
   if (normalized.length < 4 || normalized.length > 40) return false;
-  if (/^(?:GVOB[lIL]|GOVBl|GVBl|Amtsbl|Amtsblatt|ABl|NB[lL]|MBl|SchlHA|GS|StPOGS)\b/u.test(normalized)) return false;
+  if (/^(?:GVOB[lIL]|GOVBl|GVBl|Amtsbl|Amtsblatt|ABl|NB[lL]|MBl|SchlHA|GS|StPOGS|OBl)\b/u.test(normalized)) return false;
   if (/^\d/u.test(normalized) || /\s(?:und|oder|vom|der|des|in|für|nach)\s/u.test(` ${normalized} `)) return false;
-  if (!ABBREVIATION_STATE_MARKER.test(normalized)) return false;
+  const stem = stateAbbreviationStem(normalized);
+  if (stem === undefined) return false;
   // Der Stamm muss eine Abkürzung sein: kein Aktenzeichen („II 32/1200 - 75 SH“), kein Satzrest („Holstein - MBG …“),
   // höchstens drei Teile, jeder Teil mit Großbuchstaben bzw. Ziffern; lange Wörter nur mit mehreren Großbuchstaben.
-  const stem = normalized.replace(new RegExp(String.raw`^SH[\s.-]|[\s-](?:SH|${DOTTED_ABBREVIATION})$`, 'u'), '');
   if (/[/]|\s[-–]\s|\s[-–]\d/u.test(stem)) return false;
   const tokens = stem.split(' ');
   if (tokens.length > 3) return false;
   const upper = (text: string): number => [...text].filter((character) => /[A-ZÄÖÜ]/u.test(character)).length;
-  return tokens.every((token) => /^\d+$/u.test(token) || (/^[A-ZÄÖÜ]/u.test(token) && token.split('-').every((part) => part.length <= 8 || upper(part) >= 2)));
+  return /^[A-ZÄÖÜ]/u.test(stem) && tokens.every((token) => /^\d+$/u.test(token) || (/^[A-ZÄÖÜ]/u.test(token) && token.split('-').every((part) => part.length <= 8 || upper(part) >= 2)));
+}
+
+/** Abkürzung ohne das (genau einmal vorkommende) abgesetzte Landeskürzel; `undefined`, wenn es fehlt oder mehrfach steht. */
+export function stateAbbreviationStem(abbreviation: string): string | undefined {
+  const normalized = abbreviation.replace(/\s+/gu, ' ').trim();
+  const global = new RegExp(ABBREVIATION_STATE_MARKER.source, 'gu');
+  if ([...normalized.matchAll(global)].length !== 1) return undefined;
+  const stem = normalized.replace(MARKER_TOKEN, (_, before: string) => (before === ' ' ? ' ' : before)).replace(/^[\s.-]+|[\s-]+$/gu, '').replace(/\s{2,}/gu, ' ').replace(/--+/gu, '-').trim();
+  return stem === '' ? undefined : stem;
+}
+
+/**
+ * Amtliche Kurzbezeichnung mit Landeskürzel aus dem Titel einer Norm („… Schleswig-Holstein (Studienakkreditierungs-
+ * verordnung SH)“, 1.2.0): Anders als eine freie Abkürzung darf sie ein langes Wort tragen – der Titel belegt sie als
+ * Bezeichnung der Norm. Höchstens vier Wörter, das Kürzel genau einmal, kein Verkündungsblatt, kein Aktenzeichen.
+ */
+export function isStateShortTitle(value: string): boolean {
+  const normalized = value.replace(/\s+/gu, ' ').trim();
+  if (normalized.length < 4 || normalized.length > 60) return false;
+  if (/^(?:GVOB[lIL]|GOVBl|GVBl|Amtsbl|Amtsblatt|ABl|NB[lL]|MBl|SchlHA|GS|StPOGS|OBl)\b/u.test(normalized) || /[/]|\s[-–]\s/u.test(normalized)) return false;
+  const stem = stateAbbreviationStem(normalized);
+  return stem !== undefined && /^[A-ZÄÖÜ]/u.test(stem) && stem.split(' ').length <= 4 && !/\s(?:und|oder|vom|der|des|in|für|nach)\s/u.test(` ${stem} `);
 }
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
@@ -159,9 +186,12 @@ function abbreviationSource(abbreviation: string): string {
   const part = (text: string): string => escapeRegExp(text).replace(/ /gu, String.raw`\s*`).replace(/-/gu, String.raw`\s?-\s?`);
   const prefix = /^SH([\s.-])(.+)$/u.exec(normalized);
   if (prefix) return `SH${prefix[1] === '.' ? String.raw`\.` : String.raw`(?:\s?-\s?|\s+)`}${part(prefix[2]!)}`;
-  const suffix = new RegExp(String.raw`^(.+?)[\s-]${STATE_MARKER_VARIANTS}$`, 'u').exec(normalized);
-  if (suffix) return `${part(suffix[1]!)}(?:\\s?-\\s?|\\s+)${STATE_MARKER_VARIANTS}`;
-  return part(normalized);
+  const marker = MARKER_TOKEN.exec(normalized);
+  if (!marker) return part(normalized);
+  const before = normalized.slice(0, marker.index + marker[1]!.length).replace(/[\s-]+$/u, '');
+  const after = normalized.slice(marker.index + marker[0].length).replace(/^[\s-]+/u, '');
+  const separator = String.raw`(?:\s?-\s?|\s+)`;
+  return `${before ? `${part(before)}${separator}` : ''}${STATE_MARKER_VARIANTS}${after ? `${separator}${part(after)}` : ''}`;
 }
 
 /** Setzt in einer Abkürzung das abgesetzte Landeskürzel auf die Zielkonvention („MBG Schl.-H.“ → „MBG NSH“). */
@@ -169,7 +199,8 @@ export function targetAbbreviation(abbreviation: string, after = ''): string {
   const dotted = new RegExp(`${DOTTED_ABBREVIATION}$`, 'u').exec(abbreviation);
   if (dotted) return `${abbreviation.slice(0, dotted.index)}${targetShortName()}${SENTENCE_CONTINUATION_AFTER_DOT.test(after) ? '.' : ''}`;
   if (/^SH(?=[\s.-])/u.test(abbreviation)) return `${targetShortName()}${abbreviation.slice(2)}`;
-  return abbreviation.replace(/SH$/u, targetShortName());
+  // Kürzel in der Mitte oder am Anfang in Punktform: genau dieses Vorkommen ersetzen.
+  return abbreviation.replace(MARKER_TOKEN, (_, before: string) => `${before}${targetShortName()}`);
 }
 
 function stateName(match: RegExpMatchArray): string {
@@ -192,10 +223,11 @@ export function transformationRules(options: TransformationOptions = {}): Transf
 }
 
 function buildTransformationRules(options: TransformationOptions): TransformationRule[] {
-  const known = [...new Set([...(options.knownStateLawAbbreviations ?? [])].map((entry) => entry.replace(/\s+/gu, ' ').trim()))].filter(isStateAbbreviation).sort((left, right) => right.length - left.length || left.localeCompare(right));
+  const known = [...new Set([...(options.knownStateLawAbbreviations ?? [])].map((entry) => entry.replace(/\s+/gu, ' ').trim()))].filter((entry) => isStateAbbreviation(entry) || isStateShortTitle(entry)).sort((left, right) => right.length - left.length || left.localeCompare(right));
   const abbreviationRules: TransformationRule[] = known.length === 0 ? [] : [{
     id: 'jurisdiction-abbreviation-known-law',
-    pattern: new RegExp(String.raw`(?<![\p{L}\d.-])(?:${known.map(abbreviationSource).join('|')})(?![\p{L}\d-])`, 'gu'),
+    // Links genügt eine Wortgrenze gegen Buchstaben: „Abs. 1MBG Schl.-H.“ (fehlendes Leerzeichen der Quelle) trifft.
+    pattern: new RegExp(String.raw`(?<![\p{L}.-])(?:${known.map(abbreviationSource).join('|')})(?![\p{L}\d-])`, 'gu'),
     replace: (match, source) => targetAbbreviation(match[0], source.slice((match.index ?? 0) + match[0].length)),
   }];
   return [
@@ -259,7 +291,9 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
     // „GVOBI.“ (großes I statt kleinem l) ist eine Schreibvariante im Quelltext der juris-Ausgabe; ebenso „GVOBl.-Schl.-H.“,
     // „GVOBl Schl.-H.“, „GOVBl.“, „Amtsblatt Schl.-H.“ und „GS Schl.-H.“ (Sammlung des schleswig-holsteinischen Landesrechts).
     // Nachrichtenblätter der Ressorts tragen das Ressortkürzel mit oder ohne Punkt („NBl. MSB. Schl.-H.“, „NBl. HS MBWK Schl.-H.“).
-    pattern: new RegExp(String.raw`\b(?:GVOB[lIL]|GOVBl|GVBl|Amtsbl|Amtsblatt|ABl|NB[lL]|MBl|SchlHA|GS|StPOGS)\.?\s*-?\s*(?:[A-ZÄÖÜ]{2,8}\.?\s*){0,2}${DOTTED_ABBREVIATION}(?:\s*(?:\d{4}\s*)?S\.\s*\d+[a-z]?)?`, 'gu'),
+    // „OBl. Schl.-H.“: Rest von „GV-/OBl.“ nach Trennung am Zeilenende (1.2.0). Ohne Blattnamen, aber mit Seitenangabe
+    // („(Schl.-H. S. 31)“, „Schl.-H. 2010 S. 415“) ist das Kürzel ebenfalls Teil einer Fundstelle.
+    pattern: new RegExp(String.raw`(?:\b(?:GVOB[lIL]|GOVBl|GVBl|Amtsbl|Amtsblatt|ABl|NB[lL]|MBl|SchlHA|GS|StPOGS|OBl)\.?\s*-?\s*(?:[A-ZÄÖÜ]{2,8}\.?\s*){0,2}${DOTTED_ABBREVIATION}(?:\s*(?:\d{4}\s*)?S\.\s*\d+[a-z]?)?|(?<![\p{L}])${DOTTED_ABBREVIATION}\s*(?:\d{4}\s*,?\s*)?S\.\s*\d+[a-z]?)`, 'gu'),
     reason: 'Amtliche Fundstelle des Herkunftslandes (Verkündungs-, Amts- oder Nachrichtenblatt) bleibt unverändert',
   },
   {
@@ -273,7 +307,8 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
     category: 'source-citation',
     // Aktenzeichen der Justiz- und Finanzverwaltung: „– V 340 a/5607 – 19 SH –“, „V/430 a/4541 – 3 SH“, „– 1510 E – 61 SH – 5 SH –“,
     // „(II 334/2200 – Arb. – 18 SH)“, „– 065.81-LKN-SH –“ – das „SH“ gehört zum Aktenzeichen.
-    pattern: /(?:\/\s?\d{2,5}\s?[–-]\s?\d{1,3}\s?[a-z]?\s+SH\b|(?<=[–-]\s?)\d{1,3}\s?[a-z]?\s+SH(?=\s?(?:[–-]|\)|<|$))|\b\d{3}\.\d{2}-[A-Z]{2,5}-SH\b)/gu,
+    // 1.2.0: auch „II 178/ 3200 125g SH –“ (ohne Strich vor der laufenden Nummer) und „– 90 SH – 5 – SH –“.
+    pattern: /(?:\/\s?\d{2,5}\s?(?:[–-]\s?)?\d{1,3}\s?[a-z]?\s+SH\b|(?<=[–-]\s?)\d{1,3}\s?[a-z]?\s+SH(?=\s?(?:[–-]|\)|<|$))|(?<=\d\s?[–-]\s?)SH(?=\s?[–-])|\b\d{3}\.\d{2}-[A-Z]{2,5}-SH\b)/gu,
     reason: 'Aktenzeichen der Quelle bleibt unverändert',
   },
   { id: 'gazette-federal', category: 'source-citation', pattern: /\bBGBl\.\s*[IVX]*\s*(?:\d{4}\s*)?S\.\s*\d+/gu, reason: 'Fundstelle im Bundesgesetzblatt bleibt unverändert' },
@@ -361,6 +396,22 @@ export function applySegments(value: string, segments: readonly TransformSegment
  * „Zentrales IT-Management der Landesregierung Schleswig-Holstein (ZIT SH)“. Nur die unmittelbar folgende Klammer
  * bzw. der Gedankenstrich-Zusatz zählt; die Abkürzung muss ein abgesetztes Landeskürzel tragen.
  */
+/**
+ * Amtliche Kurzbezeichnungen mit Landeskürzel aus einem Normtitel (1.2.0): Klammerzusätze des Titels („(Studien-
+ * akkreditierungsverordnung SH)“, „(Mitbestimmungsgesetz Schleswig-Holstein - MBG Schl.-H.)“), auch der Teil hinter
+ * einem Gedankenstrich. Belegt ist nur, was der Titel selbst als Bezeichnung der Norm nennt.
+ */
+export function titleShortTitles(title: string): Set<string> {
+  const found = new Set<string>();
+  for (const match of title.replace(/\s+/gu, ' ').matchAll(/\(([^()]{2,80})\)/gu)) {
+    for (const part of match[1]!.split(/\s[-–]\s/u)) {
+      const value = part.trim();
+      if (isStateAbbreviation(value) || isStateShortTitle(value)) found.add(value);
+    }
+  }
+  return found;
+}
+
 export function definedStateAbbreviations(texts: readonly string[]): Set<string> {
   const found = new Set<string>();
   const name = String.raw`(?:Schleswig${NAME_SEPARATOR}Holstein(?:s)?|[Ss]chleswig${NAME_SEPARATOR}[Hh]olsteinisch\p{L}*(?:\s+[\p{L}-]+){1,6})`;
@@ -368,7 +419,7 @@ export function definedStateAbbreviations(texts: readonly string[]): Set<string>
   const dashed = new RegExp(String.raw`${name}\s[-–]\s([^()]{2,40}?)\s*(?:[-–]\s*)?\)`, 'gu');
   // Kurzbezeichnung in Klammer oder zwischen Gedankenstrichen, deren Satz den Landesnamen vorher nennt
   // („Richtlinie … der schleswig-holsteinischen Landesverwaltung – KfzRL SH –“).
-  const introduced = /[(–-]\s*([A-ZÄÖÜ][^()–;,]{1,30}?[\s-](?:SH|Schl\.\s?[-‐-―−]\s?H\.)|SH[.\s-][A-ZÄÖÜ][^()–;,\s]{1,20})\s*[)–-]/gu;
+  const introduced = /[(–-]\s*([A-ZÄÖÜ][^()–;,]{1,30}?[\s-](?:SH|Schl\.\s?[-‐-―−]\s?H\.)(?:[\s-][A-ZÄÖÜ\d][^()–;,\s]{0,12}){0,2}|SH[.\s-][A-ZÄÖÜ][^()–;,\s]{1,20})\s*[)–-]/gu;
   const stateBefore = new RegExp(String.raw`Schleswig${NAME_SEPARATOR}Holstein|[Ss]chleswig${NAME_SEPARATOR}[Hh]olsteinisch`, 'u');
   for (const text of texts) {
     const flat = text.replace(/\s+/gu, ' ');

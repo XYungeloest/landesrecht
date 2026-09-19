@@ -502,6 +502,11 @@ export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2T
   let current: Credential | undefined;
   let inflight: Promise<Credential> | undefined;
   let terminalFailure: WranglerAuthError | undefined;
+  /**
+   * Token, das nach einer Erneuerung unverändert, aber noch gültig war: `wrangler whoami` erneuert erst nach dem echten
+   * Ablauf, nicht innerhalb der Sicherheitsmarge. Es wird bis zum Ablauf weiterverwendet, danach erneut erneuert.
+   */
+  let graceToken: string | undefined;
 
   const fromConfig = (config: WranglerAuthConfig): Credential | undefined => {
     if (config.apiToken) return { token: config.apiToken, kind: 'api-token', expiresAt: Number.POSITIVE_INFINITY };
@@ -528,6 +533,11 @@ export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2T
       throw terminalFailure;
     }
     candidate = fromConfig(await readToken());
+    if (candidate && candidate.kind === 'oauth' && candidate.token !== rejected && candidate.expiresAt > now() && !usable(candidate, rejected)) {
+      debugLog?.('Token noch gültig, Wrangler erneuert erst nach dem Ablauf: bis dahin weiterverwendet');
+      graceToken = candidate.token;
+      return (current = candidate);
+    }
     if (!candidate || !usable(candidate, rejected)) {
       terminalFailure = new WranglerAuthError('expired', 'Wrangler-Anmeldung abgelaufen oder abgewiesen und nicht erneuerbar – npx wrangler login; danach denselben Befehl erneut ausführen (verarbeitete Objekte stehen im Manifest, der Sync setzt fort)');
       throw terminalFailure;
@@ -543,6 +553,7 @@ export function createWranglerApiR2Transport(options: WranglerApiR2Options): R2T
       return Promise.resolve({ token: envToken, kind: 'api-token', expiresAt: Number.POSITIVE_INFINITY });
     }
     if (current && usable(current, rejected)) return Promise.resolve(current);
+    if (current && current.token === graceToken && current.token !== rejected && current.expiresAt > now()) return Promise.resolve(current);
     if (terminalFailure) return Promise.reject(terminalFailure);
     // Gleichzeitige Aufrufer teilen sich eine Erneuerung (kein Prozessstart je Worker).
     inflight ??= acquire(rejected).finally(() => { inflight = undefined; });

@@ -384,7 +384,7 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   // Lauf 9: Reicht die Kette bis zur Stammfassung, wird der Stand am Stichtag **vorwärts** gewonnen (Stammverkündung und
   // Änderungen vor dem Stichtag, `forward.ts`) – Quelle des Alttexts und Maßstab der Probe. Gelingt das nicht, gilt Lauf 7
   // (Stammverkündung als Quelle, Probe durch Rücknahme bis zur Stammfassung).
-  const priorAmendments = (walk.prior ?? []).map((step): PriorAmendment => ({
+  const asPrior = (step: WalkStep): PriorAmendment => ({
     label: stepLabel(step),
     ...(step.block ? { block: step.block } : {}),
     url: step.page.url,
@@ -394,7 +394,8 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
     authority: SOURCE_AUTHORITY[step.ref.organ].publicationAuthority,
     representation: SOURCE_AUTHORITY[step.ref.organ].digitalRepresentation,
     ...(step.section ? { section: step.section } : {}),
-  }));
+  });
+  const priorAmendments = (walk.prior ?? []).map(asPrior);
   let forward: { used: UsedPriorAmendment[]; commands: number } | undefined;
   const eligible = loadedBase.ok && !oldestStep.block?.citation.versionForm && !oldestStep.block?.citation.consolidatedForm;
   if (loadedBase.ok && eligible && !stammfassungAtBaseline && walk.prior) {
@@ -427,7 +428,15 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   const reversed: Array<{ step: WalkStep; steps: ReturnType<typeof reverseAmendment>['steps']; before: NormBodyBlock[]; after: NormBodyBlock[] }> = [];
   const multi = walk.steps.length > 1;
   for (const [index, step] of walk.steps.entries()) {
-    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '', title, restoreBase ? { base: restoreBase, fallback: true } : undefined);
+    // Lauf 10: Alttext für eine Änderung nach dem Stichtag aus dem Stand unmittelbar vor ihr – Stand am Stichtag und die
+    // älteren Änderungen der Kette vorwärts (BayMBl. 2026 Nr. 280 nach 2024 Nr. 268). Gelingt das nicht, der Stand am
+    // Stichtag. Die Probe bleibt dieselbe: der ganze Stichtagskörper gegen den Stand am Stichtag.
+    let stepBase = restoreBase;
+    if (restoreBase && loadedBase.ok && index < walk.steps.length - 1 && walk.steps.slice(index + 1).every((older) => older.block)) {
+      const state = forwardPublicationBase(loadedBase.base, [...walk.steps.slice(index + 1).map(asPrior), ...(stammfassungAtBaseline ? [] : priorAmendments)]);
+      if (state.ok) stepBase = { ...state.base, portal: norm.body, ...(ctx.conventions ? { conventions: ctx.conventions } : {}) };
+    }
+    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '', title, stepBase ? { base: stepBase, fallback: true } : undefined);
     outcome.formulas.push(...reversal.formulas);
     if (reversal.failures.length > 0) {
       const structural = reversal.failures.some((failure) => failure.state === 'command-unreadable');
@@ -446,6 +455,18 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   checks.formulas = true;
   checks.roundTrip = true;
   const baselineBody = body;
+
+  // Lauf 11: Eine Berichtigung nach dem Stichtag gilt für die Fassung, die sie berichtigt (rückwirkend). Der Stichtagskörper
+  // hängt nur dann nicht von ihr ab, wenn ihr Wortlaut (alt wie neu) im Stichtagskörper nicht vorkommt – sonst wäre offen,
+  // ob die Stichtagsfassung schon berichtigt zu lesen ist.
+  for (const step of walk.steps.filter((entry) => entry.correction && entry.block)) {
+    const squash = (text: string): string => text.replace(/\s+/gu, '');
+    const stichtag = squash(JSON.stringify(baselineBody));
+    const quoted = commandLeaves(step.block!).leaves.flatMap((leaf) => [...leaf.node.quoted.map((unit) => unit.text), ...[...leaf.node.text.matchAll(/„([^„“]{8,})“/gu)].map((match) => match[1]!)]);
+    const hit = quoted.map((text) => squash(text.replace(/^[„‚]|[“‘]$/gu, '').replace(/^[⁰¹²³⁴⁵⁶⁷⁸⁹]+/u, ''))).find((text) => text.length >= 12 && stichtag.includes(text));
+    if (hit) return fail('contradictory', 'correction-affects-baseline', `${stepLabel(step)} ist eine Berichtigung; ihr Wortlaut „${hit.slice(0, 80)}“ steht im Stichtagskörper – ob die Stichtagsfassung berichtigt zu lesen ist, ist nicht belegt`);
+    walk.notes.push(`${stepLabel(step)}: Berichtigung; ihr Wortlaut steht nicht im Stichtagskörper – er hängt nicht von ihr ab`);
+  }
 
   // Wiederhergestellter Alttext: Der Stand der Verkündungen muss den zurückgerechneten Körper im ganzen Wortlaut tragen –
   // bei der Stammfassung am Stichtag direkt; sonst nach Rücknahme auch aller Änderungen vor dem Stichtag bis zur

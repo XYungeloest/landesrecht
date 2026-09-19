@@ -21,7 +21,7 @@ import { SOURCE_STATE, TARGET_JURISDICTION, type SourceArea } from '../common/co
 import { auditTransformation, detectReferences, summarizeDecisions, type DetectedReference, type DetectionField, type PostTransformAudit, type ReferenceCategory, type ReferenceDecision } from './detection.ts';
 import type { CompiledInstitutionRegistry } from './institution-registry.ts';
 import { extractSourceOrgans, mapEnactingBody, type EnactingBodyMapping, type OrganEvidence } from './organs.ts';
-import { applySegments, definedStateAbbreviations, isStateAbbreviation, planTransformation, targetProperName, transformationRules, TRANSFORMER_VERSION, type TransformationOptions } from './rules.ts';
+import { applySegments, definedStateAbbreviations, isStateAbbreviation, isStateShortTitle, planTransformation, titleShortTitles, targetProperName, transformationRules, TRANSFORMER_VERSION, type TransformationOptions } from './rules.ts';
 
 export interface TransformationChange {
   path: string;
@@ -135,7 +135,8 @@ export function transformToNsh(law: SourceLaw, context: TransformContext, option
   // Bekannte Abkürzungen mit Landeskürzel: amtliche Abkürzungen des Bestands (Aufrufer), die eigene amtliche
   // Abkürzung und im Text selbst eingeführte Abkürzungen (Version 1.1.0).
   const localTexts: string[] = [law.title, ...(law.shortTitle ? [law.shortTitle] : []), ...collectTexts(law.body)];
-  const known = new Set<string>([...(options.transformation?.knownStateLawAbbreviations ?? []), ...definedStateAbbreviations(localTexts), ...(law.abbr && isStateAbbreviation(law.abbr) ? [law.abbr] : [])]);
+  // 1.2.0: amtliche Kurzbezeichnungen aus dem eigenen Titel und die eigene Abkürzung auch mit Kürzel in der Mitte.
+  const known = new Set<string>([...(options.transformation?.knownStateLawAbbreviations ?? []), ...definedStateAbbreviations(localTexts), ...titleShortTitles(law.title), ...(law.abbr && (isStateAbbreviation(law.abbr) || isStateShortTitle(law.abbr)) ? [law.abbr] : [])]);
   const ruleOptions: TransformationOptions = { ...(options.transformation ?? {}), knownStateLawAbbreviations: known };
   if (context.targetJurisdiction !== TARGET_JURISDICTION) throw new Error(`Der juris-SH-Transformer bedient nur ${TARGET_JURISDICTION}, nicht ${context.targetJurisdiction}`);
   if (context.baselineDate !== SIMULATION_BASELINE_DATE) throw new Error(`Ausgangsrechtsstand ${context.baselineDate} weicht von ${SIMULATION_BASELINE_DATE} ab`);

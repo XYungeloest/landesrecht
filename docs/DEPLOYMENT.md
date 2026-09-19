@@ -3,11 +3,14 @@
 Stand: Der Worker `landesrecht` läuft unter workers.dev und der eigenen Domain `landesrecht-online.de` (Custom Domain,
 in `wrangler.jsonc` unter `routes` eingetragen – ein Deploy mit leerer Liste löst sie vom Worker; öffentlich erreichbar,
 sobald die Nameserver der Domain auf Cloudflare zeigen), zuletzt deployt 2026-09-19 als Version
-`8a7a8d5c-fd44-47d4-ab4a-6432a4a48801` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
-`landesrecht-baywue` mit 1 696 Normen, inkrementell eingespielt und am Ziel nachgeprüft; R2 `landesrecht-quellen`
-privat mit den Rohquellen beider Länder). NSH: D1 `landesrecht-nsh` ohne Schema und ohne Bestand; der lokale
-Bestand (1 910 Normen) ist projiziert (`data/runtime/d1-batches/landesrecht-nsh`, 52 Dateien) und wartet auf die
-Entscheidung zum TDM-Vorbehalt (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
+`3d606854-f9c2-4eee-a2ff-38cb70118ef4` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
+`landesrecht-baywue` mit 1 700 Normen; NSH: D1 `landesrecht-nsh` mit 2 450 Normen – Schema 2026-09-19 angelegt,
+63 Batches voll, danach 6 inkrementell eingespielt, Zielfingerabdruck `6cf5aa27` nachgeprüft, lokal ↔ remote
+identisch; R2 `landesrecht-quellen` privat mit den Rohquellen aller drei Länder, `nsh/` 17 024 Objekte). NSH-Release nach
+Nutzerfreigabe (Nutzungsfreigabe von juris laut Nutzer, `data/imports/juris-sh/source-rights-approval.json`).
+Der NSH-R2-Sync prüft mit `--verify etag` über ein Listing (Größe + MD5) statt je Objekt zurückzulesen; der
+Wrangler-API-Transport verwendet ein noch gültiges OAuth-Token bis zum echten Ablauf weiter (`wrangler whoami`
+erneuert erst danach). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
 manuelle, einzeln freigegebene Schritte; Wrangler-Anmeldung nur per OAuth (`npx wrangler login`).
 
 ## Keine CI-Pipeline

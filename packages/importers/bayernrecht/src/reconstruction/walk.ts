@@ -139,6 +139,8 @@ export interface WalkStep {
   /** Alle Inkrafttretensregeln sind ausdrückliche Kalenderdaten. */
   calendarDates: boolean;
   priorClause?: string;
+  /** Lauf 11: Berichtigung des Normtexts; wirksam mit ihrer Bekanntmachung (die Probe in `run.ts` verlangt, dass der Stichtagskörper nicht von ihr abhängt). */
+  correction?: boolean;
 }
 
 export interface WalkResult {
@@ -212,6 +214,8 @@ interface Candidate {
   enactmentDate?: string;
   /** Der genannte Abschnitt trägt keinen lesbaren Befehlsblock (nur als Beleg für den Beginn verwendbar). */
   blockMissing?: string;
+  /** Lauf 11: Berichtigung des Normtexts (Register: `correction`), ohne eigene Inkrafttretensvorschrift – die berichtigte Fassung. */
+  correction?: Candidate;
 }
 
 /** Ordnung der Kette: Ausfertigung, Fundstelle, Stelle in der Verkündung. */
@@ -370,6 +374,14 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     const mantel = new Set(amendingCitations(units).map((entry) => entry.unit.index)).size > 1;
     const section = candidate.section ?? sectionRef(candidate.block?.section, candidate.block?.intro.label?.replace(/^[„‚]/u, ''));
     const dated = datedCommencement(units, section, mantel, { ...(candidate.page.publishedAt ? { publishedAt: candidate.page.publishedAt } : {}), ...(any?.eventDate ? { registerDate: any.eventDate } : {}), url: candidate.page.url });
+    // Berichtigung ohne Inkrafttretensvorschrift: Sie berichtigt den Wortlaut der Fassung, die sie nennt, und gilt für diese
+    // Fassung – mit deren Inkrafttreten (BayMBl. 2026 Nr. 114 berichtigt die Fassung nach BayMBl. 2025 Nr. 214, in Kraft
+    // 2025-04-01; so auch das Paket). Der Stichtagskörper hängt davon nicht ab: `run.ts` verlangt, dass ihr Wortlaut dort fehlt.
+    if (!dated.ok && candidate.correction) {
+      const corrected = await commencementOf(candidate.correction);
+      if (!corrected.ok) return { ...base, ok: false, reason: `berichtigte Fassung: ${corrected.reason ?? ''}`, effectiveDates: [], effectiveDateEvidence: [], calendarDates: false };
+      return { ...base, ok: true, effectiveDates: corrected.effectiveDates, effectiveDateEvidence: [`Berichtigung (bekannt gemacht ${eventDate ?? '–'}) der Fassung nach ${publicationCitation(candidate.correction.ref)}; gilt mit dieser Fassung: ${corrected.effectiveDateEvidence.join('; ').slice(0, 200)}`], calendarDates: corrected.calendarDates, ...(corrected.publicationDated ? { publicationDated: true } : {}) };
+    }
     if (!dated.ok) return { ...base, ok: false, reason: dated.reason, effectiveDates: [], effectiveDateEvidence: [], calendarDates: false };
     return { ...base, ...(dated.eventDate ? { eventDate: dated.eventDate } : {}), ok: true, effectiveDates: dated.dates, effectiveDateEvidence: dated.evidence, calendarDates: dated.calendar, publicationDated: dated.publicationDated };
   };
@@ -386,6 +398,28 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
       pending.push(...resolved);
     }
     result.evidence.push(`Vollzitat des Portals: letzte Änderung „${clause.slice(0, 200)}“`);
+    // Lauf 11: Eine Berichtigung des Normtexts nach dem Stichtag, die als vorangehende Änderung genau die letzte Änderung
+    // des Vollzitats nennt („…, zuletzt geändert durch die Bekanntmachung vom 7. April 2025 (BayMBl. Nr. 214), wird wie
+    // folgt berichtigt:“, BayMBl. 2026 Nr. 114), ist das jüngste Glied der Kette – das Vollzitat führt sie nur bei der Fundstelle.
+    for (const event of input.ledgerEvents.filter((entry) => entry.eventType === 'correction' && entry.eventDate !== undefined && entry.eventDate > input.baselineDate)) {
+      const ref = refOfUrl(event.sourceUrl);
+      if (!ref || !event.enactmentDate) continue;
+      // Nur eine Prüfung: Scheitert die Auflösung, bleibt es beim Befund der Gegenprobe (Register), nicht bei diesem.
+      const failuresBefore = result.failures.length;
+      const resolved = await resolve({ text: event.citation, enactmentDate: event.enactmentDate, reference: ref.organ === 'gvbl' ? `GVBl. ${ref.volume} S. ${ref.position}` : `BayMBl. ${ref.volume} Nr. ${ref.position}`, sections: [], self: false }, undefined);
+      if (resolved === 'stop') {
+        result.failures.length = failuresBefore;
+        continue;
+      }
+      for (const candidate of resolved) {
+        const prior = candidate.block?.priorAmendmentClause;
+        if (!prior) continue;
+        const named = amendmentRefs(prior).filter((entry) => !entry.self).map((entry) => candidateRefs(entry.reference, entry.enactmentDate ?? '')[0]).filter((entry): entry is PublicationRef => entry !== undefined);
+        if (named.length !== 1 || !pending.some((head) => sameRef(head.ref, named[0]!))) continue;
+        pending.push({ ...candidate, correction: pending.find((head) => sameRef(head.ref, named[0]!))! });
+        result.evidence.push(`${event.citation}: Berichtigung des Normtexts nach der letzten Änderung des Vollzitats („${prior.slice(0, 120)}“) – jüngstes Glied der Kette`);
+      }
+    }
   } else if (input.ledgerEvents.length > 0) {
     const newest = [...input.ledgerEvents].sort((left, right) => ((left.eventDate ?? '') < (right.eventDate ?? '') ? -1 : 1)).at(-1)!;
     const ref = refOfUrl(newest.sourceUrl);
@@ -426,6 +460,7 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
       effectiveDateEvidence: commencement.effectiveDateEvidence,
       calendarDates: commencement.calendarDates,
       ...(newest.block?.priorAmendmentClause ? { priorClause: newest.block.priorAmendmentClause } : {}),
+      ...(newest.correction ? { correction: true } : {}),
     };
     const after = dates.every((date) => date > input.baselineDate);
     const before = dates.every((date) => date <= input.baselineDate);

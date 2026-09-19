@@ -183,6 +183,8 @@ export async function crossJurisdictionChecks(corpus: Corpus, seed = NSH_GOLDEN_
 }
 
 export interface NshGoldenRun {
+  /** Stillgelegte Anfragen (erwartete Norm zurückgenommen). */
+  retired: string[];
   set: NshGoldenSet;
   generated: boolean;
   evaluations: GoldenEvaluation[];
@@ -191,7 +193,13 @@ export interface NshGoldenRun {
 
 export async function runNshGolden(root: string, options: { write: boolean; regenerate?: boolean }): Promise<NshGoldenRun> {
   const stored = options.regenerate ? undefined : await readNshGolden(root);
-  const set = stored ?? generateNshGoldenQueries(await loadJurisdictionNorms('nsh', root));
+  const records = await loadJurisdictionNorms('nsh', root);
+  const generated = stored ?? generateNshGoldenQueries(records);
+  // Anfragen, deren erwartete Normen alle nicht mehr im Bestand sind (zurückgenommen), werden stillgelegt und benannt –
+  // nicht umgedeutet: Die Datei behält sie, die Auswertung zählt sie nicht.
+  const present = new Set(records.map((record) => record.meta.slug));
+  const retired = generated.queries.filter((query) => [...query.expectedTop, ...query.acceptable].length > 0 && [...query.expectedTop, ...query.acceptable].every((slug) => !present.has(slug)));
+  const set = { ...generated, queries: generated.queries.filter((query) => !retired.includes(query)) };
   const corpus = await projectCorpus(root);
   let evaluations: GoldenEvaluation[];
   let cross: CrossJurisdictionCase[];
@@ -203,8 +211,8 @@ export async function runNshGolden(root: string, options: { write: boolean; rege
   }
   if (options.write) {
     await mkdir(join(root, NSH_SEARCH_DIR), { recursive: true });
-    if (!stored) await writeFile(join(root, NSH_GOLDEN_QUERIES_PATH), `${JSON.stringify(set, null, 2)}\n`, 'utf8');
-    await writeFile(join(root, NSH_GOLDEN_RESULTS_JSON_PATH), `${JSON.stringify({ set: NSH_GOLDEN_QUERIES_PATH, evaluations }, null, 2)}\n`, 'utf8');
+    if (!stored) await writeFile(join(root, NSH_GOLDEN_QUERIES_PATH), `${JSON.stringify(generated, null, 2)}\n`, 'utf8');
+    await writeFile(join(root, NSH_GOLDEN_RESULTS_JSON_PATH), `${JSON.stringify({ set: NSH_GOLDEN_QUERIES_PATH, retired: retired.map((query) => ({ id: query.id, query: query.query, reason: 'erwartete Norm nicht mehr im Bestand (zurückgenommen)' })), evaluations }, null, 2)}\n`, 'utf8');
     await writeFile(join(root, NSH_CROSS_JURISDICTION_PATH), `${JSON.stringify({ cases: cross }, null, 2)}\n`, 'utf8');
     const markdown = renderGoldenMarkdown(set as unknown as GoldenQuerySet, evaluations)
       .replace('lokale SQLite-Projektion des West-Bestands', 'lokale SQLite-Projektion des NSH-Bestands')
@@ -212,5 +220,5 @@ export async function runNshGolden(root: string, options: { write: boolean; rege
       .replace('# Golden Query Set – Ergebnisse', '# Golden Query Set NSH – Ergebnisse');
     await writeFile(join(root, NSH_GOLDEN_RESULTS_MD_PATH), `${markdown}\n`, 'utf8');
   }
-  return { set, generated: !stored, evaluations, cross };
+  return { set, generated: !stored, evaluations, cross, retired: retired.map((query) => query.id) };
 }

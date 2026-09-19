@@ -1,21 +1,26 @@
 # Stand des Stichtagsbestands Bayern-Württemberg
 
-## Status: DEPLOYED (Teilbestand) · Stand 2026-09-19 (Run 9)
+## Status: DEPLOYED (Teilbestand) · Stand 2026-09-19 (Run 10)
 
-**1 696 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
+**1 700 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und
 ausgeliefert:**
 
-- 1 568, deren heutiger Text belegt der Stichtagstext ist;
-- 66, deren Stichtagsfassung bewiesen zurückgerechnet ist: 54 über eine spätere Änderung, 12 über zwei oder
-  mehr Änderungen mit Vorwärtsprobe (zwei davon mit Titeländerung); bei 17 davon (Run 7–9) nennen die
+- 1 569, deren heutiger Text belegt der Stichtagstext ist;
+- 70, deren Stichtagsfassung bewiesen zurückgerechnet ist: 56 über eine spätere Änderung, 14 über zwei oder
+  mehr Änderungen mit Vorwärtsprobe (zwei davon mit Titeländerung); bei 21 davon (Run 7–10) nennen die
   Änderungsbefehle den alten Wortlaut nicht, er stammt aus der Stammverkündung und ist im Wortlaut gegen sie
   geprüft (`docs/BAYWUE_RECONSTRUCTION.md` §19);
 - 61 heute nicht mehr geführte Stichtagsnormen, aus amtlichen Verkündungen wiederhergestellt
   (`docs/BAYWUE_BASELINE_ONLY.md`);
-- 1 Verwaltungsvorschrift, die erst nach dem Stichtag veröffentlicht wurde, laut amtlicher Verkündung aber
-  rückwirkend ab 2023-11-08 gilt und einen Vorgänger derselben Normidentität aufhebt (BayVV_1102_S_14148,
-  StRVertrBek; Vorgänger vom 11. Februar 2021, BayMBl. Nr. 164): bleibt bis zur menschlichen Entscheidung
-  veröffentlicht (blockierender Review-Fall `import-regression`).
+- **Entschieden (Nutzer, 2026-09-19): StRVertrBek (BayVV_1102_S_14148).** Die amtliche Verkündung BayMBl. 2023
+  Nr. 585 bestimmt ausdrücklich das Inkrafttreten „mit Wirkung vom 8. November 2023“ und das Außerkrafttreten des
+  Vorgängers (Erlass vom 11. Februar 2021, BayMBl. Nr. 164) mit Ablauf des 7. November 2023. Für den ex post
+  rekonstruierten Rechtsstand gilt am 2023-12-01 die neue Fassung, obwohl die Bekanntmachung erst am 2023-12-06
+  erschien. Regel 2c der Stichtagsklassifikation (Verwaltungsvorschrift, ausdrücklich bestimmte Wirksamkeit laut
+  amtlicher Verkündung ≤ Stichtag), Beleg im Manifest (`gazette-publication`, stark, mit Verkündungsadresse),
+  Regressionstest; der Review-Fall ist aufgelöst. Dieselbe Regel erfasst die AGZ-Richtlinie BayVV_787_L_14168
+  (BayMBl. 2023 Nr. 595, „mit Wirkung vom 23. November 2023“): sie galt am Stichtag, ihr heutiger Text gilt aber
+  erst seit 2025 – sie steht deshalb in der Rekonstruktionsqueue und wird nicht mit dem heutigen Text übernommen.
 
 **Zurückgenommen (Run 9):** BayVV_7840_L_14146 (MStrVerbR). Die amtliche Verkündung BayMBl. 2023 Nr. 598 setzt sie
 „mit Wirkung vom 15. Dezember 2023“ in Kraft und hebt keinen Vorgänger auf; die Portalangabe „inkraft 2023-11-15“
@@ -23,7 +28,7 @@ ist widerlegt. Stichtagsklasse `official-commencement-after-baseline`; der Slug 
 (ohne Nachfolger, nie neu vergeben), das archivierte Rohpaket bleibt in R2. Der Bulk nimmt eine übernommene Norm nur
 mit genau dieser amtlich belegten Klasse zurück; jede andere Verschlechterung bleibt `import-regression`.
 
-Der Stichtagsbestand ist damit **nicht vollständig**: 446 weitere heute geführte Normen galten am Stichtag
+Der Stichtagsbestand ist damit **nicht vollständig**: 443 weitere heute geführte Normen galten am Stichtag
 mit einem anderen oder nicht belegten Wortlaut, und heute fehlende Stichtagsnormen sind nur zum Teil
 wiederhergestellt. Die
 Oberfläche kennzeichnet den Bestand als Teilbestand (unten).
@@ -56,9 +61,9 @@ am 2023-12-01 noch nicht gab, und er zeigt geänderte Vorschriften im heutigen W
 | davon als Anhang übernommen (BayBodSchO → EV-BodenseeSchO, redaktionelle Entscheidung) | 1 |
 | davon im Scope | 2 342 |
 | davon am Stichtag geltend | 2 090 |
-| — heutiger Text **ist** der Stichtagstext → **übernommen** (einschließlich BayVwV96990 mit Quellkorrektur) | **1 570** |
-| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **66** |
-| — heutiger Text ist jünger → **Rekonstruktion nötig** | 446 |
+| — heutiger Text **ist** der Stichtagstext → **übernommen** (einschließlich BayVwV96990 mit Quellkorrektur) | **1 569** |
+| — heutiger Text ist jünger, Stichtagsfassung **rückgerechnet** (Rundlauf, belegter Beginn) → **übernommen** | **70** |
+| — heutiger Text ist jünger → **Rekonstruktion nötig** | 443 |
 | — Geltung belegt, Textbeginn nicht (BayVV_2230_7_1_K_10450) | 1 |
 | davon Geltung am Stichtag unbestimmt | 13 |
 | davon erst nach dem Stichtag erlassen | 239 |
@@ -72,7 +77,7 @@ aus den amtlichen Verkündungen sicher wiederhergestellt (Stand Run 7), 12 erwie
 Ausgangsverkündung (295: 140 nur gedruckt, 136 nie verkündet, 17 Anlage nur als PDF, 2 Stammfassung nur als PDF),
 32 mit unbestimmtem Glied und 6 mit unvollständiger Änderungskette.
 
-Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 696 von mindestens rund 2 500 Stichtagsnormen.**
+Eine ehrliche Vollständigkeitsangabe ist deshalb: **1 700 von mindestens rund 2 500 Stichtagsnormen.**
 
 ## Was jede übernommene Norm vorweisen kann
 
@@ -90,7 +95,7 @@ Fassung trägt stattdessen etwa:
 
 dazu `sourceStatus` `reconstructed/reconstructed`, die Änderungsverkündung (und bei einer vorangehenden
 Änderung deren Verkündung) als Quellreferenz und als in R2 archiviertes Rohdokument. Stammt Alttext aus der
-Stammverkündung (17 Normen, 5 davon über die Vorwärtsrekonstruktion Stammverkündung + alle Änderungen bis zum Stichtag), sind auch sie und etwa vor dem Stichtag vorwärts angewandte Änderungen Quellreferenz
+Stammverkündung (21 Normen, 7 davon über die Vorwärtsrekonstruktion Stammverkündung + alle Änderungen bis zum Stichtag), sind auch sie und etwa vor dem Stichtag vorwärts angewandte Änderungen Quellreferenz
 und archiviertes Rohdokument; der Bulk übernimmt ein solches Rezept nur, wenn jede dieser Verkündungen mit der
 SHA-256 des Rezepts im Cache liegt (`restorationChecked`). Methode:
 `docs/BAYWUE_RECONSTRUCTION.md`, Übernahmebedingungen: `docs/BAYWUE_HISTORICAL_BASELINE.md` Abschnitt 4.

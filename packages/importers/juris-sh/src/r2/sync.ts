@@ -15,6 +15,7 @@
  * `uploaded`/`verified` werden nie zurückgestuft; eine vorhandene Staging-Datei mit anderem Inhalt wird nie
  * überschrieben (Befund). Das Staging liegt unter `.cache/` und damit nie in Git.
  */
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 
@@ -27,7 +28,7 @@ import { CACHE_DIR } from '../common/constants.ts';
 import { DEFAULT_STAGING_DIR, R2_SOURCES_BUCKET } from '../common/environment.ts';
 import { isImportedStatus, writeManifestEntry, type ImportManifest, type ManifestEntry } from '../common/manifest.ts';
 import { runPdfImages, type PdfImageWithBytes } from '../parse/pdf-figures.ts';
-import { ArchiveError, envelopeBytes, envelopeFor, envelopeKey, objectMetadata, rawObjectKey, sha256Hex } from './archive.ts';
+import { ArchiveError, envelopeBytes, envelopeFor, envelopeKey, KEY_PREFIX, objectMetadata, rawObjectKey, sha256Hex } from './archive.ts';
 
 export interface StageResult {
   entries: number;
@@ -145,8 +146,14 @@ export interface SyncResult {
   missingStaging: string[];
 }
 
-/** Gestagte Objekte hochladen und prüfen; höchstens `concurrency` Normen gleichzeitig (Standard 4, höchstens 8). */
-export async function syncStaged(options: { root: string; manifest: ImportManifest; transport: R2Transport; stagingDir?: string; limit?: number; concurrency?: number; log?: (line: string) => void }): Promise<SyncResult> {
+/**
+ * Gestagte Objekte hochladen und prüfen. `readback` (Standard): je Objekt Upload und vollständige Rücklesung, höchstens
+ * `concurrency` Normen gleichzeitig (höchstens 8). `etag`: Objekte parallel (höchstens 32), danach eine Nachprüfung
+ * über das Listing (Größe und MD5-Etag gegen das Staging); erst dann gilt ein Objekt als `verified`. In beiden Modi
+ * wird ein vorhandener Schlüssel nie überschrieben.
+ */
+export async function syncStaged(options: { root: string; manifest: ImportManifest; transport: R2Transport; stagingDir?: string; limit?: number; concurrency?: number; verification?: 'readback' | 'etag'; log?: (line: string) => void }): Promise<SyncResult> {
+  if (options.verification === 'etag') return syncStagedEtag(options);
   const stagingDir = assertStagingDir(options.root, options.stagingDir ?? DEFAULT_STAGING_DIR);
   const result: SyncResult = { pending: 0, uploaded: 0, alreadyPresent: 0, entriesVerified: 0, missingStaging: [] };
   const selected: ManifestEntry[] = [];
@@ -190,5 +197,92 @@ export async function syncStaged(options: { root: string; manifest: ImportManife
   };
   await Promise.all(Array.from({ length: Math.min(concurrency, selected.length) }, () => worker()));
   if (failure !== undefined) throw failure;
+  return result;
+}
+
+const md5Hex = (bytes: Uint8Array): string => createHash('md5').update(bytes).digest('hex');
+
+async function syncStagedEtag(options: { root: string; manifest: ImportManifest; transport: R2Transport; stagingDir?: string; limit?: number; concurrency?: number; log?: (line: string) => void }): Promise<SyncResult> {
+  if (!options.transport.list) throw new ArchiveError('guard', `Transport ${options.transport.name} bietet kein Listing; --verify etag braucht es`);
+  const stagingDir = assertStagingDir(options.root, options.stagingDir ?? DEFAULT_STAGING_DIR);
+  const result: SyncResult = { pending: 0, uploaded: 0, alreadyPresent: 0, entriesVerified: 0, missingStaging: [] };
+  const selected: ManifestEntry[] = [];
+  for (const entry of options.manifest.entries) {
+    if (!isImportedStatus(entry.importStatus)) continue;
+    const staged = entry.rawDocuments.filter((raw) => raw.archiveStatus === 'staged' && raw.objectKey);
+    if (staged.length === 0) continue;
+    result.pending += staged.length;
+    if (options.limit === undefined || selected.length < options.limit) selected.push(entry);
+  }
+  const items = selected.flatMap((entry) => entry.rawDocuments.filter((raw) => raw.archiveStatus === 'staged' && raw.objectKey).map((raw) => ({ entry, raw })));
+  const expected = new Map<string, { size: number; md5: string }>();
+  const incomplete = new Set<ManifestEntry>();
+  // Bestand einmal über das Listing statt je Objekt HEAD: vorhandene Schlüssel mit gleicher Größe und gleichem MD5
+  // gelten als vorhanden; ein vorhandener Schlüssel mit anderem Inhalt ist ein harter Fehler (nie überschreiben).
+  const before = new Map((await options.transport.list(KEY_PREFIX)).map((object) => [object.key, object]));
+  const present = (key: string, bytes: Uint8Array): boolean => {
+    const object = before.get(key);
+    if (!object) return false;
+    if (object.size !== bytes.byteLength || (object.md5 && object.md5 !== md5Hex(bytes))) throw new ArchiveError('conflict', `R2-Objekt ${key} existiert mit anderem Inhalt (Größe/MD5); Rohquellen werden nie überschrieben`);
+    return true;
+  };
+  let next = 0;
+  let failure: unknown;
+  const worker = async (): Promise<void> => {
+    while (failure === undefined && next < items.length) {
+      const { entry, raw } = items[next++]!;
+      try {
+        const bytes = await readIfExists(join(stagingDir, raw.objectKey!));
+        const envelope = await readIfExists(join(stagingDir, envelopeKey(raw.objectKey!)));
+        if (!bytes || !envelope) {
+          result.missingStaging.push(raw.objectKey!);
+          incomplete.add(entry);
+          continue;
+        }
+        if (sha256Hex(bytes) !== raw.sha256) throw new ArchiveError('verification', `Staging ${raw.objectKey}: SHA-256 weicht vom Manifest ab`);
+        if (present(raw.objectKey!, bytes)) result.alreadyPresent += 1;
+        else {
+          // Zwischen Listing und Upload könnte ein anderer Lauf geschrieben haben: HEAD nur für fehlende Schlüssel.
+          const head = await options.transport.head(raw.objectKey!);
+          if (head) {
+            if (head.sha256 && head.sha256 !== raw.sha256) throw new ArchiveError('conflict', `R2-Objekt ${raw.objectKey} existiert mit anderem SHA-256 (${head.sha256}); Rohquellen werden nie überschrieben`);
+            result.alreadyPresent += 1;
+          } else {
+            await options.transport.put(raw.objectKey!, bytes, { contentType: raw.contentType, metadata: objectMetadata(envelopeFor(entry, raw, raw.objectKey!)) });
+            result.uploaded += 1;
+          }
+        }
+        // Umschläge sind unveränderlich: vorhanden → bleibt (die Nachprüfung vergleicht dann mit dem Staging).
+        if (!present(envelopeKey(raw.objectKey!), envelope) && !(await options.transport.head(envelopeKey(raw.objectKey!)))) {
+          await options.transport.put(envelopeKey(raw.objectKey!), envelope, { contentType: 'application/json', metadata: { sha256: sha256Hex(envelope), role: 'envelope', 'source-identity': entry.sourceIdentity } });
+        }
+        expected.set(raw.objectKey!, { size: bytes.byteLength, md5: md5Hex(bytes) });
+        expected.set(envelopeKey(raw.objectKey!), { size: envelope.byteLength, md5: md5Hex(envelope) });
+      } catch (error) {
+        failure ??= error;
+      }
+    }
+  };
+  const concurrency = Math.min(32, Math.max(1, Math.floor(options.concurrency ?? 16)));
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, () => worker()));
+  if (failure !== undefined) throw failure;
+
+  // Nachprüfung über das Listing: Größe und MD5-Etag jedes erwarteten Schlüssels.
+  const listed = new Map((await options.transport.list(KEY_PREFIX)).map((object) => [object.key, object]));
+  const mismatches: string[] = [];
+  for (const [key, want] of expected) {
+    const got = listed.get(key);
+    if (!got) mismatches.push(`${key}: fehlt im Listing`);
+    else if (got.size !== want.size) mismatches.push(`${key}: ${got.size} statt ${want.size} Bytes`);
+    else if (got.md5 && got.md5 !== want.md5) mismatches.push(`${key}: Etag ${got.md5} statt ${want.md5}`);
+    else if (!got.md5) mismatches.push(`${key}: kein MD5-Etag im Listing`);
+  }
+  if (mismatches.length > 0) throw new ArchiveError('verification', `Nachprüfung über das Listing: ${mismatches.length} Abweichungen (${mismatches.slice(0, 5).join('; ')})`);
+  for (const entry of selected) {
+    for (const raw of entry.rawDocuments) if (raw.archiveStatus === 'staged' && raw.objectKey && expected.has(raw.objectKey)) raw.archiveStatus = 'verified';
+    await writeManifestEntry(options.root, entry);
+    if (!incomplete.has(entry)) result.entriesVerified += 1;
+  }
+  options.log?.(`Nachprüfung über das Listing: ${expected.size} Schlüssel mit Größe und MD5-Etag bestätigt`);
   return result;
 }

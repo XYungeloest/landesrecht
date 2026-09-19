@@ -435,6 +435,12 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
       const annex = resultById.get(id);
       if (!annex) continue;
       const attachedHere = attached.includes(id);
+      // Eine am Stichtag nicht geltende Anlage bleibt „nicht am Stichtag“ (sie gehört nicht zur Stichtagsfassung).
+      if (!attachedHere && annex.outcome === 'not-at-baseline') {
+        annex.partOf = mainId;
+        annex.findings.push({ severity: 'info', code: 'annex-of-main', message: `Anlage der Stammnorm ${mainId}, am Stichtag nicht geltend` });
+        continue;
+      }
       annex.outcome = 'part-of-main';
       annex.partOf = mainId;
       annex.reasons = [attachedHere ? `Anlage der Stammnorm ${mainId} (dort angehängt)` : `Anlage der Stammnorm ${mainId}; am Stichtag nicht geltend oder nicht verwendbar (${annex.baseline?.class ?? annex.outcome})`];
@@ -490,8 +496,20 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
       if (reservation.collision) result.findings.push({ severity: 'info', code: 'slug-collision', message: `Slugkandidat ${reservation.collision.candidate} bereits vergeben (${reservation.collision.heldBy}); eindeutiger Slug ${slug}` });
     }
     // Regression: früher übernommen, jetzt nicht mehr → Verzeichnis zurücknehmen, Review-Fall.
+    // Auch in späteren Läufen bleibt eine Rücknahme als solche sichtbar (Befund im Manifest), bis die Norm wieder übernommen wird.
+    const withdrawnBefore = previous?.findings.find((finding) => finding.code === 'withdrawn-after-import');
+    if (previous && !isImportedStatus(previous.importStatus) && withdrawnBefore && !isImportedStatus(status)) {
+      result.findings.push(withdrawnBefore);
+      inputs.push({ category: 'import-regression', key: 'imported-before', severity: 'blocking', summary: withdrawnBefore.message.slice(0, 400), details: result.reasons.slice(0, 5) });
+    }
     if (previous && isImportedStatus(previous.importStatus) && !isImportedStatus(status)) {
-      inputs.push({ category: 'import-regression', key: 'imported-before', severity: 'blocking', summary: `Früher übernommen (${previous.targetSlug}), im Wiederholungslauf nicht mehr übernahmefähig`, details: result.reasons.slice(0, 5) });
+      // Begründung der Rücknahme (auch einer veröffentlichten Fassung): die Sperrgründe dieses Laufs, benannt.
+      const structural = result.findings.filter((finding) => finding.severity !== 'info' && /\[row-before-table\]|\[[a-z-]+\]/u.test(finding.message)).map((finding) => finding.message);
+      const why = structural.length > 0
+        ? `Tabellenstruktur der früheren Fassung nicht belegt: ${structural[0]!.slice(0, 220)}`
+        : `Sperrgründe: ${[...new Set(result.blockers.map((blocker) => `${blocker.kind}:${blocker.code}`))].join(', ')}`;
+      result.findings.push({ severity: 'warning', code: 'withdrawn-after-import', message: `Früher als ${previous.targetSlug} übernommen, in diesem Lauf zurückgenommen – ${why}` });
+      inputs.push({ category: 'import-regression', key: 'imported-before', severity: 'blocking', summary: `Früher übernommen (${previous.targetSlug}), im Wiederholungslauf nicht mehr übernahmefähig – ${why}`.slice(0, 400), details: result.reasons.slice(0, 5) });
       const removed = await removeOwnNormDirectory({ root, slug: previous.targetSlug, sourceIdentity: item.id, write: writeNorms });
       if (removed) {
         normsRemoved += 1;

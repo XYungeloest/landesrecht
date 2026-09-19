@@ -136,7 +136,7 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
 
   if (input.publication) facts.push(evidence('publication-date', `${input.publication.date} (${input.publication.citation})`, 'event-ledger:eigene Fundstelle'));
   if (input.publication?.officialEffectiveDate) {
-    facts.push(evidence('official-commencement', `${input.publication.officialEffectiveDate} (${input.publication.citation}${input.publication.repeals?.length ? `; hebt auf: ${input.publication.repeals.join('; ')}` : ''})`, 'amtliche Verkündung:Inkrafttretensvorschrift'));
+    facts.push(evidence('official-commencement', `${input.publication.officialEffectiveDate} (${input.publication.citation}${input.publication.repeals?.length ? `; hebt auf: ${input.publication.repeals.join('; ')}` : ''})`, `amtliche Verkündung:Inkrafttretensvorschrift${input.publication.url ? ` ${input.publication.url}` : ''}`));
   }
   const base = { documentId: input.documentId, evidence: facts };
 
@@ -180,7 +180,14 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
   //      30.11./1.12., veröffentlicht am 20.12.2023). Eine Rechtsnorm gilt nicht vor ihrer Verkündung; eine Vorschrift, deren
   //      Text erst nach dem Stichtag in Kraft tritt, galt am Stichtag ohnehin nicht. In beiden Fällen gab es am Stichtag keine
   //      Fassung dieser Quellidentität – die Stichtagsnorm ist gegebenenfalls ein Vorgänger mit eigener Quellidentität.
-  if (input.publication && input.publication.date > baseline) {
+  // 2c – Nutzerentscheidung 2026-09-19 (StRVertrBek, BayMBl. 2023 Nr. 585): Bestimmt die amtliche Verkündung einer
+  //      Verwaltungsvorschrift ausdrücklich eine Wirksamkeit am oder vor dem Stichtag (rückwirkend „mit Wirkung vom …“),
+  //      gilt für den ex post rekonstruierten Rechtsstand diese Fassung am Stichtag – die spätere Bekanntmachung ändert
+  //      am bestimmten Wirksamkeitsdatum nichts. Ein aufgehobener Vorgänger endet dann ebenfalls vor dem Stichtag.
+  //      Die Klassifikation läuft normal weiter (Textgeltung, Änderungen nach dem Stichtag).
+  const retroactive = input.administrative === true && input.publication !== undefined && input.publication.date > baseline
+    && input.publication.officialEffectiveDate !== undefined && input.publication.officialEffectiveDate <= baseline;
+  if (input.publication && input.publication.date > baseline && !retroactive) {
     if (!input.administrative || !input.inForceFrom || input.inForceFrom > baseline) {
       return {
         ...base,
@@ -216,19 +223,8 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
         blockers: [`Veröffentlicht erst am ${input.publication.date} (${input.publication.citation}), in Kraft laut amtlicher Verkündung ab ${official}; sie setzt außer Kraft: ${input.publication.repeals!.join('; ')} – ein Vorgänger derselben Normidentität ist möglich und zu prüfen`],
       };
     }
-    // Verwaltungsvorschrift mit Textgeltung vor dem Stichtag (rückwirkend oder ab Erlass), aber erst danach
-    // veröffentlicht: Ob sie am Stichtag schon wirkte, entscheidet ihre Bekanntgabe an die Behörden – das belegt die
-    // Quelle nicht. Nicht geraten: Review. Eine aufgehobene Vorgängerin wird als Beleg genannt.
-    if (official) {
-      return {
-        ...base,
-        class: 'identity-or-validity-uncertain',
-        status: 'undetermined',
-        method: 'undetermined',
-        reason: 'published-after-baseline-validity-open',
-        blockers: [`Veröffentlicht erst am ${input.publication.date} (${input.publication.citation}), laut amtlicher Verkündung rückwirkend in Kraft ab ${official}${input.publication.repeals?.length ? `; sie setzt außer Kraft: ${input.publication.repeals.join('; ')} (Vorgänger derselben Normidentität, am Stichtag noch nicht aufgehoben verkündet)` : ''}; welche Fassung am ${baseline} galt, entscheidet der Mensch`],
-      };
-    }
+    // Verwaltungsvorschrift mit Textgeltung vor dem Stichtag, aber erst danach veröffentlicht und ohne ausdrücklich
+    // bestimmte Wirksamkeit in der Verkündung: Ob sie am Stichtag schon wirkte, belegt die Quelle nicht. Review.
     return {
       ...base,
       class: 'identity-or-validity-uncertain',

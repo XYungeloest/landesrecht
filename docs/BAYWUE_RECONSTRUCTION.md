@@ -1,6 +1,6 @@
 # Rückrechnung von Änderungen – BayWü (`reverse-amendment`, ein- und mehrstufig)
 
-Stand 2026-09-19. Stichtag **2023-12-01**. Kennzahlen, Gruppen und alle offenen Fälle: `data/audits/bayernrecht/RECONSTRUCTION.md`
+Stand 2026-09-19 (Lauf 11). Stichtag **2023-12-01**. Kennzahlen, Gruppen und alle offenen Fälle: `data/audits/bayernrecht/RECONSTRUCTION.md`
 (vom Lauf erzeugt). Maschinenlesbar: Schlange `data/imports/bayernrecht/reconstruction-queue.json`, Rezepte
 `data/imports/bayernrecht/reconstruction/<documentId>.json`, Quellenregister `data/imports/bayernrecht/reconstruction-sources.json`,
 Audit `data/audits/bayernrecht/reconstruction-audit.json`, Abrufprüfpunkt `data/imports/bayernrecht/reconstruction-fetch.json`.
@@ -41,15 +41,17 @@ an (Abschnitt 11).
 
 ## 2 Ergebnis (Stand dieses Laufs)
 
-| | vor Lauf 4 | nach Lauf 4 | nach Lauf 5 | nach Lauf 6 | nach Lauf 7 | nach Lauf 8 | nach Lauf 9 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| sicher zurückgerechnet | 13 (alle einstufig) | 33 (28 einstufig, 5 mehrstufig) | 44 (37 einstufig, 7 mehrstufig) | 48 (39 einstufig, 9 mehrstufig) | 61 (50 einstufig, 11 mehrstufig) | 63 (52 einstufig, 11 mehrstufig) | **66** |
-| davon mit Stammverkündung (`restoration`) | – | – | – | – | 13 | 15 | **17** |
-| davon Stand am Stichtag vorwärts (`restoration.derivation: "forward"`) | – | – | – | – | – | – | **5** |
-| `reconstruction-required` | 506 | 486 | 475 | 464 | 451 | 449 | **446** |
+| | vor Lauf 4 | nach Lauf 4 | nach Lauf 5 | nach Lauf 6 | nach Lauf 7 | nach Lauf 8 | nach Lauf 9 | nach Lauf 10 | nach Lauf 11 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| sicher zurückgerechnet | 13 (alle einstufig) | 33 (28 einstufig, 5 mehrstufig) | 44 (37 einstufig, 7 mehrstufig) | 48 (39 einstufig, 9 mehrstufig) | 61 (50 einstufig, 11 mehrstufig) | 63 (52 einstufig, 11 mehrstufig) | 66 | 70 | **70** |
+| davon mit Stammverkündung (`restoration`) | – | – | – | – | 13 | 15 | 17 | 21 | **21** |
+| davon Stand am Stichtag vorwärts (`restoration.derivation: "forward"`) | – | – | – | – | – | – | 5 | 7 | **7** |
+| `reconstruction-required` | 506 | 486 | 475 | 464 | 451 | 449 | 446 | 442 | **443** |
 
 Lauf 7 (Alttext aus der Stammverkündung, `forward-from-publication`): Abschnitt 19; Lauf 8 (Reichweite): Abschnitt 20; Lauf 9
-(Stand am Stichtag vorwärts, PDF-Textlayer): Abschnitt 21.
+(Stand am Stichtag vorwärts, PDF-Textlayer): Abschnitt 21; Lauf 10 (Änderungen vor dem Stichtag, Alttext je Änderung):
+Abschnitt 22; Lauf 11 (Berichtigungen, Umbau von Gliederungen, Satzfehler in Befehlen): Abschnitt 23. Nach Lauf 11: 443, weil die
+Stichtagsklassifikation die AGZ-Richtlinie `BayVV_787_L_14168` neu als am Stichtag geltend führt (513 statt 512 `changed-after-baseline`).
 
 Von 475 auf 464: 4 neue Rezepte, 7 Normen nicht mehr `changed-after-baseline` (die Stichtagsklassifikation stuft Normen mit eigener
 Fundstelle nach dem Stichtag seit Lauf 6 als `not-at-baseline` ein; 519 → 512). Gruppenverteilung, Gründe und jede offene Norm:
@@ -1048,3 +1050,143 @@ Bulk-Schnittstelle: unverändert (Abschnitt 11) – Quellen aus `restoration.sou
 Neu und optional: `restoration.derivation: "forward"` und `restoration.forwardFingerprint` (Beleg, kein Eingang für den Bulk; der
 Stichtagskörper ergibt sich wie bisher aus dem Rezept). In der Schlange neu:
 `restorationBase.pdfLayer` und `totals.byPdfLayer`.
+
+## 22 Lauf 10: Änderungen vor dem Stichtag, Alttext je Änderung aus dem Stand unmittelbar vor ihr
+
+Ausgangspunkt (Commit `c15135929`): 66 Rezepte, 446 `reconstruction-required`. Auftrag: Vorwärtsrekonstruktion weiterführen,
+besonders die 69 Normen, deren Vorwärtsschritt an einer Änderung vor dem Stichtag scheiterte (Bereichsorte, Einfügen ganzer
+Glieder vor Umnummerierung, Neufassungen ohne lesbaren Alttext), mehrstufige Ketten. Beweisregeln unverändert; Scans und OCR
+nie.
+
+Ergebnis: **70 Rezepte**, **442** `reconstruction-required`.
+
+| Methode | nach Lauf 9 | nach Lauf 10 |
+| --- | ---: | ---: |
+| reine Rückrechnung | 49 | 49 |
+| Alttext aus der Stammverkündung, Probe durch Rücknahme bis zur Stammfassung (Lauf 7) | 12 | 14 |
+| Alttext aus dem Vorwärtsstand (Lauf 9) | 5 | 7 |
+| aus einem PDF-Textlayer | 0 | 0 |
+
+Neu: `BayVV_2162_A_10911` (vorwärts; Umnummerierung mit Neufassung und Aufhebung von Sätzen im selben Befehl),
+`BayVV_2160_A_11301` (vorwärts; zweistufige Kette, Alttext aus dem Stand vor der jüngeren Änderung), `BayVV_2230_1_3_K_14015`
+(zweistufig, Alttext je Änderung), `BayVV_787_L_13877` (mehrdeutige Wortersetzung über den Wortlaut der Verkündungen). Kein
+Rezept verloren, alle Stichtagsfingerabdrücke gleich; bei `BayVV_2174_A_13397` und `BayVV_7801_L_13600` sind nur die
+aufgezeichneten Bereiche einzelner Schritte enger (Vorbemerkung ohne Kopf der Bekanntmachung, Satz im Textglied), Schritte und
+Stichtagskörper unverändert. Audit 70/70, Wiederherstellungen 21/21 nachgerechnet. Netz: keine neuen Abrufe (die drei im Lauf 9
+abgebrochenen PDF-Ausgaben 1993/1994/1998 bleiben offen; der Prüfpunkt versucht sie nicht erneut).
+
+### 22.1 Was neu geht
+
+| Hebel | Modul | Wirkung |
+| --- | --- | --- |
+| **Alttext je Änderung**: Für eine Änderung nach dem Stichtag ist der Alttext der Stand unmittelbar vor ihr – Stammverkündung, Änderungen vor dem Stichtag und die älteren Änderungen der Kette vorwärts; gelingt das nicht, der Stand am Stichtag. Die Probe bleibt: der ganze Stichtagskörper gegen den Stand am Stichtag | `run.ts` | mehrstufige Ketten, in denen eine ältere Änderung nach dem Stichtag dieselbe Stelle geändert hat |
+| **Zählung innerhalb einer Änderung**: „bisherige“ meint das Glied mit dieser Bezeichnung vor der Änderung (nicht eingefügt), sonst die neue Zählung (eingefügtes oder schon umnummeriertes Glied); am Ende der Änderung darf keine Bezeichnung doppelt stehen | `forward.ts` | Einfügen vor Umnummerierung vorwärts; GVBl. 2012 S. 12 bleibt Befund, weil danach „11.“ doppelt stünde |
+| Rückwärts: mehrere eingefügte Glieder mit **einem** Zitat neben gleich bezeichneten bisherigen – das Glied nach dem Anker, dessen Wortlaut im Zitat steht | `structural.ts` | GVBl. 2023 S. 577 („Nach § 7 werden die folgenden §§ 8 und 9 eingefügt:“ vor „Die bisherigen §§ 8 bis 10 werden die §§ 10 bis 12.“) |
+| Mehrere aufgehobene Sätze: Bereiche im Wortlaut vor der Aufhebung (**Fehler behoben**: nach Streichen von Satz 5 reichte Satz 4 bis zum Feldende); über mehrere Felder eines Glieds mit Aufzählung je Satz | `restore.ts`, `forward.ts` | BayMBl. 2022 Nr. 702 |
+| „In Satz 1 wird die Satznummerierung „¹“ gestrichen.“ bei folgenden Sätzen, die dieselbe Änderung aufhebt; aufgehobener Satz 2 hinter dem unnummerierten Satz 1 | `structural.ts`, `restore.ts` | GVBl. 2023 S. 577 |
+| Neu gefasster und aufgehobener Satz unter der **bisherigen** Bezeichnung (Umnummerierung im übergeordneten Befehl), Satz des Glieds in der Verkündung, wenn andere Befehle derselben Änderung das Feld noch tragen | `restore.ts` | BayMBl. 2024 Nr. 644 |
+| Eltern-Glied eines aufgehobenen Glieds über die Nachbarn der Verkündung mit mehrstufiger Dezimalbezeichnung („4.4.1“) | `restore.ts` | BayMBl. 2024 Nr. 644 |
+| Mehrdeutige Wortersetzung: die eine Stelle, deren Rücknahme Feld oder Satz der Verkündungen wörtlich ergibt | `restore.ts`, `steps.ts` | `BayVV_787_L_13877` |
+| Satzangabe unter einem Glied, dessen eigener Text die Überschrift ist (Blockmodell der Verkündung), und unter mehreren Textgliedern, von denen genau eines die Satznummer trägt – nur als letzte Stufe | `location.ts`, `forward.ts` | BayMBl. 2023 Nr. 513, 2025 Nr. 495 |
+| Vorbemerkung ohne Kopf der Bekanntmachung im Portal („Bekanntmachung des … vom …“, „(BayMBl. Nr. 52)“) | `location.ts` | BayMBl. 2024 Nr. 644 |
+| Gerüst einer Inhaltsübersicht der Stammverkündung (gleich bezeichnete Glieder ohne Text) fällt vorwärts weg | `forward.ts` | GVBl. 2011 S. 498 (`BayAuswVAM` jetzt vorwärts; offen wegen „Die Überschrift des bisherigen Teils 2 wird gestrichen.“) |
+| Satz am Ende eines Glieds, das mit einer Aufzählung ohne Schlusstext endet: neuer Schlusstext | `forward.ts` | GVBl. 2018 S. 545, 2021 S. 608 |
+| Befehlsformen: „Nach § 2 Abs. 2 wird folgender Abs. 2a eingefügt:“ (Anker mit mehrstufigem Ort), „Es werden folgende Nr. 4 und folgende neue Nrn. 5 bis 7 eingefügt:“, „Der Wortlaut wird Satz 1 und wie folgt geändert:“, „In Abs. 1 wird der einleitende Satzteil wie folgt geändert:“; ungegliederte Einheiten hinter einem geschlossenen Zitat (nächster Paragraph, Inkrafttreten, Unterschrift) sind keine Unterbefehle | `structural.ts`, `formulas.ts`, `steps.ts` | GVBl. 2020 S. 511, 2012 S. 12, 2020 S. 318, 2013 S. 192, 2011 S. 251, 2018 S. 301 |
+
+### 22.2 Offen, mit Grund
+
+| Stammverkündung der offenen Normen | Lauf 9 | Lauf 10 |
+| --- | ---: | ---: |
+| verfügbar – die Norm scheitert an anderem | 186 | 182 |
+| nur PDF-Ausgabe des GVBl. (Textlayer: Abschnitt 21.2) | 143 | 143 |
+| keine (Neubekanntmachung, Fundstelle fehlt) | 38 | 38 |
+| nur Papier | 34 | 34 |
+| HTML nicht sicher umsetzbar | 16 | 16 |
+| verfügbar, Kette bis zur Stammfassung lückenhaft | 15 | 15 |
+| Seite gehört nicht zur Norm | 12 | 12 |
+| nicht erreicht | 2 | 2 |
+
+Häufigste offene Gründe (alle 442): Neufassung ohne Alttext 82, Aufhebung 40, Streichung ohne Anker 29 (meist Stammverkündung
+nur als PDF oder Papier), Anlage aus beigefügter Datei 27, Reihenfolge des Inkrafttretens 21, Ortsangabe nicht lesbar 19,
+Portal-Inkrafttreten widerspricht 16, Inkrafttreten nicht lesbar 15, **Wortlautprobe widerspricht 14** (echte Abweichungen: Portal
+„Art 50“ statt „Art. 50“, fehlende Wörter „und bei weiteren schulischen Impfberatungen“ ohne Änderungsbefehl, „0,7 €“ fehlt im
+Portal, Satzfehler der Verkündung „BGBl. lS.“ – bleiben Review), Änderung vor dem Stichtag nicht umkehrbar 14, Anlage nur als
+PDF-Anhang 12, Glied in der Verkündung nicht gefunden 12. Der Vorwärtsschritt scheitert noch bei 66 Normen (Umbau einer
+Gliederung wie „Nr. 2 wird aufgehoben. – Die bisherige Nr. 2.1 wird Nr. 2.“, Sätze über eine Aufzählung hinweg, Tabellen und
+Anlagen, Satzfehler der Befehle); jede nennt den Befehl in `restorationBase.detail`.
+
+Tests: `tests/unit/bayernrecht-reconstruction-run10.test.ts` (13 Fälle; Fixtures `verkuendung-gvbl-2011-251.html`,
+`verkuendung-gvbl-2023-577.html`, vollständige Seiten).
+
+Bulk-Schnittstelle: unverändert. Neue Schritte sind vorhandene Operationen (`replace-text` mit `restoredFrom`); `restoredFrom`
+nennt weiter die Stammverkündung, auch wenn der Alttext aus dem Stand vor einer jüngeren Änderung der Kette stammt – Quelle
+bleiben die Verkündungen in `restoration.sources` und `chain`, geprüft über SHA-256 wie bisher.
+
+## 23 Lauf 11: Berichtigungen, Umbau von Gliederungen, Satzfehler in Befehlen
+
+Ausgangspunkt: 70 Rezepte (Lauf 10, integriert), 443 `reconstruction-required` – die Stichtagsklassifikation führt die
+AGZ-Richtlinie `BayVV_787_L_14168` (BayMBl. 2023 Nr. 595, „mit Wirkung vom 23. November 2023“) jetzt als am Stichtag geltend.
+Auftrag: die Normen mit scheiterndem Vorwärtsschritt (Umbau von Gliederungen, Aufzählungen über Sätze, Satzfehler in Befehlen
+– nur eindeutige, bewiesen durch die Vorwärtsprobe), Neufassungen/Aufhebungen/Streichungen ohne Alttext, die AGZ-Richtlinie,
+die drei 1990er PDF-Ausgaben nur ohne OCR.
+
+Ergebnis: **70 Rezepte** (unverändert: 49 reine Rückrechnung, 14 Stammverkündung, 7 vorwärts, 0 PDF), **443**
+`reconstruction-required`. Kein Rezept verloren, alle Fingerabdrücke gleich (bei `BayVV_2230_1_3_K_14015` nur die Zahl der Normen
+im Beleg der Portalgestalt). Keine der Änderungen dieses Laufs brachte eine Norm bis zum Beweis: Sie tragen den Vorwärtsschritt
+und die Rücknahme jeweils einen oder mehrere Befehle weiter, die Normen scheitern dann an Anlagen, Tabellen, echten
+Wortlautabweichungen oder mehrdeutigen Stellen – die Probe bleibt streng (`BayVermGeoLEV_4QE`: die Vorwärtsprobe verwirft eine
+mehrdeutige Ersetzung „bzw.“ → „und“). Netz: 2 Abrufe (GVBl. 2013 S. 71, 2014 S. 117; Prüfpunkt 998 → 1 000).
+
+### 23.1 Die AGZ-Richtlinie (`BayVV_787_L_14168`)
+
+- **Fundstelle** aus dem Zitiervorschlag, wenn der Kopf des Pakets keine trägt („vom 23. November 2023 (BayMBl. Nr. 595; 2026
+  Nr. 114)“ – die erste Fundstelle der Klammer; `source.ts`). Damit ist die Stammverkündung auffindbar – aber nicht sicher
+  umsetzbar: Sie trägt Formeln als Bild (`base-unconvertible`).
+- **Berichtigung in der Kette**: BayMBl. 2026 Nr. 114 berichtigt den Normtext („…, zuletzt geändert durch die Bekanntmachung vom
+  7. April 2025 (BayMBl. Nr. 214), wird wie folgt berichtigt:“). Eine Berichtigung des Normtexts nach dem Stichtag, die als
+  vorangehende Änderung genau die letzte Änderung des Vollzitats nennt, ist jetzt jüngstes Glied der Kette (`walk.ts`); sie gilt
+  mit der berichtigten Fassung (in Kraft 2025-04-01, wie das Paket). Der Stichtagskörper darf nicht von ihr abhängen: Ihr
+  Wortlaut (alt wie neu) darf im Stichtagskörper nicht vorkommen, sonst Befund `correction-affects-baseline` (`run.ts`) – ob
+  die Stichtagsfassung schon berichtigt zu lesen ist, wäre offen. Berichtigungen, die den Befehl eines Änderungsgesetzes
+  berichtigen („In § 1 Nr. 4 der Verordnung zur Änderung … wird …“, GVBl. 2024 S. 567, 2025 S. 240, 344, 731), bleiben Befund der
+  Gegenprobe (`chain-ledger-unexplained`).
+- Offen: `location-unreadable` („Der neue Satz 4 letzter Spiegelstrich …“), dahinter „Nach Satz 1 vierter Spiegelstrich wird
+  folgender neuer Satz 2 eingefügt:“ und in BayMBl. 2025 Nr. 214 „Die Formel in Satz 1 wird wie folgt ersetzt:“ mit Formeln als
+  Bild – ohne umsetzbare Stammverkündung nicht zurückzurechnen. Review.
+
+### 23.2 Was neu geht
+
+| Hebel | Modul | Beleg |
+| --- | --- | --- |
+| Ein Zitat als **Urheber** einer früheren Änderung einer anderen Norm („…, zuletzt geändert durch Art. 10 Abs. 2 Nr. 2 des Gesetzes vom 7. Mai 2013 (GVBl S. 246), wird wie folgt geändert:“) ist kein Einleitungssatz der zitierten Norm | `structure.ts` | GVBl. 2014 S. 286: sechs Blöcke „des ZustG“ → einer |
+| **Umbau einer Gliederung** vorwärts: „Nr. 2 wird aufgehoben.“ neben „Die bisherige Nr. 2.1 wird Nr. 2.“ derselben Änderung – nur das Glied entfällt, die bezeichneten Unterglieder rücken nach; unbezeichneter Text darunter bleibt Befund | `forward.ts` | BayMBl. 2022 Nr. 702 |
+| Befehl aus nummerierten Sätzen („¹Die bisherige Nr. 3 wird aufgehoben. ²Die bisherige Nr. 2.2 wird Nr. 3.“), „Abs. 2 wird aufgehoben, die Absatzbezeichnung im bisherigen Abs. 1 entfällt.“, „§ 97 Abs. 4 und 5 werden aufgehoben; die bisherigen Abs. 6 und 7 werden Abs. 4 und 5.“ – Befehle nacheinander (der zweite im gemeinsamen Ort des ersten) | `steps.ts` | BayMBl. 2022 Nr. 702, GVBl. 2014 S. 117, 2015 S. 243, 2014 S. 450 |
+| **Satzfehler**, nur eindeutige: Schlusspunkt einer mehrstufigen Dezimalbezeichnung vor „bis“/„und“ („Nrn. 6.1. bis 6.3.“), wiederholte Einheit („Nrn. 4.5 bis Nr. 4.7“) | `structural.ts` | BayMBl. 2022 Nr. 702 |
+| Befehlsformen: „Nach Art. 1 wird folgender **neuer** Art. 2 eingefügt:“, „Art. 1 wird folgender Abs. 3 angefügt:“ (ohne „Dem“), „das Komma und das Wort „…“ gestrichen“, „ein Komma und die Worte „…“ eingefügt“, „werden in Nr. 2 die Worte „…“ gestrichen.“ (Fortsetzung des Einleitungssatzes), „Der bisherige Satz 6 wird gelöscht.“, „der Überschrift der Bekanntmachung“ | `structural.ts`, `formulas.ts`, `steps.ts`, `location.ts` | GVBl. 2014 S. 117, FMBl. 2014 S. 47, KWMBl. 2012 S. 48, BayMBl. 2022 Nr. 727 |
+| Ortsangaben: Artikel vor weiteren Orten („§ 3 Abs. 3 Satz 3, den §§ 4 und 6 sowie § 11 Abs. 2 Nr. 1“) | `location.ts` | GVBl. 2025 S. 543 |
+| Mehrdeutige Wortersetzung je Ort (auch mit „jeweils“), mit anschließenden Satzzeichen („bzw.“ → „ , “) und über die Umgebung der Stelle (je bis 40 Zeichen, auf ganze Wörter gekürzt), wenn weder Feld noch Satz der Verkündungen wörtlich passt | `restore.ts`, `steps.ts` | GVBl. 2025 S. 543 |
+
+Geprüft und verworfen: Überschrift mit geänderter Abkürzungszeile („(Qualifikationsverordnung … – VermGeoLEV/4. QE)“ ↔
+„(VermGeoLEV/4. QE)“) – ob die Kurzbezeichnung der Kopfdaten am Stichtag bestand, belegt die Zeile allein nicht (wie Lauf 6).
+
+### 23.3 PDF-Ausgaben 1993/1994/1998
+
+Nicht erneut versucht: Alle 30 bisher geprüften GVBl.-Ausgaben der Jahrgänge 1990–1999 tragen einen Textlayer aus Texterkennung
+(`pdf-ocr`, davon 3 aus 1993, 5 aus 1994, 6 aus 1998) – die drei abgebrochenen Ausgaben wären keine Quelle.
+
+### 23.4 Offen, mit Grund
+
+Häufigste Gründe (alle 443): Neufassung ohne Alttext 82, Aufhebung 39, Streichung ohne Anker 29 (bei 124 dieser 150 fehlt eine
+umsetzbare Stammverkündung: nur PDF 86, Papier 18, keine 12, nicht umsetzbar 6, Seite gehört nicht zur Norm 2; die übrigen
+scheitern an Anlagen, Tabellen, „Satz 1 wird Nr. 6.2.1 und wie folgt gefasst:“, Aufhebung einer Überschrift, Kette bis zur
+Stammfassung – 16 mit Stammverkündung, 10 mit lückenhafter Kette bis zu ihr), Anlage aus beigefügter Datei 27, Reihenfolge des Inkrafttretens 21, Ortsangabe nicht lesbar 20,
+Portal-Inkrafttreten widerspricht 16, Inkrafttreten nicht lesbar 15, Änderung vor dem Stichtag nicht umkehrbar 15, Wortlautprobe
+widerspricht 14, unerkannte Klausel 13, Anlage nur als PDF-Anhang 12, Glied in der Verkündung nicht gefunden 12. Der
+Vorwärtsschritt scheitert noch bei 66 Normen.
+
+Tests: `tests/unit/bayernrecht-reconstruction-run11.test.ts` (10 Fälle; Fixtures `verkuendung-baymbl-2026-114.html` (vollständig),
+`verkuendung-gvbl-2014-286-zustg-excerpt.html` (Ausschnitt)).
+
+Bulk-Schnittstelle: unverändert; keine neue Operation. Neu im Schritt der Kette (Quellenregister, `chain`) nur der Beleg einer
+Berichtigung („Berichtigung … der Fassung nach …; gilt mit dieser Fassung“).
+

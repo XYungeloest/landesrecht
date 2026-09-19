@@ -165,9 +165,14 @@ describe('Einzelfassungen: Umnummerierung und Reihenfolge', () => {
     const selection = selectBaselineUnits([unit(1, '§ 12', '2003-01-01'), unit(2, '§ 13', '2003-01-01', '2020-12-31'), unit(3, '§ 14', '2003-01-01', '2015-12-31'), unit(4, '§ 13', '2021-01-01'), unit(5, '§ 15', '2003-01-01')]);
     expect(selection.problems).toEqual([]);
     expect(selection.selected.map((entry) => entry.nn)).toEqual([1, 4, 5]);
-    // Stünde eine noch geltende Einheit mit höherer Nummer davor, ist die Zusammensetzung nicht belegt.
+    // Steht eine noch geltende Einheit mit höherer Nummer davor, trägt bei einer reinen Paragraphenfolge die Nummer die
+    // Reihenfolge der Norm (Paragraphen einer Norm stehen stets aufsteigend; juris führt neu angelegte Einheiten hinten):
+    // geordnet, kein Befund (Run 8). Mit einer Gliederungseinheit dazwischen bliebe die Zuordnung offen – Befund.
     const disordered = selectBaselineUnits([unit(1, '§ 12', '2003-01-01'), unit(2, '§ 13', '2003-01-01', '2020-12-31'), unit(3, '§ 14', '2003-01-01'), unit(4, '§ 13', '2021-01-01')]);
-    expect(disordered.problems).toEqual(['Reihenfolge nicht aufsteigend: § 13 nach § 14']);
+    expect(disordered.problems).toEqual([]);
+    expect(disordered.selected.map((entry) => entry.nn)).toEqual([1, 4, 3]);
+    const nested = selectBaselineUnits([unit(1, '§ 12', '2003-01-01'), unit(2, 'Abschnitt 2', '2003-01-01'), unit(3, '§ 14', '2003-01-01'), unit(4, '§ 13', '2021-01-01')]);
+    expect(nested.problems).toEqual(['Reihenfolge nicht aufsteigend: § 13 nach § 14']);
     expect(unitOrderProblems([{ key: '§ 2' }, { key: '§ 2a' }, { key: 'Anlage' }, { key: 'Art. 3' }, { key: '§ 3' }])).toEqual([]);
   });
 
@@ -290,6 +295,53 @@ describe('R2-Staging und Sync (Speichertransport, kein Netz)', () => {
     const again = await stageRawSources({ root, manifest: await readManifest(root), write: true });
     expect(again).toMatchObject({ alreadyArchived: 1, staged: 0 });
     await expect(guardTransport(memory).put('west/recht-nrw/x.pdf', bytes, { contentType: 'application/pdf', metadata: {} })).rejects.toThrow(/nicht unter/u);
+  });
+
+  it('Etag-Modus: parallel hochladen, erst nach der Listing-Nachprüfung (Größe + MD5) verified; Abweichung bleibt staged', async () => {
+    const { createHash } = await import('node:crypto');
+    const { mkdir: mkdirAsync, writeFile: writeFileAsync } = await import('node:fs/promises');
+    const { cacheKey } = await import('@landesrecht/importer-recht-nrw/common/fetcher.ts');
+    const { createMemoryR2Transport } = await import('@landesrecht/importer-recht-nrw/common/r2-transport.ts');
+    const { stageRawSources, syncStaged } = await import('@landesrecht/importer-juris-sh/r2/sync.ts');
+    const { guardTransport } = await import('@landesrecht/importer-juris-sh/r2/archive.ts');
+    const { manifestEntryDefaults, readManifest, writeManifestEntry } = await import('@landesrecht/importer-juris-sh/common/manifest.ts');
+    const setup = async (): Promise<string> => {
+      const root = await tempRoot();
+      const bytes = new TextEncoder().encode('%PDF-1.4 etag');
+      const sha256 = createHash('sha256').update(bytes).digest('hex');
+      const url = 'https://www.gesetze-rechtsprechung.sh.juris.de/jportal/recherche3doc/jlr_ETAG_X.pdf';
+      await mkdirAsync(join(root, '.cache/juris-sh'), { recursive: true });
+      await writeFileAsync(join(root, '.cache/juris-sh', `${cacheKey(url)}.bin`), bytes);
+      await writeManifestEntry(root, {
+        ...manifestEntryDefaults(),
+        sourceArea: 'landesrecht', sourceIdentity: 'jlr-NNLSH0000ETAG', sourceTitle: 'Etagverordnung', sourceType: 'verordnung', sourceUrl: url,
+        sourceVersion: { url }, selectedVersionUrl: url, sourceValidFrom: '2020-01-01', sourceValidTo: null, baselineStatus: 'active-at-baseline', baselineRecoveryMethod: 'current-source',
+        sourceProvenance: { publicationAuthority: 'unknown', digitalRepresentation: 'born-digital' }, retrievedAt: '2026-09-18T10:00:00.000Z', sha256, contentType: 'application/pdf', transformerVersion: 't',
+        targetSlug: 'etagvo-nsh', importStatus: 'imported',
+        rawDocuments: [{ role: 'pdf', url, finalUrl: url, sha256, contentType: 'application/pdf', retrievedAt: '2026-09-18T10:00:00.000Z', byteLength: bytes.byteLength }],
+      });
+      await stageRawSources({ root, manifest: await readManifest(root), write: true });
+      return root;
+    };
+    const root = await setup();
+    const memory = createMemoryR2Transport({ bucket: 'landesrecht-quellen' });
+    const sync = await syncStaged({ root, manifest: await readManifest(root), transport: guardTransport(memory), verification: 'etag' });
+    expect(sync).toMatchObject({ pending: 1, uploaded: 1, entriesVerified: 1, missingStaging: [] });
+    expect((await readManifest(root)).entries[0]!.rawDocuments[0]!.archiveStatus).toBe('verified');
+    expect(memory.calls.some((call) => call.startsWith('get '))).toBe(false);
+    // Ein Transport, der verfälscht speichert: die Nachprüfung scheitert, nichts wird verified.
+    const broken = await setup();
+    const inner = createMemoryR2Transport({ bucket: 'landesrecht-quellen' });
+    const corrupting = { ...inner, list: inner.list, head: inner.head, get: inner.get, put: (key: string, bytes: Uint8Array, options: Parameters<typeof inner.put>[2]) => inner.put(key, new Uint8Array([...bytes, 0]), options) };
+    await expect(syncStaged({ root: broken, manifest: await readManifest(broken), transport: guardTransport(corrupting), verification: 'etag' })).rejects.toThrow(/Nachprüfung über das Listing/u);
+    expect((await readManifest(broken)).entries[0]!.rawDocuments[0]!.archiveStatus).toBe('staged');
+    // Ein vorhandener Schlüssel mit anderem Inhalt (laut Listing) wird nie überschrieben: harter Fehler.
+    const occupied = await setup();
+    const taken = createMemoryR2Transport({ bucket: 'landesrecht-quellen' });
+    const key = (await readManifest(occupied)).entries[0]!.rawDocuments[0]!.objectKey!;
+    await taken.put(key, new TextEncoder().encode('fremd'), { contentType: 'application/pdf', metadata: {} });
+    await expect(syncStaged({ root: occupied, manifest: await readManifest(occupied), transport: guardTransport(taken), verification: 'etag' })).rejects.toThrow(/nie überschrieben/u);
+    expect(new TextDecoder().decode((await taken.get(key))!)).toBe('fremd');
   });
 });
 

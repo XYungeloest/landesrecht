@@ -20,8 +20,9 @@
  */
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
+import { characterStream } from './integrity.ts';
 import type { PdfImage } from './pdf-figures.ts';
-import { isCentered, type PdfLayout, type PdfLine } from './pdf-layout.ts';
+import { isCentered, type LineSegment, type PdfLayout, type PdfLine } from './pdf-layout.ts';
 
 export interface ParseFinding {
   severity: 'info' | 'warning' | 'error';
@@ -65,7 +66,7 @@ export interface ParsedJurisPdf {
   /** VwV: Metadatenzeilen am Anfang des Dokuments (Gliederungsnummer, Fundstelle), aus dem Normkörper genommen. */
   vwvMetadata?: VwvLeadMetadata;
   /** Aus dem Normkörper genommene, als Metadaten erklärte Zeilen (Textintegrität: `explained-difference`). */
-  relocated: Array<{ reason: string; text: string }>;
+  relocated: RelocatedLine[];
   /** Als `figure`-Block übernommene Abbildungen des Normkörpers (Lage: vor Zeile `beforeLine` von `bodyLines`). */
   figures: PlacedFigure[];
 }
@@ -73,6 +74,17 @@ export interface ParsedJurisPdf {
 /** Übernommene Abbildung: vor der Zeile `beforeLine` des Normkörpers (Index in `bodyLines`; Länge = am Ende). */
 export interface PlacedFigure extends PdfImage {
   beforeLine: number;
+}
+
+/**
+ * Erklärte Zeile für die Textintegrität: ohne `replacement` aus dem Normkörper genommen (Metadatum, juris-Vermerk); mit
+ * `replacement` in anderer Reihenfolge übernommen (mehrzeilige Tabellenzellen: Quelle zeilenweise, Normkörper
+ * zellenweise – vorher geprüft, dass die Zeichen dieselben sind).
+ */
+export interface RelocatedLine {
+  reason: string;
+  text: string;
+  replacement?: string;
 }
 
 export interface VwvLeadMetadata {
@@ -476,13 +488,14 @@ export function parseJurisPdf(layout: PdfLayout, options: ParseOptions = {}): Pa
   let figures: PlacedFigure[] = [];
   if (options.images === null) findings.push({ severity: 'warning', code: 'figure', message: 'Eingebettete Bilder nicht auslesbar (pdftohtml) – Abbildungen nicht prüfbar' });
   else if (options.images) figures = placeFigures(options.images, { before: all[cursor - 1], bodyLines, after: editorialLines[0], layout, findings });
-  let body = dropEmptyFootnotes([...titleFootnotes, ...buildBody(bodyLines, layout, findings, isVwv, figures)], findings);
+  const reorders: RelocatedLine[] = [];
+  let body = dropEmptyFootnotes([...titleFootnotes, ...buildBody(bodyLines, layout, findings, isVwv, figures, reorders)], findings);
   let vwvMetadata: VwvLeadMetadata | undefined;
-  let relocated: Array<{ reason: string; text: string }> = [];
+  let relocated: RelocatedLine[] = [];
   {
     const cleaned = removeEditorialNotes(body, findings);
     body = cleaned.body;
-    relocated.push(...cleaned.relocated);
+    relocated.push(...cleaned.relocated, ...reorders);
   }
   if (isVwv) {
     const extracted = extractVwvLeadMetadata(body, title);
@@ -532,28 +545,190 @@ function isMultiColumnLine(line: PdfLine): boolean {
 /** Tabellen mit mehr Spalten sind im Textlayer nicht mehr sicher von Satzspiegel-Artefakten zu trennen. */
 const TABLE_MAX_COLUMNS = 12;
 
+/** Warum ein Block von Mehrspaltenzeilen kein sicheres Raster ist (Befundtext und Clusterung). */
+export type GridRejection = 'single-row' | 'too-many-columns' | 'columns-vary' | 'no-gutter' | 'hyphenated-cell' | 'empty-cell' | 'superscript-outside-cell';
+
 /**
  * Strukturierte Tabelle aus einem Block aufeinanderfolgender Mehrspaltenzeilen – nur für das sicher erkennbare
  * Raster: Jede Zeile hat genau dieselbe Zahl k ≥ 2 von Spalten, zwischen Spalte i und i+1 liegt über alle Zeilen ein
  * gemeinsamer Zwischenraum (größtes rechtes Ende von i < kleinster Anfang von i+1; gilt für links-, rechtsbündige und
- * zentrierte Spalten), keine Zelle ist leer, keine endet mit einer Worttrennung (sonst liefe eine Zelle über mehrere
- * Zeilen) und keine Zeile trägt hochgestellte Zeichen. Jede Zeile ist eine Tabellenzeile. Kopfzeilen werden nicht
- * geraten (alle Zellen `tableCell`). Alles andere bleibt Befund `table-layout` (Review).
+ * zentrierte Spalten), keine Zelle ist leer und keine endet mit einer Worttrennung (sonst liefe eine Zelle über mehrere
+ * Zeilen). Hochgestellte Fußnotenzeichen bleiben wie im übrigen Normtext an ihrem Wort („Bestimmungsgrenze*)“). Jede
+ * Zeile ist eine Tabellenzeile. Kopfzeilen werden nicht geraten (alle Zellen `tableCell`). Alles andere bleibt Befund
+ * `table-layout` (Review).
  */
-export function gridTable(rows: readonly PdfLine[]): NormBodyBlock | undefined {
+export function diagnoseGrid(rows: readonly PdfLine[]): { table: NormBodyBlock } | { rejection: GridRejection } {
   const columns = rows[0]?.segments.length ?? 0;
-  if (rows.length < 2 || columns < 2 || columns > TABLE_MAX_COLUMNS) return undefined;
-  if (rows.some((row) => row.segments.length !== columns || row.superscripts.length > 0)) return undefined;
-  if (rows.some((row) => row.segments.some((segment) => segment.text.trim() === '' || /\p{L}-$/u.test(segment.text.trim())))) return undefined;
+  if (rows.length < 2 || columns < 2) return { rejection: 'single-row' };
+  if (columns > TABLE_MAX_COLUMNS) return { rejection: 'too-many-columns' };
+  if (rows.some((row) => row.segments.length !== columns)) return { rejection: 'columns-vary' };
+  if (rows.some((row) => row.segments.some((segment) => segment.text.trim() === ''))) return { rejection: 'empty-cell' };
+  // Hochgestellte Zeichen hängen im Textlayer am Wort ihrer Spalte („Bestimmungsgrenze*)“); stehen sie in keiner Zelle,
+  // ginge ein Fußnotenzeichen verloren – kein Raster.
+  if (rows.some((row) => row.superscripts.some((mark) => !row.segments.some((segment) => segment.text.includes(mark))))) return { rejection: 'superscript-outside-cell' };
+  if (rows.some((row) => row.segments.some((segment) => /\p{L}-$/u.test(segment.text.trim())))) return { rejection: 'hyphenated-cell' };
   for (let column = 0; column < columns - 1; column += 1) {
     const rightEdge = Math.max(...rows.map((row) => row.segments[column]!.x1));
     const nextStart = Math.min(...rows.map((row) => row.segments[column + 1]!.x0));
-    if (!(rightEdge < nextStart)) return undefined;
+    if (!(rightEdge < nextStart)) return { rejection: 'no-gutter' };
   }
   return {
-    type: 'table',
-    columns,
-    children: rows.map((row) => ({ type: 'tableRow', children: row.segments.map((segment) => ({ type: 'tableCell', text: segment.text.trim() })) })),
+    table: {
+      type: 'table',
+      columns,
+      children: rows.map((row) => ({ type: 'tableRow', children: row.segments.map((segment) => ({ type: 'tableCell', text: segment.text.trim() })) })),
+    },
+  };
+}
+
+export function gridTable(rows: readonly PdfLine[]): NormBodyBlock | undefined {
+  const result = diagnoseGrid(rows);
+  return 'table' in result ? result.table : undefined;
+}
+
+/**
+ * Längstes sicheres Raster am Anfang eines Blocks von Mehrspaltenzeilen (mindestens zwei Zeilen). Folgt dem Raster eine
+ * Zeile anderer Gestalt (eine nummerierte Überschrift „4  Schlussbestimmungen“, eine Tabelle mit anderen Spalten), endet
+ * die Tabelle davor; die übrigen Zeilen werden wie sonst gelesen.
+ */
+export function leadingGrid(rows: readonly PdfLine[]): { table: NormBodyBlock; rows: number } | { rejection: GridRejection } {
+  let first: GridRejection | undefined;
+  for (let length = rows.length; length >= 2; length -= 1) {
+    const result = diagnoseGrid(rows.slice(0, length));
+    if ('table' in result) return { table: result.table, rows: length };
+    first ??= result.rejection;
+  }
+  return { rejection: first ?? 'single-row' };
+}
+
+/**
+ * Tabelle mit mehrzeiligen Zellen (Run 8). Das Raster ist nur dann belegt, wenn die Geometrie es trägt:
+ *
+ *   Spalten   aus den vollständigen Zeilen (größte Spaltenzahl k, mindestens zwei solche Zeilen) mit durchgehendem
+ *             Zwischenraum; jedes Segment jeder Zeile liegt in genau einem Spaltenkorridor (zwischen den Rändern der
+ *             Nachbarspalten), sonst endet die Tabelle vor dieser Zeile.
+ *   Zeilen    Eine Zeile mit Text in der ersten Spalte beginnt eine Tabellenzeile; Zeilen ohne Text in der ersten
+ *             Spalte setzen die Zellen der laufenden Tabellenzeile fort (Worttrennung aufgelöst). Das ist nur belegt,
+ *             wenn Fortsetzungen im Zeilenabstand des Absatzes stehen und jede neue Tabellenzeile – sofern die
+ *             Tabelle überhaupt Fortsetzungen hat – deutlich abgesetzt beginnt (Abstand über dem Absatzabstand).
+ *             Sonst wären eine Fortsetzung und eine Zeile mit leerer erster Zelle nicht zu unterscheiden: kein Raster.
+ *             Eine abgesetzte Zeile ohne erste Zelle (Summen-, Zwischenzeile) ist eine eigene Tabellenzeile mit leerer
+ *             erster Zelle; leere Zellen bleiben leer, nichts wird aufgefüllt oder zusammengelegt.
+ *
+ * Nicht belegt (kein Raster, Befund bleibt): eine Zelle, die mit Worttrennung endet (ihre Fortsetzung stünde in einer
+ * anderen Tabellenzeile), eine eng anschließende Teilzeile mit erster Zelle (umbrochene erste Spalte oder senkrecht
+ * zentrierte Zellen), eine Tabellenzeile über einen Seitenwechsel, Fortsetzungen in einer Tabelle ohne abgesetzte
+ * Zeilen. Eine Kopfzeile wird nicht als solche gekennzeichnet (alle Zellen `tableCell`).
+ */
+export function wrappedGrid(lines: readonly PdfLine[], start: number, layout: PdfLayout): { table: NormBodyBlock; lines: number; reorder: RelocatedLine; bands: Array<[number, number]> } | undefined {
+  const tight = layout.paragraphGap;
+  // Kandidatenzone: Mehrspaltenzeilen und eng anschließende Einzelzeilen, bis zur ersten Überschrift oder Abstandslücke.
+  const zone: PdfLine[] = [];
+  for (let index = start; index < lines.length && zone.length < 5000; index += 1) {
+    const line = lines[index]!;
+    const text = line.text.trim();
+    if (index > start && (unitFor(text) || containerFor(text) || /^Fußnoten$/u.test(text))) break;
+    if (index > start && line.segments.length < 2 && !(Number.isFinite(line.gapBefore) && line.gapBefore <= tight)) break;
+    zone.push(line);
+  }
+  const k = Math.max(...zone.map((line) => line.segments.length));
+  if (k < 2 || k > TABLE_MAX_COLUMNS) return undefined;
+  const full = zone.filter((line) => line.segments.length === k);
+  if (full.length < 2) return undefined;
+  const left = Array.from({ length: k }, (_, column) => Math.min(...full.map((line) => line.segments[column]!.x0)));
+  const right = Array.from({ length: k }, (_, column) => Math.max(...full.map((line) => line.segments[column]!.x1)));
+  for (let column = 0; column < k - 1; column += 1) if (!(right[column]! < left[column + 1]!)) return undefined;
+  // Spaltenkorridor: zwischen dem rechten Rand der Vorgängerspalte und dem linken Rand der Nachfolgerspalte.
+  const columnOf = (segment: LineSegment): number | undefined => {
+    for (let column = 0; column < k; column += 1) {
+      const lower = column === 0 ? Number.NEGATIVE_INFINITY : right[column - 1]!;
+      const upper = column === k - 1 ? Number.POSITIVE_INFINITY : left[column + 1]!;
+      // Die Mitte des Segments liegt in der Spalte selbst: Eine über mehrere Spalten gesetzte Überschrift („davon“ über
+      // „Hamburg“ und „Schleswig-Holstein“) trifft keine Spalte – dann kein Raster statt einer geratenen Zuordnung.
+      const center = (segment.x0 + segment.x1) / 2;
+      if (segment.x0 > lower && segment.x1 < upper) return center >= left[column]! && center <= right[column]! ? column : undefined;
+    }
+    return undefined;
+  };
+  const placed: Array<{ line: PdfLine; cells: Map<number, string> }> = [];
+  for (const line of zone) {
+    const cells = new Map<number, string>();
+    let fits = true;
+    for (const segment of line.segments) {
+      const column = columnOf(segment);
+      if (column === undefined || cells.has(column)) {
+        fits = false;
+        break;
+      }
+      cells.set(column, segment.text.trim());
+    }
+    if (!fits) break;
+    placed.push({ line, cells });
+  }
+  const join = (cells: Array<string | undefined>, add: Map<number, string>): void => {
+    for (const [column, text] of add) cells[column] = cells[column] === undefined ? text : joinLines(cells[column]!, text);
+  };
+  const rows: Array<Array<string | undefined>> = [];
+  const startGaps: number[] = [];
+  let continuations = 0;
+  let tightStarts = 0;
+  let current: Array<string | undefined> | undefined;
+  let used = 0;
+  for (const entry of placed) {
+    const gap = entry.line.gapBefore;
+    const spaced = !current || !Number.isFinite(gap) || gap > tight;
+    if (!Number.isFinite(gap) && current && !entry.cells.has(0)) break; // Tabellenzeile über einen Seitenwechsel: nicht belegt
+    if (entry.cells.has(0) || spaced) {
+      if (!spaced && /\p{L}-$/u.test(current![0] ?? '') && entry.line.segments.length !== k) {
+        // Endet die erste Zelle mit Worttrennung („Kanada- und Nil-“), setzt die eng anschließende Teilzeile sie fort
+        // („gänse“): Eine neue Tabellenzeile begänne nie mitten im getrennten Wort.
+        join(current!, entry.cells);
+        continuations += 1;
+        used += 1;
+        continue;
+      }
+      if (!spaced) {
+        // Eng anschließende Zeile mit erster Zelle: nur als vollständige Zeile eine neue Tabellenzeile (sonst wäre sie
+        // von einer umbrochenen ersten Zelle nicht zu unterscheiden – nicht belegt).
+        if (entry.line.segments.length !== k || /\p{L}-$/u.test(current![0] ?? '')) return undefined;
+        tightStarts += 1;
+      }
+      if (rows.length > 0 && Number.isFinite(gap)) startGaps.push(gap);
+      current = Array.from({ length: k }, () => undefined);
+      join(current, entry.cells);
+      rows.push(current);
+    } else {
+      join(current!, entry.cells);
+      continuations += 1;
+    }
+    used += 1;
+  }
+  if (rows.length < 2) return undefined;
+  // Fortsetzungen sind nur belegt, wenn Tabellenzeilen abgesetzt beginnen – und zwar gleichmäßig: Ein deutlich
+  // kleinerer Abstand (zweizeilige Kopfzelle „Teil des“ / „Ausbildungsberufsbildes“) ist keine belegte Zeilengrenze.
+  if (continuations > 0 && tightStarts > 0) return undefined;
+  const spacedGaps = startGaps.filter((gap) => gap > tight).sort((a, b) => a - b);
+  const median = spacedGaps[Math.floor(spacedGaps.length / 2)];
+  if (median !== undefined && spacedGaps.some((gap) => gap < median * 0.5)) return undefined;
+  // Keine Zelle einer Tabellenzeile darf getrennt enden (umbrochene Zelle ohne belegte Fortsetzung).
+  if (rows.some((row) => row.some((text) => /\p{L}-$/u.test(text ?? '')))) return undefined;
+  if (continuations === 0 && rows.every((row) => row.every((text) => text !== undefined))) return undefined; // einfaches Raster: `leadingGrid`
+  // Kein Zeichen verloren oder hinzugekommen: dieselben Buchstaben und Ziffern in Quelle und Zellen (nur die Folge ändert
+  // sich, weil Zellen über mehrere Zeilen laufen).
+  const sourceText = placed.slice(0, used).map((entry) => entry.line.text).join('\n');
+  // Leere Zellen nur in Zeilen, die abgesetzt stehen (Summen-, Zwischenzeilen); sie bleiben leer, nichts wird aufgefüllt.
+  const cellText = rows.map((row) => row.filter((text) => text !== undefined).join('\n')).join('\n');
+  const sorted = (text: string): string => [...characterStream(text)].sort().join('');
+  if (sorted(sourceText) !== sorted(cellText)) return undefined;
+  return {
+    reorder: { reason: 'Tabelle mit mehrzeiligen Zellen (Quelle zeilenweise, Normkörper zellenweise)', text: sourceText, replacement: cellText },
+    bands: left.map((value, column) => [value, right[column]!] as [number, number]),
+    table: {
+      type: 'table',
+      columns: k,
+      children: rows.map((row) => ({ type: 'tableRow', children: row.map((text) => ({ type: 'tableCell', text: text ?? '' })) })),
+    },
+    lines: used,
   };
 }
 
@@ -637,7 +812,7 @@ interface OpenBlock {
   lastLine: PdfLine;
 }
 
-export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFinding[], isVwv: boolean, figures: readonly PlacedFigure[] = []): NormBodyBlock[] {
+export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFinding[], isVwv: boolean, figures: readonly PlacedFigure[] = [], reorders: RelocatedLine[] = []): NormBodyBlock[] {
   const root: NormBodyBlock[] = [];
   const pendingFigures = [...figures].sort((left, right) => left.beforeLine - right.beforeLine || left.page - right.page || left.y0 - right.y0 || left.x0 - right.x0);
   /** Offene Gliederungsebenen (book … subsection), innerste zuletzt. */
@@ -650,6 +825,10 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
   let holderBlock: OpenBlock | undefined;
   let inFootnotes = false;
   let tableRun = 0;
+  /** Erste Zeile nach der zuletzt übernommenen Tabelle. */
+  let tableEnd = -1;
+  /** Grund, aus dem der zuletzt begonnene Block kein sicheres Raster ist (Befundtext). */
+  let tableRejection: string = 'single-row';
   let previousCentered = false;
   const paragraphBreak = layout.paragraphGap;
 
@@ -752,7 +931,23 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
     const previousText = lines[index - 1]?.text.trim() ?? '';
     // Eine Fußnote setzt sich nie in einer zentrierten Überschrift der nächsten Seite fort („§ 2“ nach „… getreten.]“).
     const continuesSentence: boolean = open !== undefined && open.block.type !== 'footnote' && newPage && !/[.:;]$/u.test(previousText);
-    const centered: boolean = isCentered(line, layout) && (previousCentered || (breakBefore && !continuesSentence) || (newPage && !continuesSentence));
+    // Eine Mehrspaltenzeile, auf die eine Zeile mit denselben Spaltenanfängen folgt, ist eine Tabellenzeile, keine
+    // zufällig mittig stehende Überschrift („Richtung  050°/230°“ über „Länge  2162 m“).
+    const nextLine = lines[index + 1];
+    // Spalten „gleich“ heißt: jede Spalte überlappt waagerecht die Spalte der Folgezeile (Kopf „Punktzahl“ über „105 - 97“).
+    // Auch eine Kopfzeile mit weniger Spalten („X | Y“ über „1 | 3245… | 6085…“): jede ihrer Spalten liegt über einer
+    // eigenen Spalte der Folgezeile.
+    const overlaps = (segment: LineSegment, other: LineSegment): boolean => Math.min(segment.x1, other.x1) > Math.max(segment.x0, other.x0);
+    const tableRow = nextLine !== undefined && isMultiColumnLine(line) && isMultiColumnLine(nextLine) && nextLine.page === line.page && nextLine.segments.length >= line.segments.length && (() => {
+      let cursor = 0;
+      for (const segment of line.segments) {
+        while (cursor < nextLine.segments.length && !overlaps(segment, nextLine.segments[cursor]!)) cursor += 1;
+        if (cursor >= nextLine.segments.length) return false;
+        cursor += 1;
+      }
+      return true;
+    })();
+    const centered: boolean = !tableRow && isCentered(line, layout) && (previousCentered || (breakBefore && !continuesSentence) || (newPage && !continuesSentence));
     previousCentered = centered;
     const standaloneAnnex = unitType === 'annex' && line.segments.length === 1 && text.length < 40 && (breakBefore || newPage);
     if (centered || standaloneAnnex) {
@@ -795,19 +990,52 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
       let end = index + 1;
       while (end < lines.length && isMultiColumnLine(lines[end]!) && !unitFor(lines[end]!.text.trim()) && !containerFor(lines[end]!.text.trim())) end += 1;
       const figureInside = pendingFigures.some((figure) => figure.beforeLine > index && figure.beforeLine < end);
-      const table = end - index >= 2 && !figureInside ? gridTable(lines.slice(index, end)) : undefined;
-      if (table) {
+      const simple = end - index >= 2 && !figureInside ? leadingGrid(lines.slice(index, end)) : undefined;
+      // Mehrzeilige Zellen oder Kopfzeile: nur, wenn das Raster weiter trägt als das einfache (Run 8).
+      const wrapped = !figureInside ? wrappedGrid(lines, index, layout) : undefined;
+      const wrappedFree = wrapped && !pendingFigures.some((figure) => figure.beforeLine > index && figure.beforeLine < index + wrapped.lines);
+      const useWrapped = Boolean(wrappedFree && (!simple || !('table' in simple) || wrapped!.lines > simple.rows));
+      const grid = useWrapped ? { table: wrapped!.table, rows: wrapped!.lines } : simple;
+      if (useWrapped) reorders.push(wrapped!.reorder);
+      if (grid && 'table' in grid) {
+        const table = grid.table;
+        // Kopf außerhalb des Rasters: Steht unmittelbar davor eine weitere Mehrspaltenzeile (etwa eine über mehrere
+        // Spalten gesetzte Überschrift) oder eine Zeile, die in einer in der ersten Tabellenzeile leeren Spalte liegt
+        // („Kurvenpunkt“ über „Ostwert | Nordwert“), ist der Tabellenkopf nicht sicher zugeordnet: Befund.
+        const previous = lines[index - 1];
+        const beforePrevious = lines[index - 2];
+        const near = (candidate: PdfLine | undefined, after: PdfLine): boolean => candidate !== undefined && candidate.page === after.page && Number.isFinite(after.gapBefore) && after.gapBefore <= layout.bodyHeight * 2;
+        const firstRow = (table.children![0]!.children ?? []).map((cell) => cell.text ?? '');
+        const bands = useWrapped ? wrapped!.bands : [];
+        // Ein Satz am Textrand („… gelten folgende Sätze:“) ist Einleitung, kein Tabellenkopf.
+        const inEmptyBand = (candidate: PdfLine): boolean => candidate.segments.length === 1 && !/[.:;]$/u.test(candidate.text.trim()) && candidate.x0 > layout.left + 2 && bands.some(([bandLeft, bandRight], column) => firstRow[column] === '' && (candidate.x0 + candidate.x1) / 2 >= bandLeft && (candidate.x0 + candidate.x1) / 2 <= bandRight);
+        // Zeilen einer unmittelbar vorangehenden, bereits übernommenen Tabelle sind kein Kopf dieser Tabelle.
+        const inTable = (position: number): boolean => position < tableEnd;
+        // Kopfzelle über der ersten Zeile („Kurvenpunkt“ über „| X | Y“): genau eine leere Zelle der ersten Tabellenzeile,
+        // deren Spalte die Zeile trifft, eng darüber (Abstand unter dem Zeilenabstand der Tabelle) und als eigener Absatz
+        // unmittelbar zuvor ausgegeben – dann gehört sie in diese Zelle (Reihenfolge der Quelle bleibt erhalten).
+        const emptyColumns = previous && previous.segments.length === 1 ? bands.map(([bandLeft, bandRight], column) => ({ column, hit: firstRow[column] === '' && (previous.x0 + previous.x1) / 2 >= bandLeft && (previous.x0 + previous.x1) / 2 <= bandRight })).filter((entry) => entry.hit) : [];
+        const lastBlock = target().at(-1);
+        if (emptyColumns.length === 1 && near(previous, line) && !inTable(index - 1) && !/[.:;]$/u.test(previous!.text.trim()) && line.gapBefore < layout.bodyHeight * 1.5 && lastBlock?.type === 'paragraphText' && !lastBlock.children?.length && lastBlock.text === previous!.text.trim()) {
+          target().pop();
+          table.children![0]!.children![emptyColumns[0]!.column]!.text = previous!.text.trim();
+        }
+        const firstRowNow = (table.children![0]!.children ?? []).map((cell) => cell.text ?? '');
+        const headerOutside = near(previous, line) && !inTable(index - 1) && (isMultiColumnLine(previous!) || (inEmptyBand(previous!) && firstRowNow.some((cell) => cell === '') && target().at(-1)?.text === previous!.text.trim()) || (previous!.segments.length === 1 && previous!.gapBefore <= layout.paragraphGap && near(beforePrevious, previous!) && !inTable(index - 2) && isMultiColumnLine(beforePrevious!)));
+        if (headerOutside) findings.push({ severity: 'warning', code: 'table-layout', message: `Tabellenlayout ab „${text.slice(0, 60)}“: die Zeile unmittelbar davor gehört dem Satz nach zur Tabelle (Kopf oder Zeile), ist aber keiner Spalte sicher zuzuordnen [row-before-table]`, page: line.page });
         closeText();
         target().push(table);
-        findings.push({ severity: 'info', code: 'table-structured', message: `Tabelle (${table.columns} Spalten, ${table.children!.length} Zeilen) ab „${text.slice(0, 60)}“ aus dem Spaltenraster übernommen`, page: line.page });
+        findings.push({ severity: 'info', code: 'table-structured', message: `Tabelle (${table.columns} Spalten, ${table.children!.length} Zeilen) ab „${text.slice(0, 60)}“ aus dem Spaltenraster übernommen${useWrapped ? ' (mehrzeilige Zellen bzw. Kopfzeile)' : ''}`, page: line.page });
         previousCentered = false;
-        index = end - 1;
+        index += grid.rows - 1;
+        tableEnd = index + 1;
         continue;
       }
+      tableRejection = figureInside ? 'figure-inside' : grid ? grid.rejection : 'single-row';
     }
     if (multiColumn) {
       tableRun += 1;
-      if (tableRun === 2) findings.push({ severity: 'warning', code: 'table-layout', message: `Tabellenlayout (mehrere Spalten) ab „${text.slice(0, 60)}“ – Struktur aus dem Textlayer nicht sicher rekonstruierbar`, page: line.page });
+      if (tableRun === 2) findings.push({ severity: 'warning', code: 'table-layout', message: `Tabellenlayout (mehrere Spalten) ab „${text.slice(0, 60)}“ – Struktur aus dem Textlayer nicht sicher rekonstruierbar [${tableRejection}]`, page: line.page });
     } else tableRun = 0;
 
     // Absatz „(1)“.

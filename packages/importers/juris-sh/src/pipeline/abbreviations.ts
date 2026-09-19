@@ -19,10 +19,10 @@ import { CACHE_DIR, IMPORT_DATA_DIR } from '../common/constants.ts';
 import { ENUMERABLE_AREAS, readEnumeration } from '../enumerate/enumeration.ts';
 import { pdfExportUrl } from '../export/client.ts';
 import { sha256Hex } from '../r2/archive.ts';
-import { definedStateAbbreviations, isStateAbbreviation } from '../transform/rules.ts';
+import { definedStateAbbreviations, isStateAbbreviation, isStateShortTitle, titleShortTitles } from '../transform/rules.ts';
 
 export const OFFICIAL_ABBREVIATIONS_PATH = `${IMPORT_DATA_DIR}/official-abbreviations.json`;
-export const OFFICIAL_ABBREVIATIONS_SCHEMA = 'juris-sh-official-abbreviations/2' as const;
+export const OFFICIAL_ABBREVIATIONS_SCHEMA = 'juris-sh-official-abbreviations/3' as const;
 
 export interface OfficialAbbreviationEntry {
   documentId: string;
@@ -30,6 +30,8 @@ export interface OfficialAbbreviationEntry {
   abbreviation?: string;
   /** Im Text eingeführte Abkürzungen mit Landeskürzel („… Schleswig-Holstein (LVermGeo SH)“). */
   definitions?: string[];
+  /** Amtliche Kurzbezeichnungen mit Landeskürzel aus dem Titel (erste Seite, Klammerzusatz; Schema /3). */
+  shortTitles?: string[];
 }
 
 export interface OfficialAbbreviationsFile {
@@ -64,7 +66,10 @@ export async function collectOfficialAbbreviations(root: string, options: { writ
       const full = spawnSync('pdftotext', ['-enc', 'UTF-8', path, '-'], { encoding: 'utf8', timeout: 120_000, killSignal: 'SIGKILL', maxBuffer: 256 * 1024 * 1024 });
       const text = full.status === 0 ? full.stdout.replace(/(\p{Ll})-\n(\p{Ll})/gu, '$1$2') : '';
       const definitions = [...definedStateAbbreviations(text.split(/\n{2,}/u))].sort();
-      entries.push({ documentId: item.key, sha256, ...(abbreviation ? { abbreviation } : {}), ...(definitions.length ? { definitions } : {}) });
+      // Titel: zentrierte Zeilen der ersten Seite zwischen Kopf und Verzeichnis; der Klammerzusatz nennt die Kurzbezeichnung.
+      const firstPage = first.status === 0 ? first.stdout.replace(/(\p{Ll})-\n\s*(\p{Ll})/gu, '$1$2').split(/Nichtamtliches Inhaltsverzeichnis/u)[0]! : '';
+      const shortTitles = [...titleShortTitles(firstPage.replace(/^.*:\s.*$/gmu, ' '))].filter((value) => !definitions.includes(value)).sort();
+      entries.push({ documentId: item.key, sha256, ...(abbreviation ? { abbreviation } : {}), ...(definitions.length ? { definitions } : {}), ...(shortTitles.length ? { shortTitles } : {}) });
     }
   }
   entries.sort((left, right) => (left.documentId < right.documentId ? -1 : 1));
@@ -78,6 +83,9 @@ export async function collectOfficialAbbreviations(root: string, options: { writ
 export function knownFrom(entries: readonly OfficialAbbreviationEntry[]): Set<string> {
   const values = entries.flatMap((entry) => [...(entry.abbreviation ? [entry.abbreviation] : []), ...(entry.definitions ?? [])]);
   const known = new Set(values.filter((value) => isStateAbbreviation(value)));
+  // Amtliche Kurzbezeichnungen aus Titeln dürfen lange Wörter tragen (Beleg: der Titel selbst).
+  for (const entry of entries) for (const value of entry.shortTitles ?? []) if (isStateShortTitle(value)) known.add(value);
+  for (const entry of entries) if (entry.abbreviation && !isStateAbbreviation(entry.abbreviation) && isStateShortTitle(entry.abbreviation)) known.add(entry.abbreviation);
   // Amtliche Abkürzung ohne Landeskürzel mit angehängtem Kürzel im Text („LBG SH“, „LDSG-SH“): Der Stamm ist die
   // amtliche Abkürzung einer Norm des Bestands – wie West („VwVfG NRW“ → „VwVfG West“). Nur Stämme, die als
   // Abkürzung erkennbar sind (mindestens drei Zeichen, zwei Großbuchstaben).

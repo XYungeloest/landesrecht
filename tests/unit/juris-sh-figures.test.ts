@@ -246,6 +246,17 @@ describe('VwV-Anlagen als eigene juris-Dokumente', () => {
     expect([...ambiguous.ambiguousMains.keys()].sort()).toEqual(['VVSH-3', 'VVSH-5']);
   });
 
+  it('entscheidet gleichnamige Änderungsbekanntmachungen über das gemeinsame Erlassdatum, sonst nicht', () => {
+    const facts = (date: string) => ({ gliederungsnummer: '2330.54', documentDates: [date] }) as never;
+    const older = vwv('VVSH-10', { title: 'Änderung der Finanzierungsrichtlinien', source: facts('2014-12-03') });
+    const newer = vwv('VVSH-20', { title: 'Änderung der Finanzierungsrichtlinien', source: facts('2015-07-14') });
+    const annex = vwv('VVSH-21', { mainDocument: 'Änderung der Finanzierungsrichtlinien', source: facts('2015-07-14') });
+    expect(assignSeparateAnnexes([older, newer, annex]).mainOf.get('VVSH-21')).toBe('VVSH-20');
+    // Zwei Kandidaten mit demselben Datum: mehrdeutig, keine Zuordnung.
+    const twin = vwv('VVSH-22', { title: 'Änderung der Finanzierungsrichtlinien', source: facts('2015-07-14') });
+    expect(assignSeparateAnnexes([older, newer, twin, annex]).mainOf.has('VVSH-21')).toBe(false);
+  });
+
   it('hängt Anlagen an den Normkörper an und übernimmt ihre Sperrgründe', () => {
     const main = vwv('VVSH-3', { title: 'Stammnorm' });
     const clean = vwv('VVSH-1', { mainDocument: 'Stammnorm', body: [{ type: 'annex', label: 'Anlage 1', children: [{ type: 'paragraphText', text: 'Lehrgang' }] }, { type: 'paragraph', label: '§ 1', children: [{ type: 'paragraphText', text: 'Gegenstand' }] }] });
@@ -281,5 +292,47 @@ describe('R2: Abbildungs-Assets', () => {
   it('verlangt an Abbildungs-Rohquellen die gebundene PDF-Ausgabe (Lage und SHA-256)', () => {
     const problems = validateManifestEntry({ rawDocuments: [{ role: 'figure', url: 'https://example.test/a.pdf', finalUrl: 'https://example.test/a.pdf', sha256: 'f'.repeat(64), contentType: 'image/png', retrievedAt: '2026-09-18T00:00:00.000Z', byteLength: 10 }] } as never, 'x');
     expect(problems.some((problem) => /packagePath\/packageSha256/u.test(problem))).toBe(true);
+  });
+});
+
+describe('Historische Einzelfassungen (Run 8)', () => {
+  const unit = (nn: number, key: string, options: { from?: string; to?: string; version?: string; text?: string } = {}) => ({
+    documentId: `jlr-NNLSH0000TESTNN${String(nn).padStart(11, '0')}`,
+    nn,
+    key,
+    ...(options.from ? { validFrom: options.from } : {}),
+    ...(options.to ? { validTo: options.to } : {}),
+    ...(options.version ? { versionDate: options.version } : {}),
+    parsed: { body: [{ type: 'paragraphText', text: options.text ?? key }] } as never,
+    layout: {} as never,
+    raw: { url: '', sha256: '', byteLength: 0, retrievedAt: '' },
+  });
+
+  it('ordnet eine reine Paragraphenfolge nach der Nummer, wenn juris die alten Fassungen hinter die Neufassung stellt', async () => {
+    const { selectBaselineUnits } = await import('@landesrecht/importer-juris-sh/pipeline/historical.ts');
+    const selection = selectBaselineUnits([unit(1, 'Eingangsformel', { from: '2003-01-01' }), unit(2, '§ 1', { from: '2021-12-17' }), unit(3, '§ 13', { from: '2021-12-17' }), unit(4, 'Teil 1', { from: '2025-03-29' }), unit(5, '§ 8', { from: '2021-12-17' }), unit(6, 'Anlage 1', { from: '2021-12-17' })]);
+    expect(selection.problems).toEqual([]);
+    expect(selection.selected.map((entry) => entry.key)).toEqual(['Eingangsformel', '§ 1', '§ 8', '§ 13', 'Anlage 1']);
+    // Mit einer Gliederungseinheit zwischen den Paragraphen bleibt es ein Befund.
+    const nested = selectBaselineUnits([unit(1, '§ 1', { from: '2021-01-01' }), unit(2, 'Abschnitt 2', { from: '2021-01-01' }), unit(3, '§ 13', { from: '2021-01-01' }), unit(4, '§ 8', { from: '2021-01-01' })]);
+    expect(nested.problems[0]).toMatch(/Reihenfolge nicht aufsteigend/u);
+  });
+
+  it('wertet wortgleiche Doppelfassungen als eine, textlich verschiedene nie', async () => {
+    const { selectBaselineUnits } = await import('@landesrecht/importer-juris-sh/pipeline/historical.ts');
+    const twins = selectBaselineUnits([unit(1, '§ 1', { from: '2023-11-17', to: '2025-11-14', version: '2023-10-27', text: 'Text A' }), unit(2, '§ 1', { from: '2023-11-17', version: '2023-10-27', text: 'Text A' })]);
+    expect(twins.problems).toEqual([]);
+    expect(twins.selected.map((entry) => entry.nn)).toEqual([1]);
+    const different = selectBaselineUnits([unit(1, '§ 1', { from: '2023-11-17', to: '2025-11-14', version: '2023-10-27', text: 'Ministerium A' }), unit(2, '§ 1', { from: '2023-11-17', version: '2023-10-27', text: 'Ministerium B' })]);
+    expect(different.problems[0]).toMatch(/2 Fassungen gelten zugleich/u);
+  });
+
+  it('lässt eine Fassung ohne „Gültig ab“ weg, die erst nach dem Stichtag erlassen wurde', async () => {
+    const { selectBaselineUnits } = await import('@landesrecht/importer-juris-sh/pipeline/historical.ts');
+    const selection = selectBaselineUnits([unit(1, '§ 1', { from: '2020-01-01' }), unit(2, 'Einheit 2', { version: '2026-05-04' })]);
+    expect(selection.problems).toEqual([]);
+    expect(selection.omitted.map((entry) => entry.key)).toEqual(['Einheit 2']);
+    const undatedBefore = selectBaselineUnits([unit(1, '§ 1', { from: '2020-01-01' }), unit(2, 'Einheit 2', { version: '2019-05-04' })]);
+    expect(undatedBefore.problems[0]).toMatch(/ohne „Gültig ab“/u);
   });
 });

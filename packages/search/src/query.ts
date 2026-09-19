@@ -122,7 +122,8 @@ export function buildSearchVariants(value: string): string[] {
   return [...new Set(variants.filter(Boolean))];
 }
 
-const PARAGRAPH_PATTERN = /§{1,2}\s*([0-9]+[a-z]?(?:\s*(?:,|und)\s*[0-9]+[a-z]?)*)(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;
+// Die Paragraphennummer endet an einer Wortgrenze: „§ 59MBG“ (fehlendes Leerzeichen der Quelle) ist keine Adresse „§ 59m“.
+const PARAGRAPH_PATTERN = /§{1,2}\s*([0-9]+[a-z]?(?![\p{L}\d])(?:\s*(?:,|und)\s*[0-9]+[a-z]?(?![\p{L}\d]))*)(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;
 // Römische Artikelnummern („Art. IV“) nur als ganzes Wort, damit „Artikel vom …“ keine Adresse wird.
 const ARTICLE_PATTERN = /\b(?:Artikel|Art\.)\s*([0-9]+[a-z]?|[IVXLC]+(?![\p{L}\d]))(?:\s+(?:Abs(?:atz)?\.?)\s*([0-9]+[a-z]?))?/giu;
 const SUBSECTION_PATTERN = /\b(?:Absatz|Abs\.)\s*([0-9]+[a-z]?)/giu;

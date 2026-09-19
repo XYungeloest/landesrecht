@@ -621,6 +621,9 @@ describe('Rücknahme: nur bei amtlich belegtem Inkrafttreten nach dem Stichtag',
     expect(registry.entries.some((reserved) => reserved.sourceIdentity === 'BayAbmG')).toBe(false);
     expect(registry.retired).toContainEqual(expect.objectContaining({ slug, withdrawn: expect.anything() }));
     expect(registry.retired?.find((retired) => retired.slug === slug)?.successor).toBeUndefined();
+    // Auch im Folgelauf bleibt die Rücknahme am Eintrag erkennbar.
+    await run(root, { write: true });
+    expect((await readManifestEntry(root, 'landesrecht', 'BayAbmG'))?.findings.map((finding) => finding.code)).toContain('withdrawn-not-at-baseline');
   });
 
   it('jede andere Verschlechterung behält den übernommenen Stand (Review)', async () => {

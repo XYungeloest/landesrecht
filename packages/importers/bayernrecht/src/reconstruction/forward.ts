@@ -18,7 +18,7 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 import { applyForward } from './apply.ts';
 import type { ParsedDeletion, ParsedOperation } from './formulas.ts';
 import type { GazetteUnit } from './gazette.ts';
-import { blockAt, blockLabelMatches, formatPath, locateBlock, relabel, resolvePath, sentenceRange, type FieldRef, type LocationPath, type LocationStep } from './location.ts';
+import { blockAt, blockCandidates, blockLabelMatches, formatPath, locateBlock, relabel, resolvePath, sentenceRange, type FieldRef, type LocationPath, type LocationStep } from './location.ts';
 import { nestLaw, type PriorAmendment, type UsedPriorAmendment } from './publication.ts';
 import { forwardSentences, type PublicationBase, type RestoreRequest } from './restore.ts';
 import { commandLeaves, isNormTitle, parseLeaf, type Leaf } from './steps.ts';
@@ -120,8 +120,63 @@ export function quoteBlocks(units: readonly GazetteUnit[], organ: ForwardOrgan):
 
 /* ------------------------------------------------------------------------------- Einzelschritte */
 
+/**
+ * Lauf 10: Zählung innerhalb einer Änderung. Befehle einer Änderung verzahnen Einfügen und Umnummerieren („c) Es werden
+ * folgende Nrn. 4 bis 7 eingefügt: – d) Die bisherigen Nrn. 5 und 6 werden Nrn. 8 und 9.“, GVBl. 2012 S. 12); zwischendurch
+ * tragen zwei Glieder dieselbe Bezeichnung. „bisherige“ meint das Glied mit dieser Bezeichnung vor der Änderung (nicht
+ * eingefügt), sonst ist die neue Zählung gemeint: das eingefügte oder schon umnummerierte Glied. Am Ende der Änderung darf
+ * keine Bezeichnung doppelt stehen.
+ */
+interface Numbering {
+  original: WeakMap<NormBodyBlock, string | undefined>;
+  touched: WeakSet<NormBodyBlock>;
+  bisherige: boolean;
+  /** Lauf 11: Bezeichnungen, die Umnummerierungen dieser Änderung als „bisherige“ nennen (Art und Wert). */
+  renamed: Array<{ kind: string; value: string }>;
+}
+let numbering: Numbering | undefined;
+
+function startNumbering(body: readonly NormBodyBlock[]): Numbering {
+  const original = new WeakMap<NormBodyBlock, string | undefined>();
+  const visit = (blocks: readonly NormBodyBlock[]): void => blocks.forEach((block) => {
+    original.set(block, typeof block.label === 'string' ? block.label : undefined);
+    visit(block.children ?? []);
+  });
+  visit(body);
+  return { original, touched: new WeakSet(), bisherige: false, renamed: [] };
+}
+
+function duplicateLabels(body: readonly NormBodyBlock[]): string | undefined {
+  const visit = (blocks: readonly NormBodyBlock[]): string | undefined => {
+    const seen = new Set<string>();
+    for (const block of blocks) {
+      const label = typeof block.label === 'string' ? block.label.replace(/\s+/gu, ' ').trim() : '';
+      if (label !== '' && seen.has(label)) return label;
+      if (label !== '') seen.add(label);
+      const inner = visit(block.children ?? []);
+      if (inner) return inner;
+    }
+    return undefined;
+  };
+  return visit(body);
+}
+
 function locateUnique(body: readonly NormBodyBlock[], path: LocationPath, step: string): number[] {
-  const located = locateBlock(body, path);
+  let located = locateBlock(body, path);
+  if (!located.ok && numbering && /mehrfach/u.test(located.reason) && path.length > 0) {
+    const state = numbering;
+    const last = path.at(-1)!;
+    const candidates = (blockCandidates(body, path.slice(0, -1), last) ?? []).filter((candidate) => {
+      const block = blockAt(body, candidate)!;
+      if (state.bisherige) {
+        if (!state.original.has(block)) return false;
+        const before = state.original.get(block);
+        return before !== undefined && blockLabelMatches({ ...block, label: before }, last);
+      }
+      return state.touched.has(block);
+    });
+    if (candidates.length === 1) located = { ok: true, path: candidates[0]!, resolved: [formatPath(path)], widened: [] };
+  }
   if (!located.ok || located.path.length === 0) throw new ForwardError('location-unresolved', `${step} ${formatPath(path)}: ${located.ok ? 'die ganze Norm' : located.reason}`);
   if (located.widened.length > 0) throw new ForwardError('location-unresolved', `${step} ${formatPath(path)}: nur als Bereich aufgelöst (${located.widened.join(', ')})`);
   return located.path;
@@ -167,11 +222,23 @@ function sentencesForward(body: NormBodyBlock[], request: Extract<RestoreRequest
   const scope = resolvePath(body, request.path);
   if (!scope.ok) throw new ForwardError('location-unresolved', `${step} ${request.location}: ${scope.reason}`);
   const hits = scope.scope.fields.filter((ref) => request.sentences.every((number) => sentenceRange(read(body, ref), number) !== undefined));
+  if (hits.length === 0 && request.kind === 'repeal-sentences' && request.sentences.length > 1) {
+    // Lauf 10: Die Sätze stehen in verschiedenen Feldern eines Glieds mit Aufzählung (BayMBl. 2022 Nr. 702: „⁸… folgende
+    // Maßnahmen umgesetzt:“ – a), b) – „⁹Auf diese Weise …“): je Satz das eine Feld, das ihn trägt, von hinten.
+    for (const number of [...request.sentences].sort((left, right) => right - left)) sentencesForward(body, { ...request, sentences: [number], location: `${request.location} (Satz ${number})` }, step);
+    return;
+  }
   if (hits.length !== 1) throw new ForwardError('sentence-ambiguous', `${step} ${request.location}: ${hits.length} Felder tragen die Sätze`);
   const ref = hits[0]!;
   const text = read(body, ref);
   const after = forwardSentences(text, request);
   if (after === undefined) throw new ForwardError('sentence-ambiguous', `${step} ${request.location}: Sätze nicht bestimmbar`);
+  // Ein Absatztext, dessen einziger Satz aufgehoben ist, entfällt ganz (Lauf 10).
+  const holderBlock = blockAt(body, ref.path)!;
+  if (after.trim() === '' && holderBlock.type === 'paragraphText' && (holderBlock.children ?? []).length === 0 && ref.key === 'text') {
+    childrenAt(body, ref.path.slice(0, -1)).splice(ref.path.at(-1)!, 1);
+    return;
+  }
   write(body, ref, after);
   // Ein aufgehobener letzter Satz, der mit Doppelpunkt eine Aufzählung einleitet („²Mit Ablauf des … treten außer Kraft:“ –
   // „1. …“ – „2. …“), nimmt die Aufzählung mit: ihre Glieder stehen im Blockmodell hinter dem Textfeld.
@@ -214,13 +281,47 @@ function fieldFor(body: readonly NormBodyBlock[], context: LocationPath, step: s
   }
 }
 
+/**
+ * Lauf 10: Satz am Ende eines Glieds, das mit einer Aufzählung ohne Schlusstext endet („Dem Art. 18 wird folgender Satz 3
+ * angefügt:“, GVBl. 2018 S. 545): Der neue Satz ist ein Schlusstext hinter der Aufzählung – nur, wenn der Text vor ihr
+ * mit Satz N−1 endet (oder unnummeriert Satz 1 ist und Satz 2 folgt).
+ */
+function appendAfterList(body: NormBodyBlock[], template: Extract<StructuralTemplate, { kind: 'insert-sentence' }>, step: string): boolean {
+  const frame = listFrameOrUndefined(body, template.context, step);
+  if (!frame || frame.last) return false;
+  const markers = sentenceNumbers(template.text);
+  if (markers[0]?.start !== 0 || markers[0]!.value !== template.first) return false;
+  const firstText = read(body, frame.first);
+  const own = sentenceNumbers(firstText);
+  const lastOwn = own.at(-1)?.value ?? 1;
+  if (lastOwn !== template.first - 1) return false;
+  if (own.length === 0) write(body, frame.first, `¹${firstText}`);
+  const holder = blockAt(body, frame.first.path)!;
+  const tail = { type: 'paragraphText', text: template.text } as NormBodyBlock;
+  if (holder.type === 'paragraphText' && (holder.children ?? []).length === 0) {
+    const parent = frame.first.path.slice(0, -1);
+    const lastInner = frame.inner.at(-1);
+    const index = lastInner ? lastInner.path[parent.length]! + 1 : frame.first.path.at(-1)! + 1;
+    childrenAt(body, parent).splice(index, 0, tail);
+  } else {
+    (holder.children ??= []).push(tail);
+  }
+  return true;
+}
+
 function applyTemplate(body: NormBodyBlock[], template: StructuralTemplate, quoted: readonly GazetteUnit[], organ: ForwardOrgan, step: string): void {
   switch (template.kind) {
     case 'relabel':
       relabelForward(body, [template], step);
       return;
     case 'renumber-sentences': {
-      const ref = fieldFor(body, template.context, step, 'first');
+      // Lauf 10: das Feld, das die umzunummernden Sätze trägt – im ganzen Bereich gesucht (der erste Text eines Glieds
+      // kann seine Überschrift sein, BayMBl. 2022 Nr. 702: „1. Zweck der Zuwendung“, dann die Sätze).
+      const scope = resolvePath(body, template.context);
+      if (!scope.ok) throw new ForwardError('location-unresolved', `${step} ${formatPath(template.context)}: ${scope.reason}`);
+      const carrying = scope.scope.fields.filter((field) => field.key === 'text' && template.pairs.every(([from]) => sentenceNumbers(read(body, field)).some((marker) => marker.value === from)));
+      if (carrying.length !== 1) throw new ForwardError('sentence-ambiguous', `${step}: Satznummern ${template.pairs.map(([from]) => superscriptNumber(from)).join(', ')} stehen in ${carrying.length} Feldern`);
+      const ref = carrying[0]!;
       let text = read(body, ref);
       const markers = sentenceNumbers(text);
       const hits = template.pairs.map(([from]) => {
@@ -247,6 +348,7 @@ function applyTemplate(body: NormBodyBlock[], template: StructuralTemplate, quot
       return;
     }
     case 'insert-sentence': {
+      if (template.after === 'end' && appendAfterList(body, template, step)) return;
       const ref = fieldFor(body, template.context, step, template.after === 'end' ? 'last' : 'first');
       let text = read(body, ref);
       if (template.after === 'end') {
@@ -254,11 +356,20 @@ function applyTemplate(body: NormBodyBlock[], template: StructuralTemplate, quot
         write(body, ref, `${text.trimEnd()} ${template.text}`);
         return;
       }
-      const range = sentenceRange(text, template.after);
-      if (!range) throw new ForwardError('sentence-ambiguous', `${step}: Satz ${template.after} nicht bestimmt`);
+      let target = ref;
+      if (!sentenceRange(text, template.after)) {
+        // Lauf 10: Satz N steht nicht im ersten Feld (Überschrift eines Glieds als Text) – das einzige Feld des Bereichs,
+        // das ihn trägt.
+        const scope = resolvePath(body, template.context);
+        const carrying = scope.ok ? scope.scope.fields.filter((field) => field.key === 'text' && sentenceRange(read(body, field), template.after as number) !== undefined) : [];
+        if (carrying.length !== 1) throw new ForwardError('sentence-ambiguous', `${step}: Satz ${template.after} nicht bestimmt`);
+        target = carrying[0]!;
+        text = read(body, target);
+      }
+      const range = sentenceRange(text, template.after)!;
       const head = text.slice(0, range.end).trimEnd();
       const tail = text.slice(range.end).trimStart();
-      write(body, ref, tail === '' ? `${head} ${template.text}` : `${head} ${template.text} ${tail}`);
+      write(body, target, tail === '' ? `${head} ${template.text}` : `${head} ${template.text} ${tail}`);
       return;
     }
     case 'insert-blocks': {
@@ -288,6 +399,7 @@ function applyTemplate(body: NormBodyBlock[], template: StructuralTemplate, quot
         }
       }
       childrenAt(body, parent).splice(index, 0, ...blocks);
+      for (const inserted of blocks) numbering?.touched.add(inserted);
       return;
     }
     case 'insert-title': {
@@ -342,6 +454,7 @@ function relabelForward(body: NormBodyBlock[], templates: ReadonlyArray<Extract<
     const next = relabel(block.label, from, to.value);
     if (next === undefined) throw new ForwardError('relabel-unreadable', `${step}: Bezeichnung „${block.label ?? ''}“ nicht übertragbar`);
     block.label = next;
+    numbering?.touched.add(block);
   }
 }
 
@@ -359,6 +472,19 @@ function applyRestore(body: NormBodyBlock[], request: RestoreRequest, quoted: re
       const run = locateRun(body, request.context, request.targets, step);
       const siblings = childrenAt(body, run.parent);
       if (request.kind === 'repeal-blocks') {
+        // Lauf 11: Umbau einer Gliederung („Nr. 2 wird aufgehoben. – Die bisherige Nr. 2.1 wird Nr. 2.“, BayMBl. 2022
+        // Nr. 702): Nennt eine Umnummerierung derselben Änderung ein Unterglied des aufgehobenen Glieds, entfällt nur das
+        // Glied selbst (seine Überschrift); die bezeichneten Unterglieder rücken an seine Stelle. Unbezeichneter Text darunter
+        // bleibt ungeklärt – dann Befund.
+        const target = request.targets[0]!;
+        const inner = run.count === 1 ? numbering?.renamed.filter((entry) => entry.kind === target.kind && entry.value.startsWith(`${target.value}.`)) ?? [] : [];
+        if (inner.length > 0) {
+          const own = siblings[run.index]!;
+          const children = own.children ?? [];
+          if (children.some((child) => !child.label)) throw new ForwardError('location-unresolved', `${step}: das aufgehobene Glied ${formatPath([target])} trägt unbezeichneten Text; seine Unterglieder werden umnummeriert – was entfällt, ist nicht bestimmt`);
+          siblings.splice(run.index, 1, ...children);
+          return;
+        }
         siblings.splice(run.index, run.count);
         return;
       }
@@ -371,6 +497,7 @@ function applyRestore(body: NormBodyBlock[], request: RestoreRequest, quoted: re
         return;
       }
       siblings.splice(run.index, run.count, ...blocks);
+      for (const inserted of blocks) numbering?.touched.add(inserted);
       return;
     }
     case 'recast-vorspann': {
@@ -421,13 +548,31 @@ export interface ForwardAmendmentResult {
 /** Wendet einen Befehlsblock vorwärts an; wirft `ForwardError`, wenn ein Befehl nicht eindeutig anwendbar ist. */
 export function forwardAmendment(before: readonly NormBodyBlock[], block: CommandBlock, organ: ForwardOrgan, label: string): ForwardAmendmentResult {
   const body = structuredClone(before) as NormBodyBlock[];
+  numbering = startNumbering(body);
+  try {
+    const result = forwardCommands(body, block, organ, label);
+    const duplicate = duplicateLabels(result.body);
+    if (duplicate !== undefined && duplicateLabels(before) === undefined) throw new ForwardError('location-unresolved', `${label}: nach der Änderung steht „${duplicate}“ doppelt`);
+    return result;
+  } finally {
+    numbering = undefined;
+  }
+}
+
+function forwardCommands(body: NormBodyBlock[], block: CommandBlock, organ: ForwardOrgan, label: string): ForwardAmendmentResult {
   const { leaves, failures } = commandLeaves(block);
   if (failures.length > 0) throw new ForwardError('location-unreadable', `${label}: ${failures[0]}`);
   const parsed = leaves.map((leaf) => ({ leaf, parsed: parseLeaf(leaf, true) }));
+  if (numbering) {
+    for (const { parsed: command } of parsed) {
+      for (const item of command.items ?? []) if (item.template?.kind === 'relabel') for (const [from] of item.template.pairs) numbering.renamed.push({ kind: from.kind, value: from.value });
+    }
+  }
   let commands = 0;
   for (let index = 0; index < parsed.length; index += 1) {
     const { leaf, parsed: command } = parsed[index]!;
     const step = `${label} ${leaf.labels.join(' ')}`.trim();
+    if (numbering) numbering.bisherige = /(?:^|\s)bisherigen?\s/u.test(leaf.node.text);
     // Inhaltsübersicht: im Blockmodell der Verkündung nicht geführt (`nestLaw`), die Befehle betreffen es nicht.
     if (leaf.toc) continue;
     if (leaf.statisticsOnly) throw new ForwardError('location-unreadable', `${step}: Ort des Befehls nicht bestimmt`);
@@ -480,7 +625,7 @@ export interface ForwardStateResult {
  * belegt (`ok: false`, Grund und Stelle).
  */
 export function forwardState(base: readonly NormBodyBlock[], amendments: ReadonlyArray<{ label: string; block: CommandBlock }>, organ: ForwardOrgan): ForwardStateResult {
-  let body = structuredClone(base) as NormBodyBlock[];
+  let body = withoutTocSkeleton(structuredClone(base) as NormBodyBlock[]);
   const applied: ForwardStateResult['applied'] = [];
   for (const amendment of amendments) {
     try {
@@ -496,6 +641,27 @@ export function forwardState(base: readonly NormBodyBlock[], amendments: Readonl
     }
   }
   return { ok: true, body, applied };
+}
+
+/** Hat der Teilbaum irgendwo Text (nicht nur Bezeichnungen und Überschriften)? */
+const hasText = (block: NormBodyBlock): boolean => (typeof block.text === 'string' && block.text.trim() !== '') || (block.children ?? []).some(hasText);
+
+/**
+ * Lauf 10: Die Inhaltsübersicht einer Verkündung wird beim Gliedern zu einem Gerüst gleich bezeichneter Glieder ohne Text
+ * (GVBl. 2011 S. 498: „Inhaltübersicht“, dann „Teil 1 – § 1 … § 6“ nur mit Überschriften) – jede Bezeichnung stünde doppelt.
+ * Vorwärts gilt sie nicht (Befehle an ihr sind ohne Wirkung, die Probe lässt sie aus): Die Zeile und das Gerüst dahinter
+ * fallen weg – nur, wenn jedes Glied des Gerüsts ohne Text ist und seine Bezeichnung danach wiederkehrt.
+ */
+export function withoutTocSkeleton(body: NormBodyBlock[]): NormBodyBlock[] {
+  const at = body.findIndex((block) => (block.children ?? []).length === 0 && /^Inhalts?(?:übersicht|verzeichnis)$/u.test(String(block.text ?? block.title ?? '').trim()));
+  if (at < 0) return body;
+  let end = at + 1;
+  while (end < body.length && typeof body[end]!.label === 'string' && !hasText(body[end]!)) end += 1;
+  if (end === at + 1) return body;
+  const skeleton = body.slice(at + 1, end);
+  const rest = body.slice(end);
+  if (!skeleton.every((block) => rest.some((later) => later.label === block.label))) return body;
+  return [...body.slice(0, at), ...rest];
 }
 
 /**

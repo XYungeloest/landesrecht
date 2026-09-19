@@ -21,7 +21,7 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { BASELINE_DATE } from '../common/constants.ts';
 import { compareIntegrity, type IntegrityResult } from '../parse/integrity.ts';
-import { bodyText, buildBody, isoDate, joinLines, normalizeLabel, parseJurisPdf, removeEditorialNotes, type ParsedJurisPdf, type ParseFinding, type PlacedFigure } from '../parse/juris-pdf.ts';
+import { bodyText, buildBody, isoDate, joinLines, normalizeLabel, parseJurisPdf, removeEditorialNotes, type ParsedJurisPdf, type ParseFinding, type PlacedFigure, type RelocatedLine } from '../parse/juris-pdf.ts';
 import { readFigureImages, withoutBytes } from '../parse/pdf-figures.ts';
 import { layoutFromPdf, type PdfLayout, type PdfLine } from '../parse/pdf-layout.ts';
 
@@ -90,14 +90,20 @@ export function selectBaselineUnits(units: readonly UnitVersion[], baseline = BA
   const selected: UnitVersion[] = [];
   const omitted: BaselineSelection['omitted'] = [];
   const problems: string[] = [];
-  for (const group of groups) {
-    const key = group[0]!.key;
+  for (const rawGroup of groups) {
+    const key = rawGroup[0]!.key;
+    // Fassung ohne „Gültig ab“, aber mit „Fassung vom“ nach dem Stichtag: gab es am Stichtag noch nicht (Run 8).
+    const group = rawGroup.filter((unit) => unit.validFrom || !(unit.versionDate && unit.versionDate > baseline));
+    if (group.length === 0) {
+      omitted.push({ key, reason: `nur Fassung(en) vom ${rawGroup.map((unit) => unit.versionDate).join(', ')} ohne „Gültig ab“ (nach dem Stichtag)` });
+      continue;
+    }
     const undated = group.filter((unit) => !unit.validFrom);
     if (undated.length > 0) {
       problems.push(`${key}: ${undated.length} Fassung(en) ohne „Gültig ab“`);
       continue;
     }
-    let valid = group.filter((unit) => unit.validFrom! <= baseline && (!unit.validTo || unit.validTo >= baseline));
+    let valid = withoutDuplicateRecords(group).filter((unit) => unit.validFrom! <= baseline && (!unit.validTo || unit.validTo >= baseline));
     if (valid.length > 1) {
       // Mehrere offene Fassungen am selben Tag: juris führt eine abgelöste Fassung ohne Ende weiter („Gültig bis“
       // leer). Gilt genau eine Fassung mit späterem „Fassung vom“ und haben alle übrigen kein Ende, hat diese die
@@ -127,8 +133,28 @@ export function selectBaselineUnits(units: readonly UnitVersion[], baseline = BA
   for (const [key, count] of selectedByKey) if (count > 1 && /^§/u.test(key)) problems.push(`Bezeichnung ${key}: ${count} Einheiten gelten zugleich am Stichtag`);
   // Reihenfolge: Die Nummernfolge der Einzelfassungen trägt die Normreihenfolge; nummerierte Einheiten gleicher
   // Art (§, Artikel) müssen in ihr aufsteigen, sonst ist die Zusammensetzung nicht belegt.
-  problems.push(...unitOrderProblems(selected));
-  return { selected, omitted, problems };
+  const ordered = orderedByNumber(selected);
+  problems.push(...unitOrderProblems(ordered));
+  return { selected: ordered, omitted, problems };
+}
+
+/**
+ * juris führt manche Fassung doppelt (Run 8): zweimal mit gleichem „Fassung vom“ und „Gültig ab“, einmal mit, einmal ohne
+ * „Gültig bis“ (die offene ist der nicht nachgeführte Zwilling), oder zweimal ganz gleich. Belegt ist das nur bei
+ * wortgleichem Text; dann zählt die datierte bzw. die erste Fassung. Textlich verschiedene Zwillinge bleiben Befund.
+ */
+export function withoutDuplicateRecords(group: readonly UnitVersion[]): UnitVersion[] {
+  const text = (unit: UnitVersion): string => bodyText(unit.parsed.body ?? []).replace(/\s+/gu, ' ').trim();
+  const kept: UnitVersion[] = [];
+  for (const unit of group) {
+    const twins = group.filter((other) => other !== unit && other.versionDate === unit.versionDate && other.validFrom === unit.validFrom && text(other) === text(unit));
+    // Offener Zwilling einer datierten Fassung: entfällt.
+    if (!unit.validTo && twins.some((other) => other.validTo)) continue;
+    // Völlig gleicher Zwilling: nur der erste bleibt.
+    if (kept.some((other) => other.versionDate === unit.versionDate && other.validFrom === unit.validFrom && other.validTo === unit.validTo && text(other) === text(unit))) continue;
+    kept.push(unit);
+  }
+  return kept;
 }
 
 /** Ordnungsschlüssel einer nummerierten Einheit (`§ 13a` → [13, 'a']), sonst `undefined`. */
@@ -136,6 +162,34 @@ export function unitOrdinal(key: string): { kind: string; number: number; suffix
   const match = /^(§|Art\.?|Artikel)\s*(\d+)\s*([a-z]?)\b/u.exec(key);
   if (!match) return undefined;
   return { kind: match[1]!.startsWith('Art') ? 'Artikel' : '§', number: Number(match[2]), suffix: match[3] ?? '' };
+}
+
+/**
+ * Nach einer Neufassung führt juris die alten Einzelfassungen hinter den neuen (Nummernfolge nach Anlage des Dokuments,
+ * nicht nach der Norm): „§ 8“ der Stichtagsfassung steht dann hinter „§ 13“. Besteht die Stichtagsfassung nur aus
+ * Paragraphen (bzw. nur aus Artikeln) – davor höchstens Eingangsformel und Inhaltsübersicht, dahinter höchstens
+ * Anlagen –, trägt die Nummer der Paragraphen die Reihenfolge der Norm: aufsteigend geordnet (Run 8). Mit
+ * Gliederungseinheiten dazwischen (Teil, Abschnitt) bliebe die Zuordnung offen – dann unverändert (Befund).
+ */
+export function orderedByNumber<T extends Pick<UnitVersion, 'key'>>(units: readonly T[]): T[] {
+  if (unitOrderProblems(units).length === 0) return [...units];
+  const ordinals = units.map((unit) => unitOrdinal(unit.key));
+  const first = ordinals.findIndex((ordinal) => ordinal !== undefined);
+  const last = ordinals.length - 1 - [...ordinals].reverse().findIndex((ordinal) => ordinal !== undefined);
+  if (first < 0) return [...units];
+  const kinds = new Set(ordinals.filter((ordinal) => ordinal !== undefined).map((ordinal) => ordinal!.kind));
+  const lead = units.slice(0, first);
+  const middle = units.slice(first, last + 1);
+  const tail = units.slice(last + 1);
+  if (kinds.size !== 1 || middle.some((unit) => unitOrdinal(unit.key) === undefined)) return [...units];
+  if (!lead.every((unit) => /^(?:Eingangsformel|Inhaltsübersicht|Präambel)/u.test(unit.key))) return [...units];
+  if (!tail.every((unit) => /^(?:Anlage|Anhang|Schlussformel)/u.test(unit.key))) return [...units];
+  const sorted = [...middle].sort((left, right) => {
+    const a = unitOrdinal(left.key)!;
+    const b = unitOrdinal(right.key)!;
+    return a.number - b.number || a.suffix.localeCompare(b.suffix);
+  });
+  return [...lead, ...sorted, ...tail];
 }
 
 export function unitOrderProblems(units: readonly Pick<UnitVersion, 'key'>[]): string[] {
@@ -201,7 +255,9 @@ export function assembleBaseline(selected: readonly UnitVersion[], isVwv = false
     unit.parsed.bodyLines.forEach((line, index) => lines.push({ ...line, gapBefore: index === 0 ? Number.POSITIVE_INFINITY : line.gapBefore }));
     for (const finding of unit.parsed.findings) findings.push({ ...finding, message: `${unit.key}: ${finding.message}` });
   }
-  const cleaned = removeEditorialNotes(buildBody(lines, reference.layout, findings, isVwv, figures), findings);
+  const reorders: RelocatedLine[] = [];
+  const cleaned = removeEditorialNotes(buildBody(lines, reference.layout, findings, isVwv, figures, reorders), findings);
+  cleaned.relocated.push(...reorders);
   const body = cleaned.body;
   const sourceText = lines.filter((line) => !/^Fußnoten$/u.test(line.text.trim())).map((line) => line.text).join('\n');
   const integrity = compareIntegrity(sourceText, bodyText(body), cleaned.relocated, joinLines);

@@ -1,7 +1,7 @@
 ---
 export const prerender = false;
 
-import { formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { formatBaselineDate, jurisdictionGenitive } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import { ADMINISTRATIVE_REGULATION_TYPES, expandNormTypeFilter, isNormType, NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
@@ -36,13 +36,13 @@ const basePath = `/${jurisdiction.pathSegment}/`;
 const filterUrl = (type?: NormType): string => (type ? `${basePath}?type=${encodeURIComponent(type)}` : basePath);
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 ---
-<BaseLayout title={jurisdiction.name} description={`Landesrecht des ${jurisdiction.name}: Gesetze, Verordnungen und Verwaltungsvorschriften der Simulation.`} canonical={`/${jurisdiction.pathSegment}/`}>
+<BaseLayout title={jurisdiction.name} description={`Landesrecht des ${jurisdictionGenitive(jurisdiction)}: Gesetze, Verordnungen und Verwaltungsvorschriften der Simulation.`} canonical={`/${jurisdiction.pathSegment}/`}>
   <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>{jurisdiction.name}</li></ol></nav>
   <h1>{jurisdiction.name}</h1>
   <p class="lead">Kurzbezeichnung: <strong>{jurisdiction.shortName}</strong> · {VOCABULARY.baselineLabel}: <strong>{formatBaselineDate(jurisdiction.baselineDate)}</strong></p>
-  <p>Der Rechtsbestand des {jurisdiction.name} beginnt mit dem Rechtsstand vom {formatBaselineDate(jurisdiction.baselineDate)}. Übernommen wird das reale Recht des Landes {jurisdiction.sourceSystem.realWorldState} ({jurisdiction.sourceSystem.portalLabel}); spätere Änderungen entstehen ausschließlich in der Simulation.</p>
+  <p>Der Rechtsbestand des {jurisdictionGenitive(jurisdiction)} beginnt mit dem Rechtsstand vom {formatBaselineDate(jurisdiction.baselineDate)}. Übernommen wird das reale Recht des Landes {jurisdiction.sourceSystem.realWorldState} ({jurisdiction.sourceSystem.portalLabel}); spätere Änderungen entstehen ausschließlich in der Simulation.</p>
   {jurisdiction.externalSourceOfTruth && (
-    <p><strong>Hinweis:</strong> Der Rechtsbestand des {jurisdiction.name} wird derzeit in <a href={jurisdiction.externalSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.externalSourceOfTruth.label}</a> gepflegt. Dieses Portal zeigt nur Testbestände und übernimmt Normen später über die OstRecht-Schnittstelle.</p>
+    <p><strong>Hinweis:</strong> Der Rechtsbestand des {jurisdictionGenitive(jurisdiction)} wird derzeit in <a href={jurisdiction.externalSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.externalSourceOfTruth.label}</a> gepflegt. Dieses Portal zeigt nur Testbestände und übernimmt Normen später über die OstRecht-Schnittstelle.</p>
   )}
   <InventoryNotice jurisdiction={id} />
   <SearchForm state={{ jurisdictions: [id] }} />

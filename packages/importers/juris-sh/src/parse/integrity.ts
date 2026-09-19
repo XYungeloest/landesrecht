@@ -61,7 +61,7 @@ export function joinSourceLines(sourceText: string, join: (previous: string, nex
   return sourceText.split('\n').reduce((text, line) => join(text, line.trim()), '');
 }
 
-export function compareIntegrity(sourceText: string, canonicalText: string, explained: ReadonlyArray<{ reason: string; text: string }> = [], join?: (previous: string, next: string) => string): IntegrityResult {
+export function compareIntegrity(sourceText: string, canonicalText: string, explained: ReadonlyArray<{ reason: string; text: string; replacement?: string }> = [], join?: (previous: string, next: string) => string): IntegrityResult {
   const source = characterStream(sourceText);
   const canonical = characterStream(canonicalText);
   const base: IntegrityResult = { class: 'exact', sourceCharacters: source.length, canonicalCharacters: canonical.length, sourceTokens: 0, canonicalTokens: 0, missing: 0, extra: 0, explanations: [] };
@@ -75,7 +75,8 @@ export function compareIntegrity(sourceText: string, canonicalText: string, expl
       const stream = characterStream(explanation.text);
       const at = stream ? reduced.indexOf(stream) : -1;
       if (at < 0) continue;
-      reduced = `${reduced.slice(0, at)}${reduced.slice(at + stream.length)}`;
+      // Mit Ersatz: dieselben Zeichen in anderer Folge (mehrzeilige Tabellenzellen); sonst entfernt (Metadatum).
+      reduced = `${reduced.slice(0, at)}${explanation.replacement !== undefined ? characterStream(explanation.replacement) : ''}${reduced.slice(at + stream.length)}`;
       used.push(explanation.reason);
     }
     if (reduced === canonical) return { ...base, class: 'explained-difference', explanations: [...new Set(used)].sort() };

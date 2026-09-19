@@ -266,7 +266,9 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
     // Stichtagsfassung aus den am Stichtag geltenden Einzelfassungen – nie der heutige Text.
     const rawSelection = selectBaselineUnits(options.units);
     const selection = { ...rawSelection, problems: [...rawSelection.problems, ...consistencyProblems(rawSelection.selected, { title: parsed.title, ...(parsed.header['Gliederungs-Nr'] ? { gliederungsnummer: parsed.header['Gliederungs-Nr'] } : {}) })] };
-    const unitErrors = options.units.filter((unit) => unit.parsed.findings.some((finding) => finding.severity === 'error')).map((unit) => `${unit.documentId}: ${unit.parsed.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code).join(', ')}`);
+    // Parserfehler zählen nur in den gewählten Einzelfassungen – nur sie bilden die Stichtagsfassung (Run 8).
+    const selectedIds = new Set(selection.selected.map((unit) => unit.documentId));
+    const unitErrors = options.units.filter((unit) => selectedIds.has(unit.documentId) && unit.parsed.findings.some((finding) => finding.severity === 'error')).map((unit) => `${unit.documentId}: ${unit.parsed.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code).join(', ')}`);
     const assembly = assembleBaseline(selection.selected, isVwv);
     result.historical = { units: options.units.length, selected: selection.selected.length, omitted: selection.omitted.length, problems: [...selection.problems, ...unitErrors], ...(assembly.validFrom ? { validFrom: assembly.validFrom } : {}), ...(assembly.validTo ? { validTo: assembly.validTo } : {}), integrity: assembly.integrity.class, selectedUnitIds: selection.selected.map((unit) => unit.documentId) };
     result.integrity = assembly.integrity;

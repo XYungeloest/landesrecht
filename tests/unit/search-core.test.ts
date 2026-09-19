@@ -62,6 +62,9 @@ describe('Abfrageplan', () => {
     expect(extractStructuralIntents('§§ 3, 4 und 5a').references.map((intent) => intent.number)).toEqual(['3', '4', '5a']);
     expect(extractStructuralIntents('Art. 5 Abs. 1').references).toEqual([{ kind: 'article', number: '5', subsection: '1' }]);
     expect(extractStructuralIntents('Absatz 2').references).toEqual([{ kind: 'subsection', number: '2' }]);
+    // Fehlendes Leerzeichen der Quelle („§ 59MBG NSH“): keine Adresse „§ 59m“, der Text bleibt Freitext.
+    expect(extractStructuralIntents('nach § 59MBG NSH').references).toEqual([]);
+    expect(extractStructuralIntents('§ 13a und § 2').references.map((intent) => intent.number)).toEqual(['13a', '2']);
   });
 
   it('bildet FTS-Ausdrücke nur bei Freitext', () => {

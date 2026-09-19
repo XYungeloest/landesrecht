@@ -313,6 +313,9 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
 
 /** Container („Art. 53 wird wie folgt geändert:“) → Ortsangabe, sonst `undefined`. */
 export function containerLocation(text: string): string | undefined {
+  // Lauf 10: „In Abs. 1 wird der einleitende Satzteil wie folgt geändert:“ (GVBl. 2013 S. 192) – Ort und Teil.
+  const within = /^(?:In|Im)\s+(.+?)\s+(?:wird|werden)\s+(?:der|die|das)\s+(einleitende\s+Satzteil|Satzteil\s+vor\s+.+?|Überschrift|Satz\s+\d+[a-z]?|Nr\.\s+\S+|Buchst\.\s+\S+)\s+wie\s+folgt\s+geändert\s*:\s*$/u.exec(text.trim());
+  if (within) return `${within[1]} ${within[2]!.replace(/^einleitende\s/u, 'einleitender ')}`;
   const match = /^(.+?)\s+(?:wird|werden)\s+wie\s+folgt\s+geändert\s*:\s*$/u.exec(text.trim());
   if (!match) return undefined;
   const location = match[1]!.replace(/^(?:Die|Der|Das)\s+/u, '').trim();
@@ -330,7 +333,14 @@ export function repairCommandVerb(text: string): string {
   // „gelöscht“ (BayMBl. 2024 Nr. 283: „… wird die Angabe „…“ gelöscht.“) ist „gestrichen“.
   return text
     .replace(/(„[^„“”]*[“”])|\bwir\s+(angefügt|eingefügt|ersetzt|gestrichen|aufgehoben|gefasst|vorangestellt)\b/gu, (match, quoted: string | undefined, verb: string | undefined) => quoted ?? `wird ${verb!}`)
-    .replace(/\sgelöscht(\s*\.?\s*)$/u, ' gestrichen$1');
+    .replace(/\sgelöscht(\s*\.?\s*)$/u, ' gestrichen$1')
+    // Lauf 11: „nach dem Wort „Finanzen“ ein Komma und die Worte „für Landesentwicklung und“ eingefügt“ (FMBl. 2014 S. 47).
+    .replace(/\bein\s+Komma\s+und\s+(?:das\s+Wort|die\s+Worte|die\s+Wörter|die\s+Angabe)\s+„([^„“]+)“\s+eingefügt/u, 'die Angabe „, $1“ eingefügt')
+    // Lauf 11: Befehl als Fortsetzung des Einleitungssatzes („werden in Nr. 2 die Worte „…“ gestrichen.“, KWMBl. 2012 S. 48).
+    .replace(/^(wird|werden)\s+in\s+((?:Nr\.|Abs\.|§|Art\.|Satz)\s*[\w.]+(?:\s+(?:Satz|Nr\.|Abs\.|Buchst\.)\s*[\w.]+)*)\s+(?=(?:die|das|der|nach|vor)\s)/u, 'In $2 $1 ')
+    // Lauf 11: „In der Überschrift werden das Komma und das Wort „Außerkrafttreten“ gestrichen.“ (GVBl. 2014 S. 117) – das
+    // Komma vor dem Wort gehört zum gestrichenen Wortlaut.
+    .replace(/\b(?:wird|werden)\s+das\s+Komma\s+und\s+(?:das\s+Wort|die\s+Wörter|die\s+Angabe)\s+„([^„“]+)“\s+gestrichen/u, 'wird die Angabe „, $1“ gestrichen');
 }
 
 export function parseCommand(text: string, context: readonly LocationPath[]): ParsedCommand {

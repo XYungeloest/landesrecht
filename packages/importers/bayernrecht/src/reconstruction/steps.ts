@@ -18,7 +18,7 @@ import { applyBackward, ReconstructionError, stepBackward, stepForward, type Law
 import { containerLocation, isParsedDeletion, NON_INVERTIBLE_FORMULAS, parseCommand, SUPPORTED_FORMULAS, type FormulaId, type Operation, type ParsedOperation } from './formulas.ts';
 import { blockAt, formatPath, parseLocation, resolvePath, type LocationPath } from './location.ts';
 import { stableStringify, type RecipeStep, type ScopeRecord } from './recipe.ts';
-import { commandUnitPath, deletionRequest, realizeRestore, RestoreError, restoreRequest, restoreUnit, unitFor, type PublicationBase, type RestoreRequest } from './restore.ts';
+import { commandUnitPath, deletionRequest, disambiguatedReplacement, realizeRestore, RestoreError, restoreRequest, restoreUnit, unitFor, type PublicationBase, type RestoreRequest } from './restore.ts';
 import { parseStructural, quoteGroups, realize, StructuralError, structuralEvidence, type StructuralOperation, type StructuralParse, type StructuralTemplate } from './structural.ts';
 import type { CommandBlock, CommandNode } from './structure.ts';
 import type { GazetteUnit } from './gazette.ts';
@@ -70,6 +70,17 @@ function quotedChildren(node: CommandNode): GazetteUnit[] | undefined {
   return groups && groups.length > 0 ? ordered : undefined;
 }
 
+/** Geschlossenes Zitat, danach nur Einheiten ohne Gliederungszeichen (auch in der Tiefe): Rest der ändernden Vorschrift. */
+function trailingAfterQuote(node: CommandNode): boolean {
+  if (node.quoted.length === 0 || node.children.length === 0) return false;
+  const last = node.quoted.at(-1)!.text.trim();
+  if (!/[“‘][.;,]?$/u.test(last)) return false;
+  const quoted = node.quoted.map((unit) => unit.text).join(' ');
+  if ((quoted.match(/„/gu) ?? []).length !== (quoted.match(/“/gu) ?? []).length) return false;
+  const unlabeled = (entries: readonly CommandNode[]): boolean => entries.every((entry) => !entry.label && entry.quoted.length === 0 && !/^[„‚]/u.test(entry.text.trim()) && unlabeled(entry.children));
+  return unlabeled(node.children);
+}
+
 /** Führt der Körper eine Inhaltsübersicht (Glied mit Überschrift „Inhaltsübersicht“/„Inhaltsverzeichnis“)? */
 export function hasTableOfContents(body: readonly NormBodyBlock[]): boolean {
   const visit = (blocks: readonly NormBodyBlock[]): boolean => blocks.some((block) => /^Inhalts(?:übersicht|verzeichnis)$/u.test(String(block.title ?? block.text ?? '').trim()) || visit(block.children ?? []));
@@ -104,6 +115,34 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
     const sourceOf = (): Partial<Leaf> => (stableStringify(source) === stableStringify(context) ? {} : { sourceContext: source });
     for (let node of nodes) {
       const nodeLabels = node.label ? [...labels, node.label] : labels;
+      // Lauf 11: „Abs. 2 wird aufgehoben, die Absatzbezeichnung im bisherigen Abs. 1 entfällt.“ (GVBl. 2014 S. 117, 2015
+      // S. 243) – zwei Befehle nacheinander: Aufhebung, dann „In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“
+      const repealAndUnlabel = node.quoted.length === 0 && node.children.length === 0 ? /^(.+?\s(?:wird|werden)\s+aufgehoben)\s*[,;]\s*die\s+Absatzbezeichnung\s+(?:im|in)\s+(?:bisherigen\s+)?Abs\.\s*1\s+entfällt\s*\.?$/u.exec(node.text.trim()) : null;
+      if (repealAndUnlabel) {
+        walk([`${repealAndUnlabel[1]}.`, 'In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.'].map((text) => ({ ...node, text, label: undefined, children: [], quoted: [] }) as CommandNode), context, nodeLabels, statisticsOnly, source);
+        continue;
+      }
+      // Lauf 11: „§ 97 Abs. 4 und 5 werden aufgehoben; die bisherigen Abs. 6 und 7 werden Abs. 4 und 5.“ (GVBl. 2014 S. 450)
+      // – zwei Befehle; der zweite im gemeinsamen Ort des ersten (§ 97).
+      const repealAndRelabel = node.quoted.length === 0 && node.children.length === 0 ? /^((.+?)\s(?:wird|werden)\s+aufgehoben)\s*;\s*(die\s+bisherigen?\s+[^;„“]+\s(?:wird|werden)\s+[^;„“]+?)\s*\.?$/u.exec(node.text.trim()) : null;
+      const repealPaths = repealAndRelabel ? parseLocation(repealAndRelabel[2]!) : undefined;
+      if (repealAndRelabel && repealPaths && repealPaths.length > 0) {
+        const prefix: LocationPath = [];
+        for (let depth = 0; repealPaths.every((path) => path.length > depth + 1 && stableStringify(path[depth]) === stableStringify(repealPaths[0]![depth])); depth += 1) prefix.push(repealPaths[0]![depth]!);
+        walk([{ ...node, text: `${repealAndRelabel[1]}.`, label: undefined, children: [], quoted: [] } as CommandNode], context, nodeLabels, statisticsOnly, source);
+        const second = `${repealAndRelabel[3]!.charAt(0).toUpperCase()}${repealAndRelabel[3]!.slice(1)}.`;
+        walk([{ ...node, text: second, label: undefined, children: [], quoted: [] } as CommandNode], prefix.length > 0 ? [...context, prefix] : context, nodeLabels, statisticsOnly, prefix.length > 0 ? [...source, prefix] : source);
+        continue;
+      }
+      // Lauf 11: Ein Befehl aus nummerierten Sätzen ohne Zitat und ohne Unterbefehle („¹Die bisherige Nr. 3 wird
+      // aufgehoben. ²Die bisherige Nr. 2.2 wird Nr. 3.“, BayMBl. 2022 Nr. 702) sind Befehle nacheinander.
+      if (node.quoted.length === 0 && node.children.length === 0 && /^¹\S/u.test(node.text.trim()) && /\s²\S/u.test(node.text)) {
+        const parts = node.text.trim().split(/\s(?=[²³⁴⁵⁶⁷⁸⁹]\S)/u).map((part) => part.replace(/^[¹²³⁴⁵⁶⁷⁸⁹]/u, '').trim());
+        if (parts.every((part) => /(?:wird|werden)\s[^„“]*\.$|\.$/u.test(part))) {
+          walk(parts.map((text) => ({ ...node, text, label: undefined, children: [], quoted: [] }) as CommandNode), context, nodeLabels, statisticsOnly, source);
+          continue;
+        }
+      }
       const listed = listedReplacement(node);
       if (listed !== undefined) {
         // „In Satz 1 werden ersetzt:“ – „das Wort „A“ durch das Wort „B“ und“ – „das Wort „C“ durch das Wort „D“.“
@@ -141,6 +180,9 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
       // Anführungszeichen und schließen die Unterglieder das Zitat, sind sie Zitat, keine Befehle.
       const inner = quotedChildren(node);
       if (inner) node = { ...node, quoted: [...node.quoted, ...inner], children: [] };
+      // Lauf 10: Nach einem geschlossenen Zitat folgen ungegliederte Einheiten – der nächste Paragraph der ändernden
+      // Vorschrift, Inkrafttreten, Unterschrift (GVBl. 2018 S. 301, 2011 S. 251): kein Unterbefehl, nicht Teil des Befehls.
+      else if (trailingAfterQuote(node)) node = { ...node, children: [] };
       const quoted = node.quoted.map((unit) => `${unit.label ? `${unit.label} ` : ''}${unit.text}`).join(' ');
       // „Nach Nr. 1.2 wird folgende Nr. 1.3 angefügt.“ mit folgendem Zitat: für die Erkennung wie mit Doppelpunkt.
       const parseText = node.quoted.length > 0 ? node.text.replace(/\.\s*$/u, ':') : node.text;
@@ -152,6 +194,13 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
         if (structural?.formula === 'relabel' && template?.kind === 'relabel' && template.pairs.length === 1 && /wie\s+folgt\s+geändert\s*:\s*$/u.test(node.text)) {
           leaves.push(leaf);
           walk(node.children, [...context, [template.pairs[0]![1]]], nodeLabels, statisticsOnly, [...source, [template.pairs[0]![0]]]);
+          continue;
+        }
+        // Lauf 10: „Der Wortlaut wird Satz 1 und wie folgt geändert:“ (GVBl. 2020 S. 318, 2015 S. 470): Satznummer, dann
+        // Unterbefehle am (jetzt) Satz 1.
+        if (structural?.formula === 'number-sentences' && template?.kind === 'number-sentences' && !structural.followUp && /wie\s+folgt\s+geändert\s*:\s*$/u.test(node.text)) {
+          leaves.push(leaf);
+          walk(node.children, [...context, [{ kind: 'satz', value: '1' }]], nodeLabels, statisticsOnly, source);
           continue;
         }
         // „Satz 3 wird Satz 2 und wie folgt geändert:“ (BayMBl. 2025 Nr. 315): Unterbefehle am Satz unter neuer Nummer.
@@ -240,7 +289,7 @@ function restorableLeaf(leaf: Leaf, command: Parsed & { restorable?: ReturnType<
   }
   let formula = command.formulas.length === 1 ? command.formulas[0]! : undefined;
   // „Der bisherige Satz 8 wird gestrichen.“ ist keine Umnummerierung, sondern eine Aufhebung.
-  if (formula === 'renumber' && leaf.node.quoted.length === 0 && /^(?:Der|Die)\s+bisherigen?\s+(?:Satz|Sätze|Nr\.|Nrn\.|Abs\.|Buchst\.|Spiegelstrich)\s[^„“]*\s(?:wird|werden)\s+(?:gestrichen|aufgehoben)\s*\.?$/u.test(leaf.node.text.trim())) formula = 'repeal-unit';
+  if (formula === 'renumber' && leaf.node.quoted.length === 0 && /^(?:Der|Die)\s+bisherigen?\s+(?:Satz|Sätze|Nr\.|Nrn\.|Abs\.|Buchst\.|Spiegelstrich)\s[^„“]*\s(?:wird|werden)\s+(?:gestrichen|aufgehoben|gelöscht)\s*\.?$/u.test(leaf.node.text.trim())) formula = 'repeal-unit';
   if (formula !== 'recast' && formula !== 'repeal-unit') return undefined;
   const request = restoreRequest(leaf.node.text, leaf.context, leaf.node.quoted, formula);
   if ('error' in request) return { formulas: command.formulas, reason: `${command.reason ?? ''} – aus der Verkündung nicht wiederherstellbar: ${request.error}` };
@@ -481,7 +530,27 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
         }
       }
     }
+    // Lauf 10/11: Wortersetzung mit mehrdeutigem neuem Wortlaut – je Ort mit dem Stand der Verkündungen die eine Stelle.
+    const replaced = new Map<number, RecipeStep>();
+    if (restore && operation.operation.kind === 'replace') {
+      const replace = operation.operation;
+      operation.locations.forEach((path, index) => {
+        if (targets[index] !== undefined) return;
+        const probe = structuredClone(working) as NormBodyBlock[];
+        try {
+          applyBackward(probe, scopes[index]!, replace, leaf.labels.join(' '));
+        } catch (error) {
+          if (!(error instanceof ReconstructionError) || error.code !== 'target-ambiguous') return;
+          const entry = disambiguatedReplacement(working, restore, scopes[index]!, replace.from, replace.to, formatPath(path));
+          if (entry) replaced.set(index, { id: '', command: leaf.command, commandPath: leaf.labels, formula: operation.formula, location: entry.location, scope: entry.scope, operation: entry.operation as Operation, evidence: entry.evidence, restoredFrom: restore.citation, ...defectOf(leaf) });
+        }
+      });
+    }
     operation.locations.forEach((path, index) => {
+      if (replaced.has(index)) {
+        realizedSteps.push(replaced.get(index)!);
+        return;
+      }
       realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: operation.formula, location: targets[index] === 'title' ? 'Überschrift der Norm' : formatPath(path), scope: scopes[index]!, operation: operation.operation, evidence: { baseline: '', current: '' }, ...(targets[index] ? { target: targets[index]! } : {}), ...defectOf(leaf) });
     });
     return realizedSteps;

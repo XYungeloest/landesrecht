@@ -4,7 +4,8 @@
  * Eine solche Anlage ist keine eigene Norm, sondern Bestandteil ihrer Stammnorm (Audit Run 7, Punkt 8). Zugeordnet
  * wird nur eindeutig: Stammnorm ist die einzige VwV ohne eigenen Hauptdokument-Vermerk, deren Titel dem genannten
  * Hauptdokument entspricht (gleich; sonst Präfix in beide Richtungen, mindestens 20 Zeichen) und – soweit beide sie
- * tragen – dieselbe Gliederungsnummer hat. Mehrdeutige oder fehlende Stammnormen bleiben Review.
+ * tragen – dieselbe Gliederungsnummer hat; bei gleichnamigen Kandidaten (Änderungsbekanntmachungen) entscheidet das
+ * gemeinsame Erlassdatum. Mehrdeutige oder fehlende Stammnormen bleiben Review.
  *
  * Die Anlage wird als `annex`-Block an den Normkörper der Stammnorm angehängt (Reihenfolge: Nummer der Anlage, sonst
  * Dokumentnummer); ihre PDF-Ausgabe und Abbildungen werden Rohquellen der Stammnorm. Sperrgründe der Anlage (Tabellen,
@@ -68,6 +69,13 @@ export function assignSeparateAnnexes(documents: ReadonlyArray<{ id: string; are
       if (sameGl.length > 0) candidates = sameGl;
     }
     if (gl) candidates = candidates.filter((main) => !main.result!.source?.gliederungsnummer || normalizeGliederungsnummer(main.result!.source.gliederungsnummer) === normalizeGliederungsnummer(gl));
+    // Wiederkehrende Titel (Änderungsbekanntmachungen gleichen Namens): Anlage und Stammnorm tragen dasselbe
+    // Erlassdatum – eine Bekanntmachung und ihre Anlagen werden gemeinsam erlassen (Run 8). Nur eindeutig.
+    const dates = new Set(annex.result!.source?.documentDates ?? []);
+    if (candidates.length > 1 && dates.size > 0) {
+      const sameDate = candidates.filter((main) => (main.result!.source?.documentDates ?? []).some((date) => dates.has(date)));
+      if (sameDate.length === 1) candidates = sameDate;
+    }
     if (candidates.length === 1) {
       assignment.mainOf.set(annex.id, candidates[0]!.id);
       assignment.annexesOf.set(candidates[0]!.id, [...(assignment.annexesOf.get(candidates[0]!.id) ?? []), annex.id]);

@@ -137,6 +137,12 @@ function tokenize(input: string): Token[] | undefined {
       rest = rest.slice(match[0].length);
       continue;
     }
+    // Lauf 11: „der Überschrift der Bekanntmachung“ (FMBl. 2014 S. 47) – die Überschrift der Norm selbst.
+    if ((match = /^(?:der\s+|die\s+)?Überschrift\s+(?:der\s+Bekanntmachung|der\s+Verordnung|des\s+Gesetzes|der\s+Richtlinien?)$/u.exec(rest))) {
+      tokens.push({ kind: 'ueberschrift', value: '' });
+      rest = rest.slice(match[0].length);
+      continue;
+    }
     if ((match = /^(?:der|dem|den|des|die|das)\s+Überschrift(?:\s+(?:des|der|zu))?\s*/u.exec(rest)) || (match = /^Überschrift(?:\s+(?:des|der|zu))?\s*/u.exec(rest))) {
       tokens.push({ kind: 'ueberschrift', value: '' });
       rest = rest.slice(match[0].length);
@@ -267,7 +273,8 @@ export function parseLocation(input: string): LocationPath[] | undefined {
   const heading = /^(.+?)\s+in\s+der\s+Überschrift$/u.exec(input.trim());
   const text = expandLocationRanges(heading && !/\s(?:und|sowie)\s/u.test(heading[1]!) ? `Überschrift ${/^(?:Nr|Buchst|Abs)\./u.test(heading[1]!) ? 'der' : 'des'} ${heading[1]!}` : input.trim());
   if (text === '') return [[]];
-  const tokens = tokenize(text);
+  // Lauf 11: Artikel vor einem weiteren Ort der Aufzählung („§ 3 Abs. 3 Satz 3, den §§ 4 und 6 sowie § 11“, GVBl. 2025 S. 543).
+  const tokens = tokenize(text.replace(/(,|\sund|\ssowie)\s+(?:den|dem|der|des)\s+(?=(?:§|Art\.|Abs\.|Nrn?\.|Anlagen?\s)\s*)/gu, '$1 '));
   if (!tokens) return undefined;
   const paths: LocationPath[] = [];
   let current: LocationPath = [];
@@ -573,7 +580,9 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
   let mode: 'all' | 'leading' | 'heading' | 'vorspann' = 'all';
   const resolved: string[] = [];
   const widened: string[] = [];
-  for (const step of path) {
+  for (const [stepIndex, step] of path.entries()) {
+    // Lauf 10: Die Satzangabe ist die letzte Stufe (nur ein Halbsatz darf folgen) – dann darf sie in ein Textglied führen.
+    const sentenceLast = path.slice(stepIndex + 1).every((next) => next.kind === 'halbsatz');
     if (step.kind === 'vorspann') {
       if (located.block || mode !== 'all') return { ok: false, reason: 'Vorbemerkung nur auf oberster Ebene' };
       mode = 'vorspann';
@@ -622,6 +631,26 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
               located = { block: carrying[0]!.child, path: [...located.path, carrying[0]!.index] };
               sentence = number;
               resolved.push(`${label} (einziges Textglied)`);
+              continue;
+            }
+            // Lauf 10: mehrere Textglieder (Text vor und hinter einer Aufzählung), genau eines trägt die Satznummer.
+            if (carrying.length === 1 && texts.length > 1 && sentenceLast) {
+              located = { block: carrying[0]!.child, path: [...located.path, carrying[0]!.index] };
+              sentence = number;
+              resolved.push(`${label} (einziges Textglied mit dieser Satznummer)`);
+              continue;
+            }
+          }
+          // Lauf 10: Im Blockmodell der Verkündung trägt ein Glied seine Überschrift als eigenen Text („5.1.2
+          // Festbetragsfinanzierung beziehungsweise Pauschalen“), die Sätze stehen in Textgliedern darunter: Trägt genau
+          // eines von ihnen die Satznummer, ist es der Satz.
+          if (own !== undefined && sentenceLast && sentence === undefined && located.block && (located.block.children ?? []).length > 0) {
+            const number = Number(step.value);
+            const carrying = (located.block.children ?? []).map((child, index) => ({ child, index })).filter(({ child }) => child.type === 'paragraphText' && !child.label && typeof child.text === 'string' && sentenceRange(child.text, number) !== undefined);
+            if (carrying.length === 1) {
+              located = { block: carrying[0]!.child, path: [...located.path, carrying[0]!.index] };
+              sentence = number;
+              resolved.push(`${label} (Textglied unter dem Glied)`);
               continue;
             }
           }
@@ -717,6 +746,10 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
       const block = body[index]!;
       if (normalizeLabel(block.label) !== '' || (block.type as string) === 'section' || (block.type as string) === 'part') break;
       if (block.type === 'heading') continue;
+      // Lauf 10: Kopf einer Bekanntmachung im Portal („Bekanntmachung des … vom …, Az. …“, „(BayMBl. Nr. 52)“) vor der
+      // Vorbemerkung gehört nicht zu ihr.
+      const text = typeof block.text === 'string' ? block.text.trim() : '';
+      if (fields.length === 0 && (block.children ?? []).length === 0 && (/^(?:Gemeinsame\s+)?Bekanntmachung\s[\s\S]*\bvom\s+\d/u.test(text) || /^\((?:BayMBl|AllMBl|KWMBl|FMBl|JMBl|GVBl|StAnz)\.?[^()]*\)$/u.test(text))) continue;
       fields.push(...fieldsOf({ block, path: [index] }, body));
     }
   } else if (mode === 'heading') fields = [{ path: located.path, key: 'title' }];

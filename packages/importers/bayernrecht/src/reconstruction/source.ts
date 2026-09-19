@@ -98,6 +98,13 @@ export function normIdentity(documentId: string, document: BayernRechtDocument):
     const reference = referenceString(vv.gazette.organ, vv.gazette.year, vv.gazette.page, vv.gazette.pageKind);
     if (reference) references.push(reference);
     documentDate = citationDates(document.law.citation).issueDate;
+    // Lauf 11: Ohne Fundstelle im Kopf des Pakets die erste Fundstelle der Klammer hinter dem Ausfertigungsdatum im
+    // Zitiervorschlag („vom 23. November 2023 (BayMBl. Nr. 595; 2026 Nr. 114)“ – dahinter steht die Berichtigung).
+    if (!reference) {
+      const parenthetical = /\bvom\s+\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}\s*\(([^()]*)\)/u.exec(document.law.citation ?? '')?.[1];
+      const first = parenthetical ? /^\s*((?:BayMBl|AllMBl|KWMBl|FMBl|JMBl|GVBl)\.?)\s*(\d{4}\s+)?(Nr\.|S\.)\s*(\d+)/u.exec(parenthetical) : null;
+      if (first) references.push(`${first[1]!.endsWith('.') ? first[1] : `${first[1]}.`}${first[2] ? ` ${first[2].trim()}` : ''} ${first[3]} ${first[4]}`);
+    }
   } else {
     const norm = head as NormHead;
     documentDate = norm.documentDate;

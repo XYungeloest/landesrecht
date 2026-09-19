@@ -130,6 +130,18 @@ export function getJurisdictionByShortName(value: string): Jurisdiction | undefi
   );
 }
 
+const GENITIVE_STATE_FORM: Readonly<Record<Jurisdiction['stateForm'], string>> = { Land: 'Landes', Freistaat: 'Freistaats' };
+
+/**
+ * Genitiv der vollständigen Bezeichnung aus der Staatsform: „des Landes Westdeutschland“, „des Freistaats
+ * Bayern-Württemberg“. Einzige Quelle für Satzbau wie „Der Rechtsbestand des …“ – keine Einzelfixes im Template.
+ */
+export function jurisdictionGenitive(jurisdiction: Pick<Jurisdiction, 'name' | 'stateForm'>): string {
+  const prefix = `${jurisdiction.stateForm} `;
+  if (!jurisdiction.name.startsWith(prefix)) throw new Error(`Bezeichnung „${jurisdiction.name}“ beginnt nicht mit der Staatsform „${jurisdiction.stateForm}“`);
+  return `${GENITIVE_STATE_FORM[jurisdiction.stateForm]} ${jurisdiction.name.slice(prefix.length)}`;
+}
+
 /** Einheitlicher Hinweistext zum Ausgangsrechtsstand für Oberflächen. */
 export function describeBaseline(jurisdiction: Jurisdiction): string {
   return `Ausgangsrechtsstand: ${formatBaselineDate(jurisdiction.baselineDate)}`;

@@ -235,6 +235,24 @@ export function validityEvidenceFor(input: {
       citation: input.citation,
     });
   }
+  // Wirksamkeit laut amtlicher Verkündung (Stichtagsklassifikation 2c): trägt den Beginn, auch wenn sie rückwirkend
+  // bestimmt und erst nach dem Stichtag bekannt gemacht wurde (StRVertrBek, BayMBl. 2023 Nr. 585).
+  const official = input.candidate.baseline?.evidence.find((fact) => fact.kind === 'official-commencement');
+  const published = input.candidate.baseline?.evidence.find((fact) => fact.kind === 'publication-date');
+  if (official) {
+    const date = official.value.slice(0, 10);
+    const citation = /\(([^;)]+)/u.exec(official.value)?.[1];
+    const url = /https?:\/\/\S+/u.exec(official.source)?.[0];
+    evidence.push({
+      kind: 'gazette-publication',
+      dimension: 'begin',
+      strength: 'strong',
+      statement: `Laut amtlicher Verkündung${citation ? ` ${citation}` : ''} mit Wirkung vom ${date} in Kraft${published ? ` (bekannt gemacht am ${published.value.slice(0, 10)}; die Wirksamkeit ist ausdrücklich bestimmt)` : ''}${official.value.includes('hebt auf:') ? `; ${official.value.slice(official.value.indexOf('hebt auf:')).replace(/\)$/u, '')}` : ''}`,
+      date,
+      ...(citation ? { citation } : {}),
+      ...(url ? { sourceUrl: url } : {}),
+    });
+  }
   if (input.candidate.bayRsNumber) {
     evidence.push({
       kind: 'registry-position',
@@ -301,6 +319,24 @@ export function reconstructionEvidenceFor(input: {
       sha256: input.sha256,
     },
   ];
+  // Wirksamkeit laut amtlicher Verkündung (Stichtagsklassifikation 2c): trägt den Beginn, auch wenn sie rückwirkend
+  // bestimmt und erst nach dem Stichtag bekannt gemacht wurde (StRVertrBek, BayMBl. 2023 Nr. 585).
+  const official = input.candidate.baseline?.evidence.find((fact) => fact.kind === 'official-commencement');
+  const published = input.candidate.baseline?.evidence.find((fact) => fact.kind === 'publication-date');
+  if (official) {
+    const date = official.value.slice(0, 10);
+    const citation = /\(([^;)]+)/u.exec(official.value)?.[1];
+    const url = /https?:\/\/\S+/u.exec(official.source)?.[0];
+    evidence.push({
+      kind: 'gazette-publication',
+      dimension: 'begin',
+      strength: 'strong',
+      statement: `Laut amtlicher Verkündung${citation ? ` ${citation}` : ''} mit Wirkung vom ${date} in Kraft${published ? ` (bekannt gemacht am ${published.value.slice(0, 10)}; die Wirksamkeit ist ausdrücklich bestimmt)` : ''}${official.value.includes('hebt auf:') ? `; ${official.value.slice(official.value.indexOf('hebt auf:')).replace(/\)$/u, '')}` : ''}`,
+      date,
+      ...(citation ? { citation } : {}),
+      ...(url ? { sourceUrl: url } : {}),
+    });
+  }
   if (input.candidate.bayRsNumber) {
     evidence.push({
       kind: 'registry-position',
@@ -827,6 +863,13 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   const withdrawal = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
     && candidate.baseline?.status === 'not-at-baseline' && candidate.baseline.reason === 'official-commencement-after-baseline';
   const regression = !withdrawal && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status);
+  // Eine früher zurückgenommene Norm bleibt als solche erkennbar (R2-Audit: archivierte Objekte kein Widerspruch).
+  const withdrawnBefore = !withdrawal && !isImportedStatus(status)
+    ? (options.registry.retired ?? []).find((retired) => retired.sourceIdentity === candidate.documentId && retired.withdrawn)
+    : undefined;
+  if (withdrawnBefore) {
+    entry.findings = [...(entry.findings ?? []), { severity: 'info', code: 'withdrawn-not-at-baseline', message: `Am ${withdrawnBefore.withdrawn!.date} aus dem Stichtagsbestand genommen (${withdrawnBefore.withdrawn!.reason}); Slug ${withdrawnBefore.slug} bleibt stillgelegt` }];
+  }
   if (withdrawal && previous) {
     entry.targetSlug = '';
     entry.findings = [...(entry.findings ?? []), {
